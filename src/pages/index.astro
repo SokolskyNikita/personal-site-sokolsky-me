@@ -1,17 +1,374 @@
 ---
+const profile = {
+  name: "Nikita Sokolsky",
+  role: "Software Engineer @ Amazon (AWS WAF)",
+  blurb:
+    "I build reliable systems and thoughtful web products, then spend my off-hours shooting people and places with a camera.",
+  location: "Seattle area",
+  email: "sokolx@gmail.com",
+  portrait:
+    "https://thb.tildacdn.net/tild6365-3334-4561-a539-636363663061/-/empty/EbTAeKre_400x400.jpg",
+};
 
+const links = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nsokolsky/" },
+  { label: "Twitter", href: "https://twitter.com/nsokolsky/" },
+  { label: "Instagram", href: "https://www.instagram.com/nsokolsky/" },
+  { label: "Email", href: `mailto:${profile.email}` },
+];
+
+const focusAreas = [
+  "Security-minded backend and platform engineering",
+  "Performance-first frontend delivery",
+  "Product thinking and developer experience",
+  "Portrait and lifestyle photography",
+];
+
+const pageTitle = "Nikita Sokolsky - Software engineer & photographer";
+const pageDescription =
+  "Personal website of Nikita Sokolsky, software engineer at Amazon (AWS WAF) and photographer.";
 ---
 
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content="#f7f5f1" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={profile.portrait} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="page">
+      <header class="site-header">
+        <p class="brand">{profile.name}</p>
+        <nav aria-label="Primary">
+          <ul class="nav-list">
+            <li><a href="#about">About</a></li>
+            <li><a href="#focus">Focus</a></li>
+            <li><a href="#connect">Connect</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main id="content">
+        <section class="hero" aria-labelledby="hero-title">
+          <div>
+            <p class="eyebrow">{profile.role}</p>
+            <h1 id="hero-title">{profile.name}</h1>
+            <p class="lead">{profile.blurb}</p>
+            <p class="meta">{profile.location}</p>
+          </div>
+          <img
+            src={profile.portrait}
+            alt={`Portrait of ${profile.name}`}
+            loading="eager"
+            width="320"
+            height="320"
+          />
+        </section>
+
+        <section id="about" aria-labelledby="about-title">
+          <h2 id="about-title">About</h2>
+          <p>
+            I enjoy shipping clean, durable systems and simplifying things that
+            should feel obvious in production. Outside of engineering, I explore
+            visual storytelling through photography.
+          </p>
+        </section>
+
+        <section id="focus" aria-labelledby="focus-title">
+          <h2 id="focus-title">Current focus</h2>
+          <ul class="focus-list">
+            {
+              focusAreas.map((item) => (
+                <li>
+                  <span aria-hidden="true">•</span>
+                  {item}
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section id="connect" aria-labelledby="connect-title">
+          <h2 id="connect-title">Connect</h2>
+          <ul class="link-list">
+            {
+              links.map((link) => (
+                <li>
+                  <a href={link.href} target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </main>
+
+      <footer>
+        <p>
+          Built with Astro + Cloudflare Workers.
+        </p>
+      </footer>
+    </div>
+  </body>
 </html>
+
+<style>
+  :root {
+    color-scheme: light;
+    --bg: oklch(0.97 0.009 88);
+    --surface: oklch(0.94 0.012 88);
+    --text: oklch(0.28 0.03 255);
+    --muted: oklch(0.45 0.02 255);
+    --line: oklch(0.84 0.01 88);
+    --accent: oklch(0.56 0.12 250);
+    --shadow: 0 12px 36px color-mix(in oklab, var(--text) 10%, transparent);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: "Work Sans", "Avenir Next", "Segoe UI", sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--text);
+    color: var(--bg);
+    padding: 0.6rem 0.8rem;
+    z-index: 10;
+  }
+
+  .skip-link:focus-visible {
+    left: 0.5rem;
+    top: 0.5rem;
+  }
+
+  .page {
+    width: min(72rem, 100% - clamp(1.5rem, 4vw, 3rem));
+    margin-inline: auto;
+    padding-block: clamp(1rem, 3vw, 2rem) clamp(2.5rem, 5vw, 5rem);
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.9rem;
+  }
+
+  .brand {
+    margin: 0;
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .nav-list,
+  .focus-list,
+  .link-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-list {
+    display: flex;
+    gap: clamp(0.9rem, 2vw, 1.5rem);
+  }
+
+  .hero {
+    display: grid;
+    gap: clamp(1.25rem, 4vw, 2.5rem);
+    align-items: center;
+    grid-template-columns: 1.2fr minmax(12rem, 18rem);
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  h1,
+  h2 {
+    font-family: "Fraunces", "Iowan Old Style", serif;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    line-height: 0.95;
+    margin-top: 0.6rem;
+  }
+
+  h2 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    margin-bottom: 0.8rem;
+  }
+
+  p {
+    margin: 0;
+    max-width: 60ch;
+    line-height: 1.6;
+  }
+
+  .lead {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    color: color-mix(in oklab, var(--text) 92%, var(--muted));
+  }
+
+  .meta {
+    margin-top: 0.8rem;
+    color: var(--muted);
+  }
+
+  .hero img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 1.25rem;
+    border: 1px solid color-mix(in oklab, var(--line) 80%, var(--text));
+    box-shadow: var(--shadow);
+  }
+
+  main {
+    display: grid;
+    gap: clamp(1.8rem, 4vw, 2.8rem);
+  }
+
+  section {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .focus-list {
+    display: grid;
+    gap: 0.55rem;
+    color: color-mix(in oklab, var(--text) 94%, var(--muted));
+  }
+
+  .focus-list li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  .focus-list span {
+    color: var(--accent);
+  }
+
+  .link-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.2rem;
+  }
+
+  a {
+    color: var(--text);
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 0.06em;
+    text-decoration-color: color-mix(in oklab, var(--accent) 55%, transparent);
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 0.2rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 56rem) {
+    .hero {
+      grid-template-columns: 1fr;
+      max-width: 38rem;
+    }
+
+    .hero img {
+      width: min(18rem, 65vw);
+      justify-self: start;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .site-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
