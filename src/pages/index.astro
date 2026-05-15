@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 const profile = {
   name: "Nikita Sokolsky",
   role: "Software Engineer @ Amazon (AWS WAF)",
@@ -6,7 +8,6 @@ const profile = {
     "I build reliable systems and thoughtful web products, then spend my off-hours shooting people and places with a camera.",
   location: "Seattle area",
   email: "sokolx@gmail.com",
-  portrait: "/profile-portrait.jpg",
 };
 
 const links = [
@@ -26,16 +27,18 @@ const focusAreas = [
 const pageTitle = "Nikita Sokolsky - Software engineer and photographer";
 const pageDescription =
   "Personal website of Nikita Sokolsky, software engineer at Amazon (AWS WAF) and photographer.";
-const themeColorLight = "#f7f5f1";
-const themeColorDark = "#1f2735";
+const themeColorLight = "#eceff4";
+const themeColorDark = "#2e3440";
 const siteUrl =
-  (Astro.site?.toString() ?? "https://personal-site-sokolsky-me.workers.dev").replace(
+  (Astro.site?.toString() ?? "https://sokolsky-me-temp.sokolx.workers.dev").replace(
     /\/$/,
     "",
   );
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 const ogImageUrl = `${siteUrl}/og-image.jpg`;
-const profileImageUrl = `${siteUrl}${profile.portrait}`;
+const portraitJpgPath = "/profile-portrait-v2-640.jpg";
+const portraitWebpPath = "/profile-portrait-v2-640.webp";
+const profileImageUrl = `${siteUrl}${portraitJpgPath}`;
 const twitterHandle = "@nsokolsky";
 const socialProfiles = links
   .filter((link) => link.label !== "Email")
@@ -132,20 +135,6 @@ const structuredData = {
     />
     <meta name="twitter:site" content={twitterHandle} />
     <meta name="twitter:creator" content={twitterHandle} />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
   <body>
@@ -170,13 +159,18 @@ const structuredData = {
             <p class="lead">{profile.blurb}</p>
             <p class="meta">{profile.location}</p>
           </div>
-          <img
-            src={profile.portrait}
-            alt={`Portrait of ${profile.name}`}
-            loading="eager"
-            width="320"
-            height="320"
-          />
+          <picture>
+            <source srcset={portraitWebpPath} type="image/webp" />
+            <img
+              src={portraitJpgPath}
+              alt={`Portrait of ${profile.name}`}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              width="640"
+              height="640"
+            />
+          </picture>
         </section>
 
         <section id="about" aria-labelledby="about-title">
@@ -230,13 +224,13 @@ const structuredData = {
 <style>
   :root {
     color-scheme: light;
-    --bg: oklch(0.97 0.009 88);
-    --surface: oklch(0.94 0.012 88);
-    --text: oklch(0.28 0.03 255);
-    --muted: oklch(0.45 0.02 255);
-    --line: oklch(0.84 0.01 88);
-    --accent: oklch(0.56 0.12 250);
-    --shadow: 0 12px 36px color-mix(in oklab, var(--text) 10%, transparent);
+    --bg: #eceff4; /* nord6 */
+    --surface: #e5e9f0; /* nord5 */
+    --text: #2e3440; /* nord0 */
+    --muted: #4c566a; /* nord3 */
+    --line: #d8dee9; /* nord4 */
+    --accent: #5e81ac; /* nord10 */
+    --shadow: 0 12px 30px color-mix(in oklab, #3b4252 18%, transparent);
   }
 
   * {
@@ -244,7 +238,7 @@ const structuredData = {
   }
 
   html {
-    font-family: "Work Sans", "Avenir Next", "Segoe UI", sans-serif;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 16px;
     background: var(--bg);
     color: var(--text);
@@ -323,7 +317,7 @@ const structuredData = {
 
   h1,
   h2 {
-    font-family: "Fraunces", "Iowan Old Style", serif;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
     letter-spacing: -0.02em;
     margin: 0;
   }
@@ -358,8 +352,8 @@ const structuredData = {
 
   .hero img {
     width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
+    height: auto;
+    display: block;
     border-radius: 1.25rem;
     border: 1px solid color-mix(in oklab, var(--line) 80%, var(--text));
     box-shadow: var(--shadow);
@@ -373,6 +367,11 @@ const structuredData = {
   section {
     display: grid;
     gap: 0.75rem;
+  }
+
+  main > section:not(.hero) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 320px;
   }
 
   .focus-list {
