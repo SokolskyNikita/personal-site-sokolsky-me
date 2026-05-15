@@ -1,0 +1,144 @@
+---
+export const prerender = true;
+
+const pageTitle = "404 - Page Not Found | Nikita Sokolsky";
+const pageDescription = "The page you're looking for doesn't exist.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+    /\/$/,
+    "",
+  );
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <div class="page">
+      <main>
+        <section class="error-content">
+          <h1>404</h1>
+          <p>The page you're looking for doesn't exist or has been moved.</p>
+          <a href="/" class="home-link">Return home</a>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --text-muted: #666666;
+    --link: #111111;
+    --link-hover: #666666;
+    --border: #eaeaea;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --text: #ededed;
+      --text-muted: #a0a0a0;
+      --link: #ededed;
+      --link-hover: #a0a0a0;
+      --border: #333333;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    padding: 2rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 38rem;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 4rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  .home-link {
+    margin-top: 1rem;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .home-link:hover {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+</style>
