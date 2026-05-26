@@ -31,6 +31,13 @@ type Entry = {
   url: string;
 };
 
+type YearStat = {
+  year: string;
+  oneP: number;
+  threeP: number;
+  total: number;
+};
+
 const entries: Entry[] = [
   { type: "1P", date: "2004-01", sortDate: "2004-01-01", summary: "In a discussion of moral fashion and what cannot be said, mentions that pro-Israel groups compile dossiers on people who speak out against Israeli human rights abuses.", url: "https://paulgraham.com/say.html" },
   { type: "1P", date: "2004-01-01", sortDate: "2004-01-01", summary: "Lists \"anti-semitic\" as one of many labels used to suppress ideas.", url: "https://www.paulgraham.com/labels.html" },
@@ -64,6 +71,7 @@ const entries: Entry[] = [
   { type: "3P", date: "2023-11-02", sortDate: "2023-11-02", summary: "Nicholas Kristof: not \"politically sustainable for Israel, or morally sustainable for America\" to supply weapons that kill civilians.", url: "https://x.com/paulg/status/1720096486246289716" },
   { type: "1P", date: "2023-11-04", sortDate: "2023-11-04", summary: "\"A grim month: 31 Israeli and at least 3600 Palestinian children have been killed since October 7.\" ~5.1M views.", url: "https://x.com/paulg/status/1720843859054190639" },
   { type: "1P", date: "2023-11-04", sortDate: "2023-11-04", summary: "Pointed a user to an AP story about more than 3,600 Palestinian children killed in three weeks of war.", url: "https://x.com/paulg/status/1720847399621480783" },
+  { type: "1P", date: "2023-11-04", sortDate: "2023-11-04", summary: "Replied that casualty numbers include October 7 and cited a UNOCHA report as source.", url: "https://x.com/paulg/status/1720853337384312921" },
   { type: "1P", date: "2023-11-06", sortDate: "2023-11-06", summary: "\"1400 Israelis were murdered and 240 taken hostage on October 7; no reasonable person denies that\"", url: "https://x.com/paulg/status/1721481102848602416" },
   { type: "3P", date: "2023-11-15", sortDate: "2023-11-15", summary: "Reuters/Ipsos: US support for war eroding.", url: "https://x.com/paulg/status/1724921495833424317" },
   { type: "3P", date: "2023-11-26", sortDate: "2023-11-26", summary: "Guardian: restarting war would have \"disastrous consequences\"", url: "https://x.com/paulg/status/1728914503281287604" },
@@ -77,6 +85,7 @@ const entries: Entry[] = [
   { type: "3P", date: "2024-01-01", sortDate: "2024-01-01", summary: "Shared an expert analysis of civilian casualties and whether the IDF was doing enough to avoid them in Gaza.", url: "https://x.com/paulg/status/1741952950916808987" },
   { type: "1P", date: "2024-01-15", sortDate: "2024-01-15", summary: "Said he had been getting in trouble for speaking up for Palestinians longer than the recipient had been a Jew.", url: "https://x.com/paulg/status/1746904980269719604" },
   { type: "3P", date: "2024-01-23", sortDate: "2024-01-23", summary: "Shared reporting that more than 25,000 Palestinians, mainly women and children, had been killed in Gaza.", url: "https://x.com/paulg/status/1749770722942030121" },
+  { type: "1P", date: "2024-02-01", sortDate: "2024-02-01", summary: "Shared a link describing the experience of a pediatrician volunteering at a Gaza hospital.", url: "https://x.com/paulg/status/1753024513996939721" },
   { type: "1P", date: "2024-02-16", sortDate: "2024-02-16", summary: "On those criticizing Israel: \"They will be called antisemitic if they do\"", url: "https://x.com/paulg/status/1758580760494088282" },
   { type: "1P", date: "2024-02-16", sortDate: "2024-02-16", summary: "\"Even though we probably agree about Gaza, I don't agree with you about this. I don't like blacklists.\"", url: "https://x.com/paulg/status/1758586179962683571" },
   { type: "1P", date: "2024-02-18", sortDate: "2024-02-18", summary: "Phone videos and TikTok have \"ground down the taboo against criticizing Israel\"", url: "https://x.com/paulg/status/1759226928219800032" },
@@ -181,6 +190,27 @@ const entriesByYear = entries.reduce<Record<string, Entry[]>>((acc, entry) => {
 }, {});
 
 const orderedYears = Object.keys(entriesByYear).sort();
+const totalLinks = entries.length;
+const statsByYear: YearStat[] = orderedYears.map((year) => {
+  const { oneP, threeP } = entriesByYear[year].reduce(
+    (acc, entry) => {
+      if (entry.type === "1P") {
+        acc.oneP += 1;
+      } else {
+        acc.threeP += 1;
+      }
+      return acc;
+    },
+    { oneP: 0, threeP: 0 }
+  );
+
+  return {
+    year,
+    oneP,
+    threeP,
+    total: oneP + threeP
+  };
+});
 ---
 
 <!doctype html>
@@ -249,6 +279,37 @@ const orderedYears = Object.keys(entriesByYear).sort();
           <span class="legend-label">repost</span>
         </div>
       </header>
+
+      <section class="stats-block" aria-label="Link statistics">
+        <p class="stats-total">
+          <span class="stats-total-label">Total links on this page</span>
+          <strong>{totalLinks}</strong>
+        </p>
+        <details class="stats-details">
+          <summary>full stats</summary>
+          <div class="stats-grid">
+            {statsByYear.map((stat) => (
+              <article class="stats-card">
+                <h3>{stat.year}</h3>
+                <dl>
+                  <div>
+                    <dt>1P</dt>
+                    <dd>{stat.oneP}</dd>
+                  </div>
+                  <div>
+                    <dt>3P</dt>
+                    <dd>{stat.threeP}</dd>
+                  </div>
+                  <div>
+                    <dt>1P+3P</dt>
+                    <dd>{stat.total}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
+        </details>
+      </section>
 
       {orderedYears.map((year) => (
         <section class="year-section">
@@ -363,6 +424,115 @@ const orderedYears = Object.keys(entriesByYear).sort();
     margin-right: 0.7rem;
   }
 
+  .stats-block {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .stats-total {
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    padding: 0.8rem 0.95rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .stats-total-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .stats-total strong {
+    font-size: clamp(1.05rem, 4.8vw, 1.34rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .stats-details {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    overflow: hidden;
+  }
+
+  .stats-details > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.75rem 0.95rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .stats-details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .stats-details > summary::after {
+    content: "+";
+    float: right;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .stats-details[open] > summary::after {
+    content: "−";
+  }
+
+  .stats-grid {
+    display: grid;
+    gap: 0.65rem;
+    padding: 0 0.75rem 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  }
+
+  .stats-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    padding: 0.6rem 0.7rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .stats-card h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 650;
+    color: var(--text-muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .stats-card dl {
+    margin: 0;
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .stats-card dl div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.55rem;
+  }
+
+  .stats-card dt {
+    color: var(--text-muted);
+    font-size: 0.84rem;
+  }
+
+  .stats-card dd {
+    margin: 0;
+    font-weight: 620;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.92rem;
+  }
+
   .pill {
     display: inline-flex;
     align-items: center;
@@ -449,6 +619,11 @@ const orderedYears = Object.keys(entriesByYear).sort();
   @media (min-width: 860px) {
     body {
       padding: 3rem 1.5rem 4rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      padding: 0 0.95rem 0.95rem;
     }
 
     .entry-card {
