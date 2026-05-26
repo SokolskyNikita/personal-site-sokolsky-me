@@ -1,0 +1,420 @@
+---
+export const prerender = true;
+
+const pageTitle = "List of Paul Graham posts/reposts about Israel-adjacent topics";
+const pageDescription =
+  "Chronological list of Paul Graham posts and reposts about Israel-adjacent topics.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Entry = {
+  type: "1P" | "3P";
+  date: string;
+  sortDate: string;
+  summary: string;
+  url: string;
+};
+
+const entries: Entry[] = [
+  { type: "1P", date: "2004-01", sortDate: "2004-01-01", summary: "In a discussion of moral fashion and what cannot be said, mentions that pro-Israel groups compile dossiers on people who speak out against Israeli human rights abuses.", url: "https://paulgraham.com/say.html" },
+  { type: "1P", date: "2004-01-01", sortDate: "2004-01-01", summary: "Lists \"anti-semitic\" as one of many labels used to suppress ideas.", url: "https://www.paulgraham.com/labels.html" },
+  { type: "1P", date: "2006-05", sortDate: "2006-05-01", summary: "Notes that building a silicon valley in Israel would be ~impossible because it would only attract Jews, who represent a small fraction of the global population.", url: "https://paulgraham.com/america.html" },
+  { type: "1P", date: "2007-10", sortDate: "2007-10-01", summary: "Uses Jews telling Jewish jokes as an analogy for who has standing to make in-group criticism.", url: "https://paulgraham.com/startuphubs.html" },
+  { type: "1P", date: "2008-10-23", sortDate: "2008-10-23", summary: "HN comment on fear-driven military appropriations, referencing Iran, China, and terrorism rhetoric.", url: "https://news.ycombinator.com/item?id=341272#341403" },
+  { type: "1P", date: "2009-01-03", sortDate: "2009-01-03", summary: "\"Following the sentence 'no politics' with one equating criticism of Israel with anti-semitism is a bit hypocritical.\"", url: "https://news.ycombinator.com/item?id=418512" },
+  { type: "1P", date: "2009-01-17", sortDate: "2009-01-17", summary: "HN comment saying the events in Gaza seemed serious enough to be globally relevant.", url: "https://news.ycombinator.com/item?id=437852#437929" },
+  { type: "1P", date: "2009-01-17", sortDate: "2009-01-17", summary: "HN comment arguing that stronger global public attention could pressure Israel to stop.", url: "https://news.ycombinator.com/item?id=437852#438483" },
+  { type: "3P", date: "2012-11-19", sortDate: "2012-11-19", summary: "Article: \"Why Israel Targets Sports in Gaza\"", url: "https://x.com/paulg/status/270592944891912192" },
+  { type: "3P", date: "2014-07-16", sortDate: "2014-07-16", summary: "Shared a New York Times day-by-day tally of deaths in Gaza and Israel.", url: "https://x.com/paulg/status/489460466020667392" },
+  { type: "3P", date: "2014-07-24", sortDate: "2014-07-24", summary: "Shared a report saying Britain warned Netanyahu that Western sympathy for Israel was declining.", url: "https://x.com/paulg/status/492334245671485440" },
+  { type: "3P", date: "2014-08-06", sortDate: "2014-08-06", summary: "\"Israel, Gaza, War & Data\"", url: "https://x.com/paulg/status/497000177568210945" },
+  { type: "3P", date: "2014-08-07", sortDate: "2014-08-07", summary: "\"Israel and Gaza: A Just and Unjust War\"", url: "https://x.com/paulg/status/497266940541276160" },
+  { type: "3P", date: "2014-08-09", sortDate: "2014-08-09", summary: "Amnesty International's position on Gaza.", url: "https://x.com/paulg/status/498135036948803584" },
+  { type: "3P", date: "2014-08-10", sortDate: "2014-08-10", summary: "Rising antisemitism in Europe.", url: "https://x.com/paulg/status/498352846769623040" },
+  { type: "3P", date: "2014-08-15", sortDate: "2014-08-15", summary: "Desmond Tutu's \"Plea to the People of Israel\"", url: "https://x.com/paulg/status/500161965881188354" },
+  { type: "3P", date: "2014-08-23", sortDate: "2014-08-23", summary: "US aid totals to Israel since WWII.", url: "https://x.com/paulg/status/503205885506641920" },
+  { type: "3P", date: "2014-08-24", sortDate: "2014-08-24", summary: "\"The End of Liberal Zionism\"", url: "https://x.com/paulg/status/503645373613617153" },
+  { type: "3P", date: "2014-08-26", sortDate: "2014-08-26", summary: "\"Only 38% of American Jews believe that the Israeli government is sincerely pursuing peace\"", url: "https://x.com/paulg/status/504310270689148928" },
+  { type: "3P", date: "2014-09-01", sortDate: "2014-09-01", summary: "Israel claiming 1,000 acres of West Bank land near Bethlehem.", url: "https://x.com/paulg/status/506463164444053504" },
+  { type: "3P", date: "2014-10-31", sortDate: "2014-10-31", summary: "Malala donating $50,000 to rebuild Gaza schools.", url: "https://x.com/paulg/status/528248795503415296" },
+  { type: "1P", date: "2021-05-20", sortDate: "2021-05-20", summary: "\"As Gaza is under attack again, the one million children who live there are the primary victims\" + PCRF donation link.", url: "https://x.com/paulg/status/1395333817590763523" },
+  { type: "3P", date: "2021-05-21", sortDate: "2021-05-21", summary: "FT on Norway sovereign wealth fund excluding Israeli companies over West Bank settlements.", url: "https://x.com/paulg/status/1395678345187188738" },
+  { type: "3P", date: "2021-05-26", sortDate: "2021-05-26", summary: "Al Jazeera on Ireland recognizing Israel's \"de facto annexation\" of Palestine.", url: "https://x.com/paulg/status/1397599654062215169" },
+  { type: "3P", date: "2021-09-02", sortDate: "2021-09-02", summary: "On Israel's Delta variant difficulties (with own framing about it not going well).", url: "https://x.com/paulg/status/1433468443538382858" },
+  { type: "3P", date: "2022-06-16", sortDate: "2022-06-16", summary: "Al Arabiya on Gaza/Palestine tech-training program with Google and Meta.", url: "https://x.com/paulg/status/1537472629929648128" },
+  { type: "3P", date: "2023-10-11", sortDate: "2023-10-11", summary: "Shared Isaac Saul analysis arguing that labels like pro-Israel, pro-Palestine, and Zionist do not capture the nuance people should have on the issue.", url: "https://x.com/paulg/status/1712097145770156458" },
+  { type: "3P", date: "2023-10-26", sortDate: "2023-10-26", summary: "NYT: Israel asking for \"justice in Gaza\" while building \"settlement kingdom in the West Bank\" is \"strategically and morally incoherent\"", url: "https://x.com/paulg/status/1717501456796864625" },
+  { type: "3P", date: "2023-10-28", sortDate: "2023-10-28", summary: "IDF officer quote: \"We are using fire that has never been seen before in the Gaza Strip\"", url: "https://x.com/paulg/status/1718196407004266924" },
+  { type: "3P", date: "2023-11-02", sortDate: "2023-11-02", summary: "Nicholas Kristof: not \"politically sustainable for Israel, or morally sustainable for America\" to supply weapons that kill civilians.", url: "https://x.com/paulg/status/1720096486246289716" },
+  { type: "1P", date: "2023-11-04", sortDate: "2023-11-04", summary: "\"A grim month: 31 Israeli and at least 3600 Palestinian children have been killed since October 7.\" ~5.1M views.", url: "https://x.com/paulg/status/1720843859054190639" },
+  { type: "1P", date: "2023-11-04", sortDate: "2023-11-04", summary: "Pointed a user to an AP story about more than 3,600 Palestinian children killed in three weeks of war.", url: "https://x.com/paulg/status/1720847399621480783" },
+  { type: "1P", date: "2023-11-06", sortDate: "2023-11-06", summary: "\"1400 Israelis were murdered and 240 taken hostage on October 7; no reasonable person denies that\"", url: "https://x.com/paulg/status/1721481102848602416" },
+  { type: "3P", date: "2023-11-15", sortDate: "2023-11-15", summary: "Reuters/Ipsos: US support for war eroding.", url: "https://x.com/paulg/status/1724921495833424317" },
+  { type: "3P", date: "2023-11-26", sortDate: "2023-11-26", summary: "Guardian: restarting war would have \"disastrous consequences\"", url: "https://x.com/paulg/status/1728914503281287604" },
+  { type: "3P", date: "2023-12-03", sortDate: "2023-12-03", summary: "US Democrats disapprove of Israel's actions 63-36.", url: "https://x.com/paulg/status/1731244826622926860" },
+  { type: "1P", date: "2023-12-08", sortDate: "2023-12-08", summary: "Commented that a pro-Israel online coordination effort \"felt coordinated\" and \"turns out it was.\"", url: "https://x.com/paulg/status/1733146138226614465" },
+  { type: "1P", date: "2023-12-08", sortDate: "2023-12-08", summary: "Noted an article's candid discussion of Twitter users who are \"reflexively pro-Israel.\"", url: "https://x.com/paulg/status/1733155904827138223" },
+  { type: "1P", date: "2023-12-10", sortDate: "2023-12-10", summary: "\"Extremists on both sides share one tactic: to treat Israel and Jews as identical. ... We can't allow disagreement with Israeli policy to devolve into attacks on Jews. And we can't allow those who criticize Israeli policy to be called antisemitic.\"", url: "https://x.com/paulg/status/1733833508122992878" },
+  { type: "1P", date: "2023-12-10", sortDate: "2023-12-10", summary: "Reinforcing the same Israel/Jews distinction.", url: "https://x.com/paulg/status/1733840389423984863" },
+  { type: "1P", date: "2023-12-16", sortDate: "2023-12-16", summary: "On Breitbart source claiming Jewish enrollment at elite colleges decreasing.", url: "https://x.com/paulg/status/1736057429652087137" },
+  { type: "1P", date: "2023-12-17", sortDate: "2023-12-17", summary: "Notes encouragement that Saudi MBS said \"the Palestinian state\" rather than \"a Palestinian state\"", url: "https://x.com/paulg/status/1736343946819764373" },
+  { type: "3P", date: "2024-01-01", sortDate: "2024-01-01", summary: "Shared an expert analysis of civilian casualties and whether the IDF was doing enough to avoid them in Gaza.", url: "https://x.com/paulg/status/1741952950916808987" },
+  { type: "1P", date: "2024-01-15", sortDate: "2024-01-15", summary: "Said he had been getting in trouble for speaking up for Palestinians longer than the recipient had been a Jew.", url: "https://x.com/paulg/status/1746904980269719604" },
+  { type: "3P", date: "2024-01-23", sortDate: "2024-01-23", summary: "Shared reporting that more than 25,000 Palestinians, mainly women and children, had been killed in Gaza.", url: "https://x.com/paulg/status/1749770722942030121" },
+  { type: "1P", date: "2024-02-16", sortDate: "2024-02-16", summary: "On those criticizing Israel: \"They will be called antisemitic if they do\"", url: "https://x.com/paulg/status/1758580760494088282" },
+  { type: "1P", date: "2024-02-16", sortDate: "2024-02-16", summary: "\"Even though we probably agree about Gaza, I don't agree with you about this. I don't like blacklists.\"", url: "https://x.com/paulg/status/1758586179962683571" },
+  { type: "1P", date: "2024-02-18", sortDate: "2024-02-18", summary: "Phone videos and TikTok have \"ground down the taboo against criticizing Israel\"", url: "https://x.com/paulg/status/1759226928219800032" },
+  { type: "1P", date: "2024-02-21", sortDate: "2024-02-21", summary: "Defends Miguel de Icaza (shadowbanned for Gaza posts).", url: "https://x.com/paulg/status/1760352385484865778" },
+  { type: "3P", date: "2024-02-24", sortDate: "2024-02-24", summary: "Oxford surgeon Nick Maynard on what he saw in Gaza.", url: "https://x.com/paulg/status/1761529166611063031" },
+  { type: "3P", date: "2024-02-28", sortDate: "2024-02-28", summary: "Thomas Friedman on Netanyahu's price.", url: "https://x.com/paulg/status/1762802949837754595" },
+  { type: "1P", date: "2024-03-04", sortDate: "2024-03-04", summary: "Gets emails from people afraid to express opinions on Gaza.", url: "https://x.com/paulg/status/1764738079808508346" },
+  { type: "1P", date: "2024-03-11", sortDate: "2024-03-11", summary: "Sarcastic reply: \"Hamas is the reason they killed his mother. Got it\"", url: "https://x.com/paulg/status/1767173663592178045" },
+  { type: "1P", date: "2024-03-14", sortDate: "2024-03-14", summary: "Offers to repost shadowbanned de Icaza's tweets.", url: "https://x.com/paulg/status/1768339827592777975" },
+  { type: "1P", date: "2024-03-20", sortDate: "2024-03-20", summary: "\"Netanyahu's actual objective is to remain in office\"", url: "https://x.com/paulg/status/1770398325545591152" },
+  { type: "1P", date: "2024-03-21", sortDate: "2024-03-21", summary: "De Icaza out of shadowban.", url: "https://x.com/paulg/status/1770882903376838983" },
+  { type: "1P", date: "2024-03-22", sortDate: "2024-03-22", summary: "Democratic insider: Biden youth support dropping 20 points due to Gaza.", url: "https://x.com/paulg/status/1771085708276515197" },
+  { type: "3P", date: "2024-03-22", sortDate: "2024-03-22", summary: "Gaza volunteer doctors bringing \"firsthand accounts of the carnage\" to Washington.", url: "https://x.com/paulg/status/1771213321099723043" },
+  { type: "3P", date: "2024-03-27", sortDate: "2024-03-27", summary: "Gallup: 36% approve of Israel's actions; \"why does Biden support it?\"", url: "https://x.com/paulg/status/1773013114075685270" },
+  { type: "1P", date: "2024-04-04", sortDate: "2024-04-04", summary: "\"Remember when we were told children were being killed in Gaza because Hamas was using them as human shields? Now we know the real reason. When Israel wanted to kill someone, they waited till he went home, then dropped a bomb on the building, killing the whole family.\" (one day after Yuval Abraham's +972 \"Lavender\" investigation).", url: "https://x.com/paulg/status/1775847025315131767" },
+  { type: "1P", date: "2024-04-04", sortDate: "2024-04-04", summary: "Gallup: 36% Americans / 18% Democrats support Israel's Gaza actions.", url: "https://x.com/paulg/status/1775853261897011249" },
+  { type: "1P", date: "2024-04-05", sortDate: "2024-04-05", summary: "\"good sign when replies in threads about Israel mention other countries, because that means you've said something irrefutably true\"", url: "https://x.com/paulg/status/1776277533245206608" },
+  { type: "3P", date: "2024-04-12", sortDate: "2024-04-12", summary: "Economist: \"Israel has lost the battle for global public opinion\"", url: "https://x.com/paulg/status/1778727205989736812" },
+  { type: "3P", date: "2024-04-12", sortDate: "2024-04-12", summary: "Ehud Olmert: \"terrible price\" threatening Israel's existence from international isolation.", url: "https://x.com/paulg/status/1778851338664780161" },
+  { type: "1P", date: "2024-04-18", sortDate: "2024-04-18", summary: "On antisemitism accusers vs \"genocide supporter\" accusers.", url: "https://x.com/paulg/status/1781025204208058632" },
+  { type: "1P", date: "2024-04-18", sortDate: "2024-04-18", summary: "Some Palestine critics \"have brains, but have just temporarily suspended their use due to rage and grief\"", url: "https://x.com/paulg/status/1781030946457649222" },
+  { type: "3P", date: "2024-10-02", sortDate: "2024-10-02", summary: "\"In Gaza, 10 year old children are making wills\"", url: "https://x.com/paulg/status/1841518360275648977" },
+  { type: "3P", date: "2024-10-09", sortDate: "2024-10-09", summary: "NYT: 65 doctors describing pattern of children shot in the head in Gaza.", url: "https://x.com/paulg/status/1844049262126195021" },
+  { type: "1P", date: "2024-11-06", sortDate: "2024-11-06", summary: "Clarifying his Nov 4, 2023 phrasing.", url: "https://x.com/paulg/status/1854118967041794340" },
+  { type: "1P", date: "2024-11-17", sortDate: "2024-11-17", summary: "On national security transparency over private settlements.", url: "https://x.com/paulg/status/1858201614055559445" },
+  { type: "1P", date: "2025-01-04", sortDate: "2025-01-04", summary: "\"What is the Palestine gambit?\"", url: "https://x.com/paulg/status/1875505118206161116" },
+  { type: "1P", date: "2025-03-18", sortDate: "2025-03-18", summary: "\"If you didn't speak out against both woke censorship and Trump's attempts to suppress criticism of Israel at universities, you're not a genuine free speech advocate\"", url: "https://x.com/paulg/status/1901940573499498875" },
+  { type: "1P", date: "2025-03-28", sortDate: "2025-03-28", summary: "\"what everyone who criticizes Israeli policy is accused of\"", url: "https://x.com/paulg/status/1905621605276955038" },
+  { type: "1P", date: "2025-04-27", sortDate: "2025-04-27", summary: "\"Thank God for one picture of kids from Gaza that's not of kids who are now dead\"", url: "https://x.com/paulg/status/1916532833331380390" },
+  { type: "1P", date: "2025-05-04", sortDate: "2025-05-04", summary: "Questioning the Smotrich aid-blockade rationale.", url: "https://x.com/paulg/status/1919154765398708268" },
+  { type: "3P", date: "2025-05-06", sortDate: "2025-05-06", summary: "BBC/Pew: 33% of US under-30 sympathize with Palestinians vs 14% with Israelis.", url: "https://x.com/paulg/status/1919695398681165888" },
+  { type: "1P", date: "2025-05-11", sortDate: "2025-05-11", summary: "\"People with ordinary jobs face a lot of pressure to keep quiet about Gaza\"", url: "https://x.com/paulg/status/1921553615837134967" },
+  { type: "3P", date: "2025-05-14", sortDate: "2025-05-14", summary: "UN aid Chief Tom Fletcher: \"Israel denies us access\"", url: "https://x.com/paulg/status/1922722942837764561" },
+  { type: "1P", date: "2025-05-15", sortDate: "2025-05-15", summary: "\"Do you understand that the Israeli government has been preventing any food or medicine from entering Gaza since March 2?\"", url: "https://x.com/paulg/status/1923008655663751208" },
+  { type: "1P", date: "2025-05-16", sortDate: "2025-05-16", summary: "On 75 days without food entering Gaza.", url: "https://x.com/paulg/status/1923338578735591497" },
+  { type: "1P", date: "2025-05-16", sortDate: "2025-05-16", summary: "Replied skeptically to claims about people going without food for 10 days in Gaza.", url: "https://x.com/paulg/status/1923379364122575149" },
+  { type: "1P", date: "2025-05-18", sortDate: "2025-05-18", summary: "\"You're saying in effect that it's permissible to kill any Palestinian child\"", url: "https://x.com/paulg/status/1924098616030855347" },
+  { type: "1P", date: "2025-05-19", sortDate: "2025-05-19", summary: "Challenged the claim that there were no innocent Palestinians, including young children.", url: "https://x.com/paulg/status/1924536192223113688" },
+  { type: "1P", date: "2025-05-19", sortDate: "2025-05-19", summary: "\"Many Israelis disagree with Netanyahu's policies\"; some supporters \"seem to be really bad people\"", url: "https://x.com/paulg/status/1924538885465358538" },
+  { type: "1P", date: "2025-05-19", sortDate: "2025-05-19", summary: "Challenges \"every Palestinian has their own personal Hannibal Directive\"", url: "https://x.com/paulg/status/1924542425973891563" },
+  { type: "1P", date: "2025-05-20", sortDate: "2025-05-20", summary: "On whether replies are Mossad-run (\"I don't think the Mossad would be so incompetent\").", url: "https://x.com/paulg/status/1924758680404172876" },
+  { type: "3P", date: "2025-05-24", sortDate: "2025-05-24", summary: "Israeli Major General Yair Golan: \"A sane country does not wage war against civilians, does not kill babies as a pastime\"", url: "https://x.com/paulg/status/1926207587873091827" },
+  { type: "3P", date: "2025-05-25", sortDate: "2025-05-25", summary: "Shared an interview about an ICU filled with maimed children and the killing of nine siblings in Gaza.", url: "https://x.com/paulg/status/1926699090219344315" },
+  { type: "1P", date: "2025-05-25", sortDate: "2025-05-25", summary: "\"Do you honestly believe that Israel could kill every child in Gaza, and it would still be Hamas's fault?\"", url: "https://x.com/paulg/status/1926704131315544474" },
+  { type: "3P", date: "2025-06-02", sortDate: "2025-06-02", summary: "FT's Martin Sandbu: time for Europe to develop systematic sanctions on Israel.", url: "https://x.com/paulg/status/1929492062702834012" },
+  { type: "1P", date: "2025-06-04", sortDate: "2025-06-04", summary: "\"Why won't Israel allow international journalists into Gaza?\" (31K+ likes).", url: "https://x.com/paulg/status/1930191120962670722" },
+  { type: "1P", date: "2025-06-14", sortDate: "2025-06-14", summary: "Mistook a Holocaust-era map for a Gaza bombing map.", url: "https://x.com/paulg/status/1933928695439528146" },
+  { type: "1P", date: "2025-06-14", sortDate: "2025-06-14", summary: "\"the images are in fact very similar\"", url: "https://x.com/paulg/status/1933935845917987102" },
+  { type: "3P", date: "2025-06-15", sortDate: "2025-06-15", summary: "Spanish anesthesiologist on Gaza: \"Civilians being mutilated by the Israeli army on a daily basis\"", url: "https://x.com/paulg/status/1934201081929814211" },
+  { type: "1P", date: "2025-06-16", sortDate: "2025-06-16", summary: "\"Does that mean we can now vote Netanyahu out?\"", url: "https://x.com/paulg/status/1934534053979427288" },
+  { type: "3P", date: "2025-06-16", sortDate: "2025-06-16", summary: "Former Israeli PM Ehud Olmert: \"Yes, Israel is committing war crimes\"", url: "https://x.com/paulg/status/1934721252716949671" },
+  { type: "3P", date: "2025-07-11", sortDate: "2025-07-11", summary: "NYT on Netanyahu pressing ahead with war despite generals saying no military advantage.", url: "https://x.com/paulg/status/1943706649291600321" },
+  { type: "1P", date: "2025-07-12", sortDate: "2025-07-12", summary: "Hostages \"could all have been freed if Netanyahu had agreed to a cease-fire a year ago\"", url: "https://x.com/paulg/status/1943974600632607151" },
+  { type: "1P", date: "2025-07-13", sortDate: "2025-07-13", summary: "Draws parallel to \"the whole long history of pogroms against Jews\" (Patinkin context).", url: "https://x.com/paulg/status/1944540354612506946" },
+  { type: "1P", date: "2025-07-15", sortDate: "2025-07-15", summary: "\"Israel\" (with photo).", url: "https://x.com/paulg/status/1945223637692285245" },
+  { type: "1P", date: "2025-07-20", sortDate: "2025-07-20", summary: "On Warsaw Ghetto / Gaza visual parallel.", url: "https://x.com/paulg/status/1947068633185718630" },
+  { type: "1P", date: "2025-07-23", sortDate: "2025-07-23", summary: "\"Hasbara bots fill the replies of any post about Gaza that gets over a certain number of likes\"", url: "https://x.com/paulg/status/1948075258378117592" },
+  { type: "1P", date: "2025-07-24", sortDate: "2025-07-24", summary: "\"hasbara accounts are spread thinner because so many more people are talking about this now\"", url: "https://x.com/paulg/status/1948190714761785852" },
+  { type: "3P", date: "2025-07-28", sortDate: "2025-07-28", summary: "Former Israeli AG Michael Benyair: \"Jews, who suffered a genocide 80 years ago, are committing genocide in Gaza\"", url: "https://x.com/paulg/status/1949952550557384964" },
+  { type: "1P", date: "2025-07-29", sortDate: "2025-07-29", summary: "Economist: \"The continuation of the war in Gaza disgraces Israel. It no longer has a military justification\"", url: "https://x.com/paulg/status/1950180259636072739" },
+  { type: "1P", date: "2025-07-29", sortDate: "2025-07-29", summary: "FT: \"western countries should be sanctioning Netanyahu and his government\"", url: "https://x.com/paulg/status/1950319381709275237" },
+  { type: "1P", date: "2025-08-01", sortDate: "2025-08-01", summary: "\"Now we can see why Israel has kept international journalists out of Gaza\"", url: "https://x.com/paulg/status/1951389592537723374" },
+  { type: "1P", date: "2025-08-08", sortDate: "2025-08-08", summary: "On Palestine Action proscription as \"clumsy overreach\"", url: "https://x.com/paulg/status/1953671114556928110" },
+  { type: "3P", date: "2025-08-09", sortDate: "2025-08-09", summary: "Said Marjorie Taylor Greene deserved credit for courage after her post condemning October 7 and also Gaza genocide, humanitarian crisis, and starvation.", url: "https://x.com/paulg/status/1954044110417084834" },
+  { type: "1P", date: "2025-08-10", sortDate: "2025-08-10", summary: "\"At least 60,000 people have been killed in Gaza so far\"", url: "https://x.com/paulg/status/1954403405172199796" },
+  { type: "1P", date: "2025-08-10", sortDate: "2025-08-10", summary: "\"You're effectively saying it's ok to do this to any Palestinian family\"", url: "https://x.com/paulg/status/1954564195414053229" },
+  { type: "1P", date: "2025-08-10", sortDate: "2025-08-10", summary: "\"Netanyahu doesn't want peace\"", url: "https://x.com/paulg/status/1954585428558073947" },
+  { type: "1P", date: "2025-08-11", sortDate: "2025-08-11", summary: "On fake Israeli-run accounts.", url: "https://x.com/paulg/status/1954697525824463193" },
+  { type: "3P", date: "2025-08-12", sortDate: "2025-08-12", summary: "Shared an interview centered on Palestinian medical workers and children maimed by airstrikes in Gaza.", url: "https://x.com/paulg/status/1955326347506585803" },
+  { type: "1P", date: "2025-08-12", sortDate: "2025-08-12", summary: "On Israeli 3kg food limit for doctors as starvation tactic.", url: "https://x.com/paulg/status/1955378768568259032" },
+  { type: "3P", date: "2025-08-15", sortDate: "2025-08-15", summary: "Shared a story from MSF's Palestinian staff in Gaza.", url: "https://x.com/paulg/status/1956501573154300213" },
+  { type: "1P", date: "2025-08-16", sortDate: "2025-08-16", summary: "\"If Laura Loomer had been around in 1940, she'd have been trying to prevent Jewish refugees from entering the US\"", url: "https://x.com/paulg/status/1956829669145391491" },
+  { type: "1P", date: "2025-08-17", sortDate: "2025-08-17", summary: "\"Trump despises the powerless. In 1940 those were Jewish refugees. Now they're Palestinian refugees\"", url: "https://x.com/paulg/status/1957182050794094830" },
+  { type: "1P", date: "2025-08-18", sortDate: "2025-08-18", summary: "\"A Palestinian child's life is worth as much as an Israeli child's life\" (~2.1M views, 39K likes).", url: "https://x.com/paulg/status/1957567774882164784" },
+  { type: "1P", date: "2025-08-24", sortDate: "2025-08-24", summary: "Haaretz on mother feeding starving child \"starch dissolved in water\"", url: "https://x.com/paulg/status/1959413885821501847" },
+  { type: "3P", date: "2025-08-24", sortDate: "2025-08-24", summary: "\"Israel's rare and unavoidable errors. Nineteen thousand of them\" (Dutch activists reading children's names).", url: "https://x.com/paulg/status/1959648504021655586" },
+  { type: "1P", date: "2025-08-25", sortDate: "2025-08-25", summary: "\"A 'tragic mishap' is a missile strike that enough people start talking about\"", url: "https://x.com/paulg/status/1960095815479046516" },
+  { type: "3P", date: "2025-08-26", sortDate: "2025-08-26", summary: "Same Dutch activist framing repeated.", url: "https://x.com/paulg/status/1960159322421219758" },
+  { type: "1P", date: "2025-08-29", sortDate: "2025-08-29", summary: "\"A lot of these are fake accounts run by Russia and Israel\"", url: "https://x.com/paulg/status/1961275737127698574" },
+  { type: "1P", date: "2025-09-01", sortDate: "2025-09-01", summary: "\"It's official. It's genocide.\" First PG first-person use of the term.", url: "https://x.com/paulg/status/1962512489452618056" },
+  { type: "1P", date: "2025-09-01", sortDate: "2025-09-01", summary: "\"True, but the victors in a war can commit genocide\"", url: "https://x.com/paulg/status/1962540536138449334" },
+  { type: "1P", date: "2025-09-03", sortDate: "2025-09-03", summary: "\"You're encouraging people to see that a genocide is happening. At that point they're only one step away from seeing who's doing it\"", url: "https://x.com/paulg/status/1963285633830445218" },
+  { type: "1P", date: "2025-09-12", sortDate: "2025-09-12", summary: "Clarifying that an airline issue was not Israel-related as alleged.", url: "https://x.com/paulg/status/1966445213758394495" },
+  { type: "3P", date: "2025-09-21", sortDate: "2025-09-21", summary: "Australian doctor in Gaza: \"every half an hour to an hour we have another mass casualty\"", url: "https://x.com/paulg/status/1969674065322656109" },
+  { type: "1P", date: "2026-01-07", sortDate: "2026-01-07", summary: "\"These people are always there... They happen to be on the rampage in both the US and Israel right now, but not for the same reason\"", url: "https://x.com/paulg/status/2009029036815655422" },
+  { type: "1P", date: "2026-01-20", sortDate: "2026-01-20", summary: "\"I wouldn't go so far as to say that Trump, Putin, and Netanyahu are all eunuchs\"", url: "https://x.com/paulg/status/2013717931914326439" },
+  { type: "1P", date: "2026-03-15", sortDate: "2026-03-15", summary: "Prediction that Trump will declare victory and retreat from fighting Iran.", url: "https://x.com/paulg/status/2033305591792193639" },
+  { type: "3P", date: "2026-03-18", sortDate: "2026-03-18", summary: "Quoting Trump counterterrorism head's resignation: war with Iran started \"due to pressure from Israel\"", url: "https://x.com/paulg/status/2034196505389596961" },
+  { type: "1P", date: "2026-03-20", sortDate: "2026-03-20", summary: "\"None of the sources of war (Putin, Netanyahu, Trump) have Hitler's appetite for it\"", url: "https://x.com/paulg/status/2034934973996646680" },
+  { type: "1P", date: "2026-04-15", sortDate: "2026-04-15", summary: "Netanyahu (like Trump and Putin) staying in power as wartime leader.", url: "https://x.com/paulg/status/2044341837788217730" },
+  { type: "3P", date: "2026-04-26", sortDate: "2026-04-26", summary: "Retweeted Haaretz reporting that more than 60 former U.K. ambassadors called for sanctions on Israel over the West Bank.", url: "https://x.com/paulg/status/2048416435219624346" },
+];
+
+const entriesByYear = entries.reduce<Record<string, Entry[]>>((acc, entry) => {
+  const year = entry.sortDate.slice(0, 4);
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(entry);
+  return acc;
+}, {});
+
+const orderedYears = Object.keys(entriesByYear).sort();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <h1>{pageTitle}</h1>
+        <div class="legend">
+          <span class="pill one">1P</span>
+          <span class="legend-label">post</span>
+          <span class="pill three">3P</span>
+          <span class="legend-label">repost</span>
+        </div>
+      </header>
+
+      {orderedYears.map((year) => (
+        <section class="year-section">
+          <h2>{year}</h2>
+          <ul class="entry-list">
+            {entriesByYear[year].map((entry) => (
+              <li class="entry-card">
+                <div class="entry-meta">
+                  <span class={`pill ${entry.type === "1P" ? "one" : "three"}`}>{entry.type}</span>
+                  <time datetime={entry.sortDate}>{entry.date}</time>
+                </div>
+                <p>
+                  {entry.summary}{" "}
+                  <a href={entry.url} target="_blank" rel="noreferrer noopener">
+                    [link]
+                  </a>
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --text-muted: #5f6368;
+    --border: #e6e6e6;
+    --card: #fafafa;
+    --one-bg: #111111;
+    --one-text: #ffffff;
+    --three-bg: #f0f0f0;
+    --three-text: #111111;
+    --link: #111111;
+    --link-hover: #555555;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101113;
+      --text: #f2f2f2;
+      --text-muted: #a9acb1;
+      --border: #2f3237;
+      --card: #181a1f;
+      --one-bg: #f2f2f2;
+      --one-text: #101113;
+      --three-bg: #2d3137;
+      --three-text: #f2f2f2;
+      --link: #f2f2f2;
+      --link-hover: #c9c9c9;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    padding: 2rem 1rem 3rem;
+    display: flex;
+    justify-content: center;
+    background: var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 58rem;
+    display: grid;
+    gap: 1.8rem;
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.15rem, 3.2vw, 1.7rem);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .legend-label {
+    margin-right: 0.7rem;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border-radius: 999px;
+    padding: 0.2rem 0.5rem;
+    min-width: 2.4rem;
+  }
+
+  .pill.one {
+    background: var(--one-bg);
+    color: var(--one-text);
+  }
+
+  .pill.three {
+    background: var(--three-bg);
+    color: var(--three-text);
+  }
+
+  .year-section {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .entry-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .entry-card {
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 12px;
+    padding: 0.85rem 0.95rem 0.9rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.52rem;
+    min-width: 0;
+  }
+
+  time {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.96rem;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  a:hover {
+    color: var(--link-hover);
+  }
+
+  @media (min-width: 860px) {
+    body {
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    .entry-card {
+      grid-template-columns: 11rem minmax(0, 1fr);
+      gap: 0.7rem;
+      align-items: start;
+      padding: 0.78rem 0.95rem;
+    }
+
+    .entry-meta {
+      justify-content: flex-start;
+    }
+  }
+</style>
