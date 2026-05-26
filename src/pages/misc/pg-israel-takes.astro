@@ -9,6 +9,19 @@ const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const ogImageUrl = `${siteUrl}/og-image.jpg`;
+const twitterHandle = "@nsokolsky";
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": pageTitle,
+  "description": pageDescription,
+  "url": canonicalUrl,
+  "publisher": {
+    "@type": "Person",
+    "name": "Nikita Sokolsky"
+  }
+};
 
 type Entry = {
   type: "1P" | "3P";
@@ -177,7 +190,14 @@ const orderedYears = Object.keys(entriesByYear).sort();
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
+    <meta name="author" content="Nikita Sokolsky" />
+    <meta name="creator" content="Nikita Sokolsky" />
+    <meta name="publisher" content="Nikita Sokolsky" />
+    <meta name="application-name" content={pageTitle} />
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="keywords" content="Paul Graham, PG, Israel, Palestine, Gaza, takes, posts, reposts, tweets, timeline" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
     <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
@@ -192,6 +212,30 @@ const orderedYears = Object.keys(entriesByYear).sort();
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
     <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Timeline of Paul Graham posts and reposts about Israel-adjacent topics." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Timeline of Paul Graham posts and reposts about Israel-adjacent topics." />
+    <meta name="twitter:site" content={twitterHandle} />
+    <meta name="twitter:creator" content={twitterHandle} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
   <body>
     <main class="page">
