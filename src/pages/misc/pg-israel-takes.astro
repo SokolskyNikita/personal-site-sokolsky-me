@@ -9,18 +9,12 @@ const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-const ogImageUrl = `${siteUrl}/og-image.jpg`;
-const twitterHandle = "@nsokolsky";
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
+  "@type": "CollectionPage",
   "name": pageTitle,
   "description": pageDescription,
-  "url": canonicalUrl,
-  "publisher": {
-    "@type": "Person",
-    "name": "Nikita Sokolsky"
-  }
+  "url": canonicalUrl
 };
 
 type Entry = {
@@ -171,13 +165,36 @@ const entries: Entry[] = [
   { type: "1P", date: "2025-09-03", sortDate: "2025-09-03", summary: "\"You're encouraging people to see that a genocide is happening. At that point they're only one step away from seeing who's doing it\"", url: "https://x.com/paulg/status/1963285633830445218" },
   { type: "1P", date: "2025-09-12", sortDate: "2025-09-12", summary: "Clarifying that an airline issue was not Israel-related as alleged.", url: "https://x.com/paulg/status/1966445213758394495" },
   { type: "3P", date: "2025-09-21", sortDate: "2025-09-21", summary: "Australian doctor in Gaza: \"every half an hour to an hour we have another mass casualty\"", url: "https://x.com/paulg/status/1969674065322656109" },
+  { type: "3P", date: "2025-10-10", sortDate: "2025-10-10", summary: "Questioned what excuse Israel still had for keeping foreign journalists out of Gaza.", url: "https://x.com/paulg/status/1976775659667308584" },
+  { type: "1P", date: "2025-10-11", sortDate: "2025-10-11", summary: "Reply to Naftali Bennett about the breadth and permanence of damage to Israel's reputation and to Palestinians.", url: "https://x.com/paulg/status/1977007442451165292" },
+  { type: "3P", date: "2025-10-23", sortDate: "2025-10-23", summary: "Binance report mentioning transactions involving Hamas and Palestinian Islamic Jihad.", url: "https://x.com/paulg/status/1981415341264949672" },
+  { type: "1P", date: "2025-10-30", sortDate: "2025-10-30", summary: "Reply in a Hezbollah-related thread: \"I hate it that this guy has my name.\"", url: "https://x.com/paulg/status/1983902401972027803" },
+  { type: "3P", date: "2025-10-31", sortDate: "2025-10-31", summary: "Dutch election report noting Geert Wilders's strong support for Israel.", url: "https://x.com/paulg/status/1984189650177540376" },
+  { type: "3P", date: "2025-11-04", sortDate: "2025-11-04", summary: "Israeli soldiers harassing a Palestinian girl and taking her bicycle.", url: "https://x.com/paulg/status/1985822292350243001" },
+  { type: "3P", date: "2025-11-07", sortDate: "2025-11-07", summary: "Jewish refugee's son on antisemitism and disagreement with the ADL's response to Mamdani.", url: "https://x.com/paulg/status/1986836440773500987" },
+  { type: "3P", date: "2025-11-07", sortDate: "2025-11-07", summary: "Report on a Paramount blacklist under David Ellison, described as the son of Netanyahu ally Larry Ellison.", url: "https://x.com/paulg/status/1986865308100088004" },
+  { type: "3P", date: "2025-11-24", sortDate: "2025-11-24", summary: "AP view of Gaza City.", url: "https://x.com/paulg/status/1992878205259415979" },
+  { type: "3P", date: "2025-12-04", sortDate: "2025-12-04", summary: "Piers Morgan interview with John Mearsheimer and Alan Dershowitz about a Drop Site report on Israel-related influence.", url: "https://x.com/paulg/status/1996657999159644400" },
+  { type: "3P", date: "2025-12-18", sortDate: "2025-12-18", summary: "Former MI5 agent Annie Machon alleging a Mossad false flag involving the Israeli embassy in London and Palestinian activists.", url: "https://x.com/paulg/status/2001663659425124642" },
+  { type: "1P", date: "2025-12-20", sortDate: "2025-12-20", summary: "Reply describing Gaza-related VC-community pressure as coming from a handful of extremists who work as VCs.", url: "https://x.com/paulg/status/2002310151966203972" },
+  { type: "3P", date: "2025-12-28", sortDate: "2025-12-28", summary: "On Gaza policy shifting toward making people miserable without bombing them.", url: "https://x.com/paulg/status/2005240440459776180" },
+  { type: "1P", date: "2025-12-29", sortDate: "2025-12-29", summary: "Reply rejecting a Hamas-related argument that 10-year-olds ever have to be treated that way.", url: "https://x.com/paulg/status/2005750133066228175" },
+  { type: "3P", date: "2025-12-31", sortDate: "2025-12-31", summary: "Israel becoming the first country to ban Doctors Without Borders, framed as something done when committing genocide.", url: "https://x.com/paulg/status/2006454329558118468" },
   { type: "1P", date: "2026-01-07", sortDate: "2026-01-07", summary: "\"These people are always there... They happen to be on the rampage in both the US and Israel right now, but not for the same reason\"", url: "https://x.com/paulg/status/2009029036815655422" },
   { type: "1P", date: "2026-01-20", sortDate: "2026-01-20", summary: "\"I wouldn't go so far as to say that Trump, Putin, and Netanyahu are all eunuchs\"", url: "https://x.com/paulg/status/2013717931914326439" },
   { type: "1P", date: "2026-03-15", sortDate: "2026-03-15", summary: "Prediction that Trump will declare victory and retreat from fighting Iran.", url: "https://x.com/paulg/status/2033305591792193639" },
   { type: "3P", date: "2026-03-18", sortDate: "2026-03-18", summary: "Quoting Trump counterterrorism head's resignation: war with Iran started \"due to pressure from Israel\"", url: "https://x.com/paulg/status/2034196505389596961" },
   { type: "1P", date: "2026-03-20", sortDate: "2026-03-20", summary: "\"None of the sources of war (Putin, Netanyahu, Trump) have Hitler's appetite for it\"", url: "https://x.com/paulg/status/2034934973996646680" },
   { type: "1P", date: "2026-04-15", sortDate: "2026-04-15", summary: "Netanyahu (like Trump and Putin) staying in power as wartime leader.", url: "https://x.com/paulg/status/2044341837788217730" },
-  { type: "3P", date: "2026-04-26", sortDate: "2026-04-26", summary: "Retweeted Haaretz reporting that more than 60 former U.K. ambassadors called for sanctions on Israel over the West Bank.", url: "https://x.com/paulg/status/2048416435219624346" },
+  { type: "3P", date: "2026-04-26", sortDate: "2026-04-26", summary: "Haaretz reported that more than 60 former U.K. ambassadors called for sanctions on Israel over the West Bank.", url: "https://x.com/paulg/status/2048416435219624346" },
+  { type: "3P", date: "2026-05-01", sortDate: "2026-05-01", summary: "Sky News reported that villages in southern Lebanon were virtually wiped out by Israel in a matter of weeks.", url: "https://x.com/paulg/status/2050249469371773285" },
+  { type: "3P", date: "2026-05-03", sortDate: "2026-05-03", summary: "Chris Van Hollen on settlement expansion, settler violence, and U.S. backing of Netanyahu's government.", url: "https://x.com/paulg/status/2051038744283693099" },
+  { type: "3P", date: "2026-05-07", sortDate: "2026-05-07", summary: "Footage described as showing Israeli soldiers firing on starving Palestinians in Gaza.", url: "https://x.com/paulg/status/2052455812484747372" },
+  { type: "3P", date: "2026-05-09", sortDate: "2026-05-09", summary: "Quote-tweeted Rutgers controversy over canceling a commencement speaker after posts documenting alleged Israeli violations of Palestinians.", url: "https://x.com/paulg/status/2053044738530382312" },
+  { type: "3P", date: "2026-05-12", sortDate: "2026-05-12", summary: "Nicholas Kristof calling for Red Cross and lawyer visits for Palestinian \"security\" prisoners.", url: "https://x.com/paulg/status/2054236102509093201" },
+  { type: "3P", date: "2026-05-15", sortDate: "2026-05-15", summary: "Rep. Thomas Massie clip framing his race as a referendum on whether Israel can buy seats in Congress.", url: "https://x.com/paulg/status/2055422993052946466" },
+  { type: "3P", date: "2026-05-22", sortDate: "2026-05-22", summary: "Ken Roth on the New York Times defending Kristof's reporting about Israel and Palestinian prisoners.", url: "https://x.com/paulg/status/2057861042709958835" },
+  { type: "3P", date: "2026-05-26", sortDate: "2026-05-26", summary: "Claim that former ICC prosecutor Fatou Bensouda was pressured by former Mossad chief Yossi Cohen over Palestine investigations.", url: "https://x.com/paulg/status/2059178854246207911" },
 ];
 
 const entriesByYear = entries.reduce<Record<string, Entry[]>>((acc, entry) => {
@@ -221,9 +238,7 @@ const statsByYear: YearStat[] = orderedYears.map((year) => {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="author" content="Nikita Sokolsky" />
-    <meta name="creator" content="Nikita Sokolsky" />
-    <meta name="publisher" content="Nikita Sokolsky" />
+    <meta name="subject" content="Paul Graham posts and reposts about Israel-adjacent topics." />
     <meta name="application-name" content={pageTitle} />
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
@@ -248,23 +263,13 @@ const statsByYear: YearStat[] = orderedYears.map((year) => {
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="article" />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:site_name" content={pageTitle} />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:image:secure_url" content={ogImageUrl} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content="Timeline of Paul Graham posts and reposts about Israel-adjacent topics." />
 
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:url" content={canonicalUrl} />
-    <meta name="twitter:image" content={ogImageUrl} />
-    <meta name="twitter:image:alt" content="Timeline of Paul Graham posts and reposts about Israel-adjacent topics." />
-    <meta name="twitter:site" content={twitterHandle} />
-    <meta name="twitter:creator" content={twitterHandle} />
 
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
