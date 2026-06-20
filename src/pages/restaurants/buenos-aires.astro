@@ -1,0 +1,832 @@
+---
+import pageData from "../../data/restaurants-buenos-aires.json";
+
+export const prerender = true;
+
+const pageTitle = "Best restaurants in Buenos Aires";
+const pageDescription =
+  "Buenos Aires restaurants checked against Google Maps, with ratings, prices, addresses and official links.";
+const themeColorLight = "#f7f2ea";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type Restaurant = (typeof pageData.restaurants)[number];
+const restaurants = pageData.restaurants;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+});
+const exchangeRateLabel = `1 USD ≈ ARS ${formatter.format(
+  pageData.currency.arsPerUsd,
+)}`;
+const collator = new Intl.Collator("en", {
+  sensitivity: "base",
+  numeric: true,
+});
+const cuisineCounts = restaurants.reduce((counts, restaurant: Restaurant) => {
+  for (const cuisineType of restaurant.cuisineTypes) {
+    counts.set(cuisineType, (counts.get(cuisineType) ?? 0) + 1);
+  }
+
+  return counts;
+}, new Map<string, number>());
+const cuisineOptions = [...cuisineCounts.entries()]
+  .sort(([first], [second]) => collator.compare(first, second))
+  .map(([name, count]) => ({ name, count }));
+const priceValue = (restaurant: Restaurant) =>
+  restaurant.price.usd.estimate ?? Number.MAX_SAFE_INTEGER;
+const sortRank = (
+  items: Restaurant[],
+  compare: (a: Restaurant, b: Restaurant) => number,
+) =>
+  new Map<string, number>(
+    items
+      .toSorted(compare)
+      .map((restaurant: Restaurant, index: number) => [
+        restaurant.id,
+        index + 1,
+      ]),
+  );
+const nameRanks = sortRank(restaurants, (a: Restaurant, b: Restaurant) =>
+  collator.compare(a.name, b.name),
+);
+const ratingRanks = sortRank(
+  restaurants,
+  (a: Restaurant, b: Restaurant) =>
+    b.rating - a.rating ||
+    b.reviewCount - a.reviewCount ||
+    collator.compare(a.name, b.name),
+);
+const priceRanks = sortRank(
+  restaurants,
+  (a: Restaurant, b: Restaurant) =>
+    priceValue(a) - priceValue(b) ||
+    collator.compare(a.name, b.name),
+);
+const popularityRanks = sortRank(
+  restaurants,
+  (a: Restaurant, b: Restaurant) =>
+    b.reviewCount - a.reviewCount ||
+    b.rating - a.rating ||
+    collator.compare(a.name, b.name),
+);
+const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => ({
+  ...restaurant,
+  cuisineTypesAttribute: restaurant.cuisineTypes.join("|"),
+  reviewCountLabel: formatter.format(restaurant.reviewCount),
+  sortOrderStyle: [
+    `--sort-name: ${nameRanks.get(restaurant.id)}`,
+    `--sort-rating: ${ratingRanks.get(restaurant.id)}`,
+    `--sort-price: ${priceRanks.get(restaurant.id)}`,
+    `--sort-popularity: ${popularityRanks.get(restaurant.id)}`,
+  ].join("; "),
+}));
+const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: restaurants.length,
+  itemListElement: restaurants.map((restaurant, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "Restaurant",
+      name: restaurant.name,
+      url: restaurant.officialUrl,
+      sameAs: restaurant.googleMapsUrl,
+      address: restaurant.fullAddress,
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: restaurant.rating.toFixed(1),
+        ratingCount: restaurant.reviewCount,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Best restaurants in Buenos Aires" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires restaurants, best restaurants Buenos Aires, Michelin Buenos Aires, Buenos Aires fine dining"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            {restaurants.length} restaurants listed as open in Google Maps, linked to official websites or Instagram.
+          </p>
+        </div>
+        <div class="toolbar" aria-label="Restaurant controls">
+          <fieldset class="sort-toggle">
+            <legend>Sort by</legend>
+            <input id="sort-name" type="radio" name="sort" autocomplete="off" checked />
+            <label for="sort-name">Name</label>
+            <input id="sort-rating" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-rating">GMaps rating</label>
+            <input id="sort-price" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-price">Price</label>
+            <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-popularity">Popularity</label>
+          </fieldset>
+          <fieldset class="currency-toggle">
+            <legend>Price currency</legend>
+            <input id="currency-usd" type="radio" name="currency" autocomplete="off" checked />
+            <label for="currency-usd">USD</label>
+            <input id="currency-ars" type="radio" name="currency" autocomplete="off" />
+            <label for="currency-ars">ARS</label>
+          </fieldset>
+          <label class="cuisine-filter" for="cuisine-filter">
+            <span>Cuisine type</span>
+            <select id="cuisine-filter" name="cuisine" autocomplete="off">
+              <option value="">All ({restaurants.length})</option>
+              {cuisineOptions.map((option) => (
+                <option value={option.name}>{option.name} ({option.count})</option>
+              ))}
+            </select>
+          </label>
+          <p class="meta">
+            Updated {updatedDate}. {exchangeRateLabel}.
+          </p>
+        </div>
+      </header>
+
+      <section class="restaurant-list" aria-label="Buenos Aires restaurants">
+        <div class="restaurant-row restaurant-head" aria-hidden="true">
+          <span>Restaurant</span>
+          <span>Map</span>
+          <span>Address</span>
+          <span>Per person</span>
+          <span>GMaps rating</span>
+          <span>Description</span>
+        </div>
+
+        {restaurantsWithSort.map((restaurant) => (
+          <article
+            class="restaurant-row"
+            style={restaurant.sortOrderStyle}
+            data-cuisine-types={restaurant.cuisineTypesAttribute}
+          >
+            <h2 class="restaurant-name">
+              <a href={restaurant.officialUrl} target="_blank" rel="noreferrer noopener">
+                {restaurant.name}
+              </a>
+            </h2>
+            <a
+              class="maps-link"
+              href={restaurant.googleMapsUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label={`Open ${restaurant.name} on Google Maps`}
+              title={`Open ${restaurant.name} on Google Maps`}
+            >
+              <span class="maps-icon" set:html={mapsIcon} />
+            </a>
+            <p class="address">{restaurant.address}</p>
+            <p
+              class={`price ${restaurant.price.source === "google_price_level" ? "price-fallback" : ""}`}
+              title={restaurant.price.source === "google_price_level" ? "Google Maps price-level fallback" : "Google Maps price estimate"}
+            >
+              <span class="price-usd">{restaurant.price.usd.label}</span>
+              <span class="price-ars">{restaurant.price.ars.label}</span>
+            </p>
+            <p
+              class="rating"
+              aria-label={`${restaurant.rating.toFixed(1)} Google Maps rating from ${restaurant.reviewCountLabel} ratings`}
+            >
+              <span class="rating-score">{restaurant.rating.toFixed(1)}</span>
+              <span class="review-count">{restaurant.reviewCountLabel} ratings</span>
+            </p>
+            <p class="description">{restaurant.description}</p>
+          </article>
+        ))}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline>
+  const cuisineFilter = document.querySelector("#cuisine-filter");
+  const defaultSort = document.querySelector("#sort-name");
+  const defaultCurrency = document.querySelector("#currency-usd");
+  const restaurantRows = [...document.querySelectorAll(".restaurant-row:not(.restaurant-head)")];
+
+  const applyCuisineFilter = () => {
+    const selectedCuisine = cuisineFilter?.value ?? "";
+
+    for (const row of restaurantRows) {
+      const cuisines = row.dataset.cuisineTypes?.split("|") ?? [];
+      row.hidden = Boolean(selectedCuisine) && !cuisines.includes(selectedCuisine);
+    }
+  };
+
+  const resetFilters = () => {
+    if (defaultSort) defaultSort.checked = true;
+    if (defaultCurrency) defaultCurrency.checked = true;
+    if (cuisineFilter) cuisineFilter.value = "";
+
+    applyCuisineFilter();
+  };
+
+  cuisineFilter?.addEventListener("change", applyCuisineFilter);
+  resetFilters();
+  window.addEventListener("pageshow", resetFilters);
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f2ea;
+    --surface: #fffdf8;
+    --surface-soft: #efe7db;
+    --text: #181612;
+    --text-muted: #6f675c;
+    --border: #d9cfc0;
+    --border-strong: #c8baa8;
+    --accent: #28402f;
+    --accent-soft: #dfe8d7;
+    --link: #17281d;
+    --shadow: 0 20px 60px rgba(61, 44, 22, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171613;
+      --surface-soft: #211f1a;
+      --text: #f2eee7;
+      --text-muted: #aaa297;
+      --border: #343027;
+      --border-strong: #4a4338;
+      --accent: #dce8d2;
+      --accent-soft: #263022;
+      --link: #f6f1e8;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-soft), transparent 35%), transparent 32rem),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .page {
+    width: min(100%, 88rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: start;
+    padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .home-link {
+    grid-column: 1 / -1;
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.65rem;
+    max-width: 52rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 15ch;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.1rem, 5.1vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.18rem);
+  }
+
+  .toolbar {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+  }
+
+  .sort-toggle,
+  .currency-toggle {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+  }
+
+  .cuisine-filter {
+    display: grid;
+    width: min(100%, 24rem);
+    gap: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cuisine-filter select {
+    width: 100%;
+    min-height: 2.7rem;
+    padding: 0 2.5rem 0 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) right 0.7rem center / 0.42rem 0.42rem no-repeat,
+      color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .cuisine-filter select:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .sort-toggle {
+    border-radius: 1.2rem;
+  }
+
+  .currency-toggle {
+    border-radius: 999px;
+  }
+
+  .sort-toggle legend,
+  .currency-toggle legend {
+    margin: 0 0.3rem 0 0.2rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 2.25rem;
+    text-transform: uppercase;
+  }
+
+  .sort-toggle input,
+  .currency-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sort-toggle label,
+  .currency-toggle label {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.45rem;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 700;
+    padding: 0 0.85rem;
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .sort-toggle label::before,
+  .currency-toggle label::before {
+    content: "";
+    width: 0.58rem;
+    height: 0.58rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.75;
+  }
+
+  #sort-name:checked ~ label[for="sort-name"],
+  #sort-rating:checked ~ label[for="sort-rating"],
+  #sort-price:checked ~ label[for="sort-price"],
+  #sort-popularity:checked ~ label[for="sort-popularity"],
+  #currency-usd:checked ~ label[for="currency-usd"],
+  #currency-ars:checked ~ label[for="currency-ars"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  #sort-name:checked ~ label[for="sort-name"]::before,
+  #sort-rating:checked ~ label[for="sort-rating"]::before,
+  #sort-price:checked ~ label[for="sort-price"]::before,
+  #sort-popularity:checked ~ label[for="sort-popularity"]::before,
+  #currency-usd:checked ~ label[for="currency-usd"]::before,
+  #currency-ars:checked ~ label[for="currency-ars"]::before {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--accent);
+    opacity: 1;
+  }
+
+  .meta {
+    margin: 0;
+    max-width: 18rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-align: left;
+  }
+
+  .restaurant-list {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .restaurant-row {
+    display: grid;
+    grid-template-columns:
+      minmax(8rem, 1.15fr)
+      3.25rem
+      minmax(7rem, 0.78fr)
+      minmax(6.7rem, 0.52fr)
+      minmax(6.6rem, 0.62fr)
+      minmax(16rem, 2.65fr);
+    gap: 0;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+  }
+
+  .restaurant-row[hidden] {
+    display: none;
+  }
+
+  .restaurant-head {
+    order: -1;
+    border-top: 0;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .restaurant-row > * {
+    min-width: 0;
+    margin: 0;
+    padding: 0.86rem clamp(0.65rem, 1vw, 0.8rem);
+    border-left: 1px solid var(--border);
+    overflow-wrap: anywhere;
+  }
+
+  .restaurant-row > *:first-child {
+    border-left: 0;
+  }
+
+  .restaurant-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .restaurant-name a {
+    text-decoration-thickness: 1px;
+  }
+
+  .maps-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .maps-icon {
+    display: flex;
+  }
+
+  .maps-icon :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+    filter: saturate(0.95);
+  }
+
+  .address,
+  .description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .price,
+  .rating {
+    font-size: 0.95rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .price {
+    white-space: nowrap;
+  }
+
+  .price-ars,
+  body:has(#currency-ars:checked) .price-usd,
+  body:has(#currency-usd:checked) .price-ars {
+    display: none;
+  }
+
+  body:has(#currency-ars:checked) .price-ars {
+    display: inline;
+  }
+
+  body:has(#sort-name:checked) .restaurant-row:not(.restaurant-head) {
+    order: var(--sort-name);
+  }
+
+  body:has(#sort-rating:checked) .restaurant-row:not(.restaurant-head) {
+    order: var(--sort-rating);
+  }
+
+  body:has(#sort-price:checked) .restaurant-row:not(.restaurant-head) {
+    order: var(--sort-price);
+  }
+
+  body:has(#sort-popularity:checked) .restaurant-row:not(.restaurant-head) {
+    order: var(--sort-popularity);
+  }
+
+  .rating {
+    display: grid;
+    gap: 0.12rem;
+    line-height: 1.35;
+  }
+
+  .rating-score {
+    white-space: nowrap;
+  }
+
+  .review-count {
+    font-size: 0.86em;
+  }
+
+  .rating-score::before {
+    content: "★ ";
+    color: #b8872d;
+  }
+
+  .review-count {
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 650;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  @media (max-width: 1060px) {
+    .meta {
+      max-width: none;
+    }
+
+    .restaurant-row {
+      grid-template-columns:
+        minmax(8rem, 1.2fr)
+        3rem
+        minmax(6.25rem, 0.78fr)
+        minmax(7.7rem, 0.86fr)
+        minmax(6.4rem, 0.72fr)
+        minmax(12rem, 2fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding: 0.8rem;
+    }
+
+    .page-header {
+      padding-top: 1rem;
+      gap: 1.2rem;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2rem, 11vw, 3.3rem);
+    }
+
+    .sort-toggle {
+      border-radius: 1rem;
+    }
+
+    .currency-toggle {
+      border-radius: 1rem;
+    }
+
+    .restaurant-list {
+      border-radius: 1.2rem;
+      background: transparent;
+      border-color: var(--border-strong);
+    }
+
+    .restaurant-head {
+      display: none;
+    }
+
+    .restaurant-row {
+      position: relative;
+      min-height: 5.6rem;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "name"
+        "desc";
+      gap: 0.2rem 0.6rem;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.78rem 11.4rem 0.78rem 0.88rem;
+    }
+
+    .restaurant-row:first-of-type {
+      border-top: 0;
+    }
+
+    .restaurant-row > * {
+      padding: 0;
+      border-left: 0;
+    }
+
+    .restaurant-name {
+      grid-area: name;
+      font-size: 1rem;
+      line-height: 1.18;
+    }
+
+    .maps-link {
+      position: absolute;
+      top: 0.78rem;
+      right: 0.88rem;
+      width: 1.9rem;
+      height: 1.9rem;
+    }
+
+    .address {
+      display: none;
+    }
+
+    .price {
+      position: absolute;
+      top: 0.8rem;
+      right: 3.25rem;
+      width: 7.25rem;
+      font-size: 0.95rem;
+      text-align: right;
+    }
+
+    .rating {
+      position: absolute;
+      top: 2.35rem;
+      right: 3.25rem;
+      width: 7.25rem;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      text-align: right;
+    }
+
+    .review-count {
+      font-size: 0.72rem;
+    }
+
+    .description {
+      grid-area: desc;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+  }
+</style>
