@@ -86,6 +86,17 @@ const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => ({
     `--sort-popularity: ${popularityRanks.get(restaurant.id)}`,
   ].join("; "),
 }));
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const restaurantMapData = restaurants.map((restaurant: Restaurant) => ({
+  id: restaurant.id,
+  name: restaurant.name,
+  googleMapsUrl: restaurant.googleMapsUrl,
+  cuisineTypes: restaurant.cuisineTypes,
+  position: restaurant.location,
+}));
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
 const structuredData = {
   "@context": "https://schema.org",
@@ -103,6 +114,11 @@ const structuredData = {
       url: restaurant.officialUrl,
       sameAs: restaurant.googleMapsUrl,
       address: restaurant.fullAddress,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: restaurant.location.lat,
+        longitude: restaurant.location.lng,
+      },
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: restaurant.rating.toFixed(1),
@@ -266,15 +282,178 @@ const structuredData = {
           </article>
         ))}
       </section>
+
+      <section class="restaurant-map-section" aria-labelledby="restaurant-map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="restaurant-map-heading">Buenos Aires restaurant map</h2>
+          <p id="restaurant-map-status" class="map-status">
+            Showing all {restaurants.length} restaurants.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="restaurant-map"
+            class="restaurant-map"
+            aria-label="Google Map with pins for Buenos Aires restaurants"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
     </main>
   </body>
 </html>
 
-<script is:inline>
+<script is:inline define:vars={{ googleMapsApiKey, restaurantMapData }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
   const cuisineFilter = document.querySelector("#cuisine-filter");
   const defaultSort = document.querySelector("#sort-name");
   const defaultCurrency = document.querySelector("#currency-usd");
   const restaurantRows = [...document.querySelectorAll(".restaurant-row:not(.restaurant-head)")];
+  const mapElement = document.querySelector("#restaurant-map");
+  const mapStatus = document.querySelector("#restaurant-map-status");
+  const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const markerRecords = [];
+  let restaurantMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getVisibleRestaurants = (selectedCuisine) =>
+    restaurantMapData.filter(
+      (restaurant) => !selectedCuisine || restaurant.cuisineTypes.includes(selectedCuisine),
+    );
+
+  const updateMapStatus = (selectedCuisine) => {
+    if (!mapStatus) return;
+
+    const visibleCount = getVisibleRestaurants(selectedCuisine).length;
+    const restaurantLabel = visibleCount === 1 ? "restaurant" : "restaurants";
+    mapStatus.textContent = selectedCuisine
+      ? `Showing ${visibleCount} ${selectedCuisine} ${restaurantLabel}.`
+      : `Showing all ${visibleCount} ${restaurantLabel}.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!restaurantMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      restaurantMap.setCenter(visibleRecords[0].restaurant.position);
+      restaurantMap.setZoom(14);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+
+    for (const { restaurant } of visibleRecords) {
+      bounds.extend(restaurant.position);
+    }
+
+    restaurantMap.fitBounds(bounds, 44);
+  };
+
+  const syncMapMarkers = (selectedCuisine) => {
+    updateMapStatus(selectedCuisine);
+
+    if (!restaurantMap) return;
+
+    const visibleIds = new Set(
+      getVisibleRestaurants(selectedCuisine).map((restaurant) => restaurant.id),
+    );
+    const visibleRecords = [];
+
+    for (const record of markerRecords) {
+      const isVisible = visibleIds.has(record.restaurant.id);
+      record.marker.setMap(isVisible ? restaurantMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    if (mapElement) mapElement.dataset.visiblePins = String(visibleRecords.length);
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const initRestaurantMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    restaurantMap = new Map(mapElement, {
+      center: buenosAiresCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 12,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const restaurant of restaurantMapData) {
+      const marker = new google.maps.Marker({
+        map: restaurantMap,
+        position: restaurant.position,
+        title: restaurant.name,
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(
+          `<strong>${escapeHtml(restaurant.name)}</strong><br><a href="${escapeHtml(restaurant.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(restaurantMap, marker);
+      });
+
+      markerRecords.push({ restaurant, marker });
+    }
+
+    syncMapMarkers(cuisineFilter?.value ?? "");
+  };
 
   const applyCuisineFilter = () => {
     const selectedCuisine = cuisineFilter?.value ?? "";
@@ -283,6 +462,8 @@ const structuredData = {
       const cuisines = row.dataset.cuisineTypes?.split("|") ?? [];
       row.hidden = Boolean(selectedCuisine) && !cuisines.includes(selectedCuisine);
     }
+
+    syncMapMarkers(selectedCuisine);
   };
 
   const resetFilters = () => {
@@ -296,6 +477,10 @@ const structuredData = {
   cuisineFilter?.addEventListener("change", applyCuisineFilter);
   resetFilters();
   window.addEventListener("pageshow", resetFilters);
+  initRestaurantMap().catch((error) => {
+    console.error("Unable to initialize restaurant map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. Restaurant list still works.";
+  });
 </script>
 
 <style>
@@ -710,6 +895,45 @@ const structuredData = {
     white-space: normal;
   }
 
+  .restaurant-map-section {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.4vw, 1.4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .map-copy h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3.2vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .map-status,
+  .map-unavailable {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .restaurant-map {
+    min-height: clamp(22rem, 55vw, 34rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
   @media (max-width: 1060px) {
     .meta {
       max-width: none;
@@ -827,6 +1051,11 @@ const structuredData = {
       grid-area: desc;
       font-size: 0.92rem;
       line-height: 1.35;
+    }
+
+    .restaurant-map-section {
+      border-radius: 1.2rem;
+      padding: 0.8rem;
     }
   }
 </style>
