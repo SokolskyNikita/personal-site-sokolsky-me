@@ -1,11 +1,11 @@
 ---
-import pageData from "../../data/restaurants-buenos-aires.json";
+import pageData from "../../data/restaurants-asuncion.json";
 
 export const prerender = true;
 
-const pageTitle = "Best restaurants in Buenos Aires";
+const pageTitle = "Best restaurants in Asunción";
 const pageDescription =
-  "Buenos Aires restaurants checked against Google Maps, with ratings, prices, addresses and official links.";
+  "Asunción restaurants checked against Google Maps, with ratings, prices, addresses and official links.";
 const themeColorLight = "#f7f2ea";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -21,8 +21,8 @@ const updatedDate = new Intl.DateTimeFormat("en-US", {
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
-const exchangeRateLabel = `1 USD ≈ ARS ${formatter.format(
-  pageData.currency.arsPerUsd,
+const exchangeRateLabel = `1 USD ≈ PGY ${formatter.format(
+  pageData.currency.pgyPerUsd,
 )}`;
 const collator = new Intl.Collator("en", {
   sensitivity: "base",
@@ -48,17 +48,24 @@ const neighborhoodOptions = [...neighborhoodCounts.entries()]
       countB - countA || collator.compare(nameA, nameB),
   )
   .map(([name, count]) => ({ name, count }));
-const hasDelivery = (restaurant: Restaurant) => Boolean(restaurant.delivery?.available);
-const servesBreakfast = (restaurant: Restaurant) => Boolean(restaurant.breakfast?.available);
-const servesBrunch = (restaurant: Restaurant) => Boolean(restaurant.brunch?.available);
-const isHotelRestaurant = (restaurant: Restaurant) =>
-  restaurant.cuisineTypes.includes("Hotel dining");
-const deliveryCount = restaurants.filter(hasDelivery).length;
-const breakfastCount = restaurants.filter(servesBreakfast).length;
-const brunchCount = restaurants.filter(servesBrunch).length;
-const hotelRestaurantCount = restaurants.filter(isHotelRestaurant).length;
 const priceValue = (restaurant: Restaurant) =>
   restaurant.price.usd.estimate ?? Number.MAX_SAFE_INTEGER;
+const priceIsMidpoint = (restaurant: Restaurant) =>
+  restaurant.price.source === "google_price_range_midpoint";
+const priceSourceLabel = (restaurant: Restaurant) => {
+  switch (restaurant.price.source) {
+    case "google_price_range_midpoint":
+      return "Google Maps price-range midpoint";
+    case "google_price_range_lower_bound":
+      return "Google Maps lower-bound price range";
+    case "google_price_level":
+      return "Google Maps price-level fallback";
+    case "manual_menu_estimate":
+      return "Manual per-person estimate from menu sources";
+    default:
+      return "Google Maps price not listed";
+  }
+};
 const sortRank = (
   items: Restaurant[],
   compare: (a: Restaurant, b: Restaurant) => number,
@@ -97,12 +104,6 @@ const popularityRanks = sortRank(
 const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => ({
   ...restaurant,
   cuisineTypesAttribute: restaurant.cuisineTypes.join("|"),
-  doesDelivery: hasDelivery(restaurant),
-  servesBreakfast: servesBreakfast(restaurant),
-  servesBrunch: servesBrunch(restaurant),
-  isHotelRestaurant: isHotelRestaurant(restaurant),
-  deliveryServicesLabel:
-    restaurant.delivery?.services.map((service) => service.name).join(", ") ?? "",
   reviewCountLabel: formatter.format(restaurant.reviewCount),
   sortOrderStyle: [
     `--sort-name: ${nameRanks.get(restaurant.id)}`,
@@ -121,20 +122,9 @@ const restaurantMapData = restaurants.map((restaurant: Restaurant) => ({
   googleMapsUrl: restaurant.googleMapsUrl,
   cuisineTypes: restaurant.cuisineTypes,
   neighborhood: restaurant.neighborhood,
-  doesDelivery: hasDelivery(restaurant),
-  servesBreakfast: servesBreakfast(restaurant),
-  servesBrunch: servesBrunch(restaurant),
-  isHotelRestaurant: isHotelRestaurant(restaurant),
   position: restaurant.location,
 }));
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
-const deliveryIconSvgs: Record<string, string> = {
-  Rappi: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12" fill="#FF441F"/><path fill="#fff" d="M8.2 16.2V7.8h2.6c1.8 0 2.9.9 2.9 2.3 0 .9-.5 1.6-1.3 2l1.8 2.4h-1.9l-1.6-2.2H10V16.2H8.2zm1.6-3.8h1c.8 0 1.2-.3 1.2-.9s-.4-.9-1.2-.9h-1v1.8z"/></svg>`,
-  PedidosYa: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="7" fill="#FA0050"/><path fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" d="M9 7v10M9 7a2.2 2.2 0 014.4 0v3.2A2.2 2.2 0 019 12.4V7zm5.6 0v10"/></svg>`,
-};
-const deliveryIconFor = (serviceName: string) =>
-  deliveryIconSvgs[serviceName] ??
-  `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12" fill="#6f675c"/><path fill="#fff" d="M8 7h8v2H8V7zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>`;
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -174,7 +164,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Best restaurants in Buenos Aires" />
+    <meta name="subject" content="Best restaurants in Asunción" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -186,7 +176,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="Buenos Aires restaurants, best restaurants Buenos Aires, Michelin Buenos Aires, Buenos Aires fine dining"
+      content="Asunción restaurants, best restaurants Asunción, Paraguay fine dining, Asunción Paraguay restaurants"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -229,7 +219,7 @@ const structuredData = {
       <header class="page-header">
         <a class="home-link" href="/">Nikita Sokolsky</a>
         <div class="headline">
-          <p class="eyebrow">Buenos Aires guide</p>
+          <p class="eyebrow">Asunción guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
             {restaurants.length} restaurants listed as open in Google Maps, linked to official websites or Instagram.
@@ -251,19 +241,8 @@ const structuredData = {
             <legend>Price currency</legend>
             <input id="currency-usd" type="radio" name="currency" autocomplete="off" checked />
             <label for="currency-usd">USD</label>
-            <input id="currency-ars" type="radio" name="currency" autocomplete="off" />
-            <label for="currency-ars">ARS</label>
-          </fieldset>
-          <fieldset class="delivery-toggle">
-            <legend>Filter</legend>
-            <input id="filter-delivery" type="checkbox" autocomplete="off" />
-            <label for="filter-delivery">Does delivery ({deliveryCount})</label>
-            <input id="filter-breakfast" type="checkbox" autocomplete="off" />
-            <label for="filter-breakfast">Serves breakfast ({breakfastCount})</label>
-            <input id="filter-brunch" type="checkbox" autocomplete="off" />
-            <label for="filter-brunch">Serves brunch ({brunchCount})</label>
-            <input id="filter-exclude-hotels" type="checkbox" autocomplete="off" />
-            <label for="filter-exclude-hotels">Exclude hotel restaurants ({hotelRestaurantCount})</label>
+            <input id="currency-pgy" type="radio" name="currency" autocomplete="off" />
+            <label for="currency-pgy">PGY</label>
           </fieldset>
           <label class="filter-dropdown" for="neighborhood-filter">
             <span>Neighborhood</span>
@@ -289,7 +268,7 @@ const structuredData = {
         </div>
       </header>
 
-      <section class="restaurant-list" aria-label="Buenos Aires restaurants">
+      <section class="restaurant-list" aria-label="Asunción restaurants">
         <div class="restaurant-row restaurant-head" aria-hidden="true">
           <span>Restaurant</span>
           <span>Map</span>
@@ -305,31 +284,11 @@ const structuredData = {
             style={restaurant.sortOrderStyle}
             data-neighborhood={restaurant.neighborhood}
             data-cuisine-types={restaurant.cuisineTypesAttribute}
-            data-does-delivery={String(restaurant.doesDelivery)}
-            data-serves-breakfast={String(restaurant.servesBreakfast)}
-            data-serves-brunch={String(restaurant.servesBrunch)}
-            data-is-hotel-restaurant={String(restaurant.isHotelRestaurant)}
           >
             <h2 class="restaurant-name">
               <a href={restaurant.officialUrl} target="_blank" rel="noreferrer noopener">
                 {restaurant.name}
               </a>
-              {restaurant.doesDelivery && (
-                <span class="delivery-icons delivery-icons-desktop">
-                  {(restaurant.delivery?.services ?? []).map((service) => (
-                    <a
-                      class="delivery-link"
-                      href={service.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Order ${restaurant.name} on ${service.name}`}
-                      title={`Order on ${service.name}`}
-                    >
-                      <span class="delivery-icon" set:html={deliveryIconFor(service.name)} />
-                    </a>
-                  ))}
-                </span>
-              )}
             </h2>
             <div class="map-actions">
               <a
@@ -342,30 +301,14 @@ const structuredData = {
               >
                 <span class="maps-icon" set:html={mapsIcon} />
               </a>
-              {restaurant.doesDelivery && (
-                <span class="delivery-icons delivery-icons-mobile">
-                  {(restaurant.delivery?.services ?? []).map((service) => (
-                    <a
-                      class="delivery-link"
-                      href={service.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Order ${restaurant.name} on ${service.name}`}
-                      title={`Order on ${service.name}`}
-                    >
-                      <span class="delivery-icon" set:html={deliveryIconFor(service.name)} />
-                    </a>
-                  ))}
-                </span>
-              )}
             </div>
             <p class="address">{restaurant.address}</p>
             <p
-              class={`price ${restaurant.price.source === "google_price_level" ? "price-fallback" : ""}`}
-              title={restaurant.price.source === "google_price_level" ? "Google Maps price-level fallback" : "Google Maps price estimate"}
+              class={`price ${priceIsMidpoint(restaurant) ? "" : "price-fallback"}`}
+              title={priceSourceLabel(restaurant)}
             >
               <span class="price-usd">{restaurant.price.usd.label}</span>
-              <span class="price-ars">{restaurant.price.ars.label}</span>
+              <span class="price-pgy">{restaurant.price.pgy.label}</span>
             </p>
             <p
               class="rating"
@@ -382,7 +325,7 @@ const structuredData = {
       <section class="restaurant-map-section" aria-labelledby="restaurant-map-heading">
         <div class="map-copy">
           <p class="eyebrow">Map</p>
-          <h2 id="restaurant-map-heading">Buenos Aires restaurant map</h2>
+          <h2 id="restaurant-map-heading">Asunción restaurant map</h2>
           <p id="restaurant-map-status" class="map-status">
             Showing all {restaurants.length} restaurants.
           </p>
@@ -391,7 +334,7 @@ const structuredData = {
           <div
             id="restaurant-map"
             class="restaurant-map"
-            aria-label="Google Map with pins for Buenos Aires restaurants"
+            aria-label="Google Map with pins for Asunción restaurants"
           ></div>
         ) : (
           <p class="map-unavailable">
@@ -443,16 +386,12 @@ const structuredData = {
 
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const cuisineFilter = document.querySelector("#cuisine-filter");
-  const deliveryFilter = document.querySelector("#filter-delivery");
-  const breakfastFilter = document.querySelector("#filter-breakfast");
-  const brunchFilter = document.querySelector("#filter-brunch");
-  const excludeHotelsFilter = document.querySelector("#filter-exclude-hotels");
   const defaultSort = document.querySelector("#sort-name");
   const defaultCurrency = document.querySelector("#currency-usd");
   const restaurantRows = [...document.querySelectorAll(".restaurant-row:not(.restaurant-head)")];
   const mapElement = document.querySelector("#restaurant-map");
   const mapStatus = document.querySelector("#restaurant-map-status");
-  const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const asuncionCenter = { lat: -25.2637, lng: -57.5759 };
   const markerRecords = [];
   let restaurantMap;
   let infoWindow;
@@ -469,51 +408,28 @@ const structuredData = {
   const getVisibleRestaurants = (
     selectedNeighborhood,
     selectedCuisine,
-    deliveryOnly,
-    breakfastOnly,
-    brunchOnly,
-    excludeHotels,
   ) =>
     restaurantMapData.filter(
       (restaurant) =>
         (!selectedNeighborhood || restaurant.neighborhood === selectedNeighborhood) &&
-        (!selectedCuisine || restaurant.cuisineTypes.includes(selectedCuisine)) &&
-        (!deliveryOnly || restaurant.doesDelivery) &&
-        (!breakfastOnly || restaurant.servesBreakfast) &&
-        (!brunchOnly || restaurant.servesBrunch) &&
-        (!excludeHotels || !restaurant.isHotelRestaurant),
+        (!selectedCuisine || restaurant.cuisineTypes.includes(selectedCuisine)),
     );
 
   const updateMapStatus = (
     selectedNeighborhood,
     selectedCuisine,
-    deliveryOnly,
-    breakfastOnly,
-    brunchOnly,
-    excludeHotels,
   ) => {
     if (!mapStatus) return;
 
     const visibleCount = getVisibleRestaurants(
       selectedNeighborhood,
       selectedCuisine,
-      deliveryOnly,
-      breakfastOnly,
-      brunchOnly,
-      excludeHotels,
     ).length;
     const restaurantLabel = visibleCount === 1 ? "restaurant" : "restaurants";
-    const activeFilters = [
-      deliveryOnly ? "delivery" : "",
-      breakfastOnly ? "breakfast" : "",
-      brunchOnly ? "brunch" : "",
-    ].filter(Boolean);
-    const filterPrefix = activeFilters.length ? `${activeFilters.join(" + ")} ` : "";
-    const excludeSuffix = excludeHotels ? ", excluding hotels" : "";
     const categoryLabel = [selectedNeighborhood, selectedCuisine].filter(Boolean).join(" ");
     mapStatus.textContent = categoryLabel
-      ? `Showing ${visibleCount} ${filterPrefix}${categoryLabel} ${restaurantLabel}${excludeSuffix}.`
-      : `Showing ${filterPrefix ? "" : "all "}${visibleCount} ${filterPrefix}${restaurantLabel}${excludeSuffix}.`;
+      ? `Showing ${visibleCount} ${categoryLabel} ${restaurantLabel}.`
+      : `Showing all ${visibleCount} ${restaurantLabel}.`;
   };
 
   const fitMapToMarkers = (visibleRecords) => {
@@ -537,18 +453,10 @@ const structuredData = {
   const syncMapMarkers = (
     selectedNeighborhood,
     selectedCuisine,
-    deliveryOnly,
-    breakfastOnly,
-    brunchOnly,
-    excludeHotels,
   ) => {
     updateMapStatus(
       selectedNeighborhood,
       selectedCuisine,
-      deliveryOnly,
-      breakfastOnly,
-      brunchOnly,
-      excludeHotels,
     );
 
     if (!restaurantMap) return;
@@ -557,10 +465,6 @@ const structuredData = {
       getVisibleRestaurants(
         selectedNeighborhood,
         selectedCuisine,
-        deliveryOnly,
-        breakfastOnly,
-        brunchOnly,
-        excludeHotels,
       ).map((restaurant) => restaurant.id),
     );
     const visibleRecords = [];
@@ -583,7 +487,7 @@ const structuredData = {
     await google.maps.importLibrary("marker");
 
     restaurantMap = new Map(mapElement, {
-      center: buenosAiresCenter,
+      center: asuncionCenter,
       clickableIcons: false,
       fullscreenControl: true,
       mapTypeControl: false,
@@ -612,46 +516,26 @@ const structuredData = {
     syncMapMarkers(
       neighborhoodFilter?.value ?? "",
       cuisineFilter?.value ?? "",
-      deliveryFilter?.checked ?? false,
-      breakfastFilter?.checked ?? false,
-      brunchFilter?.checked ?? false,
-      excludeHotelsFilter?.checked ?? false,
     );
   };
 
   const applyFilters = () => {
     const selectedNeighborhood = neighborhoodFilter?.value ?? "";
     const selectedCuisine = cuisineFilter?.value ?? "";
-    const deliveryOnly = deliveryFilter?.checked ?? false;
-    const breakfastOnly = breakfastFilter?.checked ?? false;
-    const brunchOnly = brunchFilter?.checked ?? false;
-    const excludeHotels = excludeHotelsFilter?.checked ?? false;
 
     for (const row of restaurantRows) {
       const cuisines = row.dataset.cuisineTypes?.split("|") ?? [];
       const neighborhoodMismatch =
         Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
       const cuisineMismatch = Boolean(selectedCuisine) && !cuisines.includes(selectedCuisine);
-      const deliveryMismatch = deliveryOnly && row.dataset.doesDelivery !== "true";
-      const breakfastMismatch = breakfastOnly && row.dataset.servesBreakfast !== "true";
-      const brunchMismatch = brunchOnly && row.dataset.servesBrunch !== "true";
-      const hotelExcluded = excludeHotels && row.dataset.isHotelRestaurant === "true";
       row.hidden =
         neighborhoodMismatch ||
-        cuisineMismatch ||
-        deliveryMismatch ||
-        breakfastMismatch ||
-        brunchMismatch ||
-        hotelExcluded;
+        cuisineMismatch;
     }
 
     syncMapMarkers(
       selectedNeighborhood,
       selectedCuisine,
-      deliveryOnly,
-      breakfastOnly,
-      brunchOnly,
-      excludeHotels,
     );
   };
 
@@ -660,20 +544,12 @@ const structuredData = {
     if (defaultCurrency) defaultCurrency.checked = true;
     if (neighborhoodFilter) neighborhoodFilter.value = "";
     if (cuisineFilter) cuisineFilter.value = "";
-    if (deliveryFilter) deliveryFilter.checked = false;
-    if (breakfastFilter) breakfastFilter.checked = false;
-    if (brunchFilter) brunchFilter.checked = false;
-    if (excludeHotelsFilter) excludeHotelsFilter.checked = false;
 
     applyFilters();
   };
 
   neighborhoodFilter?.addEventListener("change", applyFilters);
   cuisineFilter?.addEventListener("change", applyFilters);
-  deliveryFilter?.addEventListener("change", applyFilters);
-  breakfastFilter?.addEventListener("change", applyFilters);
-  brunchFilter?.addEventListener("change", applyFilters);
-  excludeHotelsFilter?.addEventListener("change", applyFilters);
   resetFilters();
   window.addEventListener("pageshow", resetFilters);
   initRestaurantMap().catch((error) => {
@@ -811,8 +687,7 @@ const structuredData = {
   }
 
   .sort-toggle,
-  .currency-toggle,
-  .delivery-toggle {
+  .currency-toggle {
     display: flex;
     width: fit-content;
     align-items: center;
@@ -871,13 +746,8 @@ const structuredData = {
     border-radius: 999px;
   }
 
-  .delivery-toggle {
-    border-radius: 999px;
-  }
-
   .sort-toggle legend,
-  .currency-toggle legend,
-  .delivery-toggle legend {
+  .currency-toggle legend {
     margin: 0 0.3rem 0 0.2rem;
     padding: 0;
     color: var(--text-muted);
@@ -889,16 +759,14 @@ const structuredData = {
   }
 
   .sort-toggle input,
-  .currency-toggle input,
-  .delivery-toggle input {
+  .currency-toggle input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
   }
 
   .sort-toggle label,
-  .currency-toggle label,
-  .delivery-toggle label {
+  .currency-toggle label {
     display: inline-flex;
     min-height: 2.25rem;
     align-items: center;
@@ -916,8 +784,7 @@ const structuredData = {
   }
 
   .sort-toggle label::before,
-  .currency-toggle label::before,
-  .delivery-toggle label::before {
+  .currency-toggle label::before {
     content: "";
     width: 0.58rem;
     height: 0.58rem;
@@ -931,11 +798,7 @@ const structuredData = {
   #sort-price:checked ~ label[for="sort-price"],
   #sort-popularity:checked ~ label[for="sort-popularity"],
   #currency-usd:checked ~ label[for="currency-usd"],
-  #currency-ars:checked ~ label[for="currency-ars"],
-#filter-delivery:checked ~ label[for="filter-delivery"],
-#filter-breakfast:checked ~ label[for="filter-breakfast"],
-#filter-brunch:checked ~ label[for="filter-brunch"],
-#filter-exclude-hotels:checked ~ label[for="filter-exclude-hotels"] {
+  #currency-pgy:checked ~ label[for="currency-pgy"] {
     background: var(--accent);
     color: var(--bg);
   }
@@ -945,11 +808,7 @@ const structuredData = {
   #sort-price:checked ~ label[for="sort-price"]::before,
   #sort-popularity:checked ~ label[for="sort-popularity"]::before,
   #currency-usd:checked ~ label[for="currency-usd"]::before,
-  #currency-ars:checked ~ label[for="currency-ars"]::before,
-#filter-delivery:checked ~ label[for="filter-delivery"]::before,
-#filter-breakfast:checked ~ label[for="filter-breakfast"]::before,
-#filter-brunch:checked ~ label[for="filter-brunch"]::before,
-#filter-exclude-hotels:checked ~ label[for="filter-exclude-hotels"]::before {
+  #currency-pgy:checked ~ label[for="currency-pgy"]::before {
     background: currentColor;
     box-shadow: inset 0 0 0 3px var(--accent);
     opacity: 1;
@@ -1020,53 +879,12 @@ const structuredData = {
     letter-spacing: -0.01em;
   }
 
-  .restaurant-name:has(.delivery-icons-desktop) {
-    padding-right: 2.1rem;
-  }
-
   .restaurant-name a {
     text-decoration-thickness: 1px;
   }
 
   .map-actions {
     display: contents;
-  }
-
-  .delivery-icons {
-    display: flex;
-    gap: 0.28rem;
-    align-items: center;
-  }
-
-  .delivery-icons-desktop {
-    position: absolute;
-    top: 0.86rem;
-    right: clamp(0.65rem, 1vw, 0.8rem);
-  }
-
-  .delivery-icons-mobile {
-    display: none;
-  }
-
-  .delivery-link {
-    display: flex;
-    line-height: 0;
-    text-decoration: none;
-  }
-
-  .delivery-link:hover .delivery-icon :global(svg) {
-    transform: scale(1.08);
-  }
-
-  .delivery-icon {
-    display: flex;
-  }
-
-  .delivery-icon :global(svg) {
-    width: 1.15rem;
-    height: 1.15rem;
-    border-radius: 0.28rem;
-    transition: transform 0.15s ease;
   }
 
   .maps-link {
@@ -1104,13 +922,13 @@ const structuredData = {
     white-space: nowrap;
   }
 
-  .price-ars,
-  body:has(#currency-ars:checked) .price-usd,
-  body:has(#currency-usd:checked) .price-ars {
+  .price-pgy,
+  body:has(#currency-pgy:checked) .price-usd,
+  body:has(#currency-usd:checked) .price-pgy {
     display: none;
   }
 
-  body:has(#currency-ars:checked) .price-ars {
+  body:has(#currency-pgy:checked) .price-pgy {
     display: inline;
   }
 
@@ -1274,10 +1092,6 @@ const structuredData = {
       line-height: 1.18;
     }
 
-    .delivery-icons-desktop {
-      display: none;
-    }
-
     .map-actions {
       position: absolute;
       top: 0.78rem;
@@ -1292,12 +1106,6 @@ const structuredData = {
       position: static;
       width: 1.9rem;
       height: 1.9rem;
-    }
-
-    .delivery-icons-mobile {
-      display: flex;
-      flex-direction: column;
-      gap: 0.28rem;
     }
 
     .address {
