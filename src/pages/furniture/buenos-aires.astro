@@ -1,0 +1,1137 @@
+---
+import pageData from "../../data/furniture-buenos-aires.json";
+
+export const prerender = true;
+
+const pageTitle = pageData.title;
+const pageDescription =
+  "Furniture brands in Buenos Aires with operational Google Maps store locations, addresses, ratings and an all-store map.";
+const themeColorLight = "#f4efe7";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type Brand = (typeof pageData.brands)[number];
+type Store = Brand["stores"][number];
+const brands = pageData.brands;
+const storeCount = brands.reduce((sum, brand) => sum + brand.stores.length, 0);
+const formatter = new Intl.NumberFormat("en-US");
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+const arsPerUsd = pageData.currency?.arsPerUsd ?? 1449.5799;
+const formatChairPrice = (brand: Brand) => {
+  const chairPrice = brand.chairPrice;
+  if (chairPrice?.median == null) {
+    const samplePending = /sample pending|not sampled/i.test(chairPrice?.note ?? "");
+
+    return {
+      primary: samplePending ? "Not sampled" : "Quote only",
+      secondary: samplePending ? "Price sample pending" : "No public online chair prices",
+    };
+  }
+
+  const medianUsd =
+    chairPrice.currency === "USD"
+      ? chairPrice.median
+      : Math.round(chairPrice.median / arsPerUsd);
+
+  return {
+    primary: usdFormatter.format(medianUsd),
+    secondary:
+      chairPrice.sampleSize > 0
+        ? `${chairPrice.sampleSize} chairs sampled online`
+        : "Online list price",
+  };
+};
+const pricedBrandCount = brands.filter((brand) => brand.chairPrice.median != null).length;
+const sortStoresByReviewCount = (stores: Store[]) =>
+  [...stores].sort((first, second) =>
+    (second.reviewCount ?? 0) - (first.reviewCount ?? 0) ||
+    (second.rating ?? 0) - (first.rating ?? 0) ||
+    first.name.localeCompare(second.name)
+  );
+const brandsWithStoreLabels = brands.map((brand: Brand, index: number) => ({
+  ...brand,
+  stores: sortStoresByReviewCount(brand.stores),
+  listPosition: index + 1,
+  storeLabel: `${brand.storeCount} ${brand.storeCount === 1 ? "location" : "locations"}`,
+  chairPriceDisplay: formatChairPrice(brand),
+}));
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const furnitureMapData = brands.flatMap((brand) =>
+  brand.stores.map((store: Store) => ({
+    id: store.id,
+    brandId: brand.id,
+    brandName: brand.name,
+    storeName: store.name,
+    category: brand.category,
+    brandHasMultipleBaLocations: brand.storeCount >= 2,
+    brandHasFourStarStore: brand.stores.some((store) => (store.rating ?? 0) >= 4),
+    address: store.address,
+    googleMapsUrl: store.googleMapsUrl,
+    rating: store.rating,
+    reviewCount: store.reviewCount,
+    position: store.location,
+  })),
+);
+const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: brands.length,
+  itemListElement: brands.map((brand, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "Brand",
+      name: brand.name,
+      url: brand.officialUrl,
+      description: brand.summary,
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: `${brand.name} Buenos Aires locations`,
+        itemListElement: brand.stores.map((store: Store) => ({
+          "@type": "FurnitureStore",
+          name: store.name,
+          sameAs: store.googleMapsUrl,
+          address: store.fullAddress,
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: store.location.lat,
+            longitude: store.location.lng,
+          },
+          ...(store.rating
+            ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: store.rating.toFixed(1),
+                  ratingCount: store.reviewCount,
+                },
+              }
+            : {}),
+        })),
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Furniture brands in Buenos Aires" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires furniture brands, Buenos Aires furniture stores, furniture showrooms Buenos Aires, muebles Buenos Aires"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires furniture guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            {brands.length} furniture brands from the local notes, filtered to exact Google Maps matches with at least one operational Buenos Aires store or showroom. Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
+          </p>
+        </div>
+      </header>
+
+      <section class="brand-list" aria-label="Furniture brands in Buenos Aires" data-brand-list>
+        <div class="brand-controls" aria-label="Furniture list controls">
+          <label for="brand-sort">Sort by...</label>
+          <select id="brand-sort" name="brand-sort" autocomplete="off">
+            <option value="price" selected>Price</option>
+            <option value="stores">Number of stores</option>
+          </select>
+          <input id="multi-location-only" type="checkbox" autocomplete="off" />
+          <label for="multi-location-only">Only stores with 2+ locations in BA</label>
+          <input id="four-star-brand-only" type="checkbox" autocomplete="off" />
+          <label for="four-star-brand-only">Only brands with at least one 4.0+ rated store</label>
+        </div>
+        <p class="visible-count" data-visible-count>
+          Showing {brands.length} brands / {storeCount} locations
+        </p>
+
+        <div class="brand-row brand-head" aria-hidden="true">
+          <span>Brand</span>
+          <span>Median chair</span>
+        </div>
+
+        {brandsWithStoreLabels.map((brand) => (
+          <article
+            class="brand-card brand-row"
+            data-price-position={brand.listPosition}
+            data-store-count={brand.storeCount}
+            data-multi-location={brand.storeCount >= 2}
+            data-four-star-brand={brand.stores.some((store: Store) => (store.rating ?? 0) >= 4)}
+          >
+            <div class="brand-main">
+              <div class="brand-title-row">
+                <p class="brand-position" data-brand-position>#{brand.listPosition}</p>
+                <h2>
+                  <a href={brand.officialUrl} target="_blank" rel="noreferrer noopener">
+                    {brand.name}
+                  </a>
+                </h2>
+              </div>
+              <div class="brand-copy">
+                <p class="summary">{brand.summary}</p>
+                <div class="brand-tags" aria-label={`${brand.name} facts`}>
+                  <span>{brand.category}</span>
+                  <span>{brand.style}</span>
+                  <span>{brand.storeLabel}</span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="chair-price"
+              title={brand.chairPrice.note ?? undefined}
+            >
+              <span class="chair-price-value">{brand.chairPriceDisplay.primary}</span>
+              <span class="chair-price-meta">{brand.chairPriceDisplay.secondary}</span>
+              {brand.chairPrice.sourceUrl && (
+                <a
+                  class="chair-price-source"
+                  href={brand.chairPrice.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Price source
+                </a>
+              )}
+            </div>
+
+            <div class="store-list" aria-label={`${brand.name} store locations`}>
+              {brand.stores.map((store: Store) => (
+                <article class="store-card">
+                  <div class="store-heading">
+                    <h3>{store.name}</h3>
+                    <a
+                      class="maps-link"
+                      href={store.googleMapsUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={`Open ${store.name} on Google Maps`}
+                      title={`Open ${store.name} on Google Maps`}
+                    >
+                      <span class="maps-icon" set:html={mapsIcon} />
+                    </a>
+                  </div>
+                  <p class="address">{store.address}</p>
+                  <p class="rating">
+                    {store.rating ? (
+                      <>
+                        <span class="rating-score">{store.rating.toFixed(1)}</span>
+                        <span class="review-count">{formatter.format(store.reviewCount)} ratings</span>
+                      </>
+                    ) : (
+                      <span class="review-count">Rating not listed</span>
+                    )}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section class="furniture-map-section" aria-labelledby="furniture-map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="furniture-map-heading">All operational store locations</h2>
+          <p id="furniture-map-status" class="map-status">
+            Showing all {storeCount} Google Maps locations from {brands.length} brands.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="furniture-map"
+            class="furniture-map"
+            aria-label="Google Map with pins for Buenos Aires furniture store locations"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ googleMapsApiKey, furnitureMapData, storeCount }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const mapElement = document.querySelector("#furniture-map");
+  const mapStatus = document.querySelector("#furniture-map-status");
+  const brandList = document.querySelector("[data-brand-list]");
+  const brandSortSelect = document.querySelector("#brand-sort");
+  const multiLocationOnlyToggle = document.querySelector("#multi-location-only");
+  const fourStarBrandOnlyToggle = document.querySelector("#four-star-brand-only");
+  const visibleCount = document.querySelector("[data-visible-count]");
+  const brandCards = brandList ? [...brandList.querySelectorAll(".brand-card")] : [];
+  const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const markerRecords = [];
+  let furnitureMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getNumericSortValue = (card, key, fallback) => {
+    const value = Number(card.dataset[key]);
+    return Number.isFinite(value) ? value : fallback;
+  };
+
+  const updateBrandPositions = () => {
+    let visiblePosition = 1;
+    const cardsInDomOrder = brandList ? [...brandList.querySelectorAll(".brand-card")] : brandCards;
+    cardsInDomOrder.forEach((card) => {
+      const position = card.querySelector("[data-brand-position]");
+      if (position && !card.hidden) position.textContent = `#${visiblePosition++}`;
+    });
+  };
+
+  const sortBrandCards = () => {
+    if (!brandList) return;
+
+    const sortMode = brandSortSelect?.value ?? "price";
+    const sortedCards = [...brandCards].sort((a, b) => {
+      const aPricePosition = getNumericSortValue(a, "pricePosition", Number.MAX_SAFE_INTEGER);
+      const bPricePosition = getNumericSortValue(b, "pricePosition", Number.MAX_SAFE_INTEGER);
+
+      if (sortMode === "stores") {
+        const storeDifference =
+          getNumericSortValue(b, "storeCount", 0) - getNumericSortValue(a, "storeCount", 0);
+
+        if (storeDifference !== 0) return storeDifference;
+      }
+
+      return aPricePosition - bPricePosition;
+    });
+
+    sortedCards.forEach((card, index) => {
+      brandList.append(card);
+    });
+    updateBrandPositions();
+  };
+
+  const activeFilterDescriptions = () => [
+    ...(multiLocationOnlyToggle?.checked ? ["2+ BA locations"] : []),
+    ...(fourStarBrandOnlyToggle?.checked ? ["at least one 4.0+ rated store"] : []),
+  ];
+
+  const cardPassesActiveFilters = (card) =>
+    (!multiLocationOnlyToggle?.checked || card.dataset.multiLocation === "true") &&
+    (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true");
+
+  const storePassesActiveFilters = (store) =>
+    (!multiLocationOnlyToggle?.checked || store.brandHasMultipleBaLocations) &&
+    (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore);
+
+  const visibleFurnitureBrands = () => brandCards.filter(cardPassesActiveFilters);
+
+  const visibleFurnitureStores = () => furnitureMapData.filter(storePassesActiveFilters);
+
+  const updateVisibleCount = () => {
+    if (!visibleCount) return;
+
+    const visibleBrands = visibleFurnitureBrands().length;
+    const visibleStores = visibleFurnitureStores().length;
+    visibleCount.textContent = `Showing ${visibleBrands} ${visibleBrands === 1 ? "brand" : "brands"} / ${visibleStores} ${visibleStores === 1 ? "location" : "locations"}`;
+  };
+
+  const updateMapStatus = () => {
+    if (!mapStatus) return;
+
+    const visibleStores = visibleFurnitureStores();
+    const visibleBrands = visibleFurnitureBrands();
+    const filterDescriptions = activeFilterDescriptions();
+    mapStatus.textContent = filterDescriptions.length > 0
+      ? `Showing ${visibleStores.length} Google Maps locations from ${visibleBrands.length} brands with ${filterDescriptions.join(" and ")}.`
+      : `Showing all ${visibleStores.length} Google Maps locations from ${visibleBrands.length} brands.`;
+  };
+
+  const applyMapFilters = () => {
+    updateMapStatus();
+    if (!furnitureMap) return;
+
+    const visibleRecords = [];
+    for (const record of markerRecords) {
+      const isVisible = storePassesActiveFilters(record.store);
+      record.marker.setMap(isVisible ? furnitureMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    if (mapElement) mapElement.dataset.visiblePins = String(visibleRecords.length);
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const applyBrandFilters = () => {
+    for (const card of brandCards) {
+      card.hidden = !cardPassesActiveFilters(card);
+    }
+
+    updateVisibleCount();
+    sortBrandCards();
+    applyMapFilters();
+  };
+
+  brandSortSelect?.addEventListener("change", sortBrandCards);
+  multiLocationOnlyToggle?.addEventListener("change", applyBrandFilters);
+  fourStarBrandOnlyToggle?.addEventListener("change", applyBrandFilters);
+  applyBrandFilters();
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!furnitureMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      furnitureMap.setCenter(visibleRecords[0].store.position);
+      furnitureMap.setZoom(14);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    for (const { store } of visibleRecords) {
+      bounds.extend(store.position);
+    }
+    furnitureMap.fitBounds(bounds, 44);
+  };
+
+  const initFurnitureMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    furnitureMap = new Map(mapElement, {
+      center: buenosAiresCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 11,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const store of furnitureMapData) {
+      const marker = new google.maps.Marker({
+        map: furnitureMap,
+        position: store.position,
+        title: `${store.brandName} - ${store.storeName}`,
+      });
+
+      marker.addListener("click", () => {
+        const rating = store.rating
+          ? `<br>${escapeHtml(store.rating.toFixed(1))} Google rating (${escapeHtml(store.reviewCount)} ratings)`
+          : "";
+        infoWindow.setContent(
+          `<strong>${escapeHtml(store.brandName)}</strong><br>${escapeHtml(store.storeName)}<br>${escapeHtml(store.address)}${rating}<br><a href="${escapeHtml(store.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(furnitureMap, marker);
+      });
+
+      markerRecords.push({ store, marker });
+    }
+
+    applyMapFilters();
+  };
+
+  initFurnitureMap().catch((error) => {
+    console.error("Unable to initialize furniture map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. Furniture list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4efe7;
+    --surface: #fffdf8;
+    --surface-soft: #eee4d5;
+    --text: #181512;
+    --text-muted: #6d6258;
+    --border: #d9cbb9;
+    --border-strong: #c5b39d;
+    --accent: #4b3323;
+    --accent-soft: #e6d6c4;
+    --link: #2b1c13;
+    --shadow: 0 20px 60px rgba(65, 45, 25, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171513;
+      --surface-soft: #211d18;
+      --text: #f4eee6;
+      --text-muted: #afa59a;
+      --border: #332d25;
+      --border-strong: #4b4034;
+      --accent: #ead8c5;
+      --accent-soft: #2d241d;
+      --link: #f7eadf;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-soft), transparent 30%), transparent 34rem),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .page {
+    width: min(100%, 88rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .page-header {
+    display: grid;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.65rem;
+    max-width: 58rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    max-width: 14ch;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.2rem, 5.4vw, 5rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .intro {
+    max-width: 48rem;
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.18rem);
+  }
+
+  .summary,
+  .address,
+  .review-count,
+  .map-status,
+  .map-unavailable {
+    color: var(--text-muted);
+  }
+
+  .furniture-map-section {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: clamp(1rem, 2.5vw, 1.5rem);
+    margin-bottom: 0;
+    padding: clamp(1rem, 2.4vw, 1.4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.3rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .brand-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .brand-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--surface), transparent 18%);
+  }
+
+  .brand-controls label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .brand-controls select {
+    min-width: 11rem;
+    padding: 0.55rem 2.15rem 0.55rem 0.7rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .visible-count {
+    margin-top: -0.45rem;
+    padding: 0 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .brand-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8.5rem, 0.46fr);
+    gap: 0.85rem 1rem;
+    align-items: start;
+  }
+
+  .brand-head {
+    padding: 0 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .brand-head span:last-child {
+    text-align: right;
+  }
+
+  .brand-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8.5rem, 0.46fr);
+    grid-template-areas:
+      "main price"
+      "stores stores";
+    gap: clamp(1rem, 2vw, 1.25rem) 1rem;
+    padding: clamp(1rem, 2.3vw, 1.4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .brand-main {
+    grid-area: main;
+  }
+
+  .chair-price {
+    grid-area: price;
+    display: grid;
+    justify-items: end;
+    gap: 0.18rem;
+    padding-top: 0.15rem;
+    text-align: right;
+  }
+
+  .chair-price-value {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .chair-price-meta {
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    font-weight: 650;
+    line-height: 1.25;
+  }
+
+  .chair-price-source {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .chair-price-source:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+
+  .store-list {
+    grid-area: stores;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+    gap: 0.7rem;
+  }
+
+  .brand-card[hidden] {
+    display: none;
+  }
+
+  .brand-main {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .brand-title-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: start;
+  }
+
+  .brand-position {
+    padding-top: 0.18rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 850;
+  }
+
+  .brand-copy {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .brand-title-row h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.45rem, 2.6vw, 2.25rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  .brand-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .brand-tags span {
+    padding: 0.35rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 750;
+  }
+
+  .store-card {
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    padding: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--surface-soft), transparent 45%);
+  }
+
+  .store-heading {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .store-heading h3 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .maps-link {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .maps-icon {
+    display: flex;
+  }
+
+  .maps-icon :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+    filter: saturate(0.95);
+  }
+
+  .address,
+  .summary {
+    font-size: 0.93rem;
+  }
+
+  .rating {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 750;
+  }
+
+  .rating-score::before {
+    content: "★ ";
+    color: #b8872d;
+  }
+
+  .review-count {
+    font-size: 0.8rem;
+    font-weight: 650;
+  }
+
+  .map-copy h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.6rem, 3vw, 2.35rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .furniture-map {
+    min-height: clamp(22rem, 55vw, 34rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  @media (max-width: 1060px) {
+    .store-list {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding: 0.75rem;
+    }
+
+    .page-header {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      gap: 1rem;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2rem, 11vw, 3.3rem);
+    }
+
+    .intro {
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .furniture-map-section,
+    .brand-card {
+      border-radius: 1.15rem;
+    }
+
+    .brand-head {
+      display: none;
+    }
+
+    .brand-card {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "main"
+        "price"
+        "stores";
+      gap: 0.72rem;
+      border-radius: 1.15rem;
+      padding: 0.9rem;
+    }
+
+    .chair-price {
+      justify-items: start;
+      padding-top: 0;
+      text-align: left;
+    }
+
+    .chair-price-value {
+      font-size: 1.08rem;
+    }
+
+    .brand-list {
+      gap: 0.72rem;
+    }
+
+    .brand-controls {
+      justify-content: stretch;
+      padding: 0.7rem;
+    }
+
+    .brand-controls label {
+      font-size: 0.72rem;
+    }
+
+    .brand-controls select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .visible-count {
+      margin-top: -0.3rem;
+      font-size: 0.88rem;
+    }
+
+    .brand-title-row {
+      grid-template-columns: 2.1rem minmax(0, 1fr);
+      gap: 0.55rem;
+    }
+
+    .brand-position {
+      padding-top: 0.2rem;
+      font-size: 0.76rem;
+    }
+
+    .brand-title-row h2 {
+      font-size: clamp(1.35rem, 6.4vw, 1.9rem);
+      line-height: 0.98;
+    }
+
+    .summary {
+      font-size: 0.95rem;
+      line-height: 1.42;
+    }
+
+    .brand-tags {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      margin-inline: -0.15rem;
+      padding-inline: 0.15rem;
+    }
+
+    .brand-tags::-webkit-scrollbar {
+      display: none;
+    }
+
+    .brand-tags span {
+      flex: 0 0 auto;
+      font-size: 0.7rem;
+      line-height: 1.15;
+      padding: 0.32rem 0.52rem;
+    }
+
+    .store-list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.55rem;
+    }
+
+    .store-card {
+      position: relative;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "title"
+        "address"
+        "rating";
+      gap: 0.2rem;
+      padding: 0.78rem 3.15rem 0.78rem 0.85rem;
+      border-radius: 0.95rem;
+    }
+
+    .store-heading {
+      grid-area: title;
+      display: block;
+    }
+
+    .store-heading h3 {
+      font-size: 0.98rem;
+      line-height: 1.18;
+      padding-right: 0.2rem;
+    }
+
+    .maps-link {
+      position: absolute;
+      top: 0.78rem;
+      right: 0.85rem;
+      width: 1.9rem;
+      height: 1.9rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .maps-icon :global(svg) {
+      width: 1.45rem;
+      height: 1.45rem;
+    }
+
+    .address {
+      grid-area: address;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .rating {
+      grid-area: rating;
+      font-size: 0.86rem;
+    }
+
+    .review-count {
+      font-size: 0.72rem;
+    }
+
+    .furniture-map-section {
+      padding: 0.85rem 0.95rem;
+    }
+
+    .furniture-map {
+      min-height: 18rem;
+      border-radius: 0.95rem;
+    }
+  }
+</style>

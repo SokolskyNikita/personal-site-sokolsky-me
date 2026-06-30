@@ -1,0 +1,1003 @@
+---
+import pageData from "../../data/apartments-buenos-aires.json";
+
+export const prerender = true;
+
+const pageTitle = pageData.title;
+const pageDescription =
+  "Buenos Aires rental buildings with heated floors, pool, gym, rent notes, Airbnb links and a map.";
+const themeColorLight = "#f5efe4";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type Building = (typeof pageData.buildings)[number];
+const buildings = pageData.buildings;
+const collator = new Intl.Collator("en", {
+  sensitivity: "base",
+  numeric: true,
+});
+const neighborhoodCounts = buildings.reduce((counts, building: Building) => {
+  counts.set(building.zone, (counts.get(building.zone) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const neighborhoodOptions = [...neighborhoodCounts.entries()]
+  .sort(
+    ([nameA, countA], [nameB, countB]) =>
+      countB - countA || collator.compare(nameA, nameB),
+  )
+  .map(([name, count]) => ({ name, count }));
+const priceSortedBuildings = [...buildings].sort((first, second) =>
+  first.longTermRentUsd.amount - second.longTermRentUsd.amount ||
+  collator.compare(first.name, second.name)
+);
+const buildingsWithSort = priceSortedBuildings.map((building: Building, index) => ({
+  ...building,
+  listPosition: index + 1,
+}));
+const formatRent = (amount: number) => `$${amount.toLocaleString("en-US")}`;
+const mapApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const apartmentMapData = buildings.map((building) => ({
+  id: building.id,
+  name: building.name,
+  zone: building.zone,
+  neighborhood: building.zone,
+  address: building.address,
+  airbnbConfirmed: building.airbnb.confirmed,
+  airbnbUrl: building.airbnb.url,
+  mapUrl: building.googleMapsUrl,
+  position: building.location,
+}));
+const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: buildings.length,
+  itemListElement: priceSortedBuildings.map((building, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "ApartmentComplex",
+      name: building.name,
+      address: building.fullAddress,
+      sameAs: [
+        building.googleMapsUrl,
+        ...(building.officialWebsiteUrl ? [building.officialWebsiteUrl] : []),
+        ...(building.airbnb.confirmed && building.airbnb.url ? [building.airbnb.url] : []),
+      ],
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: building.location.lat,
+        longitude: building.location.lng,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Buenos Aires fancy apartment buildings" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires apartment buildings, fancy apartment buildings Buenos Aires, luxury apartments Buenos Aires, Buenos Aires Airbnb buildings"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires apartment guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            These are Buenos Aires rental buildings with heated floors (losa radiante), a pool and a gym. I included rent notes, Airbnb links when I found exact matches and map pins.
+          </p>
+        </div>
+      </header>
+
+      <section class="toolbar" aria-label="Apartment controls">
+        <fieldset class="availability-toggle">
+          <legend>Show</legend>
+          <input id="airbnb-only" type="checkbox" autocomplete="off" />
+          <label for="airbnb-only">Airbnb only</label>
+        </fieldset>
+        <label class="filter-dropdown" for="neighborhood-filter">
+          <span>Neighborhood</span>
+          <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
+            <option value="">All ({buildings.length})</option>
+            {neighborhoodOptions.map((option) => (
+              <option value={option.name}>{option.name} ({option.count})</option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      <section class="building-list" aria-label="Buenos Aires fancy apartment buildings">
+        {buildingsWithSort.map((building) => (
+          <article
+            class={`building-card ${building.airbnb.confirmed ? "is-airbnb" : ""}`}
+            data-airbnb={building.airbnb.confirmed}
+            data-neighborhood={building.zone}
+          >
+            <div class="building-main">
+              <div class="building-title-row">
+                <p class="building-position">#{building.listPosition}</p>
+                <h2>
+                  {building.officialWebsiteUrl ? (
+                    <a
+                      class="official-building-link"
+                      href={building.officialWebsiteUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={`Open official website for ${building.name}`}
+                    >
+                      {building.name}
+                    </a>
+                  ) : (
+                    building.name
+                  )}
+                </h2>
+              </div>
+              <p class="building-description">{building.description}</p>
+              <div class="building-tags" aria-label={`${building.name} facts`}>
+                <span>{building.zone}</span>
+                <span>{building.built}</span>
+                <span>losa radiante</span>
+                <span>pool</span>
+                <span>gym</span>
+              </div>
+            </div>
+            <div class="building-side">
+              <p
+                class={`rent-estimate confidence-${building.longTermRentUsd.confidence.replace(/[^a-z]/g, "-")}`}
+                title={building.longTermRentUsd.summary}
+              >
+                <span>{formatRent(building.longTermRentUsd.amount)}/mo</span>
+                <span>1BR long-term {building.longTermRentUsd.basis.includes("extrapolated") || building.longTermRentUsd.basis.includes("normalized") ? "estimate" : "rent"}</span>
+              </p>
+              <p class="address">{building.address}</p>
+              <div class="building-links">
+                <a
+                  href={building.googleMapsUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label={`Open map for ${building.name}`}
+                >
+                  <span class="maps-icon" set:html={mapsIcon} />
+                  Map
+                </a>
+                {building.airbnb.confirmed && building.airbnb.url ? (
+                  <a
+                    href={building.airbnb.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`Open Airbnb listing for ${building.name}`}
+                  >
+                    Airbnb
+                  </a>
+                ) : null}
+                {building.localRentalAd ? (
+                  <a
+                    href={building.localRentalAd.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`Open rental ad for ${building.name}`}
+                    title={`${building.localRentalAd.source}: ${building.localRentalAd.title}`}
+                  >
+                    Rental ad
+                  </a>
+                ) : building.rentalEvidence.url !== building.airbnb.url ? (
+                  <a
+                    href={building.rentalEvidence.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`Open rental source for ${building.name}`}
+                  >
+                    Rental source
+                  </a>
+                ) : (
+                  null
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section class="map-section" aria-labelledby="apartment-map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="apartment-map-heading">Where the buildings are</h2>
+          <p id="apartment-map-status" class="map-status">
+            Showing all {buildings.length} buildings. Gold pins are Airbnb-confirmed.
+          </p>
+        </div>
+        {mapApiKey ? (
+          <div
+            id="apartment-map"
+            class="apartment-map"
+            aria-label="Map with pins for Buenos Aires fancy apartment buildings"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the public map key is not configured.
+          </p>
+        )}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ mapApiKey, apartmentMapData }}>
+  if (mapApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The map library";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: mapApiKey,
+      v: "weekly",
+    });
+  }
+
+  const airbnbOnlyToggle = document.querySelector("#airbnb-only");
+  const neighborhoodFilter = document.querySelector("#neighborhood-filter");
+  const apartmentRows = [...document.querySelectorAll(".building-card")];
+  const mapElement = document.querySelector("#apartment-map");
+  const mapStatus = document.querySelector("#apartment-map-status");
+  const buenosAiresCenter = { lat: -34.595, lng: -58.435 };
+  const markerRecords = [];
+  let apartmentMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const visibleMapBuildings = () => {
+    const airbnbOnly = Boolean(airbnbOnlyToggle?.checked);
+    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+
+    return apartmentMapData.filter((building) =>
+      (!selectedNeighborhood || building.neighborhood === selectedNeighborhood) &&
+      (!airbnbOnly || building.airbnbConfirmed)
+    );
+  };
+
+  const updateMapStatus = () => {
+    if (!mapStatus) return;
+
+    const visibleBuildings = visibleMapBuildings();
+    const airbnbCount = visibleBuildings.filter((building) => building.airbnbConfirmed).length;
+    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+    const buildingLabel = visibleBuildings.length === 1 ? "building" : "buildings";
+    const scope = selectedNeighborhood ? ` in ${selectedNeighborhood}` : "";
+    mapStatus.textContent = `Showing ${visibleBuildings.length} ${buildingLabel}${scope}. ${airbnbCount} Airbnb-confirmed.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!apartmentMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      apartmentMap.setCenter(visibleRecords[0].building.position);
+      apartmentMap.setZoom(15);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    for (const { building } of visibleRecords) {
+      bounds.extend(building.position);
+    }
+    apartmentMap.fitBounds(bounds, 48);
+  };
+
+  const applyFilters = () => {
+    const airbnbOnly = Boolean(airbnbOnlyToggle?.checked);
+    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+
+    for (const row of apartmentRows) {
+      const neighborhoodMismatch =
+        Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
+      const airbnbMismatch = airbnbOnly && row.dataset.airbnb !== "true";
+
+      row.hidden = neighborhoodMismatch || airbnbMismatch;
+    }
+
+    updateMapStatus();
+    if (!apartmentMap) return;
+
+    const visibleRecords = [];
+    for (const record of markerRecords) {
+      const isVisible =
+        (!selectedNeighborhood || record.building.neighborhood === selectedNeighborhood) &&
+        (!airbnbOnly || record.building.airbnbConfirmed);
+      record.marker.setMap(isVisible ? apartmentMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const initApartmentMap = async () => {
+    if (!mapElement || !mapApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    apartmentMap = new Map(mapElement, {
+      center: buenosAiresCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 12,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const building of apartmentMapData) {
+      const marker = new google.maps.Marker({
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: building.airbnbConfirmed ? 9 : 7,
+          fillColor: building.airbnbConfirmed ? "#c98a17" : "#28402f",
+          fillOpacity: 0.95,
+          strokeColor: "#fffdf8",
+          strokeWeight: 2,
+        },
+        map: apartmentMap,
+        position: building.position,
+        title: building.name,
+      });
+
+      marker.addListener("click", () => {
+        const airbnbLink = building.airbnbConfirmed && building.airbnbUrl
+          ? `<br><a href="${escapeHtml(building.airbnbUrl)}" target="_blank" rel="noreferrer noopener">Open Airbnb listing</a>`
+          : "";
+        infoWindow.setContent(
+          `<strong>${escapeHtml(building.name)}</strong><br>${escapeHtml(building.zone)} · ${escapeHtml(building.address)}<br><a href="${escapeHtml(building.mapUrl)}" target="_blank" rel="noreferrer noopener">Open map</a>${airbnbLink}`,
+        );
+        infoWindow.open(apartmentMap, marker);
+      });
+
+      markerRecords.push({ building, marker });
+    }
+
+    applyFilters();
+  };
+  airbnbOnlyToggle?.addEventListener("change", applyFilters);
+  neighborhoodFilter?.addEventListener("change", applyFilters);
+  applyFilters();
+  window.addEventListener("pageshow", applyFilters);
+  initApartmentMap().catch((error) => {
+    console.error("Unable to initialize apartment map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. Building list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5efe4;
+    --surface: #fffdf8;
+    --surface-soft: #ede2d1;
+    --text: #181612;
+    --text-muted: #70665a;
+    --border: #d9cbb7;
+    --border-strong: #c3b199;
+    --accent: #28402f;
+    --accent-soft: #dce6d5;
+    --gold: #c98a17;
+    --gold-soft: #f3dfb9;
+    --link: #17281d;
+    --shadow: 0 22px 70px rgba(63, 46, 25, 0.09);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171613;
+      --surface-soft: #211e18;
+      --text: #f2eee7;
+      --text-muted: #aaa095;
+      --border: #352f26;
+      --border-strong: #4d4335;
+      --accent: #dce8d2;
+      --accent-soft: #263022;
+      --gold: #e0ad52;
+      --gold-soft: #372813;
+      --link: #f6f1e8;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--gold-soft), transparent 18%), transparent 30rem),
+      radial-gradient(circle at 84% 6%, color-mix(in srgb, var(--accent-soft), transparent 35%), transparent 28rem),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .page {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding: clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 25rem);
+    gap: clamp(1.4rem, 4vw, 3rem);
+    align-items: end;
+    padding: clamp(1rem, 4vw, 3rem) 0 clamp(1.5rem, 5vw, 3.5rem);
+  }
+
+  .home-link {
+    width: max-content;
+    grid-column: 1 / -1;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+  }
+
+  h1 {
+    max-width: 15ch;
+    font-size: clamp(2.6rem, 7.1vw, 5.6rem);
+  }
+
+  .intro {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: clamp(1.02rem, 2vw, 1.25rem);
+  }
+
+  .toolbar,
+  .building-card,
+  .map-section {
+    border: 1px solid var(--border);
+    border-radius: 1.35rem;
+    background: color-mix(in srgb, var(--surface), transparent 2%);
+    box-shadow: var(--shadow);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+  }
+
+  .availability-toggle {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0.3rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+
+  .availability-toggle legend {
+    margin: 0 0.35rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    line-height: 2.25rem;
+    text-transform: uppercase;
+  }
+
+  .availability-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .availability-toggle label {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 750;
+    padding: 0 0.85rem;
+  }
+
+  #airbnb-only:checked ~ label[for="airbnb-only"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .filter-dropdown {
+    display: grid;
+    width: min(100%, 24rem);
+    gap: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-dropdown select {
+    width: 100%;
+    min-height: 2.7rem;
+    padding: 0 2.5rem 0 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) right 0.7rem center / 0.42rem 0.42rem no-repeat,
+      var(--surface-soft);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 750;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .filter-dropdown select:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .building-list {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .building-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 24rem);
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.2vw, 1.35rem);
+  }
+
+  .building-card[hidden] {
+    display: none;
+  }
+
+  .building-card.is-airbnb {
+    border-color: color-mix(in srgb, var(--gold), var(--border) 40%);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--gold-soft), transparent 42%), transparent 42%),
+      var(--surface);
+  }
+
+  .building-main,
+  .building-side {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    gap: 0.8rem;
+  }
+
+  .building-title-row {
+    display: flex;
+    min-width: 0;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .building-position {
+    min-width: 2.15rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 850;
+  }
+
+  .building-card h2 {
+    min-width: 0;
+    font-size: clamp(1.55rem, 3.2vw, 2.45rem);
+    overflow-wrap: break-word;
+  }
+
+  .official-building-link {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 38%);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.12em;
+  }
+
+  .official-building-link:hover {
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 0.11em;
+  }
+
+  .building-description,
+  .address {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .building-description {
+    max-width: 43rem;
+    font-size: 1rem;
+  }
+
+  .building-tags,
+  .building-links {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .building-tags span,
+  .building-links a {
+    width: max-content;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.38rem 0.65rem;
+  }
+
+  .building-tags span {
+    overflow-wrap: anywhere;
+  }
+
+  .building-tags span {
+    width: fit-content;
+  }
+
+  .rent-estimate {
+    display: grid;
+    gap: 0.18rem;
+    margin: 0;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  .rent-estimate span:first-child {
+    color: var(--text);
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-weight: 850;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+  }
+
+  .rent-estimate span:last-child {
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .building-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .maps-icon {
+    display: inline-flex;
+  }
+
+  .maps-icon :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    filter: saturate(0.95);
+  }
+
+  .map-section {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.4vw, 1.4rem);
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .map-copy h2 {
+    font-size: clamp(1.55rem, 2.8vw, 2.35rem);
+  }
+
+  .map-status,
+  .map-unavailable {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .apartment-map {
+    min-height: clamp(23rem, 55vw, 35rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  @media (max-width: 860px) {
+    .page-header,
+    .building-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .page {
+      padding: 0.75rem;
+    }
+
+    .page-header {
+      gap: 1rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    h1 {
+      max-width: 10ch;
+      font-size: clamp(2.15rem, 9.5vw, 3.05rem);
+    }
+
+    .intro {
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .availability-toggle {
+      width: 100%;
+      border-radius: 1rem;
+    }
+
+    .filter-dropdown {
+      width: 100%;
+    }
+
+    .building-list {
+      gap: 0.72rem;
+    }
+
+    .building-card {
+      gap: 0.72rem;
+      border-radius: 1.05rem;
+      padding: 0.9rem;
+    }
+
+    .building-title-row {
+      display: grid;
+      grid-template-columns: 2.1rem minmax(0, 1fr);
+      gap: 0.55rem;
+      align-items: start;
+    }
+
+    .building-position {
+      padding-top: 0.2rem;
+      font-size: 0.76rem;
+    }
+
+    .building-card h2 {
+      font-size: clamp(1.35rem, 6.4vw, 1.9rem);
+      line-height: 0.98;
+    }
+
+    .building-description {
+      font-size: 0.95rem;
+      line-height: 1.42;
+    }
+
+    .building-tags {
+      gap: 0.35rem;
+    }
+
+    .building-tags span {
+      font-size: 0.7rem;
+      line-height: 1.15;
+      padding: 0.32rem 0.52rem;
+    }
+
+    .building-side {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "rent links"
+        "address links";
+      gap: 0.5rem 0.7rem;
+      align-items: center;
+      padding-top: 0.72rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .rent-estimate {
+      grid-area: rent;
+      gap: 0.12rem;
+      padding: 0.55rem 0.62rem;
+      border-radius: 0.82rem;
+    }
+
+    .rent-estimate span:first-child {
+      font-size: 1.55rem;
+    }
+
+    .rent-estimate span:last-child {
+      font-size: 0.58rem;
+    }
+
+    .address {
+      grid-area: address;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .building-links {
+      grid-area: links;
+      display: grid;
+      justify-items: end;
+      gap: 0.32rem;
+    }
+
+    .building-links a {
+      min-width: 4.5rem;
+      justify-content: center;
+      font-size: 0.75rem;
+      padding: 0.34rem 0.52rem;
+    }
+
+    .map-section {
+      border-radius: 1.05rem;
+      padding: 0.85rem;
+    }
+
+    .apartment-map {
+      min-height: 22rem;
+    }
+  }
+</style>

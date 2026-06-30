@@ -3,9 +3,9 @@ import pageData from "../../data/restaurants-asuncion.json";
 
 export const prerender = true;
 
-const pageTitle = "Best restaurants in Asunción";
+const pageTitle = "Best restaurants and bars in Asunción";
 const pageDescription =
-  "Asunción restaurants checked against Google Maps, with ratings, prices, addresses and official links.";
+  "Asunción restaurants and bars checked against Google Maps, with ratings, prices, addresses and official links.";
 const themeColorLight = "#f7f2ea";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -164,7 +164,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Best restaurants in Asunción" />
+    <meta name="subject" content="Best restaurants and bars in Asunción" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -176,7 +176,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="Asunción restaurants, best restaurants Asunción, Paraguay fine dining, Asunción Paraguay restaurants"
+      content="Asunción restaurants, Asunción bars, best restaurants Asunción, Paraguay fine dining, Asunción Paraguay restaurants"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -222,10 +222,10 @@ const structuredData = {
           <p class="eyebrow">Asunción guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {restaurants.length} restaurants listed as open in Google Maps, linked to official websites or Instagram.
+            {restaurants.length} restaurants/bars listed as open in Google Maps, linked to official websites or Instagram.
           </p>
         </div>
-        <div class="toolbar" aria-label="Restaurant controls">
+        <div class="toolbar" aria-label="Place controls">
           <fieldset class="sort-toggle">
             <legend>Sort by</legend>
             <input id="sort-name" type="radio" name="sort" autocomplete="off" checked />
@@ -268,9 +268,9 @@ const structuredData = {
         </div>
       </header>
 
-      <section class="restaurant-list" aria-label="Asunción restaurants">
+      <section class="restaurant-list" aria-label="Asunción restaurants and bars">
         <div class="restaurant-row restaurant-head" aria-hidden="true">
-          <span>Restaurant</span>
+          <span>Place</span>
           <span>Map</span>
           <span>Address</span>
           <span>Per person</span>
@@ -325,16 +325,16 @@ const structuredData = {
       <section class="restaurant-map-section" aria-labelledby="restaurant-map-heading">
         <div class="map-copy">
           <p class="eyebrow">Map</p>
-          <h2 id="restaurant-map-heading">Asunción restaurant map</h2>
+          <h2 id="restaurant-map-heading">Asunción restaurant/bar map</h2>
           <p id="restaurant-map-status" class="map-status">
-            Showing all {restaurants.length} restaurants.
+            Showing all {restaurants.length} restaurants/bars.
           </p>
         </div>
         {googleMapsApiKey ? (
           <div
             id="restaurant-map"
             class="restaurant-map"
-            aria-label="Google Map with pins for Asunción restaurants"
+            aria-label="Google Map with pins for Asunción restaurants and bars"
           ></div>
         ) : (
           <p class="map-unavailable">
@@ -425,7 +425,7 @@ const structuredData = {
       selectedNeighborhood,
       selectedCuisine,
     ).length;
-    const restaurantLabel = visibleCount === 1 ? "restaurant" : "restaurants";
+    const restaurantLabel = visibleCount === 1 ? "restaurant/bar" : "restaurants/bars";
     const categoryLabel = [selectedNeighborhood, selectedCuisine].filter(Boolean).join(" ");
     mapStatus.textContent = categoryLabel
       ? `Showing ${visibleCount} ${categoryLabel} ${restaurantLabel}.`
