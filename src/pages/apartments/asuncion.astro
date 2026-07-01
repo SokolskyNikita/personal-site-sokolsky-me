@@ -1,11 +1,11 @@
 ---
-import pageData from "../../data/apartments-buenos-aires.json";
+import pageData from "../../data/apartments-asuncion.json";
 
 export const prerender = true;
 
 const pageTitle = pageData.title;
 const pageDescription =
-  "Buenos Aires high-rise apartment buildings with rent notes, active rental ads, Airbnb links and map pins.";
+  "Asunción high-rise apartment buildings with rent notes, active rental ads, Airbnb links and map pins.";
 const themeColorLight = "#f5efe4";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -28,370 +28,28 @@ const collator = new Intl.Collator("en", {
   numeric: true,
 });
 const maxRentalListingsPerBuilding = 5;
-const removedAirbnbUrls = new Set([
-  "https://www.airbnb.com/rooms/656743268056255662",
-]);
-const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
-  zencity: [
-    { title: "Apartment in Puerto Madero - Zencity - 23rd Floor", url: "https://www.airbnb.com/rooms/674033937301855180" },
-    { title: "New, modern and sunny in luxury ZenCity", url: "https://www.airbnb.com/rooms/33679023" },
-    { title: "Studio located in Zencity of Puerto Madero", url: "https://www.airbnb.com/rooms/52950672" },
-    { title: "Cozy apartment in Zencity", url: "https://www.airbnb.com/rooms/1442094323807650307" },
-    { title: "Puerto Madero - Zencity Complex", url: "https://www.airbnb.com/rooms/35092977" },
-    { title: "Excellent apartment in ZenCity", url: "https://www.airbnb.com/rooms/31435345" },
-    { title: "Puerto Madero Master Suite", url: "https://www.airbnb.com/rooms/861641134108166999" },
-    { title: "Tango Madero in Zencity", url: "https://www.airbnb.com/rooms/590499102277612233" },
-  ],
-  "los-molinos": [
-    { title: "Nice apartment at Faena Los Molinos", url: "https://www.airbnb.com/rooms/3646087" },
-  ],
-  "torres-del-yacht": [
-    { title: "Stunning 24th Floor, City View", url: "https://www.airbnb.com/rooms/673114264166332546" },
-    { title: "Luxury apartment in Torres del Yacht", url: "https://www.airbnb.com/rooms/795165174840516184" },
-    { title: "Apartment in Puerto Madero by Madero Rentals", url: "https://www.airbnb.com/rooms/831831089338611939" },
-    { title: "Puerto Madero Yacht Towers", url: "https://www.airbnb.com/rooms/53719486" },
-    { title: "Magnificent view, Puerto Madero 39th floor", url: "https://www.airbnb.com/rooms/13015811" },
-    { title: "Stunning 24th Floor, River View", url: "https://www.airbnb.com/rooms/947230659000127671" },
-    { title: "Stunning 28th Floor, City View", url: "https://www.airbnb.com/rooms/1551487973214644634" },
-  ],
-  "quartier-del-bajo": [
-    { title: "Quartier del Bajo Encanto Urbano", url: "https://www.airbnb.com/rooms/1389450788414636587" },
-    { title: "Luxury New Apartment, City Views", url: "https://www.airbnb.com/rooms/1260210944105503874" },
-    { title: "Exclusive New Apartment with River and City Views", url: "https://www.airbnb.com/rooms/1260751265065252770" },
-    { title: "Luxury apartment in Quartier del Bajo", url: "https://www.airbnb.com/rooms/1505802767273579112" },
-    { title: "Downtown District, 29th Floor", url: "https://www.airbnb.com/rooms/1672457992257033977" },
-    { title: "Charming Studio on the 33rd floor", url: "https://www.airbnb.com/rooms/1585580794461554725" },
-    { title: "Studio in Quartier del Bajo", url: "https://www.airbnb.com/rooms/1507933865999984724" },
-    { title: "Luxury New Apartment, River City Views", url: "https://www.airbnb.com/rooms/1269486838668052699" },
-  ],
-  "concepcion-palermo": [
-    { title: "Concepcion Live 3 Environments", url: "https://www.airbnb.com/rooms/1115909330621489519" },
-    { title: "Concepcion Live luxury pool and gym", url: "https://www.airbnb.com/rooms/1333253360501657887" },
-    { title: "Concepcion Live Buenos Aires", url: "https://www.airbnb.com/rooms/1319014660778465530" },
-    { title: "Concepcion Live 2 Amb + Toilette", url: "https://www.airbnb.com/rooms/1115876190702549193" },
-    { title: "Lujoso depto en Concepcion Live", url: "https://www.airbnb.com/rooms/1457429687126707081" },
-    { title: "Concepcion Live luxury in Palermo", url: "https://www.airbnb.com/rooms/1547365926159165389" },
-    { title: "Premium Gym and Spa, Concepcion Live", url: "https://www.airbnb.com/rooms/1500262254096690801" },
-    { title: "Concepcion Live Luxury and Relax", url: "https://www.airbnb.com/rooms/1089273958150446717" },
-    { title: "Concepcion Live Full Amenities", url: "https://www.airbnb.com/rooms/1457272999402733205" },
-  ],
-  "la-musa-stars": [
-    { title: "Modern and Exclusive Apartment in Palermo", url: "https://www.airbnb.com/rooms/915894322589984117" },
-    { title: "Cozy Apartment with Pool, Gym and Parking", url: "https://www.airbnb.com/rooms/1173342773304914353" },
-    { title: "Premium apartment in La Musa Stars", url: "https://www.airbnb.com/rooms/25400289" },
-  ],
-  "jardines-del-libertador": [
-    { title: "Libert Gardens Heated Pool + 2BR", url: "https://www.airbnb.com/rooms/602107963905123924" },
-    { title: "Apartment with spa, pool and gym in Nunez", url: "https://www.airbnb.com/rooms/1065856057282732909" },
-    { title: "Libert Gardens Sunny 2BR", url: "https://www.airbnb.com/rooms/771142883295151930" },
-  ],
-  "green-haus": [
-    { title: "New apartment with amenities in DoHo Belgrano", url: "https://www.airbnb.com/rooms/1674317858751080207" },
-  ],
-  "palmera-crespo": [
-    { title: "Palmera Crespo Confort Location", url: "https://www.airbnb.com/rooms/909237803427880994" },
-    { title: "MateHost Palmera Crespo 902", url: "https://www.airbnb.com/rooms/803478984346793244" },
-    { title: "Palmera Crespo, an urban oasis", url: "https://www.airbnb.com/rooms/894416011985380163" },
-  ],
-  "acevedo-716": [
-    { title: "Apart Hotel Acevedo716 - 3B", url: "https://www.airbnb.com/rooms/621594957406953393" },
-    { title: "Apart Hotel Acevedo716 - 5B", url: "https://www.airbnb.com/rooms/622643662106454933" },
-  ],
-  "quartier-dorrego": [
-    { title: "Quartier Dorrego 208", url: "https://www.airbnb.com/rooms/48932837" },
-    { title: "Dorrego Palermo Hollywood", url: "https://www.airbnb.com/rooms/37808323" },
-    { title: "Quartier Dorrego with pool, gym and balcony", url: "https://www.airbnb.com/rooms/41436065" },
-    { title: "2BR with pool and gym in Palermo Hollywood", url: "https://www.airbnb.com/rooms/598573018763151620" },
-    { title: "Newly renovated 1BR in luxury tower", url: "https://www.airbnb.com/rooms/1528463419702903084" },
-    { title: "Dorrego Palermo Hollywood with parking", url: "https://www.airbnb.com/rooms/33644779" },
-  ],
-  "quo-swim": [
-    { title: "Suite Rotchers Palermo Hollywood", url: "https://www.airbnb.com/rooms/1506640346471362068" },
-    { title: "Palermo view with pool and gym", url: "https://www.airbnb.com/rooms/1190919327737160088" },
-    { title: "Luminous flat in Quo Swim", url: "https://www.airbnb.com/rooms/788400641714050992" },
-  ],
-  "quartier-polo": [
-    { title: "Modern 1BR in Las Canitas", url: "https://www.airbnb.com/rooms/53426163" },
-  ],
-  "oro-tower": [
-    { title: "Luxury Oro Tower Palermo Soho", url: "https://www.airbnb.com/rooms/14841384" },
-    { title: "2 bedroom apartment at Oro 2200", url: "https://www.airbnb.com/rooms/1620397193482844575" },
-    { title: "MOT Rentals + Oro 2200", url: "https://www.airbnb.com/rooms/29038326" },
-  ],
-  "torre-vista-botanico": [
-    { title: "Luxury Palermo: Botanical View", url: "https://www.airbnb.com/rooms/695641805444114038" },
-  ],
-  "quo-zapata": [
-    { title: "Studio Full Amenities 214 ZP Quo Zapata", url: "https://www.airbnb.com/rooms/1570228650408831612" },
-    { title: "Quo Zapata 2-room apartment", url: "https://www.airbnb.com/rooms/1445031229108246727" },
-    { title: "2 rooms Quo Zapata", url: "https://www.airbnb.com/rooms/1704579923437287472" },
-    { title: "Espacio Zapata Full Amenities", url: "https://www.airbnb.com/rooms/1230656623206710559" },
-    { title: "Studio with full amenities in Palermo", url: "https://www.airbnb.com/rooms/1197181121450264992" },
-    { title: "Amazing flat with Quo Zapata amenities", url: "https://www.airbnb.com/rooms/1219723340971803670" },
-  ],
-};
-const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
-  "deco-recoleta": [
-    {
-      source: "HotelVIP",
-      title: "Incredible Studio Luxe Tower D902",
-      url: "https://hotelvip.com.ar/hotel/incredible-studio-luxe-tower-d902/",
-      signature: "deco-recoleta-studio-d902-hotelvip",
-    },
-  ],
-  "lumiere-urbano": [
-    {
-      source: "Zonaprop",
-      title: "Exclusivo 2 amb luz y confort amenities full",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-exclusivo-2-amb-luz-y-confort-categoria-amenities-full-58513845.html",
-      signature: "lumiere-urbano-2amb-45m2-ars1400000",
-    },
-  ],
-  "depampa-bajo-belgrano": [
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "2 amb DePampa emprendimiento único full amenities",
-      url: "https://departamento.mercadolibre.com.ar/MLA-3252597432-2-amb-depampa-emprendimiento-unico-full-amenities-_JM",
-      signature: "depampa-2amb-42m2-usd1150",
-    },
-  ],
-  zencity: [
-    {
-      source: "Roomix",
-      title: "Departamento 3 ambientes en alquiler temporal - Zencity Puerto Madero",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-3f117911",
-      signature: "zencity-3amb-usd5000",
-    },
-  ],
-  "sls-puerto-madero": [
-    {
-      source: "Madero Realty",
-      title: "SLS Puerto Madero - 4 ambientes - 255 m2 - amoblado",
-      url: "https://www.maderorealty.com/p/4031848-Departamento-en-Alquiler-Venta-en-Puerto-Madero-SLS-Puerto-Madero---4-ambientes---255m2---amoblado",
-      signature: "sls-4amb-255m2-usd10000",
-    },
-  ],
-  "torres-del-yacht": [
-    {
-      source: "Argenprop",
-      title: "Dpto 2 amb en alquiler amoblado en Torres del Yacht",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--19447918",
-      signature: "torres-yacht-2amb-70m2-usd1800",
-    },
-    {
-      source: "Situar",
-      title: "Torres del Yacht Club alquiler departamento 2 amb",
-      url: "https://situar.com/propiedad/torres-del-yacht-club-alquiler-departamento-2-amb-en-puerto-madero--4659102",
-      signature: "torres-yacht-2amb-77m2-usd2800",
-    },
-    {
-      source: "Inmobalear",
-      title: "Torres del Yacht amoblado y equipado piso alto",
-      url: "https://inmobalear.com.ar/propiedad/torres-del-yacht-amoblado-y-equipado-piso-alto-1-cochera--4331720",
-      signature: "torres-yacht-2amb-70m2-usd2400",
-    },
-  ],
-  "quartier-del-bajo": [
-    {
-      source: "Situar",
-      title: "Quartier del Bajo alquiler departamento 2 ambientes amoblado",
-      url: "https://situar.com/propiedad/quartier-del-bajo-alquiler-departamento-2-ambientes-amoblado--4509014",
-      signature: "quartier-bajo-2amb-58m2-usd1500",
-    },
-    {
-      source: "RE/MAX",
-      title: "Depto monoambiente alquiler Quartier del Bajo",
-      url: "https://www.remax.com.ar/listings/depto-monoambiente-alquiler-quartier-del-bajo",
-      signature: "quartier-bajo-mono-35m2-ars1000000",
-    },
-    {
-      source: "Unité Quartier",
-      title: "Excelente dos ambientes en alquiler sin muebles con cochera",
-      url: "https://unitequartier.com/propiedad/excelente-dos-ambientes-en-alquiler-sin-muebles-con-cochera-quartier-del-bajo-puerto-madero--4658054",
-      signature: "quartier-bajo-2amb-47m2-usd1200",
-    },
-    {
-      source: "Inmobrokers",
-      title: "Venezuela 50 - Quartier del Bajo Torre Rio",
-      url: "https://www.inmobrokers.com.ar/p/8172256-Departamento-en-Alquiler-en-Puerto-Madero-Venezuela--50---Quartier-del-Bajo-Torre-Rio",
-      signature: "quartier-bajo-3amb-84m2-usd2500",
-    },
-  ],
-  "concepcion-palermo": [
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Alquiler departamento 2 ambientes, toilette y cochera - Concepción Live",
-      url: "https://departamento.mercadolibre.com.ar/MLA-1774809775-alquiler-departamento-2-ambientes-toilette-y-cochera-concepcion-live-palermo-full-amenities-_JM",
-      signature: "concepcion-live-2amb-ml",
-    },
-    {
-      source: "RE/MAX",
-      title: "Alquiler temporal 3 ambientes Concepción Live",
-      url: "https://www.remax.com.ar/listings/alquiler-temporal-3-ambientes-coc-concepcion-live",
-      signature: "concepcion-live-3amb-70m2-usd4000",
-    },
-    {
-      source: "Argenprop",
-      title: "Concepción Live diseño, lujo y confort",
-      url: "https://www.argenprop.com/departamento-en-alquiler-temporal-en-colegiales-2-ambientes--18250792",
-      signature: "concepcion-live-2amb-53m2-usd2650",
-    },
-  ],
-  "la-musa-stars": [
-    {
-      source: "Selectia",
-      title: "Alquiler 3 ambientes al frente - Musa Star",
-      url: "https://selectia.net.ar/propiedad/alquiler-3-ambientes-al-frente-full-amenities-totalmente-remodelado-musa-star-colegiales--4363569",
-      signature: "la-musa-stars-3amb-89m2-usd1500",
-    },
-  ],
-  "jardines-del-libertador": [
-    {
-      source: "Roomix",
-      title: "Jardines del Libertador alquiler amoblado temporario",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-nez-441ca435",
-      signature: "jardines-libertador-2amb-55m2-usd980",
-    },
-  ],
-  "palmera-crespo": [
-    {
-      source: "Roomix",
-      title: "Departamento 4 ambientes en alquiler - Palmera Crespo",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-villa-crespo-41a8722f",
-      signature: "palmera-crespo-4amb-110m2-usd1800",
-    },
-    {
-      source: "RE/MAX",
-      title: "Alquiler monoambiente Palmera Crespo amenities",
-      url: "https://www.remax.com.ar/listings/alquiler-3p-monoambiente-palmera-crespo-amenities",
-      signature: "palmera-crespo-mono-38m2-ars750000",
-    },
-    {
-      source: "Lanven",
-      title: "Palmera Crespo 4 ambientes - Villa Crespo",
-      url: "https://lanven.com.ar/propiedad-4343418-PALMERA-CRESPO-4-ambientes---Villa-Crespo",
-      signature: "palmera-crespo-4amb-100m2-usd1400",
-    },
-  ],
-  "quartier-dorrego": [
-    {
-      source: "Roomix",
-      title: "Alquiler estudio Quartier Dorrego",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-hollywood-fd9375bb",
-      signature: "quartier-dorrego-studio-usd1100",
-    },
-    {
-      source: "Unité Quartier",
-      title: "2 ambientes en alquiler temporario en Quartier Dorrego",
-      url: "https://unitequartier.com/propiedad/2-ambientes-en-alquiler-temporario-en-quartier-dorrego-palermo-hollywood--4659787",
-      signature: "quartier-dorrego-2amb-usd1100",
-    },
-  ],
-  "quo-swim": [
-    {
-      source: "RE/MAX",
-      title: "Alquiler departamento 2 ambientes Palermo Piscinas",
-      url: "https://www.remax.com.ar/listings/alquiler-departamento-2-ambientes-palermo-piscinas-1",
-      signature: "quo-swim-2amb-remax",
-    },
-    {
-      source: "Roomix",
-      title: "Alquiler departamento 2 ambientes amoblado - Quo Swim",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-09c5ccdb",
-      signature: "quo-swim-2amb-roomix",
-    },
-  ],
-  "quartier-polo": [
-    {
-      source: "Selectia",
-      title: "Alquiler departamento 2 ambientes amoblado - Quartier del Polo",
-      url: "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-amoblado-cochera-y-amenities-quartier-del-polo--4666365",
-      signature: "quartier-polo-2amb-50m2-usd1000",
-    },
-    {
-      source: "Evoluer",
-      title: "Alquiler departamento 2 ambientes con cochera - Quartier del Polo",
-      url: "https://evoluer.com.ar/propiedad/alquiler-departamento-2-ambientes-con-cochera-y-amenities-quartier-del-polo--4659019",
-      signature: "quartier-polo-2amb-50m2-usd900",
-    },
-  ],
-  "oro-tower": [
-    {
-      source: "Roomix",
-      title: "Alquiler temporal monoambiente en Torre Oro Tower",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-soho-fd72a08f",
-      signature: "oro-tower-mono-45m2-ars950000",
-    },
-  ],
-  "astor-palermo": [
-    {
-      source: "Fauro Propiedades",
-      title: "Torre Astor Palermo - piso 26",
-      url: "https://fauropropiedades.com.ar/propiedad/disponibilidad-02072026-torre-astor-palermo-piso-26--4575181",
-      signature: "astor-palermo-piso26",
-    },
-    {
-      source: "Argenprop",
-      title: "Alquiler anual 2 ambientes en Astor Palermo",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-viejo-2-ambientes--18374070",
-      signature: "astor-palermo-2amb-usd1400",
-    },
-  ],
-  "torre-bella": [
-    {
-      source: "One Brokers",
-      title: "Torre Bella - Guatemala 5155",
-      url: "https://www.onebrokers.com.ar/p/7882002-Departamento-en-Alquiler-en-Palermo-Soho-Guatemala-al-5100",
-      signature: "torre-bella-guatemala-5155",
-    },
-  ],
-  "quo-zapata": [
-    {
-      source: "Kuper Propiedades",
-      title: "Alquiler departamento 2 ambientes QUO Zapata",
-      url: "https://www.kuperpropiedades.com/inmueble/departamento-alquiler-2-ambientes-colegiales-capital-federal-buenos-aires-lp821692",
-      signature: "quo-zapata-2amb-kuper",
-    },
-    {
-      source: "Sambra Propiedades",
-      title: "Zapata al 300 departamento 2 ambientes amoblado",
-      url: "https://www.sambra-propiedades.com.ar/p/6302040-Departamento-en-Alquiler-temporario-en-Palermo-Zapata--al-300-Departamento-2-Ambientes-Belgrano-Amoblado-y-Equipado.-Full-Amenities.",
-      signature: "quo-zapata-2amb-usd950",
-    },
-    {
-      source: "Argenprop",
-      title: "Departamento a estrenar para alquiler en Colegiales",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-colegiales-2-ambientes--19448504",
-      signature: "quo-zapata-2amb-argenprop",
-    },
-  ],
-};
 const getNeighborhoodGroup = (zone: string) => {
-  const normalizedZone = zone.toLowerCase();
+  const normalizedZone = zone
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
-  if (
-    normalizedZone.includes("palermo") ||
-    normalizedZone.includes("cañitas") ||
-    normalizedZone.includes("canitas") ||
-    normalizedZone.includes("botánico") ||
-    normalizedZone.includes("botanico")
-  ) {
-    return "Palermo";
+  if (normalizedZone.includes("santa teresa") || normalizedZone.includes("ycua sati")) {
+    return "Santa Teresa / Ycuá Satí";
   }
-  if (normalizedZone.includes("puerto madero")) return "Puerto Madero";
-  if (normalizedZone.includes("belgrano") || normalizedZone.includes("bajo belgrano")) {
-    return "Belgrano";
+  if (normalizedZone.includes("molas") || normalizedZone.includes("lomas") || normalizedZone.includes("carmelitas")) {
+    return "Molas López / Las Lomas";
   }
-  if (normalizedZone.includes("núñez") || normalizedZone.includes("nunez")) return "Núñez";
-  if (normalizedZone.includes("caballito")) return "Caballito";
-  if (normalizedZone.includes("villa urquiza")) return "Villa Urquiza";
-  if (normalizedZone.includes("villa crespo")) return "Villa Crespo";
-  if (normalizedZone.includes("colegiales")) return "Colegiales";
-  if (normalizedZone.includes("flores")) return "Flores";
-  if (normalizedZone.includes("recoleta")) return "Recoleta";
-  if (normalizedZone.includes("barracas")) return "Barracas";
+  if (normalizedZone.includes("mburucuya") || normalizedZone.includes("trinidad")) {
+    return "Mburucuyá / Trinidad";
+  }
+  if (normalizedZone.includes("villa morra") || normalizedZone.includes("boggiani")) {
+    return "Villa Morra / Boggiani";
+  }
+  if (normalizedZone.includes("las mercedes")) return "Las Mercedes";
+  if (normalizedZone.includes("salvador del mundo")) return "Salvador del Mundo";
 
-  return zone.replace(/\s*\/.*$/, "").replace(/\s+edge$/i, "");
+  return zone.replace(/\s*\/.*$/, "");
 };
 const neighborhoodCounts = buildings.reduce((counts, building: Building) => {
   const neighborhood = getNeighborhoodGroup(building.zone);
@@ -405,24 +63,16 @@ const neighborhoodOptions = [...neighborhoodCounts.entries()]
   )
   .map(([name, count]) => ({ name, count }));
 const getAirbnbListings = (building: Building) => {
-  const listingMap = new Map<string, AirbnbListing>();
+  const listings: AirbnbListing[] = [];
 
-  if (
-    building.airbnb.confirmed &&
-    building.airbnb.url &&
-    !removedAirbnbUrls.has(building.airbnb.url)
-  ) {
-    listingMap.set(building.airbnb.url, {
+  if (building.airbnb.confirmed && building.airbnb.url) {
+    listings.push({
       title: building.airbnb.evidence || `${building.name} Airbnb listing`,
       url: building.airbnb.url,
     });
   }
 
-  for (const listing of additionalAirbnbListingsByBuilding[building.id] ?? []) {
-    if (!removedAirbnbUrls.has(listing.url)) listingMap.set(listing.url, listing);
-  }
-
-  return [...listingMap.values()].map((listing, index, listings) => ({
+  return listings.map((listing, index) => ({
     ...listing,
     label: listings.length === 1 ? "Airbnb" : `Airbnb ${index + 1}`,
   }));
@@ -430,10 +80,6 @@ const getAirbnbListings = (building: Building) => {
 const isDirectRentalUrl = (url: string) => {
   if (!url || url.includes("airbnb.com")) return false;
   if (url.includes("google.com/maps") || url.includes("booking.com")) return false;
-  if (url.includes("zonaprop.com.ar")) return url.includes("/propiedades/");
-  if (url.includes("mercadolibre.com.ar")) {
-    return url.includes("departamento.mercadolibre.com.ar/MLA-");
-  }
   return true;
 };
 const getRentalSignature = (listing: RentalListing) =>
@@ -463,10 +109,6 @@ const getRentalListings = (building: Building) => {
       title: `${building.name} rental source`,
       url: building.rentalEvidence.url,
     });
-  }
-
-  for (const listing of additionalRentalListingsByBuilding[building.id] ?? []) {
-    addListing(listing);
   }
 
   return [...listingMap.values()]
@@ -508,6 +150,7 @@ const mapApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   "";
+const apartmentMapCenter = pageData.mapCenter;
 const apartmentMapData = buildings.map((building) => {
   const airbnbListings = getAirbnbListings(building);
   const rentalListings = getRentalListings(building);
@@ -567,7 +210,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Buenos Aires high-rise apartment buildings" />
+    <meta name="subject" content="Asunción high-rise apartment buildings" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -579,7 +222,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="Buenos Aires apartment buildings, high-rise apartment buildings Buenos Aires, luxury apartments Buenos Aires, Buenos Aires Airbnb buildings"
+      content="Asunción apartment buildings, high-rise apartment buildings Asunción, luxury apartments Asunción, Asunción Airbnb buildings"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -621,10 +264,10 @@ const structuredData = {
       <header class="page-header">
         <a class="home-link" href="/">Nikita Sokolsky</a>
         <div class="headline">
-          <p class="eyebrow">Buenos Aires apartment guide</p>
+          <p class="eyebrow">Asunción apartment guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            A list of Buenos Aires apartment buildings with active rental ads, exact Airbnb matches and map links. It includes verified residential towers with 29 or more floors when a live listing was found.
+            A list of Asunción apartment buildings with active rental ads, exact Airbnb matches and map links. It starts from the local fancy-buildings list and stores the generated data in JSON.
           </p>
         </div>
       </header>
@@ -660,7 +303,7 @@ const structuredData = {
         </label>
       </section>
 
-      <section class="building-list" aria-label="Buenos Aires high-rise apartment buildings">
+      <section class="building-list" aria-label="Asunción high-rise apartment buildings">
         {buildingsWithSort.map((building) => (
           <article
             class={`building-card ${building.airbnbListings.length > 0 ? "is-airbnb" : ""}`}
@@ -705,7 +348,7 @@ const structuredData = {
                 title={building.longTermRentUsd.summary}
               >
                 <span>{formatRent(building.longTermRentUsd.amount)}/mo</span>
-                <span>monthly {building.longTermRentUsd.basis.includes("extrapolated") || building.longTermRentUsd.basis.includes("normalized") ? "estimate" : "rent"}</span>
+                <span>monthly {building.longTermRentUsd.basis.includes("estimate") || building.longTermRentUsd.basis.includes("normalized") ? "estimate" : "rent"}</span>
               </p>
               <p class="address">{building.address}</p>
               <div class="building-links">
@@ -767,7 +410,7 @@ const structuredData = {
           <div
             id="apartment-map"
             class="apartment-map"
-            aria-label="Map with pins for Buenos Aires high-rise apartment buildings"
+            aria-label="Map with pins for Asunción high-rise apartment buildings"
           ></div>
         ) : (
           <p class="map-unavailable">
@@ -779,7 +422,7 @@ const structuredData = {
   </body>
 </html>
 
-<script is:inline define:vars={{ mapApiKey, apartmentMapData }}>
+<script is:inline define:vars={{ mapApiKey, apartmentMapData, apartmentMapCenter }}>
   if (mapApiKey) {
     ((g) => {
       let h;
@@ -826,7 +469,6 @@ const structuredData = {
   const buildingById = new Map(apartmentMapData.map((building) => [building.id, building]));
   const mapElement = document.querySelector("#apartment-map");
   const mapStatus = document.querySelector("#apartment-map-status");
-  const buenosAiresCenter = { lat: -34.595, lng: -58.435 };
   const markerRecords = [];
   let apartmentMap;
   let infoWindow;
@@ -946,7 +588,7 @@ const structuredData = {
     await google.maps.importLibrary("marker");
 
     apartmentMap = new Map(mapElement, {
-      center: buenosAiresCenter,
+      center: apartmentMapCenter,
       clickableIcons: false,
       fullscreenControl: true,
       mapTypeControl: false,
@@ -1155,6 +797,7 @@ const structuredData = {
 
   .availability-toggle {
     display: inline-flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
     margin: 0;
@@ -1221,11 +864,6 @@ const structuredData = {
     text-transform: none;
   }
 
-  .filter-dropdown select:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
-    outline-offset: 2px;
-  }
-
   .building-list {
     display: grid;
     gap: 0.85rem;
@@ -1286,20 +924,10 @@ const structuredData = {
     text-underline-offset: 0.1em;
   }
 
-  .official-building-link:hover {
-    text-decoration-color: currentColor;
-    text-decoration-thickness: 0.11em;
-  }
-
   .building-description,
   .address {
     margin: 0;
     color: var(--text-muted);
-  }
-
-  .building-description {
-    max-width: 43rem;
-    font-size: 1rem;
   }
 
   .building-tags,
@@ -1310,6 +938,47 @@ const structuredData = {
     gap: 0.45rem;
   }
 
+  .building-tags span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.65rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 750;
+  }
+
+  .building-side {
+    justify-items: start;
+  }
+
+  .rent-estimate {
+    display: grid;
+    gap: 0.1rem;
+    margin: 0;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.95rem;
+    background: var(--surface-soft);
+  }
+
+  .rent-estimate span:first-child {
+    color: var(--text);
+    font-size: 1.25rem;
+    font-weight: 850;
+  }
+
+  .rent-estimate span:last-child {
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
   .building-links {
     display: grid;
     min-width: 0;
@@ -1317,87 +986,47 @@ const structuredData = {
     justify-items: start;
   }
 
-  .building-links .link-row {
-    padding-top: 0.5rem;
-    border-top: 1px solid color-mix(in srgb, var(--border), transparent 35%);
-  }
-
-  .building-tags span,
-  .building-links a {
-    width: max-content;
-    max-width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface-soft);
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    font-weight: 800;
-    padding: 0.38rem 0.65rem;
-  }
-
-  .airbnb-link-row,
-  .rental-link-row {
-    width: 100%;
-  }
-
-  .building-tags span {
-    overflow-wrap: anywhere;
-  }
-
-  .building-tags span {
-    width: fit-content;
-  }
-
-  .rent-estimate {
-    display: grid;
-    gap: 0.18rem;
-    margin: 0;
-    padding: 0.75rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    background: var(--surface-soft);
-  }
-
-  .rent-estimate span:first-child {
-    color: var(--text);
-    font-size: clamp(1.75rem, 3vw, 2.4rem);
-    font-weight: 850;
-    letter-spacing: -0.055em;
-    line-height: 0.95;
-  }
-
-  .rent-estimate span:last-child {
-    color: var(--text-muted);
-    font-size: 0.68rem;
-    font-weight: 850;
-    letter-spacing: 0.08em;
-    line-height: 1.15;
-    text-transform: uppercase;
-  }
-
   .building-links a {
     display: inline-flex;
     align-items: center;
     gap: 0.38rem;
-    color: var(--text);
+    min-height: 2rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--link);
+    font-size: 0.82rem;
+    font-weight: 800;
     text-decoration: none;
   }
 
+  .building-links a:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-soft);
+  }
+
+  .airbnb-link-row a {
+    border-color: color-mix(in srgb, var(--gold), var(--border) 45%);
+    background: var(--gold-soft);
+  }
+
   .maps-icon {
-    display: inline-flex;
+    width: 1rem;
+    height: 1rem;
   }
 
   .maps-icon :global(svg) {
-    width: 1rem;
-    height: 1rem;
-    filter: saturate(0.95);
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   .map-section {
     display: grid;
     gap: 1rem;
-    margin-top: clamp(1.25rem, 3vw, 2rem);
-    padding: clamp(1rem, 2.4vw, 1.4rem);
+    margin-top: 1rem;
+    padding: clamp(1rem, 2.2vw, 1.35rem);
   }
 
   .map-copy {
@@ -1406,7 +1035,7 @@ const structuredData = {
   }
 
   .map-copy h2 {
-    font-size: clamp(1.55rem, 2.8vw, 2.35rem);
+    font-size: clamp(1.7rem, 3vw, 2.7rem);
   }
 
   .map-status,
@@ -1416,142 +1045,40 @@ const structuredData = {
   }
 
   .apartment-map {
-    min-height: clamp(23rem, 55vw, 35rem);
-    overflow: hidden;
+    width: 100%;
+    min-height: min(72vh, 38rem);
     border: 1px solid var(--border);
     border-radius: 1rem;
-    background: var(--surface-soft);
+    overflow: hidden;
   }
 
-  @media (max-width: 860px) {
-    .page-header,
+  @media (max-width: 800px) {
     .building-card {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .page {
-      padding: 0.75rem;
-    }
-
-    .page-header {
-      gap: 1rem;
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
-
-    h1 {
-      max-width: 14ch;
-      font-size: clamp(2rem, 8.2vw, 2.75rem);
-    }
-
-    .intro {
-      font-size: 1rem;
-      line-height: 1.45;
-    }
-
-    .availability-toggle {
-      width: 100%;
-      border-radius: 1rem;
-    }
-
-    .filter-dropdown {
-      width: 100%;
-    }
-
-    .building-list {
-      gap: 0.72rem;
-    }
-
-    .building-card {
-      gap: 0.72rem;
-      border-radius: 1.05rem;
-      padding: 0.9rem;
-    }
-
-    .building-title-row {
-      display: grid;
-      grid-template-columns: 2.1rem minmax(0, 1fr);
-      gap: 0.55rem;
-      align-items: start;
-    }
-
-    .building-position {
-      padding-top: 0.2rem;
-      font-size: 0.76rem;
-    }
-
-    .building-card h2 {
-      font-size: clamp(1.35rem, 6.4vw, 1.9rem);
-      line-height: 0.98;
-    }
-
-    .building-description {
-      font-size: 0.95rem;
-      line-height: 1.42;
-    }
-
-    .building-tags {
-      gap: 0.35rem;
-    }
-
-    .building-tags span {
-      font-size: 0.7rem;
-      line-height: 1.15;
-      padding: 0.32rem 0.52rem;
+      grid-template-columns: 1fr;
     }
 
     .building-side {
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-areas:
-        "rent rent"
-        "address address"
-        "links links";
-      gap: 0.5rem 0.7rem;
-      align-items: center;
-      padding-top: 0.72rem;
-      border-top: 1px solid var(--border);
+      justify-items: stretch;
     }
 
     .rent-estimate {
-      grid-area: rent;
-      gap: 0.12rem;
-      padding: 0.55rem 0.62rem;
-      border-radius: 0.82rem;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding: 0.8rem;
     }
 
-    .rent-estimate span:first-child {
-      font-size: 1.55rem;
-    }
-
-    .rent-estimate span:last-child {
-      font-size: 0.58rem;
-    }
-
-    .address {
-      grid-area: address;
-      font-size: 0.9rem;
-      line-height: 1.25;
-    }
-
-    .building-links {
-      grid-area: links;
-      gap: 0.32rem;
-    }
-
+    .availability-toggle,
+    .filter-dropdown,
     .building-links a {
-      min-width: 4.5rem;
-      justify-content: center;
-      font-size: 0.75rem;
-      padding: 0.34rem 0.52rem;
+      width: 100%;
     }
 
-    .map-section {
-      border-radius: 1.05rem;
-      padding: 0.85rem;
-    }
-
-    .apartment-map {
-      min-height: 22rem;
+    .building-title-row {
+      align-items: flex-start;
     }
   }
 </style>
