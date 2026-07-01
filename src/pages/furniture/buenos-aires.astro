@@ -30,6 +30,21 @@ const usdFormatter = new Intl.NumberFormat("en-US", {
 const arsPerUsd = pageData.currency?.arsPerUsd ?? 1449.5799;
 const formatChairPrice = (brand: Brand) => {
   const chairPrice = brand.chairPrice;
+  if (
+    chairPrice &&
+    "displayPrimary" in chairPrice &&
+    typeof chairPrice.displayPrimary === "string" &&
+    chairPrice.displayPrimary.length > 0
+  ) {
+    return {
+      primary: chairPrice.displayPrimary,
+      secondary:
+        "displaySecondary" in chairPrice && typeof chairPrice.displaySecondary === "string"
+          ? chairPrice.displaySecondary
+          : "Online list price",
+    };
+  }
+
   if (chairPrice?.median == null) {
     const samplePending = /sample pending|not sampled/i.test(chairPrice?.note ?? "");
 
