@@ -5,7 +5,7 @@ export const prerender = true;
 
 const pageTitle = pageData.title;
 const pageDescription =
-  "Furniture brands in Buenos Aires with operational Google Maps store locations, addresses, ratings and an all-store map.";
+  "Furniture brands in Buenos Aires plus researched Argentina furniture shops with online chair prices, stock evidence and domestic shipping.";
 const themeColorLight = "#f4efe7";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -14,7 +14,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Brand = (typeof pageData.brands)[number];
 type Store = Brand["stores"][number];
 const brands = pageData.brands;
+const hasManualBaLocation = (brand: { hasPhysicalBaLocation?: boolean }) =>
+  brand.hasPhysicalBaLocation === true;
 const storeCount = brands.reduce((sum, brand) => sum + brand.stores.length, 0);
+const manualBrandCount = brands.filter((brand) => brand.stores.length === 0).length;
+const onlineOnlyBrandCount = brands.filter(
+  (brand) => brand.stores.length === 0 && !hasManualBaLocation(brand),
+).length;
 const formatter = new Intl.NumberFormat("en-US");
 const usdFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -42,7 +48,7 @@ const formatChairPrice = (brand: Brand) => {
     primary: usdFormatter.format(medianUsd),
     secondary:
       chairPrice.sampleSize > 0
-        ? `${chairPrice.sampleSize} chairs sampled online`
+        ? `${chairPrice.sampleSize} ${chairPrice.sampleSize === 1 ? "chair" : "chairs"} sampled online`
         : "Online list price",
   };
 };
@@ -57,7 +63,6 @@ const brandsWithStoreLabels = brands.map((brand: Brand, index: number) => ({
   ...brand,
   stores: sortStoresByReviewCount(brand.stores),
   listPosition: index + 1,
-  storeLabel: `${brand.storeCount} ${brand.storeCount === 1 ? "location" : "locations"}`,
   chairPriceDisplay: formatChairPrice(brand),
 }));
 const googleMapsApiKey =
@@ -71,6 +76,7 @@ const furnitureMapData = brands.flatMap((brand) =>
     brandName: brand.name,
     storeName: store.name,
     category: brand.category,
+    brandSampleSize: brand.chairPrice.sampleSize ?? 0,
     brandHasMultipleBaLocations: brand.storeCount >= 2,
     brandHasFourStarStore: brand.stores.some((store) => (store.rating ?? 0) >= 4),
     address: store.address,
@@ -96,30 +102,34 @@ const structuredData = {
       name: brand.name,
       url: brand.officialUrl,
       description: brand.summary,
-      hasOfferCatalog: {
-        "@type": "OfferCatalog",
-        name: `${brand.name} Buenos Aires locations`,
-        itemListElement: brand.stores.map((store: Store) => ({
-          "@type": "FurnitureStore",
-          name: store.name,
-          sameAs: store.googleMapsUrl,
-          address: store.fullAddress,
-          geo: {
-            "@type": "GeoCoordinates",
-            latitude: store.location.lat,
-            longitude: store.location.lng,
-          },
-          ...(store.rating
-            ? {
-                aggregateRating: {
-                  "@type": "AggregateRating",
-                  ratingValue: store.rating.toFixed(1),
-                  ratingCount: store.reviewCount,
+      ...(brand.stores.length > 0
+        ? {
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: `${brand.name} Buenos Aires locations`,
+              itemListElement: brand.stores.map((store: Store) => ({
+                "@type": "FurnitureStore",
+                name: store.name,
+                sameAs: store.googleMapsUrl,
+                address: store.fullAddress,
+                geo: {
+                  "@type": "GeoCoordinates",
+                  latitude: store.location.lat,
+                  longitude: store.location.lng,
                 },
-              }
-            : {}),
-        })),
-      },
+                ...(store.rating
+                  ? {
+                      aggregateRating: {
+                        "@type": "AggregateRating",
+                        ratingValue: store.rating.toFixed(1),
+                        ratingCount: store.reviewCount,
+                      },
+                    }
+                  : {}),
+              })),
+            },
+          }
+        : {}),
     },
   })),
 };
@@ -190,25 +200,36 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires furniture guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {brands.length} furniture brands from the local notes, filtered to exact Google Maps matches with at least one operational Buenos Aires store or showroom. Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
+            {brands.length} furniture brands: exact Google Maps matches with operational Buenos Aires stores/showrooms, plus {manualBrandCount} manually researched online/showroom additions ({onlineOnlyBrandCount} without a physical BA location) with public chair prices, stock evidence and domestic Argentina shipping. Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
           </p>
         </div>
       </header>
 
       <section class="brand-list" aria-label="Furniture brands in Buenos Aires" data-brand-list>
         <div class="brand-controls" aria-label="Furniture list controls">
-          <label for="brand-sort">Sort by...</label>
-          <select id="brand-sort" name="brand-sort" autocomplete="off">
-            <option value="price" selected>Price</option>
-            <option value="stores">Number of stores</option>
-          </select>
-          <input id="multi-location-only" type="checkbox" autocomplete="off" />
-          <label for="multi-location-only">Only stores with 2+ locations in BA</label>
-          <input id="four-star-brand-only" type="checkbox" autocomplete="off" />
-          <label for="four-star-brand-only">Only brands with at least one 4.0+ rated store</label>
+          <label class="sort-control" for="brand-sort">
+            <span>Sort by</span>
+            <select id="brand-sort" name="brand-sort" autocomplete="off">
+              <option value="price" selected>Price</option>
+              <option value="stores">Number of BA stores</option>
+              <option value="sample-size">Number of sampled chairs</option>
+            </select>
+          </label>
+          <label class="filter-toggle" for="multi-location-only">
+            <input id="multi-location-only" type="checkbox" autocomplete="off" />
+            <span>2+ BA locations</span>
+          </label>
+          <label class="filter-toggle" for="four-star-brand-only">
+            <input id="four-star-brand-only" type="checkbox" autocomplete="off" />
+            <span>4.0+ rated store</span>
+          </label>
+          <label class="filter-toggle" for="three-sampled-chairs-only">
+            <input id="three-sampled-chairs-only" type="checkbox" autocomplete="off" />
+            <span>3+ sampled chairs</span>
+          </label>
         </div>
         <p class="visible-count" data-visible-count>
-          Showing {brands.length} brands / {storeCount} locations
+          Showing {brands.length} brands / {storeCount} BA map locations
         </p>
 
         <div class="brand-row brand-head" aria-hidden="true">
@@ -221,6 +242,7 @@ const structuredData = {
             class="brand-card brand-row"
             data-price-position={brand.listPosition}
             data-store-count={brand.storeCount}
+            data-sample-size={brand.chairPrice.sampleSize ?? 0}
             data-multi-location={brand.storeCount >= 2}
             data-four-star-brand={brand.stores.some((store: Store) => (store.rating ?? 0) >= 4)}
           >
@@ -235,11 +257,11 @@ const structuredData = {
               </div>
               <div class="brand-copy">
                 <p class="summary">{brand.summary}</p>
-                <div class="brand-tags" aria-label={`${brand.name} facts`}>
-                  <span>{brand.category}</span>
-                  <span>{brand.style}</span>
-                  <span>{brand.storeLabel}</span>
-                </div>
+                {brand.stores.length === 0 && !hasManualBaLocation(brand) && (
+                  <div class="brand-tags" aria-label={`${brand.name} facts`}>
+                    <span>online-only</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -261,36 +283,38 @@ const structuredData = {
               )}
             </div>
 
-            <div class="store-list" aria-label={`${brand.name} store locations`}>
-              {brand.stores.map((store: Store) => (
-                <article class="store-card">
-                  <div class="store-heading">
-                    <h3>{store.name}</h3>
-                    <a
-                      class="maps-link"
-                      href={store.googleMapsUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Open ${store.name} on Google Maps`}
-                      title={`Open ${store.name} on Google Maps`}
-                    >
-                      <span class="maps-icon" set:html={mapsIcon} />
-                    </a>
-                  </div>
-                  <p class="address">{store.address}</p>
-                  <p class="rating">
-                    {store.rating ? (
-                      <>
-                        <span class="rating-score">{store.rating.toFixed(1)}</span>
-                        <span class="review-count">{formatter.format(store.reviewCount)} ratings</span>
-                      </>
-                    ) : (
-                      <span class="review-count">Rating not listed</span>
-                    )}
-                  </p>
-                </article>
-              ))}
-            </div>
+            {brand.stores.length > 0 && (
+              <div class="store-list" aria-label={`${brand.name} store locations`}>
+                {brand.stores.map((store: Store) => (
+                  <article class="store-card">
+                    <div class="store-heading">
+                      <h3>{store.name}</h3>
+                      <a
+                        class="maps-link"
+                        href={store.googleMapsUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={`Open ${store.name} on Google Maps`}
+                        title={`Open ${store.name} on Google Maps`}
+                      >
+                        <span class="maps-icon" set:html={mapsIcon} />
+                      </a>
+                    </div>
+                    <p class="address">{store.address}</p>
+                    <p class="rating">
+                      {store.rating ? (
+                        <>
+                          <span class="rating-score">{store.rating.toFixed(1)}</span>
+                          <span class="review-count">{formatter.format(store.reviewCount)} ratings</span>
+                        </>
+                      ) : (
+                        <span class="review-count">Rating not listed</span>
+                      )}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            )}
           </article>
         ))}
       </section>
@@ -298,9 +322,9 @@ const structuredData = {
       <section class="furniture-map-section" aria-labelledby="furniture-map-heading">
         <div class="map-copy">
           <p class="eyebrow">Map</p>
-          <h2 id="furniture-map-heading">All operational store locations</h2>
+          <h2 id="furniture-map-heading">All operational Buenos Aires store locations</h2>
           <p id="furniture-map-status" class="map-status">
-            Showing all {storeCount} Google Maps locations from {brands.length} brands.
+            Showing all {storeCount} Google Maps locations from brands with Buenos Aires stores.
           </p>
         </div>
         {googleMapsApiKey ? (
@@ -363,6 +387,7 @@ const structuredData = {
   const brandSortSelect = document.querySelector("#brand-sort");
   const multiLocationOnlyToggle = document.querySelector("#multi-location-only");
   const fourStarBrandOnlyToggle = document.querySelector("#four-star-brand-only");
+  const threeSampledChairsOnlyToggle = document.querySelector("#three-sampled-chairs-only");
   const visibleCount = document.querySelector("[data-visible-count]");
   const brandCards = brandList ? [...brandList.querySelectorAll(".brand-card")] : [];
   const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
@@ -408,6 +433,13 @@ const structuredData = {
         if (storeDifference !== 0) return storeDifference;
       }
 
+      if (sortMode === "sample-size") {
+        const sampleSizeDifference =
+          getNumericSortValue(b, "sampleSize", 0) - getNumericSortValue(a, "sampleSize", 0);
+
+        if (sampleSizeDifference !== 0) return sampleSizeDifference;
+      }
+
       return aPricePosition - bPricePosition;
     });
 
@@ -420,15 +452,18 @@ const structuredData = {
   const activeFilterDescriptions = () => [
     ...(multiLocationOnlyToggle?.checked ? ["2+ BA locations"] : []),
     ...(fourStarBrandOnlyToggle?.checked ? ["at least one 4.0+ rated store"] : []),
+    ...(threeSampledChairsOnlyToggle?.checked ? ["at least 3 sampled chairs"] : []),
   ];
 
   const cardPassesActiveFilters = (card) =>
     (!multiLocationOnlyToggle?.checked || card.dataset.multiLocation === "true") &&
-    (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true");
+    (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true") &&
+    (!threeSampledChairsOnlyToggle?.checked || getNumericSortValue(card, "sampleSize", 0) >= 3);
 
   const storePassesActiveFilters = (store) =>
     (!multiLocationOnlyToggle?.checked || store.brandHasMultipleBaLocations) &&
-    (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore);
+    (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore) &&
+    (!threeSampledChairsOnlyToggle?.checked || store.brandSampleSize >= 3);
 
   const visibleFurnitureBrands = () => brandCards.filter(cardPassesActiveFilters);
 
@@ -439,7 +474,7 @@ const structuredData = {
 
     const visibleBrands = visibleFurnitureBrands().length;
     const visibleStores = visibleFurnitureStores().length;
-    visibleCount.textContent = `Showing ${visibleBrands} ${visibleBrands === 1 ? "brand" : "brands"} / ${visibleStores} ${visibleStores === 1 ? "location" : "locations"}`;
+    visibleCount.textContent = `Showing ${visibleBrands} ${visibleBrands === 1 ? "brand" : "brands"} / ${visibleStores} BA map ${visibleStores === 1 ? "location" : "locations"}`;
   };
 
   const updateMapStatus = () => {
@@ -449,8 +484,8 @@ const structuredData = {
     const visibleBrands = visibleFurnitureBrands();
     const filterDescriptions = activeFilterDescriptions();
     mapStatus.textContent = filterDescriptions.length > 0
-      ? `Showing ${visibleStores.length} Google Maps locations from ${visibleBrands.length} brands with ${filterDescriptions.join(" and ")}.`
-      : `Showing all ${visibleStores.length} Google Maps locations from ${visibleBrands.length} brands.`;
+      ? `Showing ${visibleStores.length} Buenos Aires Google Maps locations from ${visibleBrands.length} brands with ${filterDescriptions.join(" and ")}.`
+      : `Showing all ${visibleStores.length} Buenos Aires Google Maps locations from brands with local stores.`;
   };
 
   const applyMapFilters = () => {
@@ -481,6 +516,7 @@ const structuredData = {
   brandSortSelect?.addEventListener("change", sortBrandCards);
   multiLocationOnlyToggle?.addEventListener("change", applyBrandFilters);
   fourStarBrandOnlyToggle?.addEventListener("change", applyBrandFilters);
+  threeSampledChairsOnlyToggle?.addEventListener("change", applyBrandFilters);
   applyBrandFilters();
 
   const fitMapToMarkers = (visibleRecords) => {
@@ -697,17 +733,33 @@ const structuredData = {
 
   .brand-controls {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 0.48rem 0.65rem;
-    padding: 0.65rem 0.78rem;
+    gap: 0.48rem;
+    padding: 0.5rem;
     border: 1px solid var(--border);
     border-radius: 0.9rem;
     background: color-mix(in srgb, var(--surface), transparent 18%);
   }
 
-  .brand-controls label {
+  .sort-control,
+  .filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.72rem;
+    background: var(--surface);
+  }
+
+  .sort-control {
+    gap: 0.45rem;
+    padding: 0.22rem 0.24rem 0.22rem 0.6rem;
+  }
+
+  .sort-control span,
+  .filter-toggle span {
     color: var(--text-muted);
     font-size: 0.7rem;
     font-weight: 800;
@@ -716,25 +768,43 @@ const structuredData = {
     text-transform: uppercase;
   }
 
-  .brand-controls input[type="checkbox"] {
+  .filter-toggle {
+    gap: 0.42rem;
+    padding: 0.46rem 0.62rem;
+    cursor: pointer;
+  }
+
+  .filter-toggle:has(input:checked) {
+    border-color: var(--border-strong);
+    background: var(--accent-soft);
+  }
+
+  .filter-toggle input[type="checkbox"] {
     flex: 0 0 auto;
-    width: 1rem;
-    height: 1rem;
+    width: 0.92rem;
+    height: 0.92rem;
     margin: 0;
     accent-color: var(--accent);
   }
 
   .brand-controls select {
-    min-width: 9.5rem;
-    min-height: 2.35rem;
-    padding: 0.5rem 2rem 0.5rem 0.68rem;
-    border: 1px solid var(--border-strong);
-    border-radius: 0.68rem;
-    background: var(--surface);
+    min-width: 11.5rem;
+    min-height: 1.78rem;
+    padding: 0.34rem 2rem 0.34rem 0.55rem;
+    border: 0;
+    border-left: 1px solid var(--border);
+    border-radius: 0.54rem;
+    background: color-mix(in srgb, var(--surface-soft), transparent 42%);
     color: var(--text);
     font: inherit;
     font-size: 0.85rem;
     font-weight: 700;
+  }
+
+  .brand-controls select:focus-visible,
+  .filter-toggle:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .visible-count {
@@ -777,6 +847,10 @@ const structuredData = {
     border-radius: 1.12rem;
     background: var(--surface);
     box-shadow: var(--shadow);
+  }
+
+  .brand-card[data-store-count="0"] {
+    grid-template-areas: "main price";
   }
 
   .brand-main {
@@ -1019,6 +1093,12 @@ const structuredData = {
       padding: 0.78rem;
     }
 
+    .brand-card[data-store-count="0"] {
+      grid-template-areas:
+        "main"
+        "price";
+    }
+
     .chair-price {
       justify-items: start;
       padding-top: 0;
@@ -1034,31 +1114,39 @@ const structuredData = {
     }
 
     .brand-controls {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      justify-content: initial;
-      align-items: center;
-      gap: 0.5rem 0.55rem;
+      gap: 0.42rem;
       padding: 0.62rem;
     }
 
-    .brand-controls label {
+    .sort-control,
+    .filter-toggle {
+      flex: 1 1 12rem;
+      min-width: min(100%, 12rem);
+    }
+
+    .sort-control span,
+    .filter-toggle span {
       color: var(--text);
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0;
       line-height: 1.18;
       text-transform: none;
     }
 
+    .sort-control {
+      flex-basis: 100%;
+      justify-content: space-between;
+    }
+
     .brand-controls select {
       min-width: 0;
-      width: 100%;
+      width: min(100%, 15rem);
       min-height: 2.7rem;
       font-size: 0.92rem;
     }
 
-    .brand-controls input[type="checkbox"] {
+    .filter-toggle input[type="checkbox"] {
       width: 1.05rem;
       height: 1.05rem;
     }

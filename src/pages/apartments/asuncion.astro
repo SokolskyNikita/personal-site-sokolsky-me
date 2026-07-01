@@ -27,7 +27,791 @@ const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
-const maxRentalListingsPerBuilding = 5;
+const maxRentalListingsPerBuilding = 6;
+const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
+  "the-tower": [
+    {
+      title: "Apartment in Asunción, The Tower",
+      url: "https://www.airbnb.com/rooms/1225305278283011311",
+    },
+    {
+      title: "Luxurious apartment in Asuncion, The Tower",
+      url: "https://www.airbnb.com/rooms/918848686056431642",
+    },
+  ],
+  "sky-tower": [
+    {
+      title: "Sky Tower | View+Pool+Gym | Paseo La Galería",
+      url: "https://www.airbnb.com/rooms/1637438522376019175",
+    },
+    {
+      title: "Vivelite SkyTower 702",
+      url: "https://www.airbnb.com/rooms/1348127532702681433",
+    },
+  ],
+  "palmanova-las-mercedes": [
+    {
+      title: "1-bedroom apartment in Palmanova Las Mercedes",
+      url: "https://www.airbnb.com/rooms/1691331595303197202",
+    },
+  ],
+  "miami-tower": [
+    {
+      title: "Welcome to your space in the Miami Tower",
+      url: "https://www.airbnb.com/rooms/1548113553586722271",
+    },
+    {
+      title: "Panorama Luxury Suites Miami Tower",
+      url: "https://www.airbnb.com/rooms/1275439123906501345",
+    },
+  ],
+  "fortaleza-boggiani": [
+    {
+      title: "Apartment in Asunción. Fortaleza Boggiani",
+      url: "https://www.airbnb.com/rooms/1288977311721193186",
+    },
+    {
+      title: "Apartment in the corporate hub of Asunción",
+      url: "https://www.airbnb.com/rooms/1629734491415670987",
+    },
+  ],
+  "palacio-de-los-patos": [
+    {
+      title: "Palacio de los Patos Building Apartment 6",
+      url: "https://www.airbnb.com/rooms/46087603",
+    },
+    {
+      title: "160 m2 category apartment in Palacio de los Patos",
+      url: "https://www.airbnb.com/rooms/948862293791995644",
+    },
+  ],
+  "feel-asuncion": [
+    {
+      title: "Feel Asunción | Pool, Gym & Prime Location",
+      url: "https://www.airbnb.com/rooms/1620455884817247752",
+    },
+    {
+      title: "3-bedroom apartment in the Feel Asunción Building",
+      url: "https://www.airbnb.com/rooms/1052282166795990139",
+    },
+    {
+      title: "Apartment with premium amenities and a great view",
+      url: "https://www.airbnb.com/rooms/1698815692835415637",
+    },
+  ],
+  "petra-tower": [
+    {
+      title: "Premium Apartment in Petra Tower",
+      url: "https://www.airbnb.com/rooms/1567693138703651229",
+    },
+    {
+      title: "Sky Stays Petra Tower | Vida moderna",
+      url: "https://www.airbnb.com/rooms/1567622026967652286",
+    },
+    {
+      title: "Luxury 1BR with City Views | Petra Tower Asunción",
+      url: "https://www.airbnb.com/rooms/1637873012477122517",
+    },
+  ],
+  "forvm-molas-lopez": [
+    {
+      title: "Edificio Forvm Molas Lopez",
+      url: "https://www.airbnb.com/rooms/1081934745618443464",
+    },
+  ],
+  "molas-tower": [
+    {
+      title: "Cozy apartment 2 bedrooms | Top area of Asunción",
+      url: "https://www.airbnb.com/rooms/1486354407281646584",
+    },
+    {
+      title: "Molas Tower 114B",
+      url: "https://www.airbnb.com/rooms/1568211932820383630",
+    },
+    {
+      title: "Loft Molas Apartamento lo mejor de Asunción",
+      url: "https://www.airbnb.com/rooms/1289959004362582109",
+    },
+  ],
+  "the-avenue": [
+    {
+      title: "Elegant, complete and comfortable studio at The Avenue",
+      url: "https://www.airbnb.com/rooms/1570460384900405673",
+    },
+  ],
+  "punto-molas-lopez": [
+    {
+      title: "Punto Molas - Shopping at the Sol",
+      url: "https://www.airbnb.com/rooms/1447266919305407991",
+    },
+  ],
+  "fortaleza-molas-lopez": [
+    {
+      title: "Dpto. nuevo en Asunción, excelente ubicación",
+      url: "https://www.airbnb.com/rooms/1603264211362895527",
+    },
+  ],
+  "home-del-sol": [
+    {
+      title: "Apartment Home del Sol | Pool & Gym",
+      url: "https://www.airbnb.com/rooms/1692907538773536454",
+    },
+    {
+      title: "Home del Sol Building",
+      url: "https://www.airbnb.com/rooms/1181928080222911925",
+    },
+  ],
+  "ventura-carmelitas": [
+    {
+      title: "Bright and comfortable studio in Ventura Carmelitas",
+      url: "https://www.airbnb.com/rooms/1271130534389738919",
+    },
+    {
+      title: "Ventura Carmelitas",
+      url: "https://www.airbnb.com/rooms/1702429178475527624",
+    },
+    {
+      title: "Comfortable apartment in Nuevo Eje Corporativo",
+      url: "https://www.airbnb.com/rooms/1453729145555744576",
+    },
+  ],
+  "life-mariscal": [
+    {
+      title: "Sky Stays at Asuncion Recoleta Bright 1BDRM",
+      url: "https://www.airbnb.com/rooms/1633630293713705481",
+    },
+  ],
+  "life-bruselas": [
+    {
+      title: "Life Bruselas Orange, 1BR, 1BTH Brand new",
+      url: "https://www.airbnb.com/rooms/47015777",
+    },
+  ],
+};
+const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
+  "the-tower": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo amoblado The Tower",
+      url: "https://www.infocasas.com.py/alquilo-amoblado-the-tower/191641577",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo depto amoblado en The Tower",
+      url: "https://www.infocasas.com.py/alquilo-depto-amoblado-en-the-tower/191880812",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento en The Tower amoblado",
+      url: "https://www.infocasas.com.py/alquilo-departamento-en-the-tower-amoblado/192152702",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo depto amoblado en The Tower",
+      url: "https://www.infocasas.com.py/alquilo-depto-amoblado-en-the-tower/193183354",
+    },
+  ],
+  "sky-tower": [
+    {
+      source: "InfoCasas",
+      title: "Departamento en Sky Tower Av. Santa Teresa",
+      url: "https://www.infocasas.com.py/departamento-alquiler-villamorra/193197221",
+    },
+      {
+      source: "TuCasaPy",
+      title: "Sky Tower 2 habitaciones en Ycuá Satí",
+      url: "https://tucasapy.com/propiedad/en-alquiler-departamento-de-2-habitaciones-estilo-moderna-en-barrio-ycua-sati-sky-tower-asuncion-1",
+      signature: "sky-tower-2hab-tucasapy",
+    },
+],
+  "miami-tower": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento Edificio Miami Tower",
+      url: "https://www.infocasas.com.py/alquilo-departamento-edificio-miami-tower/193165573",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo dpto full equipado en el Miami Tower",
+      url: "https://www.infocasas.com.py/alquilo-dpto-full-equipado-en-el-miami-tower/193166514",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Villa Morra, Miami Tower",
+      url: "https://www.infocasas.com.py/departamentoalquilervillamorra/193197350",
+    },
+  ],
+  "fortaleza-boggiani": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler departamento en Fortaleza Boggiani",
+      url: "https://www.infocasas.com.py/departamento-alquiler-mariscal-estigarribia-asuncion-paraguay/193528958",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquiler amplio departamento en Fortaleza Boggiani",
+      url: "https://www.infocasas.com.py/alquiler-amplio-departamento-en-fortaleza-boggiani/192833717",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler en Fortaleza Boggiani",
+      url: "https://www.infocasas.com.py/departamento-alquiler-mariscal-estigarribia-asuncion-paraguay/193543212",
+    },
+  ],
+  "torres-mirador": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler dpto 2 habitaciones Torres Mirador",
+      url: "https://www.infocasas.com.py/alquiler-dpto-2-habitaciones-torres-mirador/190962670",
+    },
+      {
+      source: "MercadoProp",
+      title: "Torres Mirador 1 dormitorio",
+      url: "https://www.mercadoprop.net/py/departamentos/alquiler-departamento-1-dormitorio-santisima-trinidad-12639",
+      signature: "torres-mirador-1dorm-mercadoprop",
+    },
+],
+  "altamira-ycua-sati": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo depto en Edificio Altamira Ycua Satí",
+      url: "https://www.infocasas.com.py/alquilo-depto-en-edificio-altamira-ycua-sati/193650816",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquiler departamento amoblado en Edificio Altamira Ycua Sati",
+      url: "https://www.infocasas.com.py/alquiler-departamento-ycua-sati-asuncion/193244112",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento con servicio de hotel en Altamira Ycua Sati",
+      url: "https://www.infocasas.com.py/departamento-con-servicio-de-hotel-alquiler-ycua-sati-paraguay/193360655",
+    },
+  ],
+  "alfevi-residence": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler loft doble altura en Alfevi Residence",
+      url: "https://www.infocasas.com.py/departamento-alquiler-salvador-del-mundo-asuncion-paraguay/193605982",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler en Alfevi Residence",
+      url: "https://www.infocasas.com.py/departamento-alquiler-salvador-del-mundo-asuncion-paraguay/193603734",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Salvador del Mundo",
+      url: "https://www.infocasas.com.py/departamento-alquiler-salvador-del-mundo-asuncion/193595900",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquiler departamento Alfevi Residence",
+      url: "https://www.infocasas.com.py/salvador-del-mundo-asuncion-paraguay/193822162",
+    },
+  ],
+  "petra-tower": [
+    {
+      source: "InfoCasas",
+      title: "Departamento en Petra Tower",
+      url: "https://www.infocasas.com.py/departamento-en-petra-tower/193250155",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento en alquiler Petra Tower",
+      url: "https://www.infocasas.com.py/departamento-en-alquiler-petra-tower/193154620",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento a estrenar Petra Tower",
+      url: "https://www.infocasas.com.py/departamento-a-estrenar-petra-tower/193315848",
+    },
+    {
+      source: "InfoCasas",
+      title: "Apartment for rent at Petra Tower, 39th floor",
+      url: "https://www.infocasas.com.py/apartment-for-rent-at-petra-tower-39th-floor/193710911",
+    },
+  ],
+  "forvm-molas-lopez": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler en Forvm Molas 2 dormitorios",
+      url: "https://www.infocasas.com.py/alquiler-en-forvm-molas-2-dormitorios/193356905",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquiler en Forvm Molas 2 dormitorios",
+      url: "https://www.infocasas.com.py/alquiler-en-forvm-molas-2-dormitorios/193406577",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento en Forvm Molas López",
+      url: "https://www.infocasas.com.py/alquilo-departamento-en-forvm-molas-lopez/191973741",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento en el Edificio Forvm Molas",
+      url: "https://www.infocasas.com.py/departamento-en-el-edificio-forvm-molas/193425747",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo depto piso 25B Edificio Forvm Molas López",
+      url: "https://www.infocasas.com.py/alquilo-depto-piso-25b-edificio-forvm-molas-lopez/193238721",
+    },
+  ],
+  "molas-tower": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento en Molas Tower, piso 20",
+      url: "https://www.infocasas.com.py/alquilo-departamento-en-molas-tower-piso-20/193132888",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento en Molas Tower",
+      url: "https://www.infocasas.com.py/alquilo-departamento-en-molas-tower/191903199",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquiler Molas Tower departamento amoblado",
+      url: "https://www.infocasas.com.py/alquiler-molas-tower-departamento-amoblado-sobre-av-molas-lopez/193720064",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Las Lomas, Molas Tower",
+      url: "https://www.infocasas.com.py/departamento-alquiler-las-lomas-carmelitas-paraguay/193187097",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento en Molas López, Molas Tower",
+      url: "https://www.infocasas.com.py/departamento-en-molas-lopez/193594827",
+    },
+  ],
+  "the-avenue": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler departamento a estrenar en The Avenue",
+      url: "https://www.infocasas.com.py/alquiler-departamento-a-estrenar-en-the-avenue/193263132",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento de 2 dormitorios en The Avenue",
+      url: "https://www.infocasas.com.py/departamento-de-2-dormitorios-con-2-cochera-en-the-avenue-avda-santa-teresa/193650828",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento en alquiler The Avenue",
+      url: "https://www.infocasas.com.py/departamento-en-alquiler-the-avenue/193299587",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquiler sobre Santa Teresa, The Avenue",
+      url: "https://www.infocasas.com.py/alquiler-sobre-santa-teresa/193639375",
+    },
+  ],
+  "punto-molas-lopez": [
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Las Lomas, Punto Molas",
+      url: "https://www.infocasas.com.py/departamento-alquiler-las-lomas-asuncion/193730804",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento semi amoblado, Punto Molas",
+      url: "https://www.infocasas.com.py/departamento-alquiler-las-lomas-alquilo-departamento-semi-amoblado/193875650",
+    },
+  ],
+  "home-del-sol": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento de 1 habitación Home del Sol",
+      url: "https://www.infocasas.com.py/alquilo-departamento-de-1-habitacion-home-del-sol/192097116",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento a estrenar en Home del Sol",
+      url: "https://www.infocasas.com.py/alquilo-departamento-a-estrenar-en-home-del-sol/192193542",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Paraguay Asunción Manorá",
+      url: "https://www.infocasas.com.py/departamento-alquiler-paraguay-asuncion-manora/191106121",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento amoblado a estrenar en Manorá",
+      url: "https://www.infocasas.com.py/alquilo-departamento-amoblado-a-estrenar-en-manora/191880858",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo dpto a estrenar en Home del Sol",
+      url: "https://www.infocasas.com.py/alquilo-departamento-de-1-hab-full-amoblado-en-fml/193214712",
+    },
+  ],
+  "central-park": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler premium en Central Park",
+      url: "https://www.infocasas.com.py/departamento-alquiler-trinidad-asuncion/193679236",
+    },
+    {
+      source: "InfoCasas",
+      title: "Central Park: alquilo departamento",
+      url: "https://www.infocasas.com.py/central-park-alquilo-departamento/193395817",
+    },
+  ],
+  "life-mariscal": [
+    {
+      source: "InfoCasas",
+      title: "Departamento en Life Mariscal",
+      url: "https://www.infocasas.com.py/departamento-en-life-mariscal/193619101",
+    },
+    {
+      source: "InfoCasas",
+      title: "Edificio Life Mariscal",
+      url: "https://www.infocasas.com.py/edificio-life-mariscal/190974625",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Recoleta, Life Mariscal",
+      url: "https://www.infocasas.com.py/departamento-alquiler-recoleta-paraguay/193029184",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Recoleta Asunción",
+      url: "https://www.infocasas.com.py/departamento-alquiler-recoleta-asuncion/193679935",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Recoleta, Life Mariscal",
+      url: "https://www.infocasas.com.py/departamento-alquiler-recoleta-paraguay/193049685",
+    },
+  ],
+  "edificio-espiritu-santo": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento Edificio Espíritu Santo",
+      url: "https://www.infocasas.com.py/alquilo-departamento-edificio-espiritu-santo/193418918",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Ycuá Satí, Espíritu Santo",
+      url: "https://www.infocasas.com.py/departamento-alquiler-ycua-sati-paraguay/193418903",
+    },
+      {
+      source: "Clasipar",
+      title: "Edificio Espíritu Santo departamento en alquiler",
+      url: "https://clasipar.paraguay.com/inmuebles/departamentos/alquilo-departamento-en-el-edificio-espiritu-santo-avda-santa-teresa-asuncion-2396921",
+      signature: "espiritu-santo-clasipar",
+    },
+],
+  "habitalis-mburucuya": [
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Mburucuyá, Habitalis",
+      url: "https://www.infocasas.com.py/departamento-alquiler-mburucuya-asuncion/193418663",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Habitalis Mburucuyá 2 habitaciones",
+      url: "https://asuncion.estate/pt/asuncion/habitalis-mburucuya-departamento-de-1516899",
+      signature: "habitalis-mburucuya-2hab-asuncion-estate",
+    },
+],
+  "life-bruselas": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler departamento Ycuá Satí, Life Bruselas",
+      url: "https://www.infocasas.com.py/alquiler-departamento-ycua-sati-asuncion/193286241",
+    },
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento amoblado en Ykua Saty",
+      url: "https://www.infocasas.com.py/alquilo-departamento-amoblado-en-ykua-saty/193358308",
+    },
+  ],
+  "life-villa-morra": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento amoblado en Life Villa Morra",
+      url: "https://www.infocasas.com.py/alquilo-departamento-amoblado-en-el-life-villa-mor/192075318",
+    },
+      {
+      source: "RE/MAX",
+      title: "Life Villa Morra departamento amoblado",
+      url: "https://jazmincibils.remax.com.py/es-py/propiedades/departamento/alquiler/recoleta/1411/114006049-39",
+      signature: "life-villa-morra-remax",
+    },
+],
+  "civis-alpha": [
+    {
+      source: "InfoCasas",
+      title: "Civis Alpha, alquilo monoambiente con cochera",
+      url: "https://www.infocasas.com.py/civis-alpha-alquilo-monoambiente-con-cochera/193426335",
+    },
+    {
+      source: "InfoCasas",
+      title: "Departamento alquiler Herrera, Civis Alpha",
+      url: "https://www.infocasas.com.py/departamento-alquiler-herrera-paraguay/193362086",
+    },
+    {
+      source: "InfoCasas",
+      title: "En alquiler departamento a estrenar, Civis Alpha",
+      url: "https://www.infocasas.com.py/departamento-alquiler-general-diaz-paraguay/193182798",
+    },
+  ],
+  eminent: [
+    {
+      source: "InfoCasas",
+      title: "Alquiler de departamento en Edificio Eminent",
+      url: "https://www.infocasas.com.py/alquiler-de-departamento-en-edificio-eminent/192483450",
+      signature: "eminent-infocasas-192483450",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Edificio Eminent full amoblado",
+      url: "https://asuncion.estate/es/asuncion/en-alquiler-departamento-full-1517721",
+      signature: "eminent-full-amoblado-asuncion-estate",
+    },
+],
+  "the-address": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler departamento de lujo a estrenar en The Address",
+      url: "https://www.infocasas.com.py/alquiler-departamento-de-lujo-a-estrenar-en-the-address/193571285",
+      signature: "the-address-infocasas-193571285",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "The Address departamento de lujo",
+      url: "https://asuncion.estate/pt/asuncion/alquiler-departamento-de-lujo-1465291",
+      signature: "the-address-lujo-asuncion-estate",
+    },
+],
+  "jade-park": [
+    {
+      source: "Clasipar",
+      title: "En alquiler departamento de 4 dormitorios en suite Jade Park",
+      url: "https://clasipar.paraguay.com/inmuebles/departamentos/en-alquiler-departamento-de-4-dormitorios-en-suite-jade-park-2062442",
+      signature: "jade-park-clasipar-2062442",
+    },
+      {
+      source: "Instagram",
+      title: "Jade Park 2 habitaciones en alquiler",
+      url: "https://www.instagram.com/p/DTtbDF9Du0L/",
+      signature: "jade-park-2hab-instagram",
+    },
+],
+  "palmanova-las-mercedes": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento en Edificio Palmanova Las Mercedes",
+      url: "https://www.infocasas.com.py/alquilo-departamento-en-edificio-palmanova-las-mercedes/193508676",
+      signature: "palmanova-infocasas-193508676",
+    },
+      {
+      source: "RE/MAX",
+      title: "Palmanova Las Mercedes departamento amoblado",
+      url: "https://monserratlovotrico.remax.com.py/es-py/propiedades/departamento/alquiler/las-mercedes/143096050-14",
+      signature: "palmanova-las-mercedes-remax",
+    },
+],
+  "marquis-villa-morra": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento de 3 dormitorios Marquis Villa Morra",
+      url: "https://www.infocasas.com.py/alquilo-departamento-de-3-dormitorios-marquis-villamorra/192940267",
+      signature: "marquis-villa-morra-infocasas-192940267",
+    },
+      {
+      source: "KW Paraguay",
+      title: "Marquis Villa Morra departamento en alquiler",
+      url: "https://kwparaguay.realestateplatform.com/Departamento-Alquiler-Villa-Morra-2297-1862",
+      signature: "marquis-villa-morra-kw",
+    },
+],
+  "torre-miranda": [
+    {
+      source: "Asuncion Estate",
+      title: "Alquiler de departamento terminados en Torre Miranda",
+      url: "https://asuncion.estate/es/asuncion/alquiler-de-departamento-terminados-1537965",
+      signature: "torre-miranda-asuncion-estate-1537965",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Edificio Miranda semipiso en alquiler",
+      url: "https://asuncion.estate/es/asuncion/alquilo-moderno-semipiso-edificio-1535772",
+      signature: "torre-miranda-semipiso-asuncion-estate",
+    },
+],
+  "palacio-de-los-patos": [
+    {
+      source: "Greenland Propiedades",
+      title: "Alquilo amplio departamento en Palacio de los Patos",
+      url: "https://greenlandprop.com/propiedad/alquilo-departamento/",
+      signature: "palacio-patos-greenland-alquilo",
+    },
+      {
+      source: "NIP",
+      title: "Palacio de los Patos 2 dormitorios",
+      url: "https://nip.com.py/departamento-alquiler-stma-trinidad-asuncion/3302478",
+      signature: "palacio-de-los-patos-2dorm-nip",
+    },
+],
+  "feel-asuncion": [
+    {
+      source: "Home Hunters",
+      title: "Departamento de 2 dormitorios en alquiler Feel Asunción",
+      url: "https://homehunters.com.py/propiedad/departamento-de-2-dormitorios-en-alquiler-feel-asuncion-fotos-referenciales/",
+      signature: "feel-asuncion-homehunters-2dorm",
+    },
+      {
+      source: "Century 21",
+      title: "Feel Asunción 1 dormitorio",
+      url: "https://century21.com.py/propiedad/49096_departamento-en-renta-en-trinidad-asuncion-paraguay",
+      signature: "feel-asuncion-1dorm-century21",
+    },
+],
+  "met-molas-lopez": [
+    {
+      source: "InfoCasas",
+      title: "Alquiler de dpto de 2 dormitorios en MET Molas López",
+      url: "https://www.infocasas.com.py/alquiler-de-dpto-de-2-dormitorios-en-met-molas-lopez/192257403",
+      signature: "met-molas-infocasas-192257403",
+    },
+      {
+      source: "Century 21",
+      title: "MET Molas López 1 dormitorio amoblado",
+      url: "https://century21.com.py/propiedad/48935_alquilo-dpto-1-dormitorio-amoblado-edif-met-molas-lopez",
+      signature: "met-molas-lopez-1dorm-century21",
+    },
+],
+  "molas-1311": [
+    {
+      source: "Homy",
+      title: "Departamento en alquiler Molas 1311",
+      url: "https://homy.com.py/propiedades/departamento-en-alquiler-molas-1311-mburucuya/",
+      signature: "molas-1311-homy",
+    },
+      {
+      source: "RE/MAX",
+      title: "Molas 1311 2 dormitorios",
+      url: "https://www.remax.com.py/en/listings/condo/apartment/for-rent/lease/mburucuya/av-molas-lopez-1311-av-molas-lopez-1311/143098011-319",
+      signature: "molas-1311-2dorm-remax",
+    },
+],
+  "fortaleza-molas-lopez": [
+    {
+      source: "Clasipar",
+      title: "Alquilo departamento Edificio Fortaleza Molas López",
+      url: "https://clasipar.paraguay.com/inmuebles/departamentos/alquilo-departamento-edificio-fortaleza-molas-lopez-asuncion-2901037",
+      signature: "fortaleza-molas-clasipar-2901037",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Fortaleza Molas López 2 dormitorios",
+      url: "https://asuncion.estate/es/asuncion/alquiler-departamento-amoblado-barrio-1411794",
+      signature: "fortaleza-molas-lopez-asuncion-estate",
+    },
+],
+  "urban-molas": [
+    {
+      source: "Asuncion Estate",
+      title: "Departamento premium en alquiler Urban Molas",
+      url: "https://asuncion.estate/pt/asuncion/departamento-premium-en-alquiler-1476426",
+      signature: "urban-molas-asuncion-estate-1476426",
+    },
+      {
+      source: "RE/MAX",
+      title: "Urban Molas departamento premium",
+      url: "https://nellydiaz.remax.com.py/es-py/propiedades/departamento/alquiler/las-lomas-carmelitas/143096050-13",
+      signature: "urban-molas-premium-remax",
+    },
+],
+  "natania-85": [
+    {
+      source: "RE/MAX",
+      title: "Alquilo departamento de 2 dormitorios en Natania 85",
+      url: "https://www.remax.com.py/es-py/propiedades/departamento/alquiler/mburucuya/av-molas-lopez-a-3-cuadras-de-casa-rica-molas-lopez/143014167-89",
+      signature: "natania-85-remax-143014167-89",
+    },
+      {
+      source: "Mercado Libre Inmuebles",
+      title: "Natania 85 2 dormitorios a estrenar",
+      url: "https://inmueble.mercadolibre.com.py/MPY-698044770-alquilo-departamento-de-2-dormitorios-a-estrenar-en-el-edificio-natania-85-sobre-molas-lopez-_JM",
+      signature: "natania-85-2dorm-ml",
+    },
+],
+  "live-boggiani": [
+    {
+      source: "InfoCasas",
+      title: "Alquilo departamento totalmente nuevo en Live Boggiani",
+      url: "https://www.infocasas.com.py/alquilo-departamento-totalmente-nuevo-en-el-edificio-live-boggiani/193065346",
+      signature: "live-boggiani-infocasas-193065346",
+    },
+      {
+      source: "RE/MAX",
+      title: "Live Boggiani 2 dormitorios",
+      url: "https://www.remax.com.py/es-py/propiedades/departamento/alquiler/villa-morra/av-guido-boggiani-y-ri2-de-mayo-edificio-live-boggiani/143063084-87",
+      signature: "live-boggiani-2dorm-remax",
+    },
+],
+  "ventura-carmelitas": [
+    {
+      source: "Clasipar",
+      title: "Alquilo departamento en Ventura Carmelitas Asunción",
+      url: "https://clasipar.paraguay.com/inmuebles/departamentos/alquilo-departamento-en-ventura-carmelitas-asuncion-2363528",
+      signature: "ventura-carmelitas-clasipar-2363528",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Ventura Carmelitas 3 dormitorios",
+      url: "https://asuncion.estate/pt/asuncion/alquiler-departamento-de-dormitorios-1568298",
+      signature: "ventura-carmelitas-3dorm-asuncion-estate",
+    },
+],
+  ancora: [
+    {
+      source: "Century 21",
+      title: "Exclusivo departamento en alquiler Edificio Áncora",
+      url: "https://century21.com.py/propiedad/50726_exclusivo-departamento-en-alquiler-edificio-ancora",
+      signature: "ancora-century21-50726",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Áncora 1 dormitorio",
+      url: "https://asuncion.estate/es/asuncion/alquiler-departamento-ancora-1538258",
+      signature: "ancora-1dorm-asuncion-estate",
+    },
+],
+  "torre-augusta-i": [
+    {
+      source: "RE/MAX",
+      title: "Torre Augusta I departamento en alquiler",
+      url: "https://monserratsosa.remax.com.py/es-py/propiedades/departamento/alquiler/las-lomas-carmelitas/143026206-6",
+      signature: "torre-augusta-i-remax-143026206-6",
+    },
+      {
+      source: "Asuncion Estate",
+      title: "Torre Augusta I departamento en alquiler",
+      url: "https://asuncion.estate/pt/asuncion/departamento-en-alquiler-torre-1535846",
+      signature: "torre-augusta-i-asuncion-estate",
+    },
+],
+  "lomas-1820": [
+    {
+      source: "Greenland Propiedades",
+      title: "Edificio Urban Lomas 1820 departamento en alquiler",
+      url: "https://greenlandprop.com/propiedad/edificio-urban-lomas-1820-urban-lomas-1820/",
+      signature: "lomas-1820-greenland",
+    },
+      {
+      source: "Instagram",
+      title: "Lomas 1820 departamento amoblado",
+      url: "https://www.instagram.com/reel/DH8itKqRZuG/",
+      signature: "lomas-1820-instagram",
+    },
+],
+};
 const getNeighborhoodGroup = (zone: string) => {
   const normalizedZone = zone
     .toLowerCase()
@@ -62,17 +846,46 @@ const neighborhoodOptions = [...neighborhoodCounts.entries()]
       countB - countA || collator.compare(nameA, nameB),
   )
   .map(([name, count]) => ({ name, count }));
+const getCanonicalAirbnbUrl = (url: string) => {
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.hostname.includes("airbnb.")) {
+      parsedUrl.protocol = "https:";
+      parsedUrl.hostname = "www.airbnb.com";
+      return parsedUrl.toString();
+    }
+  } catch {
+    return url;
+  }
+
+  return url;
+};
+const getAirbnbSignature = (url: string) => url.match(/\/rooms\/(\d+)/)?.[1] ?? url;
 const getAirbnbListings = (building: Building) => {
-  const listings: AirbnbListing[] = [];
+  const listingMap = new Map<string, AirbnbListing>();
+  const addListing = (listing: AirbnbListing | null | undefined) => {
+    if (!listing?.url) return;
+
+    const signature = getAirbnbSignature(listing.url);
+    if (listingMap.has(signature)) return;
+
+    listingMap.set(signature, {
+      ...listing,
+      url: getCanonicalAirbnbUrl(listing.url),
+    });
+  };
 
   if (building.airbnb.confirmed && building.airbnb.url) {
-    listings.push({
+    addListing({
       title: building.airbnb.evidence || `${building.name} Airbnb listing`,
       url: building.airbnb.url,
     });
   }
+  for (const listing of additionalAirbnbListingsByBuilding[building.id] ?? []) {
+    addListing(listing);
+  }
 
-  return listings.map((listing, index) => ({
+  return [...listingMap.values()].map((listing, index, listings) => ({
     ...listing,
     label: listings.length === 1 ? "Airbnb" : `Airbnb ${index + 1}`,
   }));
@@ -110,6 +923,9 @@ const getRentalListings = (building: Building) => {
       url: building.rentalEvidence.url,
     });
   }
+  for (const listing of additionalRentalListingsByBuilding[building.id] ?? []) {
+    addListing(listing);
+  }
 
   return [...listingMap.values()]
     .slice(0, maxRentalListingsPerBuilding)
@@ -122,14 +938,6 @@ const priceSortedBuildings = [...buildings].sort((first, second) =>
   first.longTermRentUsd.amount - second.longTermRentUsd.amount ||
   collator.compare(first.name, second.name)
 );
-const isBuiltSince2016 = (built: string) => {
-  const years = [...built.matchAll(/\b(?:19|20)\d{2}\b/g)].map((match) =>
-    Number(match[0])
-  );
-  if (years.length === 0) return false;
-
-  return Math.max(...years) >= 2016;
-};
 const buildingsWithSort = priceSortedBuildings.map((building: Building, index) => {
   const airbnbListings = getAirbnbListings(building);
   const rentalListings = getRentalListings(building);
@@ -137,15 +945,13 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
     ...building,
     airbnbListings,
     rentalListings,
-    hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
-    has20PlusFloors:
-      building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
-    isBuiltSince2016: isBuiltSince2016(building.built),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
+    pricePerTwoBedroomSquareMeter: building.longTermRentUsd.amount / building.approxTwoBedroomAreaSqm.amount,
     listPosition: index + 1,
   };
 });
 const formatRent = (amount: number) => `$${amount.toLocaleString("en-US")}`;
+const formatArea = (amount: number) => `~${amount.toLocaleString("en-US")} m²`;
 const mapApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
@@ -161,11 +967,9 @@ const apartmentMapData = buildings.map((building) => {
     neighborhood: getNeighborhoodGroup(building.zone),
     address: building.address,
     floorsAboveGround: building.floorsAboveGround,
+    rentAmount: building.longTermRentUsd.amount,
+    approxTwoBedroomAreaSqm: building.approxTwoBedroomAreaSqm.amount,
     airbnbConfirmed: airbnbListings.length > 0,
-    has20PlusFloors:
-      building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
-    isBuiltSince2016: isBuiltSince2016(building.built),
-    hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     airbnbListings,
     rentalListings,
     mapUrl: building.googleMapsUrl,
@@ -267,7 +1071,7 @@ const structuredData = {
           <p class="eyebrow">Asunción apartment guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            A list of Asunción apartment buildings with active rental ads, exact Airbnb matches and map links. It starts from the local fancy-buildings list and stores the generated data in JSON.
+            A guide to Asunción apartment towers with 1-bedroom rent estimates, active rental ads, exact Airbnb matches, neighborhood filters and map pins.
           </p>
         </div>
       </header>
@@ -279,18 +1083,6 @@ const structuredData = {
             <input id="airbnb-only" type="checkbox" autocomplete="off" />
             <span>Has Airbnb</span>
           </label>
-          <label for="multiple-offers-only">
-            <input id="multiple-offers-only" type="checkbox" autocomplete="off" />
-            <span>2+ Airbnb or 2+ rental links</span>
-          </label>
-          <label for="twenty-plus-floors-only">
-            <input id="twenty-plus-floors-only" type="checkbox" autocomplete="off" />
-            <span>20+ floors</span>
-          </label>
-          <label for="built-since-2016-only">
-            <input id="built-since-2016-only" type="checkbox" autocomplete="off" />
-            <span>Built since 2016</span>
-          </label>
         </fieldset>
         <label class="filter-dropdown" for="neighborhood-filter">
           <span>Neighborhood</span>
@@ -301,6 +1093,26 @@ const structuredData = {
             ))}
           </select>
         </label>
+        <label class="filter-dropdown sort-dropdown" for="building-sort">
+          <span>Sort by</span>
+          <select id="building-sort" name="sort" autocomplete="off">
+            <option value="price-asc">Price, asc</option>
+            <option value="price-desc">Price, desc</option>
+            <option value="area-desc">Area of a 2BR</option>
+            <option value="price-per-sqm-asc">$$$ per square meter</option>
+          </select>
+        </label>
+        <fieldset class="area-unit-toggle" aria-label="Area unit">
+          <legend>Area unit</legend>
+          <label>
+            <input type="radio" name="area-unit" value="sqm" autocomplete="off" checked />
+            <span>m²</span>
+          </label>
+          <label>
+            <input type="radio" name="area-unit" value="sqft" autocomplete="off" />
+            <span>ft²</span>
+          </label>
+        </fieldset>
       </section>
 
       <section class="building-list" aria-label="Asunción high-rise apartment buildings">
@@ -309,10 +1121,10 @@ const structuredData = {
             class={`building-card ${building.airbnbListings.length > 0 ? "is-airbnb" : ""}`}
             data-building-id={building.id}
             data-airbnb={building.airbnbListings.length > 0}
-            data-multiple-offers={building.hasMultipleRentalOffers}
-            data-twenty-plus-floors={building.has20PlusFloors}
-            data-built-since-2016={building.isBuiltSince2016}
             data-neighborhood={building.filterNeighborhood}
+            data-rent-amount={building.longTermRentUsd.amount}
+            data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
+            data-price-per-sqm={building.pricePerTwoBedroomSquareMeter}
           >
             <div class="building-main">
               <div class="building-title-row">
@@ -343,13 +1155,22 @@ const structuredData = {
               </div>
             </div>
             <div class="building-side">
-              <p
-                class={`rent-estimate confidence-${building.longTermRentUsd.confidence.replace(/[^a-z]/g, "-")}`}
-                title={building.longTermRentUsd.summary}
-              >
-                <span>{formatRent(building.longTermRentUsd.amount)}/mo</span>
-                <span>monthly {building.longTermRentUsd.basis.includes("estimate") || building.longTermRentUsd.basis.includes("normalized") ? "estimate" : "rent"}</span>
-              </p>
+              <div class="building-metrics" aria-label={`${building.name} price and area estimates`}>
+                <p
+                  class={`rent-estimate confidence-${building.longTermRentUsd.confidence.replace(/[^a-z]/g, "-")}`}
+                  title={building.longTermRentUsd.summary}
+                >
+                  <span>{formatRent(building.longTermRentUsd.amount)}/mo</span>
+                  <span>Est. $/month for 1BR</span>
+                </p>
+                <p
+                  class={`area-estimate confidence-${building.approxTwoBedroomAreaSqm.confidence.replace(/[^a-z]/g, "-")}`}
+                  title={building.approxTwoBedroomAreaSqm.summary}
+                >
+                  <span class="area-value" data-area-sqm={building.approxTwoBedroomAreaSqm.amount}>{formatArea(building.approxTwoBedroomAreaSqm.amount)}</span>
+                  <span>approx. 2BR area</span>
+                </p>
+              </div>
               <p class="address">{building.address}</p>
               <div class="building-links">
                 <a
@@ -461,10 +1282,11 @@ const structuredData = {
   }
 
   const airbnbOnlyToggle = document.querySelector("#airbnb-only");
-  const multipleOffersOnlyToggle = document.querySelector("#multiple-offers-only");
-  const twentyPlusFloorsOnlyToggle = document.querySelector("#twenty-plus-floors-only");
-  const builtSince2016OnlyToggle = document.querySelector("#built-since-2016-only");
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
+  const buildingSort = document.querySelector("#building-sort");
+  const buildingList = document.querySelector(".building-list");
+  const areaUnitInputs = [...document.querySelectorAll('input[name="area-unit"]')];
+  const areaValueLabels = [...document.querySelectorAll(".area-value")];
   const apartmentRows = [...document.querySelectorAll(".building-card")];
   const buildingById = new Map(apartmentMapData.map((building) => [building.id, building]));
   const mapElement = document.querySelector("#apartment-map");
@@ -484,16 +1306,82 @@ const structuredData = {
 
   const getCheckboxFilters = () => ({
     airbnbOnly: Boolean(airbnbOnlyToggle?.checked),
-    multipleOffersOnly: Boolean(multipleOffersOnlyToggle?.checked),
-    twentyPlusFloorsOnly: Boolean(twentyPlusFloorsOnlyToggle?.checked),
-    builtSince2016Only: Boolean(builtSince2016OnlyToggle?.checked),
   });
 
   const matchesCheckboxFilters = (building, filters) =>
-    (!filters.airbnbOnly || building.airbnbConfirmed) &&
-    (!filters.multipleOffersOnly || building.hasMultipleRentalOffers) &&
-    (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
-    (!filters.builtSince2016Only || building.isBuiltSince2016);
+    !filters.airbnbOnly || building.airbnbConfirmed;
+
+  const formatAreaLabel = (areaSqm, unit) => {
+    const amount = unit === "sqft" ? Math.round(areaSqm * 10.7639) : Math.round(areaSqm);
+    const suffix = unit === "sqft" ? "ft²" : "m²";
+    return `~${amount.toLocaleString("en-US")} ${suffix}`;
+  };
+
+  const selectedAreaUnit = () =>
+    areaUnitInputs.find((input) => input.checked)?.value ?? "sqm";
+
+  const updateAreaUnits = () => {
+    const unit = selectedAreaUnit();
+    for (const label of areaValueLabels) {
+      const areaSqm = Number(label.dataset.areaSqm);
+      if (Number.isFinite(areaSqm)) label.textContent = formatAreaLabel(areaSqm, unit);
+    }
+  };
+
+  const numericDatasetValue = (row, key) => {
+    const value = Number(row.dataset[key]);
+    return Number.isFinite(value) ? value : 0;
+  };
+
+  const compareRowsByName = (firstRow, secondRow) => {
+    const firstBuilding = buildingById.get(firstRow.dataset.buildingId);
+    const secondBuilding = buildingById.get(secondRow.dataset.buildingId);
+    return String(firstBuilding?.name ?? "").localeCompare(String(secondBuilding?.name ?? ""), "en", {
+      numeric: true,
+      sensitivity: "base",
+    });
+  };
+
+  const compareRowsBySort = (firstRow, secondRow) => {
+    const sortValue = buildingSort?.value ?? "price-asc";
+    const firstRent = numericDatasetValue(firstRow, "rentAmount");
+    const secondRent = numericDatasetValue(secondRow, "rentAmount");
+    const firstArea = numericDatasetValue(firstRow, "twoBedroomArea");
+    const secondArea = numericDatasetValue(secondRow, "twoBedroomArea");
+    const firstPricePerSqm = numericDatasetValue(firstRow, "pricePerSqm");
+    const secondPricePerSqm = numericDatasetValue(secondRow, "pricePerSqm");
+
+    const primarySort =
+      sortValue === "price-desc"
+        ? secondRent - firstRent
+        : sortValue === "area-desc"
+          ? secondArea - firstArea
+          : sortValue === "price-per-sqm-asc"
+            ? firstPricePerSqm - secondPricePerSqm
+            : firstRent - secondRent;
+
+    return primarySort || compareRowsByName(firstRow, secondRow);
+  };
+
+  const sortRows = () => {
+    const sortedRows = [...apartmentRows].sort(compareRowsBySort);
+    if (buildingList) {
+      for (const row of sortedRows) {
+        buildingList.append(row);
+      }
+    }
+    return sortedRows;
+  };
+
+  const updateVisiblePositions = (sortedRows) => {
+    let position = 0;
+    for (const row of sortedRows) {
+      if (row.hidden) continue;
+      position += 1;
+      const positionLabel = row.querySelector(".building-position");
+      if (positionLabel) positionLabel.textContent = `#${position}`;
+    }
+  };
 
   const updateNeighborhoodCounts = () => {
     if (!neighborhoodFilter) return;
@@ -566,6 +1454,7 @@ const structuredData = {
       );
     }
 
+    updateVisiblePositions(sortRows());
     updateMapStatus();
     if (!apartmentMap) return;
 
@@ -635,10 +1524,12 @@ const structuredData = {
     applyFilters();
   };
   airbnbOnlyToggle?.addEventListener("change", applyFilters);
-  multipleOffersOnlyToggle?.addEventListener("change", applyFilters);
-  twentyPlusFloorsOnlyToggle?.addEventListener("change", applyFilters);
-  builtSince2016OnlyToggle?.addEventListener("change", applyFilters);
   neighborhoodFilter?.addEventListener("change", applyFilters);
+  buildingSort?.addEventListener("change", applyFilters);
+  for (const input of areaUnitInputs) {
+    input.addEventListener("change", updateAreaUnits);
+  }
+  updateAreaUnits();
   applyFilters();
   window.addEventListener("pageshow", applyFilters);
   initApartmentMap().catch((error) => {
@@ -795,7 +1686,8 @@ const structuredData = {
     padding: 0.8rem;
   }
 
-  .availability-toggle {
+  .availability-toggle,
+  .area-unit-toggle {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -806,7 +1698,13 @@ const structuredData = {
     border-radius: 0.95rem;
   }
 
-  .availability-toggle legend {
+  .area-unit-toggle {
+    gap: 0.25rem;
+    padding: 0.35rem;
+  }
+
+  .availability-toggle legend,
+  .area-unit-toggle legend {
     margin: 0 0.25rem;
     padding: 0;
     color: var(--text-muted);
@@ -816,6 +1714,10 @@ const structuredData = {
     text-transform: uppercase;
   }
 
+  .area-unit-toggle legend {
+    padding-inline: 0.35rem 0.15rem;
+  }
+
   .availability-toggle input {
     width: 1rem;
     height: 1rem;
@@ -823,7 +1725,8 @@ const structuredData = {
     accent-color: var(--accent);
   }
 
-  .availability-toggle label {
+  .availability-toggle label,
+  .area-unit-toggle label {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -831,6 +1734,35 @@ const structuredData = {
     cursor: pointer;
     font-size: 0.86rem;
     font-weight: 750;
+  }
+
+  .area-unit-toggle label {
+    gap: 0;
+  }
+
+  .area-unit-toggle input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .area-unit-toggle span {
+    border-radius: 999px;
+    color: var(--text-muted);
+    line-height: 1;
+    padding: 0.5rem 0.58rem;
+  }
+
+  .area-unit-toggle input:checked + span {
+    background: var(--accent);
+    color: var(--surface);
+  }
+
+  .area-unit-toggle input:focus-visible + span {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
   }
 
   .filter-dropdown {
@@ -842,6 +1774,10 @@ const structuredData = {
     font-weight: 850;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .sort-dropdown {
+    width: min(100%, 13rem);
   }
 
   .filter-dropdown select {
@@ -862,6 +1798,11 @@ const structuredData = {
     font-weight: 750;
     letter-spacing: 0;
     text-transform: none;
+  }
+
+  .filter-dropdown select:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
   }
 
   .building-list {
@@ -930,53 +1871,17 @@ const structuredData = {
     color: var(--text-muted);
   }
 
+  .building-description {
+    max-width: 43rem;
+    font-size: 1rem;
+  }
+
   .building-tags,
   .link-row {
     display: flex;
     min-width: 0;
     flex-wrap: wrap;
     gap: 0.45rem;
-  }
-
-  .building-tags span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 1.65rem;
-    padding: 0.2rem 0.55rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface-soft);
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    font-weight: 750;
-  }
-
-  .building-side {
-    justify-items: start;
-  }
-
-  .rent-estimate {
-    display: grid;
-    gap: 0.1rem;
-    margin: 0;
-    padding: 0.65rem 0.75rem;
-    border: 1px solid var(--border-strong);
-    border-radius: 0.95rem;
-    background: var(--surface-soft);
-  }
-
-  .rent-estimate span:first-child {
-    color: var(--text);
-    font-size: 1.25rem;
-    font-weight: 850;
-  }
-
-  .rent-estimate span:last-child {
-    color: var(--text-muted);
-    font-size: 0.76rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
   }
 
   .building-links {
@@ -986,47 +1891,117 @@ const structuredData = {
     justify-items: start;
   }
 
+  .building-metrics {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 0.45rem;
+    align-items: stretch;
+  }
+
+  .building-links .link-row {
+    padding-top: 0.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 35%);
+  }
+
+  .building-tags span,
+  .building-links a {
+    width: max-content;
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.38rem 0.65rem;
+  }
+
+  .airbnb-link-row,
+  .rental-link-row {
+    width: 100%;
+  }
+
+  .building-tags span {
+    overflow-wrap: anywhere;
+  }
+
+  .building-tags span {
+    width: fit-content;
+  }
+
+  .rent-estimate,
+  .area-estimate {
+    display: grid;
+    gap: 0.18rem;
+    margin: 0;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  .area-estimate {
+    min-width: 6.4rem;
+    align-content: center;
+    justify-items: start;
+    padding-inline: 0.72rem;
+  }
+
+  .rent-estimate span:first-child {
+    color: var(--text);
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-weight: 850;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+  }
+
+  .area-estimate span:first-child {
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 850;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .rent-estimate span:last-child,
+  .area-estimate span:last-child {
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .area-estimate span:last-child {
+    max-width: 5.25rem;
+    font-size: 0.58rem;
+  }
+
   .building-links a {
     display: inline-flex;
     align-items: center;
     gap: 0.38rem;
-    min-height: 2rem;
-    padding: 0.35rem 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--link);
-    font-size: 0.82rem;
-    font-weight: 800;
+    color: var(--text);
     text-decoration: none;
   }
 
-  .building-links a:hover {
-    border-color: var(--border-strong);
-    background: var(--surface-soft);
-  }
-
-  .airbnb-link-row a {
-    border-color: color-mix(in srgb, var(--gold), var(--border) 45%);
-    background: var(--gold-soft);
-  }
-
   .maps-icon {
-    width: 1rem;
-    height: 1rem;
+    display: inline-flex;
   }
 
   .maps-icon :global(svg) {
-    display: block;
-    width: 100%;
-    height: 100%;
+    width: 1rem;
+    height: 1rem;
+    filter: saturate(0.95);
   }
 
   .map-section {
     display: grid;
     gap: 1rem;
-    margin-top: 1rem;
-    padding: clamp(1rem, 2.2vw, 1.35rem);
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.4vw, 1.4rem);
   }
 
   .map-copy {
@@ -1035,7 +2010,7 @@ const structuredData = {
   }
 
   .map-copy h2 {
-    font-size: clamp(1.7rem, 3vw, 2.7rem);
+    font-size: clamp(1.55rem, 2.8vw, 2.35rem);
   }
 
   .map-status,
@@ -1045,40 +2020,155 @@ const structuredData = {
   }
 
   .apartment-map {
-    width: 100%;
-    min-height: min(72vh, 38rem);
+    min-height: clamp(23rem, 55vw, 35rem);
+    overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 1rem;
-    overflow: hidden;
+    background: var(--surface-soft);
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 860px) {
+    .page-header,
     .building-card {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
-    .building-side {
-      justify-items: stretch;
-    }
-
-    .rent-estimate {
-      width: 100%;
-    }
-  }
-
-  @media (max-width: 640px) {
     .page {
-      padding: 0.8rem;
+      padding: 0.75rem;
     }
 
-    .availability-toggle,
-    .filter-dropdown,
-    .building-links a {
+    .page-header {
+      gap: 1rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    h1 {
+      max-width: 14ch;
+      font-size: clamp(2rem, 8.2vw, 2.75rem);
+    }
+
+    .intro {
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .availability-toggle {
       width: 100%;
+      border-radius: 1rem;
+    }
+
+    .filter-dropdown {
+      width: 100%;
+    }
+
+    .building-list {
+      gap: 0.72rem;
+    }
+
+    .building-card {
+      gap: 0.72rem;
+      border-radius: 1.05rem;
+      padding: 0.9rem;
     }
 
     .building-title-row {
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: 2.1rem minmax(0, 1fr);
+      gap: 0.55rem;
+      align-items: start;
+    }
+
+    .building-position {
+      padding-top: 0.2rem;
+      font-size: 0.76rem;
+    }
+
+    .building-card h2 {
+      font-size: clamp(1.35rem, 6.4vw, 1.9rem);
+      line-height: 0.98;
+    }
+
+    .building-description {
+      font-size: 0.95rem;
+      line-height: 1.42;
+    }
+
+    .building-tags {
+      gap: 0.35rem;
+    }
+
+    .building-tags span {
+      font-size: 0.7rem;
+      line-height: 1.15;
+      padding: 0.32rem 0.52rem;
+    }
+
+    .building-side {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "rent rent"
+        "address address"
+        "links links";
+      gap: 0.5rem 0.7rem;
+      align-items: center;
+      padding-top: 0.72rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .building-metrics {
+      grid-area: rent;
+    }
+
+    .rent-estimate {
+      gap: 0.12rem;
+      padding: 0.55rem 0.62rem;
+      border-radius: 0.82rem;
+    }
+
+    .rent-estimate span:first-child {
+      font-size: 1.55rem;
+    }
+
+    .rent-estimate span:last-child {
+      font-size: 0.58rem;
+    }
+
+    .address {
+      grid-area: address;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .building-links {
+      grid-area: links;
+      gap: 0.32rem;
+    }
+
+    .building-links a {
+      min-width: 4.5rem;
+      justify-content: center;
+      font-size: 0.75rem;
+      padding: 0.34rem 0.52rem;
+    }
+
+    .map-section {
+      border-radius: 1.05rem;
+      padding: 0.85rem;
+    }
+
+    .apartment-map {
+      min-height: 22rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .building-metrics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .area-estimate {
+      min-width: 0;
     }
   }
 </style>

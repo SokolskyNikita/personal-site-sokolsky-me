@@ -19,7 +19,8 @@
     "lastPriceNormalization": "On 2026-06-30, large-format or larger-unit rental evidence was normalized to approximate standard 1BR rents for objective building-by-building price comparison. The original rental URLs remain as source evidence.",
     "lastAirbnbUrlNormalization": "On 2026-06-30, Airbnb URLs were normalized to the https://www.airbnb.com host while preserving room paths and query strings.",
     "lastTallBuildingAudit": "On 2026-06-30, SkyscraperPage and Skyscraper Center were used to audit Buenos Aires residential buildings with 29 or more floors. Missing buildings were added only when BrightData search/scrape found a direct active rental or Airbnb page.",
-    "floorCountSource": "Floor counts were added on 2026-06-30 from SkyscraperPage Buenos Aires index, targeted BrightData Google searches, and direct listing/developer snippets. Null means no reliable total floor count or 20+ floor evidence was found during the audit."
+    "floorCountSource": "Floor counts were added on 2026-06-30 from SkyscraperPage Buenos Aires index, targeted BrightData Google searches, and direct listing/developer snippets. Null means no reliable total floor count or 20+ floor evidence was found during the audit.",
+    "lastTwoBedroomAreaAudit": "On 2026-07-01, Buenos Aires buildings with stored 2-bedroom / 3-ambiente estimates of 133 m2 or higher were rechecked against additional sales-listing search results. Representative estimates were adjusted when the previous value over-weighted terrace-heavy, largest-format, or extrapolated evidence; entries without stronger building-specific 2BR sale evidence were left unchanged."
   },
   "buildings": [
     {
@@ -67,7 +68,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-el-faro-puerto-madero-58634903.html",
         "summary": "Search snippets showed a 2-room El Faro rental around USD 2,900."
       },
-      "floorsAboveGround": 46
+      "floorsAboveGround": 46,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 156,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Instagram listing snippets",
+        "sourceUrl": "https://www.instagram.com/reel/DXRuow3iW3Y/",
+        "summary": "Search snippets for El Faro Towers showed a 3 ambientes Puerto Madero apartment around 155.72 m2; rounded to 156 m2."
+      }
     },
     {
       "id": "chateau-puerto-madero",
@@ -113,7 +122,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-b0a7835b",
         "summary": "A 90 m2 2-room Chateau Puerto Madero listing was visible; price is normalized down to a standard 1BR estimate for comparison."
       },
-      "floorsAboveGround": 50
+      "floorsAboveGround": 50,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 148,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Madero Realty / Mercado Libre / Zonaprop sale listings",
+        "sourceUrl": "https://www.maderorealty.com/p/8080071-Departamento-en-Venta-en-Puerto-Madero-Chateau---3-ambientes--148m2---balcon-y-cochera-Puerto-Madero",
+        "summary": "A fresh sales-listing pass found Chateau Puerto Madero 3-room / 2-bedroom units at 135 m2 covered, 140 m2 and 148 m2 total; 148 m2 is the best direct total-area listing for a representative 2BR format."
+      }
     },
     {
       "id": "le-parc-puerto-madero",
@@ -154,7 +171,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-d56629e2",
         "summary": "Regular search found an available Le Parc 1-bedroom rental at USD 1,650, with comparable listings from USD 1,550 to USD 1,800."
       },
-      "floorsAboveGround": 43
+      "floorsAboveGround": 43,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 135,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Roomix / Mercado Libre",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-b429d848",
+        "summary": "Multiple Le Parc Puerto Madero 3-room listings showed 128-135 m2, with larger variants around 180 m2; 135 m2 is the standard 2BR estimate."
+      }
     },
     {
       "id": "forum-puerto-madero",
@@ -200,7 +225,15 @@
         "sourceUrl": "https://kubito.com.ar/propiedad/excelente-2-ambientes-forum-puerto-madero/",
         "summary": "Exact 2-room Forum result; nearby snippets and marketplace ranges suggested roughly USD 1,600."
       },
-      "floorsAboveGround": 33
+      "floorsAboveGround": 33,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 145,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop / Mercado Libre sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-puerto-madero-q-forum.html",
+        "summary": "Fresh sales results showed Forum 3-room units at about 127 m2 covered, 145 m2, 152 m2 and 165 m2. The prior 165 m2 reflected the upper end; 145 m2 is the representative 2BR total-area estimate."
+      }
     },
     {
       "id": "zencity",
@@ -246,7 +279,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-puerto-madero-2-ambientes-q-zencity.html",
         "summary": "Search snippets showed Zencity 2-room rentals around USD 1,300-2,300; USD 1,800 is the long-term midpoint."
       },
-      "floorsAboveGround": 25
+      "floorsAboveGround": 25,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 120,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "RE/MAX / Mercado Libre / Roomix sale listings",
+        "sourceUrl": "https://www.remax.com.ar/listings/venta-depto-3-amb-en-zencity-puerto-madero",
+        "summary": "Fresh sales results repeatedly showed standard Zencity 3-room / 2-bedroom units around 117.53 m2 total and 117 m2, with another common listing around 130 m2. The prior 170 m2 listing is a terrace-heavy variant, so the representative 2BR estimate was reduced to 120 m2."
+      }
     },
     {
       "id": "the-link-towers",
@@ -292,7 +333,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--16352894",
         "summary": "Multiple snippets showed 2-room The Link Towers rentals around USD 1,800-2,300."
       },
-      "floorsAboveGround": 35
+      "floorsAboveGround": 35,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 122,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Argenprop sale listing",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-puerto-madero-3-ambientes--18542663",
+        "summary": "The Link Towers sale snippets showed 3 ambientes units around 115-122 m2; this uses the 122 m2 Argenprop sale listing rather than extrapolated 2-room evidence."
+      }
     },
     {
       "id": "sls-puerto-madero",
@@ -338,7 +387,15 @@
         "sourceUrl": "https://housfin.com/propiedad/departamento-2-ambientes-en-alquiler-torre-sls-puerto-madero--179073",
         "summary": "Direct snippets ranged from USD 1,700 to USD 3,000 for 2-room SLS units; USD 2,200 is the midpoint I used."
       },
-      "floorsAboveGround": 33
+      "floorsAboveGround": 33,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 105,
+        "basis": "extrapolated from 2-room and 4-room SLS evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Madero Realty",
+        "sourceUrl": "https://housfin.com/propiedad/departamento-2-ambientes-en-alquiler-torre-sls-puerto-madero--179073",
+        "summary": "SLS evidence included 2-room rentals and a 255 m2 4-room unit; a standard 2BR is normalized to about 105 m2."
+      }
     },
     {
       "id": "los-molinos",
@@ -379,7 +436,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-puerto-madero-2-ambientes.html",
         "summary": "Long-term estimate for a smaller unit in the historic Los Molinos conversion."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 100,
+        "basis": "extrapolated from Puerto Madero 2-room and loft-style comparable evidence",
+        "confidence": "low",
+        "source": "Existing rental evidence / BrightData Google",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-puerto-madero-2-ambientes.html",
+        "summary": "Direct 2BR Los Molinos evidence was sparse; historic-conversion 2-room and Puerto Madero 3-room comparables support an approximate 100 m2 2BR."
+      }
     },
     {
       "id": "madero-center",
@@ -423,7 +488,15 @@
         "sourceUrl": "https://housfin.com/propiedad/departamento-2-ambientes-en-alquiler-con-cochera-puerto-madero--218521",
         "summary": "Visible 2-room Madero Center listings were unusually large 133 m2 units around USD 4,000; estimate is normalized to a standard 1BR."
       },
-      "floorsAboveGround": 9
+      "floorsAboveGround": 9,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 200,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Madero Realty / Puerto & Cia / Zonaprop sale snippets",
+        "sourceUrl": "https://www.maderorealty.com/p/6391946-Departamento-en-Alquiler-Venta-en-Puerto-Madero-Madero-Center----3-ambientes---220-m%C2%B2---cochera-y-baulera-",
+        "summary": "Fresh sales results showed Madero Center 3-room / 2-bedroom units around 196.35 m2, 210-223 m2 and 220 m2. Rounded to 200 m2 as the representative estimate rather than anchoring only on the largest direct listing."
+      }
     },
     {
       "id": "alvear-tower",
@@ -467,7 +540,15 @@
         "sourceUrl": "https://www.girgola.com.ar/propiedad/149823_alquiler-departamento-2-ambientes-en-puerto-madero-con-cochera/",
         "summary": "Direct Alvear Tower listing showed USD 3,500 for a 90 m2 2-room unit; estimate is normalized to a standard 1BR."
       },
-      "floorsAboveGround": 55
+      "floorsAboveGround": 55,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 130,
+        "basis": "extrapolated from direct 90 m2 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Girgola",
+        "sourceUrl": "https://www.girgola.com.ar/propiedad/149823_alquiler-departamento-2-ambientes-en-puerto-madero-con-cochera/",
+        "summary": "A direct Alvear Tower 2-room listing showed 90 m2; applying a luxury-tower 2BR layout uplift gives about 130 m2."
+      }
     },
     {
       "id": "lumiere-puerto-madero",
@@ -513,7 +594,15 @@
         "sourceUrl": "https://lionteam.com.ar/propiedad/departamento-2-ambientes-con-gym-sum-parrilla-en-complejo-lumiere-puerto-madero--4561844",
         "summary": "Direct Lumiere Puerto Madero 2-room rental page listed USD 1,200."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 104,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Mercado Libre",
+        "sourceUrl": "https://inmuebles.mercadolibre.com.ar/departamentos/venta/2-dormitorios/capital-federal/puerto-madero/torres-del-yacht-puerto-madero-departamentos-venta",
+        "summary": "Search snippets for Puerto Madero 3-room inventory named Torre Lumiere with a 104 m2 3-room unit."
+      }
     },
     {
       "id": "torres-del-yacht",
@@ -559,7 +648,15 @@
         "sourceUrl": "https://www.maderorealty.com/p/7057102-Departamento-en-Alquiler-en-Puerto-Madero-Torres-del--Yacht---Juana-Manso-al-600---2-ambientes---68m2",
         "summary": "Search snippets ranged from USD 1,800 to USD 2,500 for 2-room units; USD 1,900 is the long-term estimate."
       },
-      "floorsAboveGround": 44
+      "floorsAboveGround": 44,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 105,
+        "basis": "extrapolated from direct 70-77 m2 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Madero Realty / Argenprop",
+        "sourceUrl": "https://www.maderorealty.com/p/7057102-Departamento-en-Alquiler-en-Puerto-Madero-Torres-del--Yacht---Juana-Manso-al-600---2-ambientes---68m2",
+        "summary": "Torres del Yacht 2-room listings showed about 70-77 m2; 2BR units are estimated at about 105 m2."
+      }
     },
     {
       "id": "quartier-del-bajo",
@@ -603,7 +700,15 @@
         "sourceUrl": "https://unitequartier.com/propiedad/excelente-2-ambientes-en-alquiler-con-cochera-quartier-del-bajo--4668821",
         "summary": "Direct 2-room listing showed USD 1,200; furnished variants appeared closer to USD 1,500-1,800."
       },
-      "floorsAboveGround": 37
+      "floorsAboveGround": 37,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 84,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "Existing rental evidence / Inmobrokers",
+        "sourceUrl": "https://unitequartier.com/propiedad/excelente-2-ambientes-en-alquiler-con-cochera-quartier-del-bajo--4668821",
+        "summary": "Existing listing evidence for Quartier del Bajo included a 3-room unit at 84 m2."
+      }
     },
     {
       "id": "concepcion-palermo",
@@ -651,7 +756,15 @@
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3168802876-alquiler-departamento-amoblado-2-ambientes-full-amenities-concepcion-live-palermo-_JM",
         "summary": "Visible exact listings ranged from USD 1,800 to USD 2,400 depending on furnishing and term."
       },
-      "floorsAboveGround": 23
+      "floorsAboveGround": 23,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "Existing rental evidence / RE/MAX",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3168802876-alquiler-departamento-amoblado-2-ambientes-full-amenities-concepcion-live-palermo-_JM",
+        "summary": "A Concepcion Live 3-room listing in the existing evidence showed 70 m2."
+      }
     },
     {
       "id": "torre-nic-baez-600",
@@ -697,7 +810,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas--19475444",
         "summary": "Direct Báez 600 rental result showed USD 1,100."
       },
-      "floorsAboveGround": 9
+      "floorsAboveGround": 9,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct Las Canitas rental evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas--19475444",
+        "summary": "Only smaller direct Baez 600 rental evidence was visible; a standard Las Canitas 2BR tower layout is estimated at 75 m2."
+      }
     },
     {
       "id": "live-hotel-nicaragua-6045",
@@ -744,7 +865,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-d77c40e0",
         "summary": "Direct listing showed USD 1,200 for a 2-room unit at Nicaragua 6045."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from direct 2-room Live Hotel evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-d77c40e0",
+        "summary": "The direct Live Hotel evidence was a 2-room unit; a compact Palermo Hollywood 2BR is estimated at about 70 m2."
+      }
     },
     {
       "id": "le-parc-figueroa-alcorta",
@@ -786,7 +915,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-palermo-chico-con-pileta.html",
         "summary": "Direct 1BR inventory was sparse; estimate is normalized from Palermo Chico and Le Parc rental snippets."
       },
-      "floorsAboveGround": 47
+      "floorsAboveGround": 47,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 213,
+        "basis": "direct 3-room / 2-bedroom sale listing and market-report evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Infobae / Orwel / Zonaprop snippets",
+        "sourceUrl": "https://www.infobae.com/economia/2023/12/30/premium-y-multifaceticos-estos-son-los-6-departamentos-de-tres-ambientes-mas-costosos-de-caba/",
+        "summary": "Fresh searches found Le Parc Figueroa Alcorta 3-room / 2-bedroom evidence at 213 m2 and sale-search snippets around 239 m2; the prior 170 m2 low-confidence extrapolation was too small for this tower's large 2BR format."
+      }
     },
     {
       "id": "juan-francisco-segui-3600",
@@ -832,7 +969,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-chico-2-ambientes--19849165",
         "summary": "Search snippets showed 2-room rentals around Seguí 3600, including USD 850-style references."
       },
-      "floorsAboveGround": 32
+      "floorsAboveGround": 32,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 56,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Argenprop sale listing",
+        "sourceUrl": "https://www.argenprop.com/22707669--departamento-en-venta-en-palermo-chico-3-ambientes--19524216",
+        "summary": "A Juan Francisco Segui 3600 sale listing showed a compact 3 ambientes apartment at 56.3 m2; rounded to 56 m2."
+      }
     },
     {
       "id": "demaria-4700",
@@ -876,7 +1021,15 @@
         "sourceUrl": "https://www.argenprop.com/22725294--departamento-en-alquiler-en-palermo-chico-3-ambientes--19541865",
         "summary": "A 3-room Demaría 4700 rental appeared at USD 1,500; 1BR estimate normalized down."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "direct 3-room listing evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Argenprop",
+        "sourceUrl": "https://www.argenprop.com/22725294--departamento-en-alquiler-en-palermo-chico-3-ambientes--19541865",
+        "summary": "A direct Demaria 4700 3-room rental was found; its exact area was not exposed in the summary, so 75 m2 is used as the normalized 2BR estimate."
+      }
     },
     {
       "id": "gorriti-3600",
@@ -922,7 +1075,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-2-ambientes--19593924",
         "summary": "Direct listing showed USD 850; additional snippets showed USD 700-1,000 style pricing."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 68,
+        "basis": "extrapolated from direct compact 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-2-ambientes--19593924",
+        "summary": "Direct Gorriti 3600 evidence was a compact 2-room listing; a standard 2BR estimate is about 68 m2."
+      }
     },
     {
       "id": "casa-del-angel",
@@ -966,7 +1127,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-barrancas-3-ambientes--19324684",
         "summary": "Search snippets showed 3-room Casa del Ángel around USD 1,900; 1BR estimate normalized down."
       },
-      "floorsAboveGround": 4
+      "floorsAboveGround": 4,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 94,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-belgrano-3-ambientes-q-arcos.html",
+        "summary": "Casa del Angel sale snippets showed 3 ambientes evidence around 94 m2, replacing the broader 100 m2 extrapolation."
+      }
     },
     {
       "id": "torres-de-husares",
@@ -1013,7 +1182,15 @@
         "sourceUrl": "https://yacoub.com.ar/propiedad/h-sares-2255/8041179/",
         "summary": "Direct listing showed ARS 1,400,000; normalized to about USD 1,100."
       },
-      "floorsAboveGround": 15
+      "floorsAboveGround": 15,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct one-bedroom evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Yacoub",
+        "sourceUrl": "https://yacoub.com.ar/propiedad/h-sares-2255/8041179/",
+        "summary": "Only one-bedroom Torres de Husares rental evidence was isolated; a typical Bajo Belgrano 2BR is estimated at 75 m2."
+      }
     },
     {
       "id": "torre-del-virrey",
@@ -1052,7 +1229,15 @@
         "sourceUrl": "https://teslerpropiedades.com/listings/virrey-loreto-y-11-de-septiembre-2/",
         "summary": "No 1BR ad was isolated; estimate normalized from larger tower units and nearby Belgrano Barrancas rentals."
       },
-      "floorsAboveGround": 29
+      "floorsAboveGround": 29,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 140,
+        "basis": "extrapolated from larger Torre del Virrey evidence",
+        "confidence": "low",
+        "source": "Existing rental evidence / Tesler Propiedades",
+        "sourceUrl": "https://teslerpropiedades.com/listings/virrey-loreto-y-11-de-septiembre-2/",
+        "summary": "Torre del Virrey evidence was for much larger units; a 2BR in this Belgrano tower is estimated around 140 m2."
+      }
     },
     {
       "id": "maior-barrancas",
@@ -1096,7 +1281,15 @@
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3197776522-alquiler-departamento-2-ambientes-belgrano-cochera-_JM",
         "summary": "Search snippets showed 70 m2 2-room Maior Barrancas rental evidence; USD price estimated from Belgrano Barrancas market."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 95,
+        "basis": "extrapolated from direct 70 m2 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Mercado Libre / Roomix",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3197776522-alquiler-departamento-2-ambientes-belgrano-cochera-_JM",
+        "summary": "Maior Barrancas snippets showed a 70 m2 2-room unit; a 2BR is estimated around 95 m2."
+      }
     },
     {
       "id": "la-musa-stars",
@@ -1140,7 +1333,15 @@
         "sourceUrl": "https://inmuebles.mercadolibre.com.ar/departamentos/alquiler/la-musa-stars-departamento-alquiler",
         "summary": "Snippets showed La Musa Stars 2-room rentals around ARS 1,350,000 / USD 1,000 equivalent."
       },
-      "floorsAboveGround": 10
+      "floorsAboveGround": 10,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Inmuebles Clarin / Mercado Libre",
+        "sourceUrl": "https://inmuebles.mercadolibre.com.ar/departamentos/alquiler/la-musa-stars-departamento-alquiler",
+        "summary": "La Musa Stars evidence showed 2-room rentals; the 2BR estimate follows comparable Colegiales full-amenity layouts at about 75 m2."
+      }
     },
     {
       "id": "chateau-libertador",
@@ -1184,7 +1385,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-4-ambientes-2-cocheras-en-58907840.html",
         "summary": "Visible Chateau Libertador rentals were larger and much pricier; 1BR estimate normalized from Núñez comparables."
       },
-      "floorsAboveGround": 40
+      "floorsAboveGround": 40,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 130,
+        "basis": "extrapolated from larger Chateau Libertador evidence",
+        "confidence": "low",
+        "source": "Existing rental evidence / Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-4-ambientes-2-cocheras-en-58907840.html",
+        "summary": "Visible Chateau Libertador rentals were mostly larger 4-room units; the 2BR estimate is normalized to about 130 m2."
+      }
     },
     {
       "id": "jardines-del-libertador",
@@ -1228,7 +1437,15 @@
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1663225635-jardines-del-libertador-8540-reservado-2-ambientes-alquiler-amoblado-vigilancia-24hs-temporario-_JM",
         "summary": "Exact snippets showed 2-room units around USD 900-980."
       },
-      "floorsAboveGround": 15
+      "floorsAboveGround": 15,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct 2-room and Airbnb 2BR evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Zonaprop / Airbnb",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1663225635-jardines-del-libertador-8540-reservado-2-ambientes-alquiler-amoblado-vigilancia-24hs-temporario-_JM",
+        "summary": "Direct 2-room rentals and exact 2BR Airbnb evidence support an approximate 75 m2 2BR layout."
+      }
     },
     {
       "id": "green-haus",
@@ -1270,7 +1487,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-duplex-alquiler-villa-urquiza-con-living-comedor-2-ambientes-hasta-5-anos-orden-precio-ascendente.html",
         "summary": "Direct exact snippets were present but price needed normalization from Villa Urquiza full-amenity comparables."
       },
-      "floorsAboveGround": 23
+      "floorsAboveGround": 23,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Tizado sale listing",
+        "sourceUrl": "https://tizado.com/ficha/departamento-venta-3-ambientes-villa-urquiza-capital-federal-buenos-aires-lp823310",
+        "summary": "A Green Haus sale listing showed a 3 ambientes unit at 85.09 m2; rounded to 85 m2."
+      }
     },
     {
       "id": "casa-ho",
@@ -1316,7 +1541,15 @@
         "sourceUrl": "https://www.bullano.com.ar/departamentos/ficha/holmberg-2770-12167.html",
         "summary": "Exact Casa HO rental pages were found, but visible snippets did not expose a stable USD price."
       },
-      "floorsAboveGround": 9
+      "floorsAboveGround": 9,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Mercado Libre / Bullano",
+        "sourceUrl": "https://www.bullano.com.ar/departamentos/ficha/holmberg-2770-12167.html",
+        "summary": "Casa HO evidence showed 2-room units; a standard 2BR in the building is estimated around 75 m2."
+      }
     },
     {
       "id": "ceretti-tower",
@@ -1355,7 +1588,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-villa-urquiza-423406b4",
         "summary": "Exact listing evidence found; USD price estimated from Villa Urquiza full-amenity 2-room rentals."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from direct 2-room evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-villa-urquiza-423406b4",
+        "summary": "Direct Ceretti Tower evidence was for a 2-room unit; the 2BR estimate is about 70 m2."
+      }
     },
     {
       "id": "torre-las-plazas",
@@ -1399,7 +1640,15 @@
         "sourceUrl": "https://www.remax.com.ar/listings/alquiler-2-ambientes-v-urquiza-cochera-seguridad",
         "summary": "Exact listing evidence found; USD estimate follows Villa Urquiza full-amenity market."
       },
-      "floorsAboveGround": 11
+      "floorsAboveGround": 11,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from direct 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / RE/MAX",
+        "sourceUrl": "https://www.remax.com.ar/listings/alquiler-2-ambientes-v-urquiza-cochera-seguridad",
+        "summary": "Direct Torre Las Plazas evidence was a 2-room rental with parking/security; a 2BR is estimated around 70 m2."
+      }
     },
     {
       "id": "torres-caballito-nuevo",
@@ -1445,7 +1694,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-caballito-2-ambientes--18545571",
         "summary": "Direct 2-room listing showed ARS 950,000 plus ARS 280,000 expenses; USD estimate normalized for comparison."
       },
-      "floorsAboveGround": 34
+      "floorsAboveGround": 34,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 86,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / sale listing snippets",
+        "sourceUrl": "https://www.inmobusqueda.com.ar/departamento-venta-enbarrio-caballito-en-capital-federal-pagina-19.html",
+        "summary": "Sales snippets for Torres Caballito Nuevo showed 3 ambientes units around 77-86 m2; using the 86 m2 exact-building snippet."
+      }
     },
     {
       "id": "row-hidalgo",
@@ -1489,7 +1746,15 @@
         "sourceUrl": "https://www.cuno.com.ar/p/6163676-Departamento-en-Alquiler-en-Caballito-Hidalgo-al-700",
         "summary": "Search snippets showed Row Hidalgo 2-room rentals, with USD/ARS equivalents around USD 900-1,100."
       },
-      "floorsAboveGround": 10
+      "floorsAboveGround": 10,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 81,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / Row Hidalgo sale snippets",
+        "sourceUrl": "https://www.instagram.com/p/DUIl69PkvQP/",
+        "summary": "Row Hidalgo sale snippets showed a 3 ambientes unit at 80.95 m2; rounded to 81 m2."
+      }
     },
     {
       "id": "avellaneda-260",
@@ -1533,7 +1798,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-caballito-41e706b7",
         "summary": "Roomix and regular search showed a 45 m2 2-room temporary rental at Avellaneda 260 for USD 1,100."
       },
-      "floorsAboveGround": 24
+      "floorsAboveGround": 24,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 65,
+        "basis": "extrapolated from direct 45 m2 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-caballito-41e706b7",
+        "summary": "A direct Avellaneda 260 2-room listing showed 45 m2; a compact 2BR is estimated around 65 m2."
+      }
     },
     {
       "id": "torre-centenario-diaz-velez-4924",
@@ -1579,7 +1852,15 @@
         "sourceUrl": "https://www.xn--zonadueo-j3a.com/alquiler-departamento-premium-2-ambientes-con-cochera-torre-centenario-100014844",
         "summary": "Exact listing found, but snippet did not expose a stable USD price; estimated from Caballito 2-room rentals."
       },
-      "floorsAboveGround": 37
+      "floorsAboveGround": 37,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 79,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "RE/MAX sale listing",
+        "sourceUrl": "https://www.remax.com.ar/listings/venta-3-amb-en-parque-centenario-apto-credito",
+        "summary": "Sale evidence near Torre Centenario showed a 3 ambientes apartment at 79 m2, replacing the prior extrapolated 70 m2."
+      }
     },
     {
       "id": "palmera-crespo",
@@ -1623,7 +1904,15 @@
         "sourceUrl": "https://www.mob.ar/propiedad/departamento-2-ambientes-villa-crespo-20372",
         "summary": "Multiple exact 2-room Palmera Crespo rental results were found; USD estimate follows furnished/amenity pricing."
       },
-      "floorsAboveGround": 12
+      "floorsAboveGround": 12,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 83,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Lanven sale listing",
+        "sourceUrl": "https://lanven.com.ar/ficha-propiedad.php?id=4343344",
+        "summary": "A Palmera Crespo sale listing described a 3 ambientes apartment at 83 m2."
+      }
     },
     {
       "id": "acevedo-716",
@@ -1664,7 +1953,15 @@
         "sourceUrl": "https://ar.airbnb.com/rooms/668139122215341242",
         "summary": "Exact Acevedo716 Airbnb pages were found, but no long-term 1-bedroom rental page was isolated."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 55,
+        "basis": "extrapolated from compact apart-hotel Airbnb evidence",
+        "confidence": "low",
+        "source": "Existing short-stay evidence / Airbnb",
+        "sourceUrl": "https://www.airbnb.com/rooms/668139122215341242",
+        "summary": "Acevedo716 is mostly compact short-stay inventory; a 2BR equivalent is estimated conservatively around 55 m2."
+      }
     },
     {
       "id": "solares-de-montes-de-oca",
@@ -1708,7 +2005,15 @@
         "sourceUrl": "https://www.makpropiedades.com/propiedad.php?id=757",
         "summary": "Exact 2-room listing evidence found; USD estimate follows Barracas complex rentals."
       },
-      "floorsAboveGround": 31
+      "floorsAboveGround": 31,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 74,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-barracas-3-ambientes-q-500.html",
+        "summary": "Solares de Montes de Oca sale snippets showed a 3 ambientes unit at 74 m2; rental snippets also showed about 72 m2."
+      }
     },
     {
       "aliases": [],
@@ -1759,7 +2064,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-palermo-con-solarium.html",
         "evidence": "Search snippets for Quartier Dorrego units mention \"losa radiante con termostato individual\"."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 80,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop / Roomix",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-palermo-q-dorrego.html",
+        "summary": "Quartier Dorrego 3-room snippets ranged from about 73 m2 to larger 103 m2 layouts; 80 m2 is used for a representative 2BR."
+      }
     },
     {
       "aliases": [],
@@ -1810,7 +2123,15 @@
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-2863885688-departamento-en-venta-de-2-ambientes-en-palermo-_JM",
         "evidence": "Quo Swim unit snippets mention the apartment is calefaccionado por losa radiante and has losa radiante with split A/C."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 63,
+        "basis": "direct compact 3-room / 2-bedroom snippet evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / social snippets",
+        "sourceUrl": "https://www.instagram.com/p/DL2wBRztj3b/",
+        "summary": "Search snippets showed a compact 3-room / 2-bedroom Quo Swim-style layout around 62.5 m2."
+      }
     },
     {
       "aliases": [],
@@ -1861,7 +2182,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-estandar-alquiler-las-canitas-con-vestidor-mas-de-1-bano-publicado-hace-menos-de-15-dias.html",
         "evidence": "Quartier del Polo snippets at República de Eslovenia mention \"Agua caliente y calefacción por losa radiante mediante caldera individual\"."
       },
-      "floorsAboveGround": 19
+      "floorsAboveGround": 19,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct 2-room Quartier del Polo evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Selectia / Argenprop",
+        "sourceUrl": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-amoblado-cochera-y-amenities-quartier-del-polo--4666365",
+        "summary": "Direct 2-room Quartier del Polo evidence was available; comparable Las Canitas 2BR layouts support about 75 m2."
+      }
     },
     {
       "aliases": [],
@@ -1912,7 +2241,15 @@
         "sourceUrl": "https://www.icortese.com/p/3789307-Departamento-en-Venta-en-Palermo-Fray-Justo-Santa-Mar%C3%ADa-de--Oro-al-2200",
         "evidence": "A Fray Justo Santa María de Oro al 2200 listing says \"Calefacción individual por piso radiante\" and marks \"Suelo Radiante\"."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 100,
+        "basis": "extrapolated from large-format 75 m2 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Inmoclick / Zonaprop",
+        "sourceUrl": "https://inmoclick.com/250375-soler-pujol-negocios-inmobiliarios/inmuebles/152/ficha/departamento-en-alquiler-en-fray-justo-santa-maria-de-oro-al-2200",
+        "summary": "Visible Oro Tower evidence included a 75 m2 2-room unit; a 2BR estimate is about 100 m2."
+      }
     },
     {
       "aliases": [],
@@ -1963,7 +2300,15 @@
         "sourceUrl": "https://www.inmuebles.clarin.com/departamento-en-venta-en-botanico-3-ambientes--18096075",
         "evidence": "A Torre Vista Botánico listing says \"Losa radiante con regulacion individual\"."
       },
-      "floorsAboveGround": 35
+      "floorsAboveGround": 35,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 97,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-botanico-palermo-con-balcon-1-ambiente-hasta-5-anos.html",
+        "summary": "Torre Vista Botanico sale snippets showed 3 ambientes Palermo Botanico inventory around 97 m2."
+      }
     },
     {
       "aliases": [],
@@ -2014,7 +2359,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-soho-con-sum-a-estrenar.html",
         "evidence": "DOME Green Soho snippets for Av. Córdoba 4340 mention \"losa radiante\" and \"sistema de calefacción es por losa radiante\"."
       },
-      "floorsAboveGround": 15
+      "floorsAboveGround": 15,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from DOME-specific 2-room signals",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Mercado Libre / Zonaprop",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3347248686-alquiler-2-ambientes-con-balcon-en-dome-green-soho-_JM",
+        "summary": "DOME Green Soho evidence centered on 2-room listings; a typical 2BR in the project is estimated around 70 m2."
+      }
     },
     {
       "aliases": [],
@@ -2065,7 +2418,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-nuevo-mas-de-2-banos-mas-de-5-ambientes.html",
         "evidence": "Torre Decó Palermo Nuevo snippets mention \"Calefacción por losa radiante (caldera individual)\"."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 110,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "IZR sale listing",
+        "sourceUrl": "https://www.izr.com.ar/propiedades-venta-departamento-palermo-nuevo-2192453",
+        "summary": "A Torre Deco Palermo Nuevo sale listing showed a 3 ambientes / 2-bedroom apartment at 110 m2."
+      }
     },
     {
       "aliases": [],
@@ -2116,7 +2477,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-con-pileta-dueno-directo.html",
         "evidence": "Palacio Bellini snippets at República Árabe Siria 3065 mention \"losa radiante individual con termostato\" and \"losa radiante central\"."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 116,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-chico-q-bellini.html",
+        "summary": "Palacio Bellini sale snippets repeatedly showed a 3 ambientes apartment at 116 m2."
+      }
     },
     {
       "aliases": [],
@@ -2167,7 +2536,15 @@
         "sourceUrl": "https://fauropropiedades.com.ar/propiedad/disponibilidad-02072026-torre-astor-palermo-piso-26--4575181",
         "evidence": "Torre Astor Palermo listings at Beruti 3351 mention \"Losa radiante general\"."
       },
-      "floorsAboveGround": 28
+      "floorsAboveGround": 28,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/palermo-q-astor.html",
+        "summary": "Astor Palermo search results showed a 3-room Beruti 3351 listing at 70 m2 total."
+      }
     },
     {
       "aliases": [],
@@ -2218,7 +2595,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/emprendimientos-palermo-soho-con-lavadero-4-ambientes.html",
         "evidence": "Torre Bella snippets for Guatemala 5155 mention \"losa radiante\", \"losa radiante central\" and \"losa radiante individual\"."
       },
-      "floorsAboveGround": 47
+      "floorsAboveGround": 47,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 120,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Torre Bella sale snippets",
+        "sourceUrl": "https://www.instagram.com/p/DXMqxxFDSLy/",
+        "summary": "Torre Bella sale snippets showed a 3 ambientes unit around 120 m2, replacing the earlier project-based extrapolation."
+      }
     },
     {
       "aliases": [],
@@ -2269,7 +2654,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-2-ambientes--19618810",
         "evidence": "A 2-room Mirabilia Palermo rental at Humboldt al 2000 explicitly says \"Calefacción por losa radiante\"."
       },
-      "floorsAboveGround": 47
+      "floorsAboveGround": 47,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 78,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-palermo-q-mirabilia.html",
+        "summary": "Multiple Mirabilia Palermo 3-room snippets showed 78 m2 total, around 72 m2 covered plus balcony."
+      }
     },
     {
       "aliases": [],
@@ -2320,7 +2713,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-botanico-palermo-4-ambientes-hasta-5-anos.html",
         "evidence": "OM Botánico snippets for Aráoz 2532 mention \"Calefacción por losa radiante con regulación individual\"."
       },
-      "floorsAboveGround": 23
+      "floorsAboveGround": 23,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Argenprop / Zonaprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-botanico-3-ambientes--18995815",
+        "summary": "OM Botanico 3-room search results showed 75 m2 listings, with some larger variants around 80-93 m2."
+      }
     },
     {
       "aliases": [],
@@ -2371,7 +2772,15 @@
         "sourceUrl": "https://www.inmuebles.clarin.com/departamento-en-alquiler-temporal-en-palermo-soho-3-ambientes--19393930",
         "evidence": "Town House Soho II snippets for Paraguay 4700 say \"losa radiante electrica de control individual\"."
       },
-      "floorsAboveGround": 28
+      "floorsAboveGround": 28,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/inmuebles-palermo-soho-3-ambientes-mas-de-1-garage.html",
+        "summary": "Town House Soho II sale snippets showed a 3 ambientes apartment at about 85 m2."
+      }
     },
     {
       "aliases": [],
@@ -2422,7 +2831,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-torre-stay-departamento-de-3-ambientes-con-cochera-58242368.html",
         "evidence": "A Torre Stay listing at Sinclair 3070 says \"Calefacción por losa radiante con regulación individual\"."
       },
-      "floorsAboveGround": 24
+      "floorsAboveGround": 24,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 99,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Roomix sale listing snippet",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-nuevo-feaa2eff",
+        "summary": "A Torre Stay sale listing snippet showed a 3 ambientes unit at 99 m2."
+      }
     },
     {
       "aliases": [],
@@ -2473,7 +2890,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-palermo-viejo-con-pileta-a-estrenar.html",
         "evidence": "Torre Lumière Palermo snippets at Concepción Arenal 2445 mention \"calefacción por losa radiante\" and \"regulable por departamento\"."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 127,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / sale listing snippets",
+        "sourceUrl": "https://www.instagram.com/p/CU7TcnNL-Ns/",
+        "summary": "Torre Lumiere Palermo sale snippets showed a 3 ambientes unit with 127 m2 built area and a larger terrace total; using the built-area figure for the estimate."
+      }
     },
     {
       "aliases": [],
@@ -2524,7 +2949,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-palermo-nuevo-4-ambientes--15915913",
         "evidence": "A Torre Quantum Palermo listing at Cerviño al 4600 says \"Calefacción mediante losa radiante\"."
       },
-      "floorsAboveGround": 27
+      "floorsAboveGround": 27,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 110,
+        "basis": "extrapolated from 4-room and nearby 2-room Quantum evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Zonaprop / Argenprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-estandar-alquiler-palermo-nuevo-con-laundry-4-ambientes-mas-de-1-garage.html",
+        "summary": "Torre Quantum Palermo evidence included 4-room and nearby 2-room signals; a representative 2BR is estimated around 110 m2."
+      }
     },
     {
       "aliases": [],
@@ -2575,7 +3008,15 @@
         "sourceUrl": "https://mylovelyapart.com/es/properties/panoramic-soho-2-bedroom-in-palermo-uno-2-2/",
         "evidence": "A Torre Palermo Uno listing at Uriarte 2363 says \"calefacción por suelo radiante\"."
       },
-      "floorsAboveGround": 33
+      "floorsAboveGround": 33,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "Existing rental evidence / My Lovely Apart",
+        "sourceUrl": "https://mylovelyapart.com/es/properties/panoramic-soho-2-bedroom-in-palermo-uno-2-2/",
+        "summary": "Existing Torre Palermo Uno evidence showed a furnished 3-room / 85 m2 listing."
+      }
     },
     {
       "aliases": [],
@@ -2626,7 +3067,15 @@
         "sourceUrl": "https://www.argenprop.com/departamentos/alquiler/capital-federal/4-ambientes/dolares-hasta-55000?con-ambiente-cocina&con-losaradiante",
         "evidence": "Torre Sinclair rental snippets at Sinclair 3000 appear under losa-radiante filters and mention \"Losa radiante\"."
       },
-      "floorsAboveGround": 23
+      "floorsAboveGround": 23,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 79,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-semipiso-q-sinclair.html",
+        "summary": "Torre Sinclair sale snippets showed 3 ambientes inventory around 79 m2 rather than the previous larger-unit extrapolation."
+      }
     },
     {
       "aliases": [],
@@ -2677,7 +3126,15 @@
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3215634488-departamento-en-alquiler-temporal-en-palermo-hollywood-_JM",
         "summary": "Temporary-rental snippets showed a 2-room Torre Nic Hollywood unit around USD 1,500; treated as a furnished monthly reference rather than a standard unfurnished long-term rent."
       },
-      "floorsAboveGround": 24
+      "floorsAboveGround": 24,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "extrapolated from direct 60 m2 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Mercado Libre",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3215634488-departamento-en-alquiler-temporal-en-palermo-hollywood-_JM",
+        "summary": "Torre Nic Hollywood direct evidence showed a 60 m2 2-room unit; a 2BR is estimated around 85 m2."
+      }
     },
     {
       "aliases": [],
@@ -2728,7 +3185,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-48751687",
         "summary": "Direct 2-room Torre Promenade listing showed USD 1,100 plus expensas."
       },
-      "floorsAboveGround": 35
+      "floorsAboveGround": 35,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct 2-room Torre Promenade evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-48751687",
+        "summary": "Direct Torre Promenade evidence was a 2-room listing; a 2BR estimate is about 75 m2."
+      }
     },
     {
       "aliases": [],
@@ -2779,7 +3244,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-q-torre-deco.html",
         "summary": "Direct 2-room Torre Deco de Seguí snippets showed USD 1,300-1,600 with parking; lower visible value used as the 1-bedroom reference."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 69,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-q-torre-deco.html",
+        "summary": "Torre Deco de Segui sale snippets showed 3 ambientes inventory around 69 m2."
+      }
     },
     {
       "aliases": [],
@@ -2830,7 +3303,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-soho-72e6cf83",
         "summary": "Visible Solar Soho rental evidence was a 3-room unit around USD 1,800; estimate normalizes down for a 1-bedroom unit."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "direct 3-room listing evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-soho-72e6cf83",
+        "summary": "A direct Solar Soho 3-room rental was found; the representative 2BR estimate is about 75 m2."
+      }
     },
     {
       "aliases": [],
@@ -2881,7 +3362,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/alquiler-2-ambientes-q-zapata.html",
         "summary": "Exact 2-room Quo Zapata price was not exposed in accessible snippets; a furnished 3-room signal around USD 2,500 and nearby Quo rentals were normalized to a 1-bedroom estimate."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 51,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/3-ambientes-q-zapata.html",
+        "summary": "Quo Zapata sale snippets showed compact 3 ambientes units at about 51 m2."
+      }
     },
     {
       "id": "be-plaza",
@@ -2934,7 +3423,15 @@
         "sourceUrl": "https://inmoup.com.ar/310197-moderna",
         "evidence": "Search results for Be Plaza at Santa Fe and Dorrego mention calefacción central por losa radiante, pool and gym amenities."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-palermo-3-ambientes--19558559",
+        "summary": "Torre Be Plaza 3-room listing evidence showed 90 m2 with 2 bedrooms and 2 baths."
+      }
     },
     {
       "id": "terrazas-al-polo",
@@ -2987,7 +3484,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-1-ambientes-las-caitas-5a8aee5b",
         "evidence": "Rental page and sale snippets for Terrazas al Polo mention losa radiante, pileta and gimnasio."
       },
-      "floorsAboveGround": 9
+      "floorsAboveGround": 9,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from furnished 2-room Terrazas de Polo evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-1-ambientes-las-caitas-5a8aee5b",
+        "summary": "Direct Terrazas de Polo evidence was smaller furnished inventory; a Las Canitas 2BR estimate is about 75 m2."
+      }
     },
     {
       "id": "torre-bellini-palermo-chico",
@@ -3038,7 +3543,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-palermo-2-ambientes--19923505",
         "evidence": "Torre Bellini Palermo Chico search snippets mention losa radiante, and direct rental pages confirm pool and gym amenities."
       },
-      "floorsAboveGround": 37
+      "floorsAboveGround": 37,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 150,
+        "basis": "direct oversized 2-room and luxury 3-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Argenprop / BrightData",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-palermo-2-ambientes--19923505",
+        "summary": "The active Torre Bellini listing was an oversized 140-150 m2 1BR; a 2BR estimate remains around 150 m2 because Bellini layouts are unusually large."
+      }
     },
     {
       "id": "deco-recoleta",
@@ -3092,7 +3605,15 @@
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-recoleta-con-sauna-hasta-5-anos.html",
         "evidence": "Decó Recoleta / Guido 1999 snippets mention piso radiante eléctrico in the apartments."
       },
-      "floorsAboveGround": null
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 100,
+        "basis": "extrapolated from studio and temporary 2-room luxury evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Mercado Libre / Zonaprop",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3501162682-deco-recoleta-monoambiente-_JM",
+        "summary": "Deco Recoleta evidence ranged from studios to furnished 2-room listings; a luxury 2BR equivalent is estimated around 100 m2."
+      }
     },
     {
       "id": "lumiere-urbano",
@@ -3145,7 +3666,15 @@
         "sourceUrl": "https://www.remax.com.ar/listings/alquiler-2-amb-torre-exclusiva",
         "evidence": "The rental description says both rooms have calefacción por losa individual and lists indoor/outdoor pools plus a fitness center."
       },
-      "floorsAboveGround": 20
+      "floorsAboveGround": 20,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 77,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / sale listing snippets",
+        "sourceUrl": "https://www.instagram.com/reel/DWM0YwNEn_l/",
+        "summary": "Lumiere Urbano sale snippets showed 3 ambientes units around 65-77.33 m2; using 77 m2 from the exact 3-room listing snippet."
+      }
     },
     {
       "id": "boulevard-san-isidro-vilela",
@@ -3198,7 +3727,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-nunez-2-ambientes--19943518",
         "evidence": "The direct rental lists losa radiante, and the building installations list gimnasio and pileta."
       },
-      "floorsAboveGround": 6
+      "floorsAboveGround": 6,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from direct 2-room duplex evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-nunez-2-ambientes--19943518",
+        "summary": "Boulevard San Isidro evidence was a 2-room duplex rental; a compact 2BR estimate is about 70 m2."
+      }
     },
     {
       "id": "depampa-bajo-belgrano",
@@ -3251,7 +3788,15 @@
         "sourceUrl": "https://www.remax.com.ar/listings/alquiler-2-amb-bajo-belgrano-a-estrenar-c-cochera",
         "evidence": "The direct rental amenities list losa radiante, gimnasio and pileta, plus covered and climatized pool features."
       },
-      "floorsAboveGround": 15
+      "floorsAboveGround": 15,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 83,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / DePampa sale snippets",
+        "sourceUrl": "https://www.instagram.com/reel/DTu8RErlEHu/",
+        "summary": "DePampa sale snippets showed 3 ambientes units around 77-83.49 m2; rounded to 83 m2."
+      }
     },
     {
       "id": "torres-renoir",
@@ -3296,7 +3841,15 @@
         "basis": "extrapolated 1BR estimate from active 4-room listing and Puerto Madero 2-room comps",
         "summary": "Active 178 m2 3BR Renoir rental showed USD 4,500; nearby luxury Puerto Madero 1BR listings were roughly USD 1,800-3,000, so this normalizes to a standard 1BR."
       },
-      "floorsAboveGround": 50
+      "floorsAboveGround": 50,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 145,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Zonaprop / Properati / Mercado Libre sale and listing snippets",
+        "sourceUrl": "https://www.properati.com.ar/detalle/14032-32-3732-5863aae8a0bd-19d2a65-bf9b-70c6",
+        "summary": "Fresh searches found Renoir 3-room / tipologia AVE evidence around 139 m2, 145 m2 and related 3-room listings. Updated from a 4-room extrapolation to a direct 3-room-based 145 m2 estimate."
+      }
     },
     {
       "id": "mulieris-towers",
@@ -3342,7 +3895,15 @@
         "basis": "direct 2-room listing found in current portal results",
         "summary": "Current Mulieris 2-room listings showed 77-79 m2 1BR units around USD 1,800 plus expenses; the larger 3-room page is no longer used as the estimate."
       },
-      "floorsAboveGround": 46
+      "floorsAboveGround": 46,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 164,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / RE/MAX / Madero Realty",
+        "sourceUrl": "https://www.remax.com.ar/listings/alquiler-3-amb-dependencia-mulieris-puerto-madero",
+        "summary": "Mulieris 3-room evidence showed about 163.93 m2 total, consistent with the 168 m2 Madero Realty page."
+      }
     },
     {
       "id": "madero-plaza",
@@ -3388,7 +3949,15 @@
         "sourceUrl": "https://situar.com/propiedad/departamento-de-2-ambientes-en-alquiler-madero-plaza-puerto-madero--4338111",
         "summary": "Direct Madero Plaza rental page showed USD 1,550."
       },
-      "floorsAboveGround": 38
+      "floorsAboveGround": 38,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 107,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Argenprop / Inmuebles Clarin",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-puerto-madero-3-ambientes--19113130",
+        "summary": "Madero Plaza 3-room listings showed about 107-109 m2; 107 m2 is used."
+      }
     },
     {
       "id": "edificio-kavanagh",
@@ -3427,7 +3996,15 @@
         "basis": "normalized 1BR estimate from Kavanagh rental snippets and Retiro comps",
         "summary": "Search results showed Kavanagh 1BR rentals but no clean exposed direct price; Retiro 1BR comps support an approximate USD 1,400 monthly estimate."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 181,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-retiro-3-ambientes-150-300-m2.html",
+        "summary": "Kavanagh sale snippets showed 3 ambientes inventory around 176-181 m2, replacing the prior low-confidence 100 m2 extrapolation."
+      }
     },
     {
       "id": "alvear-icon-residences",
@@ -3471,7 +4048,15 @@
         "basis": "direct 2-room listing",
         "summary": "Current Alvear Icon 2-room listings include a 75 m2 1BR at USD 2,500; larger furnished 1BR layouts reach USD 4,000+, so USD 2,500 is the standard 1BR reference."
       },
-      "floorsAboveGround": 32
+      "floorsAboveGround": 32,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 126,
+        "basis": "extrapolated from 75 m2 2-room and Puerto Madero 3-room evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / existing rental evidence",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-puerto-madero-3-ambientes.html",
+        "summary": "Alvear Icon 2-room evidence showed 75 m2; nearby Puerto Madero 3-room results around 126 m2 support this 2BR estimate."
+      }
     },
     {
       "id": "huergo-475",
@@ -3515,7 +4100,15 @@
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--19487148",
         "summary": "Direct Huergo 475 rental page showed USD 1,250."
       },
-      "floorsAboveGround": 39
+      "floorsAboveGround": 39,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from direct 2-room evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--19487148",
+        "summary": "Direct Huergo 475 evidence was a 2-room rental; a compact new-tower 2BR is estimated near 70 m2."
+      }
     },
     {
       "id": "torre-dorrego",
@@ -3559,7 +4152,15 @@
         "basis": "extrapolated 1BR estimate from active large-unit listing and Las Canitas 2-room comps",
         "summary": "Active Torre Dorrego listings were mostly 4-5 room units; a 150 m2 listing showed USD 1,200, so the estimate normalizes down to a standard 1BR."
       },
-      "floorsAboveGround": 32
+      "floorsAboveGround": 32,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "extrapolated from active large-unit Torre Dorrego evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Inmobiliaria Silvestri",
+        "sourceUrl": "https://www.inmobiliariasilvestri.com.ar/p/7806000-Departamento-en-Alquiler-en-Las-Ca%C3%B1itas-DEPARTAMENTO-EN-ALQUILER-5-AMBIENTES,-LAS-CA%C3%91ITAS,-PALERMO-BUENOS-AIRES",
+        "summary": "Active Torre Dorrego pages were mostly large 4-5 room units; a standard 2BR is estimated around 90 m2."
+      }
     },
     {
       "id": "torres-de-montaneses",
@@ -3605,7 +4206,15 @@
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-lomas-de-nez-5a7f4a4d",
         "summary": "Direct Torres de Montañeses rental page showed a current 2-room rental."
       },
-      "floorsAboveGround": 36
+      "floorsAboveGround": 36,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 98,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-a-estrenar-q-montaneses.html",
+        "summary": "Torres de Montaneses sale snippets showed a 3 ambientes unit at 98 m2."
+      }
     },
     {
       "id": "weik-belgrano",
@@ -3649,7 +4258,15 @@
         "basis": "direct 2-room listing",
         "summary": "Direct Weik Belgrano 2-room listing showed a 63 m2 1BR with parking at USD 1,500 plus expenses."
       },
-      "floorsAboveGround": 34
+      "floorsAboveGround": 34,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 72,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Argenprop sale listing",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-belgrano-3-ambientes--19923360",
+        "summary": "A Weik Belgrano sale listing showed a 3 ambientes / 2-bedroom apartment at 72 m2."
+      }
     },
     {
       "id": "torre-bulnes",
@@ -3691,7 +4308,15 @@
         "basis": "extrapolated 1BR estimate from active 3BR duplex and Palermo Chico 2-room comps",
         "summary": "The active Torre Bulnes page is a 155 m2 3BR duplex; Palermo Chico tower 1BR comps cluster around USD 1,800, so the estimate is normalized to that size."
       },
-      "floorsAboveGround": 37
+      "floorsAboveGround": 37,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "Argenprop sale listing",
+        "sourceUrl": "https://www.argenprop.com/21804582--departamento-en-venta-en-palermo-chico-3-ambientes--18563315",
+        "summary": "A Torre Bulnes sale listing showed a 3 ambientes / 2-bedroom unit at 85 m2, replacing a 5-room duplex extrapolation."
+      }
     },
     {
       "id": "torre-ruggieri",
@@ -3733,7 +4358,15 @@
         "basis": "direct 2-room listing",
         "summary": "Direct Torre Ruggieri 2-room, 60 m2 rental page showed USD 1,800; this replaces the broader comparable estimate."
       },
-      "floorsAboveGround": 37
+      "floorsAboveGround": 37,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Roomix sale snippets",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-chico-ead04b58",
+        "summary": "Torre Ruggieri sale snippets showed 3 ambientes inventory around 66-75 m2; using the exact-building 75 m2 snippet."
+      }
     },
     {
       "id": "quantum-bellini",
@@ -3777,7 +4410,15 @@
         "basis": "extrapolated 1BR estimate from active 4-room listing and Nunez luxury comps",
         "summary": "Active Quantum Bellini evidence was a 160 m2 4-room unit around USD 5,000; nearby premium Nunez 1BR tower comps support a normalized estimate around USD 1,800."
       },
-      "floorsAboveGround": 43
+      "floorsAboveGround": 43,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 120,
+        "basis": "extrapolated from 160 m2 4-room Quantum Bellini evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Mesanza Mobili",
+        "sourceUrl": "https://mesanzamobili.com.ar/ad/alquiler-4-amb-con-1-cochera-vista-rio-quantum-bellini",
+        "summary": "Active Quantum Bellini evidence was a 160 m2 4-room unit; a 2BR estimate is about 120 m2."
+      }
     },
     {
       "id": "quartier-de-oro",
@@ -3821,7 +4462,15 @@
         "basis": "extrapolated 1BR estimate from active 4-room listing and Palermo Nuevo 2-room comps",
         "summary": "The active Quartier de Oro page is a 4-room furnished unit at USD 3,200; Palermo Nuevo 1BR tower comps point to roughly USD 1,500 for apples-to-apples comparison."
       },
-      "floorsAboveGround": 33
+      "floorsAboveGround": 33,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 120,
+        "basis": "extrapolated from active 4-room Quartier de Oro evidence",
+        "confidence": "medium-low",
+        "source": "Existing rental evidence / Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-palermo-nuevo-alquiler-torre-58856695.html",
+        "summary": "The active Quartier de Oro page was a 4-room furnished unit; a 2BR estimate is normalized to around 120 m2."
+      }
     },
     {
       "id": "libertador-336",
@@ -3865,7 +4514,15 @@
         "basis": "extrapolated 1BR estimate from large-unit tower listing and Retiro 2-room comps",
         "summary": "Libertador 336 inventory is dominated by very large upper-floor units; Retiro premium 1BR comps range roughly USD 1,300-2,000, so this uses USD 1,800."
       },
-      "floorsAboveGround": 34
+      "floorsAboveGround": 34,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 130,
+        "basis": "extrapolated from large-unit Retiro tower evidence",
+        "confidence": "low",
+        "source": "Existing rental evidence / Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-4-ambientes-retiro-f22eaf07",
+        "summary": "Libertador 336 inventory is dominated by large upper-floor units; a 2BR estimate is about 130 m2."
+      }
     },
     {
       "id": "libertador-380",
@@ -3911,7 +4568,15 @@
         "sourceUrl": "https://robertoploruttiinmuebles.com/propiedad/585327",
         "summary": "Direct Libertador 380 page showed USD 2,000 for rent."
       },
-      "floorsAboveGround": 36
+      "floorsAboveGround": 36,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-retiro-q-av-del-libertador.html",
+        "summary": "Libertador 380 sale snippets showed a 3 ambientes Retiro apartment at 85 m2, replacing the larger-unit extrapolation."
+      }
     },
     {
       "id": "libertador-4444",
@@ -3955,7 +4620,15 @@
         "basis": "extrapolated 1BR estimate from oversized rental page and Las Canitas 2-room comps",
         "summary": "The active Libertador 4444 page is a 406 m2 apartment at USD 7,000; nearby 1BR Las Canitas tower comps support a normalized estimate around USD 1,700."
       },
-      "floorsAboveGround": 45
+      "floorsAboveGround": 45,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 160,
+        "basis": "extrapolated from oversized 406 m2 Libertador 4444 evidence",
+        "confidence": "low",
+        "source": "Existing rental evidence / Rentola",
+        "sourceUrl": "https://rentola.ar/listings/departamento-en-libertador-4444-p1ef6b1",
+        "summary": "The active Libertador 4444 page was a 406 m2 apartment; a standard 2BR in this tower is estimated around 160 m2."
+      }
     },
     {
       "id": "astor-nunez",
@@ -3999,7 +4672,15 @@
         "basis": "direct 2-room long-term listing",
         "summary": "Direct RE/MAX listing showed a 45.92 m2 1BR in Torre Astor Nunez at USD 1,200 plus expenses; a furnished temporary 2-room comp showed USD 1,500."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 73,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/nunez-3-ambientes-q-astor.html",
+        "summary": "Astor Nunez sale snippets showed 3 ambientes units around 55-73 m2; using 73 m2 from the Torre Astor Nunez sale snippet."
+      }
     },
     {
       "id": "torres-de-gelly",
@@ -4043,7 +4724,15 @@
         "basis": "extrapolated 1BR estimate from large-unit listing and Palermo Chico 2-room comps",
         "summary": "Active Torres de Gelly listings were larger units; Palermo Chico tower 1BR comps, including Ruggieri, support a normalized estimate around USD 1,800."
       },
-      "floorsAboveGround": 30
+      "floorsAboveGround": 30,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 102,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Zonaprop sale snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-semipiso-venta-palermo-q-salguero.html",
+        "summary": "Torres de Gelly sale snippets showed a 3 ambientes plus service unit around 102 m2, replacing the low-confidence 130 m2 extrapolation."
+      }
     }
   ]
 }

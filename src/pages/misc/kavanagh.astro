@@ -1,0 +1,1103 @@
+---
+export const prerender = true;
+
+const pageTitle = "Kavanagh building: much more than you wanted to know";
+const pageDescription =
+  "A researched account of the Kavanagh building: Cora Kavanagh, the construction, the spite legend and the building's later history.";
+const spanishPageTitle = "Edificio Kavanagh: mucho más de lo que querías saber";
+const spanishPageDescription =
+  "Un relato documentado sobre el Edificio Kavanagh: Cora Kavanagh, la construcción, la leyenda de la venganza y la historia posterior del edificio.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  },
+  inLanguage: ["en", "es-AR"]
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} data-en={pageDescription} data-es={spanishPageDescription} />
+    <meta name="subject" content="History of the Kavanagh building in Buenos Aires." />
+    <meta name="application-name" content={pageTitle} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="keywords" content="Kavanagh building, Edificio Kavanagh, Cora Kavanagh, Buenos Aires, architecture, Retiro and Plaza San Martín" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+          <nav class="language-switch" aria-label="Language">
+            <button type="button" data-language-toggle="en" aria-pressed="true">English</button>
+            <button type="button" data-language-toggle="es" lang="es-AR" aria-pressed="false">Español</button>
+          </nav>
+        </div>
+        <p class="eyebrow">Edificio Kavanagh</p>
+        <h1 data-language-title data-en={pageTitle} data-es={spanishPageTitle}>{pageTitle}</h1>
+        <p
+          class="dek"
+          data-language-dek
+          data-en="Full backstory, construction, legend and later history of Buenos Aires' most famous stepped skyscraper."
+          data-es="Contexto, construcción, leyenda e historia posterior del rascacielos escalonado más famoso de Buenos Aires."
+        >
+          Full backstory, construction, legend and later history of Buenos Aires' most famous stepped skyscraper.
+        </p>
+      </header>
+
+      <article class="article language-panel" lang="en" data-language-panel="en">
+        <section id="bottom-line" aria-labelledby="bottom-line-heading">
+          <h2 id="bottom-line-heading">Bottom line</h2>
+          <p>
+            Edificio Kavanagh is a stepped residential skyscraper in Retiro, Buenos Aires, at Florida 1065 facing Plaza San Martín. Commissioned by <a href="https://es.wikipedia.org/wiki/Corina_Kavanagh" target="_blank" rel="noreferrer noopener">Corina "Cora" Kavanagh</a> and built from 1934 to 1936, it was planned as a luxury rental tower (<em>edificio de renta</em>) and became one of the city's best-known modern buildings. Its triangular lot, reinforced-concrete structure and terraced profile made it a landmark of 1930s Buenos Aires. The reported original cost was 3,617,496 pesos moneda nacional, about US$1.2M at the 1936 exchange rate, or roughly US$29M in 2026 dollars by US CPI.
+          </p>
+          <p>
+            Part of its fame comes from the stories attached to it. The most repeated version says Corina built the tower out of spite after the Anchorena family rejected a romance, placing it where it would block the view from their palace to the Basílica del Santísimo Sacramento. Other retellings turn her into the building's architect, or shift the romance to a daughter she did not have.
+          </p>
+          <p>
+            The records point to a less theatrical history. Corina commissioned and financed the project, but the design is attributed to the studio of Sánchez, Lagos y de la Torre: the Uruguayan architect Gregorio Sánchez (1881–1941), engineer Ernesto Lagos (1890–1977) and Luis María de la Torre (1890–1975). The view-blocking effect is real; the romantic-revenge motive is weakly documented, contradicted by chronology and best treated as urban legend.
+          </p>
+          <blockquote>
+            <p>
+              <em>This account draws mainly from Leonel Hernán Contreras, <cite>Rascacielos Porteños: Historia de la Edificación en Altura en Buenos Aires</cite> (Buenos Aires: Gobierno de la Ciudad, "Temas de Patrimonio Cultural" 15, 2006), ch. VII, "El gigante de la barranca: Historia y leyenda del Edificio Kavanagh," pp. 113–125. Below, that source is cited as Contreras (2006). Where it disagrees with press or tourism sources, the discrepancy is flagged.</em>
+            </p>
+          </blockquote>
+          <p>
+            Construction was led by the firm of engineer Rodolfo Cervini (Empresa Constructora Rodolfo Cervini S.A.). The reinforced-concrete structure went to Empresa Argentina de Cemento Armado (E.A.C.A.), based on a preliminary project by structural engineer Carlos Laucher and final calculations by E.A.C.A.'s Fernando Schwarz. Schwarz had to design what was then the world's tallest concrete skeleton at a time when wind-load and soil-mechanics engineering were still young fields (Contreras, <em>Rascacielos Porteños</em>, ch. VII; Nougués, 2023). Buenos Aires tourism itself presents the revenge story as legend, not confirmed fact (<a href="https://turismo.buenosaires.gob.ar/es/otros-establecimientos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Turismo BA</a>).
+          </p>
+        </section>
+
+        <section id="cora-kavanagh" aria-labelledby="cora-kavanagh-heading">
+          <h2 id="cora-kavanagh-heading">Who Corina "Cora" Kavanagh was</h2>
+          <p>
+            Corina Kavanagh (Buenos Aires, 20 February 1890 – 18 February 1984, buried in Recoleta) came from an Irish-Argentine family with money but not old patrician status. The aristocracy dismissed families like hers as "nuevos ricos" (<a href="https://www.archdaily.com/1001110/the-story-of-cora-kavanagh-and-her-emblematic-building-in-buenos-aires" target="_blank" rel="noreferrer noopener">ArchDaily</a>). She was the eldest child of Irish immigrants John Patrick Kavanagh and Elisa Lynch Byrne, whose roots were in Ballygarrett, Co. Wexford and Co. Westmeath; she had a brother, Diego. Her fortune came from inherited rural land in Venado Tuerto, Santa Fe. Sources differ on whether she sold two estancias or three to finance the tower, but agree she did it without bank loans (<a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación: Los secretos del Kavanagh</a>).
+          </p>
+          <p>
+            Her personal life included three marriages, none of them happy. On 20 July 1912, aged 22, she made an arranged match with Guillermo Ham Kenny, a millionaire Irish-Argentine landowner older than her father. The couple had no children and lived largely in Europe for about sixteen years, while she accumulated French antiques, haute couture (Paquin, Schiaparelli) and jewellery (Van Cleef, Boivin). His death left her wealthier still.
+          </p>
+          <p>
+            She then married Carlos (or Guillermo) Mainini Ríos, the TB specialist who had attended her dying husband and whom she met in Paris around August 1929. The Vatican annulled the marriage about six years later. On 17 March 1938 she married the patrician Héctor Gustavo Casares Lynch, whose father helped found the Jockey Club. She remained childless.
+          </p>
+          <p>
+            A society figure and antiques collector, she appeared on the Christmas 1935 cover of <cite>Caras y Caretas</cite> and was painted by the society portraitist <a href="https://en.wikipedia.org/wiki/Philip_de_L%C3%A1szl%C3%B3" target="_blank" rel="noreferrer noopener">Philip de László</a>. She kept a French-style residence ("Palacio Kavanagh") in Olivos and later a mansion in Martínez. She reserved the entire ~700 m² 14th-floor apartment (14 A) for herself, though sources conflict on whether she truly lived there long-term. After her rental income collapsed, she moved to smaller C-wing units (6 C / 7 C), where she lived until her death in 1984, two days short of 94 (<a href="https://bulletinofadvancedspanish.com/the-marvellous-miss-kavanagh-revenge-and-skyscrapers-in-buenos-aires/" target="_blank" rel="noreferrer noopener">Bulletin of Advanced Spanish</a>).
+          </p>
+          <p>
+            Recent accounts treat her less as a jilted romantic than as an under-credited female patron of avant-garde 1930s architecture, and as one of the city's first female real-estate developers. Marcelo Nougués' biography "Cora Kavanagh y su edificio" (Díaz Ortiz Ediciones, 2023; 572 pp., ISBN 978-987-88-8094-5, with an English-translation appendix and a prologue by Ernesto Montequin; held at the CPAU library in Buenos Aires) argues the revenge tale is folklore and reconstructs her life, travels and art collecting from primary documents. Nougués also notes that almost no letters, interviews or direct testimony from Corina survive, leaving mainly the "adulterated version" of the Anchorena romance in oral tradition (<a href="https://www.archdaily.com/1001110/the-story-of-cora-kavanagh-and-her-emblematic-building-in-buenos-aires" target="_blank" rel="noreferrer noopener">ArchDaily</a>).
+          </p>
+        </section>
+
+        <section id="why-built" aria-labelledby="why-built-heading">
+          <h2 id="why-built-heading">Why it was built</h2>
+          <p>
+            The documented reason was a private rental-development project, or <em>edificio de renta</em>, meant to recover most of the capital invested. Around 1933 Corina, described as an eccentric young <em>estanciera</em> fascinated by everything avant-garde, decided to sell rural holdings to build it. Contreras says two estancias; Nougués and later press accounts say three. Her stated plan was to rent the apartments to wealthy young Buenos Aires families, among the few groups still able to afford them after the economic crisis.
+          </p>
+          <p>
+            Some accounts credit the idea not to Corina but to her lawyers, Diego Garret Kavanagh and Pablo Cárdenas. They were the clients for whom the Sánchez–Lagos–de la Torre studio had built an earlier stepped building at Córdoba and Libertad in 1931, a project that prefigured the Kavanagh's silhouette (Contreras 2006). Before Argentina's horizontal-property regime normalized condominium ownership, towers like this usually had one owner and many tenants, generating long-term income. La Nación separately frames the Kavanagh as a rare case where municipal rules, private capital and a determined patron aligned, quoting Silvio Plotquin on how women like Corina promoted avant-garde 1930s projects without getting much credit for it (<a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación: Los secretos del Kavanagh</a>).
+          </p>
+          <p>
+            The site mattered. The triangular lot at Florida and San Martín belonged to Carlos Alfredo Tornquist (son of <a href="https://en.wikipedia.org/wiki/Ernesto_Tornquist" target="_blank" rel="noreferrer noopener">Ernesto Tornquist</a>), who had once planned to extend the neighbouring Plaza Hotel across the whole block. The 1930 crisis killed that plan, and he sold the parcel to Corina (Contreras 2006). Plaza San Martín was one of the city's aristocratic stages, bordered by Anchorena, Paz, Ortiz Basualdo, the Plaza Hotel and Retiro Station.
+          </p>
+          <p>
+            The municipality's Comisión de Estética Edilicia had marked this spot as the "great gateway to the city," with the Retiro rail terminals just below the bluff. That civic plan helps explain why the city allowed the Kavanagh to rise to full skyscraper height in exchange for a ~10 m semi-public transverse street between the Plaza Hotel and the new tower (Contreras 2006). Argentina's heritage office describes the result as a luxury concrete <em>paquebote</em> (ocean-liner mass) inserted into that upper-class setting, tied to a modern American catalogue of comfort and technology: Westinghouse, Carrier and Otis (<a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a>). Rosa Aboy's academic work places it within a broader shift after the 1929 crash, from European mansion-style living toward modern high-rise apartments for the elite (<a href="https://www.tandfonline.com/doi/abs/10.1080/02665433.2012.629809" target="_blank" rel="noreferrer noopener">Aboy, <cite>The right to a home?</cite></a>).
+          </p>
+        </section>
+
+        <section id="how-built" aria-labelledby="how-built-heading">
+          <h2 id="how-built-heading">How it was built</h2>
+          <p>
+            Contreras gives a tight construction timeline. The demolition of the existing structures was auctioned on 24 June 1933, and the site was cleared by late August. Structural work began in January 1934, though the state heritage office dates the start to April 1934, after clearing. Concrete-pouring finished on 28 October 1934; by then the Kavanagh had overtaken São Paulo's Edifício Martinelli as the tallest reinforced-concrete structure in the world. The whole build took about 20 months, ending 30 September 1935, and the building was officially inaugurated on 15 January 1936. Total cost was 3,617,496 pesos moneda nacional; at about PMN 3.02 per US$1 in 1936, that was roughly US$1.2M then, or about US$29M in 2026 dollars by US CPI. The taxes paid on it (~180,000 pesos moneda nacional) were the highest ever paid for a building in Argentina to that date.
+          </p>
+          <p>
+            The height figures vary less than they seem. Contreras gives ~110 m to the roof and 120.35 m to the top of the mast, with 30 high floors (a national record, and the first Argentine building to reach that many levels) plus a rooftop <em>mirador</em> sometimes counted as a 31st. At completion it was the tallest building in Argentina and Latin America, surpassing the Palacio Barolo, the SAFICO and even the 106 m towers of the Basilica of Luján (Contreras 2006). During the October 1934 Eucharistic Congress, a giant cross was mounted on the summit façade.
+          </p>
+          <p>
+            The stepped, terraced form was practical as well as aesthetic. The building had to fit a complex triangular lot (~2,400 m²), so it was composed of five joined volumes: one central volume, flanked by two, then two smaller again. That arrangement gave it a symmetrical, ziggurat-like silhouette often read as a ship's prow pointed toward the Río de la Plata. Municipal height and setback rules, similar in spirit to New York's 1916 Zoning Resolution, shaped the massing. The setbacks created large garden terraces for about a third of the units. Unusually for Rationalist work, the building also uses the natural slope of the Plaza San Martín ravine rather than pretending the site is flat (<a href="https://modernabuenosaires.org/obras/20s-a-70s/kavanagh" target="_blank" rel="noreferrer noopener">Moderna Buenos Aires</a>; Nougués, 2023).
+          </p>
+          <p>
+            Critic Jorge Francisco Liernur reads it as "a perfect hybrid," reconciling program with building code, immediate context with urban scale and technological ambition with artisanal execution (Contreras 2006). La Nación's Fabio Grementieri called it a masterful synthesis of Rationalism and Art Deco, renewal and tradition, Paris and New York.
+          </p>
+          <p>
+            The engineering figures were large for the era (Contreras 2006, citing the April 1936 special issue of <cite>Nuestra Arquitectura</cite>): 1,500 drawings for 25,800 m² of built area; 1,600 km of iron reinforcing bar; ~90 km of combined water, steam, drainage and electrical conduit; an electrical installation equivalent to powering a city of 80,000; and an air-conditioning refrigeration plant (the first central A/C in the world in a building of this type) capable of making ice for 75,000 people. Up to 613 workers a day were on site; 23,260 tonnes of materials required 5,000 truck trips; the structure was rated to bear ~31,000 tonnes.
+          </p>
+          <p>
+            The interiors were just as technically ambitious. Apartments had electric kitchens (Nougués specifies 105 Hotpoint electric kitchens, 109 General Electric refrigerators and marble baths with coloured Standard sanitary ware), stainless-steel finishes, linoleum floors, Slavonian-oak parquet, cedar-and-okoumé wardrobe fittings and a dedicated automatic central telephone exchange wired to the public network. Even refrigerator electricity was included in the rent. Sanitary fittings ran to nearly 300 bathtubs (many custom-made), 120 washbasins, 370 valve-toilets, 235 bidets and 250 porcelain lavatories (Contreras 2006). The central hall held 12 high-speed elevators, with 200 stops total, behind a revolving door and marble staircase; private landings had oak <em>boiserie</em> and leather armchairs (<a href="https://turismo.buenosaires.gob.ar/es/otros-establecimientos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Turismo BA</a>; Contreras 2006).
+          </p>
+          <p>
+            One quirk survives: the Kavanagh has no garages and no electric intercom. Visitors must announce themselves at reception and are phoned up to the apartment. ASCE describes it as one of the world's early reinforced-concrete skyscrapers with central A/C, twelve elevators and a deliberately slender structure (<a href="https://www.asce.org/about-civil-engineering/history-and-heritage/historic-landmarks/kavanagh-building" target="_blank" rel="noreferrer noopener">ASCE</a>). <em>Note on the A/C:</em> Contreras says the original central system stopped operating in 1960; later press dates its removal only recently. Both agree it no longer runs.
+          </p>
+          <p>
+            At completion it surpassed Montevideo's Palacio Salvo (1928), São Paulo's Martinelli and every Argentine tower to become the tallest building in Latin America and the world's tallest reinforced-concrete structure. It held the Latin American record until 1947, when São Paulo's Altino Arantes (Banespa) building overtook it.
+          </p>
+          <p>
+            Its plan included a basement, ground floor and 30 upper floors, with 102 apartments across six wings (A, B, C, E, F and G) in Contreras' detailed count, plus the rooftop <em>mirador</em> with an astronomical observatory. Floors 1–12 held six apartments each, floors 13–20 three each and the upper floors mostly one full-floor unit apiece. Floor 21 housed elevator machinery and the A/C plant; floor 30 held the water tanks. The largest unit was the 14th floor: a single ~700 m² apartment with three terraces, a library, study, multiple bedrooms each with a private bath and a bar-galley linking the wings.
+          </p>
+          <p>
+            Stylistically it is usually labeled Rationalist / Modernist / Art Deco, but not doctrinaire modernism. Argentina's heritage office reads it as a hybrid of New York vertical Art Deco, French nautical metaphor and local Beaux-Arts tradition (<a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a>).
+          </p>
+        </section>
+
+        <section id="spite-legend" aria-labelledby="spite-legend-heading">
+          <h2 id="spite-legend-heading">The spite legend and why it doesn't hold up</h2>
+          <p>
+            The standard tale says Corina fell for an Anchorena heir, that the family rejected the match as beneath them and that she retaliated by building a tower that blocked the Anchorenas' view from their palace to the Basílica del Santísimo Sacramento, their family church and mausoleum (<a href="https://turismo.buenosaires.gob.ar/en/otros-establecimientos/kavanagh-building" target="_blank" rel="noreferrer noopener">Turismo BA: Kavanagh Building</a>). A more elaborate version has her waiting for matriarch <a href="https://en.wikipedia.org/wiki/Mercedes_Castellanos_de_Anchorena" target="_blank" rel="noreferrer noopener">Mercedes Castellanos de Anchorena</a> to leave on vacation, then buying the vacant lot by doubling the offer and telling the architects to obstruct the church from as many angles as possible.
+          </p>
+          <p>The story fractures under scrutiny:</p>
+          <ul>
+            <li>Multiple incompatible variants exist. Some cast a <em>daughter</em> of Corina falling for an Anchorena son (or, per basilica staff, a chauffeur). A monument-commission researcher rejected these because Corina had no documented children (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación: La majestuosa basílica</a>).</li>
+            <li>The chronology fails. Mercedes Castellanos de Anchorena died in 1920, over a decade before the Kavanagh was built; the palace was sold to the state in 1936 (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación</a>).</li>
+            <li>Historian Daniel Balmaceda calls the Corina–<a href="https://es.wikipedia.org/wiki/Aar%C3%B3n_de_Anchorena" target="_blank" rel="noreferrer noopener">Aarón de Anchorena</a> marriage-revenge story "fake," finding no evidence of any marriage project between them (<a href="https://www.lanacion.com.ar/la-nacion-revista/el-anchorena-aventurero-que-cruzo-el-rio-de-la-plata-en-globo-exploro-la-patagonia-y-fue-pionero-del-nid25102022/" target="_blank" rel="noreferrer noopener">La Nación: El Anchorena aventurero</a>). Historians Roberto L. Elissalde, Diego Zigiotto and Mariela Blanco likewise find no documentary trace of the romance or the feud.</li>
+            <li>Nougués adds an architectural problem for the revenge story. <a href="https://en.wikipedia.org/wiki/Alejandro_Bustillo" target="_blank" rel="noreferrer noopener">Alejandro Bustillo</a> had designed a major Plaza Hotel expansion for the Tornquist group in 1928; had it been built, it would have blocked the basilica's sightline years before the Kavanagh existed. He also points to the economic absurdity: selling three estancias purely out of spite would have been madness ("<em>haber vendido tres estancias para hacerlo es una locura</em>").</li>
+          </ul>
+          <p>
+            Contreras (2006) records another version of the legend: Corina, supposedly at odds with the Catholic Church, built the tower to block the view of the Basílica del Santísimo Sacramento from her <em>friend</em> Mercedes Castellanos de Anchorena, who had funded the church and lived in what is now the Foreign Ministry. He rejects that version on the same grounds. Some sources say Corina was never estranged from the Church, and Mercedes de Anchorena died around 1920, well before construction. The contradiction is revealing: some versions cast Mercedes as Corina's rival, others as her friend. That looks less like preserved memory than a motive reverse-engineered from the building's obvious geometry.
+          </p>
+          <p>
+            The view-blocking effect is real. The revenge motive is unproven and probably mythologized. The legend endures because the urban geometry fits it perfectly: the basilica's front is now famously best seen from the narrow Pasaje Corina Kavanagh (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación</a>).
+          </p>
+        </section>
+
+        <section id="anchorena-side" aria-labelledby="anchorena-side-heading">
+          <h2 id="anchorena-side-heading">The Anchorena side</h2>
+          <p>
+            The "spited" building is today Palacio San Martín (formerly Palacio Anchorena), built 1905–1909 by architect <a href="https://en.wikipedia.org/wiki/Alejandro_Christophersen" target="_blank" rel="noreferrer noopener">Alejandro Christophersen</a> for Mercedes Castellanos de Anchorena, with three residences. One was inhabited by Mercedes and her son Aarón. The Argentine state acquired it in 1936 for the Foreign Ministry (<a href="https://cancilleria.gob.ar/en/institutional/heritage/san-martin-palace" target="_blank" rel="noreferrer noopener">Cancillería Argentina</a>). Mercedes Castellanos de Anchorena (born Rosario, 24 September 1840; a papal countess) died 9 July 1920 and rests in the crypt of the Basílica del Santísimo Sacramento, which she funded (designed by French architects Coulomb and Chauvet, consecrated 1916) (<a href="https://turismo.buenosaires.gob.ar/en/atractivo/bas%C3%ADlica-del-sant%C3%ADsimo-sacramento" target="_blank" rel="noreferrer noopener">Turismo BA</a>). The supposed love interest, Aarón de Anchorena (1877–1965), was a celebrated bachelor-adventurer, balloonist, motorist and explorer. He married Zelmira Paz in Paris in 1933, with no record of any tie to Corina.
+          </p>
+        </section>
+
+        <section id="after-completion" aria-labelledby="after-completion-heading">
+          <h2 id="after-completion-heading">History after completion</h2>
+          <p>
+            The Kavanagh opened with a reputation for modern apartment living. It also entered literature and magazine culture: it appeared on the cover of <cite>Caras y Caretas</cite> and was written about by <a href="https://en.wikipedia.org/wiki/Manuel_Mujica_Lainez" target="_blank" rel="noreferrer noopener">Manuel Mujica Lainez</a>, <a href="https://es.wikipedia.org/wiki/H%C3%A9ctor_Viel_Temperley" target="_blank" rel="noreferrer noopener">Héctor Viel Temperley</a> and <a href="https://es.wikipedia.org/wiki/Esther_Cross" target="_blank" rel="noreferrer noopener">Esther Cross</a> (<a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación: Los secretos del Kavanagh</a>).
+          </p>
+          <p>
+            Under <a href="https://en.wikipedia.org/wiki/Juan_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Perón</a>'s first governments (1946–1955), the Kavanagh was attacked as a bastion of the landed aristocracy. Accounts say <a href="https://en.wikipedia.org/wiki/Eva_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Evita</a> considered buying it, or even expropriating it, for workers. During the 1955 church burnings, some tried to set the building on fire. The attempt was reportedly stopped only because Perón's Secretary of Commerce lived there. When the taller Edificio Alas rose nearby, the two towers were pulled into political argument: the Kavanagh as an icon of the <em>oligarquía terrateniente</em> for Peronists, the Alas as an image of "the tyranny" for anti-Peronists (Contreras 2006).
+          </p>
+          <p>
+            Over the decades, residents have included former economy minister <a href="https://en.wikipedia.org/wiki/Jos%C3%A9_Alfredo_Mart%C3%ADnez_de_Hoz" target="_blank" rel="noreferrer noopener">José Alfredo Martínez de Hoz</a>, chef <a href="https://en.wikipedia.org/wiki/Francis_Mallmann" target="_blank" rel="noreferrer noopener">Francis Mallmann</a>, journalists <a href="https://en.wikipedia.org/wiki/Joaqu%C3%ADn_Morales_Sol%C3%A1" target="_blank" rel="noreferrer noopener">Joaquín Morales Solá</a> and <a href="https://en.wikipedia.org/wiki/Jorge_Lanata" target="_blank" rel="noreferrer noopener">Jorge Lanata</a>, model <a href="https://es.wikipedia.org/wiki/Claudia_S%C3%A1nchez" target="_blank" rel="noreferrer noopener">Claudia Sánchez</a>, <a href="https://es.wikipedia.org/wiki/Torcuato_Di_Tella_%28hijo%29" target="_blank" rel="noreferrer noopener">Torcuato Di Tella</a> (whose widow Tamara Di Tella still lives there), members of the Pérez Companc and Eskenazi families, <a href="https://en.wikipedia.org/wiki/Carlos_Corach" target="_blank" rel="noreferrer noopener">Carlos Corach</a>, analyst <a href="https://en.wikipedia.org/wiki/Carlos_Maslat%C3%B3n" target="_blank" rel="noreferrer noopener">Carlos Maslatón</a> and impresario Leonardo Barujel (apt. 1°A). Through Barujel's flat passed <a href="https://en.wikipedia.org/wiki/Maurice_Chevalier" target="_blank" rel="noreferrer noopener">Maurice Chevalier</a>, <a href="https://en.wikipedia.org/wiki/Charles_Aznavour" target="_blank" rel="noreferrer noopener">Charles Aznavour</a>, <a href="https://en.wikipedia.org/wiki/%C3%89dith_Piaf" target="_blank" rel="noreferrer noopener">Edith Piaf</a>, <a href="https://en.wikipedia.org/wiki/Sammy_Davis_Jr." target="_blank" rel="noreferrer noopener">Sammy Davis Jr.</a> and others; fashion designer Roberto Devorik hosted <a href="https://en.wikipedia.org/wiki/Madonna" target="_blank" rel="noreferrer noopener">Madonna</a> there during her Buenos Aires visit. Corina's 14 A penthouse later passed to the Roberts banking family and, around 2003–2007, to British-based multimillionaire Lord Alain Levenfiche (Contreras 2006; La Nación).
+          </p>
+          <p>
+            The late arrival of horizontal-property law cost Corina her building. The Kavanagh was conceived as an <em>edificio de renta</em>: a single-owner income property whose value depended on rent. Two problems compounded. First, Argentina's rent-freeze laws of the 1940s locked nominal rents in place while inflation gutted their real value, strangling the income stream that justified holding the whole tower. Second, until Ley 13.512 (1948), there was no legal mechanism to subdivide a building's title and sell apartments individually. Argentina passed that reform later than Brazil (1928), Chile (1937) and Uruguay (1946).
+          </p>
+          <p>
+            For years Corina was trapped. Her rental income was shrinking, and she had no way to raise capital by selling pieces of the asset. When by-unit sale finally became legal, selling the flats one at a time became the only exit. But she was liquidating a devalued asset under pressure in a market of protected sitting tenants. She ended up selling nearly every apartment (La Nación dates the atomization to 1949–1951), keeping only two units in wing C (floors 6 and 7) and losing much of her fortune in the process. She remained in the building until her death in 1984 (Contreras 2006; <a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación</a>).
+          </p>
+
+          <h3>Recognitions</h3>
+          <p>Per Contreras (2006), who lists all four:</p>
+          <ul>
+            <li>1936: Municipal Prize for Collective Housing and Façade.</li>
+            <li>1939: Honourable Mention from the American Institute of Architects (AIA).</li>
+            <li>1994: ASCE International Historic Civil Engineering Landmark. Argentine media routinely place it alongside the Eiffel Tower, the Aswan Dam and the Panama Canal, but that comparison comes from secondary Argentine sources. ASCE's own citation instead says the tower rose in the 1930s when Argentina had one of the world's strongest economies (<a href="https://www.asce.org/about-civil-engineering/history-and-heritage/historic-landmarks/kavanagh-building" target="_blank" rel="noreferrer noopener">ASCE</a>).</li>
+            <li>1999: Declared a Monumento Histórico Nacional by the Comisión Nacional de Museos y Monumentos in April 1999, formalized in Decree 349/1999 (<a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/55000-59999/57386/norma.htm" target="_blank" rel="noreferrer noopener">InfoLEG</a>).</li>
+          </ul>
+          <p>
+            A 2013 Clarín survey of 600 non-specialists chose it as the building most liked by porteños (<a href="https://en.wikipedia.org/wiki/Kavanagh_Building" target="_blank" rel="noreferrer noopener">Wikipedia: Kavanagh Building</a>). Since 1999, the owners' consortium has run a phased façade restoration by Marcelo Magadán y Asociados, cleaning and consolidating the <em>símil piedra</em> render with non-aggressive conservation. The work restored the original gradient in the render, which lightens from grey at the base to a chalky white near the top.
+          </p>
+          <p>
+            The UNESCO claim is false. Contreras (2006), along with much tourism and press coverage, lists a 1999 recognition as "Patrimonio Mundial de la Arquitectura de la Modernidad en la lista de la UNESCO." There is no such UNESCO category. No designation called "World Heritage of Modern Architecture" exists, and the Kavanagh is not a UNESCO World Heritage Site (<a href="https://whc.unesco.org/en/statesparties/ar" target="_blank" rel="noreferrer noopener">UNESCO: Argentina</a>). Argentina's only UNESCO World Heritage properties are sites like Los Glaciares, Iguazú, the Jesuit Missions/Estancias, Península Valdés, Cueva de las Manos, Ischigualasto/Talampaya, Qhapaq Ñan and the <a href="https://en.wikipedia.org/wiki/Le_Corbusier" target="_blank" rel="noreferrer noopener">Le Corbusier</a> inscription (Curutchet House in La Plata), not the Kavanagh.
+          </p>
+          <p>
+            What actually happened is simpler. In 1999 Argentina declared the Kavanagh a National Historic Monument, a domestic designation. Separately, DOCOMOMO (Documentation and Conservation of the Modern Movement) maintains registries of modernist buildings, and the Kavanagh appears on such lists. At some point, the national-monument declaration and/or a DOCOMOMO-type listing seems to have been conflated with "UNESCO" to make the recognition sound grander. The inflated claim then spread through guidebooks, tourism copy and even this heritage monograph. Treat every "UNESCO World Heritage" statement about the Kavanagh as incorrect.
+          </p>
+          <p>
+            The myth has also spawned a secondary false claim: <cite>Las mil y una curiosidades de Buenos Aires</cite> (De los Cuatro Vientos, 2007) repeats the UNESCO story and adds that the distinction supposedly exempted the building's residents from municipal taxes. This is doubly wrong. The UNESCO designation itself is fictional, and no such tax exemption follows from any heritage listing. Owners in fact pay the standard municipal charges and, as a monument, face added preservation constraints.
+          </p>
+          <p>
+            The building's only genuine top-tier recognitions are the Argentine National Historic Monument status (Decree 349/1999) and the ASCE International Historic Civil Engineering Landmark (1994).
+          </p>
+        </section>
+
+        <section id="present-day" aria-labelledby="present-day-heading">
+          <h2 id="present-day-heading">Present day</h2>
+          <p>
+            The Kavanagh remains primarily a private residential building (~105 apartments), not a museum. It also has the practical problems of an old luxury tower: costly maintenance, no garages, no modern amenity package and heritage constraints. A 2025 Toribio Achával note claimed that roughly 30% of units were for sale, with high monthly expenses and prices from about US$260k to US$1M. That is broker commentary, not official building data (<a href="https://www.toribioachaval.com.ar/arquitectura-decoracion/edificio-kavanagh-leyenda-y-realidad-en-el-mercado-inmobiliario" target="_blank" rel="noreferrer noopener">Toribio Achával</a>). The 14 A penthouse has been on and off the market for years, with its asking price falling from roughly US$7.9M in 2007 to under US$3M.
+          </p>
+          <p>
+            In 2025, Cora Café opened in the ground-floor commercial area, in a former jewelry-store space, after a long consorcio approval process. It was the first gastronomic venture in the building and operates under restrictions, including no kitchen or open fire. The same reporting notes that the original central A/C system no longer operates and has been replaced by compact units that partly altered the façade composition (<a href="https://www.lanacion.com.ar/sabado/en-el-kavanagh-el-nuevo-cafe-que-rinde-homenaje-a-la-historia-del-edificio-nid03032025/" target="_blank" rel="noreferrer noopener">La Nación: Cora Café</a>).
+          </p>
+        </section>
+
+        <section id="caveats" aria-labelledby="caveats-heading">
+          <h2 id="caveats-heading">Caveats on conflicting figures</h2>
+          <p>Sources disagree on several numbers because they use different counting conventions and imprecise secondary reporting:</p>
+          <ul>
+            <li>Floors: 30, 31 or 32 (habitable vs. total, with/without the rooftop <em>mirador</em>).</li>
+            <li>Apartments: cited as anywhere from 100 to 107; Contreras counts 102, most press says 105.</li>
+            <li>Inauguration: 2, 3 or 15 January 1936 (the best-sourced date).</li>
+            <li>Construction duration: ~14 months (structure) vs. ~20 months (clearing to finish); Contreras gives 20.</li>
+            <li>Height: ~110 m to the roof vs. ~120.35 m to the mast tip.</li>
+            <li>Corina's residence: whether she genuinely lived in 14 A long-term is contested; the most detailed account (Nougués) has her moving to smaller 6 C / 7 C units after her fortune shrank.</li>
+            <li>Estancias sold: two (Contreras) vs. three in Venado Tuerto (Nougués/La Nación).</li>
+          </ul>
+          <p>
+            One recurring English-language error worth flagging: several sources garble the tale as "Kavanagh's <em>daughter</em>" falling for an Anchorena. The legend concerns Corina herself, who had no children.
+          </p>
+        </section>
+
+        <section id="sources" aria-labelledby="sources-heading">
+          <h2 id="sources-heading">Sources by topic</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Topic</th>
+                  <th scope="col">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Primary technical/historical monograph</th>
+                  <td>Leonel Hernán Contreras, <cite>Rascacielos Porteños</cite> (Gobierno de la Ciudad de Buenos Aires, <cite>Temas de Patrimonio Cultural</cite> 15, 2006), ch. VII, pp. 113–125. It draws on the April 1936 special issue of <cite>Nuestra Arquitectura</cite> and work by Gaspar Nogués.</td>
+                </tr>
+                <tr>
+                  <th scope="row">Definitive biography</th>
+                  <td>Marcelo Nougués, <cite>Cora Kavanagh y su edificio</cite> (Díaz Ortiz Ediciones, 2023; 572 pp., ISBN 978-987-88-8094-5; CPAU library), via <a href="https://www.archdaily.com/1001110/the-story-of-cora-kavanagh-and-her-emblematic-building-in-buenos-aires" target="_blank" rel="noreferrer noopener">ArchDaily</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Scholarly architecture article</th>
+                  <td>Silvio Plotquin, <cite>A&amp;P Continuidad</cite> (Univ. Nacional de Rosario, 2018)</td>
+                </tr>
+                <tr>
+                  <th scope="row">National Monument decree</th>
+                  <td><a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/55000-59999/57386/norma.htm" target="_blank" rel="noreferrer noopener">InfoLEG: Decreto 349/1999</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Engineering / technical</th>
+                  <td><a href="https://www.asce.org/about-civil-engineering/history-and-heritage/historic-landmarks/kavanagh-building" target="_blank" rel="noreferrer noopener">ASCE</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Heritage framing</th>
+                  <td><a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Architecture / prize</th>
+                  <td><a href="https://modernabuenosaires.org/obras/20s-a-70s/kavanagh" target="_blank" rel="noreferrer noopener">Moderna Buenos Aires</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Legend debunking</th>
+                  <td><a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación (basílica)</a> · <a href="https://www.lanacion.com.ar/la-nacion-revista/el-anchorena-aventurero-que-cruzo-el-rio-de-la-plata-en-globo-exploro-la-patagonia-y-fue-pionero-del-nid25102022/" target="_blank" rel="noreferrer noopener">La Nación (Balmaceda)</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Corina's life/marriages</th>
+                  <td><a href="https://bulletinofadvancedspanish.com/the-marvellous-miss-kavanagh-revenge-and-skyscrapers-in-buenos-aires/" target="_blank" rel="noreferrer noopener">Bulletin of Advanced Spanish</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Palacio San Martín</th>
+                  <td><a href="https://cancilleria.gob.ar/en/institutional/heritage/san-martin-palace" target="_blank" rel="noreferrer noopener">Cancillería Argentina</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Present-day / Cora Café</th>
+                  <td><a href="https://www.lanacion.com.ar/sabado/en-el-kavanagh-el-nuevo-cafe-que-rinde-homenaje-a-la-historia-del-edificio-nid03032025/" target="_blank" rel="noreferrer noopener">La Nación (2025)</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </article>
+
+      <article class="article language-panel" lang="es-AR" data-language-panel="es" hidden>
+        <section id="resumen" aria-labelledby="resumen-heading">
+          <h2 id="resumen-heading">Resumen</h2>
+          <p>
+            El Edificio Kavanagh es una torre residencial escalonada en Retiro, Buenos Aires, ubicada en Florida 1065 frente a la Plaza San Martín. Encargado por <a href="https://es.wikipedia.org/wiki/Corina_Kavanagh" target="_blank" rel="noreferrer noopener">Corina "Cora" Kavanagh</a> y construido entre 1934 y 1936, fue pensado como una torre de departamentos de lujo para renta (<em>edificio de renta</em>) y terminó siendo uno de los edificios modernos más conocidos de la ciudad. Su lote triangular, su estructura de hormigón armado y su perfil aterrazado lo convirtieron en un hito de la Buenos Aires de los años treinta. El costo original informado fue de 3.617.496 pesos moneda nacional, unos US$1,2M al tipo de cambio de 1936, o aproximadamente US$29M en dólares de 2026 ajustados por el IPC estadounidense.
+          </p>
+          <p>
+            Parte de su fama viene de las historias que se le pegaron. La versión más repetida dice que Corina levantó la torre por despecho después de que la familia Anchorena rechazara un romance, y que la ubicó de modo que tapara la vista desde el palacio familiar hacia la Basílica del Santísimo Sacramento. Otras versiones la convierten en la arquitecta del edificio, o trasladan el romance a una hija que nunca tuvo.
+          </p>
+          <p>
+            Los documentos apuntan a una historia menos teatral. Corina encargó y financió el proyecto, pero el diseño se atribuye al estudio Sánchez, Lagos y de la Torre: el arquitecto uruguayo Gregorio Sánchez (1881–1941), el ingeniero Ernesto Lagos (1890–1977) y Luis María de la Torre (1890–1975). El efecto de tapar la vista es real; el motivo de la venganza amorosa está poco documentado, choca con la cronología y conviene tratarlo como leyenda urbana.
+          </p>
+          <blockquote>
+            <p>
+              <em>Este relato se apoya sobre todo en Leonel Hernán Contreras, <cite>Rascacielos Porteños: Historia de la Edificación en Altura en Buenos Aires</cite> (Buenos Aires: Gobierno de la Ciudad, "Temas de Patrimonio Cultural" 15, 2006), cap. VII, "El gigante de la barranca: Historia y leyenda del Edificio Kavanagh," pp. 113–125. Abajo, esa fuente aparece citada como Contreras (2006). Cuando difiere de fuentes periodísticas o turísticas, la diferencia queda señalada.</em>
+            </p>
+          </blockquote>
+          <p>
+            La obra fue dirigida por la empresa del ingeniero Rodolfo Cervini (Empresa Constructora Rodolfo Cervini S.A.). La estructura de hormigón armado quedó a cargo de la Empresa Argentina de Cemento Armado (E.A.C.A.), sobre un anteproyecto del ingeniero calculista Carlos Laucher y cálculos finales de Fernando Schwarz, de E.A.C.A. Schwarz tuvo que diseñar lo que entonces era el esqueleto de hormigón más alto del mundo, en una época en que el cálculo de cargas de viento y la mecánica de suelos todavía eran campos jóvenes (Contreras, <em>Rascacielos Porteños</em>, cap. VII; Nougués, 2023). El propio turismo porteño presenta la historia de la venganza como leyenda, no como hecho confirmado (<a href="https://turismo.buenosaires.gob.ar/es/otros-establecimientos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Turismo BA</a>).
+          </p>
+        </section>
+
+        <section id="cora-kavanagh-es" aria-labelledby="cora-kavanagh-es-heading">
+          <h2 id="cora-kavanagh-es-heading">Quién fue Corina "Cora" Kavanagh</h2>
+          <p>
+            Corina Kavanagh (Buenos Aires, 20 de febrero de 1890 – 18 de febrero de 1984, enterrada en Recoleta) venía de una familia irlandesa-argentina con dinero, pero sin la antigüedad patricia de la elite tradicional. La aristocracia llamaba a familias como la suya "nuevos ricos" (<a href="https://www.archdaily.com/1001110/the-story-of-cora-kavanagh-and-her-emblematic-building-in-buenos-aires" target="_blank" rel="noreferrer noopener">ArchDaily</a>). Era la hija mayor de los inmigrantes irlandeses John Patrick Kavanagh y Elisa Lynch Byrne, con raíces en Ballygarrett, condado de Wexford, y en el condado de Westmeath; tenía un hermano, Diego. Su fortuna venía de tierras rurales heredadas en Venado Tuerto, Santa Fe. Las fuentes difieren sobre si vendió dos estancias o tres para financiar la torre, pero coinciden en que lo hizo sin préstamos bancarios (<a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación: Los secretos del Kavanagh</a>).
+          </p>
+          <p>
+            Su vida personal incluyó tres matrimonios, ninguno feliz. El 20 de julio de 1912, a los 22 años, aceptó un matrimonio arreglado con Guillermo Ham Kenny, un terrateniente irlandés-argentino millonario que era mayor que su padre. La pareja no tuvo hijos y vivió en buena medida en Europa durante unos dieciséis años, mientras ella reunía antigüedades francesas, alta costura (Paquin, Schiaparelli) y joyas (Van Cleef, Boivin). La muerte de Ham Kenny la dejó todavía más rica.
+          </p>
+          <p>
+            Luego se casó con Carlos (o Guillermo) Mainini Ríos, el especialista en tuberculosis que había atendido a su marido moribundo y a quien conoció en París hacia agosto de 1929. El Vaticano anuló el matrimonio unos seis años después. El 17 de marzo de 1938 se casó con el patricio Héctor Gustavo Casares Lynch, cuyo padre había ayudado a fundar el Jockey Club. Corina no tuvo hijos.
+          </p>
+          <p>
+            Figura de sociedad y coleccionista de antigüedades, apareció en la tapa navideña de 1935 de <cite>Caras y Caretas</cite> y fue retratada por el pintor de sociedad <a href="https://en.wikipedia.org/wiki/Philip_de_L%C3%A1szl%C3%B3" target="_blank" rel="noreferrer noopener">Philip de László</a>. Mantuvo una residencia de estilo francés ("Palacio Kavanagh") en Olivos y más tarde una mansión en Martínez. Se reservó para sí todo el departamento del piso 14, de unos 700 m² (14 A), aunque las fuentes no coinciden en si realmente vivió allí a largo plazo. Cuando se derrumbó su ingreso por alquileres, se mudó a unidades más chicas del ala C (6 C / 7 C), donde vivió hasta su muerte en 1984, dos días antes de cumplir 94 años (<a href="https://bulletinofadvancedspanish.com/the-marvellous-miss-kavanagh-revenge-and-skyscrapers-in-buenos-aires/" target="_blank" rel="noreferrer noopener">Bulletin of Advanced Spanish</a>).
+          </p>
+          <p>
+            Los relatos recientes la tratan menos como una romántica despechada y más como una mecenas poco reconocida de la arquitectura de vanguardia de los años treinta, y como una de las primeras desarrolladoras inmobiliarias de la ciudad. La biografía de Marcelo Nougués, "Cora Kavanagh y su edificio" (Díaz Ortiz Ediciones, 2023; 572 pp., ISBN 978-987-88-8094-5, con apéndice de traducción al inglés y prólogo de Ernesto Montequin; disponible en la biblioteca del CPAU en Buenos Aires), sostiene que la historia de la venganza es folklore y reconstruye su vida, sus viajes y su coleccionismo a partir de documentos primarios. Nougués también señala que casi no sobreviven cartas, entrevistas ni testimonios directos de Corina, lo que dejó en circulación sobre todo la "versión adulterada" del romance Anchorena en la tradición oral (<a href="https://www.archdaily.com/1001110/the-story-of-cora-kavanagh-and-her-emblematic-building-in-buenos-aires" target="_blank" rel="noreferrer noopener">ArchDaily</a>).
+          </p>
+        </section>
+
+        <section id="por-que" aria-labelledby="por-que-heading">
+          <h2 id="por-que-heading">Por qué se construyó</h2>
+          <p>
+            La razón documentada fue un desarrollo privado de renta, o <em>edificio de renta</em>, pensado para recuperar buena parte del capital invertido. Hacia 1933 Corina, descripta como una joven <em>estanciera</em> excéntrica y fascinada por todo lo vanguardista, decidió vender campos heredados para construirlo. Contreras dice dos estancias; Nougués y notas posteriores hablan de tres. Su plan declarado era alquilar los departamentos a familias jóvenes y ricas de Buenos Aires, de los pocos grupos que todavía podían pagarlos después de la crisis económica.
+          </p>
+          <p>
+            Algunas versiones atribuyen la idea no a Corina sino a sus abogados, Diego Garret Kavanagh y Pablo Cárdenas. Ellos habían sido los clientes para quienes el estudio Sánchez–Lagos–de la Torre había construido en 1931 un edificio escalonado anterior en Córdoba y Libertad, un proyecto que anticipaba la silueta del Kavanagh (Contreras 2006). Antes de que el régimen de propiedad horizontal normalizara la venta de unidades, torres como esta solían tener un solo dueño y muchos inquilinos, generando renta de largo plazo. La Nación, por su parte, presenta al Kavanagh como un caso raro en el que se alinearon normas municipales, capital privado y una comitente decidida, citando a Silvio Plotquin sobre cómo mujeres como Corina promovieron proyectos de vanguardia en los años treinta sin recibir demasiado crédito por ello (<a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación: Los secretos del Kavanagh</a>).
+          </p>
+          <p>
+            El sitio importaba. El lote triangular de Florida y San Martín pertenecía a Carlos Alfredo Tornquist (hijo de <a href="https://en.wikipedia.org/wiki/Ernesto_Tornquist" target="_blank" rel="noreferrer noopener">Ernesto Tornquist</a>), quien alguna vez había planeado extender el vecino Plaza Hotel sobre toda la manzana. La crisis de 1930 mató ese proyecto, y Tornquist le vendió la parcela a Corina (Contreras 2006). Plaza San Martín era uno de los escenarios aristocráticos de la ciudad, rodeada por Anchorena, Paz, Ortiz Basualdo, el Plaza Hotel y la estación Retiro.
+          </p>
+          <p>
+            La Comisión de Estética Edilicia municipal había señalado ese punto como la "gran puerta de entrada a la ciudad", con las terminales ferroviarias de Retiro justo debajo de la barranca. Ese plan urbano ayuda a explicar por qué la ciudad permitió que el Kavanagh alcanzara altura de rascacielos a cambio de abrir una calle transversal semipública de unos 10 m entre el Plaza Hotel y la nueva torre (Contreras 2006). La oficina de patrimonio de Argentina describe el resultado como un <em>paquebote</em> de hormigón de lujo, insertado en ese entorno de clase alta y ligado a un catálogo moderno y norteamericano de confort y tecnología: Westinghouse, Carrier y Otis (<a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a>). El trabajo académico de Rosa Aboy lo ubica dentro de un giro más amplio posterior al crack de 1929: de la vida en mansiones de modelo europeo hacia los departamentos modernos en altura para la elite (<a href="https://www.tandfonline.com/doi/abs/10.1080/02665433.2012.629809" target="_blank" rel="noreferrer noopener">Aboy, <cite>The right to a home?</cite></a>).
+          </p>
+        </section>
+
+        <section id="construccion" aria-labelledby="construccion-heading">
+          <h2 id="construccion-heading">Cómo se construyó</h2>
+          <p>
+            Contreras da una cronología ajustada de obra. La demolición de las construcciones existentes se remató el 24 de junio de 1933, y el terreno quedó despejado a fines de agosto. La estructura comenzó en enero de 1934, aunque el organismo patrimonial nacional fecha el inicio en abril de 1934, después del desmonte. El hormigonado terminó el 28 de octubre de 1934; para entonces el Kavanagh ya había superado al Edifício Martinelli de São Paulo como la estructura de hormigón armado más alta del mundo. La obra completa llevó unos 20 meses, terminó el 30 de septiembre de 1935 y el edificio se inauguró oficialmente el 15 de enero de 1936. El costo total fue de 3.617.496 pesos moneda nacional; a unos 3,02 pesos moneda nacional por US$1 en 1936, equivalía a cerca de US$1,2M de entonces, o unos US$29M en dólares de 2026 ajustados por el IPC estadounidense. Los impuestos pagados por la obra (~180.000 pesos moneda nacional) fueron los más altos abonados por un edificio en la Argentina hasta ese momento.
+          </p>
+          <p>
+            Las cifras de altura varían menos de lo que parece. Contreras da ~110 m hasta la azotea y 120,35 m hasta la punta del mástil, con 30 pisos altos (récord nacional y primer edificio argentino en alcanzar esa cantidad de niveles) más un <em>mirador</em> en la terraza que a veces se cuenta como piso 31. Al terminarse era el edificio más alto de la Argentina y de América Latina, por encima del Palacio Barolo, el SAFICO e incluso las torres de 106 m de la Basílica de Luján (Contreras 2006). Durante el Congreso Eucarístico de octubre de 1934, se montó una cruz gigante en la fachada superior.
+          </p>
+          <p>
+            La forma escalonada y aterrazada era práctica además de estética. El edificio debía encajar en un lote triangular complejo (~2.400 m²), por lo que se compuso con cinco volúmenes unidos: uno central, flanqueado por dos y luego por otros dos menores. Esa disposición le dio una silueta simétrica, casi de zigurat, que muchas veces se lee como una proa apuntando hacia el Río de la Plata. Las reglas municipales de altura y retiros, parecidas en espíritu a la Zoning Resolution neoyorquina de 1916, moldearon la volumetría. Los retiros generaron grandes terrazas-jardín para alrededor de un tercio de las unidades. De modo poco habitual para una obra racionalista, el edificio también aprovecha la pendiente natural de la barranca de Plaza San Martín, en lugar de simular un terreno plano (<a href="https://modernabuenosaires.org/obras/20s-a-70s/kavanagh" target="_blank" rel="noreferrer noopener">Moderna Buenos Aires</a>; Nougués, 2023).
+          </p>
+          <p>
+            El crítico Jorge Francisco Liernur lo lee como "un híbrido perfecto", capaz de conciliar programa y código de edificación, contexto inmediato y escala urbana, ambición tecnológica y ejecución artesanal (Contreras 2006). Fabio Grementieri, en La Nación, lo llamó una síntesis magistral de racionalismo y art déco, renovación y tradición, París y Nueva York.
+          </p>
+          <p>
+            Las cifras de ingeniería eran enormes para la época (Contreras 2006, citando el número especial de abril de 1936 de <cite>Nuestra Arquitectura</cite>): 1.500 planos para 25.800 m² construidos; 1.600 km de barras de hierro; ~90 km combinados de cañerías de agua, vapor, desagüe y conductos eléctricos; una instalación eléctrica equivalente a abastecer una ciudad de 80.000 habitantes; y una planta frigorífica de aire acondicionado (la primera central de A/C en el mundo en un edificio de este tipo) capaz de producir hielo para 75.000 personas. Llegó a haber 613 obreros por día en el sitio; 23.260 toneladas de materiales exigieron 5.000 viajes de camión; la estructura fue calculada para soportar ~31.000 toneladas.
+          </p>
+          <p>
+            Los interiores eran igual de ambiciosos técnicamente. Los departamentos tenían cocinas eléctricas (Nougués precisa 105 cocinas Hotpoint, 109 heladeras General Electric y baños de mármol con artefactos Standard de color), terminaciones de acero inoxidable, pisos de linóleo, parquet de roble de Eslavonia, placards de cedro y okumé, y una central telefónica automática propia conectada a la red pública. Incluso la electricidad de las heladeras estaba incluida en el alquiler. Los artefactos sanitarios llegaban a casi 300 bañeras (muchas hechas a medida), 120 lavabos, 370 inodoros con válvula, 235 bidets y 250 lavatorios de porcelana (Contreras 2006). El hall central tenía 12 ascensores de alta velocidad, con 200 paradas en total, detrás de una puerta giratoria y una escalera de mármol; los palieres privados tenían <em>boiserie</em> de roble y sillones de cuero (<a href="https://turismo.buenosaires.gob.ar/es/otros-establecimientos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Turismo BA</a>; Contreras 2006).
+          </p>
+          <p>
+            Una rareza sobrevive: el Kavanagh no tiene cocheras ni portero eléctrico. Las visitas deben anunciarse en recepción y desde allí se llama por teléfono al departamento. ASCE lo describe como uno de los primeros rascacielos de hormigón armado del mundo con aire acondicionado central, doce ascensores y una estructura deliberadamente esbelta (<a href="https://www.asce.org/about-civil-engineering/history-and-heritage/historic-landmarks/kavanagh-building" target="_blank" rel="noreferrer noopener">ASCE</a>). <em>Nota sobre el A/C:</em> Contreras dice que el sistema central original dejó de funcionar en 1960; la prensa más reciente fecha su retiro mucho después. Ambas versiones coinciden en que ya no funciona.
+          </p>
+          <p>
+            Al completarse superó al Palacio Salvo de Montevideo (1928), al Martinelli de São Paulo y a toda torre argentina para convertirse en el edificio más alto de América Latina y la estructura de hormigón armado más alta del mundo. Conservó el récord latinoamericano hasta 1947, cuando lo superó el edificio Altino Arantes (Banespa) de São Paulo.
+          </p>
+          <p>
+            El programa incluía subsuelo, planta baja y 30 pisos altos, con 102 departamentos distribuidos en seis alas (A, B, C, E, F y G) según el conteo detallado de Contreras, más el <em>mirador</em> de la terraza con observatorio astronómico. Los pisos 1 a 12 tenían seis departamentos cada uno, los pisos 13 a 20 tres cada uno y los niveles superiores, en su mayoría, una unidad de piso completo. El piso 21 alojaba la maquinaria de ascensores y la planta de A/C; el piso 30, los tanques de agua. La unidad más grande era el piso 14: un departamento único de ~700 m², con tres terrazas, biblioteca, escritorio, varios dormitorios con baño privado y una barra-office que conectaba las alas.
+          </p>
+          <p>
+            Estilísticamente se lo suele llamar racionalista / moderno / art déco, pero no es modernismo doctrinario. La oficina patrimonial argentina lo lee como un híbrido entre art déco vertical neoyorquino, metáfora náutica francesa y tradición beaux-arts local (<a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a>).
+          </p>
+        </section>
+
+        <section id="leyenda" aria-labelledby="leyenda-heading">
+          <h2 id="leyenda-heading">La leyenda del despecho y por qué no cierra</h2>
+          <p>
+            El relato estándar dice que Corina se enamoró de un heredero Anchorena, que la familia rechazó el vínculo por considerarlo inferior a su rango, y que ella respondió construyendo una torre que tapara la vista desde el palacio Anchorena hacia la Basílica del Santísimo Sacramento, iglesia y mausoleo familiar (<a href="https://turismo.buenosaires.gob.ar/en/otros-establecimientos/kavanagh-building" target="_blank" rel="noreferrer noopener">Turismo BA: Kavanagh Building</a>). Una versión más elaborada la muestra esperando a que la matriarca <a href="https://en.wikipedia.org/wiki/Mercedes_Castellanos_de_Anchorena" target="_blank" rel="noreferrer noopener">Mercedes Castellanos de Anchorena</a> saliera de vacaciones, comprando luego el lote baldío por el doble de la oferta y pidiendo a los arquitectos que obstruyeran la iglesia desde la mayor cantidad de ángulos posible.
+          </p>
+          <p>La historia se quiebra al mirarla de cerca:</p>
+          <ul>
+            <li>Existen variantes incompatibles. Algunas hacen que una <em>hija</em> de Corina se enamore de un Anchorena (o, según personal de la basílica, de un chofer). Una investigadora de la comisión de monumentos rechazó esas versiones porque Corina no tuvo hijos documentados (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación: La majestuosa basílica</a>).</li>
+            <li>La cronología falla. Mercedes Castellanos de Anchorena murió en 1920, más de una década antes de que se construyera el Kavanagh; el palacio fue vendido al Estado en 1936 (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación</a>).</li>
+            <li>El historiador Daniel Balmaceda llama "falsa" la historia del matrimonio frustrado entre Corina y <a href="https://es.wikipedia.org/wiki/Aar%C3%B3n_de_Anchorena" target="_blank" rel="noreferrer noopener">Aarón de Anchorena</a>, y dice no haber encontrado evidencia de ningún proyecto matrimonial entre ellos (<a href="https://www.lanacion.com.ar/la-nacion-revista/el-anchorena-aventurero-que-cruzo-el-rio-de-la-plata-en-globo-exploro-la-patagonia-y-fue-pionero-del-nid25102022/" target="_blank" rel="noreferrer noopener">La Nación: El Anchorena aventurero</a>). Roberto L. Elissalde, Diego Zigiotto y Mariela Blanco tampoco encuentran rastro documental del romance ni del pleito.</li>
+            <li>Nougués agrega un problema arquitectónico para la versión vengativa. <a href="https://en.wikipedia.org/wiki/Alejandro_Bustillo" target="_blank" rel="noreferrer noopener">Alejandro Bustillo</a> había diseñado en 1928 una ampliación importante del Plaza Hotel para el grupo Tornquist; si se hubiera construido, habría bloqueado la visual de la basílica años antes de que existiera el Kavanagh. También señala el absurdo económico: vender tres estancias solo por despecho habría sido una locura ("<em>haber vendido tres estancias para hacerlo es una locura</em>").</li>
+          </ul>
+          <p>
+            Contreras (2006) registra otra versión de la leyenda: Corina, supuestamente enfrentada con la Iglesia católica, habría construido la torre para taparle la vista de la Basílica del Santísimo Sacramento a su <em>amiga</em> Mercedes Castellanos de Anchorena, quien había financiado la iglesia y vivía en lo que hoy es la Cancillería. Contreras rechaza esa versión por los mismos motivos. Algunas fuentes dicen que Corina nunca estuvo distanciada de la Iglesia, y Mercedes de Anchorena murió hacia 1920, mucho antes de la obra. La contradicción es reveladora: algunas versiones presentan a Mercedes como rival de Corina; otras, como amiga. Eso se parece menos a un recuerdo conservado que a un motivo inventado a partir de la geometría obvia del edificio.
+          </p>
+          <p>
+            El bloqueo visual existe. La venganza no está probada y probablemente fue mitificada. La leyenda perdura porque la geometría urbana le queda perfecta: hoy la fachada de la basílica se ve de manera célebre desde el angosto Pasaje Corina Kavanagh (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación</a>).
+          </p>
+        </section>
+
+        <section id="anchorena" aria-labelledby="anchorena-heading">
+          <h2 id="anchorena-heading">El lado Anchorena</h2>
+          <p>
+            El edificio supuestamente "agredido" es hoy el Palacio San Martín (ex Palacio Anchorena), construido entre 1905 y 1909 por el arquitecto <a href="https://en.wikipedia.org/wiki/Alejandro_Christophersen" target="_blank" rel="noreferrer noopener">Alejandro Christophersen</a> para Mercedes Castellanos de Anchorena, con tres residencias. Una estaba habitada por Mercedes y su hijo Aarón. El Estado argentino lo adquirió en 1936 para la Cancillería (<a href="https://cancilleria.gob.ar/en/institutional/heritage/san-martin-palace" target="_blank" rel="noreferrer noopener">Cancillería Argentina</a>). Mercedes Castellanos de Anchorena (nacida en Rosario el 24 de septiembre de 1840; condesa pontificia) murió el 9 de julio de 1920 y descansa en la cripta de la Basílica del Santísimo Sacramento, que ella financió (diseñada por los arquitectos franceses Coulomb y Chauvet, consagrada en 1916) (<a href="https://turismo.buenosaires.gob.ar/en/atractivo/bas%C3%ADlica-del-sant%C3%ADsimo-sacramento" target="_blank" rel="noreferrer noopener">Turismo BA</a>). El supuesto interés amoroso, Aarón de Anchorena (1877–1965), fue un célebre soltero aventurero, aeronauta, automovilista y explorador. Se casó con Zelmira Paz en París en 1933, sin registro de ningún vínculo con Corina.
+          </p>
+        </section>
+
+        <section id="despues" aria-labelledby="despues-heading">
+          <h2 id="despues-heading">Historia posterior</h2>
+          <p>
+            El Kavanagh abrió con reputación de modernidad residencial. También entró en la literatura y en la cultura de revistas: apareció en la tapa de <cite>Caras y Caretas</cite> y fue escrito por <a href="https://en.wikipedia.org/wiki/Manuel_Mujica_Lainez" target="_blank" rel="noreferrer noopener">Manuel Mujica Lainez</a>, <a href="https://es.wikipedia.org/wiki/H%C3%A9ctor_Viel_Temperley" target="_blank" rel="noreferrer noopener">Héctor Viel Temperley</a> y <a href="https://es.wikipedia.org/wiki/Esther_Cross" target="_blank" rel="noreferrer noopener">Esther Cross</a> (<a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación: Los secretos del Kavanagh</a>).
+          </p>
+          <p>
+            Durante los primeros gobiernos de <a href="https://en.wikipedia.org/wiki/Juan_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Perón</a> (1946–1955), el Kavanagh fue atacado como bastión de la aristocracia terrateniente. Algunas versiones dicen que <a href="https://en.wikipedia.org/wiki/Eva_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Evita</a> pensó en comprarlo, o incluso expropiarlo, para trabajadores. Durante la quema de iglesias de 1955, algunos intentaron prender fuego el edificio. El intento se habría frenado solo porque allí vivía el secretario de Comercio de Perón. Cuando se levantó cerca el más alto Edificio Alas, ambas torres entraron en la discusión política: el Kavanagh como icono de la <em>oligarquía terrateniente</em> para los peronistas, el Alas como imagen de "la tiranía" para los antiperonistas (Contreras 2006).
+          </p>
+          <p>
+            Con el tiempo, entre sus residentes se contaron el ex ministro de Economía <a href="https://en.wikipedia.org/wiki/Jos%C3%A9_Alfredo_Mart%C3%ADnez_de_Hoz" target="_blank" rel="noreferrer noopener">José Alfredo Martínez de Hoz</a>, el chef <a href="https://en.wikipedia.org/wiki/Francis_Mallmann" target="_blank" rel="noreferrer noopener">Francis Mallmann</a>, los periodistas <a href="https://en.wikipedia.org/wiki/Joaqu%C3%ADn_Morales_Sol%C3%A1" target="_blank" rel="noreferrer noopener">Joaquín Morales Solá</a> y <a href="https://en.wikipedia.org/wiki/Jorge_Lanata" target="_blank" rel="noreferrer noopener">Jorge Lanata</a>, la modelo <a href="https://es.wikipedia.org/wiki/Claudia_S%C3%A1nchez" target="_blank" rel="noreferrer noopener">Claudia Sánchez</a>, <a href="https://es.wikipedia.org/wiki/Torcuato_Di_Tella_%28hijo%29" target="_blank" rel="noreferrer noopener">Torcuato Di Tella</a> (cuya viuda, Tamara Di Tella, sigue viviendo allí), integrantes de las familias Pérez Companc y Eskenazi, <a href="https://en.wikipedia.org/wiki/Carlos_Corach" target="_blank" rel="noreferrer noopener">Carlos Corach</a>, el analista <a href="https://en.wikipedia.org/wiki/Carlos_Maslat%C3%B3n" target="_blank" rel="noreferrer noopener">Carlos Maslatón</a> y el empresario teatral Leonardo Barujel (depto. 1°A). Por el departamento de Barujel pasaron <a href="https://en.wikipedia.org/wiki/Maurice_Chevalier" target="_blank" rel="noreferrer noopener">Maurice Chevalier</a>, <a href="https://en.wikipedia.org/wiki/Charles_Aznavour" target="_blank" rel="noreferrer noopener">Charles Aznavour</a>, <a href="https://en.wikipedia.org/wiki/%C3%89dith_Piaf" target="_blank" rel="noreferrer noopener">Edith Piaf</a>, <a href="https://en.wikipedia.org/wiki/Sammy_Davis_Jr." target="_blank" rel="noreferrer noopener">Sammy Davis Jr.</a> y otros; el diseñador Roberto Devorik alojó allí a <a href="https://en.wikipedia.org/wiki/Madonna" target="_blank" rel="noreferrer noopener">Madonna</a> durante su visita a Buenos Aires. El penthouse 14 A de Corina pasó luego a la familia bancaria Roberts y, hacia 2003–2007, al multimillonario británico Lord Alain Levenfiche (Contreras 2006; La Nación).
+          </p>
+          <p>
+            La llegada tardía de la propiedad horizontal le costó a Corina su edificio. El Kavanagh había sido concebido como <em>edificio de renta</em>: una propiedad de dueño único cuyo valor dependía del alquiler. Se combinaron dos problemas. Primero, las leyes de congelamiento de alquileres de los años cuarenta fijaron los alquileres nominales mientras la inflación destruía su valor real, asfixiando el flujo de ingresos que justificaba conservar toda la torre. Segundo, hasta la Ley 13.512 (1948), no existía un mecanismo legal para subdividir el título de un edificio y vender departamentos por separado. Argentina aprobó esa reforma más tarde que Brasil (1928), Chile (1937) y Uruguay (1946).
+          </p>
+          <p>
+            Durante años Corina quedó atrapada. Su renta se achicaba y no tenía forma de levantar capital vendiendo partes del activo. Cuando por fin se volvió legal vender por unidad, vender los departamentos uno por uno se convirtió en la única salida. Pero estaba liquidando un activo devaluado y bajo presión, en un mercado de inquilinos protegidos. Terminó vendiendo casi todos los departamentos (La Nación fecha la atomización en 1949–1951), conservó solo dos unidades del ala C (pisos 6 y 7) y perdió gran parte de su fortuna en el proceso. Siguió viviendo en el edificio hasta su muerte en 1984 (Contreras 2006; <a href="https://www.lanacion.com.ar/cultura/los-secretos-del-kavanagh-el-primer-edificio-moderno-de-buenos-aires-nid2139269/" target="_blank" rel="noreferrer noopener">La Nación</a>).
+          </p>
+
+          <h3>Reconocimientos</h3>
+          <p>Según Contreras (2006), que enumera los cuatro:</p>
+          <ul>
+            <li>1936: Premio Municipal de Vivienda Colectiva y Fachada.</li>
+            <li>1939: Mención Honorífica del American Institute of Architects (AIA).</li>
+            <li>1994: International Historic Civil Engineering Landmark de ASCE. La prensa argentina suele ponerlo junto a la Torre Eiffel, la represa de Asuán y el Canal de Panamá, pero esa comparación viene de fuentes argentinas secundarias. La cita de ASCE dice, en cambio, que la torre se levantó en los años treinta, cuando Argentina tenía una de las economías más fuertes del mundo (<a href="https://www.asce.org/about-civil-engineering/history-and-heritage/historic-landmarks/kavanagh-building" target="_blank" rel="noreferrer noopener">ASCE</a>).</li>
+            <li>1999: Declarado Monumento Histórico Nacional por la Comisión Nacional de Museos y Monumentos en abril de 1999, formalizado por el Decreto 349/1999 (<a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/55000-59999/57386/norma.htm" target="_blank" rel="noreferrer noopener">InfoLEG</a>).</li>
+          </ul>
+          <p>
+            Una encuesta de Clarín de 2013, realizada a 600 no especialistas, lo eligió como el edificio que más les gustaba a los porteños (<a href="https://en.wikipedia.org/wiki/Kavanagh_Building" target="_blank" rel="noreferrer noopener">Wikipedia: Kavanagh Building</a>). Desde 1999, el consorcio de propietarios lleva adelante una restauración de fachada por etapas a cargo de Marcelo Magadán y Asociados, limpiando y consolidando el revoque símil piedra con criterios de conservación no agresivos. El trabajo recuperó el gradiente original del revoque, que se aclara desde el gris de la base hasta un blanco tiza cerca de la cima.
+          </p>
+          <p>
+            La afirmación sobre la UNESCO es falsa. Contreras (2006), junto con mucha prensa y material turístico, enumera un reconocimiento de 1999 como "Patrimonio Mundial de la Arquitectura de la Modernidad en la lista de la UNESCO". No existe tal categoría de UNESCO. No hay una designación llamada "Patrimonio Mundial de la Arquitectura Moderna", y el Kavanagh no es Patrimonio Mundial de la UNESCO (<a href="https://whc.unesco.org/en/statesparties/ar" target="_blank" rel="noreferrer noopener">UNESCO: Argentina</a>). Los únicos bienes argentinos inscriptos por UNESCO son sitios como Los Glaciares, Iguazú, las Misiones/Estancias Jesuíticas, Península Valdés, Cueva de las Manos, Ischigualasto/Talampaya, Qhapaq Ñan y la inscripción de <a href="https://en.wikipedia.org/wiki/Le_Corbusier" target="_blank" rel="noreferrer noopener">Le Corbusier</a> (Casa Curutchet en La Plata), no el Kavanagh.
+          </p>
+          <p>
+            Lo que ocurrió fue más simple. En 1999 Argentina declaró al Kavanagh Monumento Histórico Nacional, una designación interna. Por separado, DOCOMOMO (Documentation and Conservation of the Modern Movement) mantiene registros de edificios modernistas, y el Kavanagh aparece en listas de ese tipo. En algún momento, la declaración de monumento nacional y/o una lista tipo DOCOMOMO parece haberse mezclado con "UNESCO" para sonar más importante. La versión inflada se propagó luego por guías, textos turísticos e incluso esta monografía patrimonial. Toda afirmación de "Patrimonio Mundial UNESCO" sobre el Kavanagh debe considerarse incorrecta.
+          </p>
+          <p>
+            El mito también generó una segunda afirmación falsa: <cite>Las mil y una curiosidades de Buenos Aires</cite> (De los Cuatro Vientos, 2007) repite la historia de UNESCO y agrega que esa supuesta distinción habría eximido a los residentes del pago de tasas municipales. Es doblemente incorrecto. La designación UNESCO es ficticia, y de ninguna protección patrimonial se desprende una exención así. Los propietarios pagan las cargas municipales normales y, como monumento, enfrentan además restricciones de preservación.
+          </p>
+          <p>
+            Los únicos reconocimientos de primer nivel genuinos del edificio son la condición de Monumento Histórico Nacional argentino (Decreto 349/1999) y el International Historic Civil Engineering Landmark de ASCE (1994).
+          </p>
+        </section>
+
+        <section id="presente" aria-labelledby="presente-heading">
+          <h2 id="presente-heading">Presente</h2>
+          <p>
+            El Kavanagh sigue siendo ante todo un edificio residencial privado (~105 departamentos), no un museo. También tiene los problemas prácticos de una torre de lujo antigua: mantenimiento caro, ausencia de cocheras, sin paquete moderno de amenities y restricciones patrimoniales. Una nota de Toribio Achával de 2025 afirmó que alrededor del 30% de las unidades estaba en venta, con expensas altas y precios desde unos US$260.000 hasta US$1M. Es comentario de broker, no dato oficial del edificio (<a href="https://www.toribioachaval.com.ar/arquitectura-decoracion/edificio-kavanagh-leyenda-y-realidad-en-el-mercado-inmobiliario" target="_blank" rel="noreferrer noopener">Toribio Achával</a>). El penthouse 14 A lleva años entrando y saliendo del mercado, con un precio pedido que bajó de unos US$7,9M en 2007 a menos de US$3M.
+          </p>
+          <p>
+            En 2025 abrió Cora Café en el local comercial de planta baja, en un antiguo espacio de joyería, después de un largo proceso de aprobación del consorcio. Fue el primer emprendimiento gastronómico dentro del edificio y funciona con restricciones, incluida la ausencia de cocina o fuego abierto. La misma nota señala que el sistema original de aire acondicionado central ya no funciona y fue reemplazado por equipos compactos que alteraron parcialmente la composición de la fachada (<a href="https://www.lanacion.com.ar/sabado/en-el-kavanagh-el-nuevo-cafe-que-rinde-homenaje-a-la-historia-del-edificio-nid03032025/" target="_blank" rel="noreferrer noopener">La Nación: Cora Café</a>).
+          </p>
+        </section>
+
+        <section id="salvedades" aria-labelledby="salvedades-heading">
+          <h2 id="salvedades-heading">Salvedades sobre cifras contradictorias</h2>
+          <p>Las fuentes difieren en varios números porque usan criterios de conteo distintos y porque parte de la cobertura secundaria es imprecisa:</p>
+          <ul>
+            <li>Pisos: 30, 31 o 32 (habitables vs. totales, con o sin el <em>mirador</em> de la terraza).</li>
+            <li>Departamentos: se citan cifras entre 100 y 107; Contreras cuenta 102, la mayoría de la prensa dice 105.</li>
+            <li>Inauguración: 2, 3 o 15 de enero de 1936 (esta última es la fecha mejor respaldada).</li>
+            <li>Duración de obra: ~14 meses (estructura) vs. ~20 meses (desde el despeje del lote hasta el final); Contreras da 20.</li>
+            <li>Altura: ~110 m hasta la azotea vs. ~120,35 m hasta la punta del mástil.</li>
+            <li>Residencia de Corina: está discutido si realmente vivió mucho tiempo en el 14 A; el relato más detallado (Nougués) la muestra mudándose a unidades más chicas 6 C / 7 C después de que su fortuna se redujera.</li>
+            <li>Estancias vendidas: dos (Contreras) vs. tres en Venado Tuerto (Nougués/La Nación).</li>
+          </ul>
+          <p>
+            Vale marcar un error recurrente en fuentes de habla inglesa: varias deforman la historia como si una <em>hija</em> de Kavanagh se hubiera enamorado de un Anchorena. La leyenda habla de Corina misma, que no tuvo hijos.
+          </p>
+        </section>
+
+        <section id="fuentes" aria-labelledby="fuentes-heading">
+          <h2 id="fuentes-heading">Fuentes por tema</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Tema</th>
+                  <th scope="col">Fuente</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Monografía técnica/histórica principal</th>
+                  <td>Leonel Hernán Contreras, <cite>Rascacielos Porteños</cite> (Gobierno de la Ciudad de Buenos Aires, <cite>Temas de Patrimonio Cultural</cite> 15, 2006), cap. VII, pp. 113–125. Se apoya en el número especial de abril de 1936 de <cite>Nuestra Arquitectura</cite> y en trabajos de Gaspar Nogués.</td>
+                </tr>
+                <tr>
+                  <th scope="row">Biografía de referencia</th>
+                  <td>Marcelo Nougués, <cite>Cora Kavanagh y su edificio</cite> (Díaz Ortiz Ediciones, 2023; 572 pp., ISBN 978-987-88-8094-5; biblioteca CPAU), vía <a href="https://www.archdaily.com/1001110/the-story-of-cora-kavanagh-and-her-emblematic-building-in-buenos-aires" target="_blank" rel="noreferrer noopener">ArchDaily</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Artículo académico de arquitectura</th>
+                  <td>Silvio Plotquin, <cite>A&amp;P Continuidad</cite> (Univ. Nacional de Rosario, 2018)</td>
+                </tr>
+                <tr>
+                  <th scope="row">Decreto de Monumento Nacional</th>
+                  <td><a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/55000-59999/57386/norma.htm" target="_blank" rel="noreferrer noopener">InfoLEG: Decreto 349/1999</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Ingeniería / técnica</th>
+                  <td><a href="https://www.asce.org/about-civil-engineering/history-and-heritage/historic-landmarks/kavanagh-building" target="_blank" rel="noreferrer noopener">ASCE</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Marco patrimonial</th>
+                  <td><a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Arquitectura / premios</th>
+                  <td><a href="https://modernabuenosaires.org/obras/20s-a-70s/kavanagh" target="_blank" rel="noreferrer noopener">Moderna Buenos Aires</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Chequeo de la leyenda</th>
+                  <td><a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación (basílica)</a> · <a href="https://www.lanacion.com.ar/la-nacion-revista/el-anchorena-aventurero-que-cruzo-el-rio-de-la-plata-en-globo-exploro-la-patagonia-y-fue-pionero-del-nid25102022/" target="_blank" rel="noreferrer noopener">La Nación (Balmaceda)</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Vida y matrimonios de Corina</th>
+                  <td><a href="https://bulletinofadvancedspanish.com/the-marvellous-miss-kavanagh-revenge-and-skyscrapers-in-buenos-aires/" target="_blank" rel="noreferrer noopener">Bulletin of Advanced Spanish</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Palacio San Martín</th>
+                  <td><a href="https://cancilleria.gob.ar/en/institutional/heritage/san-martin-palace" target="_blank" rel="noreferrer noopener">Cancillería Argentina</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Presente / Cora Café</th>
+                  <td><a href="https://www.lanacion.com.ar/sabado/en-el-kavanagh-el-nuevo-cafe-que-rinde-homenaje-a-la-historia-del-edificio-nid03032025/" target="_blank" rel="noreferrer noopener">La Nación (2025)</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </article>
+    </main>
+    <script is:inline>
+      const languageCopy = {
+        en: {
+          documentLang: "en",
+          title: "Kavanagh building: much more than you wanted to know",
+        description:
+          "A researched account of the Kavanagh building: Cora Kavanagh, the construction, the spite legend and the building's later history.",
+          homeLabel: "Back to home",
+          navLabel: "Language"
+        },
+        es: {
+          documentLang: "es-AR",
+          title: "Edificio Kavanagh: mucho más de lo que querías saber",
+        description:
+          "Un relato documentado sobre el Edificio Kavanagh: Cora Kavanagh, la construcción, la leyenda de la venganza y la historia posterior del edificio.",
+          homeLabel: "Volver al inicio",
+          navLabel: "Idioma"
+        }
+      };
+
+      const panels = document.querySelectorAll("[data-language-panel]");
+      const toggles = document.querySelectorAll("[data-language-toggle]");
+      const title = document.querySelector("[data-language-title]");
+      const dek = document.querySelector("[data-language-dek]");
+      const description = document.querySelector('meta[name="description"]');
+      const homeLink = document.querySelector(".home-link");
+      const switcher = document.querySelector(".language-switch");
+
+      function setLanguage(language, updateUrl = true) {
+        const nextLanguage = language === "es" ? "es" : "en";
+        const copy = languageCopy[nextLanguage];
+
+        document.documentElement.lang = copy.documentLang;
+        document.title = copy.title;
+        title.textContent = title.dataset[nextLanguage];
+        dek.textContent = dek.dataset[nextLanguage];
+        description?.setAttribute("content", description.dataset[nextLanguage] ?? copy.description);
+        homeLink?.setAttribute("aria-label", copy.homeLabel);
+        switcher?.setAttribute("aria-label", copy.navLabel);
+
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.languagePanel !== nextLanguage;
+        });
+
+        toggles.forEach((toggle) => {
+          const isCurrent = toggle.dataset.languageToggle === nextLanguage;
+          toggle.setAttribute("aria-pressed", String(isCurrent));
+        });
+
+        localStorage.setItem("kavanagh-language", nextLanguage);
+
+        if (updateUrl) {
+          const nextHash = nextLanguage === "es" ? "#es" : location.pathname + location.search;
+          history.replaceState(null, "", nextHash);
+        }
+      }
+
+      toggles.forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          setLanguage(toggle.dataset.languageToggle);
+        });
+      });
+
+      const initialLanguage =
+        location.hash === "#es" ? "es" : localStorage.getItem("kavanagh-language") === "es" ? "es" : "en";
+
+      setLanguage(initialLanguage, false);
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfaf6;
+    --paper: #fffefa;
+    --text: #1d1a16;
+    --text-soft: #403a33;
+    --muted: #756d63;
+    --rule: #ddd3c5;
+    --accent: #805324;
+    --accent-soft: #f1e7d8;
+    --selection: #e7c99d;
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171410;
+      --paper: #1f1b16;
+      --text: #f3eadf;
+      --text-soft: #d9cabc;
+      --muted: #aa9a8a;
+      --rule: #3d342b;
+      --accent: #e0ae74;
+      --accent-soft: #2b241d;
+      --selection: #6e4a25;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--text);
+  }
+
+  html {
+    max-width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 60%, transparent), transparent 28rem),
+      var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .hero {
+    min-width: 0;
+    min-height: clamp(19rem, 44svh, 30rem);
+    display: grid;
+    align-content: end;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 clamp(1.35rem, 4.5vw, 3rem);
+  }
+
+  .home-link,
+  .language-switch,
+  .eyebrow {
+    font-family: var(--sans);
+  }
+
+  .site-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-underline-offset: 0.28em;
+  }
+
+  .language-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    padding: 0.22rem;
+  }
+
+  .language-switch button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.32rem 0.52rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .language-switch button[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .home-link:hover,
+  .language-switch button:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .language-switch button[aria-pressed="true"]:hover {
+    color: var(--bg);
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    margin: clamp(1rem, 4vw, 3rem) 0 0;
+    color: var(--accent);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(2.25rem, 6.4vw, 4.9rem);
+    font-weight: 650;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    overflow-wrap: break-word;
+  }
+
+  .dek {
+    max-width: 44rem;
+    margin: 0.35rem 0 0;
+    color: var(--text-soft);
+    font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+    line-height: 1.42;
+    letter-spacing: -0.012em;
+    overflow-wrap: break-word;
+  }
+
+  .article {
+    width: 100%;
+    display: grid;
+    gap: clamp(2.75rem, 7vw, 5.5rem);
+    max-width: 67ch;
+    margin: 0 auto;
+    padding: clamp(1.75rem, 4.5vw, 3.75rem) 0;
+  }
+
+  section {
+    min-width: 0;
+    scroll-margin-top: 5.5rem;
+  }
+
+  h2,
+  h3 {
+    color: var(--text);
+    letter-spacing: -0.035em;
+  }
+
+  h2 {
+    max-width: 28ch;
+    margin: 0 0 1.2rem;
+    font-size: clamp(1.55rem, 3.8vw, 2.65rem);
+    font-weight: 650;
+    line-height: 1.04;
+  }
+
+  h3 {
+    max-width: 34ch;
+    margin: 2.4rem 0 0.8rem;
+    font-size: clamp(1.12rem, 2.2vw, 1.45rem);
+    line-height: 1.18;
+  }
+
+  p,
+  li,
+  td,
+  th {
+    color: var(--text-soft);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    overflow-wrap: break-word;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p,
+  p + ul,
+  ul + p,
+  .table-wrap {
+    margin-top: 1.25rem;
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 720;
+  }
+
+  em,
+  cite {
+    font-style: italic;
+  }
+
+  a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.17em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+
+  blockquote {
+    margin: 1.65rem 0;
+    min-width: 0;
+    border-block: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 72%, transparent);
+    padding: clamp(1.1rem, 3vw, 1.55rem) clamp(1rem, 3vw, 1.5rem);
+  }
+
+  blockquote p {
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.68;
+  }
+
+  ul {
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    padding-left: 0.25rem;
+  }
+
+  li + li {
+    margin-top: 0.75rem;
+  }
+
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  tbody th {
+    width: 32%;
+    color: var(--text);
+    font-weight: 680;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      padding: 1rem;
+    }
+
+    .site-tools {
+      align-items: flex-start;
+    }
+
+    .hero {
+      min-height: clamp(17rem, 44svh, 23rem);
+      padding-bottom: 1.25rem;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-size: clamp(2.15rem, 10vw, 3rem);
+      letter-spacing: -0.045em;
+    }
+
+    .dek {
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+
+    .article {
+      gap: 3.25rem;
+      max-width: 100%;
+      padding: 1.75rem 0 3.5rem;
+    }
+
+    h2 {
+      max-width: 100%;
+      margin-bottom: 0.95rem;
+      font-size: clamp(1.5rem, 7vw, 2.05rem);
+      line-height: 1.06;
+    }
+
+    h3 {
+      max-width: 100%;
+      font-size: 1.15rem;
+      line-height: 1.22;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      font-size: 1rem;
+      line-height: 1.72;
+    }
+
+    blockquote {
+      margin-inline: -0.25rem;
+    }
+
+    .table-wrap {
+      border: 0;
+      background: transparent;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    tbody {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    tbody tr {
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      padding: 0.85rem 0.95rem 0.95rem;
+    }
+
+    tbody th,
+    tbody td {
+      border-bottom: 0;
+      padding: 0;
+    }
+
+    tbody th {
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 750;
+      letter-spacing: 0.07em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    tbody td {
+      margin-top: 0.35rem;
+    }
+  }
+</style>

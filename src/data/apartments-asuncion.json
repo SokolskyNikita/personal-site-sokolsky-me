@@ -2,7 +2,7 @@
   "title": "Asunción high-rise apartment buildings",
   "city": "Asunción",
   "area": "Asunción, Paraguay",
-  "generatedAt": "2026-06-30T21:14:00.000-03:00",
+  "generatedAt": "2026-06-30T21:34:00.000-03:00",
   "mapCenter": {
     "lat": -25.282,
     "lng": -57.571
@@ -12,10 +12,12 @@
     "addressSource": "Google Maps Places text search using the private Maps key from .env on 2026-06-30, with the first matching residential/project result retained.",
     "availabilitySource": "BrightData Google batches, regular web search and targeted source review on 2026-06-30.",
     "localRentalAdSource": "Representative direct rental, temporary-rental, short-term rental or Airbnb pages. Generic search result pages, sale-only pages and developer pages are not used as sufficient rental evidence.",
-    "longTermRentSource": "Monthly USD rent estimates target a standard 1-bedroom or small 2-bedroom comparison unit when available. Large luxury semipisos and 3-bedroom evidence are normalized down only where noted.",
+    "longTermRentSource": "Monthly USD rent estimates target a furnished 1-bedroom benchmark. Direct 1-bedroom listings are used when available; 2-bedroom and larger-unit evidence is normalized down to a 1-bedroom-equivalent estimate.",
     "airbnbRule": "Airbnb is marked confirmed only when a search result explicitly named the building or exact address. Generic neighborhood Airbnb results are ignored.",
-    "includedRule": "Buildings come from the local Asunción fancy-buildings list and were retained when search found either a direct rental page, a short-term rental page or clear current project/rental evidence.",
-    "floorCountSource": "Floor counts use official/developer pages or listing snippets from BrightData/regular search. Null means no reliable total floor count was found during this pass."
+    "includedRule": "Buildings come from the local Asunción fancy-buildings list plus a follow-up audit for pool, gym, active rental evidence and post-2010 delivery/renovation. Entries were retained when search found either a direct rental page, a short-term rental page or clear current project/rental evidence.",
+    "lastExpansion": "On 2026-06-30, nine additional Asunción buildings were added after BrightData and regular search found pool/gym evidence, active rentals, and post-2010 construction evidence: Life Mariscal, Ancora, Edificio Espíritu Santo, Habitalis Mburucuyá, Torre Augusta I, Life Bruselas, Life Villa Morra, Civis Alpha and Lomas 1820.",
+    "floorCountSource": "Floor counts use official/developer pages or listing snippets from BrightData/regular search. Null means no reliable total floor count was found during this pass.",
+    "lastTwoBedroomAreaAudit": "On 2026-07-01, Asuncion buildings with stored 2-bedroom estimates of 133 m2 or higher were rechecked against additional sale-listing search results. Representative estimates were adjusted where repeated listing evidence showed a better apartment-area figure; entries already supported by direct 2-bedroom evidence were left unchanged."
   },
   "buildings": [
     {
@@ -47,7 +49,7 @@
         "url": "https://www.infocasas.com.py/alquiler-de-departamento-en-edificio-the-tower/186978733",
         "summary": "Exact The Tower rental result on Av. Santa Teresa showed a furnished 2-bedroom apartment around USD 1,800."
       },
-      "description": "Premium Santa Teresa tower close to Paseo La Galería, with concierge-style services and high-floor luxury units.",
+      "description": "Tall tower with concierge-style service, high-floor apartments and city views.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquiler de departamento en edificio The Tower",
@@ -55,12 +57,20 @@
         "summary": "Representative current rental result for The Tower."
       },
       "longTermRentUsd": {
-        "amount": 1800,
-        "basis": "direct 2-bedroom listing",
-        "confidence": "high",
+        "amount": 1300,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listings",
+        "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquiler-de-departamento-en-edificio-the-tower/186978733",
-        "summary": "Search results showed exact The Tower rentals from roughly USD 1,600 to USD 1,800, with broader local notes up to USD 2,500 for larger units."
+        "summary": "Exact 2-bedroom rentals ran about USD 1,600-1,800; this is normalized to a furnished 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 91,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Airbnb",
+        "sourceUrl": "https://www.infocasas.com.py/vendo-departamento-en-the-tower/189423428",
+        "summary": "Search results showed multiple exact The Tower 2-bedroom units at about 91-91.5 m2, with one Airbnb noting an approx. 100 m2 larger 2-bedroom typology."
       },
       "floorsAboveGround": null
     },
@@ -95,7 +105,7 @@
         "url": "https://tulugar.com/es/paraguay/proyectos/abv-eminent-torre-i-asuncion/alquiler",
         "summary": "Official and portal results showed Eminent units available for rent, including Armani/Casa-positioned units."
       },
-      "description": "Armani/Casa-linked luxury towers on Santa Teresa with premium common areas, services and large-format residences.",
+      "description": "Armani/Casa-linked towers with large apartments, shared lounges and managed services.",
       "localRentalAd": {
         "source": "TuLugar",
         "title": "Eminent Torre I alquiler",
@@ -104,11 +114,19 @@
       },
       "longTermRentUsd": {
         "amount": 1600,
-        "basis": "direct 1-bedroom listing",
+        "basis": "direct 1-bedroom benchmark listing",
         "confidence": "high",
         "source": "BrightData Google / TuCasaPy",
         "sourceUrl": "https://tucasapy.com/propiedad/en-alquiler-departamento-de-1-habitaciones-estilo-moderna-eminent-by-casa-armani-asuncion",
         "summary": "Search snippets showed a 1-bedroom Eminent by Casa Armani rental at USD 1,600, with larger units ranging much higher."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 110,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "M2 / InfoCasas sale listings",
+        "sourceUrl": "https://www.m2.com.py/en-venta/departamentos/edificio-torres-eminent-asuncion",
+        "summary": "Sale listings for Torres Eminent repeatedly showed 2-bedroom units at 109.85 m2; rounded to 110 m2."
       },
       "floorsAboveGround": 30
     },
@@ -142,7 +160,7 @@
         "url": "https://www.infocasas.com.py/alquilo-dpto-de-2-hab-en-sky-tower/192592516",
         "summary": "Exact Sky Tower 2-bedroom rental result at USD 1,500."
       },
-      "description": "Corporate-corridor residential tower with furnished rental inventory and short-term stay evidence.",
+      "description": "High-rise apartment tower with furnished units, pool and gym access.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo dpto de 2 hab. en Sky Tower",
@@ -150,12 +168,20 @@
         "summary": "Representative 2-bedroom Sky Tower rental."
       },
       "longTermRentUsd": {
-        "amount": 1500,
-        "basis": "direct 2-bedroom listing",
+        "amount": 950,
+        "basis": "direct smaller furnished-unit 1-bedroom benchmark",
         "confidence": "high",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-dpto-de-2-hab-en-sky-tower/192592516",
-        "summary": "Exact rental snippets showed Sky Tower 2-bedroom units around USD 1,500 and smaller furnished units from about USD 950."
+        "summary": "Exact 2-bedroom rentals were around USD 1,500; smaller furnished units appeared around USD 950, used here as the 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 100,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Home Hunters",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-dpto-de-2-hab-en-sky-tower/192592516",
+        "summary": "Exact Sky Tower 2-bedroom results repeatedly showed about 100-101 m2, with smaller 62 m2 inventory treated as an outlier."
       },
       "floorsAboveGround": null
     },
@@ -188,7 +214,7 @@
         "url": "https://asuncion.estate/es/asuncion/alquiler-de-lujosos-departamentos-1465457",
         "summary": "Exact The Address rental result in Mburucuyá at USD 2,800 for a large new unit."
       },
-      "description": "New luxury residence on Santísima Trinidad, positioned around large apartments and high-end amenities.",
+      "description": "Large-apartment residence with pool, gym and newer common areas.",
       "localRentalAd": {
         "source": "Asuncion Estate",
         "title": "Alquiler de lujosos departamentos a estrenar en The Address",
@@ -196,12 +222,20 @@
         "summary": "Representative new-unit rental for The Address."
       },
       "longTermRentUsd": {
-        "amount": 2800,
-        "basis": "direct large-unit listing",
-        "confidence": "medium",
+        "amount": 1550,
+        "basis": "1-bedroom estimate normalized from a large 3-bedroom listing",
+        "confidence": "medium-low",
         "source": "BrightData Google / Asuncion Estate",
         "sourceUrl": "https://asuncion.estate/es/asuncion/alquiler-de-lujosos-departamentos-1465457",
-        "summary": "The visible rental was a large 3-bedroom unit at USD 2,800, so the value reflects available inventory rather than a compact 1-bedroom benchmark."
+        "summary": "The visible rental was a large 3-bedroom unit at USD 2,800; this is normalized to a 1BR-equivalent benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 143,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / RE/MAX / InfoCasas",
+        "sourceUrl": "https://www.remax.com.py/es-py/propiedades/departamento/venta/santisima-trinidad/143063147-75",
+        "summary": "The Address 2-bedroom results showed large formats around 130-160 m2, including a 142.55 m2 own-area listing; 143 m2 is the representative estimate."
       },
       "floorsAboveGround": null
     },
@@ -232,7 +266,7 @@
         "url": "https://www.infocasas.com.py/en-alquiler-departamento-premium-en-jade-park/190754656",
         "summary": "Exact Jade Park premium rental result at USD 3,350."
       },
-      "description": "One of Asunción's most premium residential complexes, with resort-style amenities and large luxury units.",
+      "description": "Gated tower complex with large units, landscaped grounds, pool and clubhouse.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "En alquiler departamento premium en Jade Park",
@@ -240,12 +274,20 @@
         "summary": "Representative premium Jade Park rental."
       },
       "longTermRentUsd": {
-        "amount": 3350,
-        "basis": "direct premium listing",
-        "confidence": "high",
+        "amount": 1850,
+        "basis": "1-bedroom estimate normalized from large luxury-unit evidence",
+        "confidence": "medium-low",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/en-alquiler-departamento-premium-en-jade-park/190754656",
-        "summary": "Exact listing evidence showed a Jade Park rental at USD 3,350, consistent with the local list's USD 3,500-4,000+ range."
+        "summary": "Exact Jade Park rentals skew to large high-end units around USD 3,350+; this is normalized to a 1BR-equivalent benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 226,
+        "basis": "direct 2-bedroom sale listing evidence excluding parking-heavy saleable totals",
+        "confidence": "high",
+        "source": "InfoCasas / Coldwell Banker / social sale snippets",
+        "sourceUrl": "https://www.infocasas.com.py/en-venta-exclusivo-departamentos-en-jade-park-de-2-dormitorios-mburucuya/185648045",
+        "summary": "Fresh sales searches found repeated Jade Park 2-bedroom evidence at 188 m2 built/own area, 224 m2 including a 36 m2 terrace, and 226 m2 constructed. The prior 235 m2 figure was the upper end; 226 m2 is the representative 2BR apartment-area estimate."
       },
       "floorsAboveGround": null
     },
@@ -278,7 +320,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-en-las-mercedes-asuncion-palmanova/193482814",
         "summary": "Exact Palmanova Las Mercedes rental result for a 1-bedroom unit at Gs. 4,300,000."
       },
-      "description": "New Las Mercedes building on General Santos, with rooftop amenities and compact-to-mid-size rental units.",
+      "description": "Newer tower with rooftop amenities and small to mid-size rental units.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento en Las Mercedes Asunción, Palmanova",
@@ -287,11 +329,19 @@
       },
       "longTermRentUsd": {
         "amount": 700,
-        "basis": "direct 1-bedroom listing converted from PYG",
+        "basis": "direct 1-bedroom benchmark listing converted from PYG",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-en-las-mercedes-asuncion-palmanova/193482814",
         "summary": "Visible rental evidence ranged from Gs. 4.3m to about USD 800 for 1-bedroom or small units."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 110,
+        "basis": "direct official and listing evidence",
+        "confidence": "high",
+        "source": "Regular search / Palmanova Rentals / InfoCasas",
+        "sourceUrl": "https://www.palmanova.rentals/",
+        "summary": "Palmanova Rentals and multiple InfoCasas sale/rental pages list 2-bedroom units at 110 m2."
       },
       "floorsAboveGround": null
     },
@@ -324,7 +374,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-edificio-miami-tower/193061889",
         "summary": "Exact Miami Tower rental result in Villa Morra."
       },
-      "description": "New Villa Morra/Boggiani luxury tower with furnished rentals and premium amenities.",
+      "description": "Newer tower with furnished units, pool, gym and short-stay listings.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento Edificio Miami Tower",
@@ -332,12 +382,20 @@
         "summary": "Representative Miami Tower rental result."
       },
       "longTermRentUsd": {
-        "amount": 1300,
-        "basis": "local list and exact rental cross-check",
+        "amount": 900,
+        "basis": "1-bedroom estimate normalized from exact larger-unit rentals",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-edificio-miami-tower/193061889",
-        "summary": "Exact rental pages were visible and the local source list placed Miami Tower around USD 1,300-2,600 depending on size."
+        "summary": "Exact rentals and local notes ranged from about USD 1,300 to USD 2,600 by size; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 92,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas / eBusiness",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-edificio-miami-tower/193165573",
+        "summary": "Miami Tower 2-bedroom listings showed about 90-92 m2, while larger 130 m2 and 224 m2 ads appear to be bigger layouts."
       },
       "floorsAboveGround": null
     },
@@ -370,7 +428,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-en-el-edificio-marquis-villa-morra/191319980",
         "summary": "Exact Marquis Villa Morra rental result near Pacheco and Torreani Viera."
       },
-      "description": "Central Villa Morra building with compact and mid-size units, strong short-term rental evidence and amenities.",
+      "description": "Mid-rise building with small and mid-size units, shared amenities and Airbnb matches.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "ALQUILO Departamento en el edificio Marquis Villa Morra",
@@ -378,12 +436,20 @@
         "summary": "Representative Marquis Villa Morra rental."
       },
       "longTermRentUsd": {
-        "amount": 1300,
-        "basis": "direct 2-bedroom listing converted from PYG",
-        "confidence": "high",
+        "amount": 950,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium",
         "source": "BrightData Google / Asuncion Estate",
         "sourceUrl": "https://asuncion.estate/es/asuncion/alquilo-departamento-amoblado-en-1503244",
-        "summary": "Visible rental results included a 2-bedroom furnished unit at about Gs. 8m, roughly USD 1,300."
+        "summary": "The exact furnished 2-bedroom listing was about Gs. 8m, roughly USD 1,300; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 83,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Asuncion Estate / Montevideo Estate",
+        "sourceUrl": "https://asuncion.estate/es/asuncion/departamento-de-dormitorios-con-1512199",
+        "summary": "Marquis Villa Morra 2-bedroom listings clustered around 82.09-82.64 m2, with nearby portal results around 84-89 m2."
       },
       "floorsAboveGround": 13
     },
@@ -416,7 +482,7 @@
         "url": "https://www.infocasas.com.py/alquiler-de-dpto-en-fortaleza-boggiani-piso-6/192507243",
         "summary": "Exact Fortaleza Boggiani 2-bedroom rental result."
       },
-      "description": "Recently inaugurated Fortaleza tower on Boggiani with 31 floors, rental ads and short-term stay evidence.",
+      "description": "31-floor Fortaleza tower with furnished units, pool, gym and Airbnb matches.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquiler de dpto en Fortaleza Boggiani - Piso 6",
@@ -424,12 +490,20 @@
         "summary": "Representative Fortaleza Boggiani rental."
       },
       "longTermRentUsd": {
-        "amount": 750,
-        "basis": "direct rental range cross-check",
+        "amount": 600,
+        "basis": "1-bedroom estimate normalized from standard-unit rental range",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquiler-de-dpto-en-fortaleza-boggiani-piso-6/192507243",
-        "summary": "Local list and rental snippets placed standard units around Gs. 5.2-5.5m, roughly USD 700-750."
+        "summary": "Standard-unit snippets were around Gs. 5.2-5.5m, roughly USD 700-750; this is normalized to a smaller 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 92,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Century 21",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-amplio-departamento-a-estrenar-edif-fortaleza-boggiani/190233137",
+        "summary": "Fortaleza Boggiani 2-bedroom listings repeatedly showed about 92-92.19 m2."
       },
       "floorsAboveGround": 31
     },
@@ -463,7 +537,7 @@
         "url": "https://asuncion.estate/es/asuncion/usd-apartamento-amoblado-en-1517115",
         "summary": "Exact Torre Miranda 2-bedroom furnished rental result at USD 1,600."
       },
-      "description": "Santa Teresa luxury tower with large furnished units and premium corporate-corridor access.",
+      "description": "Large-unit tower with furnished rentals, pool, gym and higher-floor units.",
       "localRentalAd": {
         "source": "Asuncion Estate",
         "title": "Apartamento amoblado en alquiler - Edificio Torre Miranda",
@@ -471,12 +545,20 @@
         "summary": "Representative 2-bedroom Torre Miranda rental."
       },
       "longTermRentUsd": {
-        "amount": 1600,
-        "basis": "direct 2-bedroom listing",
-        "confidence": "high",
+        "amount": 1150,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium",
         "source": "BrightData Google / Asuncion Estate",
         "sourceUrl": "https://asuncion.estate/es/asuncion/usd-apartamento-amoblado-en-1517115",
-        "summary": "Exact visible listing showed a furnished Torre Miranda 2-bedroom at USD 1,600, with larger units around USD 2,800."
+        "summary": "The exact furnished 2-bedroom listing was USD 1,600, with larger units around USD 2,800; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 102,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/en-venta-departamento-de-2-habitaciones-en-edificio-miranda/193223933",
+        "summary": "Torre Miranda 2-bedroom results showed 100-102 m2, with some larger 122 m2 and 184 m2 layouts treated as premium variants."
       },
       "floorsAboveGround": null
     },
@@ -510,7 +592,7 @@
         "url": "https://www.infocasas.com.py/alquiler-palacio-de-los-patos/191009203",
         "summary": "Exact Palacio de los Patos rental result for a 2-bedroom suite unit."
       },
-      "description": "Luxury reserve-style complex on Santísima Trinidad with hotel-like amenities and oversized units.",
+      "description": "Two-tower complex with large units, pool, gym, event areas and Airbnb matches.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquiler Palacio de los Patos",
@@ -518,12 +600,20 @@
         "summary": "Representative Palacio de los Patos rental."
       },
       "longTermRentUsd": {
-        "amount": 1690,
-        "basis": "normalized estimate from large-unit listings",
-        "confidence": "medium-low",
+        "amount": 1200,
+        "basis": "1-bedroom estimate normalized from 2-bedroom and larger-unit listings",
+        "confidence": "low",
         "source": "BrightData Google / local list",
         "sourceUrl": "https://www.infocasas.com.py/alquiler-palacio-de-los-patos/191009203",
-        "summary": "Visible rentals skew large, including 224 m2 and 331 m2 units; the local source list cited about USD 1,690 for comparable availability."
+        "summary": "Visible rentals skew large, including 2-bedroom suite and 224 m2+ units; this is a conservative 1BR-equivalent benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 167,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "InfoCasas / Greenland Propiedades / Instagram sale snippets",
+        "sourceUrl": "https://greenlandprop.com/propiedad/en-venta-departamento-de-2-dormitorios-en-suite-en-palacio-de-los-patos-2/",
+        "summary": "Fresh sales searches found Palacio de los Patos 2-bedroom units at 131 m2, 165 m2 own area, 166.9 m2 own area and 174 m2 for a larger furnished suite. Updated from 175 m2 to 167 m2 as the representative larger 2BR suite estimate."
       },
       "floorsAboveGround": null
     },
@@ -556,7 +646,7 @@
         "url": "https://www.infocasas.com.py/en-alquiler-departamento-de-1-habitacion-en-torres-mirador/192142790",
         "summary": "Exact Torres Mirador 1-bedroom rental result."
       },
-      "description": "Mburucuyá tower complex on Santísima Trinidad with recurring rental inventory and multiple towers.",
+      "description": "Multi-tower complex with recurring rental ads, pool, gym and larger units.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "En alquiler departamento de 1 habitacion en Torres Mirador",
@@ -565,11 +655,19 @@
       },
       "longTermRentUsd": {
         "amount": 950,
-        "basis": "direct 1-bedroom and 2-bedroom listing range",
+        "basis": "direct 1-bedroom benchmark cross-checked against 2-bedroom range",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/en-alquiler-departamento-de-1-habitacion-en-torres-mirador/192142790",
         "summary": "Exact rental results ranged from 1-bedroom inventory to a 2-bedroom listing at USD 1,200; USD 950 is a compact-unit comparison estimate."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 94,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/departamentos-en-venta-edificio-torres-mirador/193480759",
+        "summary": "Torres Mirador 2-bedroom listings showed 93.72-94 m2 own area."
       },
       "floorsAboveGround": null
     },
@@ -603,7 +701,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-amoblado-en-altamira-ycua-sati/193246326",
         "summary": "Exact Altamira Ycuá Satí furnished rental result at USD 1,100."
       },
-      "description": "Ycuá Satí building with hotel-service positioning and compact-to-mid-size furnished rental units.",
+      "description": "Hotel-service style building with furnished one- to three-bedroom rentals.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento amoblado en Altamira Ycua Sati",
@@ -611,12 +709,20 @@
         "summary": "Representative furnished Altamira Ycuá Satí rental."
       },
       "longTermRentUsd": {
-        "amount": 1100,
-        "basis": "direct furnished listing",
-        "confidence": "high",
+        "amount": 800,
+        "basis": "1-bedroom estimate normalized from furnished 2- to 3-bedroom listings",
+        "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-amoblado-en-altamira-ycua-sati/193246326",
-        "summary": "Search results showed exact Altamira rentals around Gs. 7m to USD 1,100."
+        "summary": "Exact furnished rentals were around Gs. 7m to USD 1,100 for larger units; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 87,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / RE/MAX / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-edificio-altamira-ycua-sati/192287340",
+        "summary": "Altamira Ycuá Satí 2-bedroom listings consistently showed 87 m2 own/constructed area, sometimes 111 m2 total area."
       },
       "floorsAboveGround": null
     },
@@ -650,7 +756,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-en-el-edificio-feel-asuncion/191120121",
         "summary": "Exact Feel Asunción 2-bedroom rental result at Gs. 6,000,000."
       },
-      "description": "Santísima Trinidad residential building with pool, gym, green areas and frequent furnished rental inventory.",
+      "description": "Newer residential building with pool, gym, green areas and furnished rentals.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento de 2 dormitorios en el EDIFICIO FEEL ASUNCION",
@@ -658,12 +764,20 @@
         "summary": "Representative Feel Asunción 2-bedroom rental."
       },
       "longTermRentUsd": {
-        "amount": 980,
-        "basis": "direct 2-bedroom listing converted from PYG",
-        "confidence": "medium",
+        "amount": 650,
+        "basis": "direct 1-bedroom benchmark cross-checked against 2-bedroom listing",
+        "confidence": "high",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-en-el-edificio-feel-asuncion/191120121",
-        "summary": "Exact results showed 1-bedroom units around USD 650 and 2-bedroom units around Gs. 6m to USD 1,500 depending on furnishing."
+        "summary": "Exact results showed 1-bedroom units around USD 650; larger furnished units were higher, so USD 650 is used as the benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 93,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / Feel Asunción / InfoCasas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-en-el-edificio-feel-asuncion/191120121",
+        "summary": "Feel Asunción official and listing evidence showed 2-bedroom units from about 73 m2 to 93.42 m2; 93 m2 matches the representative exact rental/sale listing."
       },
       "floorsAboveGround": null
     },
@@ -696,7 +810,7 @@
         "url": "https://www.infocasas.com.py/alquiler-departamento-de-3-suites-en-alfevi-residence/193562031",
         "summary": "Exact Alfevi Residence rental result for a 3-suite unit."
       },
-      "description": "New Salvador del Mundo residence near the Aviadores axis, with loft to 3-bedroom rental inventory.",
+      "description": "Loft-style residence with double-height units, gym and two-bedroom rental ads.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquiler - Departamento de 3 suites en Alfevi Residence",
@@ -704,12 +818,20 @@
         "summary": "Representative Alfevi Residence rental."
       },
       "longTermRentUsd": {
-        "amount": 1200,
-        "basis": "normalized estimate from 2-bedroom and 3-bedroom listings",
-        "confidence": "medium",
+        "amount": 850,
+        "basis": "1-bedroom estimate normalized from 2-bedroom and 3-bedroom listings",
+        "confidence": "medium-low",
         "source": "BrightData Google / Asuncion Estate",
         "sourceUrl": "https://asuncion.estate/es/asuncion/alquilo-departamento-de-dormitorios-1465064",
-        "summary": "Search results showed 2-bedroom and 3-bedroom new-unit rentals; the local list placed typical rents around USD 1,200-1,650."
+        "summary": "Visible Alfevi rentals were mostly 2-bedroom and 3-bedroom new units; this value is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 96,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Century 21",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-a-estrenar-alfevi-residence/193561835",
+        "summary": "Alfevi Residence 2-bedroom listings repeatedly showed 96 m2."
       },
       "floorsAboveGround": null
     },
@@ -740,7 +862,7 @@
         "url": "https://www.infocasas.com.py/petra-tower-alquilo-departamento-de-dos-dormitorios/193419581",
         "summary": "Exact Petra Tower 2-bedroom rental result at USD 1,800."
       },
-      "description": "Very tall new Molas López tower with high-floor compact units, rental ads and short-term stay listings.",
+      "description": "Very tall tower with compact high-floor units, rental ads and Airbnb matches.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Petra Tower - Alquilo departamento de dos dormitorios",
@@ -749,11 +871,19 @@
       },
       "longTermRentUsd": {
         "amount": 900,
-        "basis": "normalized estimate from studio and 2-bedroom listings",
+        "basis": "1-bedroom estimate normalized from studio and 2-bedroom listings",
         "confidence": "medium",
         "source": "BrightData Google / Homy / InfoCasas",
         "sourceUrl": "https://homy.com.py/propiedades/monoambiente-en-molas-lopez/",
         "summary": "Search results showed a 31 m2 studio around USD 700 and a 2-bedroom unit at USD 1,800; USD 900 is a compact 1-bedroom comparison estimate."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 91,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Red Exclusivos / InfoCasas",
+        "sourceUrl": "https://www.redexclusivos.com/property/en-venta-ultimos-departamentos-de-2-dormitorios-en-petra-tower-la-torre-mas-alta-del-pais-en-el-mejor-lugar-de-asuncion/",
+        "summary": "Petra Tower 2-bedroom results showed about 90.5-91 m2 own area, with total areas near 100-103 m2 and some 84-96.5 m2 variants."
       },
       "floorsAboveGround": 43
     },
@@ -786,7 +916,7 @@
         "url": "https://asuncion.estate/es/asuncion/alquilo-dpto-dormitorio-amoblado-1537792",
         "summary": "Exact MET Molas López 1-bedroom furnished rental result at USD 1,100."
       },
-      "description": "Boutique Las Lomas building near Aviadores and Molas López, with furnished 1- and 2-bedroom rental inventory.",
+      "description": "Small-scale building with furnished one- and two-bedroom rental ads.",
       "localRentalAd": {
         "source": "Asuncion Estate",
         "title": "Dpto. 1 dormitorio amoblado - Edif. MET Molas Lopez",
@@ -795,11 +925,19 @@
       },
       "longTermRentUsd": {
         "amount": 1100,
-        "basis": "direct 1-bedroom listing",
+        "basis": "direct 1-bedroom benchmark listing",
         "confidence": "high",
         "source": "BrightData Google / Asuncion Estate",
         "sourceUrl": "https://asuncion.estate/es/asuncion/alquilo-dpto-dormitorio-amoblado-1537792",
         "summary": "Exact visible rental showed a furnished 1-bedroom at USD 1,100."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "estimated midpoint from direct 2-bedroom typologies",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas / Tava / TikTok snippet",
+        "sourceUrl": "https://www.infocasas.com.py/departamento-de-dos-habitaciones-en-met-molas-lopez/192512924",
+        "summary": "MET Molas López 2-bedroom evidence ranged from hospitality rentals around 66.6 m2 to typologies/listings around 77, 94 and 96.3 m2; 85 m2 is a midpoint estimate."
       },
       "floorsAboveGround": null
     },
@@ -833,7 +971,7 @@
         "url": "https://www.remax.com.py/es-py/propiedades/departamento/alquiler/las-lomas-carmelitas/av-molas-lopez-1525-av-molas-lopez-1525/143056033-37",
         "summary": "Exact Forvm Molas López 1-bedroom rental result."
       },
-      "description": "New Molas López high-rise with active long-term and day-rental evidence, including high-floor units.",
+      "description": "High-rise building with long-term rentals, day-rental listings and high-floor units.",
       "localRentalAd": {
         "source": "RE/MAX",
         "title": "Alquilo departamento en Forvm Molas Lopez",
@@ -842,11 +980,19 @@
       },
       "longTermRentUsd": {
         "amount": 850,
-        "basis": "direct 1-bedroom listing",
+        "basis": "direct 1-bedroom benchmark listing",
         "confidence": "high",
         "source": "BrightData Google / Century 21 / RE/MAX",
         "sourceUrl": "https://century21.com.py/propiedad/47911_en-alquier-departamento-1-dor-amoblado-en-forvm-molas-lopez",
         "summary": "Visible results showed 1-bedroom Forvm rentals around USD 610-850, with larger units near USD 1,200."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 76,
+        "basis": "direct 2-bedroom typology evidence",
+        "confidence": "high",
+        "source": "BrightData Google / RE/MAX / Asuncion Estate / Instagram",
+        "sourceUrl": "https://www.remax.com.py/es-py/propiedades/departamento/alquiler/las-lomas-carmelitas/143063217-13",
+        "summary": "Forvm Molas López 2-bedroom evidence showed typologies around 72, 73, 76 and 80 m2; 76 m2 is the representative estimate."
       },
       "floorsAboveGround": null
     },
@@ -879,7 +1025,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-1-dormitorio-edificio-molas-1311/193237154",
         "summary": "Exact Molas 1311 1-bedroom rental result."
       },
-      "description": "New Molas López building with green spaces, amenities and active 1- and 2-bedroom rentals.",
+      "description": "Newer building with green areas, shared amenities and one- to two-bedroom rentals.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento 1 dormitorio - Edificio Molas 1311",
@@ -888,11 +1034,19 @@
       },
       "longTermRentUsd": {
         "amount": 900,
-        "basis": "direct 1-bedroom and 2-bedroom range",
+        "basis": "direct 1-bedroom benchmark cross-checked against 2-bedroom range",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-1-dormitorio-edificio-molas-1311/193237154",
         "summary": "Visible results showed 1-bedroom and 2-bedroom listings around Gs. 6.8-7m and roughly USD 900-1,100."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 96,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "InfoCasas / Itaú Mi Casa sale listings",
+        "sourceUrl": "https://www.infocasas.com.py/venta-de-depto-de-2-dormitorios-a-estrenar-edificio-molas-1311/191986448",
+        "summary": "Sale listings and project pages for Molas 1311 repeatedly showed 2-bedroom units at 96 m2."
       },
       "floorsAboveGround": null
     },
@@ -923,7 +1077,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-en-molas-tower/192436388",
         "summary": "Exact Molas Tower rental result at Gs. 4,000,000."
       },
-      "description": "Finished 27-floor Molas López tower by CorAr, with rooftop amenities, pool, restaurant-style services and rental-oriented positioning.",
+      "description": "27-floor CorAr tower with rooftop areas, pool, dining service and rental ads.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento en Molas Tower",
@@ -932,11 +1086,19 @@
       },
       "longTermRentUsd": {
         "amount": 650,
-        "basis": "direct compact-unit listing converted from PYG",
+        "basis": "direct compact-unit 1-bedroom proxy converted from PYG",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-en-molas-tower/192436388",
         "summary": "Exact listing evidence showed compact-unit rent around Gs. 4m, while larger furnished units went much higher."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 44,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "Regular search / InfoCasas / Ubicaprop / Clasipar",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-en-molas-tower-piso-20/193143165",
+        "summary": "Molas Tower 2-bedroom listings repeatedly showed 44 m2 own area."
       },
       "floorsAboveGround": 27
     },
@@ -969,7 +1131,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-en-el-edificio-the-avenue-asuncion/193086734",
         "summary": "Exact The Avenue 2-bedroom rental result."
       },
-      "description": "New Santa Teresa building by Paraguay Development, marketed as finished and available for first-occupancy rentals.",
+      "description": "Finished new-build with first-occupancy rentals, pool, gym and shared work areas.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento de 2 dormitorios en el edificio The Avenue Asuncion",
@@ -977,12 +1139,20 @@
         "summary": "Representative The Avenue rental."
       },
       "longTermRentUsd": {
-        "amount": 950,
-        "basis": "direct 2-bedroom listing range converted from PYG",
+        "amount": 700,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listings",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-en-el-edificio-the-avenue-asuncion/193086734",
-        "summary": "Exact search results showed new 2-bedroom units near Gs. 5.9m and comparable Santa Teresa inventory around USD 950."
+        "summary": "Exact new 2-bedroom listings were near Gs. 5.9m and comparable inventory around USD 950; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Century 21 / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/edificio-the-avenue-santa-teresa/191867250",
+        "summary": "The Avenue 2-bedroom listings repeatedly showed 90 m2, with some larger 100 m2 units and official minimums around 87.9 m2."
       },
       "floorsAboveGround": null
     },
@@ -1016,7 +1186,7 @@
         "url": "https://www.infocasas.com.py/departamento-1-dormitorio-amoblado-en-punto-molas-las-lomas/193679272",
         "summary": "Exact Punto Molas 1-bedroom furnished rental result at USD 900."
       },
-      "description": "New Molas López building with pool, gym, business center and strong compact-unit rental inventory.",
+      "description": "Newer building with pool, gym, business center and compact rental units.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Departamento 1 dormitorio amoblado en Punto Molas Las Lomas",
@@ -1025,11 +1195,19 @@
       },
       "longTermRentUsd": {
         "amount": 900,
-        "basis": "direct 1-bedroom listing",
+        "basis": "direct 1-bedroom benchmark listing",
         "confidence": "high",
         "source": "Regular search / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/departamento-1-dormitorio-amoblado-en-punto-molas-las-lomas/193679272",
         "summary": "Regular search found exact Punto Molas rental pages ranging roughly USD 850-1,200; the 1-bedroom benchmark was USD 900."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 101,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "medium-high",
+        "source": "BrightData Google / Punto Molas sale snippets",
+        "sourceUrl": "https://www.facebook.com/groups/Pyinversiones/posts/2801582063559151/",
+        "summary": "Sale snippets for Punto Molas showed a 2-bedroom unit at 101 m2, larger than the prior 86 m2 estimate."
       },
       "floorsAboveGround": 16
     },
@@ -1062,7 +1240,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-edificio-fortaleza-molas-lopez/192997857",
         "summary": "Exact Fortaleza Molas López 2-bedroom rental result."
       },
-      "description": "Fortaleza's Molas López tower near Mburucuyá, now showing rental inventory despite official pages still flagging construction status.",
+      "description": "Fortaleza tower with pool, gym, coworking areas and current rental ads.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento de 2 dormitorios edificio Fortaleza Molas Lopez",
@@ -1070,12 +1248,20 @@
         "summary": "Representative Fortaleza Molas López rental."
       },
       "longTermRentUsd": {
-        "amount": 980,
-        "basis": "direct 2-bedroom listing converted from PYG",
+        "amount": 700,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listings",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-edificio-fortaleza-molas-lopez/192997857",
-        "summary": "Visible rental results clustered around Gs. 6-7.5m for new 2-bedroom units."
+        "summary": "New 2-bedroom units clustered around Gs. 6-7.5m; the displayed value is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 98,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-edificio-fortaleza-molas-lopez/192997857",
+        "summary": "Fortaleza Molas López 2-bedroom listings showed 88-98.26 m2; the representative exact rental source is 98.26 m2."
       },
       "floorsAboveGround": null
     },
@@ -1106,7 +1292,7 @@
         "url": "https://www.infocasas.com.py/alquilo-dpto-home-del-sol/191467141",
         "summary": "Exact Home del Sol rental result near Shopping del Sol."
       },
-      "description": "Las Lomas building near Shopping del Sol, with furnished 2-bedroom rentals and compact serviced-apartment-style inventory.",
+      "description": "Building with furnished two-bedroom rentals and serviced-apartment style units.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo dpto Home del Sol",
@@ -1114,12 +1300,20 @@
         "summary": "Representative Home del Sol rental."
       },
       "longTermRentUsd": {
-        "amount": 900,
-        "basis": "normalized estimate from 2-bedroom listings",
+        "amount": 650,
+        "basis": "1-bedroom estimate normalized from 1-bedroom and 2-bedroom rental range",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/alquilo-dpto-home-del-sol/191467141",
-        "summary": "Visible results ranged from Gs. 5.5m to about USD 1,200 depending on size and furnishing."
+        "summary": "Visible 1-bedroom results were around USD 600-720, while larger units reached about USD 1,200; USD 650 is the 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "InfoCasas sale listing",
+        "sourceUrl": "https://www.infocasas.com.py/departamento-de-dos-habitaciones-edificio-home-del-sol/193088235",
+        "summary": "An exact Home del Sol sale listing showed a 2-bedroom apartment at 85 m2."
       },
       "floorsAboveGround": null
     },
@@ -1150,7 +1344,7 @@
         "url": "https://www.infocasas.com.py/departamento-exclusivo-de-2-dormitorios-en-alquiler-urban-molas/193640685",
         "summary": "Exact Urban Molas 2-bedroom rental result."
       },
-      "description": "Two-tower Las Lomas development with gym, pool, coworking, garden and low-rise industrial design.",
+      "description": "Two-tower development with gym, pool, coworking, garden areas and industrial design.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Departamento exclusivo de 2 dormitorios en alquiler - Urban Molas",
@@ -1158,12 +1352,20 @@
         "summary": "Representative Urban Molas rental."
       },
       "longTermRentUsd": {
-        "amount": 2000,
-        "basis": "direct premium 2-bedroom listing",
-        "confidence": "medium",
+        "amount": 1400,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium-low",
         "source": "BrightData Google / Ubicaprop / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/departamento-exclusivo-de-2-dormitorios-en-alquiler-urban-molas/193640685",
-        "summary": "Search results showed premium Urban Molas rental inventory around USD 2,000."
+        "summary": "The exact furnished 2-bedroom listing was around USD 2,000; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 91,
+        "basis": "direct 2-bedroom project typology evidence",
+        "confidence": "high",
+        "source": "BrightData Google / Home Hunters / RE/MAX / Asuncion Estate",
+        "sourceUrl": "https://homehunters.com.py/propiedad/en-pozo-departamento-de-2-dorm-ubicado-estrategicamente/",
+        "summary": "Urban Molas project/listing evidence repeatedly listed 2-bedroom units at 91 m2."
       },
       "floorsAboveGround": 6
     },
@@ -1194,7 +1396,7 @@
         "url": "https://www.infocasas.com.py/natania-85-departamento-alquiler-av-molas-lopez/193257208",
         "summary": "Exact Natania 85 rental result on Av. Molas López."
       },
-      "description": "New Molas López building with fresh rental inventory, including 1- and 2-bedroom units close to Casa Rica.",
+      "description": "Newer building with one- and two-bedroom rental ads and family-sized floor plans.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Natania 85 - Departamento - Alquiler - Av. Molas López",
@@ -1202,12 +1404,20 @@
         "summary": "Representative Natania 85 rental."
       },
       "longTermRentUsd": {
-        "amount": 820,
-        "basis": "direct 2-bedroom listing",
-        "confidence": "high",
+        "amount": 650,
+        "basis": "1-bedroom estimate cross-checked against exact 2-bedroom listing",
+        "confidence": "medium",
         "source": "BrightData Google / RE/MAX / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/natania-85-departamento-alquiler-av-molas-lopez/193257208",
-        "summary": "Exact snippets showed a 2-bedroom Natania 85 rental at USD 820, with 1-bedroom inventory also visible."
+        "summary": "Exact snippets showed a 2-bedroom rental at USD 820 and 1-bedroom inventory also visible; USD 650 is the 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "direct 2-bedroom listing and brochure evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Natania PDF snippet",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-de-2-dormitorios-en-natania-85/193567345",
+        "summary": "Natania 85 2-bedroom evidence showed about 68-70 m2, including 69.9-70 m2 listings and brochure snippets."
       },
       "floorsAboveGround": null
     },
@@ -1240,7 +1450,7 @@
         "url": "https://www.infocasas.com.py/edificio-central-park-moderno-departamento-en-alquiler/192832967",
         "summary": "Exact Central Park 1-bedroom rental result at USD 600."
       },
-      "description": "Santísima Trinidad/Madame Lynch building with active 1- and 3-bedroom rental inventory.",
+      "description": "Residential building with one- and three-bedroom rental ads.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Edificio Central Park - moderno departamento en alquiler",
@@ -1249,11 +1459,19 @@
       },
       "longTermRentUsd": {
         "amount": 600,
-        "basis": "direct 1-bedroom listing",
+        "basis": "direct 1-bedroom benchmark listing",
         "confidence": "high",
         "source": "BrightData Google / InfoCasas",
         "sourceUrl": "https://www.infocasas.com.py/edificio-central-park-moderno-departamento-en-alquiler/192832967",
         "summary": "Exact 1-bedroom rental evidence showed USD 600; larger units were around USD 1,000."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 80,
+        "basis": "estimated from official minimum and direct 2-bedroom listings",
+        "confidence": "medium",
+        "source": "BrightData Google / Grupo Park / InfoCasas / MercadoLibre",
+        "sourceUrl": "https://grupopark.com.py/propiedades/central-park/",
+        "summary": "Central Park official material says 2-bedroom units start from 67 m2, while listings showed 80 m2 and a larger 106 m2 furnished unit; 80 m2 is a representative estimate."
       },
       "floorsAboveGround": 15
     },
@@ -1286,7 +1504,7 @@
         "url": "https://www.infocasas.com.py/alquilo-departamento-en-edificio-live-boggiani/193061736",
         "summary": "Exact Live Boggiani rental result."
       },
-      "description": "Boggiani/Villa Morra new-build with 1-, 2- and 3-bedroom rental inventory and full-building amenities.",
+      "description": "New-build with one- to three-bedroom rentals, pool, gym and event areas.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquilo departamento en Edificio Live Boggiani",
@@ -1294,12 +1512,20 @@
         "summary": "Representative Live Boggiani rental."
       },
       "longTermRentUsd": {
-        "amount": 950,
-        "basis": "direct 2-bedroom listing converted from PYG",
-        "confidence": "high",
+        "amount": 700,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium",
         "source": "BrightData Google / RE/MAX",
         "sourceUrl": "https://www.remax.com.py/es-py/propiedades/departamento/alquiler/villa-morra/av-guido-boggiani-y-ri2-de-mayo-edificio-live-boggiani/143063084-94",
-        "summary": "Exact results showed Live Boggiani 2-bedroom units around Gs. 5.85m, with larger inventory up to around USD 1,700."
+        "summary": "Exact 2-bedroom units were around Gs. 5.85m, with larger units higher; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 82,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / Asuncion Estate / InfoCasas",
+        "sourceUrl": "https://asuncion.estate/es/asuncion/departamento-de-dormitorios-en-1500698",
+        "summary": "Live Boggiani 2-bedroom evidence included an 81.5 m2 listing and larger plus layouts around 121.3 m2; 82 m2 matches the standard 2-bedroom listing."
       },
       "floorsAboveGround": null
     },
@@ -1332,7 +1558,7 @@
         "url": "https://www.infocasas.com.py/alquiler-ventura-carmelitas-amoblado-y-equipado/191868671",
         "summary": "Exact Ventura Carmelitas furnished rental result."
       },
-      "description": "Carmelitas building close to Molas López and San Martín, with rooftop/pool evidence and exact Airbnb availability.",
+      "description": "Building with rooftop areas, pool access and several exact Airbnb matches.",
       "localRentalAd": {
         "source": "InfoCasas",
         "title": "Alquiler Ventura Carmelitas amoblado y equipado",
@@ -1341,13 +1567,511 @@
       },
       "longTermRentUsd": {
         "amount": 800,
-        "basis": "direct 1-bedroom and 2-bedroom rental range",
+        "basis": "direct 1-bedroom benchmark cross-checked against 2-bedroom range",
         "confidence": "medium",
         "source": "BrightData Google / InfoCasas / Clasipar",
         "sourceUrl": "https://www.infocasas.com.py/alquiler-ventura-carmelitas-amoblado-y-equipado/191868671",
         "summary": "Exact results showed 1-bedroom rentals and 2-bedroom furnished rentals; USD 800 is a compact-unit comparison estimate."
       },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 89,
+        "basis": "direct 2-bedroom listing and Airbnb evidence",
+        "confidence": "high",
+        "source": "BrightData Google / RE/MAX / Airbnb",
+        "sourceUrl": "https://alexanderdure.remax.com.py/es-py/propiedades/departamento/venta/las-lomas-carmelitas/143063080-145",
+        "summary": "Ventura Carmelitas 2-bedroom evidence repeatedly showed 86-89 m2, including Airbnb noting 89 m2."
+      },
       "floorsAboveGround": null
+    },
+    {
+      "id": "life-mariscal",
+      "name": "Life Mariscal",
+      "aliases": [
+        "LIFE Mariscal",
+        "Edificio LIFE MARISCAL"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Villa Morra / Recoleta",
+      "built": "2024",
+      "address": "Manuel del Castillo 4715",
+      "fullAddress": "Manuel del Castillo 4715, Asunción 001412, Paraguay",
+      "googlePlaceId": "ChIJX8PI1nipXZQRvt-r70fVaY8",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Manuel%20del%20Castillo%204715%2C%20Asunci%C3%B3n%20001412%2C%20Paraguay&query_place_id=ChIJX8PI1nipXZQRvt-r70fVaY8",
+      "location": {
+        "lat": -25.2966498,
+        "lng": -57.5853954
+      },
+      "availability": "Rental ads found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in targeted searches on 2026-06-30."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquilo-dpto-en-el-edificio-life-mariscal/191141768",
+        "summary": "Exact Life Mariscal 2-bedroom rental result at Gs. 4,700,000 in a 2024 building."
+      },
+      "description": "Recent Petra Urbana building with pool, gym, laundry and small to mid-size rentals.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquilo dpto. en el edificio Life Mariscal",
+        "url": "https://www.infocasas.com.py/alquilo-dpto-en-el-edificio-life-mariscal/191141768",
+        "summary": "Representative 2-bedroom Life Mariscal rental."
+      },
+      "longTermRentUsd": {
+        "amount": 550,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-dpto-en-el-edificio-life-mariscal/191141768",
+        "summary": "The exact 74 m2 2-bedroom listing was Gs. 4,700,000; this is normalized to a smaller 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 74,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / RE/MAX / Petra Urbana",
+        "sourceUrl": "https://www.infocasas.com.py/vendo-departamento-2-dormitorios-en-life-mariscal/193179110",
+        "summary": "Life Mariscal 2-bedroom evidence showed 70 m2 in the brochure and 74 m2 in current sale/rental listings; 74 m2 matches the representative listing."
+      },
+      "floorsAboveGround": null
+    },
+    {
+      "id": "ancora",
+      "name": "Áncora",
+      "aliases": [
+        "Edificio Ancora",
+        "Edificio Áncora"
+      ],
+      "officialWebsiteUrl": "http://www.ancora.com.py/",
+      "zone": "Ycuá Satí / Santa Teresa",
+      "built": "2017-2018",
+      "address": "Av. Santa Teresa esq. Coronel Escurra",
+      "fullAddress": "Av. Sta. Teresa esq, Asunción 001409, Paraguay",
+      "googlePlaceId": "ChIJO89B4kyvXZQR6c_UejAI3cU",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Sta.%20Teresa%20esq%2C%20Asunci%C3%B3n%20001409%2C%20Paraguay&query_place_id=ChIJO89B4kyvXZQR6c_UejAI3cU",
+      "location": {
+        "lat": -25.2922344,
+        "lng": -57.5514573
+      },
+      "availability": "Rental ads and exact Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb found",
+        "url": "https://www.airbnb.com.ec/rooms/1579726928140124398",
+        "evidence": "Airbnb result explicitly described a modern 1-bedroom in Edificio Ancora with infinity pool and panoramic gym."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquiler-departamento-1-dormitorio-edificio-ancora/192554546",
+        "summary": "Exact Áncora 1-bedroom rental result on Av. Santa Teresa."
+      },
+      "description": "Residential tower with infinity pool, panoramic gym and furnished rentals.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquiler departamento 1 dormitorio edificio Ancora",
+        "url": "https://www.infocasas.com.py/alquiler-departamento-1-dormitorio-edificio-ancora/192554546",
+        "summary": "Representative Áncora 1-bedroom rental."
+      },
+      "longTermRentUsd": {
+        "amount": 800,
+        "basis": "direct 1-bedroom benchmark listing",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/alquiler-departamento-1-dormitorio-edificio-ancora/192554546",
+        "summary": "Exact rental pages showed furnished Áncora units around USD 800 or nearby PYG equivalents."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 83,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "Regular search / Clasipar / Ubicaprop / Ancora official",
+        "sourceUrl": "https://clasipar.paraguay.com/inmuebles/departamentos/vendo-hermoso-depto-de-2-dorm-en-el-edificio-ancora-2929536",
+        "summary": "Áncora 2-bedroom evidence included 83 m2 and 100 m2 listings, while the official site lists 1- and 2-bedroom units from 51-116 m2; 83 m2 matches a direct 2-bedroom own-area listing."
+      },
+      "floorsAboveGround": 18
+    },
+    {
+      "id": "edificio-espiritu-santo",
+      "name": "Edificio Espíritu Santo",
+      "aliases": [
+        "Espiritu Santo"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Ycuá Satí / Santa Teresa",
+      "built": "2012",
+      "address": "Av. Santa Teresa y Denis Roa",
+      "fullAddress": "PC7R+FV3, Av. Sta. Teresa, Asunción 001402, Paraguay",
+      "googlePlaceId": "ChIJuXPsEayoXZQRHCe3Ew5IzxI",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=PC7R%2BFV3%2C%20Av.%20Sta.%20Teresa%2C%20Asunci%C3%B3n%20001402%2C%20Paraguay&query_place_id=ChIJuXPsEayoXZQRHCe3Ew5IzxI",
+      "location": {
+        "lat": -25.2863735,
+        "lng": -57.5578138
+      },
+      "availability": "Rental ads found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in targeted searches on 2026-06-30."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-edificio-espiritu-santo/193172051",
+        "summary": "Exact Edificio Espíritu Santo rental result at USD 1,700, with pool and gym evidence in search snippets."
+      },
+      "description": "Large semipiso building with pool, gym, event areas and three-bedroom rentals.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquilo Departamento Edificio Espíritu Santo",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-edificio-espiritu-santo/193172051",
+        "summary": "Representative Edificio Espíritu Santo luxury rental."
+      },
+      "longTermRentUsd": {
+        "amount": 950,
+        "basis": "1-bedroom estimate normalized from large-unit listing",
+        "confidence": "medium-low",
+        "source": "BrightData Google / InfoCasas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-edificio-espiritu-santo/193172051",
+        "summary": "The exact visible rental was a large unit at USD 1,700; this is normalized to a 1BR-equivalent benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / sale listing snippets",
+        "sourceUrl": "https://www.facebook.com/groups/871625084455782/posts/1371883617763257/",
+        "summary": "Search snippets for Edificio Espiritu Santo showed 2-bedroom sale evidence around 85 m2, replacing the prior low-confidence extrapolation from a much larger 3-bedroom semipiso."
+      },
+      "floorsAboveGround": null
+    },
+    {
+      "id": "habitalis-mburucuya",
+      "name": "Habitalis Mburucuyá",
+      "aliases": [
+        "Habitallis Mburucuyá"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Molas López / Mburucuyá",
+      "built": "2026",
+      "address": "Av. Dr. Felipe Molas López",
+      "fullAddress": "Asunción 001520, Paraguay",
+      "googlePlaceId": "ChIJNe2DS_unXZQR-Wa3O_6Fgrc",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Habitalis%20Mburucuy%C3%A1%2C%20Asunci%C3%B3n%20001520%2C%20Paraguay&query_place_id=ChIJNe2DS_unXZQR-Wa3O_6Fgrc",
+      "location": {
+        "lat": -25.2735523,
+        "lng": -57.5694805
+      },
+      "availability": "Rental ads found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in targeted searches on 2026-06-30."
+      },
+      "rentalEvidence": {
+        "source": "Instagram / Coldwell Banker Origenes",
+        "url": "https://www.instagram.com/p/DZkWT51EnUT/",
+        "summary": "Exact Habitalis Mburucuyá rental result at USD 1,000 with pool, gym and quincho in the listing text."
+      },
+      "description": "19-floor building with pool, gym and two-bedroom rental ads.",
+      "localRentalAd": {
+        "source": "Instagram",
+        "title": "Habitalis Mburucuyá - departamento en alquiler",
+        "url": "https://www.instagram.com/p/DZkWT51EnUT/",
+        "summary": "Representative USD 1,000 Habitalis Mburucuyá rental."
+      },
+      "longTermRentUsd": {
+        "amount": 720,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium",
+        "source": "BrightData Google / Instagram",
+        "sourceUrl": "https://www.instagram.com/p/DZkWT51EnUT/",
+        "summary": "Exact snippets showed an 88 m2 2-bedroom rental at USD 1,000; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 86,
+        "basis": "direct 2-bedroom sale listing evidence",
+        "confidence": "high",
+        "source": "InfoCasas / Itaú Mi Casa sale listings",
+        "sourceUrl": "https://www.infocasas.com.py/departamento-de-2-dormitorios-en-venta-habitalis-mburucuya/192974632",
+        "summary": "Habitalis Mburucuya sale and project snippets repeatedly showed 2-bedroom units at 86 m2."
+      },
+      "floorsAboveGround": 19
+    },
+    {
+      "id": "torre-augusta-i",
+      "name": "Torre Augusta I",
+      "aliases": [
+        "Torre Augusta"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Molas López / Las Lomas",
+      "built": "2023-2024",
+      "address": "Av. Dr. Felipe Molas López 865",
+      "fullAddress": "Av. Dr. Felipe Molas López 865, Asunción 001527, Paraguay",
+      "googlePlaceId": "ChIJQ0Me03ynXZQRhrrkmZEXsEo",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Dr.%20Felipe%20Molas%20L%C3%B3pez%20865%2C%20Asunci%C3%B3n%20001527%2C%20Paraguay&query_place_id=ChIJQ0Me03ynXZQRhrrkmZEXsEo",
+      "location": {
+        "lat": -25.2751278,
+        "lng": -57.5680633
+      },
+      "availability": "Rental ads found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in targeted searches on 2026-06-30."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-amoblado/193832014",
+        "summary": "Exact Torre Augusta I furnished rental result on Molas López."
+      },
+      "description": "Tower with pool, solarium, gym, sauna and furnished rental ads.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquilo departamento amoblado - Torre Augusta I",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-amoblado/193832014",
+        "summary": "Representative Torre Augusta I rental."
+      },
+      "longTermRentUsd": {
+        "amount": 900,
+        "basis": "1-bedroom estimate normalized from 104 m2 and larger furnished listings",
+        "confidence": "medium-low",
+        "source": "BrightData Google / InfoCasas / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-amoblado/193832014",
+        "summary": "Visible rentals included 104 m2 furnished units and larger 3-bedroom listings around USD 1,600; this is a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 105,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/en-alquiler-departamento-de-2-dormitorios-en-torre-augusta-sobre-molas-lopez/191515121",
+        "summary": "Torre Augusta I 2-bedroom evidence repeatedly showed about 104.4-105.6 m2."
+      },
+      "floorsAboveGround": null
+    },
+    {
+      "id": "life-bruselas",
+      "name": "Life Bruselas",
+      "aliases": [
+        "Life Bruselas Green",
+        "Life Bruselas Blue"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Ycuá Satí / Bruselas",
+      "built": "2019",
+      "address": "Bruselas 1909",
+      "fullAddress": "Bruselas 1909, Asunción 1529, Paraguay",
+      "googlePlaceId": "ChIJV8ikZHKpXZQR09HfD-vtnXI",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Bruselas%201909%2C%20Asunci%C3%B3n%201529%2C%20Paraguay&query_place_id=ChIJV8ikZHKpXZQR09HfD-vtnXI",
+      "location": {
+        "lat": -25.2874171,
+        "lng": -57.568302
+      },
+      "availability": "Rental ads and exact Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb found",
+        "url": "https://www.airbnb.com.pe/rooms/46978479",
+        "evidence": "Airbnb result explicitly titled \"Life Bruselas Blue\" in Asunción."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-amoblado-de-2-dormitorios-en-edificio-life-bruselas/191749751",
+        "summary": "Exact Life Bruselas 2-bedroom rental result at USD 990."
+      },
+      "description": "Life building with pool, Airbnb matches and furnished two-bedroom rentals.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquilo departamento amoblado de 2 dormitorios en edificio Life Bruselas",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-amoblado-de-2-dormitorios-en-edificio-life-bruselas/191749751",
+        "summary": "Representative Life Bruselas rental."
+      },
+      "longTermRentUsd": {
+        "amount": 700,
+        "basis": "1-bedroom estimate normalized from exact 2-bedroom listing",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-amoblado-de-2-dormitorios-en-edificio-life-bruselas/191749751",
+        "summary": "The exact furnished 2-bedroom listing was USD 990, with another result around USD 1,200; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas / Facebook / Instagram",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-amoblado-de-2-dormitorios-en-edificio-life-bruselas/191749751",
+        "summary": "Life Bruselas 2-bedroom evidence included a 70 m2 direct listing and other furnished-unit snippets around 80 m2; 70 m2 matches the current exact listing."
+      },
+      "floorsAboveGround": 7
+    },
+    {
+      "id": "life-villa-morra",
+      "name": "Life Villa Morra",
+      "aliases": [
+        "LIFE Villa Morra"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Villa Morra",
+      "built": "2017-2020",
+      "address": "Alberto de Sousa y Rodolfo Zotti",
+      "fullAddress": "Alberto De Sousa &, Rodolfo Zotti, Asunción 001413, Paraguay",
+      "googlePlaceId": "ChIJ4zszbJCoXZQRVRp2iFEtDhU",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Alberto%20De%20Sousa%20%26%2C%20Rodolfo%20Zotti%2C%20Asunci%C3%B3n%20001413%2C%20Paraguay&query_place_id=ChIJ4zszbJCoXZQRVRp2iFEtDhU",
+      "location": {
+        "lat": -25.2986949,
+        "lng": -57.5854224
+      },
+      "availability": "Rental ads found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in targeted searches on 2026-06-30."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquilo-dpto-en-life-villamorra/192331865",
+        "summary": "Exact Life Villa Morra rental result for an 80 m2 unit."
+      },
+      "description": "Life building with terrace, quincho, pool access and furnished rentals.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquilo dpto en Life Villamorra",
+        "url": "https://www.infocasas.com.py/alquilo-dpto-en-life-villamorra/192331865",
+        "summary": "Representative Life Villa Morra rental."
+      },
+      "longTermRentUsd": {
+        "amount": 810,
+        "basis": "direct 1-bedroom benchmark range converted from PYG",
+        "confidence": "medium",
+        "source": "BrightData Google / InfoCasas / Clasipar",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-dpto-en-life-villamorra/192331865",
+        "summary": "Search snippets showed Life Villa Morra furnished rentals around Gs. 4-5.5m depending on size and parking."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 80,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Asuncion Casas y Oficinas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-dpto-en-life-villamorra/192331865",
+        "summary": "Life Villa Morra 2-bedroom evidence showed standard 72 m2 and 80 m2 layouts, with an exact rental at 80 m2 and a larger 95 m2 sale listing."
+      },
+      "floorsAboveGround": 7
+    },
+    {
+      "id": "civis-alpha",
+      "name": "Civis Alpha",
+      "aliases": [
+        "Edificio Civis Alpha"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Herrera / Santa Teresa",
+      "built": "2022-2025",
+      "address": "Eusebio Lillo Robles y Dr. Bernardino Caballero",
+      "fullAddress": "Eusebio Lillo Robles &, Dr. Bernardino Caballero, Asunción 001407, Paraguay",
+      "googlePlaceId": "ChIJE7k7ymGpXZQRaJHa_UUkN5U",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Eusebio%20Lillo%20Robles%20%26%2C%20Dr.%20Bernardino%20Caballero%2C%20Asunci%C3%B3n%20001407%2C%20Paraguay&query_place_id=ChIJE7k7ymGpXZQRaJHa_UUkN5U",
+      "location": {
+        "lat": -25.2931535,
+        "lng": -57.5572345
+      },
+      "availability": "Rental ads and exact Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb found",
+        "url": "https://es-l.airbnb.com/rooms/1623329194606711728",
+        "evidence": "Airbnb result explicitly titled \"Civis Alpha: piscina + gimnasio + barbacoa\"."
+      },
+      "rentalEvidence": {
+        "source": "InfoCasas",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-en-civis-alpha/193626340",
+        "summary": "Exact Civis Alpha rental result at Gs. 4,500,000."
+      },
+      "description": "Building with pool, gym, quinchos, long-term rental ads and Airbnb matches.",
+      "localRentalAd": {
+        "source": "InfoCasas",
+        "title": "Alquilo departamento en Civis Alpha",
+        "url": "https://www.infocasas.com.py/alquilo-departamento-en-civis-alpha/193626340",
+        "summary": "Representative Civis Alpha rental."
+      },
+      "longTermRentUsd": {
+        "amount": 730,
+        "basis": "direct compact-unit 1-bedroom benchmark converted from PYG",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas",
+        "sourceUrl": "https://www.infocasas.com.py/alquilo-departamento-en-civis-alpha/193626340",
+        "summary": "Exact Civis Alpha results showed compact units around Gs. 4-4.5m and larger 2-bedroom units around Gs. 6m."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 99,
+        "basis": "direct 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "BrightData Google / InfoCasas / Asuncion Estate",
+        "sourceUrl": "https://www.infocasas.com.py/en-alquiler-departamento-de-2-dormitorios-civis-alpha/193328366",
+        "summary": "Civis Alpha 2-bedroom evidence repeatedly showed 99-100 m2, with smaller 68 m2 units treated as compact variants."
+      },
+      "floorsAboveGround": 15
+    },
+    {
+      "id": "lomas-1820",
+      "name": "Lomas 1820",
+      "aliases": [
+        "Edificio Lomas 1820",
+        "Urban Lomas 1820"
+      ],
+      "officialWebsiteUrl": "https://urbandomus.com.py/desarrollos/lomas-1820/",
+      "zone": "Las Lomas",
+      "built": "2025",
+      "address": "Juan Max Boettner",
+      "fullAddress": "Juan Max Boettner, Asunción 001527, Paraguay",
+      "googlePlaceId": "ChIJKatjHK-nXZQRixrLHadnUvM",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juan%20Max%20Boettner%2C%20Asunci%C3%B3n%20001527%2C%20Paraguay&query_place_id=ChIJKatjHK-nXZQRixrLHadnUvM",
+      "location": {
+        "lat": -25.2805818,
+        "lng": -57.5647367
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in targeted searches on 2026-06-30."
+      },
+      "rentalEvidence": {
+        "source": "Instagram",
+        "url": "https://www.instagram.com/reel/DQrNKbfDJGJ/",
+        "summary": "Exact Lomas 1820 rental result for a 128 m2 furnished apartment."
+      },
+      "description": "Urban Domus building with pool, gym, coworking, sauna and furnished rentals.",
+      "localRentalAd": {
+        "source": "Instagram",
+        "title": "Lomas 1820 - departamento en alquiler",
+        "url": "https://www.instagram.com/reel/DQrNKbfDJGJ/",
+        "summary": "Representative Lomas 1820 furnished rental."
+      },
+      "longTermRentUsd": {
+        "amount": 1250,
+        "basis": "1-bedroom estimate normalized from 128 m2 furnished listing",
+        "confidence": "medium-low",
+        "source": "BrightData Google / Instagram",
+        "sourceUrl": "https://www.instagram.com/reel/DQrNKbfDJGJ/",
+        "summary": "The exact visible rental was a 128 m2 furnished apartment at USD 2,200; this is normalized to a 1BR benchmark."
+      },
+      "approxTwoBedroomAreaSqm": {
+        "amount": 122,
+        "basis": "estimated midpoint from direct 2-bedroom typologies",
+        "confidence": "medium",
+        "source": "BrightData Google / Home Hunters / RE/MAX / TuCasaPy",
+        "sourceUrl": "https://homehunters.com.py/propiedad/lomas-1820-un-proyecto-con-conexion-a-todo-lo-esencial/",
+        "summary": "Lomas 1820 2-bedroom typologies were listed at 115 m2 and 128 m2; 122 m2 is the rounded midpoint estimate."
+      },
+      "floorsAboveGround": 7
     }
   ]
 }

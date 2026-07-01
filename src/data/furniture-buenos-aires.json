@@ -5,11 +5,11 @@
   "source": {
     "localNotes": "local-text/ba-furniture.md",
     "placeLookup": "Google Places API exact brand/store matches",
-    "webSearch": "BrightData MCP search/scrape plus Cursor WebSearch, Spanish-first research pass"
+    "webSearch": "BrightData MCP search/scrape plus Cursor WebSearch, Spanish-first research pass; requested additions rechecked 2026-06-30"
   },
   "validation": {
     "includedStatus": "OPERATIONAL",
-    "includedScope": "Buenos Aires metro area places returned by Google Maps for exact brand/store matches with at least one browsable, brand-owned or standalone store/showroom.",
+    "includedScope": "Buenos Aires metro area places returned by Google Maps for exact brand/store matches with at least one browsable, brand-owned or standalone store/showroom, plus manually researched online/showroom additions that sell a broader furniture range and meet their noted chair-stock, public-pricing and domestic-shipping thresholds.",
     "excludedBrands": [
       {
         "name": "Cuero Buenos Aires",
@@ -58,18 +58,41 @@
       {
         "name": "Tidelli Argentina",
         "reason": "Operational Palermo place found, but no official website-backed Buenos Aires store page or review history was found during this pass."
+      },
+      {
+        "name": "MITE",
+        "reason": "Checked by user request on 2026-06-30; official chair category and product pages showed priced chairs, but the checked chair cards/pages were marked Sin stock."
       }
     ],
     "filteredOut": "Shopping malls, unrelated furniture stores, generic leather shops, warehouses, low-confidence social-only listings, non-BA matches, and duplicate/non-showroom manufacturer listings were removed from the public list.",
-    "chairPriceSource": "Rechecked 2026-06-27 using BrightData Google search, BrightData scrapes of official brand/category pages, and regular web search cross-checks. Medians use current public online chair selling/list prices, divide explicit multi-chair sets by unit count, and exclude transfer/cash-only discounts plus financing installment amounts. Brands without public chair prices remain null with updated notes."
+    "chairPriceSource": "Rechecked 2026-06-30 using BrightData Google search, BrightData scrapes of official brand/category pages, and regular web search cross-checks. Medians use current public online chair selling/list prices, divide explicit multi-chair sets by unit count, and exclude transfer/cash-only discounts, financing installment amounts, zero-price placeholders, combo sets and out-of-stock cards. Brands without public chair prices remain null with updated notes; Sajo was added under a user-specific 3+ in-stock chair-unit threshold; Geben Argentina, Denver Concept, Muebledón and Decorando Shop were added under a user-specific 1+ in-stock priced-chair threshold. Chair-only brands were removed from the public list."
   },
   "brands": [
+    {
+      "id": "sajo",
+      "name": "SAJO",
+      "category": "Online / requested addition",
+      "style": "Pine and melamine home furniture",
+      "summary": "Online shop for pine and melamine home furniture, including storage, tables, chairs and bedroom pieces.",
+      "storeCount": 0,
+      "showroomLocation": "Beruti 56, San Fernando",
+      "showroomLabel": "Online store / San Fernando contact address",
+      "officialUrl": "https://sajo.com.ar/",
+      "stores": [],
+      "chairPrice": {
+        "median": 26599,
+        "currency": "ARS",
+        "sampleSize": 1,
+        "sourceUrl": "https://sajo.com.ar/cocina-comedor/sillas/",
+        "note": "Added 2026-06-30 by user request with a lower threshold: official Sajo chair category shows Silla Ñandu Comedor Bar Estilo Moderno at $26.599 with add-to-cart controls and 'Solo quedan 4 en stock.' Only one chair SKU was found; this qualifies on at least 3 chair units marked in stock, not 3 separate chair models. Site footer/contact lists Beruti 56, San Fernando and TiendaNube shipping methods."
+      }
+    },
     {
       "id": "la-fabrica-muebles-ba",
       "name": "La Fábrica Muebles BA",
       "category": "Modern / mid / budget",
       "style": "Sofas and home furniture chain",
-      "summary": "Buenos Aires furniture chain with operational monobrand stores across Avellaneda, Ciudadela, Castelar, Lomas de Zamora and La Reja.",
+      "summary": "BA chain for sofas, dining sets, bedroom furniture and home storage.",
       "storeCount": 5,
       "officialUrl": "https://www.lafabricamueblesba.com.ar/",
       "stores": [
@@ -272,7 +295,7 @@
       "name": "Emuebles",
       "category": "Modern / mid / budget",
       "style": "Design chairs, tables and decor",
-      "summary": "Design chair and furniture retailer with a CABA showroom on Virrey Loreto by appointment.",
+      "summary": "Online-first shop for chairs, tables, sofas and home decor.",
       "storeCount": 1,
       "officialUrl": "https://emuebles.com.ar/",
       "stores": [
@@ -327,7 +350,7 @@
       "name": "Mobilarg",
       "category": "Modern / mid / budget",
       "style": "Chairs, office and home furniture",
-      "summary": "Chair and furniture brand with operational showrooms in Chacarita and Loma Hermosa.",
+      "summary": "Home and office furniture brand focused on chairs, desks, tables and storage.",
       "storeCount": 2,
       "officialUrl": "https://mobilarg.com.ar/",
       "stores": [
@@ -415,11 +438,50 @@
       }
     },
     {
+      "id": "geben-argentina",
+      "name": "Geben Argentina",
+      "category": "Requested addition / CABA showroom",
+      "style": "Sofas, chairs, tables and home decor",
+      "summary": "CABA store for sofas, chairs, tables, home-office pieces and decor.",
+      "storeCount": 0,
+      "hasPhysicalBaLocation": true,
+      "showroomLocation": "Lavalle 3100, CABA",
+      "showroomLabel": "Published CABA store / no map pin",
+      "officialUrl": "https://www.gebenargentina.com/",
+      "stores": [],
+      "chairPrice": {
+        "median": 163422,
+        "currency": "ARS",
+        "sampleSize": 10,
+        "sourceUrl": "https://www.gebenargentina.com/sillas/sillas1/",
+        "note": "Added 2026-06-30 by user request with a 1+ in-stock priced chair threshold. Official Sillas page showed 10 priced/orderable chair products with add-to-cart controls; pack prices were divided by four. Shipping page supports CP-based delivery plus interior dispatch by buyer-selected transport; site lists Lavalle 3100, CABA. MITE was checked in the same pass but excluded because scraped chair pages were marked Sin stock."
+      }
+    },
+    {
+      "id": "tienda-ideal",
+      "name": "Tienda Ideal",
+      "category": "Online / non-BA showrooms",
+      "style": "General furniture retailer with dining chairs",
+      "summary": "Santa Fe retailer selling dining sets, sofas, bedroom pieces and mattresses online.",
+      "storeCount": 0,
+      "showroomLocation": "Santa Fe, San Francisco, San Jorge and Rafaela",
+      "showroomLabel": "Showrooms outside BA list",
+      "officialUrl": "https://tiendaideal.com.ar/categoria-producto/comedor/comedor_sillas/",
+      "stores": [],
+      "chairPrice": {
+        "median": 173965,
+        "currency": "ARS",
+        "sampleSize": 15,
+        "sourceUrl": "https://tiendaideal.com.ar/categoria-producto/comedor/comedor_sillas/",
+        "note": "Added 2026-06-30 after relaxing scope to non-BA showrooms. Official chair category pages show 15 priced chair SKUs with add-to-cart controls and Argentina province checkout options; Santa Fe page says products in stock ship in 3-5 business days and that they ship countrywide."
+      }
+    },
+    {
       "id": "farber",
       "name": "Farber",
       "category": "Luxury / premium",
       "style": "Contemporary furniture and home design",
-      "summary": "Furniture brand with operational CABA and Martinez stores plus a Farber Home showroom.",
+      "summary": "Furniture brand for sofas, dining rooms, bedrooms and home storage.",
       "storeCount": 3,
       "officialUrl": "https://farbermuebles.com.ar/",
       "stores": [
@@ -548,7 +610,7 @@
       "name": "El Mundo del Mueble",
       "category": "Modern / mid / budget",
       "style": "Budget and mid-market furniture retailer",
-      "summary": "Furniture retailer with operational CABA and GBA branches.",
+      "summary": "BA furniture retailer for sofas, dining sets, beds, mattresses and home storage.",
       "storeCount": 5,
       "officialUrl": "http://www.elmundodelmueble.com/",
       "stores": [
@@ -751,7 +813,7 @@
       "name": "Corfam",
       "category": "Modern / mid / budget",
       "style": "Argentine furniture retailer, own-brand lines",
-      "summary": "Large Argentine furniture brand with an operational monobrand showroom in Colegiales where you can browse full collections.",
+      "summary": "Argentine furniture brand for living rooms, bedrooms, dining rooms and office pieces.",
       "storeCount": 1,
       "officialUrl": "https://www.corfam.com/",
       "stores": [
@@ -808,7 +870,7 @@
       "name": "Amoblamientos JJ",
       "category": "Modern / mid / budget",
       "style": "Own-production home furniture",
-      "summary": "Own-production furniture brand with multiple operational showrooms across Avenida Belgrano, Flores and Palermo.",
+      "summary": "Own-production furniture brand for sofas, dining rooms, bedrooms and storage.",
       "storeCount": 4,
       "officialUrl": "https://amoblamientosjj.com.ar/",
       "stores": [
@@ -974,7 +1036,7 @@
       "name": "Sofas.com.ar",
       "category": "Sofa / specialist",
       "style": "Sofa specialist",
-      "summary": "Sofa specialist listed as an operational furniture store on Avenida Belgrano.",
+      "summary": "Sofa shop with living-room furniture, sofa beds and upholstered pieces.",
       "storeCount": 1,
       "officialUrl": "http://www.sofas.com.ar/",
       "stores": [
@@ -1025,11 +1087,31 @@
       }
     },
     {
+      "id": "decorando-shop",
+      "name": "Decorando Shop",
+      "category": "Requested addition / CABA showroom",
+      "style": "Design chairs, tables, furniture and decor",
+      "summary": "CABA design-furniture shop for chairs, tables, racks, sofas, desks and decor.",
+      "storeCount": 0,
+      "hasPhysicalBaLocation": true,
+      "showroomLocation": "Av. Federico Lacroze 2489, CABA",
+      "showroomLabel": "Published CABA store / no map pin",
+      "officialUrl": "https://decorandoshop.com.ar/",
+      "stores": [],
+      "chairPrice": {
+        "median": 259990,
+        "currency": "ARS",
+        "sampleSize": 16,
+        "sourceUrl": "https://www.decorandoshop.com/sillas/",
+        "note": "Added 2026-06-30 by user request with a 1+ in-stock priced chair threshold. Official Sillas/home scrapes showed at least 16 priced/orderable chair products with add-to-cart or buy controls, excluding stools, armchairs and dining-table combos. Site header and terms state CABA/GBA delivery and shipments to the rest of Argentina; contact footer lists Av. Federico Lacroze 2489, CABA."
+      }
+    },
+    {
       "id": "decodesign",
       "name": "Decodesign",
       "category": "Modern / mid / budget",
       "style": "Contemporary furniture retailer",
-      "summary": "Contemporary furniture retailer with an operational monobrand store in Belgrano.",
+      "summary": "Furniture retailer for sofas, dining sets, beds, mattresses and home office pieces.",
       "storeCount": 1,
       "officialUrl": "https://www.decodesign.com.ar/",
       "stores": [
@@ -1080,11 +1162,51 @@
       }
     },
     {
+      "id": "denver-concept",
+      "name": "Denver Concept",
+      "category": "Requested addition / CABA showrooms",
+      "style": "Sofas, dining chairs, tables, storage and outdoor furniture",
+      "summary": "BA furniture shop for sofas, dining chairs, tables, storage and outdoor pieces.",
+      "storeCount": 0,
+      "hasPhysicalBaLocation": true,
+      "showroomLocation": "Av. Cabildo 1596, Belgrano; Niceto Vega 5053, Palermo",
+      "showroomLabel": "Published CABA stores / no map pins",
+      "officialUrl": "https://denverconcept.com.ar/",
+      "stores": [],
+      "chairPrice": {
+        "median": 285000,
+        "currency": "ARS",
+        "sampleSize": 11,
+        "sourceUrl": "https://denverconcept.com.ar/sillas/",
+        "note": "Added 2026-06-30 by user request with a 1+ in-stock priced chair threshold. Official Sillas page showed 11 priced/orderable chair products with add-to-cart controls, excluding stools, sofas and dining-table sets. Shipping page lists CABA/GBA delivery and interior Argentina delivery via buyer-selected express transport; site lists Belgrano and Palermo stores."
+      }
+    },
+    {
+      "id": "muebledon",
+      "name": "Muebledón",
+      "category": "Requested addition / CABA showroom",
+      "style": "Sofas, dining sets, racks and home furniture",
+      "summary": "CABA furniture retailer for sofas, dining sets, racks, aparadores and bedroom pieces.",
+      "storeCount": 0,
+      "hasPhysicalBaLocation": true,
+      "showroomLocation": "Avenida Belgrano 2474 and 2599, CABA",
+      "showroomLabel": "Published CABA stores / no map pins",
+      "officialUrl": "https://muebledon.com/",
+      "stores": [],
+      "chairPrice": {
+        "median": 299999,
+        "currency": "ARS",
+        "sampleSize": 7,
+        "sourceUrl": "https://muebledon.com/mesas-y-sillas/sillas/",
+        "note": "Added 2026-06-30 by user request with a 1+ in-stock priced chair threshold. Official Sillas page showed 7 priced/orderable chair products with add-to-cart controls before the out-of-stock cards. FAQ confirms CABA, AMBA and interior Argentina shipping; site footer lists Avenida Belgrano 2474 and 2599, CABA."
+      }
+    },
+    {
       "id": "belgrano-home",
       "name": "Belgrano Home",
       "category": "Modern / mid / budget",
       "style": "Large furniture showrooms on Avenida Belgrano",
-      "summary": "Independent furniture retailer with two operational monobrand showrooms on Avenida Belgrano.",
+      "summary": "Avenida Belgrano furniture shop for sofas, tables, bedroom pieces and mattresses.",
       "storeCount": 2,
       "officialUrl": "https://www.belgranohome.com.ar/",
       "stores": [
@@ -1176,7 +1298,7 @@
       "name": "Oromanta",
       "category": "Luxury / premium",
       "style": "Classic luxury Argentine furniture",
-      "summary": "Classic luxury furniture brand with an operational monobrand showroom in Recoleta.",
+      "summary": "Classic furniture house for sofas, dining rooms, bedrooms and decor.",
       "storeCount": 1,
       "officialUrl": "https://www.oromanta.com/",
       "stores": [
@@ -1227,7 +1349,7 @@
       "name": "Della Casa",
       "category": "Modern / mid / budget",
       "style": "Upper-mid sofas and furniture",
-      "summary": "Furniture and sofa chain with operational CABA, northern GBA and Pilar branches.",
+      "summary": "Furniture chain for sofas, dining rooms, beds, mattresses and outdoor pieces.",
       "storeCount": 9,
       "officialUrl": "http://dellacasa.com.ar/",
       "stores": [
@@ -1578,7 +1700,7 @@
       "name": "Ciudad Muebles",
       "category": "Modern / mid / budget",
       "style": "Modern and functional furniture",
-      "summary": "Modern furniture maker/store listed as operational in Belgrano.",
+      "summary": "Furniture maker for tables, chairs, beds, desks and storage.",
       "storeCount": 1,
       "officialUrl": "http://www.ciudad-muebles.com.ar/",
       "stores": [
@@ -1633,7 +1755,7 @@
       "name": "Sofá y Tronos",
       "category": "Sofa / specialist",
       "style": "Artisan sofas, chairs and tronos",
-      "summary": "Artisan sofa and upholstery brand with a Villa Crespo showroom where customers can try in-stock sofas.",
+      "summary": "Upholstery studio for sofas, armchairs and custom living-room pieces.",
       "storeCount": 1,
       "officialUrl": "https://www.sofaytronos.com.ar/",
       "stores": [
@@ -1688,7 +1810,7 @@
       "name": "Wood Market",
       "category": "Custom / fabrica propia with showroom",
       "style": "Argentine-made design furniture",
-      "summary": "Argentine-made furniture store listed as operational in Vicente Lopez.",
+      "summary": "Argentine-made furniture shop for tables, chairs, sofas and storage.",
       "storeCount": 1,
       "officialUrl": "http://www.woodmarket.com.ar/",
       "stores": [
@@ -1743,7 +1865,7 @@
       "name": "AZUL BA",
       "category": "Custom / fabrica propia with showroom",
       "style": "Factory for tables and chairs",
-      "summary": "Table and chair factory with an operational showroom on Avenida Combatientes de Malvinas.",
+      "summary": "Factory shop for tables, chairs, benches and dining sets.",
       "storeCount": 1,
       "officialUrl": "https://azulba.com.ar/",
       "stores": [
@@ -1799,7 +1921,7 @@
       "name": "Manifesto",
       "category": "Argentine designer / author studios",
       "style": "Design store with own line and imported pieces",
-      "summary": "Palermo design store and furniture showroom listed as operational in Google Maps.",
+      "summary": "Palermo store for furniture, lighting, rugs and home objects.",
       "storeCount": 1,
       "officialUrl": "http://manifestodesignstore.com/",
       "stores": [
@@ -1857,7 +1979,7 @@
       "name": "Michael Thonet",
       "category": "Modern / mid / budget",
       "style": "Furniture and home accessories",
-      "summary": "Furniture brand with an operational Avenida Belgrano experience store and outlet floor.",
+      "summary": "Argentine furniture brand for dining chairs, tables, sofas and storage.",
       "storeCount": 1,
       "officialUrl": "https://michaelthonet.ar/pages/espacio-de-experiencia-av-belgrano-michael-thonet",
       "stores": [
@@ -1912,7 +2034,7 @@
       "name": "Kikely",
       "category": "Modern / mid / budget",
       "style": "Furniture and decor",
-      "summary": "Furniture showroom listed as operational in Vicente Lopez.",
+      "summary": "Furniture shop for chairs, tables, living-room pieces and decor.",
       "storeCount": 1,
       "officialUrl": "https://www.kikely.com.ar/",
       "stores": [
@@ -1968,7 +2090,7 @@
       "name": "MueblesySillones.com",
       "category": "Modern / mid / budget",
       "style": "Furniture and sofa retailer",
-      "summary": "Furniture and sofa retailer with operational CABA, Berazategui and Canning branches.",
+      "summary": "Furniture retailer for sofas, dining sets, bedroom pieces and mattresses.",
       "storeCount": 3,
       "officialUrl": "https://mueblesysillones.com.ar/",
       "stores": [
@@ -2099,7 +2221,7 @@
       "name": "Class Furniture Factory",
       "category": "Sofa / specialist",
       "style": "Customizable sofas and furniture",
-      "summary": "Sofa and furniture factory store with an operational Avenida Belgrano showroom.",
+      "summary": "Factory store for sofas, chairs, tables and upholstered furniture.",
       "storeCount": 1,
       "officialUrl": "https://classfurniturefactory.com/",
       "stores": [
@@ -2155,7 +2277,7 @@
       "name": "Landmark",
       "category": "Luxury / premium",
       "style": "Premium and upper-mid furniture",
-      "summary": "Premium Argentine furniture chain with operational stores in CABA, northern GBA and Pilar.",
+      "summary": "Argentine furniture chain for sofas, dining rooms, bedrooms and outdoor pieces.",
       "storeCount": 5,
       "officialUrl": "http://www.landmark.com.ar/",
       "stores": [
@@ -2357,7 +2479,7 @@
       "name": "La Base Studio",
       "category": "Argentine designer / author studios",
       "style": "High-end wood design",
-      "summary": "Wood-focused design studio listed as operational in Chacarita.",
+      "summary": "Wood furniture studio for tables, chairs, storage and home objects.",
       "storeCount": 1,
       "officialUrl": "http://www.labasestudio.com/",
       "stores": [
@@ -2405,7 +2527,7 @@
       "name": "Habitamos",
       "category": "Custom / fabrica propia with showroom",
       "style": "Made-to-measure furniture and home pieces",
-      "summary": "Design and made-to-measure furniture brand with an operational showroom/workshop in José León Suárez.",
+      "summary": "Made-to-measure furniture brand for kitchens, closets, tables and storage.",
       "storeCount": 1,
       "officialUrl": "https://www.habitamos.com.ar/",
       "stores": [
@@ -2460,7 +2582,7 @@
       "name": "Fradusco",
       "category": "Sofa / specialist",
       "style": "Argentine sofa and upholstery specialist",
-      "summary": "Argentine sofa specialist with operational monobrand showrooms in Recoleta and Norcenter.",
+      "summary": "Sofa maker with armchairs, tables and living-room furniture.",
       "storeCount": 2,
       "officialUrl": "https://www.fradusco.com/",
       "stores": [
@@ -2554,7 +2676,7 @@
       "name": "BoConcept",
       "category": "Luxury / premium",
       "style": "Premium Danish modern furniture",
-      "summary": "Danish modern furniture showroom listed as operational in Recoleta.",
+      "summary": "Danish furniture brand for sofas, dining rooms, beds, storage and lighting.",
       "storeCount": 1,
       "officialUrl": "https://www.boconcept.com/es-ar/?utm_source=MyBusiness&utm_medium=Bottom_web&utm_campaign=Brand",
       "stores": [
@@ -2611,7 +2733,7 @@
       "name": "Adelphi",
       "category": "Argentine designer / author studios",
       "style": "Design furniture showroom",
-      "summary": "Design furniture brand with an operational rooftop showroom on Arenales.",
+      "summary": "Design brand for chairs, tables, lamps and home objects.",
       "storeCount": 1,
       "officialUrl": "https://www.adelphi.com.ar/",
       "stores": [
@@ -2668,7 +2790,7 @@
       "name": "AKRA Interiores",
       "category": "Custom / fabrica propia with showroom",
       "style": "Made-to-measure modern furniture",
-      "summary": "Made-to-measure furniture maker with a public showroom in Núñez/DOHO and its own production.",
+      "summary": "Made-to-measure furniture studio for kitchens, closets, vanities and storage.",
       "storeCount": 1,
       "officialUrl": "https://akra-interiores.com.ar/",
       "stores": [
@@ -2726,7 +2848,7 @@
       "name": "City & Country",
       "category": "Custom / fabrica propia with showroom",
       "style": "Traditional and solid-wood furniture",
-      "summary": "Solid-wood furniture brand with operational CABA showroom/outlet locations.",
+      "summary": "Solid-wood furniture brand for dining rooms, bedrooms, sofas and outdoor pieces.",
       "storeCount": 2,
       "officialUrl": "https://www.cityandcountrymuebles.com/",
       "stores": [
@@ -2816,67 +2938,11 @@
       }
     },
     {
-      "id": "didot",
-      "name": "Didot",
-      "category": "Argentine designer / author studios",
-      "style": "Design showroom and interior studio",
-      "summary": "Palermo design showroom and interior studio listed as an operational furniture store on Gurruchaga.",
-      "storeCount": 1,
-      "officialUrl": "http://www.didotweb.com/",
-      "stores": [
-        {
-          "id": "ChIJjVIHTIa1vJURhpTlDNJzwFE",
-          "name": "Didot",
-          "branch": "Palermo",
-          "googlePlaceId": "ChIJjVIHTIa1vJURhpTlDNJzwFE",
-          "googleMapsUrl": "https://maps.google.com/?cid=5890835658597307526&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-          "website": "http://www.didotweb.com/",
-          "phone": "011 4833-1044",
-          "businessStatus": "OPERATIONAL",
-          "address": "Gurruchaga 1840",
-          "fullAddress": "Gurruchaga 1840, C1414 Cdad. Autónoma de Buenos Aires, Argentina",
-          "rating": 4.8,
-          "reviewCount": 20,
-          "primaryType": "furniture_store",
-          "types": [
-            "furniture_store",
-            "home_improvement_store",
-            "home_goods_store",
-            "store",
-            "point_of_interest",
-            "service",
-            "establishment"
-          ],
-          "location": {
-            "lat": -34.5877264,
-            "lng": -58.42691749999999
-          },
-          "weekdayHours": [
-            "Monday: 11:00 AM – 7:00 PM",
-            "Tuesday: 11:00 AM – 7:00 PM",
-            "Wednesday: 11:00 AM – 7:00 PM",
-            "Thursday: 11:00 AM – 7:00 PM",
-            "Friday: 11:00 AM – 7:00 PM",
-            "Saturday: Closed",
-            "Sunday: Closed"
-          ],
-          "sortOrder": 1
-        }
-      ],
-      "chairPrice": {
-        "median": null,
-        "currency": "ARS",
-        "sampleSize": 0,
-        "sourceUrl": "http://www.didotweb.com/",
-        "note": "Checked official site/search; no public chair prices found, only non-chair sillón pricing surfaced."
-      }
-    },
-    {
       "id": "dj-style",
       "name": "DJ Style",
       "category": "Custom / fabrica propia with showroom",
       "style": "Custom living, dining and bedroom furniture",
-      "summary": "Custom furniture shop listed as operational on Avenida Belgrano.",
+      "summary": "Custom furniture shop for living rooms, dining rooms and bedrooms.",
       "storeCount": 1,
       "officialUrl": "https://maps.google.com/?cid=15532610208425560457&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
       "stores": [
@@ -2916,7 +2982,7 @@
       "name": "DXXI",
       "category": "Custom / fabrica propia with showroom",
       "style": "Contemporary standard and custom furniture",
-      "summary": "Custom furniture factory/showroom listed as operational in Caballito.",
+      "summary": "Custom furniture factory for kitchens, closets, desks and storage.",
       "storeCount": 1,
       "officialUrl": "https://www.dxxi.com.ar/",
       "stores": [
@@ -2969,11 +3035,67 @@
       }
     },
     {
+      "id": "didot",
+      "name": "Didot",
+      "category": "Argentine designer / author studios",
+      "style": "Design showroom and interior studio",
+      "summary": "Palermo studio for furniture, interior projects and home objects.",
+      "storeCount": 1,
+      "officialUrl": "http://www.didotweb.com/",
+      "stores": [
+        {
+          "id": "ChIJjVIHTIa1vJURhpTlDNJzwFE",
+          "name": "Didot",
+          "branch": "Palermo",
+          "googlePlaceId": "ChIJjVIHTIa1vJURhpTlDNJzwFE",
+          "googleMapsUrl": "https://maps.google.com/?cid=5890835658597307526&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+          "website": "http://www.didotweb.com/",
+          "phone": "011 4833-1044",
+          "businessStatus": "OPERATIONAL",
+          "address": "Gurruchaga 1840",
+          "fullAddress": "Gurruchaga 1840, C1414 Cdad. Autónoma de Buenos Aires, Argentina",
+          "rating": 4.8,
+          "reviewCount": 20,
+          "primaryType": "furniture_store",
+          "types": [
+            "furniture_store",
+            "home_improvement_store",
+            "home_goods_store",
+            "store",
+            "point_of_interest",
+            "service",
+            "establishment"
+          ],
+          "location": {
+            "lat": -34.5877264,
+            "lng": -58.42691749999999
+          },
+          "weekdayHours": [
+            "Monday: 11:00 AM – 7:00 PM",
+            "Tuesday: 11:00 AM – 7:00 PM",
+            "Wednesday: 11:00 AM – 7:00 PM",
+            "Thursday: 11:00 AM – 7:00 PM",
+            "Friday: 11:00 AM – 7:00 PM",
+            "Saturday: Closed",
+            "Sunday: Closed"
+          ],
+          "sortOrder": 1
+        }
+      ],
+      "chairPrice": {
+        "median": null,
+        "currency": "ARS",
+        "sampleSize": 0,
+        "sourceUrl": "http://www.didotweb.com/",
+        "note": "Checked official site/search; no public chair prices found, only non-chair sillón pricing surfaced."
+      }
+    },
+    {
       "id": "el-mueble",
       "name": "El Mueble",
       "category": "Custom / fabrica propia with showroom",
       "style": "Design and made-to-measure furniture",
-      "summary": "Made-to-measure furniture brand with an operational showroom listed in Ituzaingo.",
+      "summary": "Made-to-measure furniture brand for kitchens, closets, tables and storage.",
       "storeCount": 1,
       "officialUrl": "http://www.el-mueble.com.ar/showroom/",
       "stores": [
@@ -3028,7 +3150,7 @@
       "name": "Estilo Campo Muebles",
       "category": "Custom / fabrica propia with showroom",
       "style": "Rustic and solid-wood furniture",
-      "summary": "Rustic furniture showroom listed as operational on Avenida Belgrano.",
+      "summary": "Rustic furniture shop for dining rooms, bedrooms, sofas and storage.",
       "storeCount": 1,
       "officialUrl": "https://maps.google.com/?cid=14432127831141497562&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
       "stores": [
@@ -3082,7 +3204,7 @@
       "name": "Eugenio Aguirre",
       "category": "Argentine designer / author studios",
       "style": "Designer and artisanal furniture",
-      "summary": "Designer furniture brand with an operational Norcenter showroom.",
+      "summary": "Designer furniture brand for chairs, tables, desks and storage pieces.",
       "storeCount": 1,
       "officialUrl": "https://www.eugenioaguirre.com/",
       "stores": [
@@ -3137,7 +3259,7 @@
       "name": "Factory Muebles",
       "category": "Modern / mid / budget",
       "style": "Factory showroom for modular home furniture",
-      "summary": "Furniture factory and showroom in Nueva Pompeya with racks, placards, desks and modular home furniture.",
+      "summary": "Factory shop for racks, placards, desks and modular home furniture.",
       "storeCount": 1,
       "officialUrl": "https://www.factorymuebles.com.ar/",
       "stores": [
@@ -3192,7 +3314,7 @@
       "name": "Facyca",
       "category": "Sofa / specialist",
       "style": "Sofas, sofa beds and articulated beds",
-      "summary": "Long-running sofa and sofa-bed manufacturer with factory and public showroom in Villa Crespo.",
+      "summary": "Sofa and sofa-bed maker with recliners, beds and upholstered pieces.",
       "storeCount": 1,
       "officialUrl": "https://facyca.com.ar/",
       "stores": [
@@ -3246,7 +3368,7 @@
       "name": "Federico Churba",
       "category": "Argentine designer / author studios",
       "style": "Author design and lighting",
-      "summary": "Argentine designer furniture studio with an operational showroom near Distrito Arenales.",
+      "summary": "Designer studio for furniture, lighting and home objects.",
       "storeCount": 1,
       "officialUrl": "http://www.federicochurba.com.ar/",
       "stores": [
@@ -3301,7 +3423,7 @@
       "name": "Fontenla",
       "category": "Luxury / premium",
       "style": "Premium Argentine furniture design",
-      "summary": "Premium Argentine furniture brand with operational BA metro showrooms including General Paz, Puerto Madero and Nordelta.",
+      "summary": "Argentine furniture brand for sofas, dining rooms, bedrooms and outdoor pieces.",
       "storeCount": 3,
       "officialUrl": "https://fontenlastore.com/",
       "stores": [
@@ -3430,7 +3552,7 @@
       "name": "La Compañía",
       "category": "Custom / fabrica propia",
       "style": "Artisan Argentine furniture workshop",
-      "summary": "Artisan furniture workshop with an operational monobrand showroom in Recoleta listed on Google Maps as The Company.",
+      "summary": "Artisan workshop for wood furniture, upholstery and home pieces.",
       "storeCount": 1,
       "officialUrl": "http://www.lacompaniamuebles.com.ar/",
       "stores": [
@@ -3484,7 +3606,7 @@
       "name": "La Fábrica de Muebles Mataderos",
       "category": "Custom / fabrica propia with showroom",
       "style": "Factory furniture showroom",
-      "summary": "Independent furniture factory/showroom in Mataderos with operational Google Maps storefront.",
+      "summary": "Mataderos factory shop for sofas, tables, chairs and bedroom furniture.",
       "storeCount": 1,
       "officialUrl": "http://www.lafabricademuebles.com.ar/",
       "stores": [
@@ -3540,7 +3662,7 @@
       "name": "Marini Estudio",
       "category": "Argentine designer / author studios",
       "style": "Contemporary furniture with own workshop",
-      "summary": "Contemporary furniture showroom listed as operational in Palermo.",
+      "summary": "Palermo studio for furniture, lighting, rugs and home objects.",
       "storeCount": 1,
       "officialUrl": "http://www.marini-estudio.com/",
       "stores": [
@@ -3595,7 +3717,7 @@
       "name": "Missura",
       "category": "Custom / fabrica propia with showroom",
       "style": "High-end bespoke furniture, since 1980",
-      "summary": "Bespoke furniture showroom listed as operational on Arenales.",
+      "summary": "Bespoke furniture house for sofas, tables, storage and interior projects.",
       "storeCount": 1,
       "officialUrl": "https://www.missura.com.ar/",
       "stores": [
@@ -3650,7 +3772,7 @@
       "name": "Modo Casa",
       "category": "Argentine designer / author studios",
       "style": "Contemporary Argentine furniture design",
-      "summary": "Contemporary Argentine furniture design studio with an operational monobrand showroom in Palermo Soho.",
+      "summary": "Argentine design studio for sofas, tables, chairs and storage.",
       "storeCount": 1,
       "officialUrl": "https://www.modocasa.com.ar/",
       "stores": [
@@ -3705,7 +3827,7 @@
       "name": "Muebles Van Gogh",
       "category": "Modern / mid / budget",
       "style": "Furniture and home goods showroom",
-      "summary": "Independent furniture store with an operational Avenida Belgrano showroom.",
+      "summary": "Avenida Belgrano shop for sofas, dining rooms, bedrooms and home goods.",
       "storeCount": 1,
       "officialUrl": "http://www.mueblesvg.com.ar/",
       "stores": [
@@ -3758,7 +3880,7 @@
       "name": "Palermo Design",
       "category": "Custom / fabrica propia with showroom",
       "style": "Custom furniture and interior projects",
-      "summary": "Custom furniture showroom and manufacturer listed as operational in Núñez.",
+      "summary": "Custom furniture studio for kitchens, closets, living rooms and office pieces.",
       "storeCount": 1,
       "officialUrl": "http://www.palermodesign.com.ar/",
       "stores": [
@@ -3814,7 +3936,7 @@
       "name": "Roche Bobois",
       "category": "Luxury / premium",
       "style": "Ultra-luxury French furniture",
-      "summary": "International luxury furniture showroom brand with two operational Buenos Aires locations in Google Maps.",
+      "summary": "French furniture brand for sofas, dining rooms, beds and outdoor pieces.",
       "storeCount": 2,
       "officialUrl": "https://www.roche-bobois.com/es-AR/",
       "stores": [
@@ -3904,7 +4026,7 @@
       "name": "Selema",
       "category": "Custom / fabrica propia",
       "style": "Artisan wood furniture, Argentine maker",
-      "summary": "Artisan Argentine furniture maker with operational monobrand stores in Palermo, Villa Crespo and Norcenter.",
+      "summary": "Wood furniture maker for tables, chairs, sofas and storage.",
       "storeCount": 3,
       "officialUrl": "https://www.selemamuebles.com/",
       "stores": [
@@ -4035,7 +4157,7 @@
       "name": "Solotar",
       "category": "Argentine designer / author studios",
       "style": "Classic and contemporary design furniture",
-      "summary": "Independent furniture showroom listed as operational on Arenales.",
+      "summary": "Furniture showroom for classic and modern pieces, including chairs, tables and sofas.",
       "storeCount": 1,
       "officialUrl": "http://www.solotar.com.ar/",
       "stores": [
