@@ -90,6 +90,10 @@ body {
   padding: clamp(1.25rem, 3vw, 2.5rem);
 }
 
+.page-quiz {
+  padding-top: clamp(0.65rem, 1.6vw, 1.2rem);
+}
+
 .hero {
   display: grid;
   gap: clamp(1.5rem, 4vw, 2.75rem);
@@ -152,6 +156,32 @@ h1 {
   letter-spacing: -0.01em;
 }
 
+.hero-quiz {
+  gap: clamp(0.65rem, 1.8vw, 1rem);
+  padding-bottom: clamp(0.85rem, 2.2vw, 1.3rem);
+}
+
+.hero-quiz .home-link {
+  font-size: 0.78rem;
+}
+
+.hero-quiz .hero-kicker {
+  margin-bottom: 0.28rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.13em;
+}
+
+.hero-quiz h1 {
+  font-size: clamp(1.95rem, 4.1vw, 2.85rem);
+}
+
+.hero-quiz .hero-description {
+  max-width: 28rem;
+  margin-top: 0.45rem;
+  font-size: clamp(0.95rem, 1.25vw, 1.05rem);
+  line-height: 1.35;
+}
+
 .article {
   width: 100%;
   display: grid;
@@ -159,6 +189,10 @@ h1 {
   max-width: 46rem;
   margin: 0 auto;
   padding: clamp(1.5rem, 4vw, 2.75rem) 0 clamp(1.75rem, 4.5vw, 3.5rem);
+}
+
+.page-quiz .article {
+  padding-top: clamp(0.85rem, 2vw, 1.35rem);
 }
 
 section {
@@ -320,6 +354,12 @@ a:hover {
   border: 1px solid var(--rule);
   background: var(--paper);
   padding: clamp(1.15rem, 3vw, 1.75rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.quiz-card.settling {
+  opacity: 0.94;
+  transform: translateY(-1px);
 }
 
 .q-meta {
@@ -374,7 +414,12 @@ a:hover {
   text-align: left;
   padding: 0.68rem 0.85rem;
   cursor: pointer;
-  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    color 120ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .q-option:hover {
@@ -386,6 +431,27 @@ a:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--text);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+  animation: answer-pop 420ms cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+.quiz-card.settling .q-option:not(.selected) {
+  opacity: 0.62;
+  transition: opacity 180ms ease;
+}
+
+@keyframes answer-pop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  45% {
+    transform: translateY(-2px) scale(1.012);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+  }
 }
 
 .q-key {
@@ -658,18 +724,27 @@ a:hover {
 
 .report-bar-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns:
+    minmax(4.8rem, clamp(4.8rem, 18vw, 8.4rem))
+    minmax(0, 1fr)
+    minmax(4.8rem, clamp(4.8rem, 18vw, 8.4rem));
   align-items: center;
   gap: 0.7rem;
   margin-bottom: 0.55rem;
 }
 
 .report-pole {
+  min-width: 0;
   font-family: var(--sans);
   font-size: 0.74rem;
   letter-spacing: 0.04em;
+  line-height: 1.25;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.report-pole:last-child {
+  text-align: right;
 }
 
 .report-blurb {
@@ -750,6 +825,58 @@ a:hover {
   fill: var(--accent);
   stroke: var(--paper);
   stroke-width: 2;
+}
+
+.minimap-legend {
+  display: grid;
+  gap: 0.55rem;
+  width: min(100%, 24rem);
+  margin: 1rem auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.minimap-legend-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 0.65rem 0.75rem;
+}
+
+.minimap-rank {
+  display: grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border: 1px solid var(--text-soft);
+  border-radius: 50%;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.minimap-legend-copy {
+  display: grid;
+  gap: 0.08rem;
+  min-width: 0;
+}
+
+.minimap-legend-name {
+  width: fit-content;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.minimap-legend-tag {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-style: italic;
+  line-height: 1.35;
 }
 
 .share-row {
@@ -902,7 +1029,65 @@ a:hover {
   #results.in,
   .p-dot,
   .q-option,
+  .quiz-card,
   .btn {
     transition: none;
   }
+
+  .q-option.selected {
+    animation: none;
+  }
+}
+
+/* ---- intro lead-in ---- */
+
+.intro-card {
+  display: grid;
+  gap: 1.05rem;
+  justify-items: center;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: clamp(1.9rem, 5vw, 3rem) clamp(1.25rem, 4vw, 2.5rem);
+  text-align: center;
+}
+
+.btn-lead {
+  font-size: 1.04rem;
+  padding: 0.82rem 2.3rem;
+  margin-top: 0.3rem;
+}
+
+.intro-link {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+
+.results-links {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+
+/* ---- about page ---- */
+
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+a.btn-primary:hover {
+  color: var(--bg);
+}
+
+.hero-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.about-cta {
+  display: flex;
+  justify-content: center;
 }

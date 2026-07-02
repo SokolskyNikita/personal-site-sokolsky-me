@@ -1,0 +1,703 @@
+---
+export const prerender = true;
+
+const pageTitle = "The technology rabbi";
+const pageDescription =
+  "English translation of a July 2026 Yiddish interview with Rabbi Mordechai Lightstone about bringing Judaism into major technology companies.";
+const themeColorLight = "#f8f6ef";
+const themeColorDark = "#14120e";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  inLanguage: "en",
+  isBasedOn: "Yiddish magazine article supplied as page images",
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        <p class="eyebrow">English translation</p>
+        <h1>The technology rabbi</h1>
+        <p class="dek">
+          A Yiddish interview with Rabbi Mordechai Lightstone about teaching Torah,
+          arranging Jewish events and answering halachic questions inside major
+          technology companies.
+        </p>
+        <p class="source-note">
+          Source note: translated from the supplied Yiddish page images of a
+          <cite>Der Yid</cite> business interview, pages 108-115, July 2026.
+          The wording below is an English working translation, with obvious
+          proper names normalized where possible.
+        </p>
+      </header>
+
+      <article class="article">
+        <section aria-labelledby="opening-heading">
+          <h2 id="opening-heading">Opening</h2>
+          <p>
+            It was a beautiful sunny day. Rabbi Mordechai was at home with his
+            family when the telephone rang. The request on the other end was not
+            the sort of call he expected: "We would very much like to ask whether
+            you could please come give a class about <em>hafrashas challah</em>
+            at Google's headquarters."
+          </p>
+          <p>
+            Rabbi Mordechai could hardly believe what he was hearing. Google was
+            inviting him into its offices to give a class. He accepted. From
+            there, his name began moving through the large tech companies:
+            Google, Microsoft, Meta, Amazon and others.
+          </p>
+          <p>
+            Rabbi Mordechai is in his forties. He has a lot of energy and spends
+            much of it answering Jews who want to come closer to Judaism.
+          </p>
+          <p>
+            The technology world is a multibillion-dollar industry with enormous
+            research centers and huge office buildings employing tens of
+            thousands of people, among them many thousands of Jewish employees.
+            Some are observant Jews; others are traditional Jews. The article's
+            premise is that Jewish ability and quick thinking are visible in that
+            world.
+          </p>
+          <p>
+            We connected with Rabbi Mordechai Lightstone to hear how his
+            relationship with Google began and how it developed over the years.
+          </p>
+        </section>
+
+        <section aria-labelledby="background-heading">
+          <h2 id="background-heading">Background</h2>
+          <h3>Please introduce yourself.</h3>
+          <p>
+            My name is Mordechai Lightstone. I am the son of Rabbi David
+            Lightstone of Los Angeles. Our family's roots go back to Montreal,
+            where my parents grew up after their parents emigrated to Canada
+            before the Second World War.
+          </p>
+          <p>
+            My great-grandparents lived during the war years in Ukraine and
+            Lithuania. The last to escape was my grandmother, who left Soviet
+            Russia in 1930. After their marriage, my parents moved to Los
+            Angeles. We are a small family: just my sister and myself. My parents
+            still live in Los Angeles today.
+          </p>
+          <p>
+            As a child I studied in the local Lubavitch schools and later I
+            learned in yeshiva in Montreal. For a period I was in Warsaw, Poland,
+            helping the local rabbi with communal functions. After that I spent
+            several months helping the rabbi of another community in Vilna,
+            Lithuania. Then I returned home to Los Angeles to learn for
+            <em>semicha</em>.
+          </p>
+          <p>
+            Close to twenty years ago I married and we settled in New York.
+          </p>
+
+          <h3>Tell us about Jewish life in Los Angeles generally.</h3>
+          <p>
+            I do not think anyone needs an introduction to Jewish life in Los
+            Angeles. It is not some remote, forgotten place. Jewish life in Los
+            Angeles flourishes beautifully, thank God. There are thousands of
+            religious Jews, Torah institutions, synagogues and yeshivas,
+            especially the Ohr Elchonon Chabad yeshiva network under the
+            leadership of Rabbi Ezra Schochet. There are also many stores and
+            businesses. I have good memories of my childhood years there.
+          </p>
+
+          <h3>
+            In recent years one often hears about high crime and astronomical
+            living costs in California. How does it feel to live in Los Angeles?
+          </h3>
+          <p>
+            I have not lived there for nearly twenty years, but I do not see it
+            as so simple. It is easy to spread fear and agitation. People have
+            their agendas and stirring people up can be a good way to gain
+            political capital and votes in heated election campaigns. We see that
+            in the Orthodox election campaigns in New York as well. Of course
+            there are political differences, but when I was growing up in
+            California I felt very calm.
+          </p>
+          <p>
+            Historically speaking, New York was also terribly afflicted by crime
+            in the 1970s, 1980s and 1990s. Who does not remember the Crown
+            Heights riots? Williamsburg too was troubled by a great deal of crime
+            in those days. But the reality is that the presence of Jews changes
+            the face of a neighborhood. When Jews settle in a place, crime falls,
+            with God's help.
+          </p>
+        </section>
+
+        <section aria-labelledby="origin-heading">
+          <h2 id="origin-heading">How the work began</h2>
+          <h3>
+            Let us turn to the subject of your role as rabbi to the technology
+            companies. How far back does this go? How did it begin?
+          </h3>
+          <p>
+            After my marriage I learned in kollel for a while. At the same time,
+            I began writing about Judaism and posting it on different Jewish
+            platforms.
+          </p>
+          <p>
+            Seventeen years ago we heard about a large annual gathering in
+            Austin, Texas. The gathering draws a huge number of people and runs
+            for several days. We went there with the goal of speaking about
+            Judaism for the assembled people there.
+          </p>
+          <p>
+            After the talk, a Sephardic Jew approached me. He looked very far
+            from our style of Judaism. He told me that he had come for work and
+            had nowhere to eat the Shabbos meals. I was a stranger just like he
+            was, but I put myself into arranging a Shabbos for him. The next
+            year we also went to speak and we arranged a beautiful Shabbos for
+            hundreds of Jewish participants, most of them traditional Jews. Since
+            then, we go every year.
+          </p>
+          <p>
+            The gathering is enormous, with close to four hundred thousand
+            participants. Many large companies and notable people attend. Over
+            the years we heard from several participants that they live in New
+            York City, near the Orthodox neighborhoods of Williamsburg and Crown
+            Heights. While we were in Texas, we built relationships with local
+            New York Jews. They asked us to stay in touch with them in New York
+            about Judaism, to hear more about Jewish law, Shabbos, kashrus,
+            holidays and so on.
+          </p>
+          <p>
+            We stayed in contact with a few Google employees. That continued for
+            several years in a light way. Around Chanukah we organized a party at
+            our home and before Rosh Hashanah we gave a talk, but not much more
+            than that.
+          </p>
+          <p>
+            We moved very slowly. The reason is that Google does not look to
+            bring random outsiders into its centers. They will agree only if it
+            is a one-hundred-percent benefit for their employees. Over the years
+            we became acquainted with more and more employees. It took time to
+            get to know one another, build good relationships and trust, until
+            the time was ripe for Google to invite us in.
+          </p>
+
+          <h3>When did Google first invite you in?</h3>
+          <p>
+            It was sometime around the year 5779. One day I received a phone
+            call. On the other end, someone introduced himself as a Google
+            employee. They wanted to ask us to come to Google's headquarters in
+            Manhattan to give a class about challah. We agreed.
+          </p>
+          <p>
+            My wife organized a lecture at Google about baking challah. The
+            center has its own kitchen, but we did not want to use their non-
+            kosher ingredients. So we went to a local store and bought all the
+            ingredients ourselves: eggs, flour, sugar and our own pans. We made
+            sure everything was done with complete kashrus and on the appointed
+            day we arrived at the Google center.
+          </p>
+          <p>
+            To our surprise, more than eighty employees attended the lecture. We
+            were very surprised, because we did not know what to expect and
+            certainly did not expect such a large turnout. My wife prepared the
+            dough, formed the challah and placed it in a pan. At the same time,
+            I taught the assembled group the Torah source for the mitzvah of
+            separating challah, related ideas and the blessing made at the
+            separation.
+          </p>
+          <p>
+            Not long afterward, the Covid pandemic broke out and everyone was
+            closed at home. The Google employee then called us and said they
+            wanted to arrange virtual Jewish classes for their workers, but they
+            did not have a speaker. That is when I began giving classes for them.
+            From there it spread very quickly. They arranged gatherings at the
+            same time that I was speaking, so employees in centers in London and
+            other countries could participate live.
+          </p>
+          <p>
+            At those talks we discussed interesting halachic topics, for example
+            what happens if one is riding in a self-driving car and, God forbid,
+            an accident occurs. Then the companies began asking for help
+            arranging gatherings, such as Chanukah parties. We would come speak,
+            light the menorah and distribute menorahs to the participants.
+          </p>
+        </section>
+
+        <section aria-labelledby="awakening-heading">
+          <h2 id="awakening-heading">Why employees are seeking Judaism</h2>
+          <h3>
+            What would you say is the reason employees are trying to come closer
+            to Judaism?
+          </h3>
+          <p>
+            We are living through a very unsettled time for our fellow Jews
+            around the world, especially since the October 7 attack. The Jew is
+            truly hated among the nations and many are afraid to display their
+            Jewish identity. So people are looking for strength in Judaism. The
+            October 7 attacks made many people want more Jewish practice, not
+            less. Many call us because they need mezuzahs for their homes.
+            Others ask for tefillin. After October 7, someone called us and
+            sponsored forty mezuzahs. We distributed them.
+          </p>
+          <p>
+            One of the large technology companies informed its Jewish employees
+            that the budget had extra money and that they could arrange an
+            end-of-year event. The employees asked instead to experience a
+            Shabbos. They called us to arrange a Shabbos meal for them. They
+            chose a Shabbos instead of going out with music.
+          </p>
+          <p>
+            At one Shabbos meal in my home, a friend of mine was present. After
+            the meal, my son recited <em>birchas hamazon</em>, but the guest did
+            not. My son asked him, "Why are you not bentching?" He answered that
+            he did not even know the alef-beis. My son asked, "How old are you?"
+            "Thirty," he said. My son told him, "Rabbi Akiva began learning the
+            alef-beis at forty. You can begin at thirty." My son started learning
+            the alef-beis with him.
+          </p>
+
+          <h3>
+            Have you met technology employees who did not know they were Jewish?
+          </h3>
+          <p>
+            Certainly. Many lost Jews do not even begin to know that they are
+            Jewish. On one occasion we met someone who said that his father was
+            not Jewish but his mother was. We explained to him that according to
+            halacha he is a complete Jew. He had not known that.
+          </p>
+        </section>
+
+        <section aria-labelledby="companies-heading">
+          <h2 id="companies-heading">Inside the companies</h2>
+          <h3>How did you get from Google to the other big technology firms?</h3>
+          <p>
+            Over time, the Google employees introduced us to their friends in
+            other technology companies.
+          </p>
+
+          <h3>Where do you give classes now?</h3>
+          <p>
+            The activities vary from company to company. We have close
+            relationships with Google, Amazon, Meta, Microsoft, X/Twitter,
+            Snapchat, Squarespace, Palantir, WhatsApp, Brex, OpenAI and many
+            others. We also go around quite a bit to offices of startup
+            companies.
+          </p>
+          <p>
+            Squarespace, the company that builds websites, called us for an event
+            before Purim. The company invited many Jewish employees from a range
+            of other technology companies. We spoke to them about the holiday of
+            Purim. They helped assemble mishloach manos packages for autistic
+            children and those were distributed on Purim day itself. We arranged
+            a Megillah reading and Purim meals for them.
+          </p>
+          <p>
+            Things kept going. Today we teach a weekly Wednesday afternoon class
+            on the weekly Torah portion. Thousands of people around the world
+            follow it. The class is in the afternoon so employees in California
+            can take part too.
+          </p>
+
+          <h3>
+            How does it work? Can any employee arrange visits however he likes?
+          </h3>
+          <p>
+            Our first "class" was arranged through a mid-level employee who asked
+            all the way up to the highest levels in order to make it happen.
+          </p>
+
+          <h3>
+            You mentioned that each company has its own Jewish programming. What
+            do the lectures depend on?
+          </h3>
+          <p>
+            Every company has its own arrangement and they turn to us after that.
+            We do not go into every company to deliver lectures.
+          </p>
+          <p>
+            At Amazon, they call us and ask for help arranging gatherings for
+            employees around Chanukah, Purim, before Pesach and so on. On
+            Chanukah we light the menorah, sing Chanukah songs, distribute
+            menorahs and speak about the miracle. On Purim we speak about the
+            ideas of Purim, Megillah reading, what Haman was aiming for,
+            mishloach manos and the Purim meal. Before Pesach we arrange boxes
+            of shmurah matzah for the employees. The same happens before Rosh
+            Hashanah and Sukkos.
+          </p>
+          <p>
+            Google manages its parties on its own. They call us for deeper
+            Jewish subjects. We teach classes in Judaism and discuss interesting
+            halachic questions, such as the debate around machine-made matzah and
+            how that issue might apply today, when machines are built through AI
+            and other advanced robots.
+          </p>
+          <p>
+            At Microsoft we do not give lectures, but they call us before
+            Chanukah to distribute menorahs, as well as Megillahs and shmurah
+            matzah.
+          </p>
+          <p>
+            Meta, the parent company of Facebook and WhatsApp, is set up much
+            like Microsoft. They call us before the holidays to distribute
+            holiday needs. We also have individual employees who ask us to learn
+            with them about Judaism, keeping Shabbos, tefillin, tzitzis and
+            similar subjects. One Meta employee asked us for a daily phone class,
+            and we learn every day at 6:30 in the morning for twenty to thirty
+            minutes.
+          </p>
+
+          <h3>Have technology companies ever rejected your appearances?</h3>
+          <p>
+            Thank God, we have never received an outright no. Some have answered
+            that now is not the appropriate time.
+          </p>
+
+          <h3>What do you do about trips to tech centers around the world?</h3>
+          <p>
+            Most of the time we appear in centers in New York City. There are
+            occasions when they call us around the world, but today everything can
+            be done virtually. We arranged a Chanukah gathering for Amazon and
+            scheduled it so the London Amazon employees could participate while a
+            colleague of mine, a local rabbi, lit the menorah in London.
+          </p>
+
+          <h3>How often do you teach in the centers?</h3>
+          <p>
+            The weekly Torah-portion talk takes place every week. Other programs
+            run more or less monthly, depending on the Jewish calendar. How often
+            we appear also depends on each company.
+          </p>
+
+          <h3>
+            What is your status with the companies? Are you employed by them?
+          </h3>
+          <p>
+            Corporate companies do not look for just anyone to come in. Their
+            standards are very strict, so we cannot simply stroll into a building.
+            Each time, they specifically invite us to come teach. Our status is
+            as a guest, not as a company employee.
+          </p>
+        </section>
+
+        <section aria-labelledby="ai-heading">
+          <h2 id="ai-heading">AI, executives and personal stories</h2>
+          <h3>
+            The world of AI is very large. Have you already had occasion to speak
+            to Google employees about AI as it relates to Judaism?
+          </h3>
+          <p>
+            Not long ago we appeared on a panel about AI and antisemitism. In
+            general, AI is trained by gathering information from the internet.
+            Because the internet is filled with a great deal of incitement
+            against Jews, including claims that Jews have great power and control
+            the world, we brought out the point that companies must invest effort
+            to make sure AI has no part in spreading antisemitism. At that event,
+            a senior chief of staff from a Google-related company was present. We
+            hope it had the right effect.
+          </p>
+
+          <h3>
+            Have you met Elon Musk or other business leaders personally?
+          </h3>
+          <p>
+            The leaders of large companies are very hard to meet. I have not met
+            Elon Musk or Mark Zuckerberg, but we have met other high-ranking
+            executives and founders of smaller technology companies.
+          </p>
+
+          <h3>
+            As someone who deals with so many traditional Jews, have you seen
+            people become Torah-observant?
+          </h3>
+          <p>
+            Certainly. We had a woman who told us she would no longer come to our
+            Shabbos meal because she had begun keeping Shabbos and could not use
+            public transportation. We have also had Google employees ask us to
+            arrange the kiddushin for their wedding.
+          </p>
+
+          <h3>What are the plans for the future?</h3>
+          <p>
+            We hope to expand, to provide gatherings and classes more often and
+            in more centers.
+          </p>
+
+          <h3>
+            Have you personally felt antisemitism when appearing in the tech
+            centers?
+          </h3>
+          <p>
+            I personally have not felt it, thank God, when going to speak at the
+            technology companies. But I hear a great deal from employees who
+            receive a lot of hate. One woman told us that she was speaking with
+            her mother in Persian when suddenly an Arab woman began berating her
+            loudly about her Judaism. This woman is not Orthodox and could not
+            understand how anyone had identified her Jewish background.
+            Later she realized that during the conversation she had said "Baruch
+            Hashem" to her mother. The other woman understood from that that she
+            was Jewish.
+          </p>
+        </section>
+
+        <section aria-labelledby="recent-heading">
+          <h2 id="recent-heading">Recent activity and closing</h2>
+          <h3>
+            Tell us about recent activities you were invited to do.
+          </h3>
+          <p>
+            This past Thursday of Parshas Behaalosecha, we had a gathering with
+            the participation of about 150 employees from technology and startup
+            companies. We provided them with a kosher meal.
+          </p>
+          <p>
+            On Shabbos Parshas Behaalosecha, we arranged a Shabbos meal for more
+            than one hundred founders and investors for an AI-financing company.
+            The company asked us to provide the Shabbos meal at its office in
+            Manhattan. After the Friday-night meal, we walked home on foot in the
+            rain.
+          </p>
+
+          <h3>Please share an interesting story from over the years.</h3>
+          <p>
+            For our Orthodox community, it may not be so visible, but to me the
+            most interesting story is what has happened over the last few years
+            among traditional Jews. Many more of them want to come closer to
+            Judaism, even though there is so much hatred against Jews. People call
+            us constantly with requests to begin Torah classes, tefillin, Shabbos
+            candles and so on. It happens often when I enter
+            the technology centers that someone calls me aside: "Rabbi, I have a
+            question to ask." They ask all kinds of halachic questions.
+          </p>
+          <p>
+            Thank you very much for taking from your precious time to share such
+            an interesting look into your holy work among the technology centers.
+            May the Almighty help you continue for many healthy years with even
+            greater strength.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f8f6ef;
+        --paper: #fffdf7;
+        --ink: #1f1c16;
+        --muted: #6f685d;
+        --line: #ded7c9;
+        --accent: #006b70;
+        --accent-soft: #e0f0ef;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14120e;
+          --paper: #201c16;
+          --ink: #f3ecdd;
+          --muted: #b9ad9b;
+          --line: #3b3328;
+          --accent: #74d1d0;
+          --accent-soft: #19302f;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        margin: 0 auto;
+        max-width: 920px;
+        padding: clamp(24px, 5vw, 56px) clamp(18px, 4vw, 40px) 80px;
+      }
+
+      .hero {
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at top right, var(--accent-soft), transparent 38%),
+          var(--paper);
+        box-shadow: 0 24px 70px rgb(0 0 0 / 8%);
+        padding: clamp(24px, 5vw, 52px);
+      }
+
+      .home-link {
+        display: inline-flex;
+        width: fit-content;
+        margin-bottom: 48px;
+        color: var(--muted);
+        font:
+          700 0.78rem/1.2 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .home-link:hover {
+        color: var(--accent);
+      }
+
+      .eyebrow {
+        margin: 0 0 14px;
+        color: var(--accent);
+        font:
+          800 0.8rem/1.2 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 100%;
+        margin-bottom: 20px;
+        font-size: clamp(2.3rem, 5.8vw, 4.4rem);
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+        text-wrap: balance;
+      }
+
+      .dek {
+        max-width: 700px;
+        margin-bottom: 24px;
+        color: var(--muted);
+        font-size: clamp(1.18rem, 2vw, 1.5rem);
+        line-height: 1.45;
+      }
+
+      .source-note {
+        max-width: 720px;
+        margin-bottom: 0;
+        border-left: 4px solid var(--accent);
+        padding-left: 18px;
+        color: var(--muted);
+        font:
+          0.95rem/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .article {
+        margin-top: 34px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--paper);
+        padding: clamp(24px, 5vw, 56px);
+      }
+
+      section + section {
+        margin-top: clamp(36px, 6vw, 64px);
+      }
+
+      h2 {
+        margin-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 12px;
+        color: var(--accent);
+        font:
+          800 clamp(1.45rem, 3vw, 2.2rem)/1.1 ui-sans-serif, system-ui,
+          -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: -0.04em;
+      }
+
+      h3 {
+        margin: 32px 0 12px;
+        font:
+          800 clamp(1.08rem, 2vw, 1.28rem)/1.35 ui-sans-serif, system-ui,
+          -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: -0.02em;
+      }
+
+      h2 + h3 {
+        margin-top: 0;
+      }
+
+      p {
+        color: color-mix(in srgb, var(--ink) 92%, var(--muted));
+        font-size: clamp(1.05rem, 1.6vw, 1.16rem);
+        line-height: 1.78;
+      }
+
+      p + p {
+        margin-top: 16px;
+      }
+
+      em,
+      cite {
+        font-style: italic;
+      }
+
+      @media (max-width: 640px) {
+        .hero,
+        .article {
+          border-radius: 20px;
+        }
+
+        .home-link {
+          margin-bottom: 34px;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,176 @@
+---
+import { AXES, ARCHETYPES, fingerprintSegments } from "../../../../data/ai-compass-ru";
+import "../../../../styles/ai-compass.css";
+
+export const prerender = true;
+
+const pageTitle = "Как работает ИИ-компас";
+const pageDescription =
+  "Методичка к ИИ-компасу: пять осей, которые он измеряет, двадцать один возможный архетип и подсчет, который их связывает.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const quizUrl = `${siteUrl}/tests/ai-compass/ru`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  mainEntity: {
+    "@type": "WebApplication",
+    name: "ИИ-компас",
+    url: quizUrl
+  },
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  }
+};
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Методология теста из пяти осей об отношении к искусственному интеллекту." />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="ru_RU" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="На главную">sokolsky.me</a>
+        </div>
+        <div class="hero-copy">
+          <p class="hero-kicker">Методичка</p>
+          <h1>Как работает ИИ-компас</h1>
+          <p class="hero-description">
+            Пять осей, двадцать один архетип и простое сравнение с ближайшим результатом. Все, что делает тест, без черного ящика.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/tests/ai-compass/ru">Пройти тест</a>
+          </div>
+        </div>
+      </header>
+
+      <article class="article">
+        <section id="axes" aria-labelledby="axes-heading">
+          <h2 id="axes-heading">Пять осей</h2>
+          <p>
+            Большинство тестов про ИИ измеряют одну вещь: насколько он вам нравится. Этот измеряет пять вещей, которые на самом деле могут меняться независимо. Каждый вопрос относится ровно к одной оси, по шесть вопросов на ось.
+          </p>
+          <ul class="axis-legend">
+            {AXES.map((axis) => (
+              <li class="axis-legend-row" data-axis={axis.key}>
+                <span class="axis-swatch" aria-hidden="true"></span>
+                <span class="axis-legend-name">{axis.name}</span>
+                <span class="axis-legend-poles">{axis.neg} &harr; {axis.pos}</span>
+                <span class="axis-legend-ask">{axis.ask}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="axis-legend-note">
+            30 вопросов, примерно пять минут. Каждый вопрос обязателен. Ничего не покидает ваш браузер, если вы сами не скопируете ссылку, чтобы поделиться результатом.
+          </p>
+        </section>
+
+        <section id="archetypes" aria-labelledby="archetypes-heading">
+          <h2 id="archetypes-heading">Двадцать один архетип</h2>
+          <p>
+            Каждый архетип - фиксированная точка на пяти шкалах. Полосы показывают его координаты: влево от центра к первому полюсу, вправо к второму. Ваши ответы попадают на те же шкалы, и побеждают ближайшие архетипы.
+          </p>
+          <div class="archetype-grid">
+            {ARCHETYPES.map((arch, index) => (
+              <article class="archetype-card" id={`arch-${index}`}>
+                <header class="archetype-head">
+                  <h3>{arch.name}</h3>
+                  <p class="archetype-tag">{arch.tag}</p>
+                </header>
+                <div class="fingerprint" role="img" aria-label={`Координаты архетипа ${arch.name}`}>
+                  {fingerprintSegments(arch.seed).map((seg) => (
+                    <div class="fp-row" data-axis={seg.key}>
+                      <span class="fp-label">{seg.key}</span>
+                      <span class="fp-track">
+                        <span class="fp-center" aria-hidden="true"></span>
+                        <span class="fp-fill" style={`left:${seg.left}%;width:${seg.width}%`}></span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p class="archetype-desc">{arch.desc}</p>
+                <p class="archetype-habitat">{arch.habitat}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="method" aria-labelledby="method-heading">
+          <h2 id="method-heading">Как работает подсчет</h2>
+          <p>
+            Каждый вопрос относится ровно к одной оси, а каждый ответ несет оценку от &minus;2 до +2 по этой оси. Ваша позиция на оси - это среднее по ответам на ней, пересчитанное в интервал от &minus;1 до +1. Шесть вопросов на ось, тридцать всего. Вы отвечаете на все, поэтому каждая ось получает одинаковый вес.
+          </p>
+          <p>
+            Совпадение с архетипом считается так: у каждого архетипа есть фиксированная позиция на пяти шкалах, а тест ищет, какая позиция ближе всего к вашей. Процент совпадения - это расстояние, переведенное в шкалу 0&ndash;100: 100 значит, что вы ровно на архетипе, 0 - что вы в противоположном углу.
+          </p>
+          <p>
+            Вопросы намеренно написаны с позицией. Нейтральная формулировка часто дает нейтральную неправду: в жизни почти никто не говорит «я немного согласен, что у технологии есть последствия». Варианты написаны так, как реальные люди реально говорят, поэтому выбор одного из них что-то сообщает. Пять осей нужны потому, что разные отношения к ИИ часто не совпадают друг с другом: вера в возможности, оценка вреда и пользы, желание регулировать, личное использование и вопрос «есть ли там разум» могут двигаться отдельно. Человек может верить, что ИИ меняет мир и при этом ужасен, пользоваться им каждый день и хотеть жестких лицензий. Одно число такого человека не удержит, два числа едва справятся.
+          </p>
+          <p class="method-links">
+            Для контекста: исследование двух главных измерений отношения к ИИ у
+            <a href="https://doi.org/10.1016/j.chbr.2020.100014" target="_blank" rel="noreferrer noopener">Schepman &amp; Rodway</a>,
+            споры о группах внутри ИИ-безопасности на
+            <a href="https://www.lesswrong.com/posts/zmtqmwetKH4nrxXcE/which-side-of-the-ai-safety-community-are-you-in" target="_blank" rel="noreferrer noopener">LessWrong</a>,
+            хроника того, как все фракции спорят одновременно, в
+            <a href="https://thezvi.substack.com/" target="_blank" rel="noreferrer noopener">Don&rsquo;t Worry About the Vase</a>,
+            и прародитель жанра,
+            <a href="https://www.politicalcompass.org/" target="_blank" rel="noreferrer noopener">Political Compass</a>.
+          </p>
+          <p class="disclaimer">
+            Для развлечения и легкого самопонимания. Компас показывает направление, а не ведет машину. Ответы хранятся только в вашем браузере и в ссылке, если вы решите ее скопировать.
+          </p>
+        </section>
+
+        <section id="cta" aria-label="Пройти тест" class="about-cta">
+          <a class="btn btn-primary btn-lead" href="/tests/ai-compass/ru">Пройти тест</a>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>

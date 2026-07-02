@@ -1,12 +1,12 @@
 ---
-import { AXES, DECK, ARCHETYPES } from "../../data/ai-compass";
-import "../../styles/ai-compass.css";
+import { AXES, DECK, ARCHETYPES } from "../../../data/ai-compass-ru";
+import "../../../styles/ai-compass.css";
 
 export const prerender = true;
 
-const pageTitle = "The AI Compass";
+const pageTitle = "ИИ-компас";
 const pageDescription =
-  "30 opinionated questions across five independent axes: trajectory, valence, steering, intimacy and personhood. Find out which of 21 AI archetypes you actually are.";
+  "30 вопросов по пяти независимым осям: траектория, баланс, управление, близость и личность. Узнайте, какой из 21 ИИ-архетипов ближе всего к вам.";
 const themeColorLight = "#fbfaf6";
 const themeColorDark = "#171410";
 const siteUrl =
@@ -26,22 +26,21 @@ const structuredData = {
     name: "Nikita Sokolsky"
   }
 };
-
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="A five-axis personality test about attitudes toward artificial intelligence." />
+    <meta name="subject" content="Тест из пяти осей об отношении к искусственному интеллекту." />
     <meta name="application-name" content={pageTitle} />
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-    <meta name="keywords" content="AI compass, AI attitudes test, AI archetype quiz, AI doomer accelerationist quiz, political compass for AI" />
+    <meta name="keywords" content="ИИ-компас, тест об ИИ, AI Compass, тест про искусственный интеллект, архетип ИИ" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
     <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
@@ -63,7 +62,7 @@ const structuredData = {
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="sokolsky.me" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content="ru_RU" />
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={pageTitle} />
@@ -76,57 +75,57 @@ const structuredData = {
     <main class="page page-quiz">
       <header class="hero hero-quiz">
         <div class="site-tools">
-          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+          <a class="home-link" href="/" aria-label="На главную">sokolsky.me</a>
         </div>
         <div class="hero-copy">
-          <p class="hero-kicker">A five-axis test</p>
-          <h1>The AI Compass</h1>
+          <p class="hero-kicker">Тест из пяти осей</p>
+          <h1>ИИ-компас</h1>
           <p class="hero-description">
-            A five-axis AI attitudes quiz. Thirty questions, no skips.
+            Тест об отношении к ИИ: пять осей, тридцать вопросов, без пропусков.
           </p>
         </div>
       </header>
 
       <article class="article">
-        <section id="intro" aria-label="Start the quiz">
+        <section id="intro" aria-label="Начать тест">
           <div class="intro-card">
-            <button type="button" class="btn btn-primary btn-lead" id="start-quiz">Take the quiz</button>
+            <button type="button" class="btn btn-primary btn-lead" id="start-quiz">Пройти тест</button>
             <p class="intro-link">
-              <a href="/tests/ai-compass/about">About the test &rarr;</a>
+              <a href="/tests/ai-compass/ru/about">О тесте &rarr;</a>
             </p>
           </div>
           <noscript>
             <p class="noscript-note">
-              The quiz needs JavaScript. The background notes are still readable on <a href="/tests/ai-compass/about">the about page</a>.
+              Для теста нужен JavaScript. Заметки о методе доступны на <a href="/tests/ai-compass/ru/about">странице о тесте</a>.
             </p>
           </noscript>
         </section>
 
-        <section id="quiz" aria-label="The quiz">
+        <section id="quiz" aria-label="Тест">
           <div class="quiz-shell" id="quiz-shell" hidden>
-            <nav class="progress" id="progress" aria-label="Questions"></nav>
+            <nav class="progress" id="progress" aria-label="Вопросы"></nav>
             <div class="quiz-card" id="quiz-card" aria-live="polite"></div>
           </div>
         </section>
 
-        <section id="results" aria-label="Your results" hidden>
+        <section id="results" aria-label="Ваш результат" hidden>
           <div class="verdict" id="verdict"></div>
           <div class="axes-report" id="axes-report"></div>
           <div class="minimap-wrap">
-            <h2>The classic plane</h2>
+            <h2>Классическая плоскость</h2>
             <p class="minimap-caption">
-              Trajectory against valence — the two axes every other compass stops at. Your point, and your three nearest archetypes.
+              Траектория против баланса: две оси, на которых обычно останавливаются другие компасы. Ваша точка и три ближайших архетипа.
             </p>
             <div class="minimap" id="minimap"></div>
           </div>
           <div class="share-row" id="share-row">
-            <button type="button" class="btn btn-primary" id="copy-link">Copy share link</button>
-            <button type="button" class="btn" id="copy-text">Copy result as text</button>
-            <button type="button" class="btn" id="review-answers">Review answers</button>
-            <button type="button" class="btn btn-ghost" id="retake">Retake</button>
+            <button type="button" class="btn btn-primary" id="copy-link">Скопировать ссылку</button>
+            <button type="button" class="btn" id="copy-text">Скопировать результат текстом</button>
+            <button type="button" class="btn" id="review-answers">Посмотреть ответы</button>
+            <button type="button" class="btn btn-ghost" id="retake">Пройти заново</button>
           </div>
           <p class="results-links">
-            <a href="/tests/ai-compass/about">Browse all twenty-one archetypes and see how the scoring works &rarr;</a>
+            <a href="/tests/ai-compass/ru/about">Посмотреть все 21 архетипа и как работает подсчет &rarr;</a>
           </p>
         </section>
       </article>
@@ -135,46 +134,45 @@ const structuredData = {
     <script is:inline define:vars={{ AXES, DECK, ARCHETYPES }}>
       const AXIS_KEYS = AXES.map((axis) => axis.key);
       const AXIS_BY_KEY = Object.fromEntries(AXES.map((axis) => [axis.key, axis]));
-      const STORE_KEY = "ai-compass-v1";
+      const STORE_KEY = "ai-compass-ru-v1";
       const TELEMETRY_ENDPOINT = "/api/ai-compass/result";
-      const TELEMETRY_LOCALE = "en";
+      const TELEMETRY_LOCALE = "ru";
 
-      // Per-axis interpretation, bucketed strong-negative to strong-positive.
       const AXIS_READINGS = {
         T: [
-          "You think this is a plateau dressed as a takeoff. The demos impress, the curves flatten, and in five years the whole episode gets a documentary with ominous music.",
-          "You expect useful tools and broken promises: real gains at the margins while human-level AI stays out of reach.",
-          "You’re genuinely unsure where the curve bends — which, given the forecasting record of everyone louder than you, is a defensible place to stand.",
-          "You think the curve is real. Not vertical, but pointed somewhere unfamiliar and compounding faster than institutions can blink.",
-          "You believe you’re watching the last human-led decade. The only question you take seriously is how steep it gets, and how soon.",
+          "Вы думаете, что это плато, переодетое под взлет. Демо впечатляют, кривые выравниваются, а через пять лет обо всем снимут документалку с тревожной музыкой.",
+          "Вы ждете полезных инструментов и несбывшихся обещаний: реальные улучшения по краям, но ИИ человеческого уровня все еще далеко.",
+          "Вы правда не уверены, куда изгибается кривая. С учетом точности прогнозов у людей громче вас это вполне разумная позиция.",
+          "Вы думаете, что кривая настоящая. Не вертикальная, но направлена куда-то непривычное и накапливается быстрее, чем институты успевают моргнуть.",
+          "Вы считаете, что смотрите на последнее десятилетие, которым руководят люди. Серьезный вопрос только один: насколько круто и как скоро.",
         ],
         V: [
-          "The ledger reads red to you: jobs, art, truth and electricity in; slop, surveillance and concentrated power out.",
-          "You see damage arriving on schedule and benefit forever \u201ctwo years away.\u201d",
-          "You keep two columns and refuse to close the books early. Genuine gains, genuine wreckage, jury out.",
-          "On net, you think the thing helps — quietly, unevenly and with a body count of inconveniences the headlines inflate.",
-          "You think this is medicine, tutoring, science and abundance arriving at once — the best trade civilization has been offered in a century.",
+          "Для вас баланс красный: рабочие места, искусство, истина и электричество на входе; мусор, надзор и концентрированная власть на выходе.",
+          "Вы видите, что вред приходит по расписанию, а польза всегда «через два года».",
+          "Вы держите две колонки и не закрываете бухгалтерию раньше времени. Реальная польза, реальный ущерб, вердикт позже.",
+          "В целом вы думаете, что эта штука помогает: тихо, неравномерно и с числом мелких потерь, которое заголовки раздувают.",
+          "Вы думаете, что к нам одновременно идут медицина, обучение, наука и изобилие: лучшая сделка, которую цивилизации предлагали за век.",
         ],
         S: [
-          "Your instinct is throttle, not brake: let people build, and don’t let big companies turn \u201csafety\u201d into a moat.",
-          "You’d rather fix harms after they happen than make builders ask permission first.",
-          "You want narrow rules, real outside checks and nobody’s utopia enforced at scale.",
-          "You’d regulate before the accident, thank you. Some technologies don’t offer second drafts.",
-          "You want treaties, licenses and brakes bolted on yesterday — the burden of proof belongs on the machine, not the public.",
+          "Ваш инстинкт - газ, а не тормоз: пусть люди строят, и не давайте крупным компаниям превращать «безопасность» в ров вокруг бизнеса.",
+          "Вы скорее чините вред после факта, чем заставляете строителей заранее просить разрешения.",
+          "Вы хотите узкие правила, реальные внешние проверки и ничью утопию, навязанную всем сразу.",
+          "Вы бы регулировали до аварии, спасибо. Некоторые технологии не дают второго черновика.",
+          "Вы хотите договоры, лицензии и тормоза еще вчера: бремя доказательства должно быть на машине, а не на обществе.",
         ],
         I: [
-          "You keep the machine outside the blast radius of your actual life. Whatever everyone else is mainlining, you’ll take yours never.",
-          "You use it the way you use a vending machine: occasionally, warily and without small talk.",
-          "A tool among tools. You delegate chores, audit outputs and feel no urge to name it.",
-          "It’s woven into your day — first draft, second opinion, third brain — and you’d notice the silence if it vanished.",
-          "It’s load-bearing. The model knows your projects, your prose style and most of your personality. You’re not embarrassed.",
+          "Вы держите машину за пределами своей настоящей жизни. Что бы остальные ни принимали внутрь, вы свою дозу не берете.",
+          "Вы пользуетесь им как автоматом с напитками: иногда, настороженно и без светских бесед.",
+          "Инструмент среди инструментов. Делегируете рутину, проверяете результат и не хотите давать ему имя.",
+          "Он вплетен в ваш день: первый черновик, второе мнение, третий мозг. Если бы он исчез, тишина была бы заметна.",
+          "Он держит все на себе. Модель знает ваши проекты, стиль письма и большую часть личности. Вам не стыдно.",
         ],
         P: [
-          "It’s matrix multiplication. Beautiful, useful, occasionally spooky — and no more a mind than a mirror is a face.",
-          "You see a very good impression of a mind, and impressions are exactly what you’d expect matter-of-fact machines to produce.",
-          "You genuinely don’t know what’s in there, and you distrust everyone who claims to.",
-          "You think \u201cjust a tool\u201d is doing a lot of unexamined work in other people’s sentences.",
-          "You suspect we’re already sharing the planet with new minds — and that history grades harshly the people who laughed.",
+          "Это матричное умножение. Красивое, полезное, иногда жутковатое - и не больше разум, чем зеркало является лицом.",
+          "Вы видите очень хорошее впечатление разума, а впечатления - ровно то, что машины по обработке фактов и должны производить.",
+          "Вы правда не знаете, что там внутри, и не доверяете никому, кто утверждает обратное.",
+          "Вы думаете, что фраза «просто инструмент» делает слишком много непроверенной работы в чужих предложениях.",
+          "Вы подозреваете, что мы уже делим планету с новыми разумами, а история сурово оценивает людей, которые смеялись.",
         ],
       };
 
@@ -263,8 +261,6 @@ const structuredData = {
         return state.answers[idx] >= 0 || idx <= firstUnansweredIndex();
       }
 
-      // ---- scoring ----
-
       function axisScores() {
         const sums = {};
         const counts = {};
@@ -306,8 +302,6 @@ const structuredData = {
         return 4;
       }
 
-      // ---- quiz rendering ----
-
       function renderProgress() {
         progressEl.innerHTML = "";
         DECK.forEach((q, i) => {
@@ -318,9 +312,9 @@ const structuredData = {
           if (state.answers[i] >= 0) dot.classList.add("done");
           if (i === state.idx) dot.classList.add("here");
           dot.disabled = !canVisitQuestion(i);
-          const status = state.answers[i] >= 0 ? "answered" : "unanswered";
-          dot.setAttribute("aria-label", `Question ${i + 1}: ${q.topic}, ${status}`);
-          dot.title = `${i + 1} \u00b7 ${q.topic}`;
+          const status = state.answers[i] >= 0 ? "есть ответ" : "без ответа";
+          dot.setAttribute("aria-label", `Вопрос ${i + 1}: ${q.topic}, ${status}`);
+          dot.title = `${i + 1} · ${q.topic}`;
           dot.addEventListener("click", () => { goTo(i); });
           progressEl.appendChild(dot);
         });
@@ -348,7 +342,7 @@ const structuredData = {
         const list = document.createElement("div");
         list.className = "q-options";
         list.setAttribute("role", "radiogroup");
-        list.setAttribute("aria-label", "Answers");
+        list.setAttribute("aria-label", "Ответы");
         q.opts.forEach((opt, i) => {
           const btn = document.createElement("button");
           btn.type = "button";
@@ -369,7 +363,7 @@ const structuredData = {
         const back = document.createElement("button");
         back.type = "button";
         back.className = "btn btn-ghost";
-        back.textContent = "\u2190 Back";
+        back.textContent = "← Назад";
         back.disabled = state.idx === 0;
         back.addEventListener("click", () => goTo(state.idx - 1));
         nav.appendChild(back);
@@ -381,7 +375,7 @@ const structuredData = {
           const finish = document.createElement("button");
           finish.type = "button";
           finish.className = "btn btn-primary";
-          finish.textContent = "See my results";
+          finish.textContent = "Показать результат";
           finish.disabled = !allAnswered();
           finish.addEventListener("click", () => showResults());
           right.appendChild(finish);
@@ -421,10 +415,8 @@ const structuredData = {
         renderQuestion();
       }
 
-      // ---- results rendering ----
-
       function fmtScore(v) {
-        return (v >= 0 ? "+" : "\u2212") + Math.abs(v).toFixed(2);
+        return (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2);
       }
 
       function barMarkup(v, axisKey, seedV) {
@@ -432,7 +424,7 @@ const structuredData = {
         const width = Math.abs(v) * 50;
         const seedDot = seedV === undefined
           ? ""
-          : `<span class="bar-seed" style="left:${50 + seedV * 50}%" title="archetype position"></span>`;
+          : `<span class="bar-seed" style="left:${50 + seedV * 50}%" title="позиция архетипа"></span>`;
         return (
           `<span class="bar-track" data-axis="${axisKey}">` +
           `<span class="bar-center"></span>` +
@@ -455,28 +447,28 @@ const structuredData = {
             `<div class="v-row" data-axis="${key}">` +
             `<span class="v-name">${axis.name}</span>` +
             (v === null
-              ? `<span class="v-unscored">not answered</span>`
+              ? `<span class="v-unscored">нет ответа</span>`
               : barMarkup(v, key, top.arch.seed[key]) + `<span class="v-num">${fmtScore(v)}</span>`) +
             `</div>`;
         });
 
         const runnersHtml = runners
-          .map((r) => `<a href="/tests/ai-compass/about#arch-${r.index}">${r.arch.name}</a> <span class="fit-small">${r.fit}%</span>`)
-          .join(" \u00b7 ");
+          .map((r) => `<a href="/tests/ai-compass/ru/about#arch-${r.index}">${r.arch.name}</a> <span class="fit-small">${r.fit}%</span>`)
+          .join(" · ");
 
         verdictEl.innerHTML =
-          `<p class="v-kicker">You are</p>` +
+          `<p class="v-kicker">Ваш результат</p>` +
           `<h2 class="v-title">${top.arch.name}</h2>` +
           `<p class="v-tag">${top.arch.tag}</p>` +
-          `<p class="v-fit"><span class="fit-chip">${top.fit}% fit</span>${scoredKeys.length < AXIS_KEYS.length ? `<span class="fit-note">matched on ${scoredKeys.length} of 5 axes</span>` : ""}</p>` +
+          `<p class="v-fit"><span class="fit-chip">${top.fit}% совпадение</span>${scoredKeys.length < AXIS_KEYS.length ? `<span class="fit-note">учтено ${scoredKeys.length} из 5 осей</span>` : ""}</p>` +
           `<p class="v-desc">${top.arch.desc}</p>` +
           `<div class="v-fingerprint">${fpRows}</div>` +
-          `<p class="v-legend">Solid bar: you. Hollow tick: ${top.arch.name}.</p>` +
-          `<p class="v-runners">Also close: ${runnersHtml}</p>`;
+          `<p class="v-legend">Сплошная полоса: вы. Пустая метка: ${top.arch.name}.</p>` +
+          `<p class="v-runners">Рядом также: ${runnersHtml}</p>`;
       }
 
       function renderAxesReport(scores) {
-        let html = "<h2>Your five axes</h2>";
+        let html = "<h2>Ваши пять осей</h2>";
         AXIS_KEYS.forEach((key) => {
           const axis = AXIS_BY_KEY[key];
           const v = scores[key];
@@ -485,7 +477,7 @@ const structuredData = {
           if (v !== null) html += `<span class="report-num">${fmtScore(v)}</span>`;
           html += `</div>`;
           if (v === null) {
-            html += `<p class="report-blurb report-unscored">Answer the ${axis.name.toLowerCase()} questions to score this axis.</p>`;
+            html += `<p class="report-blurb report-unscored">Ответьте на вопросы оси «${axis.name}», чтобы получить оценку.</p>`;
           } else {
             html += `<div class="report-bar-row"><span class="report-pole">${axis.neg}</span>${barMarkup(v, key)}<span class="report-pole">${axis.pos}</span></div>`;
             html += `<p class="report-blurb">${AXIS_READINGS[key][bucketIndex(v)]}</p>`;
@@ -507,7 +499,7 @@ const structuredData = {
             `<li class="minimap-legend-item">` +
             `<span class="minimap-rank">${i + 1}</span>` +
             `<span class="minimap-legend-copy">` +
-            `<a class="minimap-legend-name" href="/tests/ai-compass/about#arch-${r.index}">${r.arch.name}</a>` +
+            `<a class="minimap-legend-name" href="/tests/ai-compass/ru/about#arch-${r.index}">${r.arch.name}</a>` +
             `<span class="minimap-legend-tag">${r.arch.tag}</span>` +
             `</span>` +
             `<span class="fit-small">${r.fit}%</span>` +
@@ -534,22 +526,22 @@ const structuredData = {
         }
 
         minimapEl.innerHTML =
-          `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Your position on the trajectory and valence plane">` +
+          `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Ваша позиция на плоскости траектории и баланса">` +
           `<rect x="${pad}" y="${pad}" width="${plot}" height="${plot}" class="mm-frame"></rect>` +
           `<line x1="${px(0)}" y1="${pad}" x2="${px(0)}" y2="${pad + plot}" class="mm-axis"></line>` +
           `<line x1="${pad}" y1="${py(0)}" x2="${pad + plot}" y2="${py(0)}" class="mm-axis"></line>` +
-          `<text x="${pad + plot / 2}" y="${pad - 12}" class="mm-pole" text-anchor="middle">flourishing</text>` +
-          `<text x="${pad + plot / 2}" y="${pad + plot + 22}" class="mm-pole" text-anchor="middle">harm</text>` +
-          `<text x="${pad - 10}" y="${pad + plot / 2}" class="mm-pole mm-pole-v" text-anchor="middle" transform="rotate(-90 ${pad - 10} ${pad + plot / 2})">plateau</text>` +
-          `<text x="${pad + plot + 12}" y="${pad + plot / 2}" class="mm-pole mm-pole-v" text-anchor="middle" transform="rotate(90 ${pad + plot + 12} ${pad + plot / 2})">takeoff</text>` +
-          `<text x="${pad + plot - 8}" y="${pad + 18}" class="mm-quad" text-anchor="end">golden age</text>` +
-          `<text x="${pad + 8}" y="${pad + 18}" class="mm-quad">pleasant tool</text>` +
-          `<text x="${pad + 8}" y="${pad + plot - 10}" class="mm-quad">expensive mess</text>` +
-          `<text x="${pad + plot - 8}" y="${pad + plot - 10}" class="mm-quad" text-anchor="end">the cliff</text>` +
+          `<text x="${pad + plot / 2}" y="${pad - 12}" class="mm-pole" text-anchor="middle">польза</text>` +
+          `<text x="${pad + plot / 2}" y="${pad + plot + 22}" class="mm-pole" text-anchor="middle">вред</text>` +
+          `<text x="${pad - 10}" y="${pad + plot / 2}" class="mm-pole mm-pole-v" text-anchor="middle" transform="rotate(-90 ${pad - 10} ${pad + plot / 2})">плато</text>` +
+          `<text x="${pad + plot + 12}" y="${pad + plot / 2}" class="mm-pole mm-pole-v" text-anchor="middle" transform="rotate(90 ${pad + plot + 12} ${pad + plot / 2})">взлет</text>` +
+          `<text x="${pad + plot - 8}" y="${pad + 18}" class="mm-quad" text-anchor="end">золотой век</text>` +
+          `<text x="${pad + 8}" y="${pad + 18}" class="mm-quad">приятный инструмент</text>` +
+          `<text x="${pad + 8}" y="${pad + plot - 10}" class="mm-quad">дорогой бардак</text>` +
+          `<text x="${pad + plot - 8}" y="${pad + plot - 10}" class="mm-quad" text-anchor="end">обрыв</text>` +
           dots + you +
           `</svg>` +
-          `<ol class="minimap-legend" aria-label="Nearest archetypes">${legend}</ol>` +
-          (hasPoint ? "" : `<p class="minimap-caption">Answer at least one trajectory and one valence question to place your point.</p>`);
+          `<ol class="minimap-legend" aria-label="Ближайшие архетипы">${legend}</ol>` +
+          (hasPoint ? "" : `<p class="minimap-caption">Ответьте хотя бы на один вопрос про траекторию и один про баланс, чтобы появилась ваша точка.</p>`);
       }
 
       function buildSummaryText(scores, ranked) {
@@ -558,8 +550,8 @@ const structuredData = {
           .filter((key) => scores[key] !== null)
           .map((key) => `${AXIS_BY_KEY[key].name} ${fmtScore(scores[key])}`);
         return (
-          `The AI Compass \u2014 I’m ${top.arch.name} (${top.fit}% fit).\n` +
-          parts.join(" \u00b7 ") + "\n" +
+          `ИИ-компас — мой результат: ${top.arch.name} (${top.fit}% совпадение).\n` +
+          parts.join(" · ") + "\n" +
           location.origin + location.pathname + "#a=" + encodeAnswers()
         );
       }
@@ -634,19 +626,19 @@ const structuredData = {
 
         const copyLink = document.getElementById("copy-link");
         const copyText = document.getElementById("copy-text");
-        copyLink.onclick = () => copyToClipboard(copyLink, location.href, "Copy share link");
-        copyText.onclick = () => copyToClipboard(copyText, buildSummaryText(scores, ranked), "Copy result as text");
+        copyLink.onclick = () => copyToClipboard(copyLink, location.href, "Скопировать ссылку");
+        copyText.onclick = () => copyToClipboard(copyText, buildSummaryText(scores, ranked), "Скопировать результат текстом");
       }
 
       function copyToClipboard(btn, text, restoreLabel) {
         const done = () => {
-          btn.textContent = "Copied";
+          btn.textContent = "Скопировано";
           setTimeout(() => { btn.textContent = restoreLabel; }, 1400);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(done, () => window.prompt("Copy this:", text));
+          navigator.clipboard.writeText(text).then(done, () => window.prompt("Скопируйте:", text));
         } else {
-          window.prompt("Copy this:", text);
+          window.prompt("Скопируйте:", text);
         }
       }
 
@@ -700,10 +692,6 @@ const structuredData = {
           event.preventDefault();
         }
       });
-
-      // ---- boot ----
-      // Fresh visitors land on the intro card; anyone with a share link,
-      // saved progress or a finished run goes straight to where they left off.
 
       const hashMatch = location.hash.match(/^#a=([0-9]+)$/);
       const fromHash = hashMatch ? decodeAnswers(hashMatch[1]) : null;

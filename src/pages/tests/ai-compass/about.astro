@@ -1,0 +1,176 @@
+---
+import { AXES, ARCHETYPES, fingerprintSegments } from "../../../data/ai-compass";
+import "../../../styles/ai-compass.css";
+
+export const prerender = true;
+
+const pageTitle = "How the AI Compass works";
+const pageDescription =
+  "The manual for the AI Compass: the five axes it measures, the twenty-one archetypes it can hand you and the scoring that connects them.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const quizUrl = `${siteUrl}/tests/ai-compass`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  mainEntity: {
+    "@type": "WebApplication",
+    name: "The AI Compass",
+    url: quizUrl
+  },
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  }
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Methodology of a five-axis personality test about attitudes toward artificial intelligence." />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        </div>
+        <div class="hero-copy">
+          <p class="hero-kicker">The manual</p>
+          <h1>How the AI Compass works</h1>
+          <p class="hero-description">
+            Five axes, twenty-one archetypes, one nearest-neighbor match. Everything the quiz does, spelled out.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/tests/ai-compass">Take the quiz</a>
+          </div>
+        </div>
+      </header>
+
+      <article class="article">
+        <section id="axes" aria-labelledby="axes-heading">
+          <h2 id="axes-heading">The five axes</h2>
+          <p>
+            Most AI quizzes measure one thing: how much you like it. This one measures five things that actually vary independently. Each question loads on exactly one axis, six questions per axis.
+          </p>
+          <ul class="axis-legend">
+            {AXES.map((axis) => (
+              <li class="axis-legend-row" data-axis={axis.key}>
+                <span class="axis-swatch" aria-hidden="true"></span>
+                <span class="axis-legend-name">{axis.name}</span>
+                <span class="axis-legend-poles">{axis.neg} &harr; {axis.pos}</span>
+                <span class="axis-legend-ask">{axis.ask}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="axis-legend-note">
+            30 questions, about five minutes. Every question is required. Nothing leaves your browser unless you copy the share link.
+          </p>
+        </section>
+
+        <section id="archetypes" aria-labelledby="archetypes-heading">
+          <h2 id="archetypes-heading">The twenty-one archetypes</h2>
+          <p>
+            Each archetype is a fixed point in the five-dimensional space. The bars show its coordinates: left of center toward the first pole, right of center toward the second. Your answers land somewhere in the same space, and the nearest points win.
+          </p>
+          <div class="archetype-grid">
+            {ARCHETYPES.map((arch, index) => (
+              <article class="archetype-card" id={`arch-${index}`}>
+                <header class="archetype-head">
+                  <h3>{arch.name}</h3>
+                  <p class="archetype-tag">{arch.tag}</p>
+                </header>
+                <div class="fingerprint" role="img" aria-label={`Coordinates of ${arch.name}`}>
+                  {fingerprintSegments(arch.seed).map((seg) => (
+                    <div class="fp-row" data-axis={seg.key}>
+                      <span class="fp-label">{seg.key}</span>
+                      <span class="fp-track">
+                        <span class="fp-center" aria-hidden="true"></span>
+                        <span class="fp-fill" style={`left:${seg.left}%;width:${seg.width}%`}></span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p class="archetype-desc">{arch.desc}</p>
+                <p class="archetype-habitat">{arch.habitat}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="method" aria-labelledby="method-heading">
+          <h2 id="method-heading">How the scoring works</h2>
+          <p>
+            Every question loads on exactly one axis, and every answer carries a score from &minus;2 to +2 on that axis. Your position on an axis is the mean of your answers there, rescaled to the interval from &minus;1 to +1. Six questions per axis, thirty in total. You answer all of them, so every axis gets the same weight.
+          </p>
+          <p>
+            The archetype match is nearest-neighbor: each archetype sits at a fixed point in the five-dimensional space, and your result is whichever point lies closest to yours, using root-mean-square distance over the axes you scored. The fit percentage is that distance mapped onto a 0&ndash;100 scale, where 100 means you sit exactly on the archetype and 0 means you sit in the opposite corner of the space.
+          </p>
+          <p>
+            The questions are opinionated on purpose. Neutral wording produces neutral lies: nobody has ever held the position &ldquo;I somewhat agree that technology has implications.&rdquo; The options are written the way actual people actually talk, which is what makes picking one informative. The five-axis structure follows what attitude research and the discourse itself keep finding: capability beliefs, harm&ndash;benefit judgments, governance preferences, personal adoption and mind attribution move independently. A person can believe AI is world-changing and terrible, use it every day and want it regulated into a licensed utility &mdash; one number cannot hold that person, and two numbers barely manage.
+          </p>
+          <p class="method-links">
+            Background reading: the two-factor structure of AI attitudes in
+            <a href="https://doi.org/10.1016/j.chbr.2020.100014" target="_blank" rel="noreferrer noopener">Schepman &amp; Rodway&rsquo;s GAAIS validation</a>,
+            the faction taxonomy debates on
+            <a href="https://www.lesswrong.com/posts/zmtqmwetKH4nrxXcE/which-side-of-the-ai-safety-community-are-you-in" target="_blank" rel="noreferrer noopener">LessWrong</a>,
+            the running chronicle of every faction arguing at once in
+            <a href="https://thezvi.substack.com/" target="_blank" rel="noreferrer noopener">Don&rsquo;t Worry About the Vase</a>,
+            and the grandparent of the genre, the
+            <a href="https://www.politicalcompass.org/" target="_blank" rel="noreferrer noopener">Political Compass</a>.
+          </p>
+          <p class="disclaimer">
+            For entertainment and mild self-knowledge. A compass points; it doesn&rsquo;t drive. Answers are stored only in your browser and in any share link you choose to copy.
+          </p>
+        </section>
+
+        <section id="cta" aria-label="Take the quiz" class="about-cta">
+          <a class="btn btn-primary btn-lead" href="/tests/ai-compass">Take the quiz</a>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>
