@@ -1,0 +1,1507 @@
+---
+export const prerender = true;
+
+const pageTitle = "Army Body Fat Calculator";
+const pageDescription =
+  "Estimate body fat with the current U.S. Army one-site tape equation or the older neck-based tape method, then compare the result with Army age standards, the weight-for-height table and the 2026 DoD waist-to-height ratio.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  applicationCategory: "HealthApplication",
+  operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  }
+};
+
+// Table B-1, AR 600-9 (screening table weight), as republished in ALARACT 032/2025.
+// [height in inches, minimum weight, M 17-20, M 21-27, M 28-39, M 40+, F 17-20, F 21-27, F 28-39, F 40+]
+// null = no male screening weight listed for that height.
+const screeningTable = [
+  [58, 91, null, null, null, null, 119, 121, 122, 124],
+  [59, 94, null, null, null, null, 124, 125, 126, 128],
+  [60, 97, 132, 136, 139, 141, 128, 129, 131, 133],
+  [61, 100, 136, 140, 144, 146, 132, 134, 135, 137],
+  [62, 104, 141, 144, 148, 150, 136, 138, 140, 142],
+  [63, 107, 145, 149, 153, 155, 141, 143, 144, 146],
+  [64, 110, 150, 154, 158, 160, 145, 147, 149, 151],
+  [65, 114, 155, 159, 163, 165, 150, 152, 154, 156],
+  [66, 117, 160, 163, 168, 170, 155, 156, 158, 161],
+  [67, 121, 165, 169, 174, 176, 159, 161, 163, 166],
+  [68, 125, 170, 174, 179, 181, 164, 166, 168, 171],
+  [69, 128, 175, 179, 184, 186, 169, 171, 173, 176],
+  [70, 132, 180, 185, 189, 192, 174, 176, 178, 181],
+  [71, 136, 185, 189, 194, 197, 179, 181, 183, 186],
+  [72, 140, 190, 195, 200, 203, 184, 186, 188, 191],
+  [73, 144, 195, 200, 205, 208, 189, 191, 194, 197],
+  [74, 148, 201, 206, 211, 214, 194, 197, 199, 202],
+  [75, 152, 206, 212, 217, 220, 200, 202, 204, 208],
+  [76, 156, 212, 217, 223, 226, 205, 207, 210, 213],
+  [77, 160, 218, 223, 229, 232, 210, 213, 215, 219],
+  [78, 164, 223, 229, 235, 238, 216, 218, 221, 225],
+  [79, 168, 229, 235, 241, 244, 221, 224, 227, 230],
+  [80, 173, 234, 240, 247, 250, 227, 230, 233, 236],
+];
+
+// Table B-2, AR 600-9: maximum allowable percent body fat by age group.
+const bodyFatStandards = [
+  { group: "17\u201320", male: 20, female: 30 },
+  { group: "21\u201327", male: 22, female: 32 },
+  { group: "28\u201339", male: 24, female: 34 },
+  { group: "40 and over", male: 26, female: 36 },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="U.S. Army body fat percentage calculator using current and older tape-test methods." />
+    <meta name="application-name" content={pageTitle} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        </div>
+        <div class="hero-copy">
+          <h1>Army Body Fat Calculator</h1>
+          <p class="hero-description">
+            Enter age, sex, height, weight and tape measurements. The calculator estimates Army body fat with the current one-site method or the older neck-based method.
+          </p>
+        </div>
+      </header>
+
+      <article class="article">
+        <section id="calculator" aria-label="Army body fat calculator">
+          <form class="calc" id="calc-form" novalidate>
+            <fieldset class="field field-method">
+              <legend>Tape method</legend>
+              <div class="segmented" role="radiogroup" aria-label="Tape method">
+                <label><input type="radio" name="method" value="current" checked /><span>Current one-site</span></label>
+                <label><input type="radio" name="method" value="legacy" /><span>Old tape</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="field field-units">
+              <legend>Units</legend>
+              <div class="segmented" role="radiogroup" aria-label="Units">
+                <label><input type="radio" name="units" value="imperial" checked /><span>Imperial</span></label>
+                <label><input type="radio" name="units" value="metric" /><span>Metric</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="field field-sex">
+              <legend>Sex</legend>
+              <div class="segmented" role="radiogroup" aria-label="Sex">
+                <label><input type="radio" name="sex" value="male" checked /><span>Male</span></label>
+                <label><input type="radio" name="sex" value="female" /><span>Female</span></label>
+              </div>
+            </fieldset>
+
+            <div class="field">
+              <label for="age">Age <span class="unit">years</span></label>
+              <input id="age" name="age" type="number" inputmode="numeric" min="17" max="80" step="1" autocomplete="off" />
+            </div>
+
+            <div class="field field-height">
+              <span class="field-label imperial-only" id="height-imperial-label">Height</span>
+              <div class="height-inputs imperial-only" role="group" aria-labelledby="height-imperial-label">
+                <span class="height-part">
+                  <input id="height-ft" name="height-ft" type="number" inputmode="numeric" min="4" max="7" step="1" aria-label="Height, feet" autocomplete="off" />
+                  <span class="unit">ft</span>
+                </span>
+                <span class="height-part">
+                  <input id="height-in" name="height-in" type="number" inputmode="decimal" min="0" max="11.5" step="0.5" aria-label="Height, additional inches" autocomplete="off" />
+                  <span class="unit">in</span>
+                </span>
+              </div>
+              <label class="metric-only" for="height-cm">Height <span class="unit">cm</span></label>
+              <input class="metric-only" id="height-cm" name="height-cm" type="number" inputmode="decimal" min="120" max="250" step="0.1" autocomplete="off" />
+            </div>
+
+            <div class="field">
+              <label for="weight">Weight <span class="unit" data-weight-unit>lb</span></label>
+              <input id="weight" name="weight" type="number" inputmode="decimal" min="70" max="500" step="0.5" autocomplete="off" />
+            </div>
+
+            <div class="field">
+              <label for="waist"><span data-waist-label>Abdominal circumference</span> <span class="unit" data-waist-unit>in, at the navel</span></label>
+              <input id="waist" name="waist" type="number" inputmode="decimal" min="18" max="70" step="0.5" autocomplete="off" />
+            </div>
+
+            <div class="field legacy-only">
+              <label for="neck">Neck circumference <span class="unit" data-neck-unit>in</span></label>
+              <input id="neck" name="neck" type="number" inputmode="decimal" min="10" max="30" step="0.5" autocomplete="off" />
+            </div>
+
+            <div class="field female-legacy-only">
+              <label for="hip">Hip circumference <span class="unit" data-hip-unit>in</span></label>
+              <input id="hip" name="hip" type="number" inputmode="decimal" min="20" max="80" step="0.5" autocomplete="off" />
+            </div>
+          </form>
+
+          <div class="results" id="results">
+            <div class="result-main">
+              <div class="result-figure">
+                <span class="result-value" id="bf-value">&ndash;%</span>
+                <span class="result-caption">estimated body fat</span>
+              </div>
+              <p class="result-verdict is-pending" id="bf-verdict">Fill in the fields above to calculate your estimate.</p>
+            </div>
+            <dl class="result-details">
+              <div class="result-row">
+                <dt>Maximum allowed for your age and sex</dt>
+                <dd id="bf-max">Waiting for age and sex</dd>
+              </div>
+              <div class="result-row">
+                <dt>Unrounded body fat estimate</dt>
+                <dd id="bf-exact">Waiting for the selected tape measurements</dd>
+              </div>
+              <div class="result-row">
+                <dt>Weight-for-height screening (Table B-1)</dt>
+                <dd id="screen-result">Waiting for height, weight, age and sex</dd>
+              </div>
+              <div class="result-row">
+                <dt>Waist-to-height ratio (2026 DoD screening, limit &lt; 0.55)</dt>
+                <dd id="whtr-result">Waiting for height and abdominal or waist circumference</dd>
+              </div>
+            </dl>
+            <p class="result-note">
+              A tape test is only required if you exceed the screening weight for your height and age (or if directed by a commander). Scoring 465+ on the Army Fitness Test with at least 80 points per event exempts you from the body fat standard entirely (AD&nbsp;2025-17).
+            </p>
+          </div>
+        </section>
+
+        <section id="formulas" aria-labelledby="formulas-heading">
+          <h2 id="formulas-heading">The formulas</h2>
+          <p>
+            Since June 9, 2023 the Army has used a one-site tape method: body weight and abdominal circumference at the navel. Army Directive 2023-11 introduced it. After a one-year transition it became the only authorized tape method on June 8, 2024. The older method used height, neck and other circumference measurements.
+          </p>
+          <div class="formula-cards">
+            <div class="formula-card">
+              <h3>Current men</h3>
+              <p class="formula">% body fat = &minus;26.97 &minus; (0.12 &times; weight in lb) + (1.99 &times; abdomen in inches)</p>
+            </div>
+            <div class="formula-card">
+              <h3>Current women</h3>
+              <p class="formula">% body fat = &minus;9.15 &minus; (0.015 &times; weight in lb) + (1.27 &times; abdomen in inches)</p>
+            </div>
+            <div class="formula-card">
+              <h3>Old men</h3>
+              <p class="formula">% body fat = 86.010 &times; log10(abdomen &minus; neck) &minus; 70.041 &times; log10(height) + 36.76</p>
+            </div>
+            <div class="formula-card">
+              <h3>Old women</h3>
+              <p class="formula">% body fat = 163.205 &times; log10(waist + hip &minus; neck) &minus; 97.684 &times; log10(height) &minus; 78.387</p>
+            </div>
+          </div>
+          <p>
+            The result is rounded to the nearest whole percent. In the Army's current worked example, a 210&nbsp;lb man with a 35-inch abdomen computes to 17.48%, recorded as 17%. The U.S. Army Research Institute of Environmental Medicine validated the newer equations against dual-energy X-ray absorptiometry (DXA). The study reported an average underestimate of about 1.4% for men and 0.4% for women, so treat the output as an estimate, not a clinical measurement.
+          </p>
+        </section>
+
+        <section id="standards" aria-labelledby="standards-heading">
+          <h2 id="standards-heading">The standards</h2>
+          <p>
+            Maximum allowable body fat depends on age and sex (AR&nbsp;600-9, Table B-2). These thresholds have been stable across the 2013, 2019 and 2023-updated versions of the program:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Age group</th>
+                  <th scope="col">Male</th>
+                  <th scope="col">Female</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bodyFatStandards.map((row) => (
+                  <tr>
+                    <th scope="row">{row.group}</th>
+                    <td>{row.male}%</td>
+                    <td>{row.female}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Before anyone gets taped, soldiers are screened against the weight-for-height table below (AR&nbsp;600-9, Table B-1). If you are at or under the screening weight for your height and age, you pass the screening outright and no tape test is required. Height is rounded to the nearest whole inch for this table. Half an inch or more rounds up.
+          </p>
+          <details class="screening-details">
+            <summary>Weight-for-height screening table (Table B-1)</summary>
+            <div class="screening-table-group" aria-label="Male and female weight-for-height screening tables">
+              <div>
+                <h3>Male screening weights</h3>
+                <div class="table-wrap">
+                  <table class="screening-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Height</th>
+                        <th scope="col">Min</th>
+                        <th scope="col">17&ndash;20</th>
+                        <th scope="col">21&ndash;27</th>
+                        <th scope="col">28&ndash;39</th>
+                        <th scope="col">40+</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {screeningTable.map((row) => (
+                        <tr>
+                          <th scope="row">{row[0]}</th>
+                          <td>{row[1]}</td>
+                          {row.slice(2, 6).map((cell) => (
+                            <td>{cell ?? "\u2014"}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <h3>Female screening weights</h3>
+                <div class="table-wrap">
+                  <table class="screening-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Height</th>
+                        <th scope="col">Min</th>
+                        <th scope="col">17&ndash;20</th>
+                        <th scope="col">21&ndash;27</th>
+                        <th scope="col">28&ndash;39</th>
+                        <th scope="col">40+</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {screeningTable.map((row) => (
+                        <tr>
+                          <th scope="row">{row[0]}</th>
+                          <td>{row[1]}</td>
+                          {row.slice(6).map((cell) => (
+                            <td>{cell ?? "\u2014"}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <p class="table-footnote">
+              Weights in pounds. Soldiers below the minimum weight are referred for medical evaluation. Above 80 inches, add 6&nbsp;lb per inch for males and 5&nbsp;lb per inch for females.
+            </p>
+          </details>
+        </section>
+
+        <section id="process" aria-labelledby="process-heading">
+          <h2 id="process-heading">How the assessment actually works</h2>
+          <h3>Screening</h3>
+          <p>
+            The recorder checks height against Table B-1 after rounding it to the nearest inch. Weight is rounded to the nearest pound. The weigh-in is done in PT uniform without shoes. At or under the screening weight: done. No tape test.
+          </p>
+          <h3>AFT exemption</h3>
+          <p>
+            Soldiers who scored 465+ on the record Army Fitness Test with at least 80 points in every event are treated as compliant with the body fat standard and are not taped, even if they are over the screening weight (Army Directive 2025-17, September 2025). The exemption lasts until the next record test, at most 8 months for the Regular Army and 12 for Guard and Reserve. It replaced the earlier ACFT 540-point exemption (AD&nbsp;2023-08, rescinded May 31, 2026).
+          </p>
+          <h3>The tape</h3>
+          <p>
+            Abdominal circumference is measured at the navel, three times, in the horizontal plane, without compressing soft tissue. The tape must be non-stretch fiberglass. Each reading is rounded down to the nearest half inch. If one reading differs from the other two by more than an inch, a fourth is taken. The average, to the nearest half inch, goes into the equation.
+          </p>
+          <h3>Failure and appeals</h3>
+          <p>
+            A failed tape triggers a confirmation tape by a different team. Soldiers who fail both may request a supplemental assessment on DXA, an InBody 770 bioimpedance analyzer or a Bod Pod, if reasonably available. Passing the supplemental test removes the flag. Otherwise the soldier is enrolled in the Army Body Composition Program.
+          </p>
+          <blockquote>
+            <p>
+              <em>2026 note:</em> a Department of War memo signed December 18, 2025 (effective January 1, 2026) directs all services to use waist-to-height ratio (WHtR). The upper limit is below 0.55. The memo also stops height-and-weight tables for body composition, sets body fat bands of 18&ndash;26% for men and 26&ndash;36% for women and tightens fitness-test exemptions. As of early 2026 the Army was still writing its policy, so the AR&nbsp;600-9 procedure above remains the published Army standard. The calculator shows WHtR too, because that number is about to matter.
+            </p>
+          </blockquote>
+        </section>
+
+        <section id="sources" aria-labelledby="sources-heading">
+          <h2 id="sources-heading">Sources</h2>
+          <ol class="sources-list">
+            <li>
+              <a href="https://www.armyresilience.army.mil/ard/images/pdf/Policy/ALARACT_0322025.pdf" target="_blank" rel="noreferrer noopener">ALARACT 032/2025: Notification of New Army Body Fat Assessment for the Army Body Composition Program</a>. HQDA DCS G-1, March 2025. Contains the one-site equations, sample calculations, Table B-1 (weight-for-height), Table B-2 (maximum body fat) and the measurement procedures used here.
+            </li>
+            <li>
+              <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN30802-AR_600-9-000-WEB-1.pdf" target="_blank" rel="noreferrer noopener">AR 600-9, The Army Body Composition Program</a>. Department of the Army. The governing regulation; Appendix B defines the standard methods for determining body fat.
+            </li>
+            <li>
+              <a href="https://recruiting.army.mil/Portals/15/DA5500.pdf" target="_blank" rel="noreferrer noopener">DA Form 5500, Body Fat Content Worksheet (Male)</a>. The worksheet prints the male equation: % body fat = &minus;26.97 &minus; (0.12 &times; weight) + (1.99 &times; abdomen). The female equation appears on DA Form 5501 and in ALARACT 032/2025: % body fat = &minus;9.15 &minus; (0.015 &times; weight) + (1.27 &times; abdomen).
+            </li>
+            <li>
+              <a href="https://www.usarcent.army.mil/Portals/1/Documents/regs/Army%20Directive%202025-17%20(Army%20Body%20Fat%20Standard%20for%20Army%20Fitness%20Test%20Score).pdf" target="_blank" rel="noreferrer noopener">Army Directive 2025-17: Army Body Fat Standard for Army Fitness Test Score</a>. September 2025. The AFT 465-point / 80-per-event compliance rule and validity windows; rescinds AD 2023-08 effective May 31, 2026.
+            </li>
+            <li>
+              <a href="https://www.army.mil/article/288357/army_exempts_soldiers_who_score_465_on_the_aft_from_body_fat_standards" target="_blank" rel="noreferrer noopener">Army exempts Soldiers who score 465+ on the AFT from body fat standards</a>. U.S. Army, September 2025.
+            </li>
+            <li>
+              <a href="https://www.armyresilience.army.mil/ABCP/BodyFatCalculator.html" target="_blank" rel="noreferrer noopener">ABCP Body Fat Calculator</a>. Army Resilience Directorate. The Army's online calculator for the 2023 one-site method, used to cross-check this page's results.
+            </li>
+            <li>
+              <a href="https://media.defense.gov/2026/Jan/12/2003855613/-1/-1/1/ADDITIONAL-GUIDANCE-ON-MILITARY-FITNESS-STANDARDS.PDF" target="_blank" rel="noreferrer noopener">Additional Guidance on Military Fitness Standards</a>. Department of War memo, December 18, 2025 (effective January 1, 2026). Source for the waist-to-height ratio limit of &lt;0.55 and the 18&ndash;26% / 26&ndash;36% body fat bands.
+            </li>
+            <li>
+              <a href="https://www.ausa.org/news/pentagon-unveils-new-body-composition-rules" target="_blank" rel="noreferrer noopener">Pentagon Unveils New Body Composition Rules</a>. Association of the United States Army, January 29, 2026. Reporting on the WHtR transition and the Army's pending policy.
+            </li>
+            <li>
+              <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11999870/" target="_blank" rel="noreferrer noopener">McClung HL, et al. Implementing a modern circumference-based body fat equation with a physical fitness threshold is associated with lower musculoskeletal injury risk</a>. 2025. Peer-reviewed background on the USARIEM one-site equation and its validation against DXA.
+            </li>
+          </ol>
+          <p class="disclaimer">
+            This page is an independent tool. It is not affiliated with or endorsed by the U.S. Army or the Department of War. It reproduces published formulas for informational purposes only; trained unit personnel make AR&nbsp;600-9 determinations. Nothing here is medical advice.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <script is:inline>
+      // Table B-1 screening weights, mirrored from the frontmatter for client-side use.
+      const SCREENING = [
+        [58, 91, null, null, null, null, 119, 121, 122, 124],
+        [59, 94, null, null, null, null, 124, 125, 126, 128],
+        [60, 97, 132, 136, 139, 141, 128, 129, 131, 133],
+        [61, 100, 136, 140, 144, 146, 132, 134, 135, 137],
+        [62, 104, 141, 144, 148, 150, 136, 138, 140, 142],
+        [63, 107, 145, 149, 153, 155, 141, 143, 144, 146],
+        [64, 110, 150, 154, 158, 160, 145, 147, 149, 151],
+        [65, 114, 155, 159, 163, 165, 150, 152, 154, 156],
+        [66, 117, 160, 163, 168, 170, 155, 156, 158, 161],
+        [67, 121, 165, 169, 174, 176, 159, 161, 163, 166],
+        [68, 125, 170, 174, 179, 181, 164, 166, 168, 171],
+        [69, 128, 175, 179, 184, 186, 169, 171, 173, 176],
+        [70, 132, 180, 185, 189, 192, 174, 176, 178, 181],
+        [71, 136, 185, 189, 194, 197, 179, 181, 183, 186],
+        [72, 140, 190, 195, 200, 203, 184, 186, 188, 191],
+        [73, 144, 195, 200, 205, 208, 189, 191, 194, 197],
+        [74, 148, 201, 206, 211, 214, 194, 197, 199, 202],
+        [75, 152, 206, 212, 217, 220, 200, 202, 204, 208],
+        [76, 156, 212, 217, 223, 226, 205, 207, 210, 213],
+        [77, 160, 218, 223, 229, 232, 210, 213, 215, 219],
+        [78, 164, 223, 229, 235, 238, 216, 218, 221, 225],
+        [79, 168, 229, 235, 241, 244, 221, 224, 227, 230],
+        [80, 173, 234, 240, 247, 250, 227, 230, 233, 236],
+      ];
+
+      const MAX_BF = {
+        male: [20, 22, 24, 26],
+        female: [30, 32, 34, 36],
+      };
+
+      function ageGroupIndex(age) {
+        if (age <= 20) return 0;
+        if (age <= 27) return 1;
+        if (age <= 39) return 2;
+        return 3;
+      }
+
+      const AGE_GROUP_LABELS = ["17\u201320", "21\u201327", "28\u201339", "40 and over"];
+
+      function screeningWeight(sex, heightInches, age) {
+        // Table lookup uses height rounded to the nearest whole inch (>= .5 rounds up).
+        const h = Math.round(heightInches);
+        const idx = ageGroupIndex(age);
+        const col = (sex === "male" ? 2 : 6) + idx;
+        if (h > 80) {
+          const base = SCREENING[SCREENING.length - 1][col];
+          if (base == null) return null;
+          return base + (h - 80) * (sex === "male" ? 6 : 5);
+        }
+        const row = SCREENING.find((r) => r[0] === h);
+        if (!row) return null;
+        return row[col];
+      }
+
+      function computeCurrentBodyFat(sex, weightLb, abdomenIn) {
+        if (sex === "male") {
+          return -26.97 - 0.12 * weightLb + 1.99 * abdomenIn;
+        }
+        return -9.15 - 0.015 * weightLb + 1.27 * abdomenIn;
+      }
+
+      function computeLegacyBodyFat(sex, heightIn, waistIn, neckIn, hipIn) {
+        if (sex === "male") {
+          const circumferenceValue = waistIn - neckIn;
+          if (circumferenceValue <= 0) return null;
+          return 86.01 * Math.log10(circumferenceValue) - 70.041 * Math.log10(heightIn) + 36.76;
+        }
+        const circumferenceValue = waistIn + hipIn - neckIn;
+        if (circumferenceValue <= 0) return null;
+        return 163.205 * Math.log10(circumferenceValue) - 97.684 * Math.log10(heightIn) - 78.387;
+      }
+
+      const CM_PER_IN = 2.54;
+      const LB_PER_KG = 2.2046226218;
+      let currentUnits = "imperial";
+
+      const form = document.getElementById("calc-form");
+      const bfValueEl = document.getElementById("bf-value");
+      const bfVerdictEl = document.getElementById("bf-verdict");
+      const bfMaxEl = document.getElementById("bf-max");
+      const bfExactEl = document.getElementById("bf-exact");
+      const screenEl = document.getElementById("screen-result");
+      const whtrEl = document.getElementById("whtr-result");
+      const heightFtEl = document.getElementById("height-ft");
+      const heightInEl = document.getElementById("height-in");
+      const heightCmEl = document.getElementById("height-cm");
+      const weightEl = document.getElementById("weight");
+      const waistEl = document.getElementById("waist");
+      const neckEl = document.getElementById("neck");
+      const hipEl = document.getElementById("hip");
+      const weightUnitEl = document.querySelector("[data-weight-unit]");
+      const waistLabelEl = document.querySelector("[data-waist-label]");
+      const waistUnitEl = document.querySelector("[data-waist-unit]");
+      const neckUnitEl = document.querySelector("[data-neck-unit]");
+      const hipUnitEl = document.querySelector("[data-hip-unit]");
+
+      function numberFrom(el) {
+        const value = parseFloat(el.value);
+        return Number.isFinite(value) ? value : null;
+      }
+
+      function formatNumber(value, decimals = 1) {
+        return value.toFixed(decimals).replace(/\.0$/, "");
+      }
+
+      function setNumber(el, value, decimals = 1) {
+        el.value = formatNumber(value, decimals);
+      }
+
+      function totalImperialHeightInches() {
+        const feet = numberFrom(heightFtEl);
+        const inches = numberFrom(heightInEl);
+        if (feet == null && inches == null) return null;
+        return (feet ?? 0) * 12 + (inches ?? 0);
+      }
+
+      function setImperialHeight(totalInches) {
+        let feet = Math.floor(totalInches / 12);
+        let inches = Math.round((totalInches - feet * 12) * 2) / 2;
+        if (inches >= 12) {
+          feet += 1;
+          inches -= 12;
+        }
+        heightFtEl.value = String(feet);
+        setNumber(heightInEl, inches, inches % 1 === 0 ? 0 : 1);
+      }
+
+      function roundDownHalf(value) {
+        return Math.floor(value * 2) / 2;
+      }
+
+      function roundUpHalf(value) {
+        return Math.ceil(value * 2) / 2;
+      }
+
+      function syncMethodDisplay() {
+        const method = form.querySelector('input[name="method"]:checked').value;
+        const sex = form.querySelector('input[name="sex"]:checked').value;
+        form.dataset.method = method;
+        form.dataset.sex = sex;
+
+        if (method === "legacy" && sex === "female") {
+          waistLabelEl.textContent = "Waist circumference";
+          waistUnitEl.textContent = currentUnits === "metric" ? "cm, at the natural waist" : "in, at the natural waist";
+        } else {
+          waistLabelEl.textContent = "Abdominal circumference";
+          waistUnitEl.textContent = currentUnits === "metric" ? "cm, at the navel" : "in, at the navel";
+        }
+      }
+
+      function syncUnitDisplay(units) {
+        form.dataset.units = units;
+        if (units === "metric") {
+          weightUnitEl.textContent = "kg";
+          neckUnitEl.textContent = "cm";
+          hipUnitEl.textContent = "cm";
+          weightEl.min = "30";
+          weightEl.max = "270";
+          weightEl.step = "0.1";
+          waistEl.min = "45";
+          waistEl.max = "180";
+          waistEl.step = "0.1";
+          neckEl.min = "25";
+          neckEl.max = "80";
+          neckEl.step = "0.1";
+          hipEl.min = "50";
+          hipEl.max = "205";
+          hipEl.step = "0.1";
+          syncMethodDisplay();
+          return;
+        }
+        weightUnitEl.textContent = "lb";
+        neckUnitEl.textContent = "in";
+        hipUnitEl.textContent = "in";
+        weightEl.min = "70";
+        weightEl.max = "500";
+        weightEl.step = "0.5";
+        waistEl.min = "18";
+        waistEl.max = "70";
+        waistEl.step = "0.5";
+        neckEl.min = "10";
+        neckEl.max = "30";
+        neckEl.step = "0.5";
+        hipEl.min = "20";
+        hipEl.max = "80";
+        hipEl.step = "0.5";
+        syncMethodDisplay();
+      }
+
+      function switchUnits(nextUnits) {
+        if (nextUnits === currentUnits) return;
+
+        if (currentUnits === "imperial") {
+          const heightIn = totalImperialHeightInches();
+          const weightLb = numberFrom(weightEl);
+          const waistIn = numberFrom(waistEl);
+          const neckIn = numberFrom(neckEl);
+          const hipIn = numberFrom(hipEl);
+          if (heightIn != null && heightIn > 0) setNumber(heightCmEl, heightIn * CM_PER_IN, 1);
+          if (weightLb != null) setNumber(weightEl, weightLb / LB_PER_KG, 1);
+          if (waistIn != null) setNumber(waistEl, waistIn * CM_PER_IN, 1);
+          if (neckIn != null) setNumber(neckEl, neckIn * CM_PER_IN, 1);
+          if (hipIn != null) setNumber(hipEl, hipIn * CM_PER_IN, 1);
+        } else {
+          const heightCm = numberFrom(heightCmEl);
+          const weightKg = numberFrom(weightEl);
+          const waistCm = numberFrom(waistEl);
+          const neckCm = numberFrom(neckEl);
+          const hipCm = numberFrom(hipEl);
+          if (heightCm != null && heightCm > 0) setImperialHeight(heightCm / CM_PER_IN);
+          if (weightKg != null) setNumber(weightEl, weightKg * LB_PER_KG, 0);
+          if (waistCm != null) {
+            const waistIn = Math.round((waistCm / CM_PER_IN) * 2) / 2;
+            setNumber(waistEl, waistIn, waistIn % 1 === 0 ? 0 : 1);
+          }
+          if (neckCm != null) {
+            const neckIn = Math.round((neckCm / CM_PER_IN) * 2) / 2;
+            setNumber(neckEl, neckIn, neckIn % 1 === 0 ? 0 : 1);
+          }
+          if (hipCm != null) {
+            const hipIn = Math.round((hipCm / CM_PER_IN) * 2) / 2;
+            setNumber(hipEl, hipIn, hipIn % 1 === 0 ? 0 : 1);
+          }
+        }
+
+        currentUnits = nextUnits;
+        syncUnitDisplay(currentUnits);
+        update();
+      }
+
+      function formatWeight(lb) {
+        if (currentUnits === "metric") return `${formatNumber(lb / LB_PER_KG)} kg (${Math.round(lb)} lb)`;
+        return `${Math.round(lb)} lb`;
+      }
+
+      function formatWeightDelta(lb) {
+        if (currentUnits === "metric") return `${formatNumber(lb / LB_PER_KG)} kg (${Math.round(lb)} lb)`;
+        return `${Math.round(lb)} lb`;
+      }
+
+      function formatWaist(inches) {
+        if (currentUnits === "metric") return `${formatNumber(inches * CM_PER_IN)} cm (${inches.toFixed(1)}\u2033)`;
+        return `${inches.toFixed(1)}\u2033`;
+      }
+
+      function formatLength(inches) {
+        if (currentUnits === "metric") return `${formatNumber(inches * CM_PER_IN)} cm (${inches.toFixed(1)}\u2033)`;
+        return `${inches.toFixed(1)}\u2033`;
+      }
+
+      function resetResults() {
+        bfValueEl.textContent = "\u2013%";
+        bfVerdictEl.textContent = "Fill in the fields above to calculate your estimate.";
+        bfVerdictEl.className = "result-verdict is-pending";
+        bfMaxEl.textContent = "Waiting for age and sex";
+        bfExactEl.textContent = "Waiting for the selected tape measurements";
+        screenEl.textContent = "Waiting for height, weight, age and sex";
+        screenEl.className = "is-pending";
+        whtrEl.textContent = "Waiting for height and abdominal or waist circumference";
+        whtrEl.className = "is-pending";
+      }
+
+      function readInputs() {
+        const units = form.querySelector('input[name="units"]:checked').value;
+        const method = form.querySelector('input[name="method"]:checked').value;
+        const sex = form.querySelector('input[name="sex"]:checked').value;
+        const age = parseFloat(document.getElementById("age").value);
+        const weightRaw = numberFrom(weightEl);
+        const waistRaw = numberFrom(waistEl);
+        const neckRaw = numberFrom(neckEl);
+        const hipRaw = numberFrom(hipEl);
+        let heightIn;
+        let weight;
+        let waist;
+        let neck;
+        let hip;
+
+        if (units === "metric") {
+          const heightCm = numberFrom(heightCmEl);
+          if (heightCm == null || heightCm < 90 || heightCm > 260) return null;
+          if (waistRaw == null || waistRaw < 35 || waistRaw > 205) return null;
+          if (weightRaw != null && (weightRaw < 25 || weightRaw > 275)) return null;
+          if (method === "current" && weightRaw == null) return null;
+          if (method === "legacy" && (neckRaw == null || neckRaw < 20 || neckRaw > 90)) return null;
+          if (method === "legacy" && sex === "female" && (hipRaw == null || hipRaw < 45 || hipRaw > 220)) return null;
+          heightIn = heightCm / CM_PER_IN;
+          weight = weightRaw == null ? null : weightRaw * LB_PER_KG;
+          waist = waistRaw / CM_PER_IN;
+          neck = neckRaw == null ? null : neckRaw / CM_PER_IN;
+          hip = hipRaw == null ? null : hipRaw / CM_PER_IN;
+        } else {
+          const feet = numberFrom(heightFtEl);
+          const extraIn = numberFrom(heightInEl);
+          if (feet == null || feet < 3 || feet > 8) return null;
+          if (extraIn == null || extraIn < 0 || extraIn >= 12) return null;
+          if (waistRaw == null || waistRaw < 15 || waistRaw > 80) return null;
+          if (weightRaw != null && (weightRaw < 50 || weightRaw > 600)) return null;
+          if (method === "current" && weightRaw == null) return null;
+          if (method === "legacy" && (neckRaw == null || neckRaw < 8 || neckRaw > 36)) return null;
+          if (method === "legacy" && sex === "female" && (hipRaw == null || hipRaw < 18 || hipRaw > 88)) return null;
+          heightIn = feet * 12 + extraIn;
+          weight = weightRaw;
+          waist = waistRaw;
+          neck = neckRaw;
+          hip = hipRaw;
+        }
+
+        if (
+          !Number.isFinite(age) || age < 17 || age > 100 ||
+          !Number.isFinite(heightIn) || heightIn < 36 || heightIn > 102 ||
+          !Number.isFinite(waist) || waist < 15 || waist > 80
+        ) {
+          return null;
+        }
+        if (weight != null && (!Number.isFinite(weight) || weight < 50 || weight > 600)) return null;
+        if (method === "legacy" && (!Number.isFinite(neck) || neck < 8 || neck > 36)) return null;
+        if (method === "legacy" && sex === "female" && (!Number.isFinite(hip) || hip < 18 || hip > 88)) return null;
+        return { method, sex, age, heightIn, weight, waist, neck, hip };
+      }
+
+      function update() {
+        const input = readInputs();
+        if (!input) {
+          resetResults();
+          return;
+        }
+        const { method, sex, age, heightIn, weight, waist, neck, hip } = input;
+
+        const weightRounded = weight == null ? null : Math.round(weight);
+        const waistRounded = roundDownHalf(waist);
+        const neckRounded = neck == null ? null : roundUpHalf(neck);
+        const hipRounded = hip == null ? null : roundDownHalf(hip);
+
+        const exact = method === "legacy"
+          ? computeLegacyBodyFat(sex, heightIn, waistRounded, neckRounded, hipRounded)
+          : computeCurrentBodyFat(sex, weightRounded, waistRounded);
+        if (exact == null || !Number.isFinite(exact)) {
+          resetResults();
+          bfExactEl.textContent = "Check the tape values. The old method needs circumference values that produce a positive circumference value.";
+          return;
+        }
+
+        const rounded = Math.round(exact);
+        const idx = ageGroupIndex(age);
+        const maxAllowed = MAX_BF[sex][idx];
+        const passes = rounded <= maxAllowed;
+
+        bfValueEl.textContent = `${rounded}%`;
+        if (method === "legacy" && sex === "male") {
+          bfExactEl.textContent = `${exact.toFixed(2)}% (old tape method using ${formatLength(heightIn)} height, ${formatWaist(waistRounded)} abdomen and ${formatLength(neckRounded)} neck after regulation rounding)`;
+        } else if (method === "legacy") {
+          bfExactEl.textContent = `${exact.toFixed(2)}% (old tape method using ${formatLength(heightIn)} height, ${formatWaist(waistRounded)} waist, ${formatLength(hipRounded)} hip and ${formatLength(neckRounded)} neck after regulation rounding)`;
+        } else {
+          bfExactEl.textContent = `${exact.toFixed(2)}% (using ${formatWeight(weightRounded)} and a ${formatWaist(waistRounded)} abdomen after regulation rounding)`;
+        }
+        bfMaxEl.textContent = `${maxAllowed}% (${sex}, age group ${AGE_GROUP_LABELS[idx]})`;
+
+        bfVerdictEl.textContent = passes
+          ? `Within the standard: ${maxAllowed - rounded} percentage point${maxAllowed - rounded === 1 ? "" : "s"} under the ${maxAllowed}% limit.`
+          : `Over the standard by ${rounded - maxAllowed} percentage point${rounded - maxAllowed === 1 ? "" : "s"} (limit ${maxAllowed}%).`;
+        bfVerdictEl.className = `result-verdict ${passes ? "is-pass" : "is-fail"}`;
+
+        const screenMax = screeningWeight(sex, heightIn, age);
+        const minWeightRow = SCREENING.find((r) => r[0] === Math.min(Math.max(Math.round(heightIn), 58), 80));
+        const minWeight = minWeightRow ? minWeightRow[1] : null;
+        if (weightRounded == null) {
+          screenEl.textContent = "Waiting for weight to compare against Table B-1.";
+          screenEl.className = "is-pending";
+        } else if (screenMax == null) {
+          screenEl.textContent = "No screening weight listed for this height and sex in Table B-1.";
+          screenEl.className = "";
+        } else if (minWeight != null && weightRounded < minWeight) {
+          screenEl.textContent = `${formatWeight(weightRounded)} is below the ${formatWeight(minWeight)} minimum. The regulation calls for a medical evaluation referral.`;
+          screenEl.className = "is-fail";
+        } else if (weightRounded <= screenMax) {
+          screenEl.textContent = `Passes: ${formatWeight(weightRounded)} is at or under the ${formatWeight(screenMax)} screening weight, so no tape test would be required.`;
+          screenEl.className = "is-pass";
+        } else {
+          screenEl.textContent = `Exceeds the ${formatWeight(screenMax)} screening weight by ${formatWeightDelta(weightRounded - screenMax)}. A tape test would be required.`;
+          screenEl.className = "is-fail";
+        }
+
+        const whtr = waist / heightIn;
+        const whtrPass = whtr < 0.55;
+        whtrEl.textContent = `${whtr.toFixed(3)}: ${whtrPass ? "under" : "at or over"} the 0.55 limit.`;
+        whtrEl.className = whtrPass ? "is-pass" : "is-fail";
+      }
+
+      form.addEventListener("input", (event) => {
+        if (event.target?.name === "units") switchUnits(event.target.value);
+        else {
+          if (event.target?.name === "method" || event.target?.name === "sex") syncMethodDisplay();
+          update();
+        }
+      });
+      form.addEventListener("submit", (e) => e.preventDefault());
+      syncUnitDisplay(currentUnits);
+      resetResults();
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfaf6;
+    --paper: #fffefa;
+    --text: #1d1a16;
+    --text-soft: #403a33;
+    --muted: #756d63;
+    --rule: #ddd3c5;
+    --accent: #55632a;
+    --accent-soft: #eaeddb;
+    --selection: #d3dba4;
+    --pass: #3c6e34;
+    --fail: #a03e2e;
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171410;
+      --paper: #1f1b16;
+      --text: #f3eadf;
+      --text-soft: #d9cabc;
+      --muted: #aa9a8a;
+      --rule: #3d342b;
+      --accent: #bfd077;
+      --accent-soft: #262a1a;
+      --selection: #4d5526;
+      --pass: #8fce84;
+      --fail: #e8917f;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--text);
+  }
+
+  html {
+    max-width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 60%, transparent), transparent 28rem),
+      var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .hero {
+    min-width: 0;
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 clamp(1.75rem, 5vw, 3.5rem);
+  }
+
+  .home-link {
+    font-family: var(--sans);
+  }
+
+  .site-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    width: 100%;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-underline-offset: 0.28em;
+  }
+
+  .home-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .hero-copy {
+    justify-self: center;
+    width: min(100%, 38rem);
+    text-align: center;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin: 0 auto;
+    color: var(--text);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 650;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    overflow-wrap: break-word;
+  }
+
+  .hero-description {
+    max-width: 37rem;
+    margin: 0.9rem auto 0;
+    color: var(--text-soft);
+    font-size: clamp(1.02rem, 1.5vw, 1.24rem);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+
+  .article {
+    width: 100%;
+    display: grid;
+    gap: clamp(2.2rem, 5vw, 4rem);
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4vw, 2.75rem) 0 clamp(1.75rem, 4.5vw, 3.5rem);
+  }
+
+  section {
+    min-width: 0;
+    scroll-margin-top: 5.5rem;
+  }
+
+  h2,
+  h3 {
+    color: var(--text);
+    letter-spacing: -0.035em;
+  }
+
+  h2 {
+    max-width: 28ch;
+    margin: 0 0 1rem;
+    font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+    font-weight: 650;
+    line-height: 1.06;
+  }
+
+  h3 {
+    max-width: 34ch;
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.2;
+  }
+
+  p,
+  li,
+  td,
+  th,
+  dt,
+  dd {
+    color: var(--text-soft);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    overflow-wrap: break-word;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p,
+  p + ul,
+  ul + p,
+  p + .table-wrap,
+  .table-wrap + p,
+  p + .formula-cards,
+  .formula-cards + p,
+  p + details {
+    margin-top: 0.9rem;
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 720;
+  }
+
+  a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.17em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    padding-left: 0.25rem;
+  }
+
+  li + li {
+    margin-top: 0.75rem;
+  }
+
+  blockquote {
+    margin: 1.25rem 0 0;
+    min-width: 0;
+    border-block: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 72%, transparent);
+    padding: clamp(1.1rem, 3vw, 1.55rem) clamp(1rem, 3vw, 1.5rem);
+  }
+
+  blockquote p {
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.68;
+  }
+
+  /* Calculator form */
+  .calc {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.25rem;
+    margin-top: 0;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: clamp(1.1rem, 3vw, 1.6rem);
+  }
+
+  .field {
+    display: grid;
+    gap: 0.4rem;
+    min-width: 0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .metric-only {
+    display: none;
+  }
+
+  .legacy-only,
+  .female-legacy-only {
+    display: none;
+  }
+
+  .calc[data-units="metric"] .metric-only {
+    display: block;
+  }
+
+  .calc[data-units="metric"] .imperial-only {
+    display: none;
+  }
+
+  .calc[data-method="legacy"] .legacy-only,
+  .calc[data-method="legacy"][data-sex="female"] .female-legacy-only {
+    display: grid;
+  }
+
+  .field label,
+  .field legend,
+  .field .field-label {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.09em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    padding: 0;
+  }
+
+  .field .unit {
+    color: color-mix(in srgb, var(--muted) 75%, transparent);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: none;
+  }
+
+  .field input[type="number"] {
+    width: 100%;
+    appearance: textfield;
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+    padding: 0.6rem 0.7rem;
+  }
+
+  .field input[type="number"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+
+  .field-method,
+  .field-units,
+  .field-sex {
+    grid-column: span 1;
+  }
+
+  .field-method {
+    grid-column: 1 / -1;
+  }
+
+  .field-method .segmented {
+    flex-wrap: wrap;
+  }
+
+  .segmented {
+    display: inline-flex;
+    width: fit-content;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    padding: 0.22rem;
+    gap: 0.25rem;
+  }
+
+  .segmented label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .segmented input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .segmented span {
+    display: inline-block;
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.45rem 0.9rem;
+  }
+
+  .segmented input:checked + span {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .segmented input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .height-inputs {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .height-part {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .height-part .unit {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 650;
+  }
+
+  /* Results */
+  .results {
+    margin-top: 1rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--rule));
+    background: color-mix(in srgb, var(--accent-soft) 55%, var(--paper));
+    padding: clamp(1.1rem, 3vw, 1.6rem);
+  }
+
+  .result-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .result-figure {
+    display: grid;
+    justify-items: start;
+  }
+
+  .result-value {
+    color: var(--text);
+    font-size: clamp(2.4rem, 6vw, 3.4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .result-caption {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 750;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .result-verdict {
+    flex: 1;
+    min-width: 14rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    line-height: 1.5;
+  }
+
+  .result-verdict.is-pass,
+  .is-pass {
+    color: var(--pass);
+  }
+
+  .result-verdict.is-fail,
+  .is-fail {
+    color: var(--fail);
+  }
+
+  .result-verdict.is-pending,
+  .is-pending {
+    color: var(--muted);
+  }
+
+  .result-details {
+    display: grid;
+    gap: 0.8rem;
+    margin: 1rem 0 0;
+  }
+
+  .result-row {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .result-row dt {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .result-row dd {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .result-note {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  /* Formulas */
+  .formula-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .formula-card {
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 1rem 1.1rem;
+    min-width: 0;
+  }
+
+  .formula {
+    font-family: var(--mono);
+    color: var(--text);
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  /* Tables */
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+  }
+
+  thead th {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  tbody th {
+    color: var(--text);
+    font-weight: 680;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .screening-table-group {
+    display: grid;
+    gap: 1.35rem;
+  }
+
+  .screening-table-group h3 {
+    margin: 0 0 0.55rem;
+    color: var(--text);
+    font-size: clamp(1rem, 1.8vw, 1.18rem);
+  }
+
+  .screening-table th,
+  .screening-table td {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .screening-details {
+    margin-top: 1rem;
+  }
+
+  .screening-details summary {
+    font-family: var(--sans);
+    color: var(--accent);
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.35rem 0;
+  }
+
+  .screening-details summary:hover {
+    color: var(--text);
+  }
+
+  .screening-details[open] summary {
+    margin-bottom: 0.75rem;
+  }
+
+  .table-footnote {
+    margin-top: 0.6rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  /* Sources */
+  .sources-list {
+    margin: 0;
+    padding-left: 1.4rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .sources-list li {
+    font-size: 0.98rem;
+    line-height: 1.65;
+  }
+
+  .disclaimer {
+    margin-top: 1.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      padding: 1rem;
+    }
+
+    .hero-copy {
+      justify-self: center;
+      width: 100%;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-size: clamp(1.85rem, 9vw, 2.45rem);
+      line-height: 1.1;
+    }
+
+    .article {
+      gap: 3rem;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 1.6rem 0 3.25rem;
+    }
+
+    h2 {
+      max-width: 100%;
+      font-size: clamp(1.45rem, 6.5vw, 1.9rem);
+    }
+
+    p,
+    li,
+    dd {
+      font-size: 1rem;
+    }
+
+    .calc {
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+    }
+
+    .field-method,
+    .field-units,
+    .field-sex {
+      grid-column: 1 / -1;
+    }
+
+    .formula-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .result-main {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .result-verdict {
+      min-width: 0;
+    }
+  }
+</style>

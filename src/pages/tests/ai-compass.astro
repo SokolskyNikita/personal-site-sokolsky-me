@@ -1,0 +1,682 @@
+---
+import { AXES, DECK, ARCHETYPES } from "../../data/ai-compass";
+import "../../styles/ai-compass.css";
+
+export const prerender = true;
+
+const pageTitle = "The AI Compass";
+const pageDescription =
+  "30 opinionated questions across five independent axes: trajectory, valence, steering, intimacy and personhood. Find out which of 21 AI archetypes you actually are.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  applicationCategory: "EntertainmentApplication",
+  operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  }
+};
+
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="A five-axis personality test about attitudes toward artificial intelligence." />
+    <meta name="application-name" content={pageTitle} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="keywords" content="AI compass, AI attitudes test, AI archetype quiz, AI doomer accelerationist quiz, political compass for AI" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        </div>
+        <div class="hero-copy">
+          <p class="hero-kicker">A five-axis test</p>
+          <h1>The AI Compass</h1>
+          <p class="hero-description">
+            Most AI quizzes measure one thing: how much you like it. This one measures five things that actually vary independently — and tells you which of twenty-one archetypes you are.
+          </p>
+        </div>
+      </header>
+
+      <article class="article">
+        <section id="axes" aria-labelledby="axes-heading">
+          <h2 id="axes-heading" class="visually-hidden">The five axes</h2>
+          <ul class="axis-legend">
+            {AXES.map((axis) => (
+              <li class="axis-legend-row" data-axis={axis.key}>
+                <span class="axis-swatch" aria-hidden="true"></span>
+                <span class="axis-legend-name">{axis.name}</span>
+                <span class="axis-legend-poles">{axis.neg} &harr; {axis.pos}</span>
+                <span class="axis-legend-ask">{axis.ask}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="axis-legend-note">
+            30 questions, about five minutes. Skip anything; only answered questions are scored. Nothing leaves your browser unless you copy the share link.
+          </p>
+        </section>
+
+        <section id="quiz" aria-label="The quiz">
+          <noscript>
+            <p class="noscript-note">The quiz needs JavaScript. The twenty-one archetypes below are readable without it.</p>
+          </noscript>
+          <div class="quiz-shell" id="quiz-shell" hidden>
+            <nav class="progress" id="progress" aria-label="Questions"></nav>
+            <div class="quiz-card" id="quiz-card" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="results" aria-label="Your results" hidden>
+          <div class="verdict" id="verdict"></div>
+          <div class="axes-report" id="axes-report"></div>
+          <div class="minimap-wrap">
+            <h2>The classic plane</h2>
+            <p class="minimap-caption">
+              Trajectory against valence — the two axes every other compass stops at. Your point, and your three nearest archetypes.
+            </p>
+            <div class="minimap" id="minimap"></div>
+          </div>
+          <div class="share-row" id="share-row">
+            <button type="button" class="btn btn-primary" id="copy-link">Copy share link</button>
+            <button type="button" class="btn" id="copy-text">Copy result as text</button>
+            <button type="button" class="btn" id="review-answers">Review answers</button>
+            <button type="button" class="btn btn-ghost" id="retake">Retake</button>
+          </div>
+        </section>
+
+        <section id="archetypes" aria-labelledby="archetypes-heading">
+          <h2 id="archetypes-heading">The twenty-one archetypes</h2>
+          <p>
+            Each archetype is a fixed point in the five-dimensional space. The bars show its coordinates: left of center toward the first pole, right of center toward the second. Your answers land somewhere in the same space, and the nearest points win.
+          </p>
+          <div class="archetype-grid">
+            {ARCHETYPES.map((arch, index) => (
+              <article class="archetype-card" id={`arch-${index}`}>
+                <header class="archetype-head">
+                  <h3>{arch.name}</h3>
+                  <p class="archetype-tag">{arch.tag}</p>
+                </header>
+                <div class="fingerprint" role="img" aria-label={`Coordinates of ${arch.name}`}>
+                  {fingerprintSegments(arch.seed).map((seg) => (
+                    <div class="fp-row" data-axis={seg.key}>
+                      <span class="fp-label">{seg.key}</span>
+                      <span class="fp-track">
+                        <span class="fp-center" aria-hidden="true"></span>
+                        <span class="fp-fill" style={`left:${seg.left}%;width:${seg.width}%`}></span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p class="archetype-desc">{arch.desc}</p>
+                <p class="archetype-habitat">{arch.habitat}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="method" aria-labelledby="method-heading">
+          <h2 id="method-heading">How the scoring works</h2>
+          <p>
+            Every question loads on exactly one axis, and every answer carries a score from &minus;2 to +2 on that axis. Your position on an axis is the mean of your answers there, rescaled to the interval from &minus;1 to +1. Six questions per axis, thirty in total. Skipped questions are simply excluded; an axis you skip entirely is left unscored and dropped from the matching.
+          </p>
+          <p>
+            The archetype match is nearest-neighbor: each archetype sits at a fixed point in the five-dimensional space, and your result is whichever point lies closest to yours, using root-mean-square distance over the axes you scored. The fit percentage is that distance mapped onto a 0&ndash;100 scale, where 100 means you sit exactly on the archetype and 0 means you sit in the opposite corner of the space.
+          </p>
+          <p>
+            The questions are opinionated on purpose. Neutral wording produces neutral lies &mdash; nobody has ever held the position &ldquo;I somewhat agree that technology has implications.&rdquo; The options are written the way actual people actually talk, which is what makes picking one informative. The five-axis structure follows what attitude research and the discourse itself keep finding: capability beliefs, harm&ndash;benefit judgments, governance preferences, personal adoption and mind attribution move independently. A person can believe AI is world-changing and terrible, use it every day, and want it regulated into a licensed utility &mdash; one number cannot hold that person, and two numbers barely manage.
+          </p>
+          <p class="method-links">
+            Background reading: the two-factor structure of AI attitudes in
+            <a href="https://doi.org/10.1016/j.chbr.2020.100014" target="_blank" rel="noreferrer noopener">Schepman &amp; Rodway&rsquo;s GAAIS validation</a>,
+            the faction taxonomy debates on
+            <a href="https://www.lesswrong.com/posts/zmtqmwetKH4nrxXcE/which-side-of-the-ai-safety-community-are-you-in" target="_blank" rel="noreferrer noopener">LessWrong</a>,
+            the running chronicle of every faction arguing at once in
+            <a href="https://thezvi.substack.com/" target="_blank" rel="noreferrer noopener">Don&rsquo;t Worry About the Vase</a>,
+            and the grandparent of the genre, the
+            <a href="https://www.politicalcompass.org/" target="_blank" rel="noreferrer noopener">Political Compass</a>.
+          </p>
+          <p class="disclaimer">
+            For entertainment and mild self-knowledge. A compass points; it doesn&rsquo;t drive. Answers are stored only in your browser and in any share link you choose to copy.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <script is:inline define:vars={{ AXES, DECK, ARCHETYPES }}>
+      const AXIS_KEYS = AXES.map((axis) => axis.key);
+      const AXIS_BY_KEY = Object.fromEntries(AXES.map((axis) => [axis.key, axis]));
+      const STORE_KEY = "ai-compass-v1";
+
+      // Per-axis interpretation, bucketed strong-negative to strong-positive.
+      const AXIS_READINGS = {
+        T: [
+          "You think this is a plateau dressed as a takeoff. The demos impress, the curves flatten, and in five years the whole episode gets a documentary with ominous music.",
+          "You expect useful tools and broken promises: real gains at the margins while the road to AGI stays unpaved.",
+          "You're genuinely unsure where the curve bends — which, given the forecasting record of everyone louder than you, is a defensible place to stand.",
+          "You think the curve is real. Not vertical, but pointed somewhere unfamiliar, and compounding faster than institutions can blink.",
+          "You believe you're watching the last human-led decade. The only question you take seriously is how steep it gets, and how soon.",
+        ],
+        V: [
+          "The ledger reads red to you: jobs, art, truth and electricity in; slop, surveillance and concentrated power out.",
+          "You see damage arriving on schedule and benefit forever \u201ctwo years away.\u201d",
+          "You keep two columns and refuse to close the books early. Genuine gains, genuine wreckage, jury out.",
+          "On net, you think the thing helps — quietly, unevenly, and with a body count of inconveniences the headlines inflate.",
+          "You think this is medicine, tutoring, science and abundance arriving at once — the best trade civilization has been offered in a century.",
+        ],
+        S: [
+          "Your instinct is throttle, not brake: permissionless innovation built everything good, and \u201csafety\u201d is what incumbents call a moat.",
+          "You'd rather fix harms after contact than license imagination in advance.",
+          "You want narrow rules, real audits, and nobody's utopia enforced at scale — governance as plumbing, not prophecy.",
+          "You'd regulate before the accident, thank you. Some technologies don't offer second drafts.",
+          "You want treaties, licenses and brakes bolted on yesterday — the burden of proof belongs on the machine, not the public.",
+        ],
+        I: [
+          "You keep the machine outside the blast radius of your actual life. Whatever everyone else is mainlining, you'll take yours never.",
+          "You use it the way you use a vending machine: occasionally, warily, and without small talk.",
+          "A tool among tools. You delegate chores, audit outputs, and feel no urge to name it.",
+          "It's woven into your day — first draft, second opinion, third brain — and you'd notice the silence if it vanished.",
+          "It's load-bearing. The model knows your projects, your prose style and arguably your personality. You're not embarrassed.",
+        ],
+        P: [
+          "It's matrix multiplication. Beautiful, useful, occasionally spooky — and no more a mind than a mirror is a face.",
+          "You see a very good impression of a mind, and impressions are exactly what you'd expect matter-of-fact machines to produce.",
+          "You genuinely don't know what's in there, and you distrust everyone who claims to.",
+          "You think \u201cjust a tool\u201d is doing a lot of unexamined work in other people's sentences.",
+          "You suspect we're already sharing the planet with new minds — and that history grades harshly the people who laughed.",
+        ],
+      };
+
+      const state = {
+        answers: new Array(DECK.length).fill(-1),
+        idx: 0,
+        finished: false,
+      };
+
+      const quizShell = document.getElementById("quiz-shell");
+      const quizSection = document.getElementById("quiz");
+      const quizCard = document.getElementById("quiz-card");
+      const progressEl = document.getElementById("progress");
+      const resultsSection = document.getElementById("results");
+      const verdictEl = document.getElementById("verdict");
+      const axesReportEl = document.getElementById("axes-report");
+      const minimapEl = document.getElementById("minimap");
+
+      let advanceTimer = null;
+
+      function saveLocal() {
+        try {
+          localStorage.setItem(
+            STORE_KEY,
+            JSON.stringify({ answers: state.answers, idx: state.idx, finished: state.finished })
+          );
+        } catch (_) { /* private mode etc. */ }
+      }
+
+      function loadLocal() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return false;
+          const data = JSON.parse(raw);
+          if (!Array.isArray(data.answers) || data.answers.length !== DECK.length) return false;
+          state.answers = data.answers.map((v) => (Number.isInteger(v) ? v : -1));
+          state.idx = Math.min(Math.max(0, data.idx | 0), DECK.length - 1);
+          state.finished = Boolean(data.finished);
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function encodeAnswers() {
+        return state.answers.map((v) => (v < 0 ? "0" : String(v + 1))).join("");
+      }
+
+      function decodeAnswers(str) {
+        if (typeof str !== "string" || str.length !== DECK.length) return null;
+        const answers = [];
+        for (let i = 0; i < str.length; i++) {
+          const digit = str.charCodeAt(i) - 48;
+          if (digit < 0 || digit > DECK[i].opts.length) return null;
+          answers.push(digit - 1);
+        }
+        return answers;
+      }
+
+      function answeredCount() {
+        return state.answers.filter((v) => v >= 0).length;
+      }
+
+      // ---- scoring ----
+
+      function axisScores() {
+        const sums = {};
+        const counts = {};
+        AXIS_KEYS.forEach((key) => { sums[key] = 0; counts[key] = 0; });
+        state.answers.forEach((optIdx, qIdx) => {
+          if (optIdx < 0) return;
+          const q = DECK[qIdx];
+          sums[q.a] += q.opts[optIdx].s;
+          counts[q.a] += 1;
+        });
+        const scores = {};
+        AXIS_KEYS.forEach((key) => {
+          scores[key] = counts[key] > 0 ? sums[key] / counts[key] / 2 : null;
+        });
+        return scores;
+      }
+
+      function matchArchetypes(scores) {
+        const scoredKeys = AXIS_KEYS.filter((key) => scores[key] !== null);
+        if (scoredKeys.length === 0) return [];
+        const ranked = ARCHETYPES.map((arch, index) => {
+          let sq = 0;
+          scoredKeys.forEach((key) => {
+            const d = scores[key] - arch.seed[key];
+            sq += d * d;
+          });
+          const dist = Math.sqrt(sq / scoredKeys.length);
+          return { arch, index, dist, fit: Math.round(Math.max(0, 1 - dist / 2) * 100) };
+        });
+        ranked.sort((a, b) => a.dist - b.dist);
+        return ranked;
+      }
+
+      function bucketIndex(v) {
+        if (v <= -0.55) return 0;
+        if (v <= -0.15) return 1;
+        if (v < 0.15) return 2;
+        if (v < 0.55) return 3;
+        return 4;
+      }
+
+      // ---- quiz rendering ----
+
+      function renderProgress() {
+        progressEl.innerHTML = "";
+        DECK.forEach((q, i) => {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "p-dot";
+          dot.dataset.axis = q.a;
+          if (state.answers[i] >= 0) dot.classList.add("done");
+          if (i === state.idx) dot.classList.add("here");
+          const status = state.answers[i] >= 0 ? "answered" : "unanswered";
+          dot.setAttribute("aria-label", `Question ${i + 1}: ${q.topic}, ${status}`);
+          dot.title = `${i + 1} \u00b7 ${q.topic}`;
+          dot.addEventListener("click", () => { goTo(i); });
+          progressEl.appendChild(dot);
+        });
+      }
+
+      function renderQuestion() {
+        const q = DECK[state.idx];
+        const chosen = state.answers[state.idx];
+        const isLast = state.idx === DECK.length - 1;
+        const answered = answeredCount();
+
+        quizCard.innerHTML = "";
+
+        const meta = document.createElement("div");
+        meta.className = "q-meta";
+        meta.innerHTML =
+          `<span class="q-topic" data-axis="${q.a}">${q.topic}</span>` +
+          `<span class="q-count">${state.idx + 1} / ${DECK.length}</span>`;
+        quizCard.appendChild(meta);
+
+        const prompt = document.createElement("h3");
+        prompt.className = "q-prompt";
+        prompt.textContent = q.q;
+        quizCard.appendChild(prompt);
+
+        const list = document.createElement("div");
+        list.className = "q-options";
+        list.setAttribute("role", "radiogroup");
+        list.setAttribute("aria-label", "Answers");
+        q.opts.forEach((opt, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "q-option";
+          btn.setAttribute("role", "radio");
+          btn.setAttribute("aria-checked", chosen === i ? "true" : "false");
+          if (chosen === i) btn.classList.add("selected");
+          btn.innerHTML = `<span class="q-key">${i + 1}</span><span class="q-text"></span>`;
+          btn.querySelector(".q-text").textContent = opt.t;
+          btn.addEventListener("click", () => selectOption(i));
+          list.appendChild(btn);
+        });
+        quizCard.appendChild(list);
+
+        const nav = document.createElement("div");
+        nav.className = "q-nav";
+
+        const back = document.createElement("button");
+        back.type = "button";
+        back.className = "btn btn-ghost";
+        back.textContent = "\u2190 Back";
+        back.disabled = state.idx === 0;
+        back.addEventListener("click", () => goTo(state.idx - 1));
+        nav.appendChild(back);
+
+        const right = document.createElement("div");
+        right.className = "q-nav-right";
+
+        if (!isLast) {
+          const next = document.createElement("button");
+          next.type = "button";
+          next.className = chosen >= 0 ? "btn" : "btn btn-ghost";
+          next.textContent = chosen >= 0 ? "Next \u2192" : "Skip \u2192";
+          next.addEventListener("click", () => goTo(state.idx + 1));
+          right.appendChild(next);
+        }
+
+        if (isLast || answered === DECK.length) {
+          const finish = document.createElement("button");
+          finish.type = "button";
+          finish.className = "btn btn-primary";
+          finish.textContent = answered === DECK.length ? "See my results" : `See results (${answered} answered)`;
+          finish.disabled = answered === 0;
+          finish.addEventListener("click", () => showResults());
+          right.appendChild(finish);
+        }
+
+        nav.appendChild(right);
+        quizCard.appendChild(nav);
+        renderProgress();
+      }
+
+      function selectOption(optIdx) {
+        state.answers[state.idx] = optIdx;
+        saveLocal();
+        renderQuestion();
+        if (advanceTimer) clearTimeout(advanceTimer);
+        if (state.idx < DECK.length - 1) {
+          advanceTimer = setTimeout(() => goTo(state.idx + 1), 260);
+        }
+      }
+
+      function goTo(idx) {
+        if (advanceTimer) { clearTimeout(advanceTimer); advanceTimer = null; }
+        state.idx = Math.min(Math.max(0, idx), DECK.length - 1);
+        saveLocal();
+        renderQuestion();
+      }
+
+      // ---- results rendering ----
+
+      function fmtScore(v) {
+        return (v >= 0 ? "+" : "\u2212") + Math.abs(v).toFixed(2);
+      }
+
+      function barMarkup(v, axisKey, seedV) {
+        const left = v >= 0 ? 50 : 50 + v * 50;
+        const width = Math.abs(v) * 50;
+        const seedDot = seedV === undefined
+          ? ""
+          : `<span class="bar-seed" style="left:${50 + seedV * 50}%" title="archetype position"></span>`;
+        return (
+          `<span class="bar-track" data-axis="${axisKey}">` +
+          `<span class="bar-center"></span>` +
+          `<span class="bar-fill" style="left:${left}%;width:${width}%"></span>` +
+          seedDot +
+          `</span>`
+        );
+      }
+
+      function renderVerdict(scores, ranked) {
+        const top = ranked[0];
+        const runners = ranked.slice(1, 3);
+        const scoredKeys = AXIS_KEYS.filter((key) => scores[key] !== null);
+
+        let fpRows = "";
+        AXIS_KEYS.forEach((key) => {
+          const axis = AXIS_BY_KEY[key];
+          const v = scores[key];
+          fpRows +=
+            `<div class="v-row" data-axis="${key}">` +
+            `<span class="v-name">${axis.name}</span>` +
+            (v === null
+              ? `<span class="v-unscored">skipped</span>`
+              : barMarkup(v, key, top.arch.seed[key]) + `<span class="v-num">${fmtScore(v)}</span>`) +
+            `</div>`;
+        });
+
+        const runnersHtml = runners
+          .map((r) => `<a href="#arch-${r.index}">${r.arch.name}</a> <span class="fit-small">${r.fit}%</span>`)
+          .join(" \u00b7 ");
+
+        verdictEl.innerHTML =
+          `<p class="v-kicker">You are</p>` +
+          `<h2 class="v-title">${top.arch.name}</h2>` +
+          `<p class="v-tag">${top.arch.tag}</p>` +
+          `<p class="v-fit"><span class="fit-chip">${top.fit}% fit</span>${scoredKeys.length < AXIS_KEYS.length ? `<span class="fit-note">matched on ${scoredKeys.length} of 5 axes</span>` : ""}</p>` +
+          `<p class="v-desc">${top.arch.desc}</p>` +
+          `<div class="v-fingerprint">${fpRows}</div>` +
+          `<p class="v-legend">Solid bar: you. Hollow tick: ${top.arch.name}.</p>` +
+          `<p class="v-runners">Also close: ${runnersHtml}</p>`;
+      }
+
+      function renderAxesReport(scores) {
+        let html = "<h2>Your five axes</h2>";
+        AXIS_KEYS.forEach((key) => {
+          const axis = AXIS_BY_KEY[key];
+          const v = scores[key];
+          html += `<div class="report-row" data-axis="${key}">`;
+          html += `<div class="report-head"><span class="report-name">${axis.name}</span>`;
+          if (v !== null) html += `<span class="report-num">${fmtScore(v)}</span>`;
+          html += `</div>`;
+          if (v === null) {
+            html += `<p class="report-blurb report-unscored">You skipped every ${axis.name.toLowerCase()} question, so this axis is unscored.</p>`;
+          } else {
+            html += `<div class="report-bar-row"><span class="report-pole">${axis.neg}</span>${barMarkup(v, key)}<span class="report-pole">${axis.pos}</span></div>`;
+            html += `<p class="report-blurb">${AXIS_READINGS[key][bucketIndex(v)]}</p>`;
+          }
+          html += `</div>`;
+        });
+        axesReportEl.innerHTML = html;
+      }
+
+      function renderMinimap(scores, ranked) {
+        const size = 340;
+        const pad = 34;
+        const plot = size - pad * 2;
+        const px = (v) => pad + ((v + 1) / 2) * plot;
+        const py = (v) => pad + ((1 - v) / 2) * plot;
+        const hasPoint = scores.T !== null && scores.V !== null;
+
+        let dots = "";
+        ranked.slice(0, 3).forEach((r, i) => {
+          const x = px(r.arch.seed.T);
+          const y = py(r.arch.seed.V);
+          dots +=
+            `<circle cx="${x}" cy="${y}" r="9" class="mm-seed"></circle>` +
+            `<text x="${x}" y="${y}" class="mm-seed-num" dy="0.36em">${i + 1}</text>`;
+        });
+
+        let you = "";
+        if (hasPoint) {
+          const x = px(scores.T);
+          const y = py(scores.V);
+          you =
+            `<circle cx="${x}" cy="${y}" r="13" class="mm-you-halo"></circle>` +
+            `<circle cx="${x}" cy="${y}" r="5.5" class="mm-you"></circle>`;
+        }
+
+        minimapEl.innerHTML =
+          `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Your position on the trajectory and valence plane">` +
+          `<rect x="${pad}" y="${pad}" width="${plot}" height="${plot}" class="mm-frame"></rect>` +
+          `<line x1="${px(0)}" y1="${pad}" x2="${px(0)}" y2="${pad + plot}" class="mm-axis"></line>` +
+          `<line x1="${pad}" y1="${py(0)}" x2="${pad + plot}" y2="${py(0)}" class="mm-axis"></line>` +
+          `<text x="${pad + plot / 2}" y="${pad - 12}" class="mm-pole" text-anchor="middle">flourishing</text>` +
+          `<text x="${pad + plot / 2}" y="${pad + plot + 22}" class="mm-pole" text-anchor="middle">harm</text>` +
+          `<text x="${pad - 10}" y="${pad + plot / 2}" class="mm-pole mm-pole-v" text-anchor="middle" transform="rotate(-90 ${pad - 10} ${pad + plot / 2})">plateau</text>` +
+          `<text x="${pad + plot + 12}" y="${pad + plot / 2}" class="mm-pole mm-pole-v" text-anchor="middle" transform="rotate(90 ${pad + plot + 12} ${pad + plot / 2})">takeoff</text>` +
+          `<text x="${pad + plot - 8}" y="${pad + 18}" class="mm-quad" text-anchor="end">golden age</text>` +
+          `<text x="${pad + 8}" y="${pad + 18}" class="mm-quad">pleasant tool</text>` +
+          `<text x="${pad + 8}" y="${pad + plot - 10}" class="mm-quad">expensive mess</text>` +
+          `<text x="${pad + plot - 8}" y="${pad + plot - 10}" class="mm-quad" text-anchor="end">the cliff</text>` +
+          dots + you +
+          `</svg>` +
+          (hasPoint ? "" : `<p class="minimap-caption">Answer at least one trajectory and one valence question to place your point.</p>`);
+      }
+
+      function buildSummaryText(scores, ranked) {
+        const top = ranked[0];
+        const parts = AXIS_KEYS
+          .filter((key) => scores[key] !== null)
+          .map((key) => `${AXIS_BY_KEY[key].name} ${fmtScore(scores[key])}`);
+        return (
+          `The AI Compass \u2014 I'm ${top.arch.name} (${top.fit}% fit).\n` +
+          parts.join(" \u00b7 ") + "\n" +
+          location.origin + location.pathname + "#a=" + encodeAnswers()
+        );
+      }
+
+      function showResults(persist = true) {
+        const scores = axisScores();
+        const ranked = matchArchetypes(scores);
+        if (ranked.length === 0) return;
+
+        state.finished = true;
+        if (persist) saveLocal();
+        history.replaceState(null, "", "#a=" + encodeAnswers());
+
+        renderVerdict(scores, ranked);
+        renderAxesReport(scores);
+        renderMinimap(scores, ranked);
+
+        quizShell.hidden = true;
+        resultsSection.hidden = false;
+        requestAnimationFrame(() => {
+          resultsSection.classList.add("in");
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        const copyLink = document.getElementById("copy-link");
+        const copyText = document.getElementById("copy-text");
+        copyLink.onclick = () => copyToClipboard(copyLink, location.href, "Copy share link");
+        copyText.onclick = () => copyToClipboard(copyText, buildSummaryText(scores, ranked), "Copy result as text");
+      }
+
+      function copyToClipboard(btn, text, restoreLabel) {
+        const done = () => {
+          btn.textContent = "Copied";
+          setTimeout(() => { btn.textContent = restoreLabel; }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, () => window.prompt("Copy this:", text));
+        } else {
+          window.prompt("Copy this:", text);
+        }
+      }
+
+      function showQuiz() {
+        resultsSection.hidden = true;
+        resultsSection.classList.remove("in");
+        quizShell.hidden = false;
+        renderQuestion();
+      }
+
+      document.getElementById("review-answers").addEventListener("click", () => {
+        state.idx = 0;
+        showQuiz();
+        quizSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document.getElementById("retake").addEventListener("click", () => {
+        state.answers = new Array(DECK.length).fill(-1);
+        state.idx = 0;
+        state.finished = false;
+        try { localStorage.removeItem(STORE_KEY); } catch (_) { /* noop */ }
+        history.replaceState(null, "", location.pathname);
+        showQuiz();
+        quizSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (quizShell.hidden) return;
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
+        const q = DECK[state.idx];
+        if (event.key >= "1" && event.key <= String(q.opts.length)) {
+          selectOption(parseInt(event.key, 10) - 1);
+          event.preventDefault();
+        } else if (event.key === "ArrowLeft") {
+          goTo(state.idx - 1);
+          event.preventDefault();
+        } else if (event.key === "ArrowRight") {
+          goTo(state.idx + 1);
+          event.preventDefault();
+        }
+      });
+
+      // ---- boot ----
+
+      const hashMatch = location.hash.match(/^#a=([0-9]+)$/);
+      const fromHash = hashMatch ? decodeAnswers(hashMatch[1]) : null;
+      if (fromHash && fromHash.some((v) => v >= 0)) {
+        state.answers = fromHash;
+        state.finished = true;
+        quizShell.hidden = false;
+        renderQuestion();
+        showResults(false);
+      } else {
+        loadLocal();
+        quizShell.hidden = false;
+        if (state.finished && answeredCount() > 0) {
+          renderQuestion();
+          showResults();
+        } else {
+          renderQuestion();
+        }
+      }
+    </script>
+  </body>
+</html>

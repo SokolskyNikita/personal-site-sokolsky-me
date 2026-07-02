@@ -453,6 +453,14 @@ const structuredData = {
   const mapElement = document.querySelector("#restaurant-map");
   const mapStatus = document.querySelector("#restaurant-map-status");
   const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const filterUrlParams = [
+    "neighborhood",
+    "cuisine",
+    "delivery",
+    "breakfast",
+    "brunch",
+    "excludeHotels",
+  ];
   const markerRecords = [];
   let restaurantMap;
   let infoWindow;
@@ -576,6 +584,35 @@ const structuredData = {
     fitMapToMarkers(visibleRecords);
   };
 
+  const updateFilterUrl = (
+    selectedNeighborhood,
+    selectedCuisine,
+    deliveryOnly,
+    breakfastOnly,
+    brunchOnly,
+    excludeHotels,
+  ) => {
+    const url = new URL(window.location.href);
+
+    for (const paramName of filterUrlParams) {
+      url.searchParams.delete(paramName);
+    }
+
+    if (selectedNeighborhood) url.searchParams.set("neighborhood", selectedNeighborhood);
+    if (selectedCuisine) url.searchParams.set("cuisine", selectedCuisine);
+    if (deliveryOnly) url.searchParams.set("delivery", "1");
+    if (breakfastOnly) url.searchParams.set("breakfast", "1");
+    if (brunchOnly) url.searchParams.set("brunch", "1");
+    if (excludeHotels) url.searchParams.set("excludeHotels", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
   const initRestaurantMap = async () => {
     if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
 
@@ -619,13 +656,24 @@ const structuredData = {
     );
   };
 
-  const applyFilters = () => {
+  const applyFilters = ({ syncUrl = true } = {}) => {
     const selectedNeighborhood = neighborhoodFilter?.value ?? "";
     const selectedCuisine = cuisineFilter?.value ?? "";
     const deliveryOnly = deliveryFilter?.checked ?? false;
     const breakfastOnly = breakfastFilter?.checked ?? false;
     const brunchOnly = brunchFilter?.checked ?? false;
     const excludeHotels = excludeHotelsFilter?.checked ?? false;
+
+    if (syncUrl) {
+      updateFilterUrl(
+        selectedNeighborhood,
+        selectedCuisine,
+        deliveryOnly,
+        breakfastOnly,
+        brunchOnly,
+        excludeHotels,
+      );
+    }
 
     for (const row of restaurantRows) {
       const cuisines = row.dataset.cuisineTypes?.split("|") ?? [];
@@ -655,7 +703,7 @@ const structuredData = {
     );
   };
 
-  const resetFilters = () => {
+  const resetControls = () => {
     if (defaultSort) defaultSort.checked = true;
     if (defaultCurrency) defaultCurrency.checked = true;
     if (neighborhoodFilter) neighborhoodFilter.value = "";
@@ -664,8 +712,34 @@ const structuredData = {
     if (breakfastFilter) breakfastFilter.checked = false;
     if (brunchFilter) brunchFilter.checked = false;
     if (excludeHotelsFilter) excludeHotelsFilter.checked = false;
+  };
 
-    applyFilters();
+  const setSelectFromUrl = (selectElement, value) => {
+    if (!selectElement || !value) return;
+
+    const hasOption = [...selectElement.options].some((option) => option.value === value);
+    if (hasOption) selectElement.value = value;
+  };
+
+  const hasEnabledUrlParam = (params, paramName) => {
+    const value = params.get(paramName);
+    if (value === null) return false;
+
+    return !["0", "false", "no", "off"].includes(value.toLowerCase());
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    resetControls();
+    setSelectFromUrl(neighborhoodFilter, params.get("neighborhood"));
+    setSelectFromUrl(cuisineFilter, params.get("cuisine"));
+    if (deliveryFilter) deliveryFilter.checked = hasEnabledUrlParam(params, "delivery");
+    if (breakfastFilter) breakfastFilter.checked = hasEnabledUrlParam(params, "breakfast");
+    if (brunchFilter) brunchFilter.checked = hasEnabledUrlParam(params, "brunch");
+    if (excludeHotelsFilter) excludeHotelsFilter.checked = hasEnabledUrlParam(params, "excludeHotels");
+
+    applyFilters({ syncUrl: false });
   };
 
   neighborhoodFilter?.addEventListener("change", applyFilters);
@@ -674,8 +748,9 @@ const structuredData = {
   breakfastFilter?.addEventListener("change", applyFilters);
   brunchFilter?.addEventListener("change", applyFilters);
   excludeHotelsFilter?.addEventListener("change", applyFilters);
-  resetFilters();
-  window.addEventListener("pageshow", resetFilters);
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
   initRestaurantMap().catch((error) => {
     console.error("Unable to initialize restaurant map", error);
     if (mapStatus) mapStatus.textContent = "Map unavailable. Restaurant list still works.";
