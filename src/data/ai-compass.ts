@@ -1,6 +1,6 @@
 // Shared data for the AI Compass quiz page and its companion about page.
-// Five axes. Every question loads on exactly one of them, so the dimensions
-// stay independent instead of collapsing into "how much do you like AI."
+// Five opinion axes. The quiz page adds Certainty as a derived dimension from
+// skipped questions, while archetype matching stays on these five dimensions.
 export const AXES = [
   {
     key: "T",
@@ -202,7 +202,7 @@ export const DECK = [
   {
     a: "I",
     topic: "3 a.m.",
-    q: "It’s 3 a.m. and something is wrong — a strange symptom, a legal letter, a breakup. Who do you ask first?",
+    q: "It’s 3 a.m. and something is wrong — a strange symptom or a legal letter. Who do you ask first?",
     opts: [
       { t: "A human, always. The machine gets none of my 3 a.m.s.", s: -2 },
       { t: "I might search, but I’d never take its word alone.", s: -1 },
@@ -405,8 +405,8 @@ export const DECK = [
   },
 ];
 
-// 21 archetypes, each a point in the five-dimensional space [T, V, S, I, P],
-// every coordinate in [-1, 1]. Matching is nearest-neighbor over scored axes.
+// 22 archetypes. Most are points in the five-dimensional space [T, V, S, I, P],
+// every coordinate in [-1, 1]. The last one is reserved for very low Certainty.
 export const ARCHETYPES = [
   {
     name: "The Short Seller",
@@ -554,6 +554,13 @@ export const ARCHETYPES = [
     habitat: "Habitat: reading both newsletters, agreeing with neither comment section.",
     seed: { T: 0.0, V: 0.1, S: 0.1, I: 0.2, P: -0.1 },
     desc: "You hold the least fashionable position in the discourse: you are actually still deciding. You use the tools, you notice both the magic and the mess, and you decline to join a tribe about it. Everyone is fighting over you — the evangelists, the doomers, the skeptics — because you are the one thing none of them are: still listening.",
+  },
+  {
+    name: "The Open Question",
+    tag: "Still loading. Honestly admirable.",
+    habitat: "Habitat: the tab left open while everyone else is already posting.",
+    seed: { T: 0.0, V: 0.0, S: 0.0, I: 0.0, P: 0.0 },
+    desc: "You skipped enough questions that the honest result is not a tribe but a question mark with good posture. Maybe you are new to the discourse, maybe allergic to false precision, maybe simply unwilling to pretend you know what a civilization-scale technology is doing while it is still happening. This is not apathy. It is a refusal to outsource your uncertainty to the nearest loud person.",
   },
 ];
 

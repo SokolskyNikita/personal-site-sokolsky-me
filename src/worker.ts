@@ -180,10 +180,14 @@ function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
     parsedScores[key] = value;
   }
 
-  const runnerIndexes = readNumberArray(payload.runnerIndexes, 2, 0, 20);
+  const runnerIndexes = readNumberArray(payload.runnerIndexes, 2, 0, 21);
   const runnerNames = readStringArray(payload.runnerNames, 2, 80);
   const runnerFits = readNumberArray(payload.runnerFits, 2, 0, 100);
   if (!runnerIndexes || !runnerNames || !runnerFits) return null;
+
+  const answers = payload.answers;
+  if (typeof answers !== "string" || !/^[0-5]{30}$/.test(answers)) return null;
+  const answeredCount = answers.split("").filter((digit) => digit !== "0").length;
 
   const durationMs = payload.durationMs;
   const parsedDurationMs =
@@ -200,10 +204,8 @@ function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
     typeof payload.path !== "string" ||
     !payload.path.startsWith("/tests/ai-compass") ||
     payload.path.length > 128 ||
-    typeof payload.answers !== "string" ||
-    !/^[1-5]{30}$/.test(payload.answers) ||
-    payload.answeredCount !== 30 ||
-    !isIntegerInRange(payload.archetypeIndex, 0, 20) ||
+    payload.answeredCount !== answeredCount ||
+    !isIntegerInRange(payload.archetypeIndex, 0, 21) ||
     typeof payload.archetypeName !== "string" ||
     payload.archetypeName.length < 1 ||
     payload.archetypeName.length > 80 ||
@@ -219,8 +221,8 @@ function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
     quiz: "ai-compass",
     locale: payload.locale,
     path: payload.path,
-    answers: payload.answers,
-    answeredCount: 30,
+    answers,
+    answeredCount,
     archetypeIndex: payload.archetypeIndex,
     archetypeName: payload.archetypeName,
     archetypeFit: payload.archetypeFit,

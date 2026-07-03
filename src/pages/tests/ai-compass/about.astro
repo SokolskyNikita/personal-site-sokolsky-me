@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "How the AI Compass works";
 const pageDescription =
-  "The manual for the AI Compass: the five axes it measures, the twenty-one archetypes it can hand you and the scoring that connects them.";
+  "The manual for the AI Compass: the five opinion axes, the Certainty score, the twenty-two archetypes it can hand you and the scoring that connects them.";
 const themeColorLight = "#fbfaf6";
 const themeColorDark = "#171410";
 const siteUrl =
@@ -39,7 +39,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Methodology of a five-axis personality test about attitudes toward artificial intelligence." />
+    <meta name="subject" content="Methodology of a personality test about attitudes toward artificial intelligence." />
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
@@ -82,7 +82,7 @@ const structuredData = {
           <p class="hero-kicker">The manual</p>
           <h1>How the AI Compass works</h1>
           <p class="hero-description">
-            Five axes, twenty-one archetypes, one nearest-neighbor match. Everything the quiz does, spelled out.
+            Five opinion axes, one Certainty score, twenty-two archetypes. Everything the quiz does, spelled out.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="/tests/ai-compass">Take the quiz</a>
@@ -92,9 +92,9 @@ const structuredData = {
 
       <article class="article">
         <section id="axes" aria-labelledby="axes-heading">
-          <h2 id="axes-heading">The five axes</h2>
+          <h2 id="axes-heading">The five axes, plus Certainty</h2>
           <p>
-            Most AI quizzes measure one thing: how much you like it. This one measures five things that actually vary independently. Each question loads on exactly one axis, six questions per axis.
+            Most AI quizzes measure one thing: how much you like it. This one measures five things that actually vary independently. Each question loads on exactly one opinion axis, six questions per axis. Certainty is derived separately from how often you skip.
           </p>
           <ul class="axis-legend">
             {AXES.map((axis) => (
@@ -105,16 +105,22 @@ const structuredData = {
                 <span class="axis-legend-ask">{axis.ask}</span>
               </li>
             ))}
+            <li class="axis-legend-row" data-axis="C">
+              <span class="axis-swatch" aria-hidden="true"></span>
+              <span class="axis-legend-name">Certainty</span>
+              <span class="axis-legend-poles">Uncertain &harr; Certain</span>
+              <span class="axis-legend-ask">How often did you know where you stood well enough to answer?</span>
+            </li>
           </ul>
           <p class="axis-legend-note">
-            30 questions, about five minutes. Every question is required. Nothing leaves your browser unless you copy the share link.
+            30 questions, about five minutes. You can answer or skip each one. Nothing leaves your browser unless you copy the share link.
           </p>
         </section>
 
         <section id="archetypes" aria-labelledby="archetypes-heading">
-          <h2 id="archetypes-heading">The twenty-one archetypes</h2>
+          <h2 id="archetypes-heading">The twenty-two archetypes</h2>
           <p>
-            Each archetype is a fixed point in the five-dimensional space. The bars show its coordinates: left of center toward the first pole, right of center toward the second. Your answers land somewhere in the same space, and the nearest points win.
+            Most archetypes are fixed points in the five-dimensional opinion space. The bars show their coordinates: left of center toward the first pole, right of center toward the second. Your answers land somewhere in the same space, and the nearest points win. The Open Question is the exception: it is reserved for the lowest Certainty results.
           </p>
           <div class="archetype-grid">
             {ARCHETYPES.map((arch, index) => (
@@ -144,10 +150,10 @@ const structuredData = {
         <section id="method" aria-labelledby="method-heading">
           <h2 id="method-heading">How the scoring works</h2>
           <p>
-            Every question loads on exactly one axis, and every answer carries a score from &minus;2 to +2 on that axis. Your position on an axis is the mean of your answers there, rescaled to the interval from &minus;1 to +1. Six questions per axis, thirty in total. You answer all of them, so every axis gets the same weight.
+            Every question loads on exactly one opinion axis, and every answer carries a score from &minus;2 to +2 on that axis. Your position on an axis is the mean of your answers there, rescaled to the interval from &minus;1 to +1. Six questions per axis, thirty in total. A skipped question counts as neutral on its opinion axis and lowers your Certainty score.
           </p>
           <p>
-            The archetype match is nearest-neighbor: each archetype sits at a fixed point in the five-dimensional space, and your result is whichever point lies closest to yours, using root-mean-square distance over the axes you scored. The fit percentage is that distance mapped onto a 0&ndash;100 scale, where 100 means you sit exactly on the archetype and 0 means you sit in the opposite corner of the space.
+            The archetype match is usually nearest-neighbor: each regular archetype sits at a fixed point in the five-dimensional space, and your result is whichever point lies closest to yours, using root-mean-square distance over the axes you scored. The fit percentage is that distance mapped onto a 0&ndash;100 scale, where 100 means you sit exactly on the archetype and 0 means you sit in the opposite corner of the space. If your Certainty lands in the lowest bucket, the test returns The Open Question instead.
           </p>
           <p>
             The questions are opinionated on purpose. Neutral wording produces neutral lies: nobody has ever held the position &ldquo;I somewhat agree that technology has implications.&rdquo; The options are written the way actual people actually talk, which is what makes picking one informative. The five-axis structure follows what attitude research and the discourse itself keep finding: capability beliefs, harm&ndash;benefit judgments, governance preferences, personal adoption and mind attribution move independently. A person can believe AI is world-changing and terrible, use it every day and want it regulated into a licensed utility &mdash; one number cannot hold that person, and two numbers barely manage.

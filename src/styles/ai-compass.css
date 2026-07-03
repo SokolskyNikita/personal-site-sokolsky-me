@@ -14,6 +14,7 @@
   --ax-s: #a03e2e;
   --ax-i: #3e5a7a;
   --ax-p: #6d4a78;
+  --ax-c: #7c6852;
   --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
   --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
@@ -35,6 +36,7 @@
     --ax-s: #dd8a75;
     --ax-i: #8fb0d1;
     --ax-p: #b78cc4;
+    --ax-c: #d0b18d;
   }
 }
 
@@ -241,6 +243,7 @@ a:hover {
 [data-axis="S"] { --ax: var(--ax-s); }
 [data-axis="I"] { --ax: var(--ax-i); }
 [data-axis="P"] { --ax: var(--ax-p); }
+[data-axis="C"] { --ax: var(--ax-c); }
 
 /* ---- axis legend ---- */
 
@@ -343,6 +346,11 @@ a:hover {
 
 .p-dot.done {
   background: var(--ax);
+}
+
+.p-dot.skipped {
+  background: color-mix(in srgb, var(--ax) 18%, transparent);
+  box-shadow: inset 0 0 0 2px var(--paper);
 }
 
 .p-dot.here {
@@ -478,6 +486,8 @@ a:hover {
 
 .q-nav-right {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.6rem;
   align-items: center;
 }
@@ -519,6 +529,12 @@ a:hover {
   border-color: transparent;
   background: transparent;
   color: var(--muted);
+}
+
+.btn-skip.selected {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--rule));
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 /* ---- results ---- */

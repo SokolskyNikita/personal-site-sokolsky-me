@@ -1,0 +1,1310 @@
+---
+import pageData from "../../data/wash-and-fold-buenos-aires.json";
+
+export const prerender = true;
+
+const pageTitle = "Wash-and-fold laundries in Buenos Aires";
+const pageDescription =
+  "Buenos Aires wash-and-fold laundries checked against Google Maps, with open status, review counts, service evidence, hours, addresses, and a map.";
+const themeColorLight = "#eef6f4";
+const themeColorDark = "#0c1516";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type Laundry = (typeof pageData.laundries)[number];
+const laundries = pageData.laundries;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+});
+const collator = new Intl.Collator("en", {
+  sensitivity: "base",
+  numeric: true,
+});
+const weekdayPattern = /^(Monday|Tuesday|Wednesday|Thursday|Friday):\s*(.+)$/;
+const saturdayPattern = /^Saturday:\s*(.+)$/;
+const normalizeHourText = (value: string) =>
+  value.replace(/[–—]/g, "-").replace(/[\u202f\u2009]/g, " ").replace(/\s+/g, " ").trim();
+const timeToMinutes = (value: string, fallbackPeriod = "") => {
+  const match = normalizeHourText(value).match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+  if (!match) return null;
+
+  let hour = Number(match[1]);
+  const minute = Number(match[2] ?? "0");
+  const period = (match[3] ?? fallbackPeriod).toUpperCase();
+
+  if (period === "AM" && hour === 12) hour = 0;
+  if (period === "PM" && hour !== 12) hour += 12;
+
+  return hour * 60 + minute;
+};
+const closesAfter = (hours: string, targetMinutes: number) => {
+  const normalizedHours = normalizeHourText(hours);
+
+  if (/closed/i.test(normalizedHours)) return false;
+  if (/open 24 hours|24 hours/i.test(normalizedHours)) return true;
+
+  return normalizedHours.split(",").some((range) => {
+    const [rawStart, rawEnd] = range.split(/\s+-\s+/);
+    if (!rawStart || !rawEnd) return false;
+
+    const endPeriod = rawEnd.match(/\b(AM|PM)\b/i)?.[1] ?? "";
+    const startPeriod = rawStart.match(/\b(AM|PM)\b/i)?.[1] ?? endPeriod;
+    const openMinutes = timeToMinutes(rawStart, startPeriod);
+    const closeMinutes = timeToMinutes(rawEnd, endPeriod);
+
+    if (closeMinutes === null) return false;
+    if (openMinutes !== null && closeMinutes <= openMinutes) return true;
+
+    return closeMinutes > targetMinutes;
+  });
+};
+const isOpenPast6OnWeekday = (laundry: Laundry) =>
+  laundry.weekdayHours.some((weekdayHours) => {
+    const match = normalizeHourText(weekdayHours).match(weekdayPattern);
+    return Boolean(match && closesAfter(match[2], 18 * 60));
+  });
+const isOpenPast3OnSaturday = (laundry: Laundry) =>
+  laundry.weekdayHours.some((weekdayHours) => {
+    const match = normalizeHourText(weekdayHours).match(saturdayPattern);
+    return Boolean(match && closesAfter(match[1], 15 * 60));
+  });
+const openPast6WeekdaysById = new Map(
+  laundries.map((laundry: Laundry) => [laundry.id, isOpenPast6OnWeekday(laundry)]),
+);
+const openPast3SaturdaysById = new Map(
+  laundries.map((laundry: Laundry) => [laundry.id, isOpenPast3OnSaturday(laundry)]),
+);
+const neighborhoodCounts = laundries.reduce((counts, laundry: Laundry) => {
+  counts.set(laundry.neighborhood, (counts.get(laundry.neighborhood) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const neighborhoodOptions = [...neighborhoodCounts.entries()]
+  .sort(
+    ([nameA, countA], [nameB, countB]) =>
+      countB - countA || collator.compare(nameA, nameB),
+  )
+  .map(([name, count]) => ({ name, count }));
+const openSundayCount = laundries.filter((laundry: Laundry) => laundry.openSunday).length;
+const sameDayCount = laundries.filter(
+  (laundry: Laundry) => laundry.sameDayService.available,
+).length;
+const openPast6WeekdaysCount = [...openPast6WeekdaysById.values()].filter(Boolean).length;
+const openPast3SaturdaysCount = [...openPast3SaturdaysById.values()].filter(Boolean).length;
+const websiteCount = laundries.filter(
+  (laundry: Laundry) => laundry.officialUrlType !== "google_maps",
+).length;
+const sortRank = (
+  items: Laundry[],
+  compare: (a: Laundry, b: Laundry) => number,
+) =>
+  new Map<string, number>(
+    items
+      .toSorted(compare)
+      .map((laundry: Laundry, index: number) => [laundry.id, index + 1]),
+  );
+const nameRanks = sortRank(laundries, (a: Laundry, b: Laundry) =>
+  collator.compare(a.name, b.name),
+);
+const ratingRanks = sortRank(
+  laundries,
+  (a: Laundry, b: Laundry) =>
+    b.rating - a.rating ||
+    b.reviewCount - a.reviewCount ||
+    collator.compare(a.name, b.name),
+);
+const popularityRanks = sortRank(
+  laundries,
+  (a: Laundry, b: Laundry) =>
+    b.reviewCount - a.reviewCount ||
+    b.rating - a.rating ||
+    collator.compare(a.name, b.name),
+);
+const laundriesWithSort = laundries.map((laundry: Laundry) => ({
+  ...laundry,
+  reviewCountLabel: formatter.format(laundry.reviewCount),
+  officialLabel:
+    laundry.officialUrlType === "instagram"
+      ? "Instagram"
+      : laundry.officialUrlType === "website"
+        ? "Website"
+        : "GMaps",
+  openPast6Weekdays: openPast6WeekdaysById.get(laundry.id) ?? false,
+  openPast3Saturdays: openPast3SaturdaysById.get(laundry.id) ?? false,
+  sortOrderStyle: [
+    `--sort-name: ${nameRanks.get(laundry.id)}`,
+    `--sort-rating: ${ratingRanks.get(laundry.id)}`,
+    `--sort-popularity: ${popularityRanks.get(laundry.id)}`,
+  ].join("; "),
+}));
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const laundryMapData = laundries.map((laundry: Laundry) => ({
+  id: laundry.id,
+  name: laundry.name,
+  googleMapsUrl: laundry.googleMapsUrl,
+  neighborhood: laundry.neighborhood,
+  openSunday: laundry.openSunday,
+  sameDayService: laundry.sameDayService.available,
+  openPast6Weekdays: openPast6WeekdaysById.get(laundry.id) ?? false,
+  openPast3Saturdays: openPast3SaturdaysById.get(laundry.id) ?? false,
+  position: laundry.location,
+}));
+const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: laundries.length,
+  itemListElement: laundries.map((laundry, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "DryCleaningOrLaundry",
+      name: laundry.name,
+      url: laundry.officialUrl,
+      sameAs: laundry.googleMapsUrl,
+      address: laundry.fullAddress,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: laundry.location.lat,
+        longitude: laundry.location.lng,
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: laundry.rating.toFixed(1),
+        ratingCount: laundry.reviewCount,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Wash-and-fold laundries in Buenos Aires" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires laundry, wash and fold Buenos Aires, lavanderia Buenos Aires, lavado y secado Buenos Aires, lavadero Palermo, lavanderia Recoleta"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            {laundries.length} laundries listed as open in Google Maps with at least {pageData.validation.minReviewCount} reviews and wash-and-fold evidence from websites, socials, or Maps reviews.
+          </p>
+        </div>
+        <div class="toolbar" aria-label="Laundry controls">
+          <fieldset class="sort-toggle">
+            <legend>Sort by</legend>
+            <input id="sort-rating" type="radio" name="sort" autocomplete="off" checked />
+            <label for="sort-rating">GMaps rating</label>
+            <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-popularity">Popularity</label>
+            <input id="sort-name" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-name">Name</label>
+          </fieldset>
+          <fieldset class="extras-toggle">
+            <legend>Filter</legend>
+            <input id="filter-open-sunday" type="checkbox" autocomplete="off" />
+            <label for="filter-open-sunday">Open Sunday ({openSundayCount})</label>
+            <input id="filter-same-day" type="checkbox" autocomplete="off" />
+            <label for="filter-same-day">Same day service ({sameDayCount})</label>
+            <input id="filter-open-past-6-weekdays" type="checkbox" autocomplete="off" />
+            <label for="filter-open-past-6-weekdays">Open past 6pm on weekdays ({openPast6WeekdaysCount})</label>
+            <input id="filter-open-past-3-saturdays" type="checkbox" autocomplete="off" />
+            <label for="filter-open-past-3-saturdays">Open past 3pm on Saturdays ({openPast3SaturdaysCount})</label>
+          </fieldset>
+          <label class="filter-dropdown" for="neighborhood-filter">
+            <span>Neighborhood</span>
+            <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
+              <option value="">All ({laundries.length})</option>
+              {neighborhoodOptions.map((option) => (
+                <option value={option.name}>{option.name} ({option.count})</option>
+              ))}
+            </select>
+          </label>
+          <p class="meta">
+            Updated {updatedDate}. Verified with Google Places API, BrightData search/scrapes, and regular web search. {websiteCount} entries have website or social proof; the rest use Google Maps review evidence.
+          </p>
+        </div>
+      </header>
+
+      <section class="laundry-list" aria-label="Buenos Aires wash-and-fold laundries">
+        <div class="laundry-row laundry-head" aria-hidden="true">
+          <span>Laundry</span>
+          <span>Map</span>
+          <span>Address</span>
+          <span>Service proof</span>
+          <span>Hours</span>
+          <span>GMaps rating</span>
+          <span>Notes</span>
+        </div>
+
+        {laundriesWithSort.map((laundry) => (
+          <article
+            class="laundry-row"
+            style={laundry.sortOrderStyle}
+            data-neighborhood={laundry.neighborhood}
+            data-open-sunday={String(laundry.openSunday)}
+            data-same-day-service={String(laundry.sameDayService.available)}
+            data-open-past-6-weekdays={String(laundry.openPast6Weekdays)}
+            data-open-past-3-saturdays={String(laundry.openPast3Saturdays)}
+          >
+            <h2 class="laundry-name">
+              <a href={laundry.officialUrl} target="_blank" rel="noreferrer noopener">
+                {laundry.name}
+              </a>
+              <span>{laundry.officialLabel}</span>
+            </h2>
+            <div class="map-actions">
+              <a
+                class="maps-link"
+                href={laundry.googleMapsUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`Open ${laundry.name} on Google Maps`}
+                title={`Open ${laundry.name} on Google Maps`}
+              >
+                <span class="maps-icon" set:html={mapsIcon} />
+              </a>
+            </div>
+            <p class="address">{laundry.address}</p>
+            <p class="service-proof" title={`${laundry.serviceProof.source}: ${laundry.serviceProof.quote}`}>
+              <span class="proof-label">{laundry.serviceProof.label}</span>
+              <a href={laundry.serviceProof.sourceUrl} target="_blank" rel="noreferrer noopener">
+                {laundry.serviceProof.source}
+              </a>
+            </p>
+            <p class="hours">{laundry.hours}</p>
+            <p
+              class="rating"
+              aria-label={`${laundry.rating.toFixed(1)} Google Maps rating from ${laundry.reviewCountLabel} reviews`}
+            >
+              <span class="rating-score">{laundry.rating.toFixed(1)}</span>
+              <span class="review-count">{laundry.reviewCountLabel} reviews</span>
+            </p>
+            <p class="description">{laundry.description}</p>
+          </article>
+        ))}
+      </section>
+
+      <section class="method-card" aria-labelledby="method-heading">
+        <p class="eyebrow">Method</p>
+        <h2 id="method-heading">How entries made the list</h2>
+        <p>
+          Each place had to be listed as {pageData.validation.includedStatus.toLowerCase()} in Google Maps, have at least {pageData.validation.minReviewCount} Google reviews, and show wash-and-fold style service evidence from its own site/socials or from Google Maps reviews. Self-service-only laundries and non-laundry false positives were excluded.
+        </p>
+      </section>
+
+      <section class="laundry-map-section" aria-labelledby="laundry-map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="laundry-map-heading">Buenos Aires laundry map</h2>
+          <p id="laundry-map-status" class="map-status">
+            Showing all {laundries.length} laundries.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="laundry-map"
+            class="laundry-map"
+            aria-label="Google Map with pins for Buenos Aires wash-and-fold laundries"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ googleMapsApiKey, laundryMapData }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const neighborhoodFilter = document.querySelector("#neighborhood-filter");
+  const openSundayFilter = document.querySelector("#filter-open-sunday");
+  const sameDayFilter = document.querySelector("#filter-same-day");
+  const openPast6WeekdaysFilter = document.querySelector("#filter-open-past-6-weekdays");
+  const openPast3SaturdaysFilter = document.querySelector("#filter-open-past-3-saturdays");
+  const defaultSort = document.querySelector("#sort-rating");
+  const laundryRows = [...document.querySelectorAll(".laundry-row:not(.laundry-head)")];
+  const mapElement = document.querySelector("#laundry-map");
+  const mapStatus = document.querySelector("#laundry-map-status");
+  const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const filterUrlParams = [
+    "neighborhood",
+    "openSunday",
+    "sameDay",
+    "openPast6Weekdays",
+    "openPast3Saturdays",
+  ];
+  const markerRecords = [];
+  let laundryMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getVisibleLaundries = (
+    selectedNeighborhood,
+    openSundayOnly,
+    sameDayOnly,
+    openPast6WeekdaysOnly,
+    openPast3SaturdaysOnly,
+  ) =>
+    laundryMapData.filter(
+      (laundry) =>
+        (!selectedNeighborhood || laundry.neighborhood === selectedNeighborhood) &&
+        (!openSundayOnly || laundry.openSunday) &&
+        (!sameDayOnly || laundry.sameDayService) &&
+        (!openPast6WeekdaysOnly || laundry.openPast6Weekdays) &&
+        (!openPast3SaturdaysOnly || laundry.openPast3Saturdays),
+    );
+
+  const updateMapStatus = (
+    selectedNeighborhood,
+    openSundayOnly,
+    sameDayOnly,
+    openPast6WeekdaysOnly,
+    openPast3SaturdaysOnly,
+  ) => {
+    if (!mapStatus) return;
+
+    const visibleCount = getVisibleLaundries(
+      selectedNeighborhood,
+      openSundayOnly,
+      sameDayOnly,
+      openPast6WeekdaysOnly,
+      openPast3SaturdaysOnly,
+    ).length;
+    const laundryLabel = visibleCount === 1 ? "laundry" : "laundries";
+    const suffixParts = [
+      openSundayOnly ? "open on Sundays" : "",
+      sameDayOnly ? "with same-day service" : "",
+      openPast6WeekdaysOnly ? "open past 6pm on weekdays" : "",
+      openPast3SaturdaysOnly ? "open past 3pm on Saturdays" : "",
+    ].filter(Boolean);
+    const suffix = suffixParts.length ? ` ${suffixParts.join(" and ")}` : "";
+    mapStatus.textContent = selectedNeighborhood
+      ? `Showing ${visibleCount} ${selectedNeighborhood} ${laundryLabel}${suffix}.`
+      : `Showing ${openSundayOnly || sameDayOnly || openPast6WeekdaysOnly || openPast3SaturdaysOnly ? "" : "all "}${visibleCount} ${laundryLabel}${suffix}.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!laundryMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      laundryMap.setCenter(visibleRecords[0].laundry.position);
+      laundryMap.setZoom(14);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+
+    for (const { laundry } of visibleRecords) {
+      bounds.extend(laundry.position);
+    }
+
+    laundryMap.fitBounds(bounds, 44);
+  };
+
+  const syncMapMarkers = (
+    selectedNeighborhood,
+    openSundayOnly,
+    sameDayOnly,
+    openPast6WeekdaysOnly,
+    openPast3SaturdaysOnly,
+  ) => {
+    updateMapStatus(
+      selectedNeighborhood,
+      openSundayOnly,
+      sameDayOnly,
+      openPast6WeekdaysOnly,
+      openPast3SaturdaysOnly,
+    );
+
+    if (!laundryMap) return;
+
+    const visibleIds = new Set(
+      getVisibleLaundries(
+        selectedNeighborhood,
+        openSundayOnly,
+        sameDayOnly,
+        openPast6WeekdaysOnly,
+        openPast3SaturdaysOnly,
+      ).map((laundry) => laundry.id),
+    );
+    const visibleRecords = [];
+
+    for (const record of markerRecords) {
+      const isVisible = visibleIds.has(record.laundry.id);
+      record.marker.setMap(isVisible ? laundryMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    if (mapElement) mapElement.dataset.visiblePins = String(visibleRecords.length);
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const updateFilterUrl = (
+    selectedNeighborhood,
+    openSundayOnly,
+    sameDayOnly,
+    openPast6WeekdaysOnly,
+    openPast3SaturdaysOnly,
+  ) => {
+    const url = new URL(window.location.href);
+
+    for (const paramName of filterUrlParams) {
+      url.searchParams.delete(paramName);
+    }
+
+    if (selectedNeighborhood) url.searchParams.set("neighborhood", selectedNeighborhood);
+    if (openSundayOnly) url.searchParams.set("openSunday", "1");
+    if (sameDayOnly) url.searchParams.set("sameDay", "1");
+    if (openPast6WeekdaysOnly) url.searchParams.set("openPast6Weekdays", "1");
+    if (openPast3SaturdaysOnly) url.searchParams.set("openPast3Saturdays", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
+  const initLaundryMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    laundryMap = new Map(mapElement, {
+      center: buenosAiresCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 12,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const laundry of laundryMapData) {
+      const marker = new google.maps.Marker({
+        map: laundryMap,
+        position: laundry.position,
+        title: laundry.name,
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(
+          `<strong>${escapeHtml(laundry.name)}</strong><br><a href="${escapeHtml(laundry.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(laundryMap, marker);
+      });
+
+      markerRecords.push({ laundry, marker });
+    }
+
+    syncMapMarkers(
+      neighborhoodFilter?.value ?? "",
+      openSundayFilter?.checked ?? false,
+      sameDayFilter?.checked ?? false,
+      openPast6WeekdaysFilter?.checked ?? false,
+      openPast3SaturdaysFilter?.checked ?? false,
+    );
+  };
+
+  const applyFilters = ({ syncUrl = true } = {}) => {
+    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+    const openSundayOnly = openSundayFilter?.checked ?? false;
+    const sameDayOnly = sameDayFilter?.checked ?? false;
+    const openPast6WeekdaysOnly = openPast6WeekdaysFilter?.checked ?? false;
+    const openPast3SaturdaysOnly = openPast3SaturdaysFilter?.checked ?? false;
+
+    if (syncUrl) {
+      updateFilterUrl(
+        selectedNeighborhood,
+        openSundayOnly,
+        sameDayOnly,
+        openPast6WeekdaysOnly,
+        openPast3SaturdaysOnly,
+      );
+    }
+
+    for (const row of laundryRows) {
+      const neighborhoodMismatch =
+        Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
+      const sundayMismatch = openSundayOnly && row.dataset.openSunday !== "true";
+      const sameDayMismatch = sameDayOnly && row.dataset.sameDayService !== "true";
+      const openPast6WeekdaysMismatch =
+        openPast6WeekdaysOnly && row.dataset.openPast6Weekdays !== "true";
+      const openPast3SaturdaysMismatch =
+        openPast3SaturdaysOnly && row.dataset.openPast3Saturdays !== "true";
+      row.hidden =
+        neighborhoodMismatch ||
+        sundayMismatch ||
+        sameDayMismatch ||
+        openPast6WeekdaysMismatch ||
+        openPast3SaturdaysMismatch;
+    }
+
+    syncMapMarkers(
+      selectedNeighborhood,
+      openSundayOnly,
+      sameDayOnly,
+      openPast6WeekdaysOnly,
+      openPast3SaturdaysOnly,
+    );
+  };
+
+  const resetControls = () => {
+    if (defaultSort) defaultSort.checked = true;
+    if (neighborhoodFilter) neighborhoodFilter.value = "";
+    if (openSundayFilter) openSundayFilter.checked = false;
+    if (sameDayFilter) sameDayFilter.checked = false;
+    if (openPast6WeekdaysFilter) openPast6WeekdaysFilter.checked = false;
+    if (openPast3SaturdaysFilter) openPast3SaturdaysFilter.checked = false;
+  };
+
+  const setSelectFromUrl = (selectElement, value) => {
+    if (!selectElement || !value) return;
+
+    const hasOption = [...selectElement.options].some((option) => option.value === value);
+    if (hasOption) selectElement.value = value;
+  };
+
+  const hasEnabledUrlParam = (params, paramName) => {
+    const value = params.get(paramName);
+    if (value === null) return false;
+
+    return !["0", "false", "no", "off"].includes(value.toLowerCase());
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    resetControls();
+    setSelectFromUrl(neighborhoodFilter, params.get("neighborhood"));
+    if (openSundayFilter) openSundayFilter.checked = hasEnabledUrlParam(params, "openSunday");
+    if (sameDayFilter) sameDayFilter.checked = hasEnabledUrlParam(params, "sameDay");
+    if (openPast6WeekdaysFilter) {
+      openPast6WeekdaysFilter.checked = hasEnabledUrlParam(params, "openPast6Weekdays");
+    }
+    if (openPast3SaturdaysFilter) {
+      openPast3SaturdaysFilter.checked = hasEnabledUrlParam(params, "openPast3Saturdays");
+    }
+
+    applyFilters({ syncUrl: false });
+  };
+
+  neighborhoodFilter?.addEventListener("change", applyFilters);
+  openSundayFilter?.addEventListener("change", applyFilters);
+  sameDayFilter?.addEventListener("change", applyFilters);
+  openPast6WeekdaysFilter?.addEventListener("change", applyFilters);
+  openPast3SaturdaysFilter?.addEventListener("change", applyFilters);
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
+  initLaundryMap().catch((error) => {
+    console.error("Unable to initialize laundry map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. Laundry list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #eef6f4;
+    --surface: #fbfffd;
+    --surface-soft: #dcebe7;
+    --text: #102022;
+    --text-muted: #5f7374;
+    --border: #c6dbd6;
+    --border-strong: #abc5bf;
+    --accent: #0e4d52;
+    --accent-soft: #cce8e2;
+    --link: #0a3438;
+    --shadow: 0 20px 60px rgba(12, 44, 46, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c1516;
+      --surface: #101d1f;
+      --surface-soft: #17292b;
+      --text: #edf7f5;
+      --text-muted: #9fb2b3;
+      --border: #263a3d;
+      --border-strong: #385154;
+      --accent: #cce8e2;
+      --accent-soft: #183537;
+      --link: #f2fbf8;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-soft), transparent 35%), transparent 32rem),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .page {
+    width: min(100%, 88rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: start;
+    padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .home-link {
+    grid-column: 1 / -1;
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.65rem;
+    max-width: 52rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 13ch;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.1rem, 5.1vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 46rem;
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.18rem);
+  }
+
+  .toolbar {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+  }
+
+  .sort-toggle,
+  .extras-toggle {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+  }
+
+  .sort-toggle {
+    border-radius: 1.2rem;
+  }
+
+  .sort-toggle legend,
+  .extras-toggle legend {
+    margin: 0 0.3rem 0 0.2rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 2.25rem;
+    text-transform: uppercase;
+  }
+
+  .sort-toggle input,
+  .extras-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sort-toggle label,
+  .extras-toggle label {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.45rem;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 700;
+    padding: 0 0.85rem;
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .sort-toggle label::before,
+  .extras-toggle label::before {
+    content: "";
+    width: 0.58rem;
+    height: 0.58rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.75;
+  }
+
+  #sort-rating:checked ~ label[for="sort-rating"],
+  #sort-popularity:checked ~ label[for="sort-popularity"],
+  #sort-name:checked ~ label[for="sort-name"],
+  #filter-open-sunday:checked ~ label[for="filter-open-sunday"],
+  #filter-same-day:checked ~ label[for="filter-same-day"],
+  #filter-open-past-6-weekdays:checked ~ label[for="filter-open-past-6-weekdays"],
+  #filter-open-past-3-saturdays:checked ~ label[for="filter-open-past-3-saturdays"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  #sort-rating:checked ~ label[for="sort-rating"]::before,
+  #sort-popularity:checked ~ label[for="sort-popularity"]::before,
+  #sort-name:checked ~ label[for="sort-name"]::before,
+  #filter-open-sunday:checked ~ label[for="filter-open-sunday"]::before,
+  #filter-same-day:checked ~ label[for="filter-same-day"]::before,
+  #filter-open-past-6-weekdays:checked ~ label[for="filter-open-past-6-weekdays"]::before,
+  #filter-open-past-3-saturdays:checked ~ label[for="filter-open-past-3-saturdays"]::before {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--accent);
+    opacity: 1;
+  }
+
+  .filter-dropdown {
+    display: grid;
+    width: min(100%, 24rem);
+    gap: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-dropdown select {
+    width: 100%;
+    min-height: 2.7rem;
+    padding: 0 2.5rem 0 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) right 0.7rem center / 0.42rem 0.42rem no-repeat,
+      color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .filter-dropdown select:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .meta {
+    margin: 0;
+    max-width: 21rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-align: left;
+  }
+
+  .laundry-list {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .laundry-row {
+    display: grid;
+    grid-template-columns:
+      minmax(8rem, 1.05fr)
+      3.25rem
+      minmax(7rem, 0.72fr)
+      minmax(9.5rem, 1fr)
+      minmax(8rem, 0.9fr)
+      minmax(6.5rem, 0.62fr)
+      minmax(14rem, 1.7fr);
+    gap: 0;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+  }
+
+  .laundry-row[hidden] {
+    display: none;
+  }
+
+  .laundry-head {
+    order: -1;
+    border-top: 0;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .laundry-row > * {
+    min-width: 0;
+    margin: 0;
+    padding: 0.86rem clamp(0.65rem, 1vw, 0.8rem);
+    border-left: 1px solid var(--border);
+    overflow-wrap: anywhere;
+  }
+
+  .laundry-row > *:first-child {
+    border-left: 0;
+  }
+
+  .laundry-name {
+    display: grid;
+    gap: 0.28rem;
+    align-content: start;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.22;
+  }
+
+  .laundry-name span {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .map-actions {
+    display: contents;
+  }
+
+  .maps-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .maps-icon {
+    display: flex;
+  }
+
+  .maps-icon :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+    filter: saturate(0.95);
+  }
+
+  .address,
+  .service-proof,
+  .hours,
+  .description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .service-proof,
+  .rating {
+    display: grid;
+    gap: 0.12rem;
+    line-height: 1.35;
+  }
+
+  .proof-label,
+  .rating-score {
+    color: var(--text);
+    font-weight: 750;
+  }
+
+  .service-proof a {
+    font-size: 0.76rem;
+    font-weight: 650;
+  }
+
+  .rating {
+    font-size: 0.95rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rating-score::before {
+    content: "★ ";
+    color: #b8872d;
+  }
+
+  .review-count {
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 650;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  body:has(#sort-rating:checked) .laundry-row:not(.laundry-head) {
+    order: var(--sort-rating);
+  }
+
+  body:has(#sort-popularity:checked) .laundry-row:not(.laundry-head) {
+    order: var(--sort-popularity);
+  }
+
+  body:has(#sort-name:checked) .laundry-row:not(.laundry-head) {
+    order: var(--sort-name);
+  }
+
+  .method-card,
+  .laundry-map-section {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.4vw, 1.4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .method-card {
+    gap: 0.45rem;
+  }
+
+  .method-card h2,
+  .map-copy h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3.2vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .method-card p:not(.eyebrow),
+  .map-status,
+  .map-unavailable {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .laundry-map {
+    min-height: clamp(22rem, 55vw, 34rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  @media (max-width: 1060px) {
+    .meta {
+      max-width: none;
+    }
+
+    .laundry-row {
+      grid-template-columns:
+        minmax(8rem, 1.15fr)
+        3rem
+        minmax(6.25rem, 0.8fr)
+        minmax(8.5rem, 1fr)
+        minmax(7.5rem, 0.9fr)
+        minmax(6.4rem, 0.72fr)
+        minmax(12rem, 1.4fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding: 0.8rem;
+    }
+
+    .page-header {
+      padding-top: 1rem;
+      gap: 1.2rem;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2rem, 11vw, 3.3rem);
+    }
+
+    .sort-toggle {
+      border-radius: 1rem;
+    }
+
+    .laundry-list {
+      border-radius: 1.2rem;
+      background: transparent;
+      border-color: var(--border-strong);
+    }
+
+    .laundry-head {
+      display: none;
+    }
+
+    .laundry-row {
+      position: relative;
+      min-height: 6rem;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "name"
+        "desc";
+      gap: 0.2rem 0.6rem;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.78rem 11.4rem 0.78rem 0.88rem;
+    }
+
+    .laundry-row:first-of-type {
+      border-top: 0;
+    }
+
+    .laundry-row > * {
+      padding: 0;
+      border-left: 0;
+    }
+
+    .laundry-name {
+      grid-area: name;
+      font-size: 1rem;
+      line-height: 1.18;
+    }
+
+    .map-actions {
+      position: absolute;
+      top: 0.78rem;
+      right: 0.88rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.32rem;
+    }
+
+    .maps-link {
+      position: static;
+      width: 1.9rem;
+      height: 1.9rem;
+    }
+
+    .address,
+    .hours {
+      display: none;
+    }
+
+    .service-proof {
+      position: absolute;
+      top: 0.8rem;
+      right: 3.25rem;
+      width: 7.25rem;
+      font-size: 0.78rem;
+      text-align: right;
+    }
+
+    .rating {
+      position: absolute;
+      top: 3.15rem;
+      right: 3.25rem;
+      width: 7.25rem;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      text-align: right;
+    }
+
+    .review-count {
+      font-size: 0.72rem;
+    }
+
+    .description {
+      grid-area: desc;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .method-card,
+    .laundry-map-section {
+      border-radius: 1.2rem;
+      padding: 0.8rem;
+    }
+  }
+</style>

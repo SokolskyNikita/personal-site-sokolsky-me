@@ -1,0 +1,1211 @@
+---
+import pageData from "../../data/ba-facials.json";
+
+export const prerender = true;
+
+const pageTitle = "Best facials in Buenos Aires";
+const pageDescription =
+  "Buenos Aires facial providers checked against Google Maps, with ratings, review counts and published standard facial prices.";
+const themeColorLight = "#f7f2ea";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type FacialPlace = (typeof pageData.places)[number];
+const facialPlaces = pageData.places;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+});
+const arsPerUsd = 1525;
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+const usdPriceLabel = (ars: number | undefined) =>
+  typeof ars === "number" ? usdFormatter.format(Math.round(ars / arsPerUsd)) : "Not published";
+const collator = new Intl.Collator("en", {
+  sensitivity: "base",
+  numeric: true,
+});
+const neighborhoodCounts = facialPlaces.reduce((counts, facialPlace: FacialPlace) => {
+  counts.set(facialPlace.neighborhood, (counts.get(facialPlace.neighborhood) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const neighborhoodOptions = [...neighborhoodCounts.entries()]
+  .sort(
+    ([nameA, countA], [nameB, countB]) =>
+      countB - countA || collator.compare(nameA, nameB),
+  )
+  .map(([name, count]) => ({ name, count }));
+const openSundayCount = facialPlaces.filter((facialPlace: FacialPlace) => facialPlace.openSunday).length;
+const dermatologistRunCount = facialPlaces.filter((facialPlace: FacialPlace) => facialPlace.dermatologistRun).length;
+const pricedCount = facialPlaces.filter((facialPlace: FacialPlace) => facialPlace.price.status === "published").length;
+const priceValue = (facialPlace: FacialPlace) =>
+  typeof facialPlace.price.ars === "number" ? facialPlace.price.ars : Number.MAX_SAFE_INTEGER;
+const sortRank = (
+  items: FacialPlace[],
+  compare: (a: FacialPlace, b: FacialPlace) => number,
+) =>
+  new Map<string, number>(
+    items
+      .toSorted(compare)
+      .map((facialPlace: FacialPlace, index: number) => [facialPlace.id, index + 1]),
+  );
+const nameRanks = sortRank(facialPlaces, (a: FacialPlace, b: FacialPlace) =>
+  collator.compare(a.name, b.name),
+);
+const ratingRanks = sortRank(
+  facialPlaces,
+  (a: FacialPlace, b: FacialPlace) =>
+    b.rating - a.rating ||
+    b.reviewCount - a.reviewCount ||
+    collator.compare(a.name, b.name),
+);
+const priceRanks = sortRank(
+  facialPlaces,
+  (a: FacialPlace, b: FacialPlace) =>
+    priceValue(a) - priceValue(b) ||
+    b.rating - a.rating ||
+    collator.compare(a.name, b.name),
+);
+const popularityRanks = sortRank(
+  facialPlaces,
+  (a: FacialPlace, b: FacialPlace) =>
+    b.reviewCount - a.reviewCount ||
+    b.rating - a.rating ||
+    collator.compare(a.name, b.name),
+);
+const facialPlacesWithSort = facialPlaces.map((facialPlace: FacialPlace) => ({
+  ...facialPlace,
+  reviewCountLabel: formatter.format(facialPlace.reviewCount),
+  displayPriceLabel: usdPriceLabel(facialPlace.price.ars),
+  priceTitle: `Source: ${facialPlace.price.source}. Converted from the ${facialPlace.price.label.startsWith("est.") ? "estimated" : "published"} local-currency price at 1,525 per USD.`,
+  sortOrderStyle: [
+    `--sort-price: ${priceRanks.get(facialPlace.id)}`,
+    `--sort-name: ${nameRanks.get(facialPlace.id)}`,
+    `--sort-rating: ${ratingRanks.get(facialPlace.id)}`,
+    `--sort-popularity: ${popularityRanks.get(facialPlace.id)}`,
+  ].join("; "),
+}));
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const facialMapData = facialPlaces.map((facialPlace: FacialPlace) => ({
+  id: facialPlace.id,
+  name: facialPlace.name,
+  googleMapsUrl: facialPlace.googleMapsUrl,
+  neighborhood: facialPlace.neighborhood,
+  openSunday: facialPlace.openSunday,
+  dermatologistRun: Boolean(facialPlace.dermatologistRun),
+  position: facialPlace.location,
+}));
+const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: facialPlaces.length,
+  itemListElement: facialPlaces.map((facialPlace, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "LocalBusiness",
+      name: facialPlace.name,
+      url: facialPlace.officialUrl,
+      sameAs: facialPlace.googleMapsUrl,
+      address: facialPlace.fullAddress,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: facialPlace.location.lat,
+        longitude: facialPlace.location.lng,
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: facialPlace.rating.toFixed(1),
+        ratingCount: facialPlace.reviewCount,
+      },
+      ...(facialPlace.price.status === "published"
+        ? { priceRange: usdPriceLabel(facialPlace.price.ars) }
+        : {}),
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Best facials in Buenos Aires" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires facials, skincare Buenos Aires, limpieza facial Buenos Aires, facial Palermo, facial Belgrano"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            {facialPlaces.length} facial providers listed as operational in Google Maps with at least 25 reviews and a published standard facial price.
+          </p>
+        </div>
+        <div class="toolbar" aria-label="Facial guide controls">
+          <fieldset class="sort-toggle">
+            <legend>Sort by</legend>
+            <input id="sort-price" type="radio" name="sort" autocomplete="off" checked />
+            <label for="sort-price">Price</label>
+            <input id="sort-name" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-name">Name</label>
+            <input id="sort-rating" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-rating">GMaps rating</label>
+            <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-popularity">Popularity</label>
+          </fieldset>
+          <fieldset class="extras-toggle">
+            <legend>Filter</legend>
+            <input id="filter-open-sunday" type="checkbox" autocomplete="off" />
+            <label for="filter-open-sunday">Open on Sundays ({openSundayCount})</label>
+            <input id="filter-dermatologist-run" type="checkbox" autocomplete="off" />
+            <label for="filter-dermatologist-run">Dermatologist on team ({dermatologistRunCount})</label>
+          </fieldset>
+          <label class="filter-dropdown" for="neighborhood-filter">
+            <span>Neighborhood</span>
+            <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
+              <option value="">All ({facialPlaces.length})</option>
+              {neighborhoodOptions.map((option) => (
+                <option value={option.name}>{option.name} ({option.count})</option>
+              ))}
+            </select>
+          </label>
+          <p class="meta">
+            Updated {updatedDate}. Verified against Google Maps. Prices are shown in USD for each provider's standard facial or closest published facial option.
+          </p>
+        </div>
+      </header>
+
+      <section class="facialPlace-list" aria-label="Buenos Aires facial providers">
+        <div class="facialPlace-row facialPlace-head" aria-hidden="true">
+          <span>Provider</span>
+          <span>Map</span>
+          <span>Address</span>
+          <span>Price</span>
+          <span>Hours</span>
+          <span>GMaps rating</span>
+          <span>Description</span>
+        </div>
+
+        {facialPlacesWithSort.map((facialPlace) => (
+          <article
+            class="facialPlace-row"
+            style={facialPlace.sortOrderStyle}
+            data-neighborhood={facialPlace.neighborhood}
+            data-open-sunday={String(facialPlace.openSunday)}
+            data-dermatologist-run={String(Boolean(facialPlace.dermatologistRun))}
+          >
+            <h2 class="facialPlace-name">
+              <a href={facialPlace.officialUrl} target="_blank" rel="noreferrer noopener">
+                {facialPlace.name}
+              </a>
+            </h2>
+            <div class="map-actions">
+              <a
+                class="maps-link"
+                href={facialPlace.googleMapsUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`Open ${facialPlace.name} on Google Maps`}
+                title={`Open ${facialPlace.name} on Google Maps`}
+              >
+                <span class="maps-icon" set:html={mapsIcon} />
+              </a>
+            </div>
+            <p class="address">{facialPlace.address}</p>
+            <p
+              class={`price ${facialPlace.price.status === "published" ? "" : "price-unpublished"}`}
+              title={facialPlace.priceTitle}
+            >
+              <a
+                class="price-label"
+                href={facialPlace.price.sourceUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {facialPlace.displayPriceLabel}
+              </a>
+              {facialPlace.price.primaryService && (
+                <span class="price-service">{facialPlace.price.primaryService}</span>
+              )}
+            </p>
+            <p class="hours">{facialPlace.hours}</p>
+            <p
+              class="rating"
+              aria-label={`${facialPlace.rating.toFixed(1)} Google Maps rating from ${facialPlace.reviewCountLabel} ratings`}
+            >
+              <span class="rating-score">{facialPlace.rating.toFixed(1)}</span>
+              <span class="review-count">{facialPlace.reviewCountLabel} ratings</span>
+            </p>
+            <p class="description">
+              {facialPlace.dermatologistRun && (
+                <span class="qualification-badge" title={facialPlace.dermatologistRunEvidence}>
+                  Dermatologist on team
+                </span>
+              )}
+              {facialPlace.description}
+            </p>
+          </article>
+        ))}
+      </section>
+
+      <section class="facialPlace-map-section" aria-labelledby="facialPlace-map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="facialPlace-map-heading">Buenos Aires facial provider map</h2>
+          <p id="facialPlace-map-status" class="map-status">
+            Showing all {facialPlaces.length} facial providers.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="facialPlace-map"
+            class="facialPlace-map"
+            aria-label="Google Map with pins for Buenos Aires facial providers"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ googleMapsApiKey, facialMapData }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const neighborhoodFilter = document.querySelector("#neighborhood-filter");
+  const openSundayFilter = document.querySelector("#filter-open-sunday");
+  const dermatologistRunFilter = document.querySelector("#filter-dermatologist-run");
+  const defaultSort = document.querySelector("#sort-price");
+  const facialPlaceRows = [...document.querySelectorAll(".facialPlace-row:not(.facialPlace-head)")];
+  const mapElement = document.querySelector("#facialPlace-map");
+  const mapStatus = document.querySelector("#facialPlace-map-status");
+  const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const filterUrlParams = ["neighborhood", "openSunday", "dermatologistRun"];
+  const markerRecords = [];
+  let facialMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getVisibleFacialPlaces = (selectedNeighborhood, openSundayOnly, dermatologistRunOnly) =>
+    facialMapData.filter(
+      (facialPlace) =>
+        (!selectedNeighborhood || facialPlace.neighborhood === selectedNeighborhood) &&
+        (!openSundayOnly || facialPlace.openSunday) &&
+        (!dermatologistRunOnly || facialPlace.dermatologistRun),
+    );
+
+  const updateMapStatus = (selectedNeighborhood, openSundayOnly, dermatologistRunOnly) => {
+    if (!mapStatus) return;
+
+    const visibleCount = getVisibleFacialPlaces(
+      selectedNeighborhood,
+      openSundayOnly,
+      dermatologistRunOnly,
+    ).length;
+    const facialPlaceLabel = visibleCount === 1 ? "facial provider" : "facial providers";
+    const activeFilters = [];
+
+    if (openSundayOnly) activeFilters.push("open Sundays");
+    if (dermatologistRunOnly) activeFilters.push("dermatologist on team");
+
+    const filterSuffix = activeFilters.length ? ` matching ${activeFilters.join(" and ")}` : "";
+
+    mapStatus.textContent = selectedNeighborhood
+      ? `Showing ${visibleCount} ${selectedNeighborhood} ${facialPlaceLabel}${filterSuffix}.`
+      : `Showing ${openSundayOnly || dermatologistRunOnly ? "" : "all "}${visibleCount} ${facialPlaceLabel}${filterSuffix}.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!facialMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      facialMap.setCenter(visibleRecords[0].facialPlace.position);
+      facialMap.setZoom(14);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+
+    for (const { facialPlace } of visibleRecords) {
+      bounds.extend(facialPlace.position);
+    }
+
+    facialMap.fitBounds(bounds, 44);
+  };
+
+  const syncMapMarkers = (selectedNeighborhood, openSundayOnly, dermatologistRunOnly) => {
+    updateMapStatus(selectedNeighborhood, openSundayOnly, dermatologistRunOnly);
+
+    if (!facialMap) return;
+
+    const visibleIds = new Set(
+      getVisibleFacialPlaces(selectedNeighborhood, openSundayOnly, dermatologistRunOnly).map((facialPlace) => facialPlace.id),
+    );
+    const visibleRecords = [];
+
+    for (const record of markerRecords) {
+      const isVisible = visibleIds.has(record.facialPlace.id);
+      record.marker.setMap(isVisible ? facialMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    if (mapElement) mapElement.dataset.visiblePins = String(visibleRecords.length);
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const updateFilterUrl = (selectedNeighborhood, openSundayOnly, dermatologistRunOnly) => {
+    const url = new URL(window.location.href);
+
+    for (const paramName of filterUrlParams) {
+      url.searchParams.delete(paramName);
+    }
+
+    if (selectedNeighborhood) url.searchParams.set("neighborhood", selectedNeighborhood);
+    if (openSundayOnly) url.searchParams.set("openSunday", "1");
+    if (dermatologistRunOnly) url.searchParams.set("dermatologistRun", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
+  const initFacialPlaceMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    facialMap = new Map(mapElement, {
+      center: buenosAiresCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 12,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const facialPlace of facialMapData) {
+      const marker = new google.maps.Marker({
+        map: facialMap,
+        position: facialPlace.position,
+        title: facialPlace.name,
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(
+          `<strong>${escapeHtml(facialPlace.name)}</strong><br><a href="${escapeHtml(facialPlace.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(facialMap, marker);
+      });
+
+      markerRecords.push({ facialPlace, marker });
+    }
+
+    syncMapMarkers(
+      neighborhoodFilter?.value ?? "",
+      openSundayFilter?.checked ?? false,
+      dermatologistRunFilter?.checked ?? false,
+    );
+  };
+
+  const applyFilters = ({ syncUrl = true } = {}) => {
+    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+    const openSundayOnly = openSundayFilter?.checked ?? false;
+    const dermatologistRunOnly = dermatologistRunFilter?.checked ?? false;
+
+    if (syncUrl) {
+      updateFilterUrl(selectedNeighborhood, openSundayOnly, dermatologistRunOnly);
+    }
+
+    for (const row of facialPlaceRows) {
+      const neighborhoodMismatch =
+        Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
+      const sundayMismatch = openSundayOnly && row.dataset.openSunday !== "true";
+      const dermatologistRunMismatch =
+        dermatologistRunOnly && row.dataset.dermatologistRun !== "true";
+      row.hidden = neighborhoodMismatch || sundayMismatch || dermatologistRunMismatch;
+    }
+
+    syncMapMarkers(selectedNeighborhood, openSundayOnly, dermatologistRunOnly);
+  };
+
+  const resetControls = () => {
+    if (defaultSort) defaultSort.checked = true;
+    if (neighborhoodFilter) neighborhoodFilter.value = "";
+    if (openSundayFilter) openSundayFilter.checked = false;
+    if (dermatologistRunFilter) dermatologistRunFilter.checked = false;
+  };
+
+  const setSelectFromUrl = (selectElement, value) => {
+    if (!selectElement || !value) return;
+
+    const hasOption = [...selectElement.options].some((option) => option.value === value);
+    if (hasOption) selectElement.value = value;
+  };
+
+  const hasEnabledUrlParam = (params, paramName) => {
+    const value = params.get(paramName);
+    if (value === null) return false;
+
+    return !["0", "false", "no", "off"].includes(value.toLowerCase());
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    resetControls();
+    setSelectFromUrl(neighborhoodFilter, params.get("neighborhood"));
+    if (openSundayFilter) openSundayFilter.checked = hasEnabledUrlParam(params, "openSunday");
+    if (dermatologistRunFilter) {
+      dermatologistRunFilter.checked = hasEnabledUrlParam(params, "dermatologistRun");
+    }
+
+    applyFilters({ syncUrl: false });
+  };
+
+  neighborhoodFilter?.addEventListener("change", applyFilters);
+  openSundayFilter?.addEventListener("change", applyFilters);
+  dermatologistRunFilter?.addEventListener("change", applyFilters);
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
+  initFacialPlaceMap().catch((error) => {
+    console.error("Unable to initialize facial provider map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. Facial provider list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f2ea;
+    --surface: #fffdf8;
+    --surface-soft: #efe7db;
+    --text: #181612;
+    --text-muted: #6f675c;
+    --border: #d9cfc0;
+    --border-strong: #c8baa8;
+    --accent: #28402f;
+    --accent-soft: #dfe8d7;
+    --link: #17281d;
+    --shadow: 0 20px 60px rgba(61, 44, 22, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171613;
+      --surface-soft: #211f1a;
+      --text: #f2eee7;
+      --text-muted: #aaa297;
+      --border: #343027;
+      --border-strong: #4a4338;
+      --accent: #dce8d2;
+      --accent-soft: #263022;
+      --link: #f6f1e8;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-soft), transparent 35%), transparent 32rem),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .page {
+    width: min(100%, 88rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: start;
+    padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .home-link {
+    grid-column: 1 / -1;
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.65rem;
+    max-width: 52rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 15ch;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.1rem, 5.1vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.18rem);
+  }
+
+  .toolbar {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+  }
+
+  .sort-toggle,
+  .extras-toggle {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+  }
+
+  .filter-dropdown {
+    display: grid;
+    width: min(100%, 24rem);
+    gap: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-dropdown select {
+    width: 100%;
+    min-height: 2.7rem;
+    padding: 0 2.5rem 0 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) right 0.7rem center / 0.42rem 0.42rem no-repeat,
+      color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .filter-dropdown select:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .sort-toggle {
+    border-radius: 1.2rem;
+  }
+
+  .sort-toggle legend,
+  .extras-toggle legend {
+    margin: 0 0.3rem 0 0.2rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 2.25rem;
+    text-transform: uppercase;
+  }
+
+  .sort-toggle input,
+  .extras-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sort-toggle label,
+  .extras-toggle label {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.45rem;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 700;
+    padding: 0 0.85rem;
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .sort-toggle label::before,
+  .extras-toggle label::before {
+    content: "";
+    width: 0.58rem;
+    height: 0.58rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.75;
+  }
+
+  #sort-price:checked ~ label[for="sort-price"],
+  #sort-name:checked ~ label[for="sort-name"],
+  #sort-rating:checked ~ label[for="sort-rating"],
+  #sort-popularity:checked ~ label[for="sort-popularity"],
+  #filter-open-sunday:checked ~ label[for="filter-open-sunday"],
+  #filter-dermatologist-run:checked ~ label[for="filter-dermatologist-run"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  #sort-price:checked ~ label[for="sort-price"]::before,
+  #sort-name:checked ~ label[for="sort-name"]::before,
+  #sort-rating:checked ~ label[for="sort-rating"]::before,
+  #sort-popularity:checked ~ label[for="sort-popularity"]::before,
+  #filter-open-sunday:checked ~ label[for="filter-open-sunday"]::before,
+  #filter-dermatologist-run:checked ~ label[for="filter-dermatologist-run"]::before {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--accent);
+    opacity: 1;
+  }
+
+  .meta {
+    margin: 0;
+    max-width: 18rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-align: left;
+  }
+
+  .facialPlace-list {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .facialPlace-row {
+    display: grid;
+    grid-template-columns:
+      minmax(8rem, 1.1fr)
+      4rem
+      minmax(7rem, 0.75fr)
+      minmax(6.6rem, 0.62fr)
+      minmax(8rem, 0.9fr)
+      minmax(6.6rem, 0.62fr)
+      minmax(15rem, 2fr);
+    gap: 0;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+  }
+
+  .facialPlace-row[hidden] {
+    display: none;
+  }
+
+  .facialPlace-head {
+    order: -1;
+    border-top: 0;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .facialPlace-head > * {
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+
+  .facialPlace-row > * {
+    min-width: 0;
+    margin: 0;
+    padding: 0.86rem clamp(0.65rem, 1vw, 0.8rem);
+    border-left: 1px solid var(--border);
+    overflow-wrap: anywhere;
+  }
+
+  .facialPlace-row > *:first-child {
+    border-left: 0;
+  }
+
+  .facialPlace-name {
+    position: relative;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .facialPlace-name a {
+    text-decoration-thickness: 1px;
+  }
+
+  .map-actions {
+    display: contents;
+  }
+
+  .maps-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .maps-icon {
+    display: flex;
+  }
+
+  .maps-icon :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+    filter: saturate(0.95);
+  }
+
+  .address,
+  .price,
+  .hours,
+  .description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .price {
+    display: grid;
+    gap: 0.12rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+  }
+
+  .price-label {
+    color: var(--text);
+    font-weight: 750;
+    white-space: nowrap;
+  }
+
+  .price-service {
+    font-size: 0.76rem;
+    font-weight: 650;
+  }
+
+  .price-unpublished .price-label {
+    color: var(--text-muted);
+    font-weight: 700;
+    white-space: normal;
+  }
+
+  .rating {
+    font-size: 0.95rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  body:has(#sort-price:checked) .facialPlace-row:not(.facialPlace-head) {
+    order: var(--sort-price);
+  }
+
+  body:has(#sort-name:checked) .facialPlace-row:not(.facialPlace-head) {
+    order: var(--sort-name);
+  }
+
+  body:has(#sort-rating:checked) .facialPlace-row:not(.facialPlace-head) {
+    order: var(--sort-rating);
+  }
+
+  body:has(#sort-popularity:checked) .facialPlace-row:not(.facialPlace-head) {
+    order: var(--sort-popularity);
+  }
+
+  .rating {
+    display: grid;
+    gap: 0.12rem;
+    line-height: 1.35;
+  }
+
+  .rating-score {
+    white-space: nowrap;
+  }
+
+  .rating-score::before {
+    content: "★ ";
+    color: #b8872d;
+  }
+
+  .review-count {
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 650;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  .qualification-badge {
+    display: inline-flex;
+    width: fit-content;
+    margin: 0 0.35rem 0.18rem 0;
+    padding: 0.16rem 0.44rem;
+    border: 1px solid color-mix(in srgb, var(--accent), transparent 62%);
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .facialPlace-map-section {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.4vw, 1.4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .map-copy h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3.2vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .map-status,
+  .map-unavailable {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .facialPlace-map {
+    min-height: clamp(22rem, 55vw, 34rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  @media (max-width: 1060px) {
+    .meta {
+      max-width: none;
+    }
+
+    .facialPlace-row {
+      grid-template-columns:
+        minmax(8rem, 1.2fr)
+        3rem
+        minmax(6.25rem, 0.8fr)
+        minmax(6.3rem, 0.72fr)
+        minmax(7.5rem, 0.9fr)
+        minmax(6.4rem, 0.72fr)
+        minmax(12rem, 1.6fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding: 0.8rem;
+    }
+
+    .page-header {
+      padding-top: 1rem;
+      gap: 1.2rem;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2rem, 11vw, 3.3rem);
+    }
+
+    .sort-toggle {
+      border-radius: 1rem;
+    }
+
+    .facialPlace-list {
+      border-radius: 1.2rem;
+      background: transparent;
+      border-color: var(--border-strong);
+    }
+
+    .facialPlace-head {
+      display: none;
+    }
+
+    .facialPlace-row {
+      min-height: 5.6rem;
+      grid-template-columns: minmax(0, 1fr) minmax(4.6rem, 5.7rem) 1.9rem;
+      grid-template-areas:
+        "name price map"
+        "desc rating map";
+      gap: 0.28rem 0.54rem;
+      align-items: start;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.78rem 0.88rem;
+    }
+
+    .facialPlace-row:first-of-type {
+      border-top: 0;
+    }
+
+    .facialPlace-row > * {
+      padding: 0;
+      border-left: 0;
+    }
+
+    .facialPlace-name {
+      grid-area: name;
+      font-size: 1rem;
+      line-height: 1.18;
+    }
+
+    .map-actions {
+      grid-area: map;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.32rem;
+    }
+
+    .maps-link {
+      position: static;
+      width: 1.9rem;
+      height: 1.9rem;
+    }
+
+    .address,
+    .hours {
+      display: none;
+    }
+
+    .price {
+      grid-area: price;
+      width: auto;
+      font-size: 0.86rem;
+      justify-items: end;
+      text-align: right;
+    }
+
+    .rating {
+      grid-area: rating;
+      width: auto;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      justify-items: end;
+      text-align: right;
+    }
+
+    .price-service {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .review-count {
+      font-size: 0.72rem;
+    }
+
+    .description {
+      grid-area: desc;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .facialPlace-map-section {
+      border-radius: 1.2rem;
+      padding: 0.8rem;
+    }
+  }
+</style>

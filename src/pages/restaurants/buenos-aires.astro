@@ -5,7 +5,7 @@ export const prerender = true;
 
 const pageTitle = "Best restaurants in Buenos Aires";
 const pageDescription =
-  "Buenos Aires restaurants checked against Google Maps, with ratings, prices, addresses and official links.";
+  "Buenos Aires restaurants checked against Google Maps, with ratings, prices, addresses and map links.";
 const themeColorLight = "#f7f2ea";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -28,8 +28,24 @@ const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
+const postSovietCuisineOption = "Russian/Ukrainian/post-Soviet";
+const postSovietCuisineTypes = [
+  "Armenian / Caucasus",
+  "Central Asian",
+  "Eastern European",
+  "Georgian",
+  "Russian",
+  "Slavic",
+  "Ukrainian",
+  "Uzbek",
+];
+const postSovietCuisineTypeSet = new Set(postSovietCuisineTypes);
+const cuisineOptionFor = (cuisineType: string) =>
+  postSovietCuisineTypeSet.has(cuisineType)
+    ? postSovietCuisineOption
+    : cuisineType;
 const cuisineCounts = restaurants.reduce((counts, restaurant: Restaurant) => {
-  for (const cuisineType of restaurant.cuisineTypes) {
+  for (const cuisineType of new Set(restaurant.cuisineTypes.map(cuisineOptionFor))) {
     counts.set(cuisineType, (counts.get(cuisineType) ?? 0) + 1);
   }
 
@@ -232,7 +248,7 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {restaurants.length} restaurants listed as open in Google Maps, linked to official websites or Instagram.
+            {restaurants.length} restaurants listed as open in Google Maps, linked to official pages or Google Maps.
           </p>
         </div>
         <div class="toolbar" aria-label="Restaurant controls">
@@ -453,6 +469,18 @@ const structuredData = {
   const mapElement = document.querySelector("#restaurant-map");
   const mapStatus = document.querySelector("#restaurant-map-status");
   const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const postSovietCuisineOption = "Russian/Ukrainian/post-Soviet";
+  const postSovietCuisineTypes = [
+    "Armenian / Caucasus",
+    "Central Asian",
+    "Eastern European",
+    "Georgian",
+    "Russian",
+    "Slavic",
+    "Ukrainian",
+    "Uzbek",
+  ];
+  const postSovietCuisineTypeSet = new Set(postSovietCuisineTypes);
   const filterUrlParams = [
     "neighborhood",
     "cuisine",
@@ -485,7 +513,10 @@ const structuredData = {
     restaurantMapData.filter(
       (restaurant) =>
         (!selectedNeighborhood || restaurant.neighborhood === selectedNeighborhood) &&
-        (!selectedCuisine || restaurant.cuisineTypes.includes(selectedCuisine)) &&
+        (!selectedCuisine ||
+          (selectedCuisine === postSovietCuisineOption
+            ? restaurant.cuisineTypes.some((cuisineType) => postSovietCuisineTypeSet.has(cuisineType))
+            : restaurant.cuisineTypes.includes(selectedCuisine))) &&
         (!deliveryOnly || restaurant.doesDelivery) &&
         (!breakfastOnly || restaurant.servesBreakfast) &&
         (!brunchOnly || restaurant.servesBrunch) &&
@@ -679,7 +710,11 @@ const structuredData = {
       const cuisines = row.dataset.cuisineTypes?.split("|") ?? [];
       const neighborhoodMismatch =
         Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
-      const cuisineMismatch = Boolean(selectedCuisine) && !cuisines.includes(selectedCuisine);
+      const cuisineMismatch =
+        Boolean(selectedCuisine) &&
+        (selectedCuisine === postSovietCuisineOption
+          ? !cuisines.some((cuisineType) => postSovietCuisineTypeSet.has(cuisineType))
+          : !cuisines.includes(selectedCuisine));
       const deliveryMismatch = deliveryOnly && row.dataset.doesDelivery !== "true";
       const breakfastMismatch = breakfastOnly && row.dataset.servesBreakfast !== "true";
       const brunchMismatch = brunchOnly && row.dataset.servesBrunch !== "true";
