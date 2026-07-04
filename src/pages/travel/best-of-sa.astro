@@ -1,0 +1,2449 @@
+---
+export const prerender = true;
+
+const pageTitle = "Most interesting spots in South America";
+const pageDescription =
+  "A researched field guide to South America's most unique places: geology, archaeology, ecosystems and culture, with Google Maps pins.";
+const themeColorLight = "#f7f0e5";
+const themeColorDark = "#15120e";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const updatedDate = "Jul 4, 2026";
+
+const spots = [
+  {
+    id: "salar-de-uyuni",
+    name: "Salar de Uyuni and Sud Lípez",
+    countries: ["Bolivia"],
+    area: "Altiplano / Sud Lípez",
+    kind: "Geology",
+    access: "3–4 day high-altitude route",
+    uniqueness: "World's largest salt flat plus mineral lakes and geysers",
+    why:
+      "A closed high-Andean basin left behind a mineral crust so flat and bright that satellite teams use it for calibration. The stronger version continues south into Sud Lípez: cactus islands, colored mineral lakes, geysers, flamingos at altitude and volcano-backed desert.",
+    realityCheck:
+      "The mirror photos are timing-dependent. The more interesting part is the full circuit: scale, paleoclimate record, lithium-brine basin and Mars-like high desert in one route.",
+    source: {
+      label: "NASA Earth Observatory",
+      url: "https://science.nasa.gov/earth/earth-observatory/salar-de-uyuni-bolivia-6096/",
+    },
+    map: {
+      name: "Uyuni Salt Flat",
+      formattedAddress: "Uyuni Salt Flat, Bolivia",
+      placeId: "ChIJ14vhJbOEVZERtniCFToY5Aw",
+      rating: 4.8,
+      reviewCount: 3131,
+      location: { lat: -20.1337772, lng: -67.4891345 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Uyuni%20Salt%20Flat&query_place_id=ChIJ14vhJbOEVZERtniCFToY5Aw",
+    },
+  },
+  {
+    id: "lencois-maranhenses",
+    name: "Lençóis Maranhenses National Park",
+    countries: ["Brazil"],
+    area: "Maranhão",
+    kind: "Geology",
+    access: "Seasonal, guide recommended",
+    uniqueness: "Rain-filled lagoons inside migrating dunes",
+    why:
+      "It looks like desert, but seasonal rain pools between white dunes, creating thousands of freshwater lagoons in a coastal dune system shaped by wind, rivers and tides.",
+    realityCheck:
+      "Go when the lagoons exist. The seasonal geomorphology matters more than a blue-water dune photo.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1611/",
+    },
+    map: {
+      name: "Parque Nacional dos Lençóis Maranhenses",
+      formattedAddress: "MA, Brazil",
+      placeId: "ChIJX745XuGe8QcR65t-1dCVKC0",
+      rating: 4.9,
+      reviewCount: 12283,
+      location: { lat: -2.5282195, lng: -43.026021 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20dos%20Len%C3%A7%C3%B3is%20Maranhenses&query_place_id=ChIJX745XuGe8QcR65t-1dCVKC0",
+    },
+  },
+  {
+    id: "mount-roraima",
+    name: "Mount Roraima and the tepui country",
+    countries: ["Venezuela", "Guyana", "Brazil"],
+    area: "Guiana Highlands",
+    kind: "Geology",
+    access: "Multi-day trek or remote expedition",
+    uniqueness: "Sandstone island mountains with isolated summit ecosystems",
+    why:
+      "Roraima is the iconic, walkable example of the Guiana Shield tepuis: flat-topped sandstone mountains with cliff walls, quartz fields, black rock, boggy summit surfaces and species isolated by vertical geology.",
+    realityCheck:
+      "Think less 'mountain summit' and more ecological platform. Canaima and Angel Falls are part of the wider concept, but Roraima makes the tepui idea easiest to grasp on foot.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/701/",
+    },
+    map: {
+      name: "Mount Roraima",
+      formattedAddress: "Mt Roraima",
+      placeId: "ChIJw6u1H1Aav40RCcFCNg_fNO4",
+      rating: 4.7,
+      reviewCount: 1006,
+      location: { lat: 5.1315566, lng: -60.7585488 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Mount%20Roraima&query_place_id=ChIJw6u1H1Aav40RCcFCNg_fNO4",
+    },
+  },
+  {
+    id: "angel-falls-canaima",
+    name: "Angel Falls and Canaima",
+    countries: ["Venezuela"],
+    area: "Canaima National Park",
+    kind: "Waterfall",
+    access: "Hard fly-in trip; security-sensitive",
+    uniqueness: "World's tallest uninterrupted waterfall dropping from a tepui",
+    why:
+      "Angel Falls drops 979 meters from Auyán-tepui, high enough that much of the water turns to mist before it reaches the base. The appeal is not only the record height; it is the whole Canaima package of table mountains, rivers, lagoons and fly-in remoteness.",
+    realityCheck:
+      "The visit is closer to a fly-in expedition than a normal waterfall stop. Most trips depend on flights to Canaima, seasonal river access, local operators and Venezuela conditions that can change quickly.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/701/",
+    },
+    map: {
+      name: "Angel Falls",
+      formattedAddress: "Angel Falls, 8011, Bolívar, Venezuela",
+      placeId: "ChIJeagwcHG-xo0R598P9osOIXM",
+      rating: 4.7,
+      reviewCount: 2804,
+      location: { lat: 5.970125599999999, lng: -62.53621989999999 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Angel%20Falls&query_place_id=ChIJeagwcHG-xo0R598P9osOIXM",
+    },
+  },
+  {
+    id: "catatumbo-lightning",
+    name: "Catatumbo lightning",
+    countries: ["Venezuela"],
+    area: "Lake Maracaibo",
+    kind: "Atmospheric",
+    access: "Hard overnight boat trip; security-sensitive",
+    uniqueness: "Highest lightning concentration on Earth",
+    why:
+      "At the mouth of the Catatumbo River, lake moisture, Caribbean air and mountains combine into terrain-anchored nighttime convection. NASA describes Lake Maracaibo as Earth's top lightning hotspot, with storms repeatedly firing over the same basin.",
+    realityCheck:
+      "This is a phenomenon to time and wait for, not a guaranteed viewpoint. Venezuela logistics and safety conditions can change the real difficulty more than the distance does.",
+    source: {
+      label: "NASA Earthdata",
+      url: "https://www.earthdata.nasa.gov/news/feature-articles/maracaibo-beacon",
+    },
+    map: {
+      name: "Catatumbo River",
+      formattedAddress: "Catatumbo River",
+      placeId: "ChIJOwOEd789YY4RGuO_4gHgjNw",
+      rating: 4.3,
+      reviewCount: 89,
+      location: { lat: 9.1260514, lng: -72.2165404 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Catatumbo%20River&query_place_id=ChIJOwOEd789YY4RGuO_4gHgjNw",
+    },
+  },
+  {
+    id: "boiling-river",
+    name: "Shanay-timpishka, the Boiling River",
+    countries: ["Peru"],
+    area: "Ucayali Amazon",
+    kind: "Geothermal",
+    access: "Hard; community-controlled access",
+    uniqueness: "A non-volcanic thermal river in the Amazon",
+    why:
+      "This Amazon tributary runs hot enough to steam and scald far from any active volcanic center. The validated story is not magic but unusual non-volcanic geothermal plumbing: rainwater descends, heats underground and rises along faults.",
+    realityCheck:
+      "Access runs through local communities and should be arranged respectfully. It is a fragile place, not a casual hot-spring stop.",
+    source: {
+      label: "National Geographic",
+      url: "https://www.nationalgeographic.com/adventure/article/160313-boiling-river-amazon-geothermal-science-conservation-ngbooktalk",
+    },
+    map: {
+      name: "Shanay Timpishka (Hervido con el Calor del Sol)",
+      formattedAddress: "57VP+865, Aguas Calientes 10350, Peru",
+      placeId: "ChIJs3FDX33jo5EREfoCUYFA6zM",
+      rating: 4.7,
+      reviewCount: 68,
+      location: { lat: -8.8067475, lng: -74.7143976 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Shanay%20Timpishka%20(Hervido%20con%20el%20Calor%20del%20Sol)&query_place_id=ChIJs3FDX33jo5EREfoCUYFA6zM",
+    },
+  },
+  {
+    id: "chiribiquete",
+    name: "Chiribiquete National Park",
+    countries: ["Colombia"],
+    area: "Colombian Amazon",
+    kind: "Archaeology",
+    access: "Protected; no normal visitor access",
+    uniqueness: "Tepuis plus tens of thousands of rock paintings",
+    why:
+      "The park combines Guiana Shield tepuis, Amazon wilderness and more than 75,000 rock-art figures associated with jaguar cosmology and still-living Indigenous sacred geography.",
+    realityCheck:
+      "This is included because it is one of the continent's most important places, not because it belongs on a casual itinerary. Treat access restrictions as part of the site.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1174/",
+    },
+    map: {
+      name: "Parque Nacional Natural Serranía de Chiribiquete",
+      formattedAddress: "Guaviare, Colombia",
+      placeId: "ChIJxfwO8zLbGI4R4Wms0uyEV7Y",
+      rating: 4.7,
+      reviewCount: 144,
+      location: { lat: 0.8632323, lng: -72.5711651 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20Natural%20Serran%C3%ADa%20de%20Chiribiquete&query_place_id=ChIJxfwO8zLbGI4R4Wms0uyEV7Y",
+    },
+  },
+  {
+    id: "galapagos",
+    name: "Galápagos Islands",
+    countries: ["Ecuador"],
+    area: "Eastern Pacific",
+    kind: "Ecology",
+    access: "Regulated island travel",
+    uniqueness: "Evolutionary isolation made visible",
+    why:
+      "The islands are a living argument for how isolation, ocean currents and volcanic terrain produce strange animal behavior and speciation. The draw is not a beach; it is watching ecology act differently from the mainland.",
+    realityCheck:
+      "This is offshore rather than mainland, but it is too central to South America's natural history to omit.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1/",
+    },
+    map: {
+      name: "Parque Nacional Galápagos",
+      formattedAddress: "9MP3+6WH, El cascajo, Ecuador",
+      placeId: "ChIJQ8p4MDxfqpoRW7ZiDEGJ3Io",
+      rating: 4.8,
+      reviewCount: 3560,
+      location: { lat: -0.6144343, lng: -90.3451351 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20Gal%C3%A1pagos&query_place_id=ChIJQ8p4MDxfqpoRW7ZiDEGJ3Io",
+    },
+  },
+  {
+    id: "fernando-de-noronha",
+    name: "Fernando de Noronha",
+    countries: ["Brazil"],
+    area: "Equatorial Atlantic",
+    kind: "Ecology",
+    access: "Moderate, regulated and expensive",
+    uniqueness: "Oceanic islands with unusually reliable spinner dolphin concentration",
+    why:
+      "This volcanic archipelago is protected for Atlantic marine ecology, including Baía dos Golfinhos, where large groups of spinner dolphins regularly rest. It is Brazil's clearest island counterpoint to mainland rainforest and wetland ecology.",
+    realityCheck:
+      "Visitor controls, environmental fees and flight routing make it costly. The reason to go is the regulated oceanic ecosystem, not generic beach time.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1000/",
+    },
+    map: {
+      name: "Fernando de Noronha Marine National Park",
+      formattedAddress: "Estadual, Fernando de Noronha - PE, 53990-000, Brazil",
+      placeId: "ChIJOdv45IlNNgYRbzYnR_dtZy0",
+      rating: 4.9,
+      reviewCount: 3510,
+      location: { lat: -3.8604156, lng: -32.415579 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Fernando%20de%20Noronha%20Marine%20National%20Park&query_place_id=ChIJOdv45IlNNgYRbzYnR_dtZy0",
+    },
+  },
+  {
+    id: "rapa-nui",
+    name: "Rapa Nui",
+    countries: ["Chile"],
+    area: "Eastern Pacific",
+    kind: "Archaeology",
+    access: "Remote island travel",
+    uniqueness: "Polynesian ceremonial island isolated in the Pacific",
+    why:
+      "The moai are the entry point, but the stranger story is the whole island system: quarry slopes, clan platforms, ceremonial roads, Polynesian settlement far from any mainland and a long debate over ecology, contact and resilience.",
+    realityCheck:
+      "Like Galápagos, it sits offshore. It stays because Chilean South America has no other cultural system with this level of isolation and specificity.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/715/",
+    },
+    map: {
+      name: "Rapa Nui National Park",
+      formattedAddress: "Easter Island, Valparaíso, Chile",
+      placeId: "ChIJWWlTfdL7R5kRdwZpdsbVLZM",
+      rating: 4.8,
+      reviewCount: 2991,
+      location: { lat: -27.0728475, lng: -109.3485868 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Rapa%20Nui%20National%20Park-Land%20Of%20the%20Shark%20Spirits&query_place_id=ChIJWWlTfdL7R5kRdwZpdsbVLZM",
+    },
+  },
+  {
+    id: "atacama",
+    name: "Atacama high desert",
+    countries: ["Chile"],
+    area: "Antofagasta",
+    kind: "Geology",
+    access: "Straightforward from San Pedro",
+    uniqueness: "Hyperarid desert, salt basins and geysers",
+    why:
+      "The Atacama is dry in a way few places are: almost no rain in parts of it, evaporite basins, volcanoes, geothermal fields and Mars-analog soils. Valle de la Luna, El Tatio, Paranal/ALMA-style astronomy country and nitrate ghost-town preservation all come from that aridity.",
+    realityCheck:
+      "Do not reduce it to one viewpoint at sunset. The interesting version includes salt, altitude, astronomy, microbial life, geothermal activity and the industrial archaeology preserved by dryness.",
+    source: {
+      label: "NASA Earth Observatory",
+      url: "https://earthobservatory.nasa.gov/images/90768/atacama-desert",
+    },
+    map: {
+      name: "Atacama Desert",
+      formattedAddress: "Atacama Desert, Antofagasta, Chile",
+      placeId: "ChIJRxzvf1JGr5YR3COCqre7TQM",
+      rating: 4.5,
+      reviewCount: 1364,
+      location: { lat: -23.8634189, lng: -69.1328491 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Atacama%20Desert&query_place_id=ChIJRxzvf1JGr5YR3COCqre7TQM",
+    },
+  },
+  {
+    id: "humberstone-santa-laura",
+    name: "Humberstone and Santa Laura",
+    countries: ["Chile"],
+    area: "Atacama / Tarapacá",
+    kind: "Industrial history",
+    access: "Easy day trip from Iquique",
+    uniqueness: "Nitrate company towns mummified by the Atacama",
+    why:
+      "These saltpeter works preserve the birth, boom and collapse of a desert industrial civilization: company housing, machinery, theater, pool, church and processing plants left in the hyperarid Atacama after synthetic fertilizer killed the business.",
+    realityCheck:
+      "It is less sublime than the desert itself, but more historically specific: a preserved industrial society made possible by nitrate and dryness.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1178/",
+    },
+    map: {
+      name: "Santa Laura Saltpeter",
+      formattedAddress: "Calle de Servicio 3672, Alto Hospicio",
+      placeId: "ChIJAVyohAI3UpERyEsiEZTAxGU",
+      rating: 4.7,
+      reviewCount: 1063,
+      location: { lat: -20.2116832, lng: -69.8124719 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Santa%20Laura%20Saltpeter&query_place_id=ChIJAVyohAI3UpERyEsiEZTAxGU",
+    },
+  },
+  {
+    id: "torres-del-paine",
+    name: "Torres del Paine National Park",
+    countries: ["Chile"],
+    area: "Patagonia",
+    kind: "Geology",
+    access: "Popular but weather-exposed",
+    uniqueness: "Granite towers beside active ice and steppe",
+    why:
+      "The park compresses Patagonian systems into a legible cross-section: granite intrusions, glaciers, lakes, wind-shaped steppe and lenga forest within walking distance of each other.",
+    realityCheck:
+      "It is famous and photogenic, but the reason it stays on this list is the density of geological and ecological transitions.",
+    source: {
+      label: "UNESCO Biosphere Reserves",
+      url: "https://www.unesco.org/en/mab/torres-del-paine",
+    },
+    map: {
+      name: "Torres del Paine National Park",
+      formattedAddress: "Magallanes and Chilean Antarctica, Chile",
+      placeId: "ChIJB6_bgwEbpb0RWM4aRVcmn70",
+      rating: 4.8,
+      reviewCount: 11018,
+      location: { lat: -50.9423262, lng: -73.406788 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Torres%20del%20Paine%20National%20Park&query_place_id=ChIJB6_bgwEbpb0RWM4aRVcmn70",
+    },
+  },
+  {
+    id: "los-glaciares",
+    name: "Patagonian Ice Fields and Perito Moreno",
+    countries: ["Argentina", "Chile"],
+    area: "Patagonia",
+    kind: "Geology",
+    access: "Straightforward from El Calafate",
+    uniqueness: "Temperate ice fields, outlet glaciers, fjords and steppe",
+    why:
+      "Perito Moreno is the accessible edge: a large outlet glacier visitors can watch from land while it calves into a lake. The larger reason is the Southern Patagonian Ice Field system, where temperate ice, fjords, mountains and wind-scoured steppe sit unusually close together.",
+    realityCheck:
+      "The balconies are easy; understanding the place means seeing Perito Moreno as one visible outlet of a much larger ice system shared by Chile and Argentina.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/145/",
+    },
+    map: {
+      name: "Perito Moreno Glacier",
+      formattedAddress: "Perito Moreno Glacier, Santa Cruz Province, Argentina",
+      placeId: "ChIJw1B4IWPJpL0Rvnl0r--igaQ",
+      rating: 4.9,
+      reviewCount: 3154,
+      location: { lat: -50.4967297, lng: -73.1376612 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Perito%20Moreno%20Glacier&query_place_id=ChIJw1B4IWPJpL0Rvnl0r--igaQ",
+    },
+  },
+  {
+    id: "ischigualasto-talampaya",
+    name: "Ischigualasto and Talampaya",
+    countries: ["Argentina"],
+    area: "Cuyo",
+    kind: "Deep time",
+    access: "Road trip or guided park visits",
+    uniqueness: "Triassic fossil basin exposed in desert canyons",
+    why:
+      "The adjoining parks preserve an unusually complete continental Triassic sequence: early dinosaurs, mammal ancestors, ancient river systems and red-rock canyons in the same geological story.",
+    realityCheck:
+      "The rocks are a fossil archive of vertebrate evolution. The scenery is secondary.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/966/",
+    },
+    map: {
+      name: "Ischigualasto Provincial Park",
+      formattedAddress: "J5449 Villa San Agustín, San Juan, Argentina",
+      placeId: "ChIJwynmBT3sgpYR0J11F_1O5cw",
+      rating: 4.7,
+      reviewCount: 17619,
+      location: { lat: -30.163806, lng: -67.842494 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Ischigualasto%20Provincial%20Park&query_place_id=ChIJwynmBT3sgpYR0J11F_1O5cw",
+    },
+  },
+  {
+    id: "cueva-de-las-manos",
+    name: "Cueva de las Manos",
+    countries: ["Argentina"],
+    area: "Santa Cruz",
+    kind: "Archaeology",
+    access: "Remote but visitable",
+    uniqueness: "Ancient hand stencils in a Patagonian canyon",
+    why:
+      "The cave's negative handprints, hunting scenes and canyon setting make a direct, human-scale record of hunter-gatherer life over thousands of years.",
+    realityCheck:
+      "It is a small site compared with the continent-scale places here, but few places feel as immediate.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/936/",
+    },
+    map: {
+      name: "Cueva de las Manos",
+      formattedAddress: "Santa Cruz Province, Argentina",
+      placeId: "ChIJdd-wpp5k670REHncH6rk_qI",
+      rating: 4.7,
+      reviewCount: 1143,
+      location: { lat: -47.1554475, lng: -70.6550556 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Cueva%20de%20las%20Manos&query_place_id=ChIJdd-wpp5k670REHncH6rk_qI",
+    },
+  },
+  {
+    id: "tierra-del-fuego",
+    name: "Tierra del Fuego and the Beagle Channel",
+    countries: ["Argentina", "Chile"],
+    area: "Southern Patagonia",
+    kind: "Ecology",
+    access: "Straightforward from Ushuaia; deeper travel is harder",
+    uniqueness: "Subantarctic forest, peatlands and sea channels at the continent's edge",
+    why:
+      "The interest is conceptual as much as scenic: the southern edge of the continent, shaped by cold forest, peat bogs, marine channels, penguin colonies, wind and the history of Yaghan and Selk'nam peoples.",
+    realityCheck:
+      "Ushuaia can feel packaged. The stronger version is Beagle Channel, peatland and subantarctic ecology rather than the 'end of the world' sign.",
+    source: {
+      label: "Argentina National Parks",
+      url: "https://www.argentina.gob.ar/interior/ambiente/parquesnacionales/tierradelfuego",
+    },
+    map: {
+      name: "Parque Nacional Tierra del Fuego",
+      formattedAddress:
+        "RN3 kilómetro 3067, V9410 Ushuaia, Tierra del Fuego, Argentina",
+      placeId: "ChIJwYRTw8w4TLwRMTjY5EwT7Wc",
+      rating: 4.8,
+      reviewCount: 15390,
+      location: { lat: -54.8349253, lng: -68.4465053 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20Tierra%20del%20Fuego&query_place_id=ChIJwYRTw8w4TLwRMTjY5EwT7Wc",
+    },
+  },
+  {
+    id: "peninsula-valdes",
+    name: "Península Valdés",
+    countries: ["Argentina"],
+    area: "Chubut",
+    kind: "Ecology",
+    access: "Seasonal wildlife timing matters",
+    uniqueness: "Marine megafauna concentrated on an arid Patagonian coast",
+    why:
+      "Southern right whales, elephant seals, sea lions, penguins and orcas use the same peninsula and gulfs, turning a dry coast into one of South America's densest marine-wildlife stages.",
+    realityCheck:
+      "The orca beach-hunting behavior around Punta Norte is extremely timing-dependent. The peninsula is still worth listing because the whole marine system concentrates there.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/937/",
+    },
+    map: {
+      name: "Valdes Peninsula",
+      formattedAddress: "Valdes Peninsula, Chubut Province, Argentina",
+      placeId: "ChIJsTY5y4LWAr4RKOaySgOPusk",
+      rating: 4.7,
+      reviewCount: 1277,
+      location: { lat: -42.5285871, lng: -63.8790146 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Valdes%20Peninsula&query_place_id=ChIJsTY5y4LWAr4RKOaySgOPusk",
+    },
+  },
+  {
+    id: "nazca-lines",
+    name: "Nazca and Palpa Lines",
+    countries: ["Peru"],
+    area: "Ica",
+    kind: "Archaeology",
+    access: "Overflight or viewing towers",
+    uniqueness: "Giant desert geoglyphs made to be read from scale",
+    why:
+      "The Nazca and Palpa geoglyphs turn desert pavement into a designed surface: animals, lines and trapezoids preserved by aridity and legible only from height or distance.",
+    realityCheck:
+      "The overflight can feel touristy, but the puzzle of labor, desert surface and ritual scale is real.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/700/",
+    },
+    map: {
+      name: "Nazca Lines",
+      formattedAddress: "Peru",
+      placeId: "ChIJrTK1zEYeFJERkbWXZrnSAhg",
+      rating: 4.6,
+      reviewCount: 4081,
+      location: { lat: -14.739027, lng: -75.130005 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Nazca%20Lines&query_place_id=ChIJrTK1zEYeFJERkbWXZrnSAhg",
+    },
+  },
+  {
+    id: "colca-canyon",
+    name: "Colca Canyon",
+    countries: ["Peru"],
+    area: "Arequipa",
+    kind: "Culture",
+    access: "Easy to moderate from Arequipa",
+    uniqueness: "Deep inhabited canyon and reliable condor thermals",
+    why:
+      "Colca is a deep, inhabited Andean canyon with pre-Inca agricultural terraces and one of the most reliable places to watch Andean condors rise on morning thermals at eye level.",
+    realityCheck:
+      "The condor show is timing-dependent and best in dry-season mornings. The settlement pattern matters as much as the canyon depth.",
+    source: {
+      label: "UNESCO Global Geoparks",
+      url: "https://www.unesco.org/en/iggp/geoparks/colca-and-volcanoes-andahuaylas",
+    },
+    map: {
+      name: "Colca Canyon",
+      formattedAddress: "Peru",
+      placeId: "ChIJ_____zTnaZERAs-hs9HJi_Q",
+      rating: 4.7,
+      reviewCount: 7139,
+      location: { lat: -15.6574463, lng: -72.1771463 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Colca%20Canyon&query_place_id=ChIJ_____zTnaZERAs-hs9HJi_Q",
+    },
+  },
+  {
+    id: "moray-maras",
+    name: "Moray and Maras salt pans",
+    countries: ["Peru"],
+    area: "Sacred Valley",
+    kind: "Culture",
+    access: "Easy from Cusco",
+    uniqueness: "Inca microclimate terraces beside hand-worked salt pans",
+    why:
+      "Moray's concentric terraces create measurable microclimates, making the site feel like an Inca environmental instrument. Nearby Maras turns one saline spring into thousands of small evaporation pans still worked by local families.",
+    realityCheck:
+      "It is easy to visit, which makes it easy to underrate. The value is in the agricultural engineering and continuity of use, not the quick photo stop.",
+    source: {
+      label: "Peru Ministry of Culture",
+      url: "https://www.gob.pe/cultura",
+    },
+    map: {
+      name: "Zona Arqueologica Moray",
+      formattedAddress: "Vía a Moray, Maras 08655, Peru",
+      placeId: "ChIJyZGitKXDbZERg4qm1pVfwBQ",
+      rating: 4.7,
+      reviewCount: 12590,
+      location: { lat: -13.3298569, lng: -72.1971438 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Zona%20Arqueologica%20Moray&query_place_id=ChIJyZGitKXDbZERg4qm1pVfwBQ",
+    },
+  },
+  {
+    id: "caral",
+    name: "Sacred City of Caral-Supe",
+    countries: ["Peru"],
+    area: "Norte Chico",
+    kind: "Archaeology",
+    access: "Day trip from Lima with effort",
+    uniqueness: "One of the Americas' earliest urban centers",
+    why:
+      "Caral reframes the Andean story: monumental architecture, plazas and urban planning appear here roughly five millennia ago, long before the Inca.",
+    realityCheck:
+      "It is less visually dramatic than Machu Picchu. That is exactly why it is worth separating from the usual Peru itinerary.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1269/",
+    },
+    map: {
+      name: "Sacred City of Caral-Supe (UNESCO)",
+      formattedAddress: "Barranca, Supe Puerto 15161, Peru",
+      placeId: "ChIJVWZZX5sXB5ERAMQuS6UnOhw",
+      rating: 4.6,
+      reviewCount: 2011,
+      location: { lat: -10.8922984, lng: -77.5218329 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Sacred%20City%20of%20Caral-Supe%20(UNESCO)&query_place_id=ChIJVWZZX5sXB5ERAMQuS6UnOhw",
+    },
+  },
+  {
+    id: "chan-chan",
+    name: "Chan Chan",
+    countries: ["Peru"],
+    area: "La Libertad",
+    kind: "Archaeology",
+    access: "Straightforward from Trujillo",
+    uniqueness: "Largest earthen-architecture city in pre-Columbian America",
+    why:
+      "Chan Chan makes the Andean coast feel radically different from the Inca stone canon: adobe palaces, walled compounds, water management, reliefs and Chimú urbanism built for a desert coast.",
+    realityCheck:
+      "It is fragile and partly reconstructed, but that fragility is the point: an enormous mud city surviving in a changing coastal climate.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/366/",
+    },
+    map: {
+      name: "Chan Chan",
+      formattedAddress: "Site Museum, Av. Chan Chan 101 Urb, Trujillo 13000, Peru",
+      placeId: "ChIJxYphrFo8rZERKahyG4KUm8s",
+      rating: 4.6,
+      reviewCount: 5826,
+      location: { lat: -8.1085762, lng: -79.0752648 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Chan%20Chan&query_place_id=ChIJxYphrFo8rZERKahyG4KUm8s",
+    },
+  },
+  {
+    id: "machu-picchu",
+    name: "Machu Picchu",
+    countries: ["Peru"],
+    area: "Cusco",
+    kind: "Culture",
+    access: "Highly regulated and crowded",
+    uniqueness: "Inca urbanism fused to cloud-forest topography",
+    why:
+      "It is overexposed for good reason: masonry, terraces, water control, roads and mountain setting work as one design.",
+    realityCheck:
+      "Go for the engineering and mountain logic, not for the proof that you have been to Peru.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/274/",
+    },
+    map: {
+      name: "Historic Sanctuary of Machu Picchu",
+      formattedAddress: "08680, Peru",
+      placeId: "ChIJVVVViV-abZERJxqgpA43EDo",
+      rating: 4.8,
+      reviewCount: 84602,
+      location: { lat: -13.1631988, lng: -72.5452621 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Historic%20Sanctuary%20of%20Machu%20Picchu&query_place_id=ChIJVVVViV-abZERJxqgpA43EDo",
+    },
+  },
+  {
+    id: "lake-titicaca",
+    name: "Lake Titicaca",
+    countries: ["Peru", "Bolivia"],
+    area: "Altiplano",
+    kind: "Culture",
+    access: "Straightforward from Puno or Copacabana",
+    uniqueness: "High-altitude lake culture at continental scale",
+    why:
+      "The lake is a vast Andean inland sea tied to origin myths, reed technologies, island agriculture and long-distance exchange across the Altiplano.",
+    realityCheck:
+      "Some floating-island visits are staged. The interesting version asks how people adapted to altitude, reeds, water and cold.",
+    source: {
+      label: "UNESCO Tentative Lists",
+      url: "https://whc.unesco.org/en/tentativelists/5080/",
+    },
+    map: {
+      name: "Lake Titicaca",
+      formattedAddress: "Lake Titicaca",
+      placeId: "ChIJdXyv9iKbXZER3HHf1CQnaA8",
+      rating: 4.5,
+      reviewCount: 2971,
+      location: { lat: -15.9254, lng: -69.3354 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Lake%20Titicaca&query_place_id=ChIJdXyv9iKbXZER3HHf1CQnaA8",
+    },
+  },
+  {
+    id: "la-rinconada",
+    name: "La Rinconada",
+    countries: ["Peru"],
+    area: "Puno",
+    kind: "Settlement",
+    access: "Hard and not recommended casually",
+    uniqueness: "Highest permanent settlement on Earth",
+    why:
+      "At roughly 5,100 meters, La Rinconada is a gold-mining boomtown at the physiological edge of permanent settlement, with oxygen levels, labor systems and infrastructure gaps that make it unlike normal highland towns.",
+    realityCheck:
+      "This is included for human-geography singularity, not as a pleasant recommendation. Altitude, sanitation, mining conditions and safety make it a serious trip.",
+    source: {
+      label: "National Geographic",
+      url: "https://www.nationalgeographic.com/magazine/article/gold-is-a-toxic-lure-in-the-worlds-highest-settlement",
+    },
+    map: {
+      name: "La Rinconada",
+      formattedAddress: "La Rinconada 21355, Peru",
+      placeId: "ChIJPcyHCJHvZpERjE9ZmFJXNyo",
+      rating: null,
+      reviewCount: null,
+      location: { lat: -14.6311542, lng: -69.4464247 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=La%20Rinconada&query_place_id=ChIJPcyHCJHvZpERjE9ZmFJXNyo",
+    },
+  },
+  {
+    id: "manu",
+    name: "Manu and the Amazon headwaters",
+    countries: ["Peru"],
+    area: "Andes to Amazon",
+    kind: "Ecology",
+    access: "Difficult and permit-based in zones",
+    uniqueness: "One of Earth's great biodiversity gradients",
+    why:
+      "Manu is the strongest shorthand for the deep-Amazon/headwaters idea: it drops from high Andes through cloud forest into Amazon lowlands, protecting an almost absurd range of habitats, birds, mammals and plant communities.",
+    realityCheck:
+      "A Manaus-adjacent day trip or checklist safari would miss the point. The value is the intact gradient and the amount of life packed into it.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/402/",
+    },
+    map: {
+      name: "Parque Nacional del Manu",
+      formattedAddress: "Peru",
+      placeId: "ChIJGwwOP4tpbpERx7lm8yzL5tA",
+      rating: 4.5,
+      reviewCount: 457,
+      location: { lat: -12.0406493, lng: -71.7230362 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20del%20Manu&query_place_id=ChIJGwwOP4tpbpERx7lm8yzL5tA",
+    },
+  },
+  {
+    id: "pantanal",
+    name: "Pantanal",
+    countries: ["Brazil", "Bolivia", "Paraguay"],
+    area: "Upper Paraguay River basin",
+    kind: "Ecology",
+    access: "Seasonal lodges and boat travel",
+    uniqueness: "One of the world's largest tropical wetlands",
+    why:
+      "Flood pulses, grasslands, gallery forests and open water make wildlife unusually visible for South America: jaguar, giant otter, hyacinth macaw, caiman and marsh deer.",
+    realityCheck:
+      "The Pantanal is not one viewpoint; it is a hydrological machine. Timing the wet/dry cycle matters.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/999/",
+    },
+    map: {
+      name: "Portal Transpantaneira",
+      formattedAddress: "Estr. Transpantaneira - Poconé, MT, 78175-000, Brazil",
+      placeId: "ChIJuSNCOcOwnJMReMHnnECpBAM",
+      rating: 4.7,
+      reviewCount: 448,
+      location: { lat: -16.4068276, lng: -56.6699103 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Portal%20Transpantaneira&query_place_id=ChIJuSNCOcOwnJMReMHnnECpBAM",
+    },
+  },
+  {
+    id: "iguazu",
+    name: "Iguazú Falls",
+    countries: ["Argentina", "Brazil"],
+    area: "Atlantic Forest",
+    kind: "Geology",
+    access: "Very accessible and busy",
+    uniqueness: "A huge multi-fall basalt-rim waterfall system",
+    why:
+      "Iguazú is famous enough to feel obvious, but physically it is still hard to overrate: hundreds of falls spread across a horseshoe-like basalt edge inside subtropical Atlantic Forest.",
+    realityCheck:
+      "The infrastructure is heavy. It stays on the list because the hydrology, width and forest setting are genuinely exceptional, not because it is a bucket-list classic.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/303/",
+    },
+    map: {
+      name: "Iguazu Falls",
+      formattedAddress: "Misiones Province, Argentina",
+      placeId: "ChIJbRuqowzq9pQRfphenBd1e5E",
+      rating: 4.9,
+      reviewCount: 127511,
+      location: { lat: -25.695259, lng: -54.4366662 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Iguazu%20Falls&query_place_id=ChIJbRuqowzq9pQRfphenBd1e5E",
+    },
+  },
+  {
+    id: "kaieteur",
+    name: "Kaieteur Falls",
+    countries: ["Guyana"],
+    area: "Potaro-Siparuni",
+    kind: "Geology",
+    access: "Fly-in day trip or expedition",
+    uniqueness: "Huge single-drop waterfall in rainforest",
+    why:
+      "Kaieteur is a powerful, isolated single-drop fall pouring over the Guiana Shield into a forested gorge, with tiny golden frogs living in tank bromeliads nearby.",
+    realityCheck:
+      "Its remoteness is part of the appeal. The visitor footprint is much smaller than at Iguazú.",
+    source: {
+      label: "Protected Planet",
+      url: "https://www.protectedplanet.net/303706",
+    },
+    map: {
+      name: "Kaieteur Falls - Guyana",
+      formattedAddress: "Guyana",
+      placeId: "ChIJI5rzdV0_vI0Rf8urOBzZQho",
+      rating: 4.7,
+      reviewCount: 492,
+      location: { lat: 5.176516, lng: -59.4807529 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Kaieteur%20Falls%20-%20Guyana&query_place_id=ChIJI5rzdV0_vI0Rf8urOBzZQho",
+    },
+  },
+  {
+    id: "central-suriname",
+    name: "Central Suriname Nature Reserve",
+    countries: ["Suriname"],
+    area: "Guiana Shield",
+    kind: "Ecology",
+    access: "Remote expedition",
+    uniqueness: "Large intact, largely uninhabited tropical forest",
+    why:
+      "Normal Amazon entries miss this: 1.6 million hectares of primary Guiana Shield rainforest, with lowland and montane ecosystems, granite outcrops and little hunting or settlement pressure.",
+    realityCheck:
+      "It is a major detour. The reason to include it is intactness at scale, not visitor convenience.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/1017/",
+    },
+    map: {
+      name: "Central Suriname Nature Reserve",
+      formattedAddress: "Suriname",
+      placeId: "ChIJxQ-WM514n40R_IEw9AfNl2E",
+      rating: 4.7,
+      reviewCount: 47,
+      location: { lat: 4.1346023, lng: -56.1142253 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Central%20Suriname%20Nature%20Reserve&query_place_id=ChIJxQ-WM514n40R_IEw9AfNl2E",
+    },
+  },
+  {
+    id: "chapada-diamantina",
+    name: "Chapada Diamantina and Poço Encantado",
+    countries: ["Brazil"],
+    area: "Bahia",
+    kind: "Geology",
+    access: "Moderate; guide useful",
+    uniqueness: "Table mountains, cave lakes and a blue-light underground pool",
+    why:
+      "Chapada Diamantina's highlands are full of canyons, caves and waterfalls, but Poço Encantado is the singular hook: a deep, exceptionally clear cave lake that glows blue when sunlight enters through the cave mouth.",
+    realityCheck:
+      "It is a regional system rather than one isolated attraction. The best version combines the cave lakes with several days around Lençóis.",
+    source: {
+      label: "Scientific Electronic Library Online",
+      url: "https://www.scielo.br/j/ni/a/7jhTNWtnmhyB6SphmQwbKHt/?lang=en",
+    },
+    map: {
+      name: "Chapada Diamantina National Park",
+      formattedAddress: "Andaraí - State of Bahia, 46430-000, Brazil",
+      placeId: "ChIJvxVjS7whQgcRvbnUHVNZb1s",
+      rating: 4.9,
+      reviewCount: 10841,
+      location: { lat: -12.7927433, lng: -41.4123466 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Chapada%20Diamantina%20National%20Park&query_place_id=ChIJvxVjS7whQgcRvbnUHVNZb1s",
+    },
+  },
+  {
+    id: "serra-da-capivara",
+    name: "Serra da Capivara National Park",
+    countries: ["Brazil"],
+    area: "Piauí",
+    kind: "Archaeology",
+    access: "Remote but visitable",
+    uniqueness: "Rock art and debates over early peopling",
+    why:
+      "Hundreds of shelters preserve dense rock art scenes in semi-arid caatinga. The park is also tied to long-running debates about how early humans reached and occupied the Americas.",
+    realityCheck:
+      "The case builds through repetition: many shelters, many panels and a research history that changed the conversation.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/606/",
+    },
+    map: {
+      name: "Serra da Capivara National Park",
+      formattedAddress:
+        "Rua Doutor Luís Paixão, 188 - Milonga, João Costa - PI, 64770-000, Brazil",
+      placeId: "ChIJV5QpMA_XeQcRj6j-UetD02M",
+      rating: 4.8,
+      reviewCount: 1665,
+      location: { lat: -8.716685, lng: -42.6018821 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Serra%20da%20Capivara%20National%20Park&query_place_id=ChIJV5QpMA_XeQcRj6j-UetD02M",
+    },
+  },
+  {
+    id: "cano-cristales",
+    name: "Caño Cristales",
+    countries: ["Colombia"],
+    area: "Serranía de la Macarena",
+    kind: "Ecology",
+    access: "Seasonal and regulated",
+    uniqueness: "A river colored by endemic aquatic plants",
+    why:
+      "The river's reds, greens and yellows come from Macarenia, an aquatic plant responding to light, water level and season on ancient Guiana Shield rock.",
+    realityCheck:
+      "The fragile biology is the main point. Sunscreen and repellents are restricted for a reason.",
+    source: {
+      label: "Parques Nacionales Naturales de Colombia",
+      url: "https://www.parquesnacionales.gov.co/sala-prensa/noticias/inicia-temporada-en-cano-cristales-naturalmente-responsable/",
+    },
+    map: {
+      name: "Parque Nacional Natural Sierra de La Macarena",
+      formattedAddress: "Meta, Colombia",
+      placeId: "ChIJ0eNpgHoKPY4R1YPpb8NrXBk",
+      rating: 4.6,
+      reviewCount: 1367,
+      location: { lat: 2.96914, lng: -73.90059 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20Natural%20Sierra%20de%20La%20Macarena&query_place_id=ChIJ0eNpgHoKPY4R1YPpb8NrXBk",
+    },
+  },
+  {
+    id: "marble-caves",
+    name: "Marble Caves",
+    countries: ["Chile"],
+    area: "Aysén",
+    kind: "Geology",
+    access: "Boat or kayak, weather-dependent",
+    uniqueness: "Lake-carved marble forms",
+    why:
+      "Glacial lake water has sculpted marble into caves, columns and smooth blue-white chambers. The material, water color and erosion process are the story.",
+    realityCheck:
+      "It is beautiful, but its place on this list depends on the geology, not the Instagram palette.",
+    source: {
+      label: "Servicio Nacional de Turismo Chile",
+      url: "https://www.chile.travel/en/where-to-go/patagonia-and-antarctica/carretera-austral/",
+    },
+    map: {
+      name: "Marble Caves",
+      formattedAddress: "Chile Chico, Aysén, Chile",
+      placeId: "ChIJKf_V1RRWkr0Ri7fQv6TzV_Q",
+      rating: 4.9,
+      reviewCount: 3404,
+      location: { lat: -46.6586031, lng: -72.6275525 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Marble%20Caves&query_place_id=ChIJKf_V1RRWkr0Ri7fQv6TzV_Q",
+    },
+  },
+  {
+    id: "kuelap",
+    name: "Kuélap",
+    countries: ["Peru"],
+    area: "Amazonas",
+    kind: "Archaeology",
+    access: "Cable car access, closures possible",
+    uniqueness: "Chachapoya walled city in cloud forest",
+    why:
+      "Kuélap is a massive mountaintop settlement with high limestone walls, circular houses and cloud-forest context that makes northern Peru feel historically separate from the Cusco-centered story.",
+    realityCheck:
+      "Check current access before planning; conservation work and landslide risk have affected visits.",
+    source: {
+      label: "Ministerio de Cultura del Perú",
+      url: "https://www.gob.pe/cultura",
+    },
+    map: {
+      name: "Kuelap Fortress",
+      formattedAddress: "Carr. a Kuelap, 01415, Peru",
+      placeId: "ChIJFzjuFuFXsZERCYAfi_OfA-8",
+      rating: 4.7,
+      reviewCount: 4530,
+      location: { lat: -6.4174133, lng: -77.9236067 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Kuelap%20Fortress&query_place_id=ChIJFzjuFuFXsZERCYAfi_OfA-8",
+    },
+  },
+  {
+    id: "tiwanaku",
+    name: "Tiwanaku",
+    countries: ["Bolivia"],
+    area: "Lake Titicaca basin",
+    kind: "Archaeology",
+    access: "Day trip from La Paz",
+    uniqueness: "High-altitude pre-Inca ceremonial and political center",
+    why:
+      "Tiwanaku shows that complex Andean statecraft, stonework, ritual architecture and raised-field agriculture were flourishing around Lake Titicaca long before the Inca.",
+    realityCheck:
+      "The site can feel fragmentary. Its importance is easier to grasp if you read the chronology before going.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/567/",
+    },
+    map: {
+      name: "Sun Gate",
+      formattedAddress: "C8WG+7C3, Tiwanaku, Bolivia",
+      placeId: "ChIJHaWJCAy9XpER-8ZO9-1buD8",
+      rating: 4.6,
+      reviewCount: 1171,
+      location: { lat: -16.5543705, lng: -68.6739395 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Sun%20Gate&query_place_id=ChIJHaWJCAy9XpER-8ZO9-1buD8",
+    },
+  },
+  {
+    id: "san-agustin",
+    name: "San Agustín Archaeological Park",
+    countries: ["Colombia"],
+    area: "Huila",
+    kind: "Archaeology",
+    access: "Straightforward from San Agustín",
+    uniqueness: "Monumental statues and tombs from an unknown culture",
+    why:
+      "The park's carved guardians, burial mounds and ceremonial sites form one of South America's strangest sculptural groups, with more questions than answers.",
+    realityCheck:
+      "The statues sit with the terrain, tombs and watercourses. Treating them as isolated objects flattens the site.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/744/",
+    },
+    map: {
+      name: "San Agustín Archaeological Park",
+      formattedAddress: "San Agustín, Huila, Colombia",
+      placeId: "ChIJ3RYP1TZwJY4RTNNwct_2pYY",
+      rating: 4.8,
+      reviewCount: 4173,
+      location: { lat: 1.8856809, lng: -76.2942962 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=San%20Agust%C3%ADn%20Archaeological%20Park&query_place_id=ChIJ3RYP1TZwJY4RTNNwct_2pYY",
+    },
+  },
+  {
+    id: "sierra-nevada-santa-marta",
+    name: "Sierra Nevada de Santa Marta and Ciudad Perdida",
+    countries: ["Colombia"],
+    area: "Caribbean Colombia",
+    kind: "Culture",
+    access: "Multi-day trek for Ciudad Perdida",
+    uniqueness: "The world's highest coastal mountain range with living Indigenous territories",
+    why:
+      "The Sierra rises from Caribbean coast to snow peaks in a short horizontal distance, compressing tropical coast, forest, cloud belt, páramo and sacred Indigenous territory. Ciudad Perdida adds a Tayrona urban site inside that vertical world.",
+    realityCheck:
+      "The Lost City trek is only one doorway. The broader mountain system and Indigenous geography are the reason it belongs here.",
+    source: {
+      label: "UNESCO Biosphere Reserves",
+      url: "https://www.unesco.org/en/mab/sierra-nevada-de-santa-marta",
+    },
+    map: {
+      name: "Sierra Nevada de Santa Marta",
+      formattedAddress: "Sierra Nevada de Santa Marta, Aracataca, Magdalena, Colombia",
+      placeId: "ChIJKzTP8mYm9Y4RK1f9NTffGWM",
+      rating: 4.4,
+      reviewCount: 291,
+      location: { lat: 10.8292413, lng: -73.6923443 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Sierra%20Nevada%20de%20Santa%20Marta&query_place_id=ChIJKzTP8mYm9Y4RK1f9NTffGWM",
+    },
+  },
+  {
+    id: "chavin",
+    name: "Chavín de Huántar",
+    countries: ["Peru"],
+    area: "Ancash",
+    kind: "Archaeology",
+    access: "Mountain road from Huaraz",
+    uniqueness: "An underground ceremonial complex of an early Andean cult",
+    why:
+      "Chavín's galleries, stone heads, drainage acoustics and Lanzón monolith show an early religious center using architecture to produce sensory effects.",
+    realityCheck:
+      "The best parts are spatial and subterranean. It rewards a guide more than a quick walk-through.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/330/",
+    },
+    map: {
+      name: "Chavín de Huántar Archaeological Monument",
+      formattedAddress: "CR4F+G3M Museo de, Chavín de Huantar 02395, Peru",
+      placeId: "ChIJhVvRBhb-qJER5iA0DJDmWhg",
+      rating: 4.6,
+      reviewCount: 4448,
+      location: { lat: -9.5936721, lng: -77.1773384 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Chav%C3%ADn%20de%20Hu%C3%A1ntar%20Archaeological%20Monument&query_place_id=ChIJhVvRBhb-qJER5iA0DJDmWhg",
+    },
+  },
+  {
+    id: "potosi-cerro-rico",
+    name: "Potosí and Cerro Rico",
+    countries: ["Bolivia"],
+    area: "Bolivian Andes",
+    kind: "Industrial history",
+    access: "Straightforward but ethically heavy",
+    uniqueness: "A mountain that reshaped global silver, empire and labor",
+    why:
+      "Cerro Rico is one of the darkest and most consequential places in the hemisphere: silver extraction there helped fund the Spanish Empire, moved wealth through global trade and consumed Indigenous and enslaved labor at brutal scale.",
+    realityCheck:
+      "This is a grim visit. It belongs because historical consequence can be as singular as geology.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/420/",
+    },
+    map: {
+      name: "National Mint of Bolivia",
+      formattedAddress: "C66W+C8W, Ayacucho, Villa Imperial de Potosí, Bolivia",
+      placeId: "ChIJY8EtdHpO-ZMRYvm9vlY6lPA",
+      rating: 4.5,
+      reviewCount: 2886,
+      location: { lat: -19.5888848, lng: -65.7541803 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=National%20Mint%20of%20Bolivia&query_place_id=ChIJY8EtdHpO-ZMRYvm9vlY6lPA",
+    },
+  },
+  {
+    id: "mennonite-chaco",
+    name: "Mennonite colonies of the Paraguayan Chaco",
+    countries: ["Paraguay"],
+    area: "Gran Chaco",
+    kind: "Culture",
+    access: "Moderate road trip from Asunción",
+    uniqueness: "Plautdietsch-speaking agricultural colonies in dry Chaco scrub",
+    why:
+      "Filadelfia and the nearby colonies are a stark cultural-geographic transplant: Anabaptist cooperatives, Germanic language and order and dairy/agricultural infrastructure built in one of South America's harshest lowland environments.",
+    realityCheck:
+      "Visit respectfully. The Chaco context and Indigenous land history are inseparable from the Mennonite success story.",
+    source: {
+      label: "University of Florida Center for Latin American Studies",
+      url: "https://www.latam.ufl.edu/blog/2020/mennonites-helped-turn-paraguay-into-beef-producer-indigenous-people-pay-price.html",
+    },
+    map: {
+      name: "Museo Jakob Unger",
+      formattedAddress: "Av. Hindenburg, Filadelfia 160402, Paraguay",
+      placeId: "ChIJDf0DBaUQcpQRVXJBe4CPof0",
+      rating: 4.8,
+      reviewCount: 107,
+      location: { lat: -22.3531376, lng: -60.0355199 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Museo%20Jakob%20Unger&query_place_id=ChIJDf0DBaUQcpQRVXJBe4CPof0",
+    },
+  },
+  {
+    id: "meeting-waters",
+    name: "Meeting of Waters",
+    countries: ["Brazil"],
+    area: "Manaus",
+    kind: "Hydrology",
+    access: "Easy boat trip from Manaus",
+    uniqueness: "Two major rivers visibly resist mixing",
+    why:
+      "The dark Negro and sediment-heavy Solimões differ in temperature, speed, density, chemistry and suspended load, so they flow side by side for miles before continuing downstream as the Amazon.",
+    realityCheck:
+      "It is more interesting with the physics in mind: the contrast is not a trick of color but a real mixing problem.",
+    source: {
+      label: "Hydrological Processes",
+      url: "https://doi.org/10.1002/hyp.7388",
+    },
+    map: {
+      name: "Meeting of Waters",
+      formattedAddress:
+        "Meeting of Waters, Careiro da Várzea - State of Amazonas, 69255-000, Brazil",
+      placeId: "ChIJ0Rcb1aADbJIRk-E1XDUlHNQ",
+      rating: 4.8,
+      reviewCount: 417,
+      location: { lat: -3.136667, lng: -59.904722 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Meeting%20of%20Waters&query_place_id=ChIJ0Rcb1aADbJIRk-E1XDUlHNQ",
+    },
+  },
+  {
+    id: "chiloe",
+    name: "Chiloé Archipelago",
+    countries: ["Chile"],
+    area: "Chiloé Archipelago",
+    kind: "Culture",
+    access: "Road and ferry travel",
+    uniqueness: "A foggy island culture of timber churches, palafitos and maritime mythology",
+    why:
+      "Chiloé feels like a parallel Chile: wooden churches built with boat-building logic, palafitos, fog, mythology, seafood and a maritime history at the edge of Spanish colonial control.",
+    realityCheck:
+      "Use Castro as an anchor, but the point is the archipelago's cultural system, not one postcard church.",
+    source: {
+      label: "UNESCO World Heritage Centre",
+      url: "https://whc.unesco.org/en/list/971/",
+    },
+    map: {
+      name: "Iglesia Patrimonial San Francisco, Castro",
+      formattedAddress: "Almte. Latorre, Castro, Los Lagos, Chile",
+      placeId: "ChIJk5YaxeUZIpYRKfNXIN6MAyY",
+      rating: 4.6,
+      reviewCount: 6950,
+      location: { lat: -42.4816257, lng: -73.7636913 },
+      googleMapsUrl:
+        "https://www.google.com/maps/search/?api=1&query=Iglesia%20Patrimonial%20San%20Francisco%2C%20Castro&query_place_id=ChIJk5YaxeUZIpYRKfNXIN6MAyY",
+    },
+  },
+];
+
+const wikiUrls: Partial<Record<string, string>> = {
+  "salar-de-uyuni": "https://en.wikipedia.org/wiki/Salar_de_Uyuni",
+  "lencois-maranhenses": "https://en.wikipedia.org/wiki/Len%C3%A7%C3%B3is_Maranhenses_National_Park",
+  "mount-roraima": "https://en.wikipedia.org/wiki/Mount_Roraima",
+  "angel-falls-canaima": "https://en.wikipedia.org/wiki/Angel_Falls",
+  "catatumbo-lightning": "https://en.wikipedia.org/wiki/Catatumbo_lightning",
+  "boiling-river": "https://en.wikipedia.org/wiki/Shanay-timpishka",
+  chiribiquete: "https://en.wikipedia.org/wiki/Chiribiquete_National_Park",
+  galapagos: "https://en.wikipedia.org/wiki/Gal%C3%A1pagos_Islands",
+  "fernando-de-noronha": "https://en.wikipedia.org/wiki/Fernando_de_Noronha",
+  "rapa-nui": "https://en.wikipedia.org/wiki/Easter_Island",
+  atacama: "https://en.wikipedia.org/wiki/Atacama_Desert",
+  "humberstone-santa-laura":
+    "https://en.wikipedia.org/wiki/Humberstone_and_Santa_Laura_Saltpeter_Works",
+  "torres-del-paine": "https://en.wikipedia.org/wiki/Torres_del_Paine_National_Park",
+  "los-glaciares": "https://en.wikipedia.org/wiki/Southern_Patagonian_Ice_Field",
+  "ischigualasto-talampaya": "https://en.wikipedia.org/wiki/Ischigualasto_Provincial_Park",
+  "cueva-de-las-manos": "https://en.wikipedia.org/wiki/Cueva_de_las_Manos",
+  "tierra-del-fuego": "https://en.wikipedia.org/wiki/Tierra_del_Fuego",
+  "peninsula-valdes": "https://en.wikipedia.org/wiki/Valdes_Peninsula",
+  "nazca-lines": "https://en.wikipedia.org/wiki/Nazca_Lines",
+  "colca-canyon": "https://en.wikipedia.org/wiki/Colca_Canyon",
+  "moray-maras": "https://en.wikipedia.org/wiki/Moray_(Inca_ruin)",
+  caral: "https://en.wikipedia.org/wiki/Caral",
+  "chan-chan": "https://en.wikipedia.org/wiki/Chan_Chan",
+  "machu-picchu": "https://en.wikipedia.org/wiki/Machu_Picchu",
+  "lake-titicaca": "https://en.wikipedia.org/wiki/Lake_Titicaca",
+  "la-rinconada": "https://en.wikipedia.org/wiki/La_Rinconada,_Peru",
+  manu: "https://en.wikipedia.org/wiki/Manu_National_Park",
+  pantanal: "https://en.wikipedia.org/wiki/Pantanal",
+  iguazu: "https://en.wikipedia.org/wiki/Iguazu_Falls",
+  kaieteur: "https://en.wikipedia.org/wiki/Kaieteur_Falls",
+  "central-suriname": "https://en.wikipedia.org/wiki/Central_Suriname_Nature_Reserve",
+  "chapada-diamantina": "https://en.wikipedia.org/wiki/Chapada_Diamantina_National_Park",
+  "serra-da-capivara": "https://en.wikipedia.org/wiki/Serra_da_Capivara_National_Park",
+  "cano-cristales": "https://en.wikipedia.org/wiki/Ca%C3%B1o_Cristales",
+  "marble-caves": "https://en.wikipedia.org/wiki/General_Carrera_Lake",
+  kuelap: "https://en.wikipedia.org/wiki/Ku%C3%A9lap",
+  tiwanaku: "https://en.wikipedia.org/wiki/Tiwanaku",
+  "san-agustin": "https://en.wikipedia.org/wiki/San_Agust%C3%ADn_Archaeological_Park",
+  "sierra-nevada-santa-marta": "https://en.wikipedia.org/wiki/Sierra_Nevada_de_Santa_Marta",
+  chavin: "https://en.wikipedia.org/wiki/Chav%C3%ADn_de_Huantar",
+  "potosi-cerro-rico": "https://en.wikipedia.org/wiki/Cerro_Rico",
+  "mennonite-chaco": "https://en.wikipedia.org/wiki/Mennonites_in_Paraguay",
+  "meeting-waters": "https://en.wikipedia.org/wiki/Meeting_of_Waters",
+  chiloe: "https://en.wikipedia.org/wiki/Chilo%C3%A9_Archipelago",
+};
+
+// Ranked by global singularity: phenomena and places that are hardest to substitute
+// anywhere on Earth come first, even when they are less convenient to visit.
+const interestingnessOrder = [
+  "catatumbo-lightning",
+  "boiling-river",
+  "galapagos",
+  "salar-de-uyuni",
+  "mount-roraima",
+  "angel-falls-canaima",
+  "la-rinconada",
+  "rapa-nui",
+  "chiribiquete",
+  "atacama",
+  "lencois-maranhenses",
+  "fernando-de-noronha",
+  "pantanal",
+  "nazca-lines",
+  "chan-chan",
+  "caral",
+  "potosi-cerro-rico",
+  "humberstone-santa-laura",
+  "kaieteur",
+  "cano-cristales",
+  "central-suriname",
+  "manu",
+  "serra-da-capivara",
+  "cueva-de-las-manos",
+  "ischigualasto-talampaya",
+  "moray-maras",
+  "tiwanaku",
+  "sierra-nevada-santa-marta",
+  "los-glaciares",
+  "lake-titicaca",
+  "colca-canyon",
+  "san-agustin",
+  "chavin",
+  "machu-picchu",
+  "peninsula-valdes",
+  "tierra-del-fuego",
+  "chapada-diamantina",
+  "mennonite-chaco",
+  "meeting-waters",
+  "chiloe",
+  "kuelap",
+  "iguazu",
+  "marble-caves",
+  "torres-del-paine",
+];
+
+type Spot = (typeof spots)[number];
+const spotById = new Map(spots.map((spot) => [spot.id, spot] as const));
+const rankedSpots = interestingnessOrder
+  .map((id) => spotById.get(id))
+  .filter((spot): spot is Spot => Boolean(spot));
+const rankedSpotIds = new Set(interestingnessOrder);
+
+if (rankedSpotIds.size !== spots.length || rankedSpots.length !== spots.length) {
+  throw new Error("South America spot ranking must include each spot exactly once.");
+}
+
+const tripEstimates: Record<string, { days: number; costUsd: number; note: string }> = {
+  "catatumbo-lightning": {
+    days: 7,
+    costUsd: 2400,
+    note: "Assumes flights via Caracas, Bogotá or Panama to the Maracaibo basin, boat access to a stilt-village viewing area, a local guide, simple lodging, meals and extra buffer for Venezuela logistics.",
+  },
+  "boiling-river": {
+    days: 6,
+    costUsd: 1700,
+    note: "Assumes flights via Lima to Pucallpa, road/boat access toward Honoria and Mayantuyacu, community-controlled guiding, simple lodging, meals and transfers.",
+  },
+  galapagos: {
+    days: 9,
+    costUsd: 3900,
+    note: "Assumes flights via mainland Ecuador, Galápagos fees, a land-based island stay, day boats, hotels, meals and local transfers.",
+  },
+  "salar-de-uyuni": {
+    days: 7,
+    costUsd: 1550,
+    note: "Assumes flights via La Paz or Santa Cruz, a connection to Uyuni, the 3-day Sud Lípez circuit, simple hotels, meals and transfers.",
+  },
+  "mount-roraima": {
+    days: 10,
+    costUsd: 2500,
+    note: "Assumes flights to Boa Vista or Caracas-side access, ground transfers, a 6–7 day guided trek, basic hotels, meals and border logistics.",
+  },
+  "angel-falls-canaima": {
+    days: 7,
+    costUsd: 2800,
+    note: "Assumes flights via Caracas or Bogotá/Panama to Venezuela, a connection to Canaima, a seasonal Angel Falls boat or flyover excursion, local lodging, meals, guides and extra logistics buffer.",
+  },
+  chiribiquete: {
+    days: 6,
+    costUsd: 2400,
+    note: "Assumes travel via Bogotá and San José del Guaviare for legal flyover-style access, lodging, guides, meals and regional transfers.",
+  },
+  atacama: {
+    days: 6,
+    costUsd: 1350,
+    note: "Assumes flights via Santiago to Calama, San Pedro lodging, shared desert tours including Valle de la Luna and El Tatio, meals and airport transfers.",
+  },
+  pantanal: {
+    days: 7,
+    costUsd: 2500,
+    note: "Assumes flights to Cuiabá or Campo Grande, a midrange wildlife lodge package, meals, boat outings and transfers.",
+  },
+  caral: {
+    days: 4,
+    costUsd: 1000,
+    note: "Assumes round-trip flights to Lima, a day trip or private transfer to Caral, midrange Lima lodging, meals and site fees.",
+  },
+  "chan-chan": {
+    days: 4,
+    costUsd: 1050,
+    note: "Assumes flights via Lima to Trujillo, local archaeological tours, midrange lodging, meals and transfers.",
+  },
+  "central-suriname": {
+    days: 7,
+    costUsd: 2400,
+    note: "Assumes flights to Paramaribo, a Raleighvallen or Voltzberg-style nature reserve tour, local hotels, meals and transfers.",
+  },
+  "los-glaciares": {
+    days: 5,
+    costUsd: 1100,
+    note: "Assumes flights to El Calafate, midrange lodging, meals, park transport and one glacier-focused excursion.",
+  },
+  "rapa-nui": {
+    days: 7,
+    costUsd: 3200,
+    note: "Assumes flights via Santiago to Hanga Roa, park access, guided site visits or a rental car, midrange lodging, meals and transfers.",
+  },
+  "fernando-de-noronha": {
+    days: 6,
+    costUsd: 2300,
+    note: "Assumes flights via São Paulo and Recife or Natal, island/environmental fees, midrange pousada lodging, meals, local transfers and a few guided marine outings.",
+  },
+  "lencois-maranhenses": {
+    days: 7,
+    costUsd: 1650,
+    note: "Assumes flights to São Luís, transfers to Barreirinhas or Atins, dune-lagoon tours, midrange lodging and meals.",
+  },
+  "humberstone-santa-laura": {
+    days: 5,
+    costUsd: 1200,
+    note: "Assumes flights via Santiago to Iquique, midrange lodging, meals, local transport and a Humberstone/Santa Laura day trip.",
+  },
+  "cueva-de-las-manos": {
+    days: 5,
+    costUsd: 1400,
+    note: "Assumes Patagonia flights, a rental car or guided road transfer, remote lodging, meals and site access.",
+  },
+  "ischigualasto-talampaya": {
+    days: 4,
+    costUsd: 850,
+    note: "Assumes domestic flights or overnight bus to San Juan/La Rioja, local park tours or car rental, lodging and meals.",
+  },
+  "potosi-cerro-rico": {
+    days: 5,
+    costUsd: 1050,
+    note: "Assumes flights via Bolivia, overland transfer to Potosí, midrange lodging, meals and a historically focused Cerro Rico visit.",
+  },
+  manu: {
+    days: 8,
+    costUsd: 1900,
+    note: "Assumes flights via Lima to Cusco, a midrange Manu road/river package, buffer nights, meals and transfers.",
+  },
+  "nazca-lines": {
+    days: 4,
+    costUsd: 950,
+    note: "Assumes flights to Lima, bus or private transfer to Nazca, an overflight or viewing sites, lodging and meals.",
+  },
+  "sierra-nevada-santa-marta": {
+    days: 7,
+    costUsd: 1800,
+    note: "Assumes flights via Bogotá or Cartagena/Santa Marta, a Ciudad Perdida trek package, buffer hotels, meals and transfers.",
+  },
+  tiwanaku: {
+    days: 4,
+    costUsd: 1000,
+    note: "Assumes flights to La Paz, midrange lodging, meals and a guided Tiwanaku day trip.",
+  },
+  iguazu: {
+    days: 3,
+    costUsd: 650,
+    note: "Assumes direct flights to Puerto Iguazú, two hotel nights, meals, park tickets and local transfers.",
+  },
+  "tierra-del-fuego": {
+    days: 5,
+    costUsd: 1100,
+    note: "Assumes flights to Ushuaia, midrange lodging, Beagle Channel and park excursions, meals and transfers.",
+  },
+  "lake-titicaca": {
+    days: 6,
+    costUsd: 1400,
+    note: "Assumes flights via La Paz or Lima/Juliaca, lake transfers, island visits, midrange lodging and meals.",
+  },
+  "la-rinconada": {
+    days: 5,
+    costUsd: 1200,
+    note: "Assumes flights via Lima to Juliaca, rough road travel to La Rinconada, basic lodging, meals, local transport and an altitude buffer day.",
+  },
+  "colca-canyon": {
+    days: 5,
+    costUsd: 1100,
+    note: "Assumes flights via Lima to Arequipa, an overnight Colca Canyon trip, condor viewpoint visit, midrange lodging, meals and transfers.",
+  },
+  "moray-maras": {
+    days: 5,
+    costUsd: 1200,
+    note: "Assumes flights via Lima to Cusco, a Sacred Valley day trip to Moray and Maras, midrange lodging, meals and local transfers.",
+  },
+  "serra-da-capivara": {
+    days: 6,
+    costUsd: 1600,
+    note: "Assumes flights via Brazil to Teresina or Petrolina, road transfers, a local guide, midrange lodging and meals.",
+  },
+  "san-agustin": {
+    days: 6,
+    costUsd: 1450,
+    note: "Assumes flights via Bogotá to Neiva/Pitalito, road transfers, archaeological guiding, lodging and meals.",
+  },
+  "machu-picchu": {
+    days: 6,
+    costUsd: 1500,
+    note: "Assumes flights via Lima to Cusco, train or bus access, site ticket, guide, midrange lodging, meals and transfers.",
+  },
+  chavin: {
+    days: 5,
+    costUsd: 900,
+    note: "Assumes flights to Lima, bus to Huaraz, a guided Chavín day trip, lodging and meals.",
+  },
+  kaieteur: {
+    days: 5,
+    costUsd: 2200,
+    note: "Assumes flights to Georgetown, a Kaieteur day flight, city lodging, meals and local transfers.",
+  },
+  "peninsula-valdes": {
+    days: 5,
+    costUsd: 1000,
+    note: "Assumes flights to Trelew or Puerto Madryn, a rental car or wildlife tours, midrange lodging and meals.",
+  },
+  "cano-cristales": {
+    days: 6,
+    costUsd: 1700,
+    note: "Assumes flights via Bogotá, La Macarena access, required local guiding, lodging, meals and park logistics.",
+  },
+  "chapada-diamantina": {
+    days: 7,
+    costUsd: 1700,
+    note: "Assumes flights via Salvador, overland transfer or regional flight to Lençóis, guided Chapada cave/waterfall trips, midrange lodging and meals.",
+  },
+  "mennonite-chaco": {
+    days: 4,
+    costUsd: 800,
+    note: "Assumes flights to Asunción, overland travel to Filadelfia, simple-to-midrange lodging, meals, local museum/colony visits and road transfers.",
+  },
+  chiloe: {
+    days: 6,
+    costUsd: 1300,
+    note: "Assumes flights via Santiago to Puerto Montt, rental car or buses/ferries, midrange island lodging, meals and local visits.",
+  },
+  "meeting-waters": {
+    days: 5,
+    costUsd: 1300,
+    note: "Assumes flights to Manaus, midrange lodging, river outing, meals and local transfers.",
+  },
+  kuelap: {
+    days: 6,
+    costUsd: 1400,
+    note: "Assumes flights via Lima to Jaén or Chachapoyas access, local transfers, cable car/site visit, lodging and meals.",
+  },
+  "torres-del-paine": {
+    days: 7,
+    costUsd: 1900,
+    note: "Assumes flights to Puerto Natales, Punta Arenas or El Calafate, park transfers, midrange lodging, meals and day hikes.",
+  },
+  "marble-caves": {
+    days: 7,
+    costUsd: 1500,
+    note: "Assumes flights to Balmaceda or Puerto Montt, Carretera Austral transfers, boat/kayak visit, lodging and meals.",
+  },
+};
+
+const rankedSpotsWithTrip = rankedSpots.map((spot) => {
+  const trip = tripEstimates[spot.id];
+
+  if (!trip) {
+    throw new Error(`Missing trip estimate for ${spot.id}.`);
+  }
+
+  return { ...spot, trip, wikiUrl: wikiUrls[spot.id] };
+});
+
+if (Object.keys(tripEstimates).length !== rankedSpotsWithTrip.length) {
+  throw new Error("Trip estimates must match the ranked South America spot list.");
+}
+
+const formatter = new Intl.NumberFormat("en-US");
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+const countryOptions = [...new Set(rankedSpotsWithTrip.flatMap((spot) => spot.countries))].sort(
+  (a, b) => a.localeCompare(b),
+);
+const kindOptions = [...new Set(rankedSpotsWithTrip.map((spot) => spot.kind))].sort((a, b) =>
+  a.localeCompare(b),
+);
+const spotMapData = rankedSpotsWithTrip.map((spot, index) => ({
+  id: spot.id,
+  rank: index + 1,
+  name: spot.name,
+  kind: spot.kind,
+  countries: spot.countries,
+  uniqueness: spot.uniqueness,
+  position: spot.map.location,
+  googleMapsUrl: spot.map.googleMapsUrl,
+}));
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: rankedSpotsWithTrip.length,
+  itemListElement: rankedSpotsWithTrip.map((spot, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "TouristAttraction",
+      name: spot.name,
+      description: spot.why,
+      sameAs: spot.map.googleMapsUrl,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: spot.map.location.lat,
+        longitude: spot.map.location.lng,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Unique places to visit in South America" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="South America travel, unique places South America, South America archaeology, South America geology, South America map"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/">sokolsky.me</a>
+        <p class="eyebrow">South America field guide</p>
+        <h1>{pageTitle}</h1>
+        <p class="dek">
+          A list biased toward places that are hard to substitute anywhere on Earth:
+          strange geology, deep-time archaeology, living ecosystems and culture.
+          Not a list of the most Instagram-friendly viewpoints.
+        </p>
+      </header>
+
+      <section class="criteria" aria-labelledby="criteria-heading">
+        <div>
+          <p class="eyebrow">Selection rule</p>
+          <h2 id="criteria-heading">What "interesting" means here</h2>
+        </div>
+        <p>
+          I included a place when the thing to see is specific to that place:
+          an ecological process, an archaeological question, a geological formation,
+          or an architecture/culture system that would not make sense somewhere else.
+          The list order is the ranking: higher means rarer against the rest of the
+          world, more mind-expanding, or harder to substitute with another destination
+          on any continent. Famous places stayed only when the underlying reason is
+          still exceptional. Trip estimates are per person from Buenos Aires in
+          2026-style USD, assuming economy flights, midrange lodging, meals, local
+          transfers, required fees and the shortest realistic visit.
+        </p>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="map-heading">Pins across the continent</h2>
+          <p id="map-status" class="map-status">
+            Showing all {rankedSpotsWithTrip.length} spots.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="spots-map"
+            class="spots-map"
+            aria-label="Google Map with pins for interesting South America places"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
+
+      <section class="toolbar" aria-label="Spot filters">
+        <label class="filter-field" for="country-filter">
+          <span>Country</span>
+          <select id="country-filter" autocomplete="off">
+            <option value="">All countries</option>
+            {countryOptions.map((country) => <option value={country}>{country}</option>)}
+          </select>
+        </label>
+        <label class="filter-field" for="kind-filter">
+          <span>Type</span>
+          <select id="kind-filter" autocomplete="off">
+            <option value="">All types</option>
+            {kindOptions.map((kind) => <option value={kind}>{kind}</option>)}
+          </select>
+        </label>
+        <label class="filter-field" for="sort-select">
+          <span>Sort</span>
+          <select id="sort-select" autocomplete="off">
+            <option value="uniqueness">Uniqueness</option>
+            <option value="popularity">Popularity (GMaps reviews)</option>
+            <option value="cost">Cost (low to high)</option>
+            <option value="time">Time required (short to long)</option>
+          </select>
+        </label>
+        <button id="reset-filters" class="reset-button" type="button">Reset</button>
+      </section>
+
+      <section class="spot-list" aria-label="Most interesting South America spots">
+        {rankedSpotsWithTrip.map((spot, index) => (
+          <article
+            id={spot.id}
+            class="spot-card"
+            data-country-list={spot.countries.join("|")}
+            data-kind={spot.kind}
+            data-cost-usd={spot.trip.costUsd}
+            data-trip-days={spot.trip.days}
+            data-review-count={spot.map.reviewCount ?? 0}
+            data-uniqueness-rank={index + 1}
+          >
+            <div class="spot-rank" aria-label={`Rank ${index + 1}`}>
+              {String(index + 1).padStart(2, "0")}
+            </div>
+            <div class="spot-body">
+              <div class="spot-heading">
+                <div>
+                  <p class="spot-area">{spot.area}</p>
+                  <h2>
+                    {spot.wikiUrl ? (
+                      <a
+                        class="spot-title-link"
+                        href={spot.wikiUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      >
+                        {spot.name}
+                      </a>
+                    ) : (
+                      spot.name
+                    )}
+                  </h2>
+                </div>
+                <a
+                  class="maps-link"
+                  href={spot.map.googleMapsUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Open map
+                </a>
+              </div>
+              <div class="badges" aria-label={`${spot.name} attributes`}>
+                <span>{spot.kind}</span>
+                <span>{spot.countries.join(" / ")}</span>
+                <span>{spot.access}</span>
+                <span>
+                  From BA: {spot.trip.days} days · {usdFormatter.format(spot.trip.costUsd)}
+                </span>
+                {typeof spot.map.rating === "number" && (
+                  <span>
+                    GMaps {spot.map.rating.toFixed(1)} · {formatter.format(spot.map.reviewCount ?? 0)} reviews
+                  </span>
+                )}
+              </div>
+              <p class="uniqueness">{spot.uniqueness}</p>
+              <p>{spot.why}</p>
+              <p class="reality-check">{spot.realityCheck}</p>
+              <p class="trip-estimate">
+                <strong>Buenos Aires trip estimate:</strong> {spot.trip.days} days · {usdFormatter.format(spot.trip.costUsd)}. {spot.trip.note}
+              </p>
+            </div>
+          </article>
+        ))}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ googleMapsApiKey, spotMapData }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const countryFilter = document.querySelector("#country-filter");
+  const kindFilter = document.querySelector("#kind-filter");
+  const sortSelect = document.querySelector("#sort-select");
+  const resetFiltersButton = document.querySelector("#reset-filters");
+  const spotList = document.querySelector(".spot-list");
+  const spotCards = [...document.querySelectorAll(".spot-card")];
+  const mapElement = document.querySelector("#spots-map");
+  const mapStatus = document.querySelector("#map-status");
+  const markerRecords = [];
+  let spotsMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getVisibleSpots = (selectedCountry, selectedKind) =>
+    spotMapData.filter(
+      (spot) =>
+        (!selectedCountry || spot.countries.includes(selectedCountry)) &&
+        (!selectedKind || spot.kind === selectedKind),
+    );
+
+  const updateMapStatus = (selectedCountry, selectedKind) => {
+    if (!mapStatus) return;
+
+    const visibleCount = getVisibleSpots(selectedCountry, selectedKind).length;
+    const label = visibleCount === 1 ? "spot" : "spots";
+    const filterLabel = [selectedCountry, selectedKind].filter(Boolean).join(" · ");
+    mapStatus.textContent = filterLabel
+      ? `Showing ${visibleCount} ${label} for ${filterLabel}.`
+      : `Showing all ${visibleCount} ${label}.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!spotsMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      spotsMap.setCenter(visibleRecords[0].spot.position);
+      spotsMap.setZoom(8);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    for (const { spot } of visibleRecords) {
+      bounds.extend(spot.position);
+    }
+    spotsMap.fitBounds(bounds, 42);
+  };
+
+  const syncMapMarkers = (selectedCountry, selectedKind) => {
+    updateMapStatus(selectedCountry, selectedKind);
+    if (!spotsMap) return;
+
+    const visibleIds = new Set(
+      getVisibleSpots(selectedCountry, selectedKind).map((spot) => spot.id),
+    );
+    const visibleRecords = [];
+
+    for (const record of markerRecords) {
+      const isVisible = visibleIds.has(record.spot.id);
+      record.marker.setMap(isVisible ? spotsMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const getNumberData = (element, key) => Number(element.dataset[key] ?? 0);
+
+  const sortedSpotCards = () => {
+    const selectedSort = sortSelect?.value ?? "uniqueness";
+
+    return [...spotCards].sort((a, b) => {
+      const uniquenessDelta =
+        getNumberData(a, "uniquenessRank") - getNumberData(b, "uniquenessRank");
+
+      if (selectedSort === "popularity") {
+        const popularityDelta =
+          getNumberData(b, "reviewCount") - getNumberData(a, "reviewCount");
+
+        return popularityDelta || uniquenessDelta;
+      }
+
+      if (selectedSort === "cost") {
+        const costDelta = getNumberData(a, "costUsd") - getNumberData(b, "costUsd");
+
+        return costDelta || uniquenessDelta;
+      }
+
+      if (selectedSort === "time") {
+        const timeDelta = getNumberData(a, "tripDays") - getNumberData(b, "tripDays");
+
+        return timeDelta || uniquenessDelta;
+      }
+
+      return uniquenessDelta;
+    });
+  };
+
+  const syncCardOrderAndRanks = () => {
+    const sortedCards = sortedSpotCards();
+    let visibleIndex = 0;
+
+    for (const card of sortedCards) {
+      spotList?.append(card);
+
+      if (card.hidden) continue;
+
+      visibleIndex += 1;
+      const rank = card.querySelector(".spot-rank");
+      if (!rank) continue;
+
+      rank.textContent = String(visibleIndex).padStart(2, "0");
+      rank.setAttribute("aria-label", `Display rank ${visibleIndex}`);
+    }
+  };
+
+  const applyFilters = () => {
+    const selectedCountry = countryFilter?.value ?? "";
+    const selectedKind = kindFilter?.value ?? "";
+
+    for (const card of spotCards) {
+      const countries = card.dataset.countryList?.split("|") ?? [];
+      const countryMismatch =
+        Boolean(selectedCountry) && !countries.includes(selectedCountry);
+      const kindMismatch =
+        Boolean(selectedKind) && card.dataset.kind !== selectedKind;
+      card.hidden = countryMismatch || kindMismatch;
+    }
+
+    syncCardOrderAndRanks();
+    syncMapMarkers(selectedCountry, selectedKind);
+  };
+
+  const initMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    spotsMap = new Map(mapElement, {
+      center: { lat: -16, lng: -63 },
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 3,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const spot of spotMapData) {
+      const marker = new google.maps.Marker({
+        map: spotsMap,
+        position: spot.position,
+        title: `${spot.rank}. ${spot.name}`,
+        label: String(spot.rank),
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(
+          `<strong>${escapeHtml(spot.rank)}. ${escapeHtml(spot.name)}</strong><br>${escapeHtml(spot.uniqueness)}<br><a href="${escapeHtml(spot.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(spotsMap, marker);
+      });
+
+      markerRecords.push({ spot, marker });
+    }
+
+    applyFilters();
+  };
+
+  countryFilter?.addEventListener("change", applyFilters);
+  kindFilter?.addEventListener("change", applyFilters);
+  sortSelect?.addEventListener("change", applyFilters);
+  resetFiltersButton?.addEventListener("click", () => {
+    if (countryFilter) countryFilter.value = "";
+    if (kindFilter) kindFilter.value = "";
+    if (sortSelect) sortSelect.value = "uniqueness";
+    applyFilters();
+  });
+  window.addEventListener("pageshow", applyFilters);
+  initMap().catch((error) => {
+    console.error("Unable to initialize South America spots map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. The list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f0e5;
+    --panel: #fffaf2;
+    --panel-strong: #ede0cd;
+    --text: #1e1912;
+    --muted: #6e604f;
+    --border: #dfcfb8;
+    --accent: #8a4b2a;
+    --accent-strong: #4f2b18;
+    --shadow: 0 22px 70px rgba(64, 43, 24, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15120e;
+      --panel: #211c16;
+      --panel-strong: #30271d;
+      --text: #f4eadb;
+      --muted: #c0ae97;
+      --border: #493a2a;
+      --accent: #e0a069;
+      --accent-strong: #ffd3a9;
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(138, 75, 42, 0.18), transparent 28rem),
+      linear-gradient(180deg, var(--bg), var(--panel-strong));
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.55;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 32px 0 72px;
+  }
+
+  .hero,
+  .criteria,
+  .map-section,
+  .toolbar,
+  .spot-card {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    box-shadow: var(--shadow);
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 520px;
+    padding: clamp(28px, 7vw, 72px);
+    border-radius: 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 28px;
+    border-radius: 28px;
+    border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -8%;
+    top: -16%;
+    width: min(58vw, 620px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      linear-gradient(120deg, transparent 42%, color-mix(in srgb, var(--accent) 40%, transparent) 43% 45%, transparent 46%),
+      repeating-linear-gradient(155deg, transparent 0 20px, color-mix(in srgb, var(--accent) 18%, transparent) 21px 22px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .home-link {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    z-index: 1;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .eyebrow,
+  .spot-area {
+    margin: 0 0 10px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    position: relative;
+    z-index: 1;
+    max-width: min(100%, 1080px);
+    margin-bottom: 18px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.75rem, 6.8vw, 6.4rem);
+    line-height: 0.96;
+    letter-spacing: -0.065em;
+  }
+
+  h2 {
+    margin-bottom: 8px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3vw, 2.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .dek {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin-bottom: 28px;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .badges span {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--panel) 70%, transparent);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 6px 10px;
+  }
+
+  .criteria,
+  .map-section,
+  .toolbar {
+    margin-top: 22px;
+    border-radius: 26px;
+    padding: 24px;
+  }
+
+  .criteria {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.25fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .criteria p:last-child {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .map-section {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .map-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .map-status {
+    margin-bottom: 0;
+    color: var(--muted);
+  }
+
+  .spots-map {
+    min-height: 520px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--panel-strong);
+  }
+
+  .map-unavailable {
+    margin: 0;
+    border: 1px dashed var(--border);
+    border-radius: 22px;
+    padding: 24px;
+    color: var(--muted);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: end;
+    box-shadow: none;
+  }
+
+  .filter-field {
+    display: grid;
+    gap: 6px;
+    min-width: min(260px, 100%);
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  select,
+  .reset-button {
+    min-height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    padding: 0 14px;
+  }
+
+  .reset-button {
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .spot-list {
+    display: grid;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .spot-card {
+    display: grid;
+    grid-template-columns: 86px minmax(0, 1fr);
+    gap: 18px;
+    border-radius: 26px;
+    padding: 22px;
+  }
+
+  .spot-card[hidden] {
+    display: none;
+  }
+
+  .spot-rank {
+    display: grid;
+    place-items: center;
+    align-self: start;
+    width: 68px;
+    height: 68px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--accent-strong);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+  }
+
+  .spot-heading {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 14px;
+  }
+
+  .spot-heading h2 {
+    margin-bottom: 0;
+  }
+
+  .spot-title-link {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.12em;
+  }
+
+  .spot-title-link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .maps-link {
+    flex: 0 0 auto;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent-strong);
+    font-size: 0.86rem;
+    font-weight: 800;
+    padding: 8px 12px;
+    text-decoration: none;
+  }
+
+  .badges {
+    margin-bottom: 16px;
+  }
+
+  .uniqueness {
+    margin-bottom: 10px;
+    color: var(--accent-strong);
+    font-size: 1.08rem;
+    font-weight: 800;
+  }
+
+  .spot-body p:not(.spot-area, .uniqueness) {
+    color: var(--muted);
+  }
+
+  .reality-check {
+    border-left: 3px solid var(--accent);
+    padding-left: 14px;
+  }
+
+  .trip-estimate {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--panel-strong) 48%, transparent);
+    padding: 12px 14px;
+  }
+
+  .trip-estimate strong {
+    color: var(--accent-strong);
+  }
+
+  @media (max-width: 820px) {
+    .page {
+      width: min(100% - 20px, 1180px);
+      padding-top: 10px;
+    }
+
+    .hero {
+      min-height: 560px;
+      border-radius: 24px;
+      padding: 82px 22px 28px;
+    }
+
+    .hero::before {
+      inset: 12px;
+      border-radius: 20px;
+    }
+
+    .home-link {
+      top: 22px;
+      left: 22px;
+    }
+
+    .criteria,
+    .map-section,
+    .spot-card {
+      grid-template-columns: 1fr;
+    }
+
+    .spots-map {
+      min-height: 420px;
+    }
+
+    .spot-card {
+      padding: 18px;
+    }
+
+    .spot-rank {
+      width: 54px;
+      height: 54px;
+      font-size: 1.1rem;
+    }
+
+    .spot-heading {
+      display: grid;
+    }
+
+    .maps-link {
+      justify-self: start;
+    }
+  }
+</style>

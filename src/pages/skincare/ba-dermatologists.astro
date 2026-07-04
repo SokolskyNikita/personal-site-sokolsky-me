@@ -17,6 +17,11 @@ const updatedDate = new Intl.DateTimeFormat("en-US", {
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const instagramIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm8.75 1.5a1.45 1.45 0 1 1 0 2.9 1.45 1.45 0 0 1 0-2.9ZM12 7.25a4.75 4.75 0 1 1 0 9.5 4.75 4.75 0 0 1 0-9.5Zm0 2a2.75 2.75 0 1 0 0 5.5 2.75 2.75 0 0 0 0-5.5Z"/></svg>`;
 
 type Source = {
   label: string;
@@ -29,9 +34,38 @@ type Metric = {
   max: number;
 };
 
+type GooglePlace = {
+  id: string;
+  name: string;
+  address: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  rating: number;
+  reviewCount: number;
+  businessStatus: "OPERATIONAL";
+  url: string;
+  reviewThemes: string[];
+  reviewCaution?: string;
+};
+
+type EnglishSupport = {
+  speaksEnglish: boolean;
+  label: string;
+  evidence: string;
+  sourceUrl?: string;
+};
+
+type ConsultationPrice = {
+  label: string;
+  source: Source;
+};
+
 type Dermatologist = {
   name: string;
   rankLabel: string;
+  instagramUrl?: string;
   neighborhood: string;
   providerType: "Individual" | "Clinic" | "Hospital";
   bestFor: string;
@@ -42,6 +76,9 @@ type Dermatologist = {
   caution: string;
   sources: Source[];
   metrics: Metric[];
+  googlePlace: GooglePlace;
+  englishSupport: EnglishSupport;
+  consultationPrice?: ConsultationPrice;
 };
 
 const metrics = [
@@ -53,12 +90,12 @@ const metrics = [
   {
     name: "Aesthetic fit",
     weight: 25,
-    note: "Botox, fillers, facial rejuvenation, lasers, skin quality, natural-result framing, and other non-surgical aesthetics.",
+    note: "Botox, fillers, facial rejuvenation, lasers, skin quality, natural-result framing and other non-surgical aesthetics.",
   },
   {
     name: "Review strength",
     weight: 20,
-    note: "Visible Doctoralia, TopDoctors, Google snippets, and testimonial volume. Verified medical-directory reviews count more than site testimonials.",
+    note: "Google Maps review count/rating, Google review snippets, Doctoralia, TopDoctors and public testimonials.",
   },
   {
     name: "Technology depth",
@@ -73,7 +110,12 @@ const metrics = [
   {
     name: "Transparency",
     weight: 5,
-    note: "Clear address, booking path, procedure pages, and enough public information to evaluate fit before contacting them.",
+    note: "Clear address, booking path, procedure pages and enough public information to evaluate fit before contacting them.",
+  },
+  {
+    name: "English access",
+    weight: 6,
+    note: "Six-point lift when an official site, official social profile, or explicit Google review evidence shows English access.",
   },
 ];
 
@@ -81,10 +123,11 @@ const dermatologists: Dermatologist[] = [
   {
     name: "Dra. Florencia Galván",
     rankLabel: "Dermatología y Estética Integral",
+    instagramUrl: "https://www.instagram.com/draflorenciagalvan/",
     neighborhood: "Recoleta",
     providerType: "Individual",
     bestFor: "A first-call aesthetic dermatologist with unusually strong patient-review volume.",
-    score: 92,
+    score: 73,
     reviewSignal:
       "Doctoralia shows 578 opinions; search snippets also surfaced a Google Maps signal of 4.8 from 19 reviews.",
     credentialSignal:
@@ -92,7 +135,7 @@ const dermatologists: Dermatologist[] = [
     aestheticSignal:
       "Public profiles describe a dermatology and aesthetic-integral clinic, plus patient reviews mentioning aesthetic treatment visits.",
     caution:
-      "The public evidence is review-heavy; confirm the exact injector, device, and follow-up protocol before booking.",
+      "The public evidence is review-heavy; confirm the exact injector, device and follow-up protocol before booking.",
     sources: [
       {
         label: "Doctoralia profile",
@@ -110,27 +153,59 @@ const dermatologists: Dermatologist[] = [
     metrics: [
       { label: "Credential", value: 24, max: 25 },
       { label: "Aesthetic fit", value: 23, max: 25 },
-      { label: "Reviews", value: 20, max: 20 },
+      { label: "Reviews", value: 12, max: 20 },
       { label: "Technology", value: 11, max: 15 },
       { label: "Experience", value: 9, max: 10 },
       { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJa5xkxG3LvJURnBB2UjtYQXE",
+      name: "Bewell - Centro de Bienestar Integral",
+      address: "Av. Pueyrredón 2318 3H, C1119 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.586721, lng: -58.3961377 },
+      rating: 4.8,
+      reviewCount: 372,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=8160901011581833372",
+      reviewThemes: [
+        "Recent positive Google reviews praise clear explanations, listening, warmth and confidence-building first consultations.",
+        "One negative Google review says the reviewer chose her because she was understood to speak English, but also raises serious care and follow-up complaints.",
+        "Treat the high review volume as useful, but read recent one-star reviews before booking anything medical.",
+      ],
+      reviewCaution: "Strong volume, mixed recent review snippets.",
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "A Google review says the reviewer chose Dr. Galván because she was understood to speak English; the same review is otherwise strongly negative, so verify directly before booking.",
+      sourceUrl: "https://maps.google.com/?cid=8160901011581833372",
+    },
+    consultationPrice: {
+      label: "Initial consult listed: $50",
+      source: {
+        label: "Doctoralia price listing",
+        url: "https://www.doctoraliar.com/florencia-galvan/dermatologo/capital-federal",
+      },
+    },
   },
   {
     name: "Dra. Verónica Muchnik",
     rankLabel: "Skin Solutions",
+    instagramUrl: "https://www.instagram.com/draveronicamuchnik/",
     neighborhood: "Palermo / Belgrano search footprint",
     providerType: "Individual",
-    bestFor: "Laser-led facial rejuvenation, fillers, and a conservative natural-result aesthetic.",
-    score: 90,
+    bestFor: "Laser-led facial rejuvenation, fillers and a conservative natural-result aesthetic.",
+    score: 84,
     reviewSignal:
-      "TopDoctors lists no patient reviews, but independent public signals include a large social audience, press coverage, and specialist-directory presence.",
+      "TopDoctors lists no patient reviews, but public signals include a large social audience, press coverage and specialist-directory presence.",
     credentialSignal:
       "TopDoctors and LinkedIn describe her as a UBA-trained dermatologist with postgraduate training in aesthetic medicine and laser medicine.",
     aestheticSignal:
-      "TopDoctors, Estética Online, LinkedIn, and press coverage emphasize facial rejuvenation, botulinum toxin, fillers, rinomodelación, lasers, and complication management.",
+      "TopDoctors, Estética Online, LinkedIn and press coverage list facial rejuvenation, botulinum toxin, fillers, rinomodelación, lasers and complication management.",
     caution:
-      "Great expert signal, weaker public review volume. Best evaluated by consultation quality and before/after relevance.",
+      "Strong expert signal, weaker public review volume. Best evaluated by consultation quality and before/after relevance.",
     sources: [
       {
         label: "TopDoctors profile",
@@ -152,25 +227,48 @@ const dermatologists: Dermatologist[] = [
     metrics: [
       { label: "Credential", value: 25, max: 25 },
       { label: "Aesthetic fit", value: 25, max: 25 },
-      { label: "Reviews", value: 11, max: 20 },
+      { label: "Reviews", value: 16, max: 20 },
       { label: "Technology", value: 15, max: 15 },
       { label: "Experience", value: 10, max: 10 },
       { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJcYO8JfK1vJURVJ9vKu4cOWU",
+      name: "Dermatología Dra Verónica Muchnik",
+      address: "Virrey Arredondo 2412, C1426 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5672835, lng: -58.4509522 },
+      rating: 5,
+      reviewCount: 39,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=7293892880742981460",
+      reviewThemes: [
+        "Google reviews mention rosacea improvement with medication and vascular laser.",
+        "Reviewers repeatedly mention newer equipment, scar/acne-mark work, pulsed light and attentive WhatsApp follow-up.",
+        "All five API-returned review snippets were five-star reviews.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official/social search results were Spanish-language; no official English site or English-language social account was found.",
+    },
   },
   {
     name: "Buenos Aires Skin",
     rankLabel: "Dr. Fernando Stengel, Dr. Matías Maskin, Dra. Mónica Noguera and team",
+    instagramUrl: "https://www.instagram.com/bsas.skin/",
     neighborhood: "Centro / Retiro edge",
     providerType: "Clinic",
     bestFor: "A dermatologist-led clinic where aesthetics sits beside strong medical dermatology.",
-    score: 89,
+    score: 58,
     reviewSignal:
       "The official site publishes Google Maps testimonials; third-party listings repeat a long-standing reputation signal.",
     credentialSignal:
-      "The clinic describes a multi-dermatologist team with UBA, CEMIC, Sociedad Argentina de Dermatología, teaching, and research ties.",
+      "The clinic describes a multi-dermatologist team with UBA, CEMIC, Sociedad Argentina de Dermatología, teaching and research ties.",
     aestheticSignal:
-      "Public service pages include rejuvenation, laser and IPL, fillers, botulinum toxin, PRP, mesotherapy, hilos tensores, scars, and tattoo removal.",
+      "Public service pages include rejuvenation, laser and IPL, fillers, botulinum toxin, PRP, mesotherapy, hilos tensores, scars and tattoo removal.",
     caution:
       "This is a clinic ranking rather than a single-doctor ranking. Ask who performs the procedure and who handles complications.",
     sources: [
@@ -187,25 +285,49 @@ const dermatologists: Dermatologist[] = [
     metrics: [
       { label: "Credential", value: 25, max: 25 },
       { label: "Aesthetic fit", value: 22, max: 25 },
-      { label: "Reviews", value: 12, max: 20 },
+      { label: "Reviews", value: 6, max: 20 },
       { label: "Technology", value: 15, max: 15 },
       { label: "Experience", value: 10, max: 10 },
       { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJQXky5sfKvJURp_SAILgZPOo",
+      name: "Buenos Aires Skin",
+      address: "Av. Córdoba 1184 Piso 9, C1055 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5993034, lng: -58.3837038 },
+      rating: 4.5,
+      reviewCount: 21,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=16878393782087775399",
+      reviewThemes: [
+        "Positive Google reviews praise integrity, family care and specific doctors such as Stengel.",
+        "Negative snippets complain about empathy, follow-up, WhatsApp/admin responsiveness and high treatment prices.",
+        "The Google review sample makes this feel like a medically serious clinic with uneven service experience.",
+      ],
+      reviewCaution: "Operational with enough reviews, but Google snippets are polarized.",
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official pages found during research were Spanish-language; English testimonials do not count as an official English version.",
+    },
   },
   {
     name: "Dr. André Amaral",
     rankLabel: "Medicina Estética",
+    instagramUrl: "https://www.instagram.com/dr.andreamaral/",
     neighborhood: "Puerto Madero",
     providerType: "Individual",
     bestFor: "Aesthetics-first injectables with very strong Doctoralia patient volume.",
-    score: 88,
+    score: 80,
     reviewSignal:
-      "Doctoralia shows 198 opinions and repeated patient mentions of detailed explanations, facilities, and botulinum-toxin visits.",
+      "Doctoralia shows 198 opinions and repeated patient mentions of detailed explanations, facilities and botulinum-toxin visits.",
     credentialSignal:
       "Doctoralia labels him as both médico estético and dermatologist in Capital Federal.",
     aestheticSignal:
-      "The public profile lists botox, hyaluronic-acid fillers, MD Codes, rinomodelación, Profhilo, Radiesse, Sculptra, Ultraformer III, peels, PDO threads, PRP, and mesotherapy.",
+      "The public profile lists botox, hyaluronic-acid fillers, MD Codes, rinomodelación, Profhilo, Radiesse, Sculptra, Ultraformer III, peels, PDO threads, PRP and mesotherapy.",
     caution:
       "Because the profile is aesthetics-heavy, verify dermatology board/specialty details directly if that matters to your risk tolerance.",
     sources: [
@@ -217,25 +339,55 @@ const dermatologists: Dermatologist[] = [
     metrics: [
       { label: "Credential", value: 20, max: 25 },
       { label: "Aesthetic fit", value: 25, max: 25 },
-      { label: "Reviews", value: 18, max: 20 },
-      { label: "Technology", value: 12, max: 15 },
-      { label: "Experience", value: 8, max: 10 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 13, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
       { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJ3xDXl2vLvJURl8RRISdFnhE",
+      name: "Dr. André Amaral - Medicina Estética",
+      address: "Juana Manso 1666 Dpto 202, C1107 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.6169851, lng: -58.3616236 },
+      rating: 5,
+      reviewCount: 114,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=1269528179330106519",
+      reviewThemes: [
+        "Google reviews repeatedly praise natural, harmonious results and non-commercial treatment recommendations.",
+        "Review snippets mention custom plans, careful explanations, peels for sensitive/rosacea-prone skin and Nordlys pulsed-light sessions.",
+        "The API-returned snippets were all five-star and unusually detailed.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "The official website did not expose English content in the scrape/search pass and no English-language official social account was found.",
+    },
+    consultationPrice: {
+      label: "Initial consult listed: $17",
+      source: {
+        label: "Doctoralia price listing",
+        url: "https://www.doctoraliar.com/andre-amaral/medico-estetico-dermatologo/san-juan-capital",
+      },
+    },
   },
   {
     name: "PG Skin Lab / Dr. Pablo González",
     rankLabel: "Clinical & Cosmetic Dermatology",
+    instagramUrl: "https://www.instagram.com/pgskinlab/",
     neighborhood: "Recoleta",
     providerType: "Clinic",
     bestFor: "A polished cosmetic-dermatology experience with premium skin-quality positioning.",
-    score: 87,
+    score: 100,
     reviewSignal:
       "The official site publishes five-star testimonials; public search confirms a strong cosmetic dermatology brand footprint.",
     credentialSignal:
       "The site positions Dr. Pablo González as director of a clinical and cosmetic dermatology center.",
     aestheticSignal:
-      "The clinic highlights cosmetic dermatology, botulinum toxin, hyaluronic acid, IPL, vascular laser, melasma, tattoo removal, and natural-looking custom designs.",
+      "The clinic lists cosmetic dermatology, botulinum toxin, hyaluronic acid, IPL, vascular laser, melasma, tattoo removal and natural-looking custom designs.",
     caution:
       "Most review evidence scraped here is owned-site testimonial copy, so independent review volume is less transparent.",
     sources: [
@@ -245,25 +397,344 @@ const dermatologists: Dermatologist[] = [
     metrics: [
       { label: "Credential", value: 23, max: 25 },
       { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 16, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJnU4oUlrLvJUR2XSh9Q49AhU",
+      name: "PG | Skin Lab - Dr. Pablo Gonzalez",
+      address: "Libertad 1213 Piso 2, C1012 AAY, Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5942666, lng: -58.3843239 },
+      rating: 5,
+      reviewCount: 38,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=1513839559209743577",
+      reviewThemes: [
+        "Google snippets mention transparent consultations, detailed explanations and natural-looking results.",
+        "Reviewers mention Botox, fillers, laser, vascular laser and a polished clinic experience.",
+        "The selected Google reviews were all five-star, with a few English-language visitor-friendly reviews.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "Official site has an EN/ES switch and a full English site at pgskinlab.com/en/.",
+      sourceUrl: "https://www.pgskinlab.com/en/",
+    },
+  },
+  {
+    name: "Concepto Estético / Dra. Lilian Demarchi & Dr. Christian Sánchez Saizar",
+    rankLabel: "Dermatología Estética",
+    instagramUrl: "https://www.instagram.com/coestetico/",
+    neighborhood: "Belgrano / Palermo edge",
+    providerType: "Clinic",
+    bestFor: "Documented red-carpet style skin quality: luminosity, even tone, conservative injectables and combination programs.",
+    score: 89,
+    reviewSignal:
+      "Google Maps shows 4.8 from 153 reviews, with recent snippets praising warmth, professionalism, organization and the Demarchi/Sánchez Saizar office experience.",
+    credentialSignal:
+      "Their official site says both directors are dermatologists with more than 20 years of experience and members of the Sociedad Argentina de Dermatología.",
+    aestheticSignal:
+      "The official site lists toxina botulínica, HarmonyCa, combined laser, facial treatments, dermatology, body treatments, cosmetology and an explicit natural-results positioning.",
+    caution:
+      "Good fit for skin glow and natural aesthetics, but English was not confirmed through an official English site or social profile.",
+    sources: [
+      { label: "Official site", url: "https://conceptoestetico.com.ar/" },
+      {
+        label: "Infobae profile",
+        url: "https://www.infobae.com/tendencias/2017/06/15/el-dermatologo-de-las-famosas-revelo-sus-secretos-para-cuidar-la-piel/",
+      },
+      {
+        label: "La Nación profile",
+        url: "https://www.lanacion.com.ar/lifestyle/el-amor-los-llevo-al-exito-se-conocieron-a-los-20-crearon-sus-propias-cremas-y-los-famosos-aman-sus-nid29062021/",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 18, max: 20 },
+      { label: "Technology", value: 14, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJGfbQ3Le1vJURUvVxPgOYKRg",
+      name: "Concepto Estetico",
+      address: "Av. del Libertador 5190, C1426BWP Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5628885, lng: -58.4394636 },
+      rating: 4.8,
+      reviewCount: 153,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=1741089870655386962",
+      reviewThemes: [
+        "Google snippets repeatedly praise professionalism, warmth, organization and skin-type advice.",
+        "One recent review specifically calls out the Dr. Lilian and Dr. Christian office experience as a strong blend of professionalism and warmth.",
+        "The official-site claims about natural results and dermatologist directors match the Google review tone.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official Instagram results found during research were Spanish-language.",
+    },
+  },
+  {
+    name: "Derma Internacional / Dr. Daniel Galimberti",
+    rankLabel: "Laser and aesthetic dermatology",
+    instagramUrl: "https://www.instagram.com/derma.internacional/",
+    neighborhood: "Belgrano",
+    providerType: "Clinic",
+    bestFor: "High-device-depth dermatology aesthetics and laser-heavy skin rebuild programs.",
+    score: 69,
+    reviewSignal:
+      "Google Maps shows 4.3 from 50 reviews; recent snippets are mostly positive about the dermatology center, with one complaint about Galimberti arriving late.",
+    credentialSignal:
+      "Official pages describe a Galimberti-led dermatology center; Daniel Galimberti is listed as specialized in dermatology laser and aesthetics.",
+    aestheticSignal:
+      "Official pages list aesthetic dermatology coordinated by Daniel Galimberti, hyaluronic acid, botulinum toxin, biostimulators, laser, CO2, vascular/pigment work, rosacea, scars, tattoo removal, Sculptra, Profhilo and body devices.",
+    caution:
+      "Very strong technology signal, but Google review snippets are for the whole center and include at least one service-timing complaint.",
+    sources: [
+      {
+        label: "Medical team",
+        url: "https://www.dermainternacional.com.ar/equipomedico",
+      },
+      {
+        label: "Aesthetic dermatology",
+        url: "https://www.dermainternacional.com.ar/dermatologiaestetica",
+      },
+      {
+        label: "SAD laser committee",
+        url: "https://sad.org.ar/dermatologia-laser-y-otras-tecnologias/",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 23, max: 25 },
       { label: "Reviews", value: 10, max: 20 },
       { label: "Technology", value: 15, max: 15 },
       { label: "Experience", value: 10, max: 10 },
-      { label: "Transparency", value: 4, max: 5 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJWQMpR9C1vJURgPCv2dyf7R8",
+      name: "Derma Internacional S.A.",
+      address: "Virrey del Pino 2456, C1426 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5667894, lng: -58.4530616 },
+      rating: 4.3,
+      reviewCount: 50,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=2300670755549999232",
+      reviewThemes: [
+        "Positive Google snippets mention friendly, professional care, clear explanations and trustworthy dermatology service.",
+        "One recent negative snippet specifically complains about waiting because Dr. Galimberti arrived late.",
+        "The review evidence supports a serious dermatology center, but is less uniformly glowing than the highest-ranked entries.",
+      ],
+      reviewCaution: "Strong clinic and technology signal, mixed service-timing evidence.",
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official Instagram results found during research were Spanish-language.",
+    },
+  },
+  {
+    name: "Dra. Désirée Castelanich",
+    rankLabel: "Dermatología y Estética",
+    instagramUrl: "https://www.instagram.com/dra.desiree/",
+    neighborhood: "Belgrano",
+    providerType: "Individual",
+    bestFor: "Standards-level aesthetic dermatology: full-face antiaging, injectables, biostimulators and device-backed facial/body plans.",
+    score: 73,
+    reviewSignal:
+      "Google Maps shows 4.8 from 17 reviews, with snippets praising skill, compassion, modern equipment, follow-up and patients traveling from the USA.",
+    credentialSignal:
+      "Her official site lists dermatology training, SAD membership and coordination of the SAD dermatoesthetic course from 2013 to the present.",
+    aestheticSignal:
+      "Official pages list facial aesthetics, armonización facial, botulinum toxin, hyaluronic acid, calcium hydroxyapatite, poly-L-lactic acid, threads, PRP, mesotherapy, radiofrequency, Emtone, Exilis and laser hair removal.",
+    caution:
+      "Strong credential and aesthetics fit, but public Google review volume is still small compared with higher-volume clinics.",
+    sources: [
+      { label: "Official site", url: "https://dradesiree.com.ar/" },
+      {
+        label: "SAD aesthetic dermatology",
+        url: "https://sad.org.ar/dermatologia-estetica/",
+      },
+      {
+        label: "Facial aesthetics",
+        url: "https://dradesiree.com.ar/dermatologia-estetica-faciales/",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 24, max: 25 },
+      { label: "Reviews", value: 12, max: 20 },
+      { label: "Technology", value: 14, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJu59RHFq1vJURNolVKkxW1tA",
+      name: "Dra. Desirée",
+      address: "Cuba 2290, Piso 1, dpto 101, C1428DKJ Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5592895, lng: -58.4565325 },
+      rating: 4.8,
+      reviewCount: 17,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=15048310090032843062",
+      reviewThemes: [
+        "Google snippets praise expertise, skill, compassion and careful long-term follow-up.",
+        "One reviewer says they came from the USA to see her, but that is not enough to mark official English support.",
+        "Review snippets mention modern equipment and aesthetic treatments.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "The Claude result claimed English, but the official site/social evidence found during fact-checking was Spanish-language.",
+    },
+  },
+  {
+    name: "Dr. Luis Sevinsky",
+    rankLabel: "Centro Dermatológico",
+    instagramUrl: "https://www.instagram.com/drsevinsky/",
+    neighborhood: "Recoleta / Barrio Norte",
+    providerType: "Individual",
+    bestFor: "Credential-heavy clinical and aesthetic dermatology with an official English website option.",
+    score: 87,
+    reviewSignal:
+      "Google Maps shows 4.2 from 85 reviews, with recent snippets praising accurate diagnosis, expertise, WhatsApp scheduling, empathy and long-term family care.",
+    credentialSignal:
+      "Official pages and directories identify him as a dermatologist; public profiles also describe UBA honors/doctorate and clinical/aesthetic dermatology practice.",
+    aestheticSignal:
+      "Official aesthetic dermatology pages list fillers, Botox/Dysport, pulsed light, photorejuvenation and expression-line treatments.",
+    caution:
+      "Strong all-rounder and English-access signal, but Google rating is lower than the top boutique entries; older public reviews mention waits in some sources.",
+    sources: [
+      { label: "Official site", url: "https://www.drsevinsky.com.ar/" },
+      {
+        label: "Aesthetic dermatology",
+        url: "https://www.drsevinsky.com.ar/dermatologia-estetica/",
+      },
+      {
+        label: "Doctoralia profile",
+        url: "https://www.doctoraliar.com/luis-diego-sevinsky/dermatologo/capital-federal",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 21, max: 25 },
+      { label: "Reviews", value: 13, max: 20 },
+      { label: "Technology", value: 13, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJG0ghWZHKvJURYX-7dMWp1RE",
+      name: "Dr. Luis Sevinsky",
+      address: "Paraguay 2342 9no A, C1121ABL Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5980601, lng: -58.401325 },
+      rating: 4.2,
+      reviewCount: 85,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=1285119934216240993",
+      reviewThemes: [
+        "Recent Google snippets praise accurate diagnosis, expertise, empathy and long-term trust.",
+        "One reviewer mentions easy WhatsApp appointment scheduling and a professional dermatology team.",
+        "The review signal is credible but less luxury/aesthetic-specific than the highest-ranked clinics.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "The official website exposes English-language pages, including /en/ and /en/contact-us/.",
+      sourceUrl: "https://www.drsevinsky.com.ar/en/",
+    },
+  },
+  {
+    name: "Dr. Fabián Bottegal",
+    rankLabel: "Discreet aesthetic dermatology",
+    instagramUrl: "https://www.instagram.com/drbottegal/",
+    neighborhood: "Recoleta / Retiro edge",
+    providerType: "Individual",
+    bestFor: "Discreet injectable-led refinement and society-profile aesthetic dermatology.",
+    score: 55,
+    reviewSignal:
+      "Google Maps shows 4.8 from 16 reviews; snippets are positive but older and lower-volume than most ranked entries.",
+    credentialSignal:
+      "Search and IMCAS profile identify him as a dermatologist; media profiles describe dermatology training and a well-known aesthetic practice.",
+    aestheticSignal:
+      "IMCAS lists interests in injections, cosmeceuticals, peels, lasers and energy-based devices; media profiles describe rejuvenation and discreet aesthetics.",
+    caution:
+      "Potentially high-end, but public source depth is thinner and less official than the strongest ranked providers.",
+    sources: [
+      { label: "Instagram", url: "https://www.instagram.com/drbottegal/" },
+      {
+        label: "IMCAS profile",
+        url: "https://www.imcas.com/es/profile/dr-fabian-bottegal",
+      },
+      {
+        label: "L'Officiel interview",
+        url: "https://www.lofficiel.com.ar/belleza/bottegal_rejuvenecimiento",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 24, max: 25 },
+      { label: "Reviews", value: 12, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 3, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJe9DWNrjKvJUR5aS3E8r-dDY",
+      name: "Dr. Bottegal, Fabián",
+      address: "Libertad 1055, C1012AAU Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5961873, lng: -58.3840394 },
+      rating: 4.8,
+      reviewCount: 16,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=3924041319214195941",
+      reviewThemes: [
+        "Google snippets praise professional quality, comfort and long-term skin care.",
+        "The public Google sample is positive but mostly older.",
+        "The lower review volume means the ranking relies more on media/specialist-profile evidence.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "No official English site or English-language official social profile was found during fact-checking.",
+    },
   },
   {
     name: "Hospital Italiano Dermatología Estética",
     rankLabel: "Dermatología Estética del Hospital Italiano",
+    instagramUrl: "https://www.instagram.com/estetica.hospitalitaliano/",
     neighborhood: "Almagro / hospital network",
     providerType: "Hospital",
     bestFor: "A conservative hospital-backed option for laser and procedure safety.",
-    score: 84,
+    score: 33,
     reviewSignal:
-      "The microsite publishes patient testimonials for laser, fillers, CO2, manchas, and blepharoplasty outcomes.",
+      "The microsite publishes patient testimonials for laser, fillers, CO2, manchas and blepharoplasty outcomes.",
     credentialSignal:
       "The public page frames the service as a dermatology-aesthetic area inside Hospital Italiano.",
     aestheticSignal:
-      "Procedures include Laser 5D, CO2, manchas and cicatrices laser, peels, mesotherapy, bioestimuladores, hilos, fillers, and botulinum toxin.",
+      "Procedures include Laser 5D, CO2, manchas and cicatrices laser, peels, mesotherapy, bioestimuladores, hilos, fillers and botulinum toxin.",
     caution:
       "The page is service-level rather than doctor-level; the ranking depends on institutional trust more than named-provider review volume.",
     sources: [
@@ -278,182 +749,150 @@ const dermatologists: Dermatologist[] = [
     ],
     metrics: [
       { label: "Credential", value: 22, max: 25 },
-      { label: "Aesthetic fit", value: 24, max: 25 },
-      { label: "Reviews", value: 8, max: 20 },
+      { label: "Aesthetic fit", value: 20, max: 25 },
+      { label: "Reviews", value: 0, max: 20 },
       { label: "Technology", value: 15, max: 15 },
       { label: "Experience", value: 10, max: 10 },
       { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJV2KhhtTLvJURqYEryjDcDJ4",
+      name: "Servicio Dermatología Hospital Italiano de Buenos Aires",
+      address: "Tte. Gral. Juan Domingo Perón 4272 6° piso, C1199 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.606142, lng: -58.4271169 },
+      rating: 3.1,
+      reviewCount: 60,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=11388719659821531561",
+      reviewThemes: [
+        "Google review snippets are mostly negative for the dermatology service, especially waits, prices, rushed cosmetic consultations and admin friction.",
+        "A positive snippet praises Mohs surgery punctuality, professionalism, protocols and warmth.",
+        "The Google data pushes this down as an aesthetics pick despite the hospital safety signal.",
+      ],
+      reviewCaution: "Operational, but Google rating is materially weaker than the rest of the shortlist.",
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "The dermatología estética microsite and official/social results found during research were Spanish-language.",
+    },
   },
   {
     name: "Dr. Pedro Rovere",
     rankLabel: "Dermatología Estética",
+    instagramUrl: "https://www.instagram.com/drpedrorovere/",
     neighborhood: "Belgrano",
     providerType: "Individual",
     bestFor: "Laser-heavy dermatology aesthetics with a long track record.",
-    score: 83,
+    score: 78,
     reviewSignal:
-      "Review volume was not clearly visible in the scraped sources; ranking comes from credentials, experience, and procedure breadth.",
+      "Review volume was not clearly visible in the scraped sources; ranking comes from credentials, experience and procedure breadth.",
     credentialSignal:
       "His official site lists him as a university specialist in dermatology, UBA graduate, with 34 years of experience.",
     aestheticSignal:
-      "The site emphasizes dermatología estética, Candela Alexandrite 755, DEKA fractional CO2, high-definition cutaneous ultrasound, and hyaluronic-acid fillers.",
+      "The site lists dermatología estética, Candela Alexandrite 755, DEKA fractional CO2, high-definition cutaneous ultrasound and hyaluronic-acid fillers.",
     caution:
-      "Great technical signal, weaker public review signal. Ask to see examples for the exact concern you want treated.",
+      "Strong technical signal, weaker public review signal. Ask to see examples for the exact concern you want treated.",
     sources: [
       { label: "Official site", url: "https://drpedrorovere.com.ar/" },
     ],
     metrics: [
       { label: "Credential", value: 25, max: 25 },
       { label: "Aesthetic fit", value: 22, max: 25 },
-      { label: "Reviews", value: 7, max: 20 },
+      { label: "Reviews", value: 16, max: 20 },
       { label: "Technology", value: 15, max: 15 },
       { label: "Experience", value: 10, max: 10 },
       { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJAyNVeDm5vJURFjyjzXE1MOo",
+      name: "Rovere Dermatología Clínica y Estética",
+      address: "O'Higgins 2243, Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5583659, lng: -58.4539234 },
+      rating: 4.9,
+      reviewCount: 102,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=16875046566654852118",
+      reviewThemes: [
+        "Google reviews mention CO2 laser, PRP, xanthelasma laser treatment and Venus Freeze.",
+        "Positive snippets praise technical knowledge, passion, professionalism and warm reception/team care.",
+        "One lower-rated snippet asks for clearer pricing information before in-person visits.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site/search evidence found during research was Spanish-language; no official English version was confirmed.",
+    },
   },
   {
     name: "Dra. Eliana Maldonado / Piel Atelier",
     rankLabel: "Dermatología y Estética Médica",
+    instagramUrl: "https://www.instagram.com/dra_elianamaldonado/",
     neighborhood: "Recoleta / Barrio Norte",
     providerType: "Individual",
-    bestFor: "A warmer, consultation-led option for skin, antiaging, botox, PRP, and hair treatments.",
-    score: 80,
+    bestFor: "A warmer, consultation-led option for skin, antiaging, botox, PRP and hair treatments.",
+    score: 73,
     reviewSignal:
       "The official site publishes detailed patient testimonials, but independent review volume was not prominent in search.",
     credentialSignal:
-      "Her site lists UBA dermatology specialization, dermatologic oncology, laser and medical technologies, antiaging training, and trichology.",
+      "Her site lists UBA dermatology specialization, dermatologic oncology, laser and medical technologies, antiaging training and trichology.",
     aestheticSignal:
-      "The clinic frames its work as dermatology, medical aesthetics, collagen biostimulators, botox, PRP, mesotherapy, and antiaging care.",
+      "The clinic frames its work as dermatology, medical aesthetics, collagen biostimulators, botox, PRP, mesotherapy and antiaging care.",
     caution:
       "Owned-site testimonials are useful but less strong than verified directory review volume.",
     sources: [{ label: "Official site", url: "https://pielatelier.com/" }],
     metrics: [
       { label: "Credential", value: 23, max: 25 },
       { label: "Aesthetic fit", value: 22, max: 25 },
-      { label: "Reviews", value: 7, max: 20 },
+      { label: "Reviews", value: 17, max: 20 },
       { label: "Technology", value: 14, max: 15 },
       { label: "Experience", value: 9, max: 10 },
       { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
-  },
-  {
-    name: "Dra. Laura Diana Szafirstein",
-    rankLabel: "Dermatología Clínica y Estética",
-    neighborhood: "Las Cañitas / Palermo",
-    providerType: "Individual",
-    bestFor: "Straightforward dermatology aesthetics with society-directory and TopDoctors presence.",
-    score: 78,
-    reviewSignal:
-      "TopDoctors surfaced a 5.0 signal from one review in broader dermatología estética search results.",
-    credentialSignal:
-      "Search results list her as a dermatologist in CABA; CILAD directory results show a Buenos Aires dermatology consultorio.",
-    aestheticSignal:
-      "Public pages mention dermatología clínica y estética, botulinum toxin, hyaluronic acid, cryosurgery, and vulvar pathology.",
-    caution:
-      "Promising credential fit, but public review depth is light compared with the top-ranked entries.",
-    sources: [
-      {
-        label: "TopDoctors profile",
-        url: "https://www.topdoctors.com.ar/doctor/laura-diana-szafirstein/",
-      },
-      {
-        label: "Official site",
-        url: "http://www.lauraszafirstein.com.ar/",
-      },
-      {
-        label: "CILAD directory",
-        url: "https://www.cilad.org/directorio-de-dermatologos-br/83692/laura-szafirstein/",
-      },
-    ],
-    metrics: [
-      { label: "Credential", value: 24, max: 25 },
-      { label: "Aesthetic fit", value: 20, max: 25 },
-      { label: "Reviews", value: 6, max: 20 },
-      { label: "Technology", value: 13, max: 15 },
-      { label: "Experience", value: 10, max: 10 },
-      { label: "Transparency", value: 5, max: 5 },
-    ],
-  },
-  {
-    name: "Dra. Carina Simionato",
-    rankLabel: "Dermatología integral",
-    neighborhood: "Caballito / Ituzaingó footprint",
-    providerType: "Individual",
-    bestFor: "A clinical dermatologist with aesthetic-medicine training and hospital grounding.",
-    score: 76,
-    reviewSignal:
-      "Doctoralia shows positive patient comments, but the scraped search result did not expose a high review count.",
-    credentialSignal:
-      "Doctoralia lists dermatology; the profile says she has served in Hospital Británico dermatology since 2004 and holds a postgraduate diploma in aesthetic medicine.",
-    aestheticSignal:
-      "Public evidence includes botulinum toxin and a dermatología integral positioning.",
-    caution:
-      "Aesthetic signal is present but less extensive than the laser/filler-focused clinics above.",
-    sources: [
-      {
-        label: "Doctoralia profile",
-        url: "https://www.doctoraliar.com/carina-simionato-2/dermatologo/ciudad-autonoma-de-buenos-aires",
-      },
-    ],
-    metrics: [
-      { label: "Credential", value: 25, max: 25 },
-      { label: "Aesthetic fit", value: 18, max: 25 },
-      { label: "Reviews", value: 6, max: 20 },
-      { label: "Technology", value: 12, max: 15 },
-      { label: "Experience", value: 10, max: 10 },
-      { label: "Transparency", value: 5, max: 5 },
-    ],
-  },
-  {
-    name: "Dra. Karina Bobadilla",
-    rankLabel: "Renova Derm",
-    neighborhood: "Rafael Calzada / AMBA",
-    providerType: "Individual",
-    bestFor: "AMBA patients who want a clinically serious dermatologist with aesthetic services.",
-    score: 74,
-    reviewSignal:
-      "TopDoctors shows 5.0 from one review, so the independent review signal is positive but thin.",
-    credentialSignal:
-      "TopDoctors lists her as a dermatologist; LinkedIn/search results show UBA, hospital dermatology, academic coordination, and Sociedad Argentina de Dermatología signals.",
-    aestheticSignal:
-      "TopDoctors lists botulinum toxin, facial fillers, lip augmentation, acne, alopecia, and psoriasis; her consultorio is described as dermatología clínica y medicina estética.",
-    caution:
-      "Lower because public aesthetics evidence is narrower and the practice is outside central CABA.",
-    sources: [
-      {
-        label: "TopDoctors profile",
-        url: "https://www.topdoctors.com.ar/doctor/karina-bobadilla/",
-      },
-      {
-        label: "LinkedIn profile",
-        url: "https://linkedin.com/in/karina-gabriela-bobadilla-545a5062",
-      },
-    ],
-    metrics: [
-      { label: "Credential", value: 25, max: 25 },
-      { label: "Aesthetic fit", value: 18, max: 25 },
-      { label: "Reviews", value: 5, max: 20 },
-      { label: "Technology", value: 12, max: 15 },
-      { label: "Experience", value: 10, max: 10 },
-      { label: "Transparency", value: 4, max: 5 },
-    ],
+    googlePlace: {
+      id: "ChIJt2GScjO1vJUROA84LBzkjmA",
+      name: "Piel Atelier by Eliana Maldonado",
+      address: "Billinghurst 2481, C1425 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5838128, lng: -58.4041541 },
+      rating: 5,
+      reviewCount: 62,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=6957749283986083640",
+      reviewThemes: [
+        "Google snippets mention warm, professional care and treatment plans tailored to the patient's skin.",
+        "Reviewers mention acne care, medical testing before treatment, follow-up and visible improvement.",
+        "All API-returned review snippets were five-star and recent.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and social links found during research were Spanish-language.",
+    },
   },
   {
     name: "Dra. Rosi Flom",
     rankLabel: "Dermatología Premium",
+    instagramUrl: "https://www.instagram.com/drarosiflom/",
     neighborhood: "Belgrano / Núñez search footprint",
     providerType: "Individual",
     bestFor: "A premium aesthetic-dermatology shortlist option to vet in person.",
-    score: 72,
+    score: 46,
     reviewSignal:
       "Search showed official/social presence and media mentions, but not enough independent review depth to rank higher.",
     credentialSignal:
       "Her official site and search results describe her as a UBA-trained medical dermatologist focused on clinical and aesthetic dermatology.",
     aestheticSignal:
-      "Public snippets mention dermatología premium, lasers, vascular laser, skin texture, manchas, wrinkles, and natural personalized care.",
+      "Public snippets mention dermatología premium, lasers, vascular laser, skin texture, manchas, wrinkles and custom care.",
     caution:
-      "Treat as a shortlist lead until you verify independent reviews, exact devices, and procedure ownership.",
+      "Treat as a shortlist lead until you verify separate reviews, exact devices and procedure ownership.",
     sources: [
       { label: "Official site", url: "https://www.drarosiflom.com/" },
       {
@@ -464,32 +903,1073 @@ const dermatologists: Dermatologist[] = [
     metrics: [
       { label: "Credential", value: 23, max: 25 },
       { label: "Aesthetic fit", value: 20, max: 25 },
-      { label: "Reviews", value: 4, max: 20 },
+      { label: "Reviews", value: 10, max: 20 },
       { label: "Technology", value: 14, max: 15 },
       { label: "Experience", value: 7, max: 10 },
       { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
     ],
+    googlePlace: {
+      id: "ChIJkTMz7dK1vJUR4WCwPq3-w7M",
+      name: "Dra. Rosi Flom",
+      address: "Av. Juramento 2010, C1428 DNH, Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5600523, lng: -58.4529775 },
+      rating: 4.5,
+      reviewCount: 14,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=12953476973282222305",
+      reviewThemes: [
+        "Google reviews praise experience, updated equipment/products, warmth and trust.",
+        "Older snippets include loyal long-term patients and strong personal endorsements.",
+        "One lower-rated review criticizes reception/payment staff rather than the medical care.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site/search evidence found during research was Spanish-language; no official English version was confirmed.",
+    },
+  },
+
+  {
+    name: "Clínica Irene Bermejo",
+    rankLabel: "Dermatología Funcional y Estética",
+    instagramUrl: "https://www.instagram.com/dra.irenebermejo/",
+    neighborhood: "Belgrano",
+    providerType: "Clinic",
+    bestFor: "A laser-heavy dermatologist-led clinic with unusually deep public review volume.",
+    score: 98,
+    reviewSignal:
+      "Google Maps shows 4.8 from 3,285 reviews; official pages also publish a long-running clinic story and team depth.",
+    credentialSignal:
+      "The official site says Dra. Irene Bermejo is a UBA physician with more than 40 years in clinical and aesthetic dermatology, SAD involvement and laser leadership.",
+    aestheticSignal:
+      "Official treatment pages list CO2, Erbium, Q Switch, IPL, Ultherapy, Morpheus8, Accent, botulinum toxin, fillers and bioestimuladores.",
+    caution:
+      "This is a clinic-level pick. Ask which dermatologist will see you and who performs device or injectable work.",
+    sources: [
+      { label: "Official about page", url: "https://irenebermejo.com/sobre-nosotros/" },
+      { label: "Official treatments", url: "https://irenebermejo.com/tratamientos/" },
+      { label: "Official technologies", url: "https://irenebermejo.com/tecnologias/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJE_8JXs21vJUREO_e3cp4uX0",
+      name: "Clínica Irene Bermejo - Dermatología Funcional y Estética",
+      address: "Av. Juramento 1805 5a, C1428 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5615274, lng: -58.4558103 },
+      rating: 4.8,
+      reviewCount: 3285,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=9060050158703865616",
+      reviewThemes: [
+        "Recent snippets praise professionalism, frank explanations, dedication and admin-to-clinic coordination.",
+        "Reviewers mention specific doctors and long-running trust in the clinic.",
+        "The review volume is very high, so read recent negative reviews as well as the five-star ones before booking.",
+      ],
+      reviewCaution: "Very high review volume; validate recent service experience.",
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Centro Médico de la Piel / Dra. Leisa Molinari",
+    rankLabel: "Dermatología Clínica y Estética",
+    instagramUrl: "https://www.instagram.com/cmedicodelapiel/",
+    neighborhood: "Belgrano",
+    providerType: "Clinic",
+    bestFor: "A large dermatology center with strong medical depth plus facial and body aesthetics.",
+    score: 87,
+    reviewSignal:
+      "Google Maps shows 4.8 from 1,005 reviews; the official site also publishes Google-linked testimonials.",
+    credentialSignal:
+      "The staff page lists multiple dermatologists, with Dra. Leisa Molinari as medical director and a team covering dermatology, Mohs, oncology, lasers and aesthetics.",
+    aestheticSignal:
+      "Official pages include facial aesthetics, lips, rinomodelación, manchas, rosacea, acne scars, technologies and body treatments.",
+    caution:
+      "A strong medical center, but the review sample includes admin and wait complaints. Clarify the exact doctor and follow-up path.",
+    sources: [
+      { label: "Official staff page", url: "https://centromedicodelapiel.com.ar/staff/" },
+      { label: "Facial aesthetics", url: "https://centromedicodelapiel.com.ar/esteticafacial/" },
+      { label: "Technologies", url: "https://centromedicodelapiel.com.ar/esteticafacial/tecnologias/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 22, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJj-MCIRu1vJURbb-pzmszDdM",
+      name: "Centro Médico de la Piel - Dra. Leisa Molinari",
+      address: "Av. Cabildo 1117, C1428 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5685953, lng: -58.4472143 },
+      rating: 4.8,
+      reviewCount: 1005,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=15207868054821781357",
+      reviewThemes: [
+        "Positive snippets praise the clinic space, staff, treatment quality and scheduling flexibility.",
+        "Reviews mention Dra. Leisa, Dra. Fiorella and team care for skin treatment and follow-up.",
+        "A recent negative snippet complained about a delayed, prepaid appointment and communication friction.",
+      ],
+      reviewCaution: "Strong clinic signal with some admin friction in recent snippets.",
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Dra. Sofía Vázquez / Vázquez Dermatología",
+    rankLabel: "Dermatología, Láser y Armonización Facial",
+    instagramUrl: "https://www.instagram.com/vazquez.dermatologia/",
+    neighborhood: "Recoleta / Palermo search footprint",
+    providerType: "Individual",
+    bestFor: "A high-review aesthetics-forward dermatologist for fillers, lasers and facial balance.",
+    score: 100,
+    reviewSignal:
+      "Google Maps shows 4.9 from 562 reviews, with detailed snippets about first procedures, explanations and clinic care.",
+    credentialSignal:
+      "Official and social profiles present a dermatology and aesthetics practice; public profiles describe Sofía Vázquez as a dermatologist focused on skin, laser and facial aesthetics.",
+    aestheticSignal:
+      "Official pages list lips, rinomodelación, contouring, IPL, HarmonyCa, facial aesthetics, body aesthetics, dermatology and laser.",
+    caution:
+      "The public footprint is aesthetics-forward. Confirm medical dermatology scope if you want a more conservative clinical-first consult.",
+    sources: [
+      { label: "Official site", url: "https://drasofiavazquez.com.ar/" },
+      { label: "About page", url: "https://drasofiavazquez.com.ar/quienes-somos/" },
+      { label: "Instagram", url: "https://www.instagram.com/vazquez.dermatologia/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 14, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ4aT7oofLvJURPv1Q0F6mx-4",
+      name: "Dra Sofia Vazquez | Vazquez Dermatología",
+      address: "Av. Pres. Manuel Quintana 585, C1112 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5876889, lng: -58.3904321 },
+      rating: 4.9,
+      reviewCount: 562,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=17205903827544374590",
+      reviewThemes: [
+        "Google snippets praise the doctor and secretary, especially for first aesthetic procedures.",
+        "Two Google reviews explicitly say Dra. Vázquez or her staff speak fluent English and made the visit smooth.",
+        "The review set is unusually strong for an aesthetics-forward individual practice.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "Two Google reviews explicitly say Dra. Vázquez or the office staff speak fluent English and made the visit smooth.",
+      sourceUrl: "https://maps.google.com/?cid=17205903827544374590",
+    },
+  },
+  {
+    name: "MAS DERMA / Dra. Mariel Mac Guire",
+    rankLabel: "Clínica Dermatológica",
+    instagramUrl: "https://www.instagram.com/dra.macguire/",
+    neighborhood: "Belgrano",
+    providerType: "Clinic",
+    bestFor: "A high-trust dermatology clinic for clinical, surgical and aesthetic skin care.",
+    score: 82,
+    reviewSignal:
+      "Google Maps shows 5.0 from 553 reviews, including recent praise for Dra. Mariel Mac Guire and the clinic team.",
+    credentialSignal:
+      "Official and public profiles describe Dra. Mariel Mac Guire as a dermatologist in clinical, surgical and aesthetic dermatology.",
+    aestheticSignal:
+      "The official site positions MÁS DERMA around dermatologic and aesthetic treatments with technology and an integral skin-care model.",
+    caution:
+      "The official site is less procedure-detailed than some laser-heavy clinics, so ask for exact devices and injector ownership.",
+    sources: [
+      { label: "Official site", url: "https://masderma.com.ar/" },
+      { label: "Team page", url: "https://masderma.com.ar/equipo/" },
+      { label: "Instagram", url: "https://www.instagram.com/dra.macguire/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 21, max: 25 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ2yoKK8LLvJURbJduoklOmeQ",
+      name: "MAS DERMA Clínica dermatológica - Dra. Mariel Mac Guire",
+      address: "Virrey Arredondo 2412, C1426DZF Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5672835, lng: -58.4509522 },
+      rating: 5,
+      reviewCount: 553,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=16472283190249035628",
+      reviewThemes: [
+        "Google snippets praise attentive explanations, a warm office and trust in Dra. Mariel's criteria.",
+        "Reviewers mention multiple doctors, reception care and long-term treatment confidence.",
+        "The all-five-star rating is strong, but still worth checking recent review distribution directly.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Due Derma / Dra. Daniela Maleh",
+    rankLabel: "Dermatología Clínica y Estética",
+    instagramUrl: "https://www.instagram.com/duederma/",
+    neighborhood: "Recoleta / Palermo edge",
+    providerType: "Clinic",
+    bestFor: "Dermatology aesthetics with strong injectable positioning and high patient-review volume.",
+    score: 84,
+    reviewSignal:
+      "Google Maps shows 4.9 from 349 reviews; official social profiles also show active dermatology and aesthetics content.",
+    credentialSignal:
+      "Search and official profiles identify Dra. Daniela Maleh as a dermatologist and specialist in aesthetic medicine, with Due Derma as her clinic.",
+    aestheticSignal:
+      "Public sources list clinical dermatology, aesthetic dermatology, injectables, laser, peels, botulinum toxin, fillers and skin-quality work.",
+    caution:
+      "Strong aesthetics fit, but confirm the exact doctor for injectables and how complications are handled.",
+    sources: [
+      { label: "Official site", url: "https://duederma.com.ar/" },
+      { label: "Dra. Daniela Maleh site", url: "https://danielamaleh.com/" },
+      { label: "Instagram", url: "https://www.instagram.com/duederma/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 24, max: 25 },
+      { label: "Aesthetic fit", value: 24, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 13, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJx-0rQHnLvJUR9rk3AJxku0k",
+      name: "Due Derma - Dermatología Clínica y Estética",
+      address: "Gallo 1671, C1425 C1425EFI, Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5912434, lng: -58.4082082 },
+      rating: 4.9,
+      reviewCount: 349,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=5312950806594959862",
+      reviewThemes: [
+        "Google snippets praise the calm clinic space, educated admin team and warm medical treatment.",
+        "Reviewers call out Daniela and team care, plus clean consult rooms and careful scheduling help.",
+        "The review tone is boutique and service-forward, not just generic dermatology praise.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Piel Studio",
+    rankLabel: "Dermatología y Estética",
+    instagramUrl: "https://www.instagram.com/pielstudio_/",
+    neighborhood: "Palermo",
+    providerType: "Clinic",
+    bestFor: "A team-based dermatology and aesthetics studio with very strong Maps volume.",
+    score: 82,
+    reviewSignal:
+      "Google Maps shows 4.9 from 888 reviews; snippets praise the space, skin treatments and patient experience.",
+    credentialSignal:
+      "The official site lists multiple doctors under dermatología y estética, including Daniel Troncoso, María Pía Herlein, María Paz Sappia and others.",
+    aestheticSignal:
+      "Official and booking pages mention dermatología clínica y estética, cosmiatría, peels, skin treatments and medical skin care.",
+    caution:
+      "A studio-style clinic rather than a named-doctor ranking. Confirm who will diagnose, inject, laser and supervise follow-up.",
+    sources: [
+      { label: "Official site", url: "https://pielstudio.com.ar/" },
+      { label: "Booking page", url: "https://pielstudio.site.agendapro.com/ar/sucursal/101571" },
+      { label: "Instagram", url: "https://www.instagram.com/pielstudio_/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 20, max: 25 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 11, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ5biC4k7LvJURZzZTdHro4lU",
+      name: "Piel Studio",
+      address: "José A. Cabrera 4869, C1414 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5888476, lng: -58.4310218 },
+      rating: 4.9,
+      reviewCount: 888,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=10748820681281283751",
+      reviewThemes: [
+        "Google snippets praise facial treatments, the studio environment and front-desk care.",
+        "Google reviews say the team speaks fluent English and handled an English-speaking visitor smoothly.",
+        "The review volume is high, but the snippets are less doctor-specific than individual practices.",
+      ],
+      reviewCaution: "Very strong volume, less named-doctor specificity.",
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "Google reviews say Piel Studio speaks fluent English and handled an English-speaking visitor smoothly.",
+      sourceUrl: "https://maps.google.com/?cid=10748820681281283751",
+    },
+  },
+  {
+    name: "Casa Piel Dermatología / Dra. Mariángeles Jofré",
+    rankLabel: "Centro Dermatológico",
+    instagramUrl: "https://www.instagram.com/casapieldermatologia/",
+    neighborhood: "Palermo",
+    providerType: "Clinic",
+    bestFor: "A polished dermatology clinic for acne, rosacea, preventive aesthetics and facial procedures.",
+    score: 80,
+    reviewSignal:
+      "Google Maps shows 4.9 from 347 reviews; search also surfaced booking pages and official treatment pages.",
+    credentialSignal:
+      "Search results and official profiles describe Mariángeles Jofré as a dermatologist with Buenos Aires dermatology training and a Casa Piel team.",
+    aestheticSignal:
+      "Official snippets list Botox, bioestimuladores, luz pulsada, laser, plasma pen, radiofrequency and peelings.",
+    caution:
+      "Strong fit, though some evidence came from search snippets where the page returned redirect-style URLs. Verify the exact treatment page before booking.",
+    sources: [
+      { label: "Official site", url: "https://casapieldermatologia.com/" },
+      { label: "Instagram", url: "https://www.instagram.com/casapieldermatologia/" },
+      { label: "Mariángeles Jofré Instagram", url: "https://www.instagram.com/mariandermato/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 24, max: 25 },
+      { label: "Aesthetic fit", value: 23, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 13, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJJcwOKJbLvJURfwNEegPAIvM",
+      name: "Casa Piel Dermatología por Marian Jofre",
+      address: "Guatemala 5612, C1425 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5787595, lng: -58.4359869 },
+      rating: 4.9,
+      reviewCount: 347,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=18160737376009094015",
+      reviewThemes: [
+        "Google snippets praise peels, the consult room environment and attentive staff.",
+        "Reviewers mention trained doctors, many services and a comfortable clinic feel.",
+        "The strongest public signal is clinic experience plus aesthetics breadth.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Experiencia Piel",
+    rankLabel: "Centro Dermatológico",
+    instagramUrl: "https://www.instagram.com/experienciapiel/",
+    neighborhood: "Recoleta",
+    providerType: "Clinic",
+    bestFor: "A dermatology center with strong patient volume and clear aesthetic procedure positioning.",
+    score: 73,
+    reviewSignal:
+      "Google Maps shows 4.9 from 481 reviews, with recent snippets praising reception, medical advice and procedure care.",
+    credentialSignal:
+      "Official and social pages describe a team with dermatología clínica, quirúrgica y estética in Recoleta.",
+    aestheticSignal:
+      "Official snippets mention toxina botulínica, rejuvenecimiento facial, capillary implants, cosmiatría dermatológica and peelings.",
+    caution:
+      "The clinic signal is stronger than the named-doctor signal. Ask which doctor owns diagnosis and procedure follow-up.",
+    sources: [
+      { label: "Official site", url: "https://experienciapiel.com/" },
+      { label: "About page", url: "https://experienciapiel.com/nosotros/" },
+      { label: "Cosmiatría dermatológica", url: "https://experienciapiel.com/dermatologiaestetica/cosmiatria-dermatologica/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 22, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJj5B_s2XLvJURYadPoMsZyKc",
+      name: "Experiencia Piel",
+      address: "Arenales 2532, C1425 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.592269, lng: -58.4065762 },
+      rating: 4.9,
+      reviewCount: 481,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=12048556626703779681",
+      reviewThemes: [
+        "Google snippets praise reception, medical advice and procedure handling.",
+        "A reviewer specifically mentions intervention by Dra. Julia Vélez with stained-skin treatment.",
+        "The review signal is strong, but still clinic-level rather than a single-doctor proof point.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Tosiponti Skin Longevity",
+    rankLabel: "Dermatología Funcional y de Precisión",
+    instagramUrl: "https://www.instagram.com/tosiponti/",
+    neighborhood: "Belgrano",
+    providerType: "Clinic",
+    bestFor: "Acne, rosacea and skin-longevity care with enough aesthetic procedures to matter.",
+    score: 84,
+    reviewSignal:
+      "Google Maps shows 4.9 from 877 reviews; the official site repeats 853 Google reviews and patient quotes.",
+    credentialSignal:
+      "The official site lists Dra. Verónica Tosi as medical director, with dermatology functional, precision and skin-longevity positioning.",
+    aestheticSignal:
+      "Official services include botulinum toxin, Profhilo, bioplasma, Dermapen, peels, mesotherapy, IPL, Healite and acne-scar procedures.",
+    caution:
+      "Best fit for skin health and acne/rosacea systems thinking. It is less of a pure filler-and-laser beauty clinic than the highest-ranked aesthetic entries.",
+    sources: [
+      { label: "Official site", url: "https://tosiponti.com/" },
+      { label: "Instagram", url: "https://www.instagram.com/tosiponti/" },
+      { label: "LinkedIn profile", url: "https://ar.linkedin.com/in/veronica-tosi-3462217a" },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 19, max: 25 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 13, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ7Qh95X21vJUR-9U76fP-RLU",
+      name: "Tosiponti Skin Longevity (antes ACNEBA)",
+      address: "Av. Federico Lacroze 2252 3 A, C1426 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5681248, lng: -58.4517449 },
+      rating: 4.9,
+      reviewCount: 877,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=4992920896564094459",
+      reviewThemes: [
+        "Google snippets praise long-term team care, service quality and facial treatments.",
+        "One Google review says Dr. Lértora answered questions and explained everything in detail in English.",
+        "The reviews skew skin-health and facial-care more than injectables.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "A Google review says Dr. Lértora explained the consultation in detail in English.",
+      sourceUrl: "https://maps.google.com/?cid=4992920896564094459",
+    },
+  },
+  {
+    name: "Dra. Alejandra Meijide",
+    rankLabel: "Dermatología Estética",
+    instagramUrl: "https://www.instagram.com/drameijide/",
+    neighborhood: "Belgrano",
+    providerType: "Individual",
+    bestFor: "An experienced dermatologist for conservative Botox, peels, mesotherapy and hair/skin care.",
+    score: 69,
+    reviewSignal:
+      "Google Maps shows 4.7 from 263 reviews; Doctoralia and Esteticas.com.ar also carry review signals.",
+    credentialSignal:
+      "The official site says she has worked in dermatology for more than 30 years, studied at UBA and is a dermatologist with a master's in aesthetics.",
+    aestheticSignal:
+      "Official services include mesotherapy, peels, plasma laser, Botox, radiofrequency, ultracavitation and Dermapen.",
+    caution:
+      "Strong experience signal, but the device/procedure list is less modern than laser-heavy clinics.",
+    sources: [
+      { label: "Official site", url: "https://drameijide.com/" },
+      { label: "Doctoralia profile", url: "https://www.doctoraliar.com/alejandra-meijide/dermatologo-medico-estetico/capital-federal" },
+      { label: "Esteticas.com.ar profile", url: "https://www.esteticas.com.ar/centros/dra-alejandra-fernandez-meijide" },
+    ],
+    metrics: [
+      { label: "Credential", value: 24, max: 25 },
+      { label: "Aesthetic fit", value: 21, max: 25 },
+      { label: "Reviews", value: 18, max: 20 },
+      { label: "Technology", value: 11, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJGWgrBNG1vJURFH1yvzIvVa8",
+      name: "Dra. Meijide",
+      address: "5 E, Cdad. de la Paz 1745, C1426 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5657015, lng: -58.4546736 },
+      rating: 4.7,
+      reviewCount: 263,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=12634056224664616212",
+      reviewThemes: [
+        "Google snippets praise alopecia treatment, warmth and patient comfort.",
+        "Reviewers mention feeling heard and long-term trust in the doctor.",
+        "The review signal supports inclusion, though aesthetic-procedure detail is thinner than some competitors.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Dr. Matías Bertiche",
+    rankLabel: "Dermatología Clínica y Estética",
+    instagramUrl: "https://www.instagram.com/dr.matiasbertiche/",
+    neighborhood: "Villa Crespo / Palermo edge",
+    providerType: "Individual",
+    bestFor: "A dermatologist with strong Doctoralia volume and a compact Google Maps footprint.",
+    score: 66,
+    reviewSignal:
+      "Doctoralia shows 394 opinions and Google Maps shows 4.4 from 13 reviews, enough to pass the page threshold.",
+    credentialSignal:
+      "Doctoralia lists him as a dermatologist with national specialty training, SAD membership and dermatoscopy/clinical dermatology diplomas.",
+    aestheticSignal:
+      "Doctoralia lists minimally invasive aesthetics, botulinum toxin, hyaluronic acid, radiofrequency, IPL, peels, PRP and mesotherapy.",
+    caution:
+      "Google review volume is just above the threshold and includes a negative communication snippet. Doctoralia carries the stronger review signal.",
+    sources: [
+      { label: "Doctoralia profile", url: "https://www.doctoraliar.com/matias-bertiche/dermatologo/capital-federal" },
+      { label: "Instagram", url: "https://www.instagram.com/dr.matiasbertiche/" },
+      { label: "Facebook", url: "https://www.facebook.com/Dr.MatiasBertiche/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 21, max: 25 },
+      { label: "Reviews", value: 17, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ4xiPRizLvJURtqxDOxD8RmM",
+      name: "Consultorio Dr. Matias Bertiche",
+      address: "Av. Córdoba 4123, C1188 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5968246, lng: -58.4251052 },
+      rating: 4.4,
+      reviewCount: 13,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=7153682204768578742",
+      reviewThemes: [
+        "Google snippets include praise for clinical and aesthetic dermatology, the space and the service.",
+        "Doctoralia reviews repeatedly mention detailed explanations and good facilities.",
+        "One Google snippet is materially negative about the visit tone, so read recent reviews before booking.",
+      ],
+      reviewCaution: "Barely clears Google review threshold and has mixed snippets.",
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Doctoralia lists English and Portuguese, but the page's rule requires official English website or official English social proof.",
+    },
+  },
+  {
+    name: "Dra. Sabrina Alfonso",
+    rankLabel: "Dermatología Clínica y Estética",
+    instagramUrl: "https://www.instagram.com/dra.sabrinaalfonso/",
+    neighborhood: "Belgrano",
+    providerType: "Individual",
+    bestFor: "A high-review Belgrano dermatologist for clinical skin care with lighter aesthetic services.",
+    score: 62,
+    reviewSignal:
+      "Google Maps shows 5.0 from 504 reviews; the official site mirrors Google review snippets and patient volume.",
+    credentialSignal:
+      "The official site says she is a UBA dermatologist with more than 20 years of experience, Hospital Fernández training and SAD membership.",
+    aestheticSignal:
+      "Official services list aesthetic dermatology, rejuvenation, manchas, peelings, hydration, cosmetic advice and anti-age care.",
+    caution:
+      "Aesthetic scope appears more skin-quality and peel-focused than injectable or laser-heavy.",
+    sources: [
+      { label: "Official site", url: "https://www.drasabrinaalfonso.com/" },
+      { label: "Instagram", url: "https://www.instagram.com/dra.sabrinaalfonso/" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/dramariasabrinaalfonso" },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 16, max: 25 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 8, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJAfX_iWq1vJUR8DlPVztkO9o",
+      name: "Dra. Sabrina Alfonso",
+      address: "Cuba 1956, C1428 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5623974, lng: -58.453589 },
+      rating: 5,
+      reviewCount: 504,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=15722139842457508336",
+      reviewThemes: [
+        "Google snippets praise warm care, time spent answering questions and clear explanations.",
+        "One English-language visitor review says she was clear, gentle and useful during a short stay.",
+        "The review base is strong, but the aesthetic scope is narrower than the top aesthetic-focused clinics.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "English reviews do not count under the page rule; no official English site or English-language official social account was found.",
+    },
+  },
+  {
+    name: "Dra. Yanina Sequeira / Seré",
+    rankLabel: "Dermatología y Medicina Estética",
+    instagramUrl: "https://www.instagram.com/dra.sequeirayanina/",
+    neighborhood: "Palermo",
+    providerType: "Individual",
+    bestFor: "A social-forward dermatologist for facial harmonization, skin care and PRP.",
+    score: 64,
+    reviewSignal:
+      "Google Maps shows 5.0 from 126 reviews, with snippets praising clear treatment explanations and careful first consults.",
+    credentialSignal:
+      "The official site says she trained for five years in clinical dermatology at Hospital Piñero and is a SAD member.",
+    aestheticSignal:
+      "Official services include clinical dermatology, aesthetic treatments, facial harmonization, fillers, botulinum toxin, bioestimuladores, threads and PRP.",
+    caution:
+      "Strong aesthetics signal, but the website has some polish issues. Validate medical specialty details directly if risk tolerance is low.",
+    sources: [
+      { label: "Official site", url: "https://drasequeirayanina.com/" },
+      { label: "Instagram", url: "https://www.instagram.com/dra.sequeirayanina/" },
+      { label: "TikTok", url: "https://www.tiktok.com/@dra.sequeirayanina" },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 23, max: 25 },
+      { label: "Reviews", value: 18, max: 20 },
+      { label: "Technology", value: 10, max: 15 },
+      { label: "Experience", value: 7, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJLVKKAJm_yicRHH5Kmt1E_Fo",
+      name: "Dra Sequeira Yanina",
+      address: "Soler 6060 8C, C1425 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5772308, lng: -58.4373859 },
+      rating: 5,
+      reviewCount: 126,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=6556190876111633948",
+      reviewThemes: [
+        "Google snippets praise kindness, patience and clear explanation of treatment plans.",
+        "Reviewers mention careful first consultations and detailed evaluation of skin.",
+        "The review signal is strong for an individual practice of this size.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Dra. Sofía Becu",
+    rankLabel: "Dermatología Clínica y Medicina Estética",
+    instagramUrl: "https://www.instagram.com/dra.sofiabecu/",
+    neighborhood: "Recoleta",
+    providerType: "Individual",
+    bestFor: "A high-review individual dermatologist for Recoleta clinical and aesthetic care.",
+    score: 80,
+    reviewSignal:
+      "Google Maps shows 5.0 from 195 reviews; snippets praise long-term trust, clear explanations and results.",
+    credentialSignal:
+      "Official social profiles describe her as a dermatologist doing advanced aesthetics with dermatologic criteria.",
+    aestheticSignal:
+      "Public sources mention botulinum toxin and aesthetic treatment with a dermatology base.",
+    caution:
+      "The public evidence is social-profile heavy and has less procedure detail than full official websites.",
+    sources: [
+      { label: "Instagram", url: "https://www.instagram.com/dra.sofiabecu/" },
+      { label: "American Health Tourism listing", url: "https://americanhealthtourism.org/facility/dra-sofia-becu-dermatologia-clinica-y-medicina-estetica/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 20, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 10, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ-3mDGXS1vJURlIBDkIjS1tg",
+      name: "Dra. Sofia Becu - Médica Dermatóloga - Dermatología clínica y Medicina estética",
+      address: "Av. Callao 1441 Entre Las Heras, José Andrés Pacheco de Melo y, C1021 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.589214, lng: -58.3956141 },
+      rating: 5,
+      reviewCount: 195,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=13169114275753954324",
+      reviewThemes: [
+        "Google snippets praise long-term trust, professional quality and patient explanations.",
+        "One Google review from a US patient explicitly says Dra. Becu speaks English.",
+        "The Google evidence is strong, but independent source depth is more limited.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "A Google review from a US patient explicitly says Dra. Becu speaks English.",
+      sourceUrl: "https://maps.google.com/?cid=13169114275753954324",
+    },
+  },
+  {
+    name: "Dra. Valeria Vagnoni / DERMES",
+    rankLabel: "Dermatología, Estética y Láser",
+    instagramUrl: "https://www.instagram.com/dra.valeriavagnoni/",
+    neighborhood: "Caballito",
+    providerType: "Individual",
+    bestFor: "Dermatology aesthetics and laser care outside the Palermo-Belgrano-Recoleta cluster.",
+    score: 64,
+    reviewSignal:
+      "Google Maps shows 5.0 from 175 reviews, with snippets praising results, follow-up and patient care.",
+    credentialSignal:
+      "Official site and social profiles identify Dra. Valeria Vagnoni as a dermatologist at DERMES.",
+    aestheticSignal:
+      "Public sources list dermatology, aesthetics, laser, melasma, peelings, Dermapen and skin treatments.",
+    caution:
+      "Good review and location diversity signal, but public procedure detail is not as deep as the top laser centers.",
+    sources: [
+      { label: "Official site", url: "https://dermespiel.com/" },
+      { label: "About page", url: "https://dermespiel.com/about/" },
+      { label: "Instagram", url: "https://www.instagram.com/dra.valeriavagnoni/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 20, max: 25 },
+      { label: "Reviews", value: 19, max: 20 },
+      { label: "Technology", value: 11, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJfe_6EoC0vJURAn4HGEdbF-4",
+      name: "Dra. Valeria Vagnoni. Dermatología, Estética y Láser DERMES – Buenos Aires",
+      address: "Muñiz 612, C1226 Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.6227541, lng: -58.4298226 },
+      rating: 5,
+      reviewCount: 175,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=18373502821578169858",
+      reviewThemes: [
+        "Google snippets praise results, follow-up, team care and patients traveling for trust.",
+        "Reviewers mention the doctor and the broader team rather than only the clinic space.",
+        "The public signal is strong for an individual Caballito option.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "ON Dermatología Estética / Dra. Natalia Otero",
+    rankLabel: "Dermatología Clínica y Estética",
+    instagramUrl: "https://www.instagram.com/dra.natalia.otero/",
+    neighborhood: "Recoleta / Barrio Norte",
+    providerType: "Individual",
+    bestFor: "Natural-looking injectable and radiofrequency work with a clear dermatologist signal.",
+    score: 55,
+    reviewSignal:
+      "Google Maps shows 4.8 from 38 reviews; snippets praise natural results, empathy and the office team.",
+    credentialSignal:
+      "Official and social sources identify Dra. Natalia Otero as a medical dermatologist and SAD member.",
+    aestheticSignal:
+      "Official sources and press mention peels, fillers, botulinum toxin, radiofrequency, PRP, mesotherapy and body treatments.",
+    caution:
+      "Good fit, but lower review volume than the highest-ranked entries and a smaller public footprint.",
+    sources: [
+      { label: "Official site", url: "https://ondermatologiayestetica.com.ar/" },
+      { label: "Contacto page", url: "https://ondermatologiayestetica.com.ar/contacto.php" },
+      { label: "Caras profile", url: "https://caras.perfil.com/noticias/caras-like/dra-natalia-otero.phtml" },
+    ],
+    metrics: [
+      { label: "Credential", value: 24, max: 25 },
+      { label: "Aesthetic fit", value: 21, max: 25 },
+      { label: "Reviews", value: 13, max: 20 },
+      { label: "Technology", value: 10, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJeacjcB7LvJURQjsoSviJOC8",
+      name: "ON Dermatología Estética | Dra. Natalia Otero",
+      address: "Gral. Lucio Norberto Mansilla 2450, C1121AAB, C1121AAB Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5962431, lng: -58.4034719 },
+      rating: 4.8,
+      reviewCount: 38,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=798117797439078210",
+      reviewThemes: [
+        "Google snippets praise natural treatment results and the doctor's empathy.",
+        "Reviewers mention secretarial warmth and good office communication.",
+        "The evidence supports inclusion but not a top-tier ranking by review depth.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
+  },
+  {
+    name: "Dra. Celeste Di Matteo",
+    rankLabel: "Dermatología Estética y Funcional",
+    instagramUrl: "https://www.instagram.com/dracelestedimatteo/",
+    neighborhood: "Palermo / Villa Crespo edge",
+    providerType: "Individual",
+    bestFor: "A functional-dermatology aesthetic option with a smaller but strong review base.",
+    score: 64,
+    reviewSignal:
+      "Google Maps shows 5.0 from 41 reviews, with snippets praising acne care, skin rescue and detailed routine work.",
+    credentialSignal:
+      "Official and social sources describe her as a dermatologist specialized in aesthetics and functional medicine.",
+    aestheticSignal:
+      "Public sources mention aesthetic dermatology, Botox, skin aging, skin biology and precision-health framing.",
+    caution:
+      "Promising but smaller review footprint. It may be a better skin-health pick than a full-device aesthetic center.",
+    sources: [
+      { label: "Official site", url: "https://www.dracelestedimatteo.com.ar/" },
+      { label: "Instagram", url: "https://www.instagram.com/dracelestedimatteo/" },
+      { label: "Tosiponti profile signal", url: "https://tosiponti.com/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 19, max: 25 },
+      { label: "Reviews", value: 14, max: 20 },
+      { label: "Technology", value: 10, max: 15 },
+      { label: "Experience", value: 7, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+      { label: "English", value: 6, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJ8Xv8M9PLvJURpKzM1AWl7D4",
+      name: "Dra. Celeste Di Matteo - Dermatología Estética",
+      address: "Cnel. Niceto Vega 4647, C1414BEA Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5898733, lng: -58.4293903 },
+      rating: 5,
+      reviewCount: 41,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=1135031222467615908",
+      reviewThemes: [
+        "Google snippets praise acne care, listening and detailed skin routine work.",
+        "One Google review explicitly says Dr. Celeste speaks English too.",
+        "The signal is clinically reassuring but less broad than larger clinics.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: true,
+      label: "They speak English",
+      evidence:
+        "A Google review explicitly says Dr. Celeste speaks English too.",
+      sourceUrl: "https://maps.google.com/?cid=1135031222467615908",
+    },
+  },
+  {
+    name: "Centro Dermatológico Dr. Ramírez Medina",
+    rankLabel: "Dermatología y Estética Masculina",
+    instagramUrl: "https://www.instagram.com/centro.dermatologico/",
+    neighborhood: "Palermo",
+    providerType: "Clinic",
+    bestFor: "A dermatology center with a male-aesthetics angle and strong alopecia/skin-care signals.",
+    score: 49,
+    reviewSignal:
+      "Google Maps shows 4.8 from 93 reviews, including praise for urgent care, alopecia follow-up and human treatment.",
+    credentialSignal:
+      "Official and social sources describe Dr. Carlos Ramírez Medina as a dermatologist with more than 30 years of experience.",
+    aestheticSignal:
+      "Public sources mention dermatología estética, antiaging, non-surgical lifting and skin/hair treatments.",
+    caution:
+      "The strongest public positioning is male skin and hair care rather than classic facial rejuvenation for all audiences.",
+    sources: [
+      { label: "Official site", url: "https://centrodermatologicoramirezmedina.com.ar/" },
+      { label: "Clinical dermatology", url: "https://centrodermatologicoramirezmedina.com.ar/dermatologia-clinica/" },
+      { label: "Instagram", url: "https://www.instagram.com/centro.dermatologico/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 18, max: 25 },
+      { label: "Reviews", value: 16, max: 20 },
+      { label: "Technology", value: 10, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+      { label: "English", value: 0, max: 6 },
+    ],
+    googlePlace: {
+      id: "ChIJn5NCqazLvJURxrAyWhcGnhw",
+      name: "CENTRO DERMATOLÓGICO DR. RAMÍREZ MEDINA",
+      address: "Av. Córdoba 4840 Piso 1, timbre 2, C1414EIC Cdad. Autónoma de Buenos Aires",
+      location: { lat: -34.5985974, lng: -58.4326404 },
+      rating: 4.8,
+      reviewCount: 93,
+      businessStatus: "OPERATIONAL",
+      url: "https://maps.google.com/?cid=10126544517313376454",
+      reviewThemes: [
+        "Google snippets praise urgent dermatology help and attentive alopecia follow-up.",
+        "Reviewers mention humane care, availability and willingness to answer questions.",
+        "The evidence is solid, but aesthetic-procedure breadth is less visible than higher entries.",
+      ],
+    },
+    englishSupport: {
+      speaksEnglish: false,
+      label: "No official English version found",
+      evidence:
+        "Official site and official social results found during the audit were Spanish-language.",
+    },
   },
 ];
+
+const rankedDermatologists = dermatologists.toSorted(
+  (a, b) =>
+    b.score - a.score ||
+    b.googlePlace.rating - a.googlePlace.rating ||
+    b.googlePlace.reviewCount - a.googlePlace.reviewCount ||
+    a.name.localeCompare(b.name),
+);
 
 const screenedOut = [
   {
     name: "Dra. Yamile Alejandra Llahyah",
     reason:
-      "Excellent TopDoctors signal for dermatology aesthetics, but the actual profile places consultations in Rosario/Santa Fe rather than Buenos Aires.",
+      "TopDoctors has strong dermatology aesthetics data for her, but the actual profile places consultations in Rosario/Santa Fe rather than Buenos Aires.",
   },
   {
     name: "Non-dermatologist aesthetic clinics",
     reason:
       "A few strong aesthetics businesses appeared in search, but were not included unless a dermatologist or dermatology service was clearly central to the offer.",
   },
+  {
+    name: "Dra. Laura Diana Szafirstein",
+    reason:
+      "A named Google Maps place was found and marked operational, but the Places API did not expose a rating/review count meeting the 10-review minimum.",
+  },
+  {
+    name: "Dra. Carina Simionato",
+    reason:
+      "Google Maps searches did not return a matching named place; broad searches matched unrelated clinics, so she was removed rather than using an ambiguous Maps listing.",
+  },
+  {
+    name: "Dra. Karina Bobadilla",
+    reason:
+      "Renova Derm was found on Google Maps and marked operational, but it had only 5 Google reviews in the Places API result.",
+  },
+  {
+    name: "Dr. Sergio Escobar",
+    reason:
+      "The Claude research claimed strong professional reputation and English fluency, but the matching Google Maps listing had only 7 reviews, below the page's 10-review threshold.",
+  },
+  {
+    name: "Hospital Alemán Dermoestética",
+    reason:
+      "Official dermoestética pages were found, but Google Maps returned the general hospital listing rather than a specific dermatology/aesthetic unit, so it was treated as an institutional option rather than a ranked cosmetic dermatology provider.",
+  },
+  {
+    name: "Dermo Studio Medical Lux",
+    reason:
+      "Google Maps showed very high review volume, but official search evidence framed it as an aesthetics center rather than a dermatologist-led clinic with a named dermatologist.",
+  },
+  {
+    name: "Dra. María Lucchesi",
+    reason:
+      "Operational and well reviewed on Google Maps, but the public evidence found in this pass positioned her as medicina estética rather than dermatology.",
+  },
+  {
+    name: "Dra. Agustina Álvarez",
+    reason:
+      "Operational and well reviewed, but official/social evidence identifies her as an ophthalmologist and aesthetic physician rather than a dermatologist.",
+  },
+  {
+    name: "Dra. Romina Neira",
+    reason:
+      "Operational and very well reviewed for medical aesthetics, but official biography describes pediatrics and aesthetic-medicine training rather than dermatology specialization.",
+  },
+  {
+    name: "Estética Cirene / Dra. Alejandra Ciccarelli",
+    reason:
+      "The clinic is operational, has more than 10 Google reviews and offers dermatology, but the audit did not find enough visible named-dermatologist credential evidence to rank it with dermatologist-led entries.",
+  },
+  {
+    name: "Estética Fullone",
+    reason:
+      "Google Maps and social pages show dermatology and aesthetics in Villa Devoto, but the audit did not find enough named-dermatologist credential evidence to rank it confidently.",
+  },
 ];
 
-const totalReviewMentions = dermatologists
-  .map((dermatologist) => dermatologist.reviewSignal.match(/\d+/g)?.map(Number) ?? [])
-  .flat()
-  .filter((value) => value > 10)
-  .reduce((sum, value) => sum + value, 0);
+const totalGoogleReviews = rankedDermatologists.reduce(
+  (sum, dermatologist) => sum + dermatologist.googlePlace.reviewCount,
+  0,
+);
+const dermatologistMapData = rankedDermatologists.map((dermatologist, index) => ({
+  id: dermatologist.googlePlace.id,
+  rank: index + 1,
+  name: dermatologist.name,
+  mapName: dermatologist.googlePlace.name,
+  score: dermatologist.score,
+  rating: dermatologist.googlePlace.rating,
+  reviewCount: dermatologist.googlePlace.reviewCount,
+  url: dermatologist.googlePlace.url,
+  address: dermatologist.googlePlace.address,
+  position: dermatologist.googlePlace.location,
+}));
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -497,8 +1977,8 @@ const structuredData = {
   name: pageTitle,
   description: pageDescription,
   url: canonicalUrl,
-  numberOfItems: dermatologists.length,
-  itemListElement: dermatologists.map((dermatologist, index) => ({
+  numberOfItems: rankedDermatologists.length,
+  itemListElement: rankedDermatologists.map((dermatologist, index) => ({
     "@type": "ListItem",
     position: index + 1,
     item: {
@@ -506,6 +1986,18 @@ const structuredData = {
       name: dermatologist.name,
       medicalSpecialty: "Dermatology",
       url: dermatologist.sources[0]?.url,
+      sameAs: dermatologist.googlePlace.url,
+      address: dermatologist.googlePlace.address,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: dermatologist.googlePlace.location.lat,
+        longitude: dermatologist.googlePlace.location.lng,
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: dermatologist.googlePlace.rating.toFixed(1),
+        ratingCount: dermatologist.googlePlace.reviewCount,
+      },
       description: dermatologist.bestFor,
     },
   })),
@@ -580,44 +2072,27 @@ const structuredData = {
             <h1>{pageTitle}</h1>
             <p class="intro">
               A research-backed shortlist of aesthetics-focused dermatologists and
-              dermatologist-led clinics in Buenos Aires, compiled from regular search,
-              BrightData search, Doctoralia, TopDoctors, official pages, and public
-              review snippets.
+              dermatologist-led clinics in Buenos Aires. Every provider below is
+              operational on Google Maps and has at least 10 Google reviews, then gets
+              cross-checked against regular search, BrightData, Doctoralia, TopDoctors,
+              official pages and review snippets. For facial-only options, see the{" "}
+              <a href="/skincare/ba-facials/">Buenos Aires facials guide</a>.
             </p>
           </div>
           <aside class="scorecard" aria-label="Ranking summary">
-            <span class="scorecard-number">{dermatologists.length}</span>
+            <span class="scorecard-number">{rankedDermatologists.length}</span>
             <span class="scorecard-label">ranked providers</span>
             <span class="scorecard-detail">
-              {formatter.format(totalReviewMentions)}+ visible review mentions across the strongest public signals
+              {formatter.format(totalGoogleReviews)} Google reviews across operational Google Maps listings
             </span>
           </aside>
         </div>
         <p class="disclaimer">
           This is not medical advice or a clinical endorsement. It ranks public evidence
           for non-surgical aesthetic dermatology: injectables, skin quality, lasers,
-          rejuvenation, scars, pigment, and cosmetic skin concerns.
+          rejuvenation, scars, pigment and cosmetic skin concerns.
         </p>
       </header>
-
-      <section class="method" aria-labelledby="method-heading">
-        <div>
-          <p class="eyebrow">Method</p>
-          <h2 id="method-heading">How the ranking was scored</h2>
-        </div>
-        <div class="method-grid">
-          {metrics.map((metric) => (
-            <article class="method-card">
-              <div>
-                <span class="metric-weight">{metric.weight}</span>
-                <span class="metric-unit">pts</span>
-              </div>
-              <h3>{metric.name}</h3>
-              <p>{metric.note}</p>
-            </article>
-          ))}
-        </div>
-      </section>
 
       <section class="ranking" aria-labelledby="ranking-heading">
         <div class="section-heading">
@@ -625,7 +2100,7 @@ const structuredData = {
           <h2 id="ranking-heading">Best public-evidence matches</h2>
         </div>
 
-        {dermatologists.map((dermatologist, index) => (
+        {rankedDermatologists.map((dermatologist, index) => (
           <article class="doctor-card">
             <div class="rank">
               <span>{String(index + 1).padStart(2, "0")}</span>
@@ -638,10 +2113,56 @@ const structuredData = {
                   <p class="doctor-type">
                     {dermatologist.providerType} · {dermatologist.neighborhood}
                   </p>
-                  <h3>{dermatologist.name}</h3>
+                  <div class="doctor-title-row">
+                    <h3>{dermatologist.name}</h3>
+                    {dermatologist.instagramUrl && (
+                      <a
+                        class="instagram-link"
+                        href={dermatologist.instagramUrl}
+                        target="_blank"
+                        rel="nofollow noopener noreferrer"
+                        aria-label={`Open ${dermatologist.name} on Instagram`}
+                        title={`Open ${dermatologist.name} on Instagram`}
+                      >
+                        <span set:html={instagramIcon}></span>
+                      </a>
+                    )}
+                  </div>
                   <p class="rank-label">{dermatologist.rankLabel}</p>
+                  {dermatologist.englishSupport.speaksEnglish && (
+                    <p class="english-signal english-yes">
+                      {dermatologist.englishSupport.label}
+                    </p>
+                  )}
                 </div>
                 <p class="best-for">{dermatologist.bestFor}</p>
+              </div>
+
+              <div class="google-panel">
+                <div class="google-place">
+                  <span class="google-kicker">Google Maps verified</span>
+                  <strong>{dermatologist.googlePlace.rating.toFixed(1)}</strong>
+                  <span>{formatter.format(dermatologist.googlePlace.reviewCount)} reviews</span>
+                  <small>{dermatologist.googlePlace.name}</small>
+                  <a
+                    href={dermatologist.googlePlace.url}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    Open map listing
+                  </a>
+                </div>
+                <div class="google-notes">
+                  <h4>Google review readout</h4>
+                  <ul>
+                    {dermatologist.googlePlace.reviewThemes.map((theme) => (
+                      <li>{theme}</li>
+                    ))}
+                  </ul>
+                  {dermatologist.googlePlace.reviewCaution && (
+                    <p>{dermatologist.googlePlace.reviewCaution}</p>
+                  )}
+                </div>
               </div>
 
               <div class="evidence-grid">
@@ -661,6 +2182,21 @@ const structuredData = {
                   <h4>Check before booking</h4>
                   <p>{dermatologist.caution}</p>
                 </div>
+                {dermatologist.consultationPrice && (
+                  <div>
+                    <h4>Initial consultation</h4>
+                    <p>
+                      {dermatologist.consultationPrice.label}{" "}
+                      <a
+                        href={dermatologist.consultationPrice.source.url}
+                        rel="nofollow noopener noreferrer"
+                        target="_blank"
+                      >
+                        {dermatologist.consultationPrice.source.label}
+                      </a>
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div class="bars" aria-label={`${dermatologist.name} metric scores`}>
@@ -684,6 +2220,13 @@ const structuredData = {
                     {source.label}
                   </a>
                 ))}
+                <a
+                  href={dermatologist.googlePlace.url}
+                  rel="nofollow noopener noreferrer"
+                  target="_blank"
+                >
+                  Google Maps
+                </a>
               </div>
             </div>
           </article>
@@ -705,17 +2248,154 @@ const structuredData = {
         </div>
       </section>
 
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="map-heading">Operational Google Maps listings</h2>
+          <p class="map-status">
+            Showing {rankedDermatologists.length} providers with at least 10 Google reviews.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="dermatologist-map"
+            class="dermatologist-map"
+            aria-label="Google Map with ranked Buenos Aires dermatologist listings"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps browser credential is not configured.
+          </p>
+        )}
+      </section>
+
+      <section class="method" aria-labelledby="method-heading">
+        <div>
+          <p class="eyebrow">Method</p>
+          <h2 id="method-heading">How the ranking was scored</h2>
+        </div>
+        <div class="method-grid">
+          {metrics.map((metric) => (
+            <article class="method-card">
+              <div>
+                <span class="metric-weight">{metric.weight}</span>
+                <span class="metric-unit">pts</span>
+              </div>
+              <h3>{metric.name}</h3>
+              <p>{metric.note}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <footer class="footer">
         <p>
           Updated {updatedDate}. Search/scrape sources included BrightData Google
-          searches, BrightData page scraping, and regular web search. Public pages can
-          change quickly; verify current credentials, pricing, complications policy,
-          and who performs each procedure.
+          searches, BrightData page scraping, regular web search and Google Places API
+          data collected server-side. The embedded map uses the browser credential.
+          Public pages and Google reviews can change quickly; verify current credentials,
+          pricing, complications policy and who performs each procedure.
         </p>
       </footer>
     </main>
   </body>
 </html>
+
+<script is:inline define:vars={{ googleMapsApiKey, dermatologistMapData }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const initDermatologistMap = async () => {
+    const mapElement = document.querySelector("#dermatologist-map");
+
+    if (!mapElement || !googleMapsApiKey || !dermatologistMapData.length) return;
+
+    const { Map } = await google.maps.importLibrary("maps");
+    const bounds = new google.maps.LatLngBounds();
+    const infoWindow = new google.maps.InfoWindow();
+    const map = new Map(mapElement, {
+      center: { lat: -34.6037, lng: -58.3816 },
+      zoom: 12,
+      disableDefaultUI: true,
+      zoomControl: true,
+      fullscreenControl: true,
+    });
+
+    for (const dermatologist of dermatologistMapData) {
+      const marker = new google.maps.Marker({
+        map,
+        position: dermatologist.position,
+        title: dermatologist.name,
+        label: {
+          text: String(dermatologist.rank),
+          color: "#fffaf2",
+          fontWeight: "700",
+        },
+      });
+
+      bounds.extend(dermatologist.position);
+      marker.addListener("click", () => {
+        infoWindow.setContent(`
+          <strong>${escapeHtml(dermatologist.name)}</strong>
+          <span>${escapeHtml(dermatologist.mapName)}</span>
+          <span>${escapeHtml(dermatologist.rating.toFixed(1))} stars · ${escapeHtml(dermatologist.reviewCount)} Google reviews</span>
+          <span>${escapeHtml(dermatologist.address)}</span>
+          <a href="${escapeHtml(dermatologist.url)}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
+        `);
+        infoWindow.open({ anchor: marker, map });
+      });
+    }
+
+    map.fitBounds(bounds, 48);
+  };
+
+  initDermatologistMap().catch((error) => {
+    console.error("Could not initialize dermatologist map", error);
+  });
+</script>
 
 <style>
   :root {
@@ -751,17 +2431,23 @@ const structuredData = {
     color: inherit;
   }
 
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 0.22rem;
+    border-radius: 0.35rem;
+  }
+
   .page {
     width: min(1180px, calc(100% - clamp(2rem, 5vw, 5rem)));
     margin: 0 auto;
-    padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(4rem, 9vw, 7rem);
+    padding: clamp(1.25rem, 3vw, 2.25rem) 0 clamp(4rem, 9vw, 7rem);
   }
 
   .home-link {
     display: inline-flex;
     align-items: center;
-    min-height: 2.5rem;
-    margin-bottom: clamp(4rem, 12vw, 9rem);
+    min-height: 2.75rem;
+    margin-bottom: clamp(2rem, 5vw, 3.75rem);
     color: var(--muted);
     font-family:
       ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -777,13 +2463,13 @@ const structuredData = {
   }
 
   .hero {
-    padding-bottom: clamp(3rem, 8vw, 6rem);
+    padding-bottom: clamp(2.35rem, 5vw, 3.75rem);
   }
 
   .hero-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-    gap: clamp(2rem, 7vw, 6rem);
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
     align-items: end;
   }
 
@@ -807,36 +2493,43 @@ const structuredData = {
   }
 
   h1 {
-    max-width: 13ch;
-    margin-bottom: 1.4rem;
-    font-size: clamp(4rem, 12vw, 9.5rem);
+    max-width: 16ch;
+    margin-bottom: 1.15rem;
+    font-size: clamp(3.35rem, 7.2vw, 6.4rem);
     font-weight: 500;
-    letter-spacing: -0.075em;
-    line-height: 0.86;
+    letter-spacing: -0.065em;
+    line-height: 0.91;
   }
 
   h2 {
-    max-width: 12ch;
+    max-width: 18ch;
     margin-bottom: 0;
-    font-size: clamp(2.2rem, 6vw, 5.2rem);
+    font-size: clamp(1.9rem, 3.6vw, 3.1rem);
     font-weight: 500;
-    letter-spacing: -0.06em;
-    line-height: 0.9;
+    letter-spacing: -0.052em;
+    line-height: 0.95;
   }
 
   h3 {
-    font-size: clamp(1.45rem, 3vw, 2.45rem);
+    font-size: clamp(1.35rem, 2.15vw, 2rem);
     font-weight: 500;
     letter-spacing: -0.04em;
-    line-height: 1;
+    line-height: 1.08;
   }
 
   .intro {
-    max-width: 48rem;
+    max-width: 54rem;
     margin-bottom: 0;
     color: var(--muted);
-    font-size: clamp(1.2rem, 2vw, 1.65rem);
+    font-size: clamp(1.16rem, 1.75vw, 1.45rem);
     line-height: 1.45;
+  }
+
+  .intro a {
+    color: var(--accent-dark);
+    font-weight: 700;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.18em;
   }
 
   .scorecard {
@@ -851,7 +2544,7 @@ const structuredData = {
   }
 
   .scorecard-number {
-    font-size: clamp(4.5rem, 10vw, 8rem);
+    font-size: clamp(3.8rem, 7.5vw, 6.2rem);
     letter-spacing: -0.08em;
     line-height: 0.9;
   }
@@ -860,6 +2553,7 @@ const structuredData = {
   .scorecard-detail,
   .doctor-type,
   .rank-label,
+  .google-panel,
   .footer,
   .disclaimer {
     font-family:
@@ -884,7 +2578,7 @@ const structuredData = {
 
   .disclaimer {
     max-width: 54rem;
-    margin: clamp(2rem, 5vw, 4rem) 0 0;
+    margin: clamp(1.6rem, 4vw, 2.75rem) 0 0;
     padding-left: 1rem;
     border-left: 2px solid var(--accent);
     color: var(--muted);
@@ -893,16 +2587,17 @@ const structuredData = {
 
   .method,
   .ranking,
-  .notes {
-    padding: clamp(3rem, 8vw, 6rem) 0;
+  .notes,
+  .map-section {
+    padding: clamp(2.75rem, 6vw, 4.75rem) 0;
     border-top: 1px solid var(--line);
   }
 
   .method,
   .notes {
     display: grid;
-    grid-template-columns: minmax(12rem, 0.36fr) 1fr;
-    gap: clamp(2rem, 6vw, 5rem);
+    grid-template-columns: minmax(18rem, 0.42fr) 1fr;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
   }
 
   .method-grid,
@@ -955,7 +2650,7 @@ const structuredData = {
   }
 
   .section-heading {
-    margin-bottom: clamp(2rem, 5vw, 4rem);
+    margin-bottom: clamp(1.5rem, 4vw, 3rem);
   }
 
   .doctor-card {
@@ -975,11 +2670,15 @@ const structuredData = {
     top: 1rem;
     align-self: start;
     display: grid;
-    gap: 0.1rem;
+    grid-template-columns: auto auto;
+    gap: 0.1rem 0.45rem;
+    align-items: end;
+    width: max-content;
     color: var(--accent-dark);
   }
 
   .rank span {
+    grid-column: 1 / -1;
     font-family:
       ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 0.82rem;
@@ -988,13 +2687,14 @@ const structuredData = {
   }
 
   .rank strong {
-    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-size: clamp(3rem, 6vw, 5rem);
     font-weight: 500;
-    letter-spacing: -0.08em;
+    letter-spacing: -0.055em;
     line-height: 0.82;
   }
 
   .rank small {
+    padding-bottom: 0.35em;
     color: var(--muted);
     font-family:
       ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -1035,12 +2735,144 @@ const structuredData = {
     text-transform: none;
   }
 
+  .doctor-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    align-items: center;
+  }
+
+  .doctor-title-row h3 {
+    margin-bottom: 0;
+  }
+
+  .instagram-link {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-dark);
+    background: rgba(159, 79, 48, 0.08);
+    border: 1px solid rgba(159, 79, 48, 0.2);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  .instagram-link:hover {
+    color: var(--paper);
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+  }
+
+  .instagram-link :global(svg) {
+    width: 1.08rem;
+    height: 1.08rem;
+  }
+
+  .english-signal {
+    display: inline-flex;
+    width: fit-content;
+    margin: 0.85rem 0 0;
+    padding: 0.34rem 0.62rem;
+    border-radius: 999px;
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .english-yes {
+    background: rgba(109, 117, 93, 0.16);
+    color: #3f4c32;
+    border: 1px solid rgba(109, 117, 93, 0.35);
+  }
+
   .best-for {
     margin-bottom: 0;
     color: var(--accent-dark);
-    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-size: clamp(1.05rem, 1.65vw, 1.22rem);
     font-style: italic;
     line-height: 1.35;
+  }
+
+  .google-panel {
+    display: grid;
+    grid-template-columns: minmax(11rem, 0.28fr) 1fr;
+    gap: 1rem;
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+    padding: 1rem;
+    background: rgba(109, 117, 93, 0.1);
+    border: 1px solid rgba(109, 117, 93, 0.22);
+    border-radius: 1.3rem;
+  }
+
+  .google-place {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+  }
+
+  .google-kicker {
+    color: var(--sage);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .google-place strong {
+    color: var(--accent-dark);
+    font-family:
+      ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    font-size: clamp(3rem, 6vw, 4.8rem);
+    font-weight: 500;
+    letter-spacing: -0.08em;
+    line-height: 0.9;
+  }
+
+  .google-place strong::before {
+    content: "★ ";
+    color: #b8872d;
+    font-size: 0.45em;
+    vertical-align: 0.25em;
+  }
+
+  .google-place span:not(.google-kicker),
+  .google-place small {
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .google-place a {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 2.75rem;
+    align-items: center;
+    margin-top: 0.6rem;
+    color: var(--accent-dark);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-underline-offset: 0.22em;
+  }
+
+  .google-notes ul {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .google-notes p {
+    margin: 0.7rem 0 0;
+    color: var(--accent-dark);
+    font-size: 0.88rem;
+    font-weight: 750;
+    line-height: 1.45;
   }
 
   .evidence-grid {
@@ -1070,6 +2902,12 @@ const structuredData = {
     margin-bottom: 0;
     color: var(--muted);
     line-height: 1.55;
+  }
+
+  .evidence-grid a {
+    color: var(--accent-dark);
+    font-weight: 750;
+    text-underline-offset: 0.22em;
   }
 
   .bars {
@@ -1120,7 +2958,7 @@ const structuredData = {
 
   .sources a {
     display: inline-flex;
-    min-height: 2.15rem;
+    min-height: 2.75rem;
     align-items: center;
     padding: 0 0.8rem;
     color: var(--accent-dark);
@@ -1138,6 +2976,67 @@ const structuredData = {
     color: var(--paper);
   }
 
+  .map-section {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .map-copy h2 {
+    max-width: 18ch;
+  }
+
+  .map-status,
+  .map-unavailable {
+    margin: 0;
+    color: var(--muted);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.55;
+  }
+
+  .dermatologist-map {
+    min-height: clamp(24rem, 58vw, 38rem);
+    overflow: hidden;
+    background: rgba(255, 250, 242, 0.58);
+    border: 1px solid var(--line);
+    border-radius: clamp(1.4rem, 3vw, 2.2rem);
+    box-shadow: var(--shadow);
+  }
+
+  .gm-style-iw-chr {
+    height: 1.7rem;
+  }
+
+  .gm-style-iw-d strong,
+  .gm-style-iw-d span,
+  .gm-style-iw-d a {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .gm-style-iw-d strong {
+    color: var(--ink);
+    font-size: 0.95rem;
+  }
+
+  .gm-style-iw-d span {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .gm-style-iw-d a {
+    color: var(--accent-dark);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
   .footer {
     max-width: 58rem;
     color: var(--muted);
@@ -1149,8 +3048,7 @@ const structuredData = {
     .method,
     .notes,
     .doctor-card,
-    .doctor-head,
-    .evidence-grid {
+    .doctor-head {
       grid-template-columns: 1fr;
     }
 
@@ -1165,9 +3063,6 @@ const structuredData = {
 
     .rank {
       position: static;
-      grid-template-columns: auto auto auto;
-      align-items: end;
-      width: max-content;
     }
 
     .rank strong {
@@ -1177,11 +3072,67 @@ const structuredData = {
 
   @media (max-width: 620px) {
     .page {
-      width: min(100% - 1.25rem, 1180px);
+      width: min(100% - 2rem, 1180px);
+      padding-top: 1rem;
+    }
+
+    .hero {
+      padding-bottom: 2.25rem;
+    }
+
+    .home-link {
+      margin-bottom: 1.9rem;
+    }
+
+    .eyebrow {
+      margin-bottom: 0.8rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
     }
 
     h1 {
-      font-size: clamp(3.3rem, 20vw, 5.2rem);
+      max-width: 100%;
+      margin-bottom: 1rem;
+      font-size: clamp(2.85rem, 12.6vw, 3.55rem);
+      letter-spacing: -0.058em;
+      line-height: 0.96;
+    }
+
+    h2 {
+      max-width: 100%;
+      font-size: clamp(1.8rem, 9.5vw, 2.75rem);
+      line-height: 1;
+    }
+
+    h3 {
+      font-size: clamp(1.35rem, 7.5vw, 1.85rem);
+    }
+
+    .intro {
+      max-width: 100%;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .scorecard {
+      width: 100%;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 1rem;
+      align-items: center;
+      padding: 1rem 1.1rem;
+      border-radius: 1.35rem;
+      text-align: left;
+    }
+
+    .scorecard-number {
+      grid-row: 1 / 3;
+      font-size: 3.55rem;
+    }
+
+    .scorecard-detail {
+      max-width: none;
+      margin: 0.15rem 0 0;
+      font-size: 0.84rem;
     }
 
     .method-grid,
@@ -1189,18 +3140,97 @@ const structuredData = {
       grid-template-columns: 1fr;
     }
 
+    .method,
+    .ranking,
+    .notes,
+    .map-section {
+      padding: 2.25rem 0;
+    }
+
+    .doctor-card {
+      gap: 0.8rem;
+      padding: 1.25rem 0;
+    }
+
     .doctor-main {
       padding: 1rem;
       border-radius: 1.2rem;
     }
 
+    .doctor-head,
+    .google-panel,
+    .evidence-grid {
+      gap: 0.85rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .google-panel,
+    .evidence-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .doctor-type,
+    .rank-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.09em;
+    }
+
+    .doctor-title-row {
+      gap: 0.55rem;
+    }
+
+    .doctor-title-row h3 {
+      font-size: clamp(1.4rem, 7.5vw, 1.85rem);
+      line-height: 1.04;
+    }
+
+    .english-signal {
+      max-width: 100%;
+      padding: 0.38rem 0.62rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.07em;
+    }
+
+    .best-for {
+      font-size: 1.05rem;
+    }
+
+    .google-panel {
+      padding: 0.9rem;
+      border-radius: 1.05rem;
+    }
+
+    .google-place strong {
+      font-size: 3.2rem;
+    }
+
+    .google-notes ul {
+      padding-left: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .evidence-grid p {
+      font-size: 0.95rem;
+    }
+
     .bar-row {
       grid-template-columns: 1fr 3rem;
+      font-size: 0.76rem;
     }
 
     .bar-track {
       grid-column: 1 / -1;
       grid-row: 2;
+    }
+
+    .sources a {
+      min-height: 2.75rem;
+      padding: 0 0.9rem;
+    }
+
+    .dermatologist-map {
+      min-height: 26rem;
+      border-radius: 1.2rem;
     }
   }
 </style>

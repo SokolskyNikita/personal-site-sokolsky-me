@@ -38,6 +38,7 @@ interface CfProperties {
 
 const AI_COMPASS_RESULT_PATH = "/api/ai-compass/result";
 const PRIVATE_PATH_PREFIX = "/private/";
+const LLMS_TXT_PATH = "/llms.txt";
 const AXIS_KEYS = ["T", "V", "S", "I", "P"] as const;
 
 export default {
@@ -66,6 +67,10 @@ export default {
 
     if (isPrivatePath(url.pathname)) {
       return withNoIndexHeaders(await env.ASSETS.fetch(request));
+    }
+
+    if (url.pathname === LLMS_TXT_PATH) {
+      return withUtf8TextHeaders(await env.ASSETS.fetch(request));
     }
 
     return env.ASSETS.fetch(request);
@@ -283,6 +288,17 @@ function isPrivatePath(pathname: string): boolean {
 function withNoIndexHeaders(response: Response): Response {
   const headers = new Headers(response.headers);
   headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function withUtf8TextHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set("Content-Type", "text/plain; charset=utf-8");
 
   return new Response(response.body, {
     status: response.status,
