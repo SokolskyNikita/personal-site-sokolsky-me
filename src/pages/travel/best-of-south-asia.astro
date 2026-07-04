@@ -1,0 +1,267 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "sundarbans",
+    "name": "Sundarbans mangrove forest",
+    "countries": [
+      "Bangladesh",
+      "India"
+    ],
+    "area": "Ganges-Brahmaputra delta",
+    "kind": "Mangrove ecology",
+    "access": "Boat-based access",
+    "uniqueness": "The world’s largest mangrove forest and a tide-river tiger habitat",
+    "why": "The Sundarbans is a delta maze of mangrove islands, tidal creeks, cyclones, sediment and Bengal tiger habitat.",
+    "realityCheck": "Boat trips are seasonal and wildlife sightings are never guaranteed.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sundarbans",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Sundarbans"
+    },
+    "map": {
+      "name": "Sundarban Mangrove Forest",
+      "formattedAddress": "4VJP+RQR, Luxbagan, Sudhansupur, West Bengal 743370, India",
+      "placeId": "ChIJEWwAGyGPAToRxmYc3QIsxOk",
+      "rating": 4.7,
+      "reviewCount": 266,
+      "location": {
+        "lat": 22.1321055,
+        "lng": 88.88688619999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJEWwAGyGPAToRxmYc3QIsxOk"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 900,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "k2-baltoro",
+    "name": "K2 and Baltoro Glacier",
+    "countries": [
+      "Pakistan"
+    ],
+    "area": "Karakoram",
+    "kind": "High mountain expedition",
+    "access": "Long trek; permit-sensitive",
+    "uniqueness": "The densest cluster of very high peaks around one glacier approach",
+    "why": "The Baltoro approach compresses K2, Broad Peak, Gasherbrum peaks and granite towers into one glacial corridor.",
+    "realityCheck": "This is a serious altitude trek with weather and permit constraints.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Baltoro_Glacier",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Baltoro_Glacier"
+    },
+    "map": {
+      "name": "Baltoro Glacier",
+      "formattedAddress": "Baltoro Glacier",
+      "placeId": "ChIJn9iIuCcs-zgRbmo-19xV2ac",
+      "rating": 4.7,
+      "reviewCount": 89,
+      "location": {
+        "lat": 35.7362002,
+        "lng": 76.3713008
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJn9iIuCcs-zgRbmo-19xV2ac"
+    },
+    "trip": {
+      "days": 18,
+      "costUsd": 4200,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "living-root-bridges",
+    "name": "Living root bridges of Meghalaya",
+    "countries": [
+      "India"
+    ],
+    "area": "Meghalaya",
+    "kind": "Bioengineering",
+    "access": "Village hikes; slippery in monsoon",
+    "uniqueness": "Ficus roots trained into working footbridges over generations",
+    "why": "The Khasi and Jaintia root bridges are infrastructure that keeps growing, guided across streams until they become load-bearing paths.",
+    "realityCheck": "Trails can be steep and wet. Use local guides.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Living_root_bridge",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Living_root_bridge"
+    },
+    "map": {
+      "name": "Living Root Bridge, Riwai Village",
+      "formattedAddress": "Mawlynnong Road, Riwai, Nongthymmai, Meghalaya 793110, India",
+      "placeId": "ChIJAQAAQCJcUDcRYzcxdeceCZ8",
+      "rating": 4.6,
+      "reviewCount": 8099,
+      "location": {
+        "lat": 25.2064993,
+        "lng": 91.8978556
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJAQAAQCJcUDcRYzcxdeceCZ8"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 850,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "kaziranga",
+    "name": "Kaziranga National Park",
+    "countries": [
+      "India"
+    ],
+    "area": "Assam",
+    "kind": "Floodplain wildlife",
+    "access": "Jeep safari access",
+    "uniqueness": "A floodplain stronghold for the greater one-horned rhinoceros",
+    "why": "Kaziranga’s alluvial grasslands and wetlands hold one of the world’s great one-horned rhino populations.",
+    "realityCheck": "Safari zones and seasons matter. Flooding can close areas.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Kaziranga_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Kaziranga_National_Park"
+    },
+    "map": {
+      "name": "Kaziranga National Park",
+      "formattedAddress": "Assam, India",
+      "placeId": "ChIJ32WfNy1BRDcRWJTJ57Z0K4s",
+      "rating": 4.5,
+      "reviewCount": 9336,
+      "location": {
+        "lat": 26.6445044,
+        "lng": 93.3524858
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ32WfNy1BRDcRWJTJ57Z0K4s"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 850,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "sigiriya",
+    "name": "Sigiriya",
+    "countries": [
+      "Sri Lanka"
+    ],
+    "area": "Central Province",
+    "kind": "Rock fortress",
+    "access": "Ticketed climb",
+    "uniqueness": "A palace-fortress and water-garden system on a sheer rock",
+    "why": "Sigiriya turns a lone rock into frescoes, a mirror wall, lion gateway, gardens, cisterns and summit palace remains.",
+    "realityCheck": "Heat and stairs are real. Go early.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sigiriya",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Sigiriya"
+    },
+    "map": {
+      "name": "Sigiriya",
+      "formattedAddress": "Sigiriya, Sri Lanka",
+      "placeId": "ChIJ0Xkxp9-g_DoR3w7_DBXBBB4",
+      "location": {
+        "lat": 7.9455635,
+        "lng": 80.76157719999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ0Xkxp9-g_DoR3w7_DBXBBB4"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 900,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "mohenjo-daro",
+    "name": "Mohenjo-daro",
+    "countries": [
+      "Pakistan"
+    ],
+    "area": "Sindh",
+    "kind": "Indus urbanism",
+    "access": "Road/flight plus site visit",
+    "uniqueness": "One of the clearest surviving cities of the Indus civilization",
+    "why": "Mohenjo-daro shows planned streets, drainage, wells and baked-brick urbanism from a civilization whose script remains unread.",
+    "realityCheck": "Heat is severe and conservation is fragile.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mohenjo-daro",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Mohenjo-daro"
+    },
+    "map": {
+      "name": "Mohenjo Daro",
+      "formattedAddress": "84FP+P78, Mohenjo-daro, Pakistan",
+      "placeId": "ChIJX9UZN3EKNTkRa4yLua0jt3I",
+      "rating": 4.4,
+      "reviewCount": 5048,
+      "location": {
+        "lat": 27.3242933,
+        "lng": 68.135689
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJX9UZN3EKNTkRa4yLua0jt3I"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1300,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "ajanta-ellora",
+    "name": "Ajanta and Ellora caves",
+    "countries": [
+      "India"
+    ],
+    "area": "Maharashtra",
+    "kind": "Rock-cut cave art",
+    "access": "Road access from Aurangabad",
+    "uniqueness": "Buddhist, Hindu and Jain rock-cut art in two cave complexes",
+    "why": "Ajanta brings painted Buddhist interiors; Ellora brings a multi-religious cliff of carved temples, including Kailasa cut downward from living rock.",
+    "realityCheck": "Do not rush both in one day unless necessary.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ajanta_Caves",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Ajanta_Caves"
+    },
+    "map": {
+      "name": "Ajanta Caves",
+      "formattedAddress": "Maharashtra 431117, India",
+      "placeId": "ChIJQ16nFHB_2TsRH2k5dsXXqHw",
+      "rating": 4.6,
+      "reviewCount": 27466,
+      "location": {
+        "lat": 20.5513286,
+        "lng": 75.7069356
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJQ16nFHB_2TsRH2k5dsXXqHw"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 650,
+      "note": "Assumes travel from Delhi via Indira Gandhi International (DEL), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in South Asia"}
+  pageDescription={"A researched field guide to South Asia's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in South Asia"}
+  keywords={"South Asia travel, unique places South Asia, globally distinctive travel, South Asia map"}
+  eyebrow={"South Asia field guide"}
+  dek={"A South Asia list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Delhi via Indira Gandhi International (DEL). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Delhi"}
+  mapHeading={"Pins across South Asia"}
+  mapAriaLabel={"Google Map with pins for interesting places in South Asia"}
+  mapCenter={{"lat":22,"lng":78}}
+  mapZoom={4}
+  mapErrorLabel={"South Asia"}
+  spots={spots}
+/>

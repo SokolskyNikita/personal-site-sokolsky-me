@@ -1,0 +1,301 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "angkor",
+    "name": "Angkor Archaeological Park",
+    "countries": [
+      "Cambodia"
+    ],
+    "area": "Siem Reap",
+    "kind": "Temple city",
+    "access": "Ticketed temple circuit",
+    "uniqueness": "The largest pre-industrial urban complex tied to a temple capital",
+    "why": "Angkor is ranked for the whole engineered urban world: reservoirs, canals, roads, temples and forested ruins.",
+    "realityCheck": "Three days beats one rushed sunrise.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Angkor",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Angkor"
+    },
+    "map": {
+      "name": "Angkor Wat",
+      "formattedAddress": "Krong Siem Reap, Cambodia",
+      "placeId": "ChIJLSea6ooWEDERjUGwVxGoqz4",
+      "rating": 4.8,
+      "reviewCount": 43275,
+      "location": {
+        "lat": 13.4124693,
+        "lng": 103.8669857
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJLSea6ooWEDERjUGwVxGoqz4"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 750,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "son-doong",
+    "name": "Sơn Đoòng and Phong Nha caves",
+    "countries": [
+      "Vietnam"
+    ],
+    "area": "Quảng Bình",
+    "kind": "Cave system",
+    "access": "Expedition permit for Sơn Đoòng",
+    "uniqueness": "One of Earth’s largest known cave passages inside a major karst park",
+    "why": "Sơn Đoòng’s passage scale, skylights and internal jungle push cave travel into expedition territory.",
+    "realityCheck": "Sơn Đoòng is expensive, limited and physically demanding.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Hang_S%C6%A1n_%C4%90o%C3%B2ng",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Hang_S%C6%A1n_%C4%90o%C3%B2ng"
+    },
+    "map": {
+      "name": "Hang Sơn Đoòng",
+      "formattedAddress": "Bố Trạch, Quảng Bình, Vietnam",
+      "placeId": "ChIJI-LkoRfIODERrkzpzgMF7pI",
+      "rating": 4.6,
+      "reviewCount": 1141,
+      "location": {
+        "lat": 17.4647924,
+        "lng": 106.2873939
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJI-LkoRfIODERrkzpzgMF7pI"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 3600,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "komodo",
+    "name": "Komodo National Park",
+    "countries": [
+      "Indonesia"
+    ],
+    "area": "Lesser Sunda Islands",
+    "kind": "Island evolution",
+    "access": "Boat access from Labuan Bajo",
+    "uniqueness": "The natural home of the world’s largest living lizard",
+    "why": "Komodo dragons make island evolution visible, while the park also adds dry islands, reefs and strong currents.",
+    "realityCheck": "Use licensed guides and respect closures or fee changes.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Komodo_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Komodo_National_Park"
+    },
+    "map": {
+      "name": "Komodo National Park",
+      "formattedAddress": "East Nusa Tenggara, Indonesia",
+      "placeId": "ChIJuZGsKfP4tC0RYtHgcIgHobE",
+      "rating": 4.6,
+      "reviewCount": 7141,
+      "location": {
+        "lat": -8.527716,
+        "lng": 119.4833198
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJuZGsKfP4tC0RYtHgcIgHobE"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "borobudur",
+    "name": "Borobudur",
+    "countries": [
+      "Indonesia"
+    ],
+    "area": "Central Java",
+    "kind": "Buddhist monument",
+    "access": "Timed ticket access",
+    "uniqueness": "The world’s largest Buddhist temple monument",
+    "why": "Borobudur is a stone mandala built as a mountain, with terraces, relief panels, stupas and a ritual walking route.",
+    "realityCheck": "Climbing access and quotas change.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Borobudur",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Borobudur"
+    },
+    "map": {
+      "name": "Borobudur Temple",
+      "formattedAddress": "Jl. Badrawati, Kw. Candi Borobudur, Borobudur, Kec. Borobudur, Kabupaten Magelang, Jawa Tengah, Indonesia",
+      "placeId": "ChIJl9anCfCMei4Ry8NNdDRD0w0",
+      "rating": 4.7,
+      "reviewCount": 103711,
+      "location": {
+        "lat": -7.6078738,
+        "lng": 110.2037513
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJl9anCfCMei4Ry8NNdDRD0w0"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 750,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "lorentz",
+    "name": "Lorentz National Park",
+    "countries": [
+      "Indonesia"
+    ],
+    "area": "Papua",
+    "kind": "Equatorial wilderness",
+    "access": "Difficult expedition access",
+    "uniqueness": "A protected transect from tropical sea level to equatorial glaciers",
+    "why": "Lorentz spans mangroves, rainforest, alpine zones and glaciers near the equator.",
+    "realityCheck": "Access is difficult and often unrealistic without specialist logistics.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lorentz_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lorentz_National_Park"
+    },
+    "map": {
+      "name": "Lorentz National Park",
+      "formattedAddress": "9XCF+33V, Yakapis, Papua, Indonesia",
+      "placeId": "ChIJW7_YynLaOmgRfzitHLiyrOU",
+      "rating": 4.4,
+      "reviewCount": 356,
+      "location": {
+        "lat": -4.6297633,
+        "lng": 137.9726829
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJW7_YynLaOmgRfzitHLiyrOU"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 3200,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "gunung-mulu",
+    "name": "Gunung Mulu National Park",
+    "countries": [
+      "Malaysia"
+    ],
+    "area": "Sarawak",
+    "kind": "Caves and karst",
+    "access": "Flight or overland plus guided trails",
+    "uniqueness": "Huge cave chambers, bat exodus and razor limestone pinnacles",
+    "why": "Mulu combines cave volume, tropical karst and rainforest, with Deer Cave’s bat exodus as a memorable living marker.",
+    "realityCheck": "Pinnacles hikes are hard and weather-sensitive.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Gunung_Mulu_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Gunung_Mulu_National_Park"
+    },
+    "map": {
+      "name": "Gunung Mulu National Park",
+      "formattedAddress": "Sarawak, Malaysia",
+      "placeId": "ChIJHZzYUbYDGTIRKZ8z74xqVcw",
+      "rating": 4.8,
+      "reviewCount": 1616,
+      "location": {
+        "lat": 4.09207,
+        "lng": 114.8958021
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJHZzYUbYDGTIRKZ8z74xqVcw"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "bagan",
+    "name": "Bagan",
+    "countries": [
+      "Myanmar"
+    ],
+    "area": "Mandalay Region",
+    "kind": "Temple plain",
+    "access": "Security-sensitive access",
+    "uniqueness": "Thousands of Buddhist monuments spread across a dry plain",
+    "why": "Bagan is a religious city dispersed into a horizon of stupas, temples and monasteries across the Irrawaddy plain.",
+    "realityCheck": "Myanmar’s security situation can make travel inappropriate.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Bagan",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Bagan"
+    },
+    "map": {
+      "name": "Old Bagan",
+      "formattedAddress": "Old Bagan, Myanmar (Burma)",
+      "placeId": "ChIJYcrYkwPltTARgZnowxdHGjc",
+      "location": {
+        "lat": 21.1717271,
+        "lng": 94.8585458
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJYcrYkwPltTARgZnowxdHGjc"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "tubbataha",
+    "name": "Tubbataha Reefs",
+    "countries": [
+      "Philippines"
+    ],
+    "area": "Sulu Sea",
+    "kind": "Marine reserve",
+    "access": "Liveaboard only in season",
+    "uniqueness": "A remote atoll-reef system in the center of the Coral Triangle",
+    "why": "Tubbataha’s isolation helps protect walls, sharks, seabirds and pelagic life in a seasonal liveaboard-only marine park.",
+    "realityCheck": "The season is short and crossings can be rough.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tubbataha_Reef",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Tubbataha_Reef"
+    },
+    "map": {
+      "name": "Tubbataha Reef",
+      "formattedAddress": "Tubbataha Reef, Philippines",
+      "placeId": "ChIJy8XjYNloSzIRmbF9A66_tL0",
+      "rating": 4.7,
+      "reviewCount": 136,
+      "location": {
+        "lat": 8.85,
+        "lng": 119.9333333
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJy8XjYNloSzIRmbF9A66_tL0"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2200,
+      "note": "Assumes travel from Singapore via Changi (SIN), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Southeast Asia"}
+  pageDescription={"A researched field guide to Southeast Asia's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Southeast Asia"}
+  keywords={"Southeast Asia travel, unique places Southeast Asia, globally distinctive travel, Southeast Asia map"}
+  eyebrow={"Southeast Asia field guide"}
+  dek={"A Southeast Asia list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Singapore via Changi (SIN). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Singapore"}
+  mapHeading={"Pins across Southeast Asia"}
+  mapAriaLabel={"Google Map with pins for interesting places in Southeast Asia"}
+  mapCenter={{"lat":4,"lng":112}}
+  mapZoom={4}
+  mapErrorLabel={"Southeast Asia"}
+  spots={spots}
+/>

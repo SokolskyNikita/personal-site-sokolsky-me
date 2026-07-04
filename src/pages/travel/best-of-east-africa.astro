@@ -1,0 +1,301 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "danakil-depression",
+    "name": "Danakil Depression",
+    "countries": [
+      "Ethiopia"
+    ],
+    "area": "Afar Triangle",
+    "kind": "Desert volcanism",
+    "access": "Guided expedition access",
+    "uniqueness": "One of the hottest, lowest and most geochemically vivid places on land",
+    "why": "Danakil is ranked for salt flats, acid pools, hydrothermal colors and rift volcanism concentrated in a harsh basin.",
+    "realityCheck": "Heat, security and road conditions make this a serious guided trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Danakil_Depression",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Danakil_Depression"
+    },
+    "map": {
+      "name": "Danakil Depression",
+      "formattedAddress": "Danakil Depression, Ethiopia",
+      "placeId": "ChIJ9UM-yBlAExYRQhtrY64FlhQ",
+      "rating": 4.1,
+      "reviewCount": 51,
+      "location": {
+        "lat": 14.241893,
+        "lng": 40.2998619
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ9UM-yBlAExYRQhtrY64FlhQ"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 850,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "lalibela",
+    "name": "Rock-hewn churches of Lalibela",
+    "countries": [
+      "Ethiopia"
+    ],
+    "area": "Amhara",
+    "kind": "Rock-cut sacred architecture",
+    "access": "Ticketed town access",
+    "uniqueness": "A medieval church complex carved downward from living rock",
+    "why": "Lalibela’s churches are excavation as devotion: roofs, courtyards, trenches and interiors cut from the ground rather than built upward.",
+    "realityCheck": "Religious use is active. Dress and behavior matter.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lalibela",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lalibela"
+    },
+    "map": {
+      "name": "Rock-Hewn Churches, Lalibela",
+      "formattedAddress": "22MV+79C, Unnamed Road, Lalibela, Ethiopia",
+      "placeId": "ChIJM2u97vw_QRYRDfZP5KXehl8",
+      "rating": 4.4,
+      "reviewCount": 209,
+      "location": {
+        "lat": 12.0331956,
+        "lng": 39.04338509999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJM2u97vw_QRYRDfZP5KXehl8"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 650,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "serengeti",
+    "name": "Serengeti migration",
+    "countries": [
+      "Tanzania"
+    ],
+    "area": "Serengeti ecosystem",
+    "kind": "Wildlife migration",
+    "access": "Safari access",
+    "uniqueness": "One of Earth’s great large-mammal migration systems",
+    "why": "The Serengeti is ranked for movement: wildebeest, zebra and predators cycling through grasslands with the rains.",
+    "realityCheck": "Exact locations shift by season. Do not buy a fixed fantasy of river crossings.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Serengeti_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Serengeti_National_Park"
+    },
+    "map": {
+      "name": "Serengeti National Park",
+      "formattedAddress": "Tanzania",
+      "placeId": "ChIJ0cbagNbNMhgRRTnrnfNXoS4",
+      "rating": 4.8,
+      "reviewCount": 6674,
+      "location": {
+        "lat": -2.4162136,
+        "lng": 34.6856507
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ0cbagNbNMhgRRTnrnfNXoS4"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1700,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "ngorongoro",
+    "name": "Ngorongoro Crater",
+    "countries": [
+      "Tanzania"
+    ],
+    "area": "Arusha Region",
+    "kind": "Volcanic caldera wildlife",
+    "access": "Safari access",
+    "uniqueness": "A large intact volcanic caldera filled with dense wildlife",
+    "why": "Ngorongoro feels like a self-contained wildlife bowl, with crater walls, grassland, lake and animals compressed into one old volcanic structure.",
+    "realityCheck": "It is busy and expensive. Early starts help.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ngorongoro_Conservation_Area",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Ngorongoro_Conservation_Area"
+    },
+    "map": {
+      "name": "Ngorongoro Crater",
+      "formattedAddress": "Ngorongoro Crater, Tanzania",
+      "placeId": "ChIJuesQrFkNNBgRTCZxFqttM_U",
+      "rating": 4.8,
+      "reviewCount": 1151,
+      "location": {
+        "lat": -3.1617522,
+        "lng": 35.5876697
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJuesQrFkNNBgRTCZxFqttM_U"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1500,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "kilimanjaro",
+    "name": "Mount Kilimanjaro",
+    "countries": [
+      "Tanzania"
+    ],
+    "area": "Kilimanjaro Region",
+    "kind": "High mountain",
+    "access": "Trek by permit",
+    "uniqueness": "Africa’s highest mountain and a free-standing volcanic massif",
+    "why": "Kilimanjaro is ranked for vertical ecological change from cultivated foothills to alpine desert and ice remnants near the summit.",
+    "realityCheck": "Altitude is the main risk. Choose enough days.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mount_Kilimanjaro",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Mount_Kilimanjaro"
+    },
+    "map": {
+      "name": "Mount Kilimanjaro",
+      "formattedAddress": "Mt Kilimanjaro, Tanzania",
+      "placeId": "ChIJBahuOVr8ORgRAWzqjkccdI4",
+      "rating": 4.5,
+      "reviewCount": 3632,
+      "location": {
+        "lat": -3.0674247,
+        "lng": 37.35562729999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJBahuOVr8ORgRAWzqjkccdI4"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2500,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "lake-natron",
+    "name": "Lake Natron",
+    "countries": [
+      "Tanzania"
+    ],
+    "area": "Rift Valley",
+    "kind": "Alkaline lake",
+    "access": "Road access",
+    "uniqueness": "A caustic soda lake central to lesser flamingo breeding",
+    "why": "Lake Natron’s red shallows, salt crusts and harsh chemistry support one of the world’s main lesser flamingo breeding systems.",
+    "realityCheck": "Roads are rough and the lake edge is sensitive.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lake_Natron",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lake_Natron"
+    },
+    "map": {
+      "name": "Lake Natron",
+      "formattedAddress": "Lake Natron",
+      "placeId": "ChIJocxHJCiPMRgRMWrY3G0X-XE",
+      "rating": 4,
+      "reviewCount": 803,
+      "location": {
+        "lat": -2.3435563,
+        "lng": 36.0458437
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJocxHJCiPMRgRMWrY3G0X-XE"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "aldabra",
+    "name": "Aldabra Atoll",
+    "countries": [
+      "Seychelles"
+    ],
+    "area": "Outer Islands",
+    "kind": "Raised coral atoll",
+    "access": "Expedition access",
+    "uniqueness": "A remote raised coral atoll with giant tortoises and high protection",
+    "why": "Aldabra is ranked for isolation, tortoises, lagoon ecology and coral-atoll evolution with limited human disturbance.",
+    "realityCheck": "Access is rare and expensive, usually by expedition vessel.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Aldabra",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Aldabra"
+    },
+    "map": {
+      "name": "Aldabra",
+      "formattedAddress": "Aldabra, Seychelles",
+      "placeId": "ChIJbQo_Wt8xeiIRVMcLsi8K9zY",
+      "rating": 4.5,
+      "reviewCount": 80,
+      "location": {
+        "lat": -9.4236984,
+        "lng": 46.3432781
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJbQo_Wt8xeiIRVMcLsi8K9zY"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 4200,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "lamu",
+    "name": "Lamu Old Town",
+    "countries": [
+      "Kenya"
+    ],
+    "area": "Swahili coast",
+    "kind": "Swahili urbanism",
+    "access": "Boat/air access",
+    "uniqueness": "A long-lived Swahili town shaped by Indian Ocean trade",
+    "why": "Lamu’s coral-stone houses, carved doors, narrow lanes and dhow culture preserve a coastal urban world tied to the monsoon trade.",
+    "realityCheck": "Security and festival timing matter. Respect local norms.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lamu",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lamu"
+    },
+    "map": {
+      "name": "Lamu",
+      "formattedAddress": "Lamu, Kenya",
+      "placeId": "ChIJlRVlqz8ZFxgRNSi6OMyR130",
+      "location": {
+        "lat": -2.2695575,
+        "lng": 40.9006408
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJlRVlqz8ZFxgRNSi6OMyR130"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Addis Ababa via Bole International (ADD), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in East Africa"}
+  pageDescription={"A researched field guide to East Africa's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in East Africa"}
+  keywords={"East Africa travel, unique places East Africa, globally distinctive travel, East Africa map"}
+  eyebrow={"East Africa field guide"}
+  dek={"A East Africa list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Addis Ababa via Bole International (ADD). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Addis Ababa"}
+  mapHeading={"Pins across East Africa"}
+  mapAriaLabel={"Google Map with pins for interesting places in East Africa"}
+  mapCenter={{"lat":-2,"lng":38}}
+  mapZoom={4}
+  mapErrorLabel={"East Africa"}
+  spots={spots}
+/>

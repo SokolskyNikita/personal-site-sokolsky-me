@@ -1,0 +1,306 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "surtsey",
+    "name": "Surtsey",
+    "countries": [
+      "Iceland"
+    ],
+    "area": "Vestmannaeyjar",
+    "kind": "Volcanic island ecology",
+    "access": "Closed; viewed by air or from nearby islands",
+    "uniqueness": "A newly formed volcanic island protected as a natural colonization experiment",
+    "why": "Surtsey is ranked first because the island was born in the 1960s and then left largely alone, giving scientists a rare baseline for how life reaches new land.",
+    "realityCheck": "Public landing is forbidden. Treat it as a serious detour around Vestmannaeyjar, with the island itself seen from distance.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Surtsey",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Surtsey"
+    },
+    "map": {
+      "name": "Surtsey",
+      "formattedAddress": "Surtsey, Iceland",
+      "placeId": "ChIJWdSh9p2j10gRmrYQDbDdHDc",
+      "rating": 4.4,
+      "reviewCount": 134,
+      "location": {
+        "lat": 63.3022885,
+        "lng": -20.6010732
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJWdSh9p2j10gRmrYQDbDdHDc"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1300,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "wadden-sea",
+    "name": "Wadden Sea",
+    "countries": [
+      "Netherlands",
+      "Germany",
+      "Denmark"
+    ],
+    "area": "North Sea coast",
+    "kind": "Tidal flats",
+    "access": "Guided mudflat walks, ferries and island bases",
+    "uniqueness": "The world’s largest continuous tidal-flat system",
+    "why": "The Wadden Sea earns its place because water repeatedly erases and reveals a continental-scale coast of mudflats, channels, seals and migrating birds.",
+    "realityCheck": "Timing controls the trip. Go with tide-aware guides and plan for wind, mud and ferries.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Wadden_Sea",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Wadden_Sea"
+    },
+    "map": {
+      "name": "Wadden Sea National Park",
+      "formattedAddress": "Denmark",
+      "placeId": "ChIJmXU0hpzHtEcRZXZFzvmikho",
+      "rating": 4.6,
+      "reviewCount": 7261,
+      "location": {
+        "lat": 55.2410323,
+        "lng": 8.4972079
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJmXU0hpzHtEcRZXZFzvmikho"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "giants-causeway",
+    "name": "Giant’s Causeway",
+    "countries": [
+      "United Kingdom"
+    ],
+    "area": "County Antrim",
+    "kind": "Columnar basalt",
+    "access": "Easy coastal access",
+    "uniqueness": "A classic basalt-column coast tied to a huge Paleogene lava province",
+    "why": "The Causeway makes columnar jointing unusually legible, with thousands of polygonal basalt columns meeting the Atlantic at walking scale.",
+    "realityCheck": "It is busy and managed. Walk farther along the coast for context.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Giant%27s_Causeway",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Giant%27s_Causeway"
+    },
+    "map": {
+      "name": "Giant's Causeway",
+      "formattedAddress": "44 Causeway Rd, Bushmills BT57 8SU, UK",
+      "placeId": "ChIJD48V9EQpYEgR0h_eGaCMIvM",
+      "rating": 4.7,
+      "reviewCount": 28826,
+      "location": {
+        "lat": 55.2408073,
+        "lng": -6.5115554
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJD48V9EQpYEgR0h_eGaCMIvM"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 650,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "skocjan-caves",
+    "name": "Škocjan Caves",
+    "countries": [
+      "Slovenia"
+    ],
+    "area": "Karst Plateau",
+    "kind": "Cave system",
+    "access": "Guided cave route",
+    "uniqueness": "A huge underground river canyon in the type region for karst",
+    "why": "Škocjan is ranked for the scale of the Reka River canyon below ground, beyond cave decoration.",
+    "realityCheck": "Tours are fixed-route and damp. The surface karst nearby helps explain the cave.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/%C5%A0kocjan_Caves",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/%C5%A0kocjan_Caves"
+    },
+    "map": {
+      "name": "Skocjan Caves",
+      "formattedAddress": "Matavun 12, 6215 Divača, Slovenia",
+      "placeId": "ChIJmebBnZE4e0cR9X9K7-7dp9g",
+      "rating": 4.8,
+      "reviewCount": 15220,
+      "location": {
+        "lat": 45.663089,
+        "lng": 13.9892129
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJmebBnZE4e0cR9X9K7-7dp9g"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 850,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "chauvet-cave",
+    "name": "Chauvet Cave / Chauvet 2",
+    "countries": [
+      "France"
+    ],
+    "area": "Ardèche",
+    "kind": "Paleolithic art",
+    "access": "Replica visit; original closed",
+    "uniqueness": "Some of Europe’s oldest known figurative cave paintings, protected through a full-scale replica",
+    "why": "Chauvet’s lions, rhinos, horses and bears are a deep-time shock; the public replica exists because the original cave is too fragile.",
+    "realityCheck": "You are visiting a replica by design. That is the correct access model.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Chauvet_Cave",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Chauvet_Cave"
+    },
+    "map": {
+      "name": "Grotte chauvet 2 - Ardèche",
+      "formattedAddress": "4941 Route de Bourg St Andéol, 07150 Vallon-Pont-d'Arc, France",
+      "placeId": "ChIJOy57VPQBtRIRi-qOeCg2U00",
+      "rating": 4.5,
+      "reviewCount": 18838,
+      "location": {
+        "lat": 44.406273,
+        "lng": 4.431287
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJOy57VPQBtRIRi-qOeCg2U00"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 950,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "pompeii-herculaneum",
+    "name": "Pompeii and Herculaneum",
+    "countries": [
+      "Italy"
+    ],
+    "area": "Bay of Naples",
+    "kind": "Buried Roman city",
+    "access": "Rail and site walking",
+    "uniqueness": "Roman urban life preserved by the 79 CE eruption of Vesuvius",
+    "why": "Pompeii gives urban scale while Herculaneum gives denser preservation of houses, timber and upper floors. Together they form a rare city-level disaster record.",
+    "realityCheck": "Heat and crowds can be rough. Herculaneum often gives the better preservation-to-crowd ratio.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Pompeii",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Pompeii"
+    },
+    "map": {
+      "name": "Archaeological Park of Herculaneum",
+      "formattedAddress": "Corso Resina, 187, 80056 Ercolano NA, Italy",
+      "placeId": "ChIJ17d1Me-mOxMRe4JncVKqWGI",
+      "rating": 4.8,
+      "reviewCount": 15680,
+      "location": {
+        "lat": 40.8059253,
+        "lng": 14.3473869
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ17d1Me-mOxMRe4JncVKqWGI"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "meteora",
+    "name": "Meteora",
+    "countries": [
+      "Greece"
+    ],
+    "area": "Thessaly",
+    "kind": "Monastic geology",
+    "access": "Road or train plus monastery visits",
+    "uniqueness": "Monasteries built on vertical sandstone pillars",
+    "why": "Meteora is rare because the monasteries are inseparable from the rock towers that made retreat physically possible.",
+    "realityCheck": "Dress rules and opening days matter. The viewpoints are easy; the monastery visits carry the point.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Meteora",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Meteora"
+    },
+    "map": {
+      "name": "Meteora",
+      "formattedAddress": "Kalabaka 422 00, Greece",
+      "placeId": "ChIJOX8y6K4PWRMR_zK82NStJ3E",
+      "rating": 4.9,
+      "reviewCount": 53153,
+      "location": {
+        "lat": 39.7217044,
+        "lng": 21.6305896
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJOX8y6K4PWRMR_zK82NStJ3E"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "cern-lhc",
+    "name": "CERN and the Large Hadron Collider",
+    "countries": [
+      "Switzerland",
+      "France"
+    ],
+    "area": "Geneva border",
+    "kind": "Science infrastructure",
+    "access": "Exhibitions; tunnel access rare",
+    "uniqueness": "The world’s largest particle-physics machine under an ordinary border suburb",
+    "why": "CERN turns abstract physics into infrastructure: detectors, accelerators and control rooms scattered around a cross-border ring.",
+    "realityCheck": "Book public visits early. Routine underground detector access should not be assumed.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Large_Hadron_Collider",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Large_Hadron_Collider"
+    },
+    "map": {
+      "name": "CERN",
+      "formattedAddress": "Espl. des Particules 1, 1217, Switzerland",
+      "placeId": "ChIJEXtz7PxijEcRMV6Ieq7zvoE",
+      "rating": 4.4,
+      "reviewCount": 3185,
+      "location": {
+        "lat": 46.2329733,
+        "lng": 6.0555723
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJEXtz7PxijEcRMV6Ieq7zvoE"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 850,
+      "note": "Assumes travel from London via Heathrow (LHR), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Europe"}
+  pageDescription={"A researched field guide to Europe's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Europe"}
+  keywords={"Europe travel, unique places Europe, globally distinctive travel, Europe map"}
+  eyebrow={"Europe field guide"}
+  dek={"A Europe list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from London via Heathrow (LHR). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From London"}
+  mapHeading={"Pins across Europe"}
+  mapAriaLabel={"Google Map with pins for interesting places in Europe"}
+  mapCenter={{"lat":52,"lng":12}}
+  mapZoom={3}
+  mapErrorLabel={"Europe"}
+  spots={spots}
+/>

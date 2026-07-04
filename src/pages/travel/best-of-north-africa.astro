@@ -1,0 +1,338 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "giza-pyramids",
+    "name": "Giza pyramid complex",
+    "countries": [
+      "Egypt"
+    ],
+    "area": "Giza Plateau",
+    "kind": "Ancient monument",
+    "access": "Easy road access",
+    "uniqueness": "The last surviving ancient wonder and the anchor of Old Kingdom pyramid building",
+    "why": "Giza is overfamiliar, but the physical fact remains strange: huge royal pyramids, causeways, temples and the Sphinx on Cairo’s desert edge.",
+    "realityCheck": "Crowds and touts are part of the visit.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Giza_pyramid_complex",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Giza_pyramid_complex"
+    },
+    "map": {
+      "name": "Giza Necropolis",
+      "formattedAddress": "Al Haram, Giza Governorate 3512201, Egypt",
+      "placeId": "ChIJzbs54n1PWBQRizZuWjV0dMo",
+      "rating": 4.6,
+      "reviewCount": 112345,
+      "location": {
+        "lat": 29.9772962,
+        "lng": 31.1324955
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJzbs54n1PWBQRizZuWjV0dMo"
+    },
+    "trip": {
+      "days": 3,
+      "costUsd": 350,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "valley-of-kings",
+    "name": "Valley of the Kings",
+    "countries": [
+      "Egypt"
+    ],
+    "area": "Luxor west bank",
+    "kind": "Pharaonic tombs",
+    "access": "Ticketed tomb access",
+    "uniqueness": "A royal tomb valley with decorated New Kingdom burial chambers",
+    "why": "The Valley of the Kings hides royal architecture underground: corridors, astronomical ceilings and painted funerary texts cut into a dry Theban valley.",
+    "realityCheck": "Tomb rotations and extra tickets matter.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Valley_of_the_Kings",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Valley_of_the_Kings"
+    },
+    "map": {
+      "name": "Valley of the Kings",
+      "formattedAddress": "Luxor, Luxor Governorate 1340420, Egypt",
+      "placeId": "ChIJ1_7etYo9SRQR2qnjovbMj3E",
+      "rating": 4.8,
+      "reviewCount": 23008,
+      "location": {
+        "lat": 25.7401643,
+        "lng": 32.601411
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ1_7etYo9SRQR2qnjovbMj3E"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 450,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "tassili-najjer",
+    "name": "Tassili n’Ajjer",
+    "countries": [
+      "Algeria"
+    ],
+    "area": "Sahara",
+    "kind": "Rock art and sandstone",
+    "access": "Guided desert trek",
+    "uniqueness": "One of the world’s great Saharan rock-art and sandstone plateau regions",
+    "why": "Tassili n’Ajjer preserves thousands of paintings and engravings recording wetter Saharan worlds that no longer exist.",
+    "realityCheck": "Access requires guides and desert permits.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tassili_n%27Ajjer",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Tassili_n%27Ajjer"
+    },
+    "map": {
+      "name": "Tassili N'Ajjer National Park",
+      "formattedAddress": "R47M+CGQ, Illizi, Algeria",
+      "placeId": "ChIJJ4MBpuvbLxIRJq0_P_y1pRg",
+      "rating": 4.5,
+      "reviewCount": 858,
+      "location": {
+        "lat": 25.8135945,
+        "lng": 8.1338558
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJJ4MBpuvbLxIRJq0_P_y1pRg"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "white-desert-egypt",
+    "name": "White Desert",
+    "countries": [
+      "Egypt"
+    ],
+    "area": "Farafra Depression",
+    "kind": "Desert chalk forms",
+    "access": "4x4 camping access",
+    "uniqueness": "Wind-carved chalk forms in a stark Sahara basin",
+    "why": "The White Desert’s pale marine deposits have been carved by wind into mushrooms, towers and animal-like forms.",
+    "realityCheck": "Use licensed desert operators.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/White_Desert_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/White_Desert_National_Park"
+    },
+    "map": {
+      "name": "White Desert National Park",
+      "formattedAddress": "الظهير الصحراوى للفرافرة،، 76M2+5CJ, Al Wadi Al Gadid Desert, The New Valley Governorate 1014001, Egypt",
+      "placeId": "ChIJuxbSDYKPaRQR3p636BDFf30",
+      "rating": 4.8,
+      "reviewCount": 193,
+      "location": {
+        "lat": 27.2829637,
+        "lng": 28.2010031
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJuxbSDYKPaRQR3p636BDFf30"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 500,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "tadrart-acacus",
+    "name": "Tadrart Acacus",
+    "countries": [
+      "Libya"
+    ],
+    "area": "Fezzan",
+    "kind": "Rock art and desert arches",
+    "access": "Security-sensitive expedition",
+    "uniqueness": "Saharan rock art inside a spectacular sandstone desert",
+    "why": "Acacus combines paintings, dunes, arches and dark sandstone at the edge of the Libyan Sahara.",
+    "realityCheck": "Libya security can make this impossible.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Acacus_Mountains",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Acacus_Mountains"
+    },
+    "map": {
+      "name": "Tadrart Acacus",
+      "formattedAddress": "Tadrart Acacus, Libya",
+      "placeId": "ChIJU39b0aY-LRIRcVII3bsCzJE",
+      "rating": 4.6,
+      "reviewCount": 133,
+      "location": {
+        "lat": 24.8333333,
+        "lng": 10.3333333
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJU39b0aY-LRIRcVII3bsCzJE"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 2600,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "mzab-valley",
+    "name": "M’Zab Valley",
+    "countries": [
+      "Algeria"
+    ],
+    "area": "Ghardaïa",
+    "kind": "Oasis urbanism",
+    "access": "Guided town access",
+    "uniqueness": "A compact Ibadi oasis urban system in the Sahara",
+    "why": "M’Zab’s fortified towns, palm groves and water logic make an oasis society readable in plan.",
+    "realityCheck": "Local norms matter; use guides and respect photography limits.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/M%27zab",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/M%27zab"
+    },
+    "map": {
+      "name": "M'Zab",
+      "formattedAddress": "M'Zab, Algeria",
+      "placeId": "ChIJLYj67SkmZBIR-9WQ-wp8oyE",
+      "rating": 4.2,
+      "reviewCount": 36,
+      "location": {
+        "lat": 32.4727002,
+        "lng": 3.7082024
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJLYj67SkmZBIR-9WQ-wp8oyE"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "abu-simbel",
+    "name": "Abu Simbel temples",
+    "countries": [
+      "Egypt"
+    ],
+    "area": "Nubia",
+    "kind": "Rock-cut temple relocation",
+    "access": "Road/flight access",
+    "uniqueness": "Rock temples moved block by block to escape Lake Nasser",
+    "why": "Abu Simbel is both ancient monument and modern salvage project: colossal Ramesses II façades relocated during the Aswan High Dam campaign.",
+    "realityCheck": "It is far from Luxor and Aswan. Start early.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Abu_Simbel",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Abu_Simbel"
+    },
+    "map": {
+      "name": "Abu Simbel Temples",
+      "formattedAddress": "Abu Simbel, Aswan Governorate 1211501, Egypt",
+      "placeId": "ChIJWwUmsYipOhQR0pj4GGbM06c",
+      "rating": 4.8,
+      "reviewCount": 20797,
+      "location": {
+        "lat": 22.3372319,
+        "lng": 31.625799
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJWwUmsYipOhQR0pj4GGbM06c"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 650,
+      "note": "Assumes travel from Cairo via Cairo International (CAI), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+      "id": "el-jem-amphitheatre",
+      "name": "Amphitheatre of El Jem",
+      "countries": [
+          "Tunisia"
+      ],
+      "area": "Mahdia Governorate",
+      "kind": "Roman amphitheatre",
+      "access": "Rail/road access with ticketed entry",
+      "uniqueness": "One of the largest and best-preserved Roman amphitheatres outside Italy",
+      "why": "El Jem belongs on the North Africa page because the amphitheatre is a near-Colosseum-scale Roman arena standing in a small Tunisian town, and Lakeman calls it easily the best amphitheater on earth beside Rome’s Colosseum.",
+      "realityCheck": "It is easy to visit between Sfax and Sousse. The surrounding town is ordinary; the amphitheatre is the reason for the stop.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Amphitheatre_of_El_Jem",
+      "source": {
+          "label": "Matt Lakeman",
+          "url": "https://mattlakeman.org/2025/05/29/notes-on-tunisia/"
+      },
+      "trip": {
+          "days": 5,
+          "costUsd": 750,
+          "note": "Assumes travel from Cairo via Cairo International (CAI), flights to Tunis or Monastir, rail/road transfer to El Jem, lodging, meals and site ticket."
+      },
+      "map": {
+          "name": "Amphitheatre of El Jem",
+          "formattedAddress": "Route Mahdia, El Jem, Tunisia",
+          "placeId": "ChIJ9V1P35z8ARMRqCO4L4AIbPU",
+          "rating": 4.8,
+          "reviewCount": 10588,
+          "location": {
+              "lat": 35.2964181,
+              "lng": 10.7069747
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ9V1P35z8ARMRqCO4L4AIbPU"
+      }
+  },
+  {
+      "id": "dougga",
+      "name": "Dougga",
+      "countries": [
+          "Tunisia"
+      ],
+      "area": "Béja Governorate",
+      "kind": "Roman and Numidian city ruins",
+      "access": "Road access with ticketed entry",
+      "uniqueness": "A substantially preserved Roman-period city on a North African hill site",
+      "why": "Dougga is a missing North Africa card because it preserves the street-and-building scale of an ancient city better than most Tunisian ruins; Lakeman singles it out as one of the reasons Tunisia has exceptional Roman remains outside Italy.",
+      "realityCheck": "It is less famous than Carthage or El Jem and needs a driver or tour. Go for the city plan, not one postcard monument.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Dougga",
+      "source": {
+          "label": "Matt Lakeman",
+          "url": "https://mattlakeman.org/2025/05/29/notes-on-tunisia/"
+      },
+      "trip": {
+          "days": 5,
+          "costUsd": 780,
+          "note": "Assumes travel from Cairo via Cairo International (CAI), flights to Tunis, road transfer to Dougga, lodging, meals, guide or driver and site ticket."
+      },
+      "map": {
+          "name": "Dougga Archaeological Site",
+          "formattedAddress": "Dougga, Téboursouk, Tunisia",
+          "placeId": "ChIJ68eHwcyC_BIR722LjYThEzU",
+          "rating": 4.8,
+          "reviewCount": 2056,
+          "location": {
+              "lat": 36.4229381,
+              "lng": 9.219348199999999
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ68eHwcyC_BIR722LjYThEzU"
+      }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in North Africa"}
+  pageDescription={"A researched field guide to North Africa's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in North Africa"}
+  keywords={"North Africa travel, unique places North Africa, globally distinctive travel, North Africa map"}
+  eyebrow={"North Africa field guide"}
+  dek={"A North Africa list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Cairo via Cairo International (CAI). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Cairo"}
+  mapHeading={"Pins across North Africa"}
+  mapAriaLabel={"Google Map with pins for interesting places in North Africa"}
+  mapCenter={{"lat":28,"lng":10}}
+  mapZoom={4}
+  mapErrorLabel={"North Africa"}
+  spots={spots}
+/>

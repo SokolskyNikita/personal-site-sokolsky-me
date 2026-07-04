@@ -1,0 +1,336 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "okavango-delta",
+    "name": "Okavango Delta",
+    "countries": [
+      "Botswana"
+    ],
+    "area": "Kalahari Basin",
+    "kind": "Inland delta",
+    "access": "Fly-in or road safari",
+    "uniqueness": "A huge inland delta that floods the desert instead of reaching the sea",
+    "why": "The Okavango is ranked first because its water disappears into the Kalahari, creating seasonal channels, islands, wildlife and flood patterns.",
+    "realityCheck": "Costs can be high. Water levels and season shape the trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Okavango_Delta",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Okavango_Delta"
+    },
+    "map": {
+      "name": "Okavango Delta",
+      "formattedAddress": "Okavango Delta, Botswana",
+      "placeId": "ChIJJycNodZsVhkRrivLs87AFQQ",
+      "rating": 4.7,
+      "reviewCount": 377,
+      "location": {
+        "lat": -19.6510095,
+        "lng": 22.9058802
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJJycNodZsVhkRrivLs87AFQQ"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1900,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "victoria-falls",
+    "name": "Victoria Falls",
+    "countries": [
+      "Zambia",
+      "Zimbabwe"
+    ],
+    "area": "Zambezi River",
+    "kind": "Waterfall gorge",
+    "access": "Easy road/air access",
+    "uniqueness": "One of the world’s largest waterfall curtains by width and flow",
+    "why": "Victoria Falls is less about a single viewpoint than a river suddenly dropping into a narrow basalt gorge system.",
+    "realityCheck": "Spray season and low-water season feel like different places.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Victoria_Falls",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Victoria_Falls"
+    },
+    "map": {
+      "name": "Victoria Falls",
+      "placeId": "ChIJ-fIL2vnvTxkRaNUY32NGBYs",
+      "rating": 4.8,
+      "reviewCount": 9138,
+      "location": {
+        "lat": -17.9255206,
+        "lng": 25.8585336
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ-fIL2vnvTxkRaNUY32NGBYs"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 950,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "namib-sand-sea",
+    "name": "Namib Sand Sea",
+    "countries": [
+      "Namibia"
+    ],
+    "area": "Namib-Naukluft",
+    "kind": "Dune desert",
+    "access": "Road/4x4 access",
+    "uniqueness": "A fog-fed dune sea in one of Earth’s oldest deserts",
+    "why": "The Namib Sand Sea is ranked for dune scale, fog ecology and age: sand, wind and Atlantic moisture produce a desert unlike the Sahara.",
+    "realityCheck": "Distances are long. Heat and tire logistics matter.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Namib_Sand_Sea",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Namib_Sand_Sea"
+    },
+    "map": {
+      "name": "Namib Desert",
+      "formattedAddress": "Namib Desert",
+      "placeId": "ChIJofXbPTT4dBwRg605Ezy4D9o",
+      "rating": 4.6,
+      "reviewCount": 1522,
+      "location": {
+        "lat": -24.2888714,
+        "lng": 15.2604813
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJofXbPTT4dBwRg605Ezy4D9o"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "tsingy-bemaraha",
+    "name": "Tsingy de Bemaraha",
+    "countries": [
+      "Madagascar"
+    ],
+    "area": "Melaky",
+    "kind": "Limestone forest",
+    "access": "Seasonal road/park access",
+    "uniqueness": "A razor limestone karst forest with endemic wildlife",
+    "why": "Tsingy de Bemaraha is ranked for stone needles, suspended routes and Madagascar endemism packed into a harsh karst reserve.",
+    "realityCheck": "Road access is seasonal and slow.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tsingy_de_Bemaraha_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Tsingy_de_Bemaraha_National_Park"
+    },
+    "map": {
+      "name": "Tsingy De Bemaraha National Park",
+      "formattedAddress": "3QJV+2Q6, Begara, Madagascar",
+      "placeId": "ChIJ3bJNGF3xVx8RK0aCWeScO-I",
+      "rating": 4.7,
+      "reviewCount": 241,
+      "location": {
+        "lat": -18.9199656,
+        "lng": 44.7943804
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ3bJNGF3xVx8RK0aCWeScO-I"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "avenue-baobabs",
+    "name": "Avenue of the Baobabs",
+    "countries": [
+      "Madagascar"
+    ],
+    "area": "Menabe",
+    "kind": "Baobab grove",
+    "access": "Road access",
+    "uniqueness": "A concentrated stand of giant Grandidier’s baobabs",
+    "why": "The avenue is small but visually singular: thick baobab trunks standing like old infrastructure along a dirt road.",
+    "realityCheck": "It is popular at sunset and vulnerable to overuse.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Avenue_of_the_Baobabs",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Avenue_of_the_Baobabs"
+    },
+    "map": {
+      "name": "Allée des Baobabs",
+      "formattedAddress": "RN8, Madagascar",
+      "placeId": "ChIJo9ZioxgpXx8RK4cf_TrQets",
+      "rating": 4.7,
+      "reviewCount": 376,
+      "location": {
+        "lat": -20.2504811,
+        "lng": 44.419695
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJo9ZioxgpXx8RK4cf_TrQets"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1400,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "great-zimbabwe",
+    "name": "Great Zimbabwe",
+    "countries": [
+      "Zimbabwe"
+    ],
+    "area": "Masvingo",
+    "kind": "Stone city",
+    "access": "Road access",
+    "uniqueness": "The largest stone ruins in sub-Saharan Africa south of the Sahara’s old cities",
+    "why": "Great Zimbabwe is ranked for dry-stone walls, enclosures and a state-level urban center that reshaped how outsiders understood African history.",
+    "realityCheck": "Interpretation matters. Give it more time than a quick ruins stop.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Great_Zimbabwe",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Great_Zimbabwe"
+    },
+    "map": {
+      "name": "Great Zimbabwe National Monument",
+      "formattedAddress": "PWHM+C39, Zimbabwe",
+      "placeId": "ChIJf-_0xoQBzR4RoGbHr8YeLOk",
+      "rating": 4.5,
+      "reviewCount": 1021,
+      "location": {
+        "lat": -20.2714635,
+        "lng": 30.9327465
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJf-_0xoQBzR4RoGbHr8YeLOk"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 850,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "vredefort-dome",
+    "name": "Vredefort Dome",
+    "countries": [
+      "South Africa"
+    ],
+    "area": "Free State",
+    "kind": "Impact structure",
+    "access": "Road access",
+    "uniqueness": "The eroded core of Earth’s largest confirmed impact structure",
+    "why": "Vredefort is ranked for planetary scale: an ancient asteroid impact so large that only its eroded inner structure remains visible.",
+    "realityCheck": "The feature is not obvious without a guide or geology context.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Vredefort_crater",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Vredefort_crater"
+    },
+    "map": {
+      "name": "Vredefort Dome",
+      "formattedAddress": "Vredefort, 9595, South Africa",
+      "placeId": "ChIJ53iWO9EZlB4R6b9PlclHyVc",
+      "rating": 3.5,
+      "reviewCount": 52,
+      "location": {
+        "lat": -27.0002353,
+        "lng": 27.3524749
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ53iWO9EZlB4R6b9PlclHyVc"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 450,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "cradle-humankind",
+    "name": "Cradle of Humankind",
+    "countries": [
+      "South Africa"
+    ],
+    "area": "Gauteng",
+    "kind": "Hominin fossil caves",
+    "access": "Easy road access",
+    "uniqueness": "One of the world’s densest hominin fossil cave regions",
+    "why": "The Cradle is ranked for fossil evidence: Sterkfontein and nearby caves helped define early human evolution in Africa.",
+    "realityCheck": "Some cave access can close for safety. Check current openings.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cradle_of_Humankind",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Cradle_of_Humankind"
+    },
+    "map": {
+      "name": "Cradle of Humankind",
+      "formattedAddress": "South Africa",
+      "placeId": "ChIJt2TVAsSFlR4RwB0UoD1_jHQ",
+      "rating": 4.5,
+      "reviewCount": 2689,
+      "location": {
+        "lat": -25.9253869,
+        "lng": 27.7673811
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJt2TVAsSFlR4RwB0UoD1_jHQ"
+    },
+    "trip": {
+      "days": 3,
+      "costUsd": 350,
+      "note": "Assumes travel from Johannesburg via OR Tambo (JNB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+      "id": "tristan-da-cunha",
+      "name": "Tristan da Cunha",
+      "countries": [
+          "Saint Helena, Ascension and Tristan da Cunha"
+      ],
+      "area": "South Atlantic Ocean",
+      "kind": "Remote inhabited archipelago",
+      "access": "Multi-day ship access from Cape Town when available",
+      "uniqueness": "The world’s most remote inhabited archipelago",
+      "why": "Tristan da Cunha is a strong Travel Stack Exchange-derived missing card because remoteness is the point: a tiny inhabited volcanic island group in the South Atlantic with no airport and ship schedules as the main constraint.",
+      "realityCheck": "You plan around the ship, not the other way around. Weather, berth availability and medical evacuation limits make this expedition-style travel.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Tristan_da_Cunha",
+      "source": {
+          "label": "Travel Stack Exchange",
+          "url": "https://travel.stackexchange.com/questions/3183/most-remote-exclave"
+      },
+      "trip": {
+          "days": 18,
+          "costUsd": 5200,
+          "note": "Assumes travel from Johannesburg via OR Tambo (JNB), repositioning to Cape Town, return ship passage when available, island lodging, meals and major sea-schedule buffer."
+      },
+      "map": {
+          "name": "Edinburgh of the Seven Seas",
+          "formattedAddress": "Edinburgh of the Seven Seas TDCU 1ZZ, St Helena, Ascension and Tristan da Cunha",
+          "placeId": "ChIJpaQ1n2U8WgIRqa4X9SkZajc",
+          "location": {
+              "lat": -37.0680421,
+              "lng": -12.3113147
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJpaQ1n2U8WgIRqa4X9SkZajc"
+      }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Southern Africa"}
+  pageDescription={"A researched field guide to Southern Africa's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Southern Africa"}
+  keywords={"Southern Africa travel, unique places Southern Africa, globally distinctive travel, Southern Africa map"}
+  eyebrow={"Southern Africa field guide"}
+  dek={"A Southern Africa list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Johannesburg via OR Tambo (JNB). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Johannesburg"}
+  mapHeading={"Pins across Southern Africa"}
+  mapAriaLabel={"Google Map with pins for interesting places in Southern Africa"}
+  mapCenter={{"lat":-22,"lng":24}}
+  mapZoom={4}
+  mapErrorLabel={"Southern Africa"}
+  spots={spots}
+/>

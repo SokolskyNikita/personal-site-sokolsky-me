@@ -1,0 +1,340 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "djenne",
+    "name": "Djenné and the Great Mosque",
+    "countries": [
+      "Mali"
+    ],
+    "area": "Inner Niger Delta",
+    "kind": "Earthen architecture",
+    "access": "Security-sensitive road access",
+    "uniqueness": "The world’s most famous monumental mud-brick mosque and a Sahel town fabric",
+    "why": "Djenné’s mosque is rebuilt and maintained through earthen craft, while the surrounding town preserves a Sahelian urban form.",
+    "realityCheck": "Central Mali security can make travel impossible.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Great_Mosque_of_Djenn%C3%A9",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Great_Mosque_of_Djenn%C3%A9"
+    },
+    "map": {
+      "name": "Great Mosque of Djenne",
+      "formattedAddress": "WC4V+3R8, Djenne, Mali",
+      "placeId": "ChIJiyCX7XBIOA4RHrqardoDlZI",
+      "rating": 4.4,
+      "reviewCount": 365,
+      "location": {
+        "lat": 13.905169,
+        "lng": -4.5554155
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJiyCX7XBIOA4RHrqardoDlZI"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1700,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "timbuktu",
+    "name": "Timbuktu manuscript city",
+    "countries": [
+      "Mali"
+    ],
+    "area": "Sahara edge",
+    "kind": "Sahel scholarship",
+    "access": "Security-sensitive access",
+    "uniqueness": "A desert-edge scholarly city of mosques, libraries and caravan memory",
+    "why": "Timbuktu is ranked for intellectual geography: trade routes, Islamic scholarship, manuscripts and mud mosques at the Sahara edge.",
+    "realityCheck": "Current security often makes travel unrealistic.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Timbuktu",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Timbuktu"
+    },
+    "map": {
+      "name": "Timbuctu",
+      "formattedAddress": "QXFR+HQ6, Timbuktu, Mali",
+      "placeId": "ChIJw-khyKLOFw4RGxstHVpLWtw",
+      "rating": 3.8,
+      "reviewCount": 12,
+      "location": {
+        "lat": 16.7739102,
+        "lng": -3.0081222
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJw-khyKLOFw4RGxstHVpLWtw"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "bandiagara",
+    "name": "Bandiagara Escarpment",
+    "countries": [
+      "Mali"
+    ],
+    "area": "Dogon country",
+    "kind": "Cliff culture",
+    "access": "Security-sensitive guided access",
+    "uniqueness": "A cliff-and-village system tied to Dogon and earlier Tellem occupation",
+    "why": "Bandiagara’s escarpment holds villages, granaries, shrines and cliff traces across a long settlement sequence.",
+    "realityCheck": "Security has made many routes unsafe.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Bandiagara_Escarpment",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Bandiagara_Escarpment"
+    },
+    "map": {
+      "name": "Bandiagara Escarpment",
+      "formattedAddress": "Bandiagara Escarpment, Mali",
+      "placeId": "ChIJG20NUeiwOw4RvAghpamyuXk",
+      "rating": 4.6,
+      "reviewCount": 50,
+      "location": {
+        "lat": 14.4277938,
+        "lng": -3.3253338
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJG20NUeiwOw4RvAghpamyuXk"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "richat-structure",
+    "name": "Richat Structure / Eye of the Sahara",
+    "countries": [
+      "Mauritania"
+    ],
+    "area": "Adrar Plateau",
+    "kind": "Geological structure",
+    "access": "4x4 desert access",
+    "uniqueness": "A huge circular eroded dome visible from space",
+    "why": "The Richat Structure looks like an impact crater but is an eroded geological dome, a giant bullseye in the Sahara.",
+    "realityCheck": "The ground view is less obvious than satellite images.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Richat_Structure",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Richat_Structure"
+    },
+    "map": {
+      "name": "Richat Structure",
+      "formattedAddress": "وادان, Mauritania",
+      "placeId": "ChIJdWhLMk4fgQ4RbcQMMGfEf8c",
+      "rating": 4.7,
+      "reviewCount": 1846,
+      "location": {
+        "lat": 21.1202141,
+        "lng": -11.4006842
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJdWhLMk4fgQ4RbcQMMGfEf8c"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1500,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "banc-darguin",
+    "name": "Banc d’Arguin National Park",
+    "countries": [
+      "Mauritania"
+    ],
+    "area": "Atlantic Sahara coast",
+    "kind": "Bird coast",
+    "access": "Boat/4x4 access",
+    "uniqueness": "One of the world’s major migratory bird coastal feeding areas",
+    "why": "Banc d’Arguin is where desert meets shallow Atlantic productivity: mudflats, seagrass, islands and huge numbers of migratory birds.",
+    "realityCheck": "Access is controlled and basic.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Banc_d%27Arguin_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Banc_d%27Arguin_National_Park"
+    },
+    "map": {
+      "name": "Banc d'Arguin National Park",
+      "formattedAddress": "Mauritania",
+      "placeId": "ChIJj5uhV8dFmA4RjKJidbPtWSA",
+      "rating": 4.4,
+      "reviewCount": 152,
+      "location": {
+        "lat": 20.5985588,
+        "lng": -16.2522143
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJj5uhV8dFmA4RjKJidbPtWSA"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1400,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "osun-osogbo",
+    "name": "Osun-Osogbo Sacred Grove",
+    "countries": [
+      "Nigeria"
+    ],
+    "area": "Osogbo",
+    "kind": "Sacred forest",
+    "access": "Road access",
+    "uniqueness": "A Yoruba sacred grove with shrines, sculpture and active ritual life",
+    "why": "Osun-Osogbo is a living forest shrine where river, deity, festival, sculpture and Yoruba ritual practice share one protected grove.",
+    "realityCheck": "Respect active religious use.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Osun-Osogbo",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Osun-Osogbo"
+    },
+    "map": {
+      "name": "Osun-Osogbo Sacred Grove park and Gardens",
+      "formattedAddress": "local government, Osogbo 230212, Osun, Nigeria",
+      "placeId": "ChIJ6z2TnO8pOBARpB41fhT54qA",
+      "rating": 4.4,
+      "reviewCount": 189,
+      "location": {
+        "lat": 7.755667399999999,
+        "lng": 4.5522822
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ6z2TnO8pOBARpB41fhT54qA"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 450,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "ganvie",
+    "name": "Ganvié stilt village",
+    "countries": [
+      "Benin"
+    ],
+    "area": "Lake Nokoué",
+    "kind": "Lake settlement",
+    "access": "Boat access",
+    "uniqueness": "A large lake village built on stilts",
+    "why": "Ganvié is ranked for daily life on water: houses, markets and transport organized above Lake Nokoué.",
+    "realityCheck": "Tourism can feel intrusive. Use local boat operators.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ganvie",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Ganvie"
+    },
+    "map": {
+      "name": "Village Lacustre de Ganvié",
+      "formattedAddress": "BP: 740, Abomey Calavi, Benin",
+      "placeId": "ChIJ7R7VfACrJBARvcpERPOQxrs",
+      "rating": 5,
+      "reviewCount": 13,
+      "location": {
+        "lat": 6.467444299999999,
+        "lng": 2.3912944
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ7R7VfACrJBARvcpERPOQxrs"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 650,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "elmina-castle",
+    "name": "Elmina Castle",
+    "countries": [
+      "Ghana"
+    ],
+    "area": "Central Region",
+    "kind": "Atlantic fortress",
+    "access": "Road access",
+    "uniqueness": "One of the oldest European buildings south of the Sahara and a slave-trade prison site",
+    "why": "Elmina makes coastal commerce, violence and empire concrete through a fort that shifted from gold trade to human captivity.",
+    "realityCheck": "Guided interpretation is essential.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Elmina_Castle",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Elmina_Castle"
+    },
+    "map": {
+      "name": "Elmina Castle",
+      "formattedAddress": "3MM2+4R3, W1 Lagoon St, Elmina, Ghana",
+      "placeId": "ChIJtVXNbD_43Q8RtYbCxZYtIWM",
+      "rating": 4.5,
+      "reviewCount": 3419,
+      "location": {
+        "lat": 5.0827429,
+        "lng": -1.3481259
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJtVXNbD_43Q8RtYbCxZYtIWM"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 750,
+      "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+      "id": "mount-nimba",
+      "name": "Mount Nimba",
+      "countries": [
+          "Guinea",
+          "Côte d’Ivoire",
+          "Liberia"
+      ],
+      "area": "Upper Guinea highlands",
+      "kind": "Montane biodiversity",
+      "access": "Guide/permit access varies by country",
+      "uniqueness": "A transboundary mountain reserve with high endemism at the forest-savanna edge",
+      "why": "Mount Nimba adds a different West Africa rarity: montane forest, grassland, mining pressure and endemic species in a region better represented by Sahel and coast cards. Lakeman calls the Liberia hike one of the best things he did in West Africa.",
+      "realityCheck": "Access is fragmented by borders, permits, roads and local rules. The Liberia hike in Lakeman’s account required on-the-ground arranging rather than normal park infrastructure.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Mount_Nimba_Strict_Nature_Reserve",
+      "source": {
+          "label": "Matt Lakeman",
+          "url": "https://mattlakeman.org/2024/01/27/other-notes-on-west-africa/"
+      },
+      "trip": {
+          "days": 7,
+          "costUsd": 1300,
+          "note": "Assumes travel from Lagos via Murtala Muhammed (LOS), regional flights toward Monrovia or Conakry, long road transfer, guide/permit fees, simple lodging, meals and border/security buffer."
+      },
+      "map": {
+          "name": "Mount Nimba Strict Nature Reserve",
+          "formattedAddress": "HHJJ+QJX, Gouéla, Côte d'Ivoire",
+          "placeId": "ChIJC_VyeuR7pQ8RyZNGzPUP2DE",
+          "rating": 5,
+          "reviewCount": 3,
+          "location": {
+              "lat": 7.581975799999999,
+              "lng": -8.4183833
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJC_VyeuR7pQ8RyZNGzPUP2DE"
+      }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in West Africa"}
+  pageDescription={"A researched field guide to West Africa's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in West Africa"}
+  keywords={"West Africa travel, unique places West Africa, globally distinctive travel, West Africa map"}
+  eyebrow={"West Africa field guide"}
+  dek={"A West Africa list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Lagos via Murtala Muhammed (LOS). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Lagos"}
+  mapHeading={"Pins across West Africa"}
+  mapAriaLabel={"Google Map with pins for interesting places in West Africa"}
+  mapCenter={{"lat":12,"lng":-4}}
+  mapZoom={4}
+  mapErrorLabel={"West Africa"}
+  spots={spots}
+/>

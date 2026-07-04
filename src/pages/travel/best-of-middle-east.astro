@@ -1,0 +1,335 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "gobekli-tepe",
+    "name": "Göbekli Tepe",
+    "countries": [
+      "Turkey"
+    ],
+    "area": "Şanlıurfa",
+    "kind": "Pre-pottery ritual site",
+    "access": "Road access from Şanlıurfa",
+    "uniqueness": "Monumental carved stone enclosures older than agriculture-based cities",
+    "why": "Göbekli Tepe changes the usual story of temples following cities: its T-shaped pillars and animal reliefs come from a much earlier world.",
+    "realityCheck": "The site is managed and partly reconstructed. Add the Şanlıurfa museum.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe"
+    },
+    "map": {
+      "name": "Göbeklitepe",
+      "formattedAddress": "Örencik, 63290 Haliliye/Şanlıurfa, Türkiye",
+      "placeId": "ChIJXzpuX7ZmNBURcU15VQJRZxY",
+      "rating": 4.7,
+      "reviewCount": 31282,
+      "location": {
+        "lat": 37.2232589,
+        "lng": 38.9218317
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJXzpuX7ZmNBURcU15VQJRZxY"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "dead-sea",
+    "name": "Dead Sea basin",
+    "countries": [
+      "Jordan",
+      "Israel",
+      "Palestine"
+    ],
+    "area": "Jordan Rift Valley",
+    "kind": "Salt lake and low point",
+    "access": "Road access",
+    "uniqueness": "Earth’s lowest exposed land area and a hypersaline terminal lake",
+    "why": "The Dead Sea is ranked for topography and chemistry: salt, sinkholes, evaporation and a shoreline far below sea level.",
+    "realityCheck": "Water levels are falling. Use stable, legal beaches and viewpoints.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Dead_Sea",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Dead_Sea"
+    },
+    "map": {
+      "name": "Dead Sea Hot Springs",
+      "placeId": "ChIJ-2uqo_4XAxURAPCWO4ZN6iw",
+      "rating": 4.6,
+      "reviewCount": 405,
+      "location": {
+        "lat": 31.514975,
+        "lng": 35.395478
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ-2uqo_4XAxURAPCWO4ZN6iw"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 850,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "petra",
+    "name": "Petra",
+    "countries": [
+      "Jordan"
+    ],
+    "area": "Wadi Musa",
+    "kind": "Rock-cut archaeology",
+    "access": "Ticketed walking site",
+    "uniqueness": "A Nabataean rock-cut city in a desert canyon system",
+    "why": "Petra’s tombs, temples, dams and stairways occupy a whole sandstone basin, with water control as central as the famous façades.",
+    "realityCheck": "Start early and walk beyond the Treasury axis.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Petra",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Petra"
+    },
+    "map": {
+      "name": "Petra",
+      "formattedAddress": "Jordan",
+      "placeId": "ChIJcWA7cPFuARURkSKaZwj5mxk",
+      "rating": 4.8,
+      "reviewCount": 45700,
+      "location": {
+        "lat": 30.3284544,
+        "lng": 35.4443622
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJcWA7cPFuARURkSKaZwj5mxk"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "socotra",
+    "name": "Socotra Archipelago",
+    "countries": [
+      "Yemen"
+    ],
+    "area": "Arabian Sea",
+    "kind": "Island endemism",
+    "access": "Difficult, security-sensitive flights or tours",
+    "uniqueness": "A continental island fragment with dragon’s blood trees and extreme endemism",
+    "why": "Socotra is one of the region’s least replaceable places: dragon’s blood trees, bottle trees, limestone plateaus and endemic animals evolved in isolation.",
+    "realityCheck": "Access changes with Yemen’s security and flight situation. Use experienced operators.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Socotra",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Socotra"
+    },
+    "map": {
+      "name": "Socotra",
+      "formattedAddress": "Socotra, Yemen",
+      "placeId": "ChIJ8UvJKjCjtj0Ra0Ks8N99CoU",
+      "rating": 4.2,
+      "reviewCount": 4128,
+      "location": {
+        "lat": 12.4634205,
+        "lng": 53.8237385
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ8UvJKjCjtj0Ra0Ks8N99CoU"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 3200,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "wadi-rum",
+    "name": "Wadi Rum",
+    "countries": [
+      "Jordan"
+    ],
+    "area": "Aqaba Governorate",
+    "kind": "Desert geology and culture",
+    "access": "4x4/camp access",
+    "uniqueness": "A sandstone-and-granite desert tied to Nabataean routes and Bedouin life",
+    "why": "Wadi Rum combines cliffs, arches, inscriptions and red sand in a desert where human routes are still visible in the rock.",
+    "realityCheck": "Camp quality varies. Choose operators carefully.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Wadi_Rum",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Wadi_Rum"
+    },
+    "map": {
+      "name": "Wadi Rum Protected Area",
+      "formattedAddress": "Jordan",
+      "placeId": "ChIJsze106WTABURB12LlZJViOk",
+      "rating": 4.7,
+      "reviewCount": 12664,
+      "location": {
+        "lat": 29.555872,
+        "lng": 35.4076008
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJsze106WTABURB12LlZJViOk"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 850,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "pamukkale-hierapolis",
+    "name": "Pamukkale and Hierapolis",
+    "countries": [
+      "Turkey"
+    ],
+    "area": "Denizli",
+    "kind": "Travertine and archaeology",
+    "access": "Ticketed terraces and ruins",
+    "uniqueness": "White travertine terraces beside a Greco-Roman spa city",
+    "why": "Pamukkale turns hot-spring chemistry into a white stepped hillside, while Hierapolis shows how people built around the same water.",
+    "realityCheck": "Barefoot terrace access is controlled to protect the deposits.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Pamukkale",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Pamukkale"
+    },
+    "map": {
+      "name": "Pamukkale",
+      "formattedAddress": "Pamukkale, 20190 Pamukkale/Denizli, Türkiye",
+      "placeId": "ChIJL9ogVskTxxQR1vweRV8PGbE",
+      "location": {
+        "lat": 37.9136957,
+        "lng": 29.1187097
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJL9ogVskTxxQR1vweRV8PGbE"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 950,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "hegra",
+    "name": "Hegra / Mada’in Salih",
+    "countries": [
+      "Saudi Arabia"
+    ],
+    "area": "AlUla",
+    "kind": "Nabataean tombs",
+    "access": "Timed guided access",
+    "uniqueness": "Saudi Arabia’s best-preserved Nabataean rock-cut tomb city",
+    "why": "Hegra is Petra’s desert cousin: monumental tomb façades cut into outcrops across AlUla, with far fewer familiar images.",
+    "realityCheck": "Access is organized and timed. Build the trip around AlUla logistics.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Hegra_(Mada%27in_Salih)",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Hegra_(Mada%27in_Salih)"
+    },
+    "map": {
+      "name": "Hegra",
+      "formattedAddress": "Hegra Saudi Arabia",
+      "placeId": "ChIJywSzM8G0pRURIgQOjaK8eJA",
+      "location": {
+        "lat": 26.8040118,
+        "lng": 37.9572703
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJywSzM8G0pRURIgQOjaK8eJA"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1200,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "shushtar",
+    "name": "Shushtar Historical Hydraulic System",
+    "countries": [
+      "Iran"
+    ],
+    "area": "Khuzestan",
+    "kind": "Hydraulic engineering",
+    "access": "Road access",
+    "uniqueness": "Ancient canals, mills, dams and tunnels built as a water machine",
+    "why": "Shushtar is ranked for engineering: river diversion, mill races, bridges and cascades forming one historical water system.",
+    "realityCheck": "Iran access depends on nationality and current rules. Summer heat is punishing.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Shushtar_Historical_Hydraulic_System",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Shushtar_Historical_Hydraulic_System"
+    },
+    "map": {
+      "name": "Shushtar Historical Hydraulic System",
+      "formattedAddress": "Khuzestan Province, Shushtar, Taleghani St, 2VV5+J69, Iran",
+      "placeId": "ChIJvcnR24zxwT8Rpvj1stcVYUU",
+      "rating": 4.7,
+      "reviewCount": 1363,
+      "location": {
+        "lat": 32.04403920000001,
+        "lng": 48.8581186
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJvcnR24zxwT8Rpvj1stcVYUU"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1500,
+      "note": "Assumes travel from Dubai via Dubai International (DXB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+      "id": "babylon-iraq",
+      "name": "Babylon",
+      "countries": [
+          "Iraq"
+      ],
+      "area": "Babil Governorate",
+      "kind": "Ancient city",
+      "access": "Security-sensitive road access",
+      "uniqueness": "The excavated core of one of antiquity’s most famous imperial cities",
+      "why": "Babylon clears the bar because the name is not a metaphor here: this is the Mesopotamian city tied to Nebuchadnezzar II, biblical memory, cuneiform history, German excavations and modern reconstruction politics.",
+      "realityCheck": "Iraq travel is not routine. Security, guides, checkpoints, heat and site condition matter more than a normal ruins itinerary.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Babylon",
+      "source": {
+          "label": "Artemy Lebedev",
+          "url": "https://www.tema.ru/travel/iraq-3/"
+      },
+      "trip": {
+          "days": 6,
+          "costUsd": 1100,
+          "note": "Assumes travel from Dubai via Dubai International (DXB), flights to Baghdad or Najaf, local driver/guide, lodging, meals, site access and security buffer."
+      },
+      "map": {
+          "name": "Ancient Babylon",
+          "formattedAddress": "GCRC+W96، سنجار، بابل محافظة، Iraq",
+          "placeId": "ChIJ3VWfTz79WBURYBdL3ERQoUE",
+          "rating": 4.4,
+          "reviewCount": 2885,
+          "location": {
+              "lat": 32.5422787,
+              "lng": 44.4208893
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ3VWfTz79WBURYBdL3ERQoUE"
+      }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in the Middle East"}
+  pageDescription={"A researched field guide to Middle East's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Middle East"}
+  keywords={"Middle East travel, unique places Middle East, globally distinctive travel, Middle East map"}
+  eyebrow={"Middle East field guide"}
+  dek={"A Middle East list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Dubai via Dubai International (DXB). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Dubai"}
+  mapHeading={"Pins across Middle East"}
+  mapAriaLabel={"Google Map with pins for interesting places in Middle East"}
+  mapCenter={{"lat":29,"lng":44}}
+  mapZoom={4}
+  mapErrorLabel={"Middle East"}
+  spots={spots}
+/>

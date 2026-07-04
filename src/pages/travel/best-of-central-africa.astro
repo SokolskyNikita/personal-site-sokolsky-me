@@ -1,0 +1,301 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "virunga",
+    "name": "Virunga National Park",
+    "countries": [
+      "Democratic Republic of the Congo"
+    ],
+    "area": "Albertine Rift",
+    "kind": "Volcanoes and gorillas",
+    "access": "Security-sensitive park access",
+    "uniqueness": "Africa’s oldest national park with gorillas, volcanoes and Rift Valley lakes",
+    "why": "Virunga is ranked for ecological compression: mountain gorillas, active volcanoes, savanna, forest and lake edges in one park.",
+    "realityCheck": "Security conditions can close access. Follow park guidance strictly.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Virunga_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Virunga_National_Park"
+    },
+    "map": {
+      "name": "Virunga National Park",
+      "formattedAddress": "WGX7+WP7, Bulambo, Democratic Republic of the Congo",
+      "placeId": "ChIJ0-rNko3FYBcRPzjbi0xEgoU",
+      "rating": 4.4,
+      "reviewCount": 528,
+      "location": {
+        "lat": -0.05022099999999999,
+        "lng": 29.5142852
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ0-rNko3FYBcRPzjbi0xEgoU"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1500,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "nyiragongo",
+    "name": "Mount Nyiragongo",
+    "countries": [
+      "Democratic Republic of the Congo"
+    ],
+    "area": "North Kivu",
+    "kind": "Active volcano",
+    "access": "Guided climb when open",
+    "uniqueness": "A steep stratovolcano known for a large lava lake when active",
+    "why": "Nyiragongo is one of the clearest volcano experiences in Africa when access is open, with lava-lake history above Goma.",
+    "realityCheck": "Eruptions and security can close the route with little warning.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mount_Nyiragongo",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Mount_Nyiragongo"
+    },
+    "map": {
+      "name": "Mount Nyiragongo",
+      "formattedAddress": "Mt Nyiragongo, Democratic Republic of the Congo",
+      "placeId": "ChIJCcwafUav3RkRTmzJAaZ-RG0",
+      "rating": 4.4,
+      "reviewCount": 453,
+      "location": {
+        "lat": -1.5220378,
+        "lng": 29.2494566
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJCcwafUav3RkRTmzJAaZ-RG0"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1200,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "dzanga-sangha",
+    "name": "Dzanga-Sangha Bai",
+    "countries": [
+      "Central African Republic"
+    ],
+    "area": "Sangha forest",
+    "kind": "Forest wildlife",
+    "access": "Specialist lodge access",
+    "uniqueness": "A forest clearing where elephants and gorillas are unusually visible",
+    "why": "Dzanga-Sangha’s bai lets visitors watch forest elephants, buffalo and other animals in an open clearing inside dense Congo Basin forest.",
+    "realityCheck": "Access is logistically hard and security-sensitive.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Dzanga-Sangha_Special_Reserve",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Dzanga-Sangha_Special_Reserve"
+    },
+    "map": {
+      "name": "Dzanga Bai (The Village of Elephants)",
+      "formattedAddress": "X938+H29, Bayanga, Central African Republic",
+      "placeId": "ChIJty7QEL7SlxAR-4FPVtQ0jC0",
+      "rating": 4.8,
+      "reviewCount": 13,
+      "location": {
+        "lat": 2.9539082,
+        "lng": 16.3651074
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJty7QEL7SlxAR-4FPVtQ0jC0"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 2500,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "sangha-trinational",
+    "name": "Sangha Trinational",
+    "countries": [
+      "Cameroon",
+      "Central African Republic",
+      "Republic of the Congo"
+    ],
+    "area": "Congo Basin",
+    "kind": "Rainforest reserve",
+    "access": "Specialist guided access",
+    "uniqueness": "A cross-border Congo Basin forest reserve complex",
+    "why": "Sangha Trinational matters because intact lowland forest, clearings, gorillas, elephants and Indigenous use cross political borders.",
+    "realityCheck": "Permits, park rules and security vary by country.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sangha_Trinational",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Sangha_Trinational"
+    },
+    "map": {
+      "name": "Sangha Lodge",
+      "formattedAddress": "X6PM+527, Djomo, Central African Republic",
+      "placeId": "ChIJqSN0ubk0lhARmphVF9yh4q0",
+      "rating": 4.3,
+      "reviewCount": 22,
+      "location": {
+        "lat": 2.9854211,
+        "lng": 16.2325409
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJqSN0ubk0lhARmphVF9yh4q0"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 2300,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "loango",
+    "name": "Loango National Park",
+    "countries": [
+      "Gabon"
+    ],
+    "area": "Atlantic coast",
+    "kind": "Surf-zone wildlife",
+    "access": "Lodge/boat access",
+    "uniqueness": "A rare place where rainforest wildlife meets Atlantic beaches",
+    "why": "Loango is ranked for the junction of forest, lagoon, savanna and beach, with hippos, elephants and buffalo sometimes near the surf.",
+    "realityCheck": "Wildlife sightings vary. The season shapes everything.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Loango_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Loango_National_Park"
+    },
+    "map": {
+      "name": "Loango National Park",
+      "formattedAddress": "RHWQ+FR9, Aningué, Gabon",
+      "placeId": "ChIJq6qqqqo_hhoRZPVEwkd0s40",
+      "rating": 3.7,
+      "reviewCount": 3,
+      "location": {
+        "lat": -2.1538342,
+        "lng": 9.5896043
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJq6qqqqo_hhoRZPVEwkd0s40"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1900,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "lope",
+    "name": "Lopé National Park",
+    "countries": [
+      "Gabon"
+    ],
+    "area": "Ogooué-Ivindo",
+    "kind": "Forest-savanna mosaic",
+    "access": "Rail/road access",
+    "uniqueness": "A rainforest-savanna interface with mandrills and deep human history",
+    "why": "Lopé combines mandrill groups, forest-savanna edges and archaeological traces of long human presence.",
+    "realityCheck": "Guides and timing make the difference; the park is not a simple safari loop.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lop%C3%A9_National_Park",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lop%C3%A9_National_Park"
+    },
+    "map": {
+      "name": "Lope",
+      "formattedAddress": "Lope, Gabon",
+      "placeId": "ChIJFfPeJB5RfxoRdGhY5ZjKTfg",
+      "location": {
+        "lat": -0.4405787,
+        "lng": 11.8891721
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJFfPeJB5RfxoRdGhY5ZjKTfg"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1600,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "ennedi",
+    "name": "Ennedi Plateau",
+    "countries": [
+      "Chad"
+    ],
+    "area": "Sahara / Sahel",
+    "kind": "Sandstone and rock art",
+    "access": "4x4 expedition access",
+    "uniqueness": "A sandstone plateau of arches, gueltas and Saharan rock art",
+    "why": "Ennedi is ranked for its mix of natural arches, desert crocodile refuges, rock art and long-range Sahara expedition character.",
+    "realityCheck": "Access requires serious 4x4 logistics and current security checks.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ennedi_Plateau",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Ennedi_Plateau"
+    },
+    "map": {
+      "name": "Ennedi Plateau",
+      "formattedAddress": "Ennedi Plateau, Chad",
+      "placeId": "ChIJXb2aD9xlTRERGYGVomPnlXI",
+      "location": {
+        "lat": 17.5414578,
+        "lng": 21.8568586
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJXb2aD9xlTRERGYGVomPnlXI"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 2800,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "okapi-reserve",
+    "name": "Okapi Wildlife Reserve",
+    "countries": [
+      "Democratic Republic of the Congo"
+    ],
+    "area": "Ituri Forest",
+    "kind": "Rainforest wildlife",
+    "access": "Security-sensitive access",
+    "uniqueness": "A Congo Basin forest reserve created for okapi habitat",
+    "why": "The reserve is ranked for okapi, Ituri rainforest and the scale of Central African forest biodiversity.",
+    "realityCheck": "Travel can be unsafe or impossible. Treat this as a high-friction conservation entry.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Okapi_Wildlife_Reserve",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Okapi_Wildlife_Reserve"
+    },
+    "map": {
+      "name": "Okapi Wildlife Reserve",
+      "formattedAddress": "N4, Democratic Republic of the Congo",
+      "placeId": "ChIJufjgpsVaXRcRwaeK85nFOtA",
+      "rating": 3.8,
+      "reviewCount": 92,
+      "location": {
+        "lat": 1.6710695,
+        "lng": 28.4873575
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJufjgpsVaXRcRwaeK85nFOtA"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2200,
+      "note": "Assumes travel from Kinshasa via N’djili (FIH), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Central Africa"}
+  pageDescription={"A researched field guide to Central Africa's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Central Africa"}
+  keywords={"Central Africa travel, unique places Central Africa, globally distinctive travel, Central Africa map"}
+  eyebrow={"Central Africa field guide"}
+  dek={"A Central Africa list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Kinshasa via N’djili (FIH). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Kinshasa"}
+  mapHeading={"Pins across Central Africa"}
+  mapAriaLabel={"Google Map with pins for interesting places in Central Africa"}
+  mapCenter={{"lat":0,"lng":19}}
+  mapZoom={4}
+  mapErrorLabel={"Central Africa"}
+  spots={spots}
+/>

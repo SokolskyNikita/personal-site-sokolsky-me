@@ -1,0 +1,301 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const spots = [
+  {
+    "id": "lake-baikal",
+    "name": "Lake Baikal",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Irkutsk / Buryatia",
+    "kind": "Ancient lake",
+    "access": "Rail/road access",
+    "uniqueness": "The world’s deepest lake and largest liquid freshwater volume",
+    "why": "Baikal is ranked for depth, age and endemic evolution: nerpa seals, strange amphipods, clear ice and rift geology.",
+    "realityCheck": "Winter ice is spectacular but risky. Summer is easier.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lake_Baikal",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lake_Baikal"
+    },
+    "map": {
+      "name": "Lake Baikal",
+      "formattedAddress": "Lake Baikal, Russia",
+      "placeId": "ChIJc9iNz-19q10RSTOFxRKUSPI",
+      "rating": 4.7,
+      "reviewCount": 5804,
+      "location": {
+        "lat": 53.5587003,
+        "lng": 108.1649964
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJc9iNz-19q10RSTOFxRKUSPI"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 800,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "kamchatka-geysers",
+    "name": "Valley of Geysers, Kamchatka",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Kamchatka Peninsula",
+    "kind": "Geothermal field",
+    "access": "Helicopter access when allowed",
+    "uniqueness": "One of the largest geyser fields on Earth",
+    "why": "Kamchatka’s Valley of Geysers is a volcanic basin of geysers, hot springs, mud pots and landslide-shaped terrain.",
+    "realityCheck": "Helicopter days can cancel and access can be restricted.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Valley_of_Geysers",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Valley_of_Geysers"
+    },
+    "map": {
+      "name": "Доли́на ге́йзеров",
+      "formattedAddress": "Доли́на ге́йзеров, Камчатский край, Russia, 684305",
+      "placeId": "ChIJS1f3cYwuHVkR0S2aHPyMX9c",
+      "rating": 3.2,
+      "reviewCount": 9,
+      "location": {
+        "lat": 54.430726,
+        "lng": 160.1393101
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJS1f3cYwuHVkR0S2aHPyMX9c"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2600,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "lena-pillars",
+    "name": "Lena Pillars",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Sakha / Yakutia",
+    "kind": "River cliffs",
+    "access": "Boat or winter road access",
+    "uniqueness": "A long wall of Cambrian limestone pillars above the Lena River",
+    "why": "Lena Pillars turns a Siberian river into a stone corridor of frost-shattered columns and fossil-bearing limestone.",
+    "realityCheck": "Boat season and winter access are completely different trips.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lena_Pillars",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lena_Pillars"
+    },
+    "map": {
+      "name": "Natsional'nyy Park \"Lenskiye Stolby\"",
+      "formattedAddress": "Sakha Republic, Russia, 678024",
+      "placeId": "ChIJ58bFqB4UCVwR2Ew5ZFO1nsY",
+      "rating": 4.6,
+      "reviewCount": 429,
+      "location": {
+        "lat": 61.1068613,
+        "lng": 127.3637963
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ58bFqB4UCVwR2Ew5ZFO1nsY"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1400,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "putorana-plateau",
+    "name": "Putorana Plateau",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Krasnoyarsk Krai",
+    "kind": "Basalt plateau",
+    "access": "Expedition access from Norilsk",
+    "uniqueness": "A huge basalt plateau of canyons, lakes and waterfalls near the Arctic Circle",
+    "why": "Putorana is Siberian scale in hard rock: stepped basalt, tablelands, deep lakes and remote waterfalls.",
+    "realityCheck": "Access is expensive and permit-heavy.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Putorana_Plateau",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Putorana_Plateau"
+    },
+    "map": {
+      "name": "Putorana Plateau",
+      "formattedAddress": "Putorana Plateau, Krasnoyarsk Krai, Russia, 647483",
+      "placeId": "ChIJMYsZKhBUV1sRe_gXpMK7fOY",
+      "rating": 4.6,
+      "reviewCount": 70,
+      "location": {
+        "lat": 68.7257271,
+        "lng": 96.1289958
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJMYsZKhBUV1sRe_gXpMK7fOY"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 2800,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "oymyakon",
+    "name": "Oymyakon",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Sakha / Yakutia",
+    "kind": "Cold settlement",
+    "access": "Long winter road trip",
+    "uniqueness": "One of the coldest permanently inhabited places on Earth",
+    "why": "Oymyakon is human settlement at extreme winter temperature, where roads, houses, vehicles and routines adapt to cold that breaks normal assumptions.",
+    "realityCheck": "Winter is the point and the hazard.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Oymyakon",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Oymyakon"
+    },
+    "map": {
+      "name": "Oymyakon",
+      "formattedAddress": "Oymyakon, Sakha Republic, Russia, 678750",
+      "placeId": "ChIJ24rPgw6O4FsRwIXI9jHNIfY",
+      "location": {
+        "lat": 63.464138,
+        "lng": 142.773727
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ24rPgw6O4FsRwIXI9jHNIfY"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1600,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "manpupuner",
+    "name": "Manpupuner rock formations",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Komi Republic",
+    "kind": "Weathering pillars",
+    "access": "Remote trek/helicopter access",
+    "uniqueness": "Seven giant weathering pillars on a remote Ural plateau",
+    "why": "Manpupuner’s stone towers feel almost artificial because erosion left them standing alone on an exposed plateau.",
+    "realityCheck": "Access is difficult and seasonal.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Manpupuner_rock_formations",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Manpupuner_rock_formations"
+    },
+    "map": {
+      "name": "Man-Pupu-Ner",
+      "formattedAddress": "Man-Pupu-Ner, Komi Republic, Russia, 169437",
+      "placeId": "ChIJpVVuiW4djEMRuFJ_bLt4XRs",
+      "rating": 4.8,
+      "reviewCount": 78,
+      "location": {
+        "lat": 62.21522220000001,
+        "lng": 59.30503219999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJpVVuiW4djEMRuFJ_bLt4XRs"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "sikhote-alin",
+    "name": "Sikhote-Alin",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Primorsky Krai",
+    "kind": "Temperate forest wildlife",
+    "access": "Reserve-limited access",
+    "uniqueness": "A meeting zone for Amur tiger habitat, temperate forest and Far East mountains",
+    "why": "Sikhote-Alin is ranked for the overlap of boreal and temperate Asia, with Amur tiger habitat and Pacific-influenced forest.",
+    "realityCheck": "Strict reserve rules limit access.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sikhote-Alin",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Sikhote-Alin"
+    },
+    "map": {
+      "name": "Sikhote-Alin",
+      "formattedAddress": "Sikhote-Alin, Khabarovsk Krai, Russia, 682909",
+      "placeId": "ChIJm2jhp2bA414Rlc60Je9Av7Y",
+      "rating": 4.8,
+      "reviewCount": 32,
+      "location": {
+        "lat": 47.52335249999999,
+        "lng": 138.0146532
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJm2jhp2bA414Rlc60Je9Av7Y"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1700,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+  {
+    "id": "altai-golden-mountains",
+    "name": "Golden Mountains of Altai",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Altai Republic",
+    "kind": "Mountain ecology",
+    "access": "Road and trek access",
+    "uniqueness": "A high biodiversity mountain knot between Siberia and Central Asia",
+    "why": "Russian Altai compresses glaciers, steppe, taiga, lakes and archaeological traces into a borderland mountain system.",
+    "realityCheck": "Roads vary and border-zone rules can affect routes.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Golden_Mountains_of_Altai",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Golden_Mountains_of_Altai"
+    },
+    "map": {
+      "name": "Golden Mountains of Altai",
+      "formattedAddress": "Ongudaysky District, Altai Republic, Russia, 649470",
+      "placeId": "ChIJRS_crsgbx0IR5gZlRVjAhYQ",
+      "rating": 4.2,
+      "reviewCount": 5,
+      "location": {
+        "lat": 50.4770177,
+        "lng": 85.99682849999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJRS_crsgbx0IR5gZlRVjAhYQ"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1100,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in North Asia and Siberia"}
+  pageDescription={"A researched field guide to North Asia and Siberia's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in North Asia and Siberia"}
+  keywords={"North Asia and Siberia travel, unique places North Asia and Siberia, globally distinctive travel, North Asia and Siberia map"}
+  eyebrow={"North Asia and Siberia field guide"}
+  dek={"A North Asia and Siberia list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby."}
+  criteriaText={"Trip estimates are per person from Novosibirsk via Tolmachevo (OVB). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Novosibirsk"}
+  mapHeading={"Pins across North Asia and Siberia"}
+  mapAriaLabel={"Google Map with pins for interesting places in North Asia and Siberia"}
+  mapCenter={{"lat":60,"lng":100}}
+  mapZoom={3}
+  mapErrorLabel={"North Asia and Siberia"}
+  spots={spots}
+/>
