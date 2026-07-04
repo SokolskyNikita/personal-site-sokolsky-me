@@ -1,0 +1,806 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+const mapsSearchUrl = (query: string, placeId?: string) => {
+  const params = new URLSearchParams({ api: "1", query });
+  if (placeId) params.set("query_place_id", placeId);
+  return `https://www.google.com/maps/search/?${params.toString()}`;
+};
+
+const peninsulaCruiseNote =
+  "Assumes travel from NYC via Buenos Aires and Ushuaia for an expedition cruise, with economy flights, port nights, ship berth, meals, landing gear and a weather buffer.";
+const weddellCruiseNote =
+  "Assumes travel from NYC via Buenos Aires and Ushuaia for a helicopter-supported Weddell Sea expedition, with economy flights, ship berth, meals, landing gear and a large ice/weather buffer.";
+const rossSeaCruiseNote =
+  "Assumes travel from NYC to a New Zealand or Australia expedition gateway for a long Ross Sea voyage, with economy flights, port nights, ship berth, meals, helicopter-linked access where offered and a large weather buffer.";
+const scienceOnlyNote =
+  "No normal civilian itinerary exists from NYC or anywhere else. The estimate is a practical placeholder for rare research-linked or national-program logistics, including long-haul repositioning, not a bookable tourist trip.";
+const southPoleFlightNote =
+  "Assumes travel from NYC via South America to the operator gateway for a specialist fly-in South Pole itinerary, with economy flights, polar logistics, camp support, meals, required gear and weather contingency.";
+
+const spots = [
+  {
+    id: "snow-hill-emperor-penguins",
+    name: "Snow Hill Island emperor penguins",
+    countries: ["Antarctica"],
+    area: "Weddell Sea",
+    kind: "Emperor penguin colony",
+    access: "Helicopter-supported expedition",
+    scores: {
+      globallyUnique: 10,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A realistic visitor target for the only bird that breeds through the Antarctic winter",
+    why: "Emperor penguins are a globally singular breeding spectacle, incubating eggs through the polar night on sea ice. Snow Hill Island is the best-known tourist objective for seeing them, when ice and helicopter conditions cooperate.",
+    realityCheck: "Treat emperor penguins as a premium attempt, not a guarantee. Weather, sea ice and aircraft limits cancel landings often.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Snow_Hill_Island",
+    source: {
+      label: "British Antarctic Survey",
+      url: "https://www.bas.ac.uk/media-post/four-new-emperor-penguin-colonies-discovered-by-satellite/",
+    },
+    trip: {
+      days: 16,
+      costUsd: 30000,
+      note: weddellCruiseNote,
+    },
+    map: {
+      name: "Snow Hill Island",
+      formattedAddress: "Snow Hill Island, Antarctica",
+      placeId: "ChIJBfBmxZmnibsRLWZN33WDtwE",
+      rating: 4.3,
+      reviewCount: 15,
+      location: {
+        lat: -64.466667,
+        lng: -57.2,
+      },
+      googleMapsUrl: mapsSearchUrl("Snow Hill Island Antarctica", "ChIJBfBmxZmnibsRLWZN33WDtwE"),
+    },
+  },
+{
+    id: "commonwealth-bay",
+    name: "Commonwealth Bay and Cape Denison",
+    countries: ["Antarctica"],
+    area: "George V Land",
+    kind: "Katabatic wind coast",
+    access: "Rare East Antarctic expedition",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The windiest near-sea-level place on Earth by sustained average winds",
+    why: "Cape Denison is the Home of the Blizzard: terrain-funneled katabatic winds pour off the plateau with unusual persistence, creating a wind regime defined by gravity and topography rather than ordinary storms. Mawson's huts add polar history to the meteorology.",
+    realityCheck: "This is remote East Antarctica. Grounded icebergs, sea ice and expedition availability can make access disappear for years.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Commonwealth_Bay",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Commonwealth_Bay",
+    },
+    trip: {
+      days: 28,
+      costUsd: 33000,
+      note: "Assumes travel from NYC to an Australia or New Zealand expedition gateway for a specialized East Antarctic coastal voyage, with economy flights, port nights, ship berth, meals, permit constraints and a large ice/weather buffer.",
+    },
+    map: {
+      name: "Cape Denison",
+      formattedAddress: "Cape Denison, Antarctica",
+      placeId: "ChIJy4zAe11QxK4RtMWKtAemz6w",
+      rating: 3.7,
+      reviewCount: 7,
+      location: {
+        lat: -67.0063019,
+        lng: 142.6554173,
+      },
+      googleMapsUrl: mapsSearchUrl("Cape Denison Antarctica", "ChIJy4zAe11QxK4RtMWKtAemz6w"),
+    },
+  },
+{
+    id: "mcmurdo-dry-valleys",
+    name: "McMurdo Dry Valleys",
+    countries: ["Antarctica"],
+    area: "Victoria Land",
+    kind: "Polar desert",
+    access: "Research-only or rare helicopter-supported Ross Sea access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The largest ice-free region in Antarctica and Earth's strongest Mars analogue",
+    why: "The Dry Valleys combine blocked ice flow, precipitation shadow and katabatic winds into a bare-rock cold desert where parts may have avoided meaningful precipitation for millions of years. Their exposed soils, salts and microbial limits make them a core astrobiology field site.",
+    realityCheck: "Tourists almost never reach the valleys. A few helicopter-equipped Ross Sea expeditions have offered glimpses, but practical access is science-dominated.",
+    wikiUrl: "https://en.wikipedia.org/wiki/McMurdo_Dry_Valleys",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/McMurdo_Dry_Valleys",
+    },
+    trip: {
+      days: 34,
+      costUsd: 48000,
+      note: rossSeaCruiseNote,
+    },
+    map: {
+      name: "McMurdo Dry Valleys",
+      formattedAddress: "McMurdo Dry Valleys, Victoria Land, Antarctica",
+      location: {
+        lat: -77.466667,
+        lng: 162.516667,
+      },
+      googleMapsUrl: mapsSearchUrl("McMurdo Dry Valleys Antarctica"),
+    },
+  },
+{
+    id: "blood-falls",
+    name: "Blood Falls",
+    countries: ["Antarctica"],
+    area: "Taylor Glacier",
+    kind: "Subglacial brine outflow",
+    access: "Research-only; occasional Ross Sea aerial view",
+    scores: {
+      globallyUnique: 10,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The only surface outflow of an ancient iron-rich subglacial brine ecosystem",
+    why: "Blood Falls makes a sealed, salty, oxygen-poor microbial world visible as red iron oxides spilling from Taylor Glacier. The brine reservoir and its lightless microbial metabolism are why astrobiologists treat the site as a window into icy worlds such as Mars or Europa.",
+    realityCheck: "It is not a normal landing site. Access is tied to McMurdo-area science logistics, with rare tourist views from the air.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Blood_Falls",
+    source: {
+      label: "Science",
+      url: "https://www.science.org/doi/10.1126/science.1167350",
+    },
+    trip: {
+      days: 34,
+      costUsd: 48000,
+      note: rossSeaCruiseNote,
+    },
+    map: {
+      name: "Blood Falls",
+      formattedAddress: "Blood Falls, Antarctica",
+      placeId: "ChIJq-YOzXofdK8RhIUBfGEFbE8",
+      rating: 4.4,
+      reviewCount: 260,
+      location: {
+        lat: -77.716667,
+        lng: 162.266667,
+      },
+      googleMapsUrl: mapsSearchUrl("Blood Falls Antarctica", "ChIJq-YOzXofdK8RhIUBfGEFbE8"),
+    },
+  },
+{
+    id: "ross-island-huts",
+    name: "Scott's and Shackleton's Ross Island huts",
+    countries: ["Antarctica"],
+    area: "Ross Island",
+    kind: "Heroic age expedition huts",
+    access: "Ross Sea voyage with helicopter or landing access",
+    scores: {
+      globallyUnique: 8,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 8,
+    },
+    uniqueness: "Century-old expedition bases preserved in situ by polar cold and dryness",
+    why: "Scott's Discovery and Terra Nova huts and Shackleton's Nimrod hut preserve the heroic age at room scale: food tins, clothing, scientific gear and expedition objects remain where polar teams left them, conserved by the Antarctic Heritage Trust.",
+    realityCheck: "These are reachable only on rare Ross Sea itineraries, and actual hut landings depend on permits, helicopters, weather and sea ice.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Scott%27s_Hut",
+    source: {
+      label: "Antarctic Heritage Trust",
+      url: "https://nzaht.org/conserve/explorer-bases/scotts-terra-nova-hut/",
+    },
+    trip: {
+      days: 34,
+      costUsd: 39000,
+      note: rossSeaCruiseNote,
+    },
+    map: {
+      name: "Scott's Hut",
+      formattedAddress: "Cape Evans, 9C79+H46, McMurdo Station, Antarctica",
+      placeId: "ChIJ2dQSMHgtd68R0hIVtUci_qg",
+      rating: 4.3,
+      reviewCount: 552,
+      location: {
+        lat: -77.6360778,
+        lng: 166.4177754,
+      },
+      googleMapsUrl: mapsSearchUrl("Scott's Hut Cape Evans Antarctica", "ChIJ2dQSMHgtd68R0hIVtUci_qg"),
+    },
+  },
+{
+    id: "mount-erebus",
+    name: "Mount Erebus",
+    countries: ["Antarctica"],
+    area: "Ross Island",
+    kind: "Active volcano",
+    access: "Visible from Ross Sea routes; summit science only",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "Earth's southernmost active volcano, with one of the few persistent lava lakes",
+    why: "Mount Erebus is singular for active polar volcanism: a phonolitic summit lava lake, rare anorthoclase crystals, ice fumarole towers and warm microbial niches inside a landscape otherwise defined by deep cold.",
+    realityCheck: "Ross Sea travelers may see the mountain and nearby historic sites, but the crater and summit are research terrain.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Mount_Erebus",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Mount_Erebus",
+    },
+    trip: {
+      days: 34,
+      costUsd: 39000,
+      note: rossSeaCruiseNote,
+    },
+    map: {
+      name: "Mount Erebus",
+      formattedAddress: "Mt Erebus, Antarctica",
+      placeId: "ChIJI7ZVC4HJcK8RJ4MydevUo-4",
+      rating: 4.5,
+      reviewCount: 314,
+      location: {
+        lat: -77.5292912,
+        lng: 167.1523106,
+      },
+      googleMapsUrl: mapsSearchUrl("Mount Erebus Antarctica", "ChIJI7ZVC4HJcK8RJ4MydevUo-4"),
+    },
+  },
+{
+    id: "lake-vostok",
+    name: "Lake Vostok",
+    countries: ["Antarctica"],
+    area: "East Antarctic ice sheet",
+    kind: "Subglacial lake",
+    access: "Interior science only",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The largest known Antarctic subglacial lake, sealed beneath roughly 4 km of ice",
+    why: "Lake Vostok is a hidden liquid world comparable in area to Lake Ontario, isolated beneath the ice and kept liquid by pressure and geothermal heat. Its biology remains contested, but as a Europa and Enceladus analogue it has no ordinary terrestrial twin.",
+    realityCheck: "This is one of the least reachable places on Earth. Tourist logistics do not go to the lake or drilling area.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Lake_Vostok",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Lake_Vostok",
+    },
+    trip: {
+      days: 34,
+      costUsd: 123000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Lake Vostok",
+      formattedAddress: "Lake Vostok, Antarctica",
+      placeId: "ChIJr47iE4HhM64RMoVp5BCbQRA",
+      rating: 4.3,
+      reviewCount: 376,
+      location: {
+        lat: -77.500052,
+        lng: 106.0000951,
+      },
+      googleMapsUrl: mapsSearchUrl("Lake Vostok Antarctica", "ChIJr47iE4HhM64RMoVp5BCbQRA"),
+    },
+  },
+{
+    id: "larsen-ice-shelves",
+    name: "Larsen ice shelves",
+    countries: ["Antarctica"],
+    area: "East Antarctic Peninsula",
+    kind: "Ice-shelf collapse zone",
+    access: "Occasional Weddell Sea expedition",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A real-time record of ice-shelf collapse after millennia of stability",
+    why: "Larsen A and B became the emblem of abrupt Antarctic change when they disintegrated in 1995 and 2002, with Larsen B losing thousands of square kilometers in weeks after remaining stable through much of the Holocene. Larsen C later produced the giant A-68 iceberg.",
+    realityCheck: "This is more scientific evidence than scenic certainty. Weddell Sea access varies sharply with sea ice and ship capability.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Larsen_Ice_Shelf",
+    source: {
+      label: "NASA Earth Observatory",
+      url: "https://earthobservatory.nasa.gov/images/88552/crack-in-the-larsen-c-ice-shelf",
+    },
+    trip: {
+      days: 16,
+      costUsd: 22000,
+      note: weddellCruiseNote,
+    },
+    map: {
+      name: "Larsen Ice Shelf",
+      formattedAddress: "Larsen Ice Shelf, Antarctic Peninsula",
+      location: {
+        lat: -67.5,
+        lng: -61,
+      },
+      googleMapsUrl: mapsSearchUrl("Larsen Ice Shelf Antarctica"),
+    },
+  },
+{
+    id: "vostok-station",
+    name: "Vostok Station",
+    countries: ["Antarctica"],
+    area: "Princess Elizabeth Land",
+    kind: "Cold record station",
+    access: "Interior science only",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 8,
+    },
+    uniqueness: "The site of the coldest directly measured natural air temperature on Earth",
+    why: "Vostok Station holds the official ground-measured air-temperature record of -89.2 C, recorded in July 1983. It also sits above the Lake Vostok drilling zone, linking the surface cold record with one of the planet's most isolated hidden lakes.",
+    realityCheck: "Satellite surface-temperature lows elsewhere on the plateau are colder but not the official air-temperature record. Vostok itself is not a tourist destination.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Vostok_Station",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Vostok_Station",
+    },
+    trip: {
+      days: 34,
+      costUsd: 123000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Vostok Station",
+      formattedAddress: "Princess Elizabeth Land, Antarctica",
+      placeId: "ChIJtbRv24sUM64RgkGHYHjEqx4",
+      rating: 4.3,
+      reviewCount: 703,
+      location: {
+        lat: -78.4644892,
+        lng: 106.8339659,
+      },
+      googleMapsUrl: mapsSearchUrl("Vostok Station Antarctica", "ChIJtbRv24sUM64RgkGHYHjEqx4"),
+    },
+  },
+{
+    id: "ross-ice-shelf",
+    name: "Ross Ice Shelf",
+    countries: ["Antarctica"],
+    area: "Ross Sea",
+    kind: "Ice shelf",
+    access: "Ross Sea expedition access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 5,
+      easeOfAccess: 0,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The largest floating slab of ice on Earth",
+    why: "The Ross Ice Shelf is continent-scale floating ice, with a long seaward front that early explorers called the Barrier. Its size, history as the launch ramp for South Pole expeditions and giant calving events make it unmatched as a single ice shelf.",
+    realityCheck: "Ross Sea ships can approach the front only when ice, weather and route planning allow.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Ross_Ice_Shelf",
+    source: {
+      label: "NASA Earth Observatory",
+      url: "https://earthobservatory.nasa.gov/images/5302/b-15a-iceberg-nears-drygalski-ice-tongue",
+    },
+    trip: {
+      days: 34,
+      costUsd: 35000,
+      note: rossSeaCruiseNote,
+    },
+    map: {
+      name: "Ross Ice Shelf",
+      formattedAddress: "Ross Ice Shelf, Antarctica",
+      placeId: "ChIJmwx70xv4fKURCo6S0GXAEsM",
+      rating: 4.3,
+      reviewCount: 154,
+      location: {
+        lat: -81.4999691,
+        lng: -174.9999732,
+      },
+      googleMapsUrl: mapsSearchUrl("Ross Ice Shelf Antarctica", "ChIJmwx70xv4fKURCo6S0GXAEsM"),
+    },
+  },
+{
+    id: "deception-island",
+    name: "Deception Island",
+    countries: ["Antarctica"],
+    area: "South Shetland Islands",
+    kind: "Flooded volcanic caldera",
+    access: "Expedition cruise landing",
+    scores: {
+      globallyUnique: 6,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 8,
+    },
+    uniqueness: "A ship-reachable harbor inside the flooded caldera of an active volcano",
+    why: "Deception Island is the most globally singular Antarctic place ordinary travelers can realistically reach: ships enter through Neptune's Bellows and anchor inside Port Foster, the flooded crater of an active volcano with steaming beaches, ruined stations and chinstrap colonies.",
+    realityCheck: "It is common by Antarctic standards, but never guaranteed. Landings depend on weather, sea state, volcanic monitoring and IAATO rules.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Deception_Island",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Deception_Island",
+    },
+    trip: {
+      days: 14,
+      costUsd: 14000,
+      note: peninsulaCruiseNote,
+    },
+    map: {
+      name: "Deception Island",
+      formattedAddress: "Deception Island, Antarctica",
+      placeId: "ChIJy86TpF4wd7wR71tBNhGEwzE",
+      rating: 4.6,
+      reviewCount: 702,
+      location: {
+        lat: -62.9409297,
+        lng: -60.55537510000001,
+      },
+      googleMapsUrl: mapsSearchUrl("Deception Island Antarctica", "ChIJy86TpF4wd7wR71tBNhGEwzE"),
+    },
+  },
+{
+    id: "transantarctic-mountains",
+    name: "Transantarctic Mountains",
+    countries: ["Antarctica"],
+    area: "East-West Antarctica divide",
+    kind: "Continental mountain range",
+    access: "Seen from Ross routes and overflights; interior science or mountaineering only",
+    scores: {
+      globallyUnique: 8,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 8,
+    },
+    uniqueness: "One of Earth's longest mountain ranges, raised largely without tectonic compression",
+    why: "The Transantarctic Mountains split the continent and expose Beacon Supergroup rocks with fossils and coal from greener Antarctic worlds. Their scale and rift-flank uplift history make them geologically unlike most great ranges.",
+    realityCheck: "Travelers may see parts of the range from ships or aircraft. The interior range is not normal tourism terrain.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Transantarctic_Mountains",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Transantarctic_Mountains",
+    },
+    trip: {
+      days: 34,
+      costUsd: 35000,
+      note: rossSeaCruiseNote,
+    },
+    map: {
+      name: "Transantarctic Mountains",
+      formattedAddress: "Transantarctic Mountains, Antarctica",
+      placeId: "ChIJQdVOuvbZX6URuGNqSTYx-gM",
+      rating: 4.1,
+      reviewCount: 68,
+      location: {
+        lat: -85,
+        lng: -175,
+      },
+      googleMapsUrl: mapsSearchUrl("Transantarctic Mountains Antarctica", "ChIJQdVOuvbZX6URuGNqSTYx-gM"),
+    },
+  },
+{
+    id: "don-juan-pond",
+    name: "Don Juan Pond",
+    countries: ["Antarctica"],
+    area: "Wright Valley",
+    kind: "Hypersaline pond",
+    access: "Science only",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 3,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The saltiest known natural body of water on Earth",
+    why: "Don Juan Pond is an ankle-deep calcium-chloride brine that can remain liquid at Antarctic winter temperatures. Its salts, moisture capture and dark slope tracks make it one of Earth's best models for possible briny flows on Mars.",
+    realityCheck: "It is well off the tourist circuit inside the Dry Valleys. Treat it as a science-only site, not an expedition-cruise objective.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Don_Juan_Pond",
+    source: {
+      label: "Nature Scientific Reports",
+      url: "https://www.nature.com/articles/srep01166",
+    },
+    trip: {
+      days: 34,
+      costUsd: 48000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Don Juan Pond",
+      formattedAddress: "Don Juan Pond, Antarctica",
+      placeId: "ChIJFXmUfasUdK8Rfp3Zf8Pnmq0",
+      rating: 4.1,
+      reviewCount: 74,
+      location: {
+        lat: -77.5618985,
+        lng: 161.1907728,
+      },
+      googleMapsUrl: mapsSearchUrl("Don Juan Pond Antarctica", "ChIJFXmUfasUdK8Rfp3Zf8Pnmq0"),
+    },
+  },
+{
+    id: "icecube-neutrino-observatory",
+    name: "IceCube Neutrino Observatory",
+    countries: ["Antarctica"],
+    area: "South Pole",
+    kind: "Astroparticle observatory",
+    access: "Science only",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 3,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A cubic kilometer of Antarctic ice turned into the world's largest neutrino detector",
+    why: "IceCube exists because deep South Pole ice is clear, dark and stable enough to detect Cherenkov flashes from rare neutrino interactions. The observatory turns the ice sheet itself into a gigaton-scale instrument.",
+    realityCheck: "South Pole fly-in travelers may be nearby, but the observatory is a research facility rather than a public attraction.",
+    wikiUrl: "https://en.wikipedia.org/wiki/IceCube_Neutrino_Observatory",
+    source: {
+      label: "IceCube",
+      url: "https://icecube.wisc.edu/",
+    },
+    trip: {
+      days: 12,
+      costUsd: 68000,
+      note: southPoleFlightNote,
+    },
+    map: {
+      name: "IceCube Neutrino Observatory",
+      formattedAddress: "89.99 -63.453056, Antarctica",
+      placeId: "ChIJJ5tG_K2qqroRErkAUCOL-Ko",
+      rating: 3.5,
+      reviewCount: 68,
+      location: {
+        lat: -89.99,
+        lng: -63.453056,
+      },
+      googleMapsUrl: mapsSearchUrl("IceCube Neutrino Observatory Antarctica", "ChIJJ5tG_K2qqroRErkAUCOL-Ko"),
+    },
+  },
+{
+    id: "onyx-river",
+    name: "Onyx River and Lake Vanda",
+    countries: ["Antarctica"],
+    area: "Wright Valley",
+    kind: "Endorheic meltwater river",
+    access: "Science only",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "Antarctica's longest river, flowing inland away from the sea",
+    why: "The Onyx River reverses normal intuition: summer meltwater flows inland from Wright Lower Glacier to Lake Vanda because the valley's seaward exit is blocked. Its short seasonal flow and long monitoring record make it one of Antarctica's strangest hydrology sites.",
+    realityCheck: "Google returns Lake Vanda as the useful map result for this system. The river itself is inside the science-controlled Dry Valleys.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Onyx_River",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Onyx_River",
+    },
+    trip: {
+      days: 34,
+      costUsd: 48000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Lake Vanda",
+      formattedAddress: "Lake Vanda, Antarctica",
+      placeId: "ChIJJdY5_DESdK8RYsMve-En3PY",
+      rating: 3.9,
+      reviewCount: 21,
+      location: {
+        lat: -77.52963,
+        lng: 161.57553,
+      },
+      googleMapsUrl: mapsSearchUrl("Lake Vanda Antarctica", "ChIJJdY5_DESdK8RYsMve-En3PY"),
+    },
+  },
+{
+    id: "deep-lake",
+    name: "Deep Lake",
+    countries: ["Antarctica"],
+    area: "Vestfold Hills",
+    kind: "Hypersaline extremophile lake",
+    access: "Science only",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A marine-derived lake so salty it can remain liquid through deep Antarctic cold",
+    why: "Deep Lake is dominated by cold-adapted haloarchaea and remains liquid because its salinity is roughly an order of magnitude above seawater. It is one of the planet's cleanest natural laboratories for cold, salt-loving life.",
+    realityCheck: "Google's text result for Deep Lake pointed to the wrong Antarctic feature, so the map uses a manual Vestfold Hills coordinate. This is not tourist-accessible.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Deep_Lake_(Antarctica)",
+    source: {
+      label: "ISME Journal",
+      url: "https://www.nature.com/articles/ismej201323",
+    },
+    trip: {
+      days: 28,
+      costUsd: 63000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Deep Lake",
+      formattedAddress: "Deep Lake, Vestfold Hills, Antarctica",
+      location: {
+        lat: -68.56,
+        lng: 78.19,
+      },
+      googleMapsUrl: mapsSearchUrl("Deep Lake Vestfold Hills Antarctica"),
+    },
+  },
+{
+    id: "lake-untersee",
+    name: "Lake Untersee",
+    countries: ["Antarctica"],
+    area: "Queen Maud Land",
+    kind: "Alkaline ice-covered lake",
+    access: "Science only",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 6,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A perennially ice-covered alkaline lake with giant modern conical stromatolites",
+    why: "Lake Untersee combines a high-pH mixed layer, anoxic methane-rich deep water and microbial mats unlike modern environments elsewhere. It is studied as an analogue for early Earth and icy ocean worlds.",
+    realityCheck: "It is a remote Queen Maud Land field site. There is no standard traveler route.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Lake_Untersee",
+    source: {
+      label: "Nature Scientific Reports",
+      url: "https://www.nature.com/articles/s41598-022-11028-1",
+    },
+    trip: {
+      days: 28,
+      costUsd: 63000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Lake Untersee",
+      formattedAddress: "Lake Untersee, Antarctica",
+      placeId: "ChIJ3VQqdSfRuLARCx5MwsgPSYI",
+      rating: 4.5,
+      reviewCount: 6,
+      location: {
+        lat: -71.333333,
+        lng: 13.45,
+      },
+      googleMapsUrl: mapsSearchUrl("Lake Untersee Antarctica", "ChIJ3VQqdSfRuLARCx5MwsgPSYI"),
+    },
+  },
+{
+    id: "south-pole",
+    name: "Geographic South Pole",
+    countries: ["Antarctica"],
+    area: "Antarctic Plateau",
+    kind: "Polar endpoint",
+    access: "Specialist fly-in expedition",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 5,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The southern endpoint of Earth's rotation axis, sitting on a moving ice sheet",
+    why: "The pole is not only symbolic: the ceremonial marker must be reset because the ice beneath it flows roughly toward the Weddell Sea. At this point all directions are north, and the sun rises and sets only once each year.",
+    realityCheck: "A small number of flight-based tourists reach the pole, but it remains dominated by the US science program and weather can control the schedule.",
+    wikiUrl: "https://en.wikipedia.org/wiki/South_Pole",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/South_Pole",
+    },
+    trip: {
+      days: 12,
+      costUsd: 68000,
+      note: southPoleFlightNote,
+    },
+    map: {
+      name: "South Pole",
+      formattedAddress: "South Pole, Antarctica",
+      placeId: "ChIJ9X49KuD8ZbER9H-1_d0OLRQ",
+      location: {
+        lat: -90,
+        lng: 0,
+      },
+      googleMapsUrl: mapsSearchUrl("South Pole Antarctica", "ChIJ9X49KuD8ZbER9H-1_d0OLRQ"),
+    },
+  },
+{
+    id: "dome-a-ridge-a",
+    name: "Dome A and Ridge A",
+    countries: ["Antarctica"],
+    area: "East Antarctic Plateau",
+    kind: "Extreme plateau and astronomy site",
+    access: "National-program logistics only",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 3,
+      easeOfAccess: 0,
+      lowTouristCrowds: 8,
+    },
+    uniqueness: "The coldest, driest and calmest high plateau conditions on Earth",
+    why: "Dome A is the highest point on the East Antarctic plateau, while nearby Ridge A has been identified as an extraordinary ground-based astronomy site because of extreme cold, dryness, calm air and vanishingly low water vapor.",
+    realityCheck: "There is no meaningful tourist route. Even scientific access is specialized, with robotic and national-program facilities doing most of the work.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Dome_A",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Dome_A",
+    },
+    trip: {
+      days: 34,
+      costUsd: 153000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Dome A",
+      formattedAddress: "Dome A, Antarctica",
+      placeId: "ChIJsb3-S4zCLbAR-_mQA1OG9iM",
+      rating: 4.1,
+      reviewCount: 54,
+      location: {
+        lat: -80.36666699999999,
+        lng: 77.35,
+      },
+      googleMapsUrl: mapsSearchUrl("Dome A Antarctica", "ChIJsb3-S4zCLbAR-_mQA1OG9iM"),
+    },
+  },
+{
+    id: "allan-hills",
+    name: "Allan Hills blue ice area",
+    countries: ["Antarctica"],
+    area: "Victoria Land",
+    kind: "Meteorite and ancient ice field",
+    access: "Deep-field science only",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 3,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A blue-ice meteorite trap where Martian meteorites and million-year-old ice surface together",
+    why: "The Allan Hills concentrate meteorites as ice flows, stalls and ablates against buried bedrock. The same blue-ice mechanics expose ancient ice, including samples far older than conventional ice-core records, making the area a double archive of space rocks and ancient atmosphere.",
+    realityCheck: "Google text search returned a different Antarctic feature for this name, so the map uses a manual Allan Hills coordinate. Access is national-program field science, not tourism.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Allan_Hills",
+    source: {
+      label: "COLDEX",
+      url: "https://www.coldex.org/",
+    },
+    trip: {
+      days: 34,
+      costUsd: 93000,
+      note: scienceOnlyNote,
+    },
+    map: {
+      name: "Allan Hills",
+      formattedAddress: "Allan Hills, Victoria Land, Antarctica",
+      location: {
+        lat: -76.716667,
+        lng: 159.666667,
+      },
+      googleMapsUrl: mapsSearchUrl("Allan Hills Antarctica"),
+    },
+  }] satisfies TravelSpot[];
+
+---
+
+<TravelSpotGuide
+  pageTitle={"Polar places outside UN member states"}
+  pageDescription={"A merged Arctic and Antarctic guide filtered to places outside the internationally recognized borders of UN member states, leaving the Antarctic Treaty area entries."}
+  subject={"Polar places in international or disputed territory"}
+  keywords={"polar travel, Antarctica unique places, Antarctic Treaty, international territory, disputed territories, Deception Island, South Pole, Ross Sea"}
+  eyebrow={"Polar field guide"}
+  dek={"A filtered polar guide for places that sit outside the internationally recognized borders of UN member states. The current Arctic source list falls inside Russia, Canada, Norway, Sweden, Iceland or Greenland/Denmark, so the retained entries are Antarctic Treaty-area singularities."}
+  criteriaText={"This page merges the former Arctic and Antarctica guides, then removes every site located within the internationally recognized borders of UN member states, including dependencies and autonomous territories of those states. The retained list is therefore the Antarctic Treaty-area material: active volcanic harbors, Mars-like deserts, subglacial lakes, ancient ice, emperor penguins and polar history frozen in place. Trip estimates are per person from NYC and include long-haul economy flights, gateway nights, polar logistics, meals, required gear and weather buffers."}
+  tripOriginLabel={"From NYC"}
+  mapHeading={"Pins across polar territory outside UN member states"}
+  mapAriaLabel={"Google Map with pins for polar places outside UN member states"}
+  mapCenter={{ lat: -73, lng: 35 }}
+  mapZoom={2}
+  mapErrorLabel={"polar territory outside UN member states"}
+  spots={spots}
+/>

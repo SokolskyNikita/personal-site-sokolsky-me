@@ -1,7 +1,832 @@
 ---
 import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
 
-const spots = [
+const mapsSearchUrl = (query: string, placeId?: string) => {
+  const params = new URLSearchParams({ api: "1", query });
+  if (placeId) params.set("query_place_id", placeId);
+  return `https://www.google.com/maps/search/?${params.toString()}`;
+};
+
+const standardTripNote =
+  "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits.";
+const restrictedTripNote =
+  "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights, specialist local operators, permit support, chartered transfers where needed and a large weather or access buffer.";
+
+const importedSpots = [
+  {
+    id: "chara-sands",
+    name: "Chara Sands",
+    countries: ["Russia"],
+    area: "Zabaykalsky Krai",
+    kind: "Permafrost dune field",
+    access: "Rail plus local off-road access",
+    scores: {
+      globallyUnique: 8,
+      laymenInterest: 10,
+      easeOfAccess: 7,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A true dune desert abruptly set among taiga, bog, permafrost and glaciated mountains",
+    why: "Chara Sands is the improbable landscape contrast entry: dunes up to tens of meters high sitting on deep permafrost beside taiga and the Kodar range, likely inherited from glacial-lake delta sediments.",
+    realityCheck: "Its uniqueness claims are more popular-geographic than hard world-record science, but the landscape juxtaposition is still rare.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Chara_Sands",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Chara_Sands",
+    },
+    trip: {
+      days: 7,
+      costUsd: 1300,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Chara Sands",
+      formattedAddress: "Zabaykalsky Krai, Russia, 674150",
+      placeId: "ChIJxwUdjBUlP1wR6irzmywbcL0",
+      rating: 4.9,
+      reviewCount: 58,
+      location: {
+        lat: 56.8419238,
+        lng: 118.1390798,
+      },
+      googleMapsUrl: mapsSearchUrl("Chara Sands Zabaykalsky Krai Russia", "ChIJxwUdjBUlP1wR6irzmywbcL0"),
+    },
+  },
+{
+    id: "denisova-cave",
+    name: "Denisova Cave",
+    countries: ["Russia"],
+    area: "Altai Krai",
+    kind: "Paleoanthropology cave",
+    access: "Road access with local site rules",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 9,
+      easeOfAccess: 10,
+      lowTouristCrowds: 7,
+    },
+    uniqueness: "The type site of the Denisovans and the only cave tied to three human lineages",
+    why: "Denisova Cave changed human prehistory: DNA from a finger bone identified the Denisovans, and the site also records Neanderthals, modern humans and the famous first-generation Neanderthal-Denisovan hybrid known as Denisova 11.",
+    realityCheck: "The archaeological importance is much bigger than the visitor infrastructure. Expect a scientific landmark, not a polished cave-show route.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Denisova_Cave",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Denisova_Cave",
+    },
+    trip: {
+      days: 5,
+      costUsd: 650,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Denisova Cave",
+      formattedAddress: "Altai Krai, Russia, 659686",
+      placeId: "ChIJZZ1GtErPw0IR8nbJplVoawo",
+      rating: 4.6,
+      reviewCount: 138,
+      location: {
+        lat: 51.3975041,
+        lng: 84.6761088,
+      },
+      googleMapsUrl: mapsSearchUrl("Denisova Cave Altai Krai Russia", "ChIJZZ1GtErPw0IR8nbJplVoawo"),
+    },
+  },
+{
+    id: "ivolginsky-datsan",
+    name: "Ivolginsky datsan and the body of Itigelov",
+    countries: ["Russia"],
+    area: "Buryatia",
+    kind: "Buddhist monastery and relic",
+    access: "Road access from Ulan-Ude",
+    scores: {
+      globallyUnique: 7,
+      laymenInterest: 9,
+      easeOfAccess: 10,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "Russian Buddhism's spiritual center and the unexplained preserved body of Lama Itigelov",
+    why: "Ivolginsky datsan matters both as the center of Russian Buddhism and for the seated body of Dashi-Dorzho Itigelov, exhumed decades after death and reported to retain unusually preserved tissue.",
+    realityCheck: "The body is shown only on major Buddhist holidays. Treat the claim with respect and verify display dates before planning around it.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Ivolginsky_Datsan",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Ivolginsky_Datsan",
+    },
+    trip: {
+      days: 5,
+      costUsd: 700,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Ivolginskiy Datsan",
+      formattedAddress: "Ivolginskiy Datsan, Buryatia, Russia, 671050",
+      placeId: "ChIJM6su4ZiVr10R9qbIUh6eczc",
+      location: {
+        lat: 51.7591015,
+        lng: 107.2030611,
+      },
+      googleMapsUrl: mapsSearchUrl("Ivolginsky Datsan Buryatia Russia", "ChIJM6su4ZiVr10R9qbIUh6eczc"),
+    },
+  },
+{
+    id: "yakutsk",
+    name: "Yakutsk",
+    countries: ["Russia"],
+    area: "Sakha / Yakutia",
+    kind: "Permafrost city",
+    access: "Flight access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 6,
+      easeOfAccess: 10,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The coldest major city on Earth and the largest city on continuous permafrost",
+    why: "Yakutsk is a functioning urban experiment in deep cold: pile foundations, winter routines near -40 C, mammoth-tusk commerce and permafrost museums built around ground that can destroy ordinary construction.",
+    realityCheck: "It is the easiest Sakha base, but winter visits still require serious cold-weather planning.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Yakutsk",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Yakutsk",
+    },
+    trip: {
+      days: 5,
+      costUsd: 900,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Yakutsk",
+      formattedAddress: "Yakutsk, Sakha Republic, Russia",
+      placeId: "ChIJfcTSoDk59lsR-6KvXLPEtGk",
+      location: {
+        lat: 62.03969120000001,
+        lng: 129.7422193,
+      },
+      googleMapsUrl: mapsSearchUrl("Yakutsk Sakha Republic Russia", "ChIJfcTSoDk59lsR-6KvXLPEtGk"),
+    },
+  },
+{
+    id: "lake-baikal",
+    name: "Lake Baikal",
+    countries: ["Russia"],
+    area: "Irkutsk Oblast / Buryatia",
+    kind: "Ancient rift lake",
+    access: "Rail/road access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 10,
+      easeOfAccess: 9,
+      lowTouristCrowds: 4,
+    },
+    uniqueness: "The deepest, oldest and largest freshwater lake by volume on Earth",
+    why: "Baikal is the benchmark for North Asian singularity: a 25- to 30-million-year-old continental rift lake holding roughly a fifth of Earth's unfrozen fresh surface water, oxygenated to full depth and packed with endemic life including the nerpa, the world's only exclusively freshwater seal.",
+    realityCheck: "The lake is accessible by Siberian standards, but winter ice travel needs local judgment and summer shore traffic clusters around the easiest towns.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Lake_Baikal",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Lake_Baikal",
+    },
+    trip: {
+      days: 6,
+      costUsd: 800,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Lake Baikal",
+      formattedAddress: "Lake Baikal, Russia",
+      placeId: "ChIJc9iNz-19q10RSTOFxRKUSPI",
+      rating: 4.7,
+      reviewCount: 5803,
+      location: {
+        lat: 53.5587003,
+        lng: 108.1649964,
+      },
+      googleMapsUrl: mapsSearchUrl("Lake Baikal Russia", "ChIJc9iNz-19q10RSTOFxRKUSPI"),
+    },
+  },
+{
+    id: "volcanoes-kamchatka",
+    name: "Volcanoes of Kamchatka",
+    countries: ["Russia"],
+    area: "Kamchatka Peninsula",
+    kind: "Active volcanic arc",
+    access: "Flight plus guided field access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 9,
+      easeOfAccess: 5,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "One of Earth's densest and most varied active-volcano landscapes",
+    why: "Kamchatka packs hundreds of volcanoes, glaciers, salmon rivers, brown bears and Pacific wildlife into one Ring of Fire peninsula. Klyuchevskaya Sopka anchors the entry as the highest active volcano in the Northern Hemisphere.",
+    realityCheck: "Weather, volcanic activity and reserve rules drive the trip. Some volcano views are easy from Petropavlovsk-Kamchatsky, while backcountry access is expeditionary.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Volcanoes_of_Kamchatka",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Volcanoes_of_Kamchatka",
+    },
+    trip: {
+      days: 8,
+      costUsd: 1900,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Klyuchevskaya Sopka",
+      formattedAddress: "Klyuchevskaya Sopka, Kamchatka Krai, Russia, 684400",
+      placeId: "ChIJyUJ1S7NNBFkR67Sb82CdQGA",
+      rating: 4.6,
+      reviewCount: 233,
+      location: {
+        lat: 56.0575376,
+        lng: 160.6414579,
+      },
+      googleMapsUrl: mapsSearchUrl("Klyuchevskaya Sopka Kamchatka Russia", "ChIJyUJ1S7NNBFkR67Sb82CdQGA"),
+    },
+  },
+{
+    id: "batagaika-crater",
+    name: "Batagay megaslump",
+    countries: ["Russia"],
+    area: "Sakha / Yakutia",
+    kind: "Permafrost thaw crater",
+    access: "Remote field access from Batagay",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 8,
+      easeOfAccess: 2,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The largest permafrost thaw slump on Earth",
+    why: "Batagaika is an open wound in Siberian permafrost: a kilometer-scale thaw slump whose retreat exposes ancient frozen ground, releases carbon and disgorges Ice Age remains from horses to woolly rhino.",
+    realityCheck: "It is an active collapse feature, not a managed attraction. Access depends on local logistics, season and safety around unstable headwalls.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Batagaika_crater",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Batagaika_crater",
+    },
+    trip: {
+      days: 8,
+      costUsd: 2300,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Batagaika crater",
+      formattedAddress: "Sakha Republic, Russia, 678515",
+      placeId: "ChIJaxRrYYrpv1sRjKZk0tIeDRA",
+      rating: 4.5,
+      reviewCount: 60,
+      location: {
+        lat: 67.57838319999999,
+        lng: 134.7728568,
+      },
+      googleMapsUrl: mapsSearchUrl("Batagaika crater Batagay Sakha Republic Russia", "ChIJaxRrYYrpv1sRjKZk0tIeDRA"),
+    },
+  },
+{
+    id: "patomskiy-crater",
+    name: "Patomskiy crater",
+    countries: ["Russia"],
+    area: "Irkutsk Oblast",
+    kind: "Unexplained geological cone",
+    access: "Remote taiga expedition",
+    scores: {
+      globallyUnique: 6,
+      laymenInterest: 9,
+      easeOfAccess: 4,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "A young limestone cone with no settled origin story",
+    why: "Patomskiy crater is a strange cone of shattered limestone in remote taiga, long argued over as impact, volcanic or degassing feature and still valuable precisely because it resists easy classification.",
+    realityCheck: "This is for geology completists. Access is hard, local support matters and the payoff is intellectual more than scenic convenience.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Patomskiy_crater",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Patomskiy_crater",
+    },
+    trip: {
+      days: 10,
+      costUsd: 3200,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Patomskiy Crater",
+      formattedAddress: "Irkutsk Oblast, Russia, 666960",
+      placeId: "ChIJtWF4hAeDaVwR-GmKBRQ-Zlg",
+      rating: 4.6,
+      reviewCount: 165,
+      location: {
+        lat: 59.2847206,
+        lng: 116.5895574,
+      },
+      googleMapsUrl: mapsSearchUrl("Patomskiy crater Irkutsk Oblast Russia", "ChIJtWF4hAeDaVwR-GmKBRQ-Zlg"),
+    },
+  },
+{
+    id: "tunguska-event-site",
+    name: "Tunguska event site",
+    countries: ["Russia"],
+    area: "Krasnoyarsk Krai",
+    kind: "Airburst impact site",
+    access: "Remote expedition access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 8,
+      easeOfAccess: 1,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The largest impact event in recorded history",
+    why: "The 1908 Tunguska airburst flattened roughly 2,150 square kilometers of taiga without leaving a crater, making this remote forest the reference case for modern planetary-defense airburst risk.",
+    realityCheck: "It is historically enormous but logistically awkward: the first scientific expedition took almost two decades to arrive, and modern access still needs planning.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Tunguska_event",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Tunguska_event",
+    },
+    trip: {
+      days: 10,
+      costUsd: 3000,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Tunguska Blast Event",
+      formattedAddress: "Krasnoyarsk Krai, Russia, 648490",
+      placeId: "ChIJEVrmrFJRk1wRov8MXiTrqn4",
+      rating: 4.4,
+      reviewCount: 30,
+      location: {
+        lat: 60.91657,
+        lng: 101.9499859,
+      },
+      googleMapsUrl: mapsSearchUrl("Tunguska event site Podkamennaya Tunguska River Russia", "ChIJEVrmrFJRk1wRov8MXiTrqn4"),
+    },
+  },
+{
+    id: "kungur-ice-cave",
+    name: "Kungur Ice Cave",
+    countries: ["Russia"],
+    area: "Perm Krai",
+    kind: "Gypsum ice cave",
+    access: "Managed cave visit",
+    scores: {
+      globallyUnique: 7,
+      laymenInterest: 9,
+      easeOfAccess: 7,
+      lowTouristCrowds: 4,
+    },
+    uniqueness: "A large gypsum karst cave with perennial ice outside continuous permafrost",
+    why: "Kungur is unusual for the mix of gypsum karst scale, permanent entrance-zone ice, underground lakes and organ-pipe shafts sustained by the cave's own air circulation.",
+    realityCheck: "This is one of the most accessible entries in the list and is more managed show cave than wilderness.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Kungur_Ice_Cave",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Kungur_Ice_Cave",
+    },
+    trip: {
+      days: 5,
+      costUsd: 650,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Kungurskaya Ledyanaya Peshchera",
+      formattedAddress: "Кунгурская Ледяная пещера, Filippovka, Permskiy kray, Russia, 617472",
+      placeId: "ChIJa89YeG9C6EMRX1gaQNpoblE",
+      rating: 4.7,
+      reviewCount: 5884,
+      location: {
+        lat: 57.44095180000001,
+        lng: 57.0058743,
+      },
+      googleMapsUrl: mapsSearchUrl("Kungur Ice Cave Perm Krai Russia", "ChIJa89YeG9C6EMRX1gaQNpoblE"),
+    },
+  },
+{
+    id: "kamchatka-geysers",
+    name: "Valley of Geysers, Kamchatka",
+    countries: ["Russia"],
+    area: "Kronotsky Reserve, Kamchatka",
+    kind: "Geothermal field",
+    access: "Helicopter access when allowed",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "The only geyser field on the Eurasian landmass",
+    why: "The Valley of Geysers concentrates dozens of geysers, hot springs and volcanic thermal features into a short Kamchatka river basin, making it Eurasia's closest analogue to Yellowstone-scale geyser terrain.",
+    realityCheck: "Helicopter days can cancel and reserve access can change quickly. Visitors stay on controlled routes.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Valley_of_Geysers",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Valley_of_Geysers",
+    },
+    trip: {
+      days: 8,
+      costUsd: 2600,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Доли́на ге́йзеров",
+      formattedAddress: "Доли́на ге́йзеров, Камчатский край, Russia, 684305",
+      placeId: "ChIJS1f3cYwuHVkR0S2aHPyMX9c",
+      rating: 3.2,
+      reviewCount: 9,
+      location: {
+        lat: 54.430726,
+        lng: 160.1393101,
+      },
+      googleMapsUrl: mapsSearchUrl("Valley of Geysers Kamchatka Russia", "ChIJS1f3cYwuHVkR0S2aHPyMX9c"),
+    },
+  },
+{
+    id: "tuvan-throat-singing",
+    name: "Tuvan throat singing",
+    countries: ["Russia"],
+    area: "Tuva",
+    kind: "Intangible culture",
+    access: "Flight/road access via Kyzyl",
+    scores: {
+      globallyUnique: 6,
+      laymenInterest: 7,
+      easeOfAccess: 9,
+      lowTouristCrowds: 5,
+    },
+    uniqueness: "A living overtone-singing tradition where one singer produces multiple pitches",
+    why: "Khoomei is tied to Tuva's steppe, shamanic and pastoral sound-world: singers shape the vocal tract so overtones emerge as a second melody above a drone.",
+    realityCheck: "The pin uses Kyzyl's Center of Asia monument as a practical anchor for a regional cultural tradition, not as the tradition's sole location.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Tuvan_throat_singing",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Tuvan_throat_singing",
+    },
+    trip: {
+      days: 6,
+      costUsd: 900,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Obelisk Tsentr Azii",
+      formattedAddress: "Ulitsa Krasnykh Partizan, 9, Kyzyl, Respublika Tyva, Russia, 667000",
+      placeId: "ChIJ5Wa0ctWWO10RCk7gUXJJksA",
+      rating: 4.7,
+      reviewCount: 2252,
+      location: {
+        lat: 51.7248639,
+        lng: 94.44365189999999,
+      },
+      googleMapsUrl: mapsSearchUrl("Kyzyl Tuva Russia Center of Asia", "ChIJ5Wa0ctWWO10RCk7gUXJJksA"),
+    },
+  },
+{
+    id: "oymyakon",
+    name: "Oymyakon and Verkhoyansk",
+    countries: ["Russia"],
+    area: "Sakha / Yakutia",
+    kind: "Extreme cold settlements",
+    access: "Long winter road trip",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 5,
+      easeOfAccess: 4,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The coldest permanently inhabited places on Earth",
+    why: "Oymyakon and Verkhoyansk share the Northern Hemisphere pole-of-cold story: inhabited settlements with readings near -68 C, January conditions that can stay below -60 C, and annual temperature ranges wide enough to run from deep Arctic cold to warm continental summers.",
+    realityCheck: "Winter is the point and the hazard. Verkhoyansk is hundreds of kilometers from Oymyakon, so most trips choose one cold-pole route rather than both.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Oymyakon",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Oymyakon",
+    },
+    trip: {
+      days: 8,
+      costUsd: 1600,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Oymyakon",
+      formattedAddress: "Oymyakon, Sakha Republic, Russia, 678750",
+      placeId: "ChIJ24rPgw6O4FsRwIXI9jHNIfY",
+      location: {
+        lat: 63.464138,
+        lng: 142.773727,
+      },
+      googleMapsUrl: mapsSearchUrl("Oymyakon Sakha Republic Russia", "ChIJ24rPgw6O4FsRwIXI9jHNIfY"),
+    },
+  },
+{
+    id: "yamal-gas-craters",
+    name: "Yamal gas-emission craters",
+    countries: ["Russia"],
+    area: "Yamal and Gydan peninsulas",
+    kind: "Methane permafrost craters",
+    access: "Science/industry-adjacent remote access",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 9,
+      easeOfAccess: 2,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A newly recognized explosive permafrost phenomenon known from one niche Arctic region",
+    why: "The Yamal craters are near-vertical holes opened by pressurized gas beneath thawing permafrost. Their rarity, recent discovery and debated formation mechanism make them one of the most important new Arctic geomorphology stories.",
+    realityCheck: "These are not normal visitor sites and some sit near industrial fields. The Maps pin is for the mapped Yamal Crater listing, not a recommended tourist stop.",
+    source: {
+      label: "Geophysical Research Letters",
+      url: "https://agupubs.onlinelibrary.wiley.com/journal/19448007",
+    },
+    trip: {
+      days: 7,
+      costUsd: 3500,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Yamal Crater",
+      formattedAddress: "Yamalo-Nenets Autonomous Okrug, Russia, 629632",
+      placeId: "ChIJrzFVxUTTkUQRUddAOYpDqIA",
+      rating: 5,
+      reviewCount: 1,
+      location: {
+        lat: 69.9766446,
+        lng: 68.4142923,
+      },
+      googleMapsUrl: mapsSearchUrl("Yamal crater Yamal Peninsula Russia", "ChIJrzFVxUTTkUQRUddAOYpDqIA"),
+    },
+  },
+{
+    id: "wrangel-island",
+    name: "Wrangel Island",
+    countries: ["Russia"],
+    area: "Chukotka",
+    kind: "Arctic refugium",
+    access: "Permit-only expedition access",
+    scores: {
+      globallyUnique: 9,
+      laymenInterest: 8,
+      easeOfAccess: 0,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The last known refuge of woolly mammoths and a polar-bear denning stronghold",
+    why: "Wrangel Island is singular because mammoths survived there into the Bronze Age, long after mainland extinction, and because its unglaciated Arctic isolation now supports exceptional polar bear den density, Pacific walrus haul-outs and a rich cold-adapted flora.",
+    realityCheck: "This is a strict reserve. Realistic access means permits plus expedition ship or helicopter logistics from the Russian Arctic.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Wrangel_Island",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Wrangel_Island",
+    },
+    trip: {
+      days: 18,
+      costUsd: 12000,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Wrangel Island",
+      formattedAddress: "Wrangel Island, Chukotka Autonomous Okrug, Russia",
+      placeId: "ChIJPwP1pTYGp1ARw0tbCCWp3OE",
+      rating: 4.3,
+      reviewCount: 339,
+      location: {
+        lat: 71.2488724,
+        lng: -179.9789208,
+      },
+      googleMapsUrl: mapsSearchUrl("Wrangel Island Chukotka Russia", "ChIJPwP1pTYGp1ARw0tbCCWp3OE"),
+    },
+  },
+{
+    id: "lena-pillars",
+    name: "Lena Pillars",
+    countries: ["Russia"],
+    area: "Sakha / Yakutia",
+    kind: "Cambrian river cliffs",
+    access: "Boat or winter road access",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 7,
+      easeOfAccess: 7,
+      lowTouristCrowds: 7,
+    },
+    uniqueness: "A major Cambrian fossil archive wrapped in a 100-meter pillar landscape",
+    why: "Lena Pillars combines spectacle and science: frost-shattered carbonate columns above the Lena River, plus Cambrian strata tied to early animal evolution and some of the world's important metazoan reef records.",
+    realityCheck: "Boat season and winter access are completely different trips. Yakutsk is the usual practical base.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Lena_Pillars",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Lena_Pillars",
+    },
+    trip: {
+      days: 7,
+      costUsd: 1400,
+      note: standardTripNote,
+    },
+    map: {
+      name: "Natsional'nyy Park \"Lenskiye Stolby\"",
+      formattedAddress: "Sakha Republic, Russia, 678024",
+      placeId: "ChIJ58bFqB4UCVwR2Ew5ZFO1nsY",
+      rating: 4.6,
+      reviewCount: 429,
+      location: {
+        lat: 61.1068613,
+        lng: 127.3637963,
+      },
+      googleMapsUrl: mapsSearchUrl("Lena Pillars National Park Sakha Republic Russia", "ChIJ58bFqB4UCVwR2Ew5ZFO1nsY"),
+    },
+  },
+{
+    id: "putorana-plateau",
+    name: "Putorana Plateau",
+    countries: ["Russia"],
+    area: "Krasnoyarsk Krai",
+    kind: "Basalt plateau",
+    access: "Expedition access from Norilsk",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 8,
+      easeOfAccess: 2,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "A roadless Arctic basalt plateau linked to the Siberian Traps",
+    why: "Putorana is Siberian scale in hard rock: the northern edge of the Siberian Traps, lifted into a labyrinth of tablelands, canyons, fjord-like lakes, waterfalls, endemic snow sheep and one of the last large wild reindeer migrations.",
+    realityCheck: "Access is expensive and permit-heavy, usually via Norilsk by helicopter or boat.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Putorana_Plateau",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Putorana_Plateau",
+    },
+    trip: {
+      days: 9,
+      costUsd: 2800,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Putorana Plateau",
+      formattedAddress: "Putorana Plateau, Krasnoyarsk Krai, Russia, 647483",
+      placeId: "ChIJMYsZKhBUV1sRe_gXpMK7fOY",
+      rating: 4.6,
+      reviewCount: 70,
+      location: {
+        lat: 68.7257271,
+        lng: 96.1289958,
+      },
+      googleMapsUrl: mapsSearchUrl("Putorana Plateau Krasnoyarsk Krai Russia", "ChIJMYsZKhBUV1sRe_gXpMK7fOY"),
+    },
+  },
+{
+    id: "pleistocene-park",
+    name: "Pleistocene Park",
+    countries: ["Russia"],
+    area: "Near Chersky, Sakha / Yakutia",
+    kind: "Rewilding climate experiment",
+    access: "Remote science-linked access",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 9,
+      easeOfAccess: 1,
+      lowTouristCrowds: 9,
+    },
+    uniqueness: "The flagship attempt to restore the mammoth steppe biome",
+    why: "Pleistocene Park is a real-world test of whether large grazers can recreate grassland, compact winter snow and slow permafrost thaw, turning a vanished Ice Age ecosystem into a climate experiment.",
+    realityCheck: "It is remote and research-led. Treat visits as specialist field logistics, not conventional ecotourism.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Pleistocene_Park",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Pleistocene_Park",
+    },
+    trip: {
+      days: 10,
+      costUsd: 3500,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Pleistocene Park",
+      formattedAddress: "Sakha Republic, Russia, 678830",
+      placeId: "ChIJ3zugruGsJVoRORKz4cqNdRg",
+      rating: 4.8,
+      reviewCount: 114,
+      location: {
+        lat: 68.5132223,
+        lng: 161.5060425,
+      },
+      googleMapsUrl: mapsSearchUrl("Pleistocene Park Chersky Sakha Republic Russia", "ChIJ3zugruGsJVoRORKz4cqNdRg"),
+    },
+  },
+{
+    id: "ukok-plateau",
+    name: "Ukok Plateau and the Siberian Ice Maiden",
+    countries: ["Russia"],
+    area: "Altai Republic",
+    kind: "High plateau archaeology",
+    access: "Guided border-zone expedition",
+    scores: {
+      globallyUnique: 8,
+      laymenInterest: 4,
+      easeOfAccess: 2,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "Permafrost-preserved Pazyryk burials with some of the best ancient tattoos known",
+    why: "Ukok's frozen kurgans preserved the Pazyryk world in rare detail, especially the Ice Maiden burial with tattooed skin, horses and an unresolved cultural-repatriation dispute in a sacred Altai border landscape.",
+    realityCheck: "Border-zone rules, weather and local sensitivities matter. The archaeological material is not simply a sightseeing object.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Ukok_Plateau",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Ukok_Plateau",
+    },
+    trip: {
+      days: 8,
+      costUsd: 1200,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Plato Ukok",
+      formattedAddress: "Unnamed Road, Respúblika Altáy, Russia, 649789",
+      placeId: "ChIJqVIXRdVZtkIRRDjJpJrpik4",
+      rating: 5,
+      reviewCount: 11,
+      location: {
+        lat: 49.3604342,
+        lng: 88.07658459999999,
+      },
+      googleMapsUrl: mapsSearchUrl("Ukok Plateau Altai Republic Russia", "ChIJqVIXRdVZtkIRRDjJpJrpik4"),
+    },
+  },
+{
+    id: "manpupuner",
+    name: "Manpupuner rock formations",
+    countries: ["Russia"],
+    area: "Komi Republic",
+    kind: "Weathering pillars",
+    access: "Remote trek/helicopter access",
+    scores: {
+      globallyUnique: 5,
+      laymenInterest: 6,
+      easeOfAccess: 2,
+      lowTouristCrowds: 10,
+    },
+    uniqueness: "Seven giant quartzite-schist pillars on a sacred remote plateau",
+    why: "Manpupuner's seven towers are the surviving hard cores of ancient Ural mountains, isolated by selective erosion into a landscape that looks engineered and remains sacred to the Mansi.",
+    realityCheck: "Access is difficult and seasonal, either by helicopter or a multi-day trek.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Manpupuner_rock_formations",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Manpupuner_rock_formations",
+    },
+    trip: {
+      days: 8,
+      costUsd: 1900,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Man-Pupu-Ner",
+      formattedAddress: "Man-Pupu-Ner, Komi Republic, Russia, 169437",
+      placeId: "ChIJpVVuiW4djEMRuFJ_bLt4XRs",
+      rating: 4.8,
+      reviewCount: 78,
+      location: {
+        lat: 62.21522220000001,
+        lng: 59.30503219999999,
+      },
+      googleMapsUrl: mapsSearchUrl("Manpupuner rock formations Komi Republic Russia", "ChIJpVVuiW4djEMRuFJ_bLt4XRs"),
+    },
+  },
+{
+    id: "nenets-yamal",
+    name: "Nenets reindeer herders of the Yamal Peninsula",
+    countries: ["Russia"],
+    area: "Yamalo-Nenets Autonomous Okrug",
+    kind: "Nomadic reindeer culture",
+    access: "Specialist cultural logistics",
+    scores: {
+      globallyUnique: 6,
+      laymenInterest: 5,
+      easeOfAccess: 2,
+      lowTouristCrowds: 7,
+    },
+    uniqueness: "One of the last intact large-scale nomadic reindeer migrations",
+    why: "Nenets families on Yamal still move herds across immense seasonal routes, including the frozen Ob crossing, keeping alive a mobile pastoral system under pressure from gas development and thawing permafrost.",
+    realityCheck: "This is a living culture, not an attraction. Ethical visits require local operators, permission and careful timing around migration or festival dates.",
+    wikiUrl: "https://en.wikipedia.org/wiki/Nenets_people",
+    source: {
+      label: "Wikipedia",
+      url: "https://en.wikipedia.org/wiki/Nenets_people",
+    },
+    trip: {
+      days: 8,
+      costUsd: 2500,
+      note: restrictedTripNote,
+    },
+    map: {
+      name: "Yamal Peninsula",
+      formattedAddress: "Yamal Peninsula, Yamalo-Nenets Autonomous Okrug, Russia, 629705",
+      placeId: "ChIJd6Xe-PRVkEQRv76IFsQj4oo",
+      rating: 4.3,
+      reviewCount: 148,
+      location: {
+        lat: 70,
+        lng: 70,
+      },
+      googleMapsUrl: mapsSearchUrl("Yamal Peninsula Russia", "ChIJd6Xe-PRVkEQRv76IFsQj4oo"),
+    },
+  }] satisfies TravelSpot[];
+
+const existingSpots = [
   {
     "id": "lake-baikal",
     "name": "Lake Baikal",
@@ -11,6 +836,12 @@ const spots = [
     "area": "Irkutsk / Buryatia",
     "kind": "Ancient lake",
     "access": "Rail/road access",
+    "scores": {
+      "globallyUnique": 9,
+      "laymenInterest": 10,
+      "easeOfAccess": 9,
+      "lowTouristCrowds": 4,
+    },
     "uniqueness": "The world’s deepest lake and largest liquid freshwater volume",
     "why": "Baikal is ranked for depth, age and endemic evolution: nerpa seals, strange amphipods, clear ice and rift geology.",
     "realityCheck": "Winter ice is spectacular but risky. Summer is easier.",
@@ -37,180 +868,87 @@ const spots = [
       "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
     }
   },
-  {
-    "id": "kamchatka-geysers",
-    "name": "Valley of Geysers, Kamchatka",
-    "countries": [
-      "Russia"
-    ],
-    "area": "Kamchatka Peninsula",
-    "kind": "Geothermal field",
-    "access": "Helicopter access when allowed",
-    "uniqueness": "One of the largest geyser fields on Earth",
-    "why": "Kamchatka’s Valley of Geysers is a volcanic basin of geysers, hot springs, mud pots and landslide-shaped terrain.",
-    "realityCheck": "Helicopter days can cancel and access can be restricted.",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Valley_of_Geysers",
-    "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Valley_of_Geysers"
-    },
-    "map": {
-      "name": "Доли́на ге́йзеров",
-      "formattedAddress": "Доли́на ге́йзеров, Камчатский край, Russia, 684305",
-      "placeId": "ChIJS1f3cYwuHVkR0S2aHPyMX9c",
-      "rating": 3.2,
-      "reviewCount": 9,
-      "location": {
-        "lat": 54.430726,
-        "lng": 160.1393101
+{
+      "id": "petropavlovsk-kamchatsky",
+      "name": "Petropavlovsk-Kamchatsky and Avacha Bay",
+      "countries": [
+          "Russia"
+      ],
+      "area": "Kamchatka Peninsula",
+      "kind": "Lebedev-loved volcanic port city",
+      "access": "Long domestic flight; weather-sensitive excursions",
+      "scores": {
+        "globallyUnique": 8,
+        "laymenInterest": 10,
+        "easeOfAccess": 2,
+        "lowTouristCrowds": 10,
       },
-      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJS1f3cYwuHVkR0S2aHPyMX9c"
-    },
-    "trip": {
-      "days": 8,
-      "costUsd": 2600,
-      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
-    }
-  },
-  {
-    "id": "lena-pillars",
-    "name": "Lena Pillars",
-    "countries": [
-      "Russia"
-    ],
-    "area": "Sakha / Yakutia",
-    "kind": "River cliffs",
-    "access": "Boat or winter road access",
-    "uniqueness": "A long wall of Cambrian limestone pillars above the Lena River",
-    "why": "Lena Pillars turns a Siberian river into a stone corridor of frost-shattered columns and fossil-bearing limestone.",
-    "realityCheck": "Boat season and winter access are completely different trips.",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Lena_Pillars",
-    "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Lena_Pillars"
-    },
-    "map": {
-      "name": "Natsional'nyy Park \"Lenskiye Stolby\"",
-      "formattedAddress": "Sakha Republic, Russia, 678024",
-      "placeId": "ChIJ58bFqB4UCVwR2Ew5ZFO1nsY",
-      "rating": 4.6,
-      "reviewCount": 429,
-      "location": {
-        "lat": 61.1068613,
-        "lng": 127.3637963
+      "uniqueness": "Artemy loved stop: a working Pacific port surrounded by volcanoes and one of the world’s great natural bays",
+      "why": "Lebedev wrote that he liked absolutely everything in Petropavlovsk-Kamchatsky, and later called its setting one of the most beautiful places in the world. The city is included for that rare urban geography: bay, ocean, volcanoes and military/fishing-town texture in one view.",
+      "realityCheck": "Weather and flight logistics dominate. Use the city as the base for Avacha Bay and volcano context, not as a polished city break.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Petropavlovsk-Kamchatsky",
+      "source": {
+          "label": "Artemy Lebedev",
+          "url": "https://www.tema.ru/travel/petropavlovsk-kamchatsky.2005/"
       },
-      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ58bFqB4UCVwR2Ew5ZFO1nsY"
-    },
-    "trip": {
-      "days": 7,
-      "costUsd": 1400,
-      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
-    }
-  },
-  {
-    "id": "putorana-plateau",
-    "name": "Putorana Plateau",
-    "countries": [
-      "Russia"
-    ],
-    "area": "Krasnoyarsk Krai",
-    "kind": "Basalt plateau",
-    "access": "Expedition access from Norilsk",
-    "uniqueness": "A huge basalt plateau of canyons, lakes and waterfalls near the Arctic Circle",
-    "why": "Putorana is Siberian scale in hard rock: stepped basalt, tablelands, deep lakes and remote waterfalls.",
-    "realityCheck": "Access is expensive and permit-heavy.",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Putorana_Plateau",
-    "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Putorana_Plateau"
-    },
-    "map": {
-      "name": "Putorana Plateau",
-      "formattedAddress": "Putorana Plateau, Krasnoyarsk Krai, Russia, 647483",
-      "placeId": "ChIJMYsZKhBUV1sRe_gXpMK7fOY",
-      "rating": 4.6,
-      "reviewCount": 70,
-      "location": {
-        "lat": 68.7257271,
-        "lng": 96.1289958
+      "trip": {
+          "days": 7,
+          "costUsd": 1500,
+          "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), flights to Petropavlovsk-Kamchatsky, city lodging, meals, bay or volcano day trip and weather buffer."
       },
-      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJMYsZKhBUV1sRe_gXpMK7fOY"
-    },
-    "trip": {
-      "days": 9,
-      "costUsd": 2800,
-      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
-    }
+      "map": {
+          "name": "Avacha Bay",
+          "formattedAddress": "Avacha Bay, Russia, 683012",
+          "placeId": "ChIJ2VM7Bwei4VgRr1YltRzr_Q0",
+          "rating": 4.9,
+          "reviewCount": 36,
+          "location": {
+              "lat": 52.933333,
+              "lng": 158.6
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ2VM7Bwei4VgRr1YltRzr_Q0"
+      }
   },
-  {
-    "id": "oymyakon",
-    "name": "Oymyakon",
-    "countries": [
-      "Russia"
-    ],
-    "area": "Sakha / Yakutia",
-    "kind": "Cold settlement",
-    "access": "Long winter road trip",
-    "uniqueness": "One of the coldest permanently inhabited places on Earth",
-    "why": "Oymyakon is human settlement at extreme winter temperature, where roads, houses, vehicles and routines adapt to cold that breaks normal assumptions.",
-    "realityCheck": "Winter is the point and the hazard.",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Oymyakon",
-    "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Oymyakon"
-    },
-    "map": {
-      "name": "Oymyakon",
-      "formattedAddress": "Oymyakon, Sakha Republic, Russia, 678750",
-      "placeId": "ChIJ24rPgw6O4FsRwIXI9jHNIfY",
-      "location": {
-        "lat": 63.464138,
-        "lng": 142.773727
+{
+      "id": "satka",
+      "name": "Satka",
+      "countries": [
+          "Russia"
+      ],
+      "area": "South Urals",
+      "kind": "Lebedev-loved industrial town",
+      "access": "Road/rail access from Chelyabinsk or Ufa",
+      "scores": {
+        "globallyUnique": 5,
+        "laymenInterest": 6,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 9,
       },
-      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ24rPgw6O4FsRwIXI9jHNIfY"
-    },
-    "trip": {
-      "days": 8,
-      "costUsd": 1600,
-      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
-    }
-  },
-  {
-    "id": "manpupuner",
-    "name": "Manpupuner rock formations",
-    "countries": [
-      "Russia"
-    ],
-    "area": "Komi Republic",
-    "kind": "Weathering pillars",
-    "access": "Remote trek/helicopter access",
-    "uniqueness": "Seven giant weathering pillars on a remote Ural plateau",
-    "why": "Manpupuner’s stone towers feel almost artificial because erosion left them standing alone on an exposed plateau.",
-    "realityCheck": "Access is difficult and seasonal.",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Manpupuner_rock_formations",
-    "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Manpupuner_rock_formations"
-    },
-    "map": {
-      "name": "Man-Pupu-Ner",
-      "formattedAddress": "Man-Pupu-Ner, Komi Republic, Russia, 169437",
-      "placeId": "ChIJpVVuiW4djEMRuFJ_bLt4XRs",
-      "rating": 4.8,
-      "reviewCount": 78,
-      "location": {
-        "lat": 62.21522220000001,
-        "lng": 59.30503219999999
+      "uniqueness": "Artemy top-tier rating: Ural industrial town with factory, pond and civic oddities",
+      "why": "Satka is not famous, which is part of the point: Artemy ranks it in his top tier, and the town concentrates old Ural industry, a factory pond, surviving pre-revolutionary fragments and the strange Sonkina Laguna complex.",
+      "realityCheck": "This is for travelers who enjoy industrial towns and local texture. It is not a normal sightseeing blockbuster.",
+      "wikiUrl": "https://en.wikipedia.org/wiki/Satka",
+      "source": {
+          "label": "Artemy Lebedev",
+          "url": "https://www.tema.ru/travel/satka/"
       },
-      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJpVVuiW4djEMRuFJ_bLt4XRs"
-    },
-    "trip": {
-      "days": 8,
-      "costUsd": 1900,
-      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
-    }
+      "trip": {
+          "days": 5,
+          "costUsd": 700,
+          "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), flights or rail through Chelyabinsk/Ufa, road transfer, modest lodging, meals and local transport."
+      },
+      "map": {
+          "name": "Satka",
+          "formattedAddress": "Satka, Chelyabinsk Oblast, Russia",
+          "placeId": "ChIJlTqOKPHY2kMRV__9f0KEjZI",
+          "location": {
+              "lat": 55.0474994,
+              "lng": 58.9745606
+          },
+          "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJlTqOKPHY2kMRV__9f0KEjZI"
+      }
   },
-  {
+{
     "id": "sikhote-alin",
     "name": "Sikhote-Alin",
     "countries": [
@@ -219,6 +957,12 @@ const spots = [
     "area": "Primorsky Krai",
     "kind": "Temperate forest wildlife",
     "access": "Reserve-limited access",
+    "scores": {
+      "globallyUnique": 6,
+      "laymenInterest": 9,
+      "easeOfAccess": 4,
+      "lowTouristCrowds": 8,
+    },
     "uniqueness": "A meeting zone for Amur tiger habitat, temperate forest and Far East mountains",
     "why": "Sikhote-Alin is ranked for the overlap of boreal and temperate Asia, with Amur tiger habitat and Pacific-influenced forest.",
     "realityCheck": "Strict reserve rules limit access.",
@@ -245,7 +989,169 @@ const spots = [
       "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
     }
   },
-  {
+{
+    "id": "kamchatka-geysers",
+    "name": "Valley of Geysers, Kamchatka",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Kamchatka Peninsula",
+    "kind": "Geothermal field",
+    "access": "Helicopter access when allowed",
+    "scores": {
+      "globallyUnique": 9,
+      "laymenInterest": 8,
+      "easeOfAccess": 0,
+      "lowTouristCrowds": 10,
+    },
+    "uniqueness": "One of the largest geyser fields on Earth",
+    "why": "Kamchatka’s Valley of Geysers is a volcanic basin of geysers, hot springs, mud pots and landslide-shaped terrain.",
+    "realityCheck": "Helicopter days can cancel and access can be restricted.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Valley_of_Geysers",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Valley_of_Geysers"
+    },
+    "map": {
+      "name": "Доли́на ге́йзеров",
+      "formattedAddress": "Доли́на ге́йзеров, Камчатский край, Russia, 684305",
+      "placeId": "ChIJS1f3cYwuHVkR0S2aHPyMX9c",
+      "rating": 3.2,
+      "reviewCount": 9,
+      "location": {
+        "lat": 54.430726,
+        "lng": 160.1393101
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJS1f3cYwuHVkR0S2aHPyMX9c"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2600,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+{
+    "id": "oymyakon",
+    "name": "Oymyakon",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Sakha / Yakutia",
+    "kind": "Cold settlement",
+    "access": "Long winter road trip",
+    "scores": {
+      "globallyUnique": 9,
+      "laymenInterest": 5,
+      "easeOfAccess": 4,
+      "lowTouristCrowds": 9,
+    },
+    "uniqueness": "One of the coldest permanently inhabited places on Earth",
+    "why": "Oymyakon is human settlement at extreme winter temperature, where roads, houses, vehicles and routines adapt to cold that breaks normal assumptions.",
+    "realityCheck": "Winter is the point and the hazard.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Oymyakon",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Oymyakon"
+    },
+    "map": {
+      "name": "Oymyakon",
+      "formattedAddress": "Oymyakon, Sakha Republic, Russia, 678750",
+      "placeId": "ChIJ24rPgw6O4FsRwIXI9jHNIfY",
+      "location": {
+        "lat": 63.464138,
+        "lng": 142.773727
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ24rPgw6O4FsRwIXI9jHNIfY"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1600,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+{
+    "id": "lena-pillars",
+    "name": "Lena Pillars",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Sakha / Yakutia",
+    "kind": "River cliffs",
+    "access": "Boat or winter road access",
+    "scores": {
+      "globallyUnique": 5,
+      "laymenInterest": 7,
+      "easeOfAccess": 7,
+      "lowTouristCrowds": 7,
+    },
+    "uniqueness": "A long wall of Cambrian limestone pillars above the Lena River",
+    "why": "Lena Pillars turns a Siberian river into a stone corridor of frost-shattered columns and fossil-bearing limestone.",
+    "realityCheck": "Boat season and winter access are completely different trips.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lena_Pillars",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Lena_Pillars"
+    },
+    "map": {
+      "name": "Natsional'nyy Park \"Lenskiye Stolby\"",
+      "formattedAddress": "Sakha Republic, Russia, 678024",
+      "placeId": "ChIJ58bFqB4UCVwR2Ew5ZFO1nsY",
+      "rating": 4.6,
+      "reviewCount": 429,
+      "location": {
+        "lat": 61.1068613,
+        "lng": 127.3637963
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJ58bFqB4UCVwR2Ew5ZFO1nsY"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1400,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+{
+    "id": "putorana-plateau",
+    "name": "Putorana Plateau",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Krasnoyarsk Krai",
+    "kind": "Basalt plateau",
+    "access": "Expedition access from Norilsk",
+    "scores": {
+      "globallyUnique": 5,
+      "laymenInterest": 8,
+      "easeOfAccess": 2,
+      "lowTouristCrowds": 10,
+    },
+    "uniqueness": "A huge basalt plateau of canyons, lakes and waterfalls near the Arctic Circle",
+    "why": "Putorana is Siberian scale in hard rock: stepped basalt, tablelands, deep lakes and remote waterfalls.",
+    "realityCheck": "Access is expensive and permit-heavy.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Putorana_Plateau",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Putorana_Plateau"
+    },
+    "map": {
+      "name": "Putorana Plateau",
+      "formattedAddress": "Putorana Plateau, Krasnoyarsk Krai, Russia, 647483",
+      "placeId": "ChIJMYsZKhBUV1sRe_gXpMK7fOY",
+      "rating": 4.6,
+      "reviewCount": 70,
+      "location": {
+        "lat": 68.7257271,
+        "lng": 96.1289958
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJMYsZKhBUV1sRe_gXpMK7fOY"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 2800,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  },
+{
     "id": "altai-golden-mountains",
     "name": "Golden Mountains of Altai",
     "countries": [
@@ -254,6 +1160,12 @@ const spots = [
     "area": "Altai Republic",
     "kind": "Mountain ecology",
     "access": "Road and trek access",
+    "scores": {
+      "globallyUnique": 6,
+      "laymenInterest": 8,
+      "easeOfAccess": 2,
+      "lowTouristCrowds": 9,
+    },
     "uniqueness": "A high biodiversity mountain knot between Siberia and Central Asia",
     "why": "Russian Altai compresses glaciers, steppe, taiga, lakes and archaeological traces into a borderland mountain system.",
     "realityCheck": "Roads vary and border-zone rules can affect routes.",
@@ -279,8 +1191,56 @@ const spots = [
       "costUsd": 1100,
       "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
     }
-  }
+  },
+{
+    "id": "manpupuner",
+    "name": "Manpupuner rock formations",
+    "countries": [
+      "Russia"
+    ],
+    "area": "Komi Republic",
+    "kind": "Weathering pillars",
+    "access": "Remote trek/helicopter access",
+    "scores": {
+      "globallyUnique": 5,
+      "laymenInterest": 6,
+      "easeOfAccess": 2,
+      "lowTouristCrowds": 10,
+    },
+    "uniqueness": "Seven giant weathering pillars on a remote Ural plateau",
+    "why": "Manpupuner’s stone towers feel almost artificial because erosion left them standing alone on an exposed plateau.",
+    "realityCheck": "Access is difficult and seasonal.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Manpupuner_rock_formations",
+    "source": {
+      "label": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Manpupuner_rock_formations"
+    },
+    "map": {
+      "name": "Man-Pupu-Ner",
+      "formattedAddress": "Man-Pupu-Ner, Komi Republic, Russia, 169437",
+      "placeId": "ChIJpVVuiW4djEMRuFJ_bLt4XRs",
+      "rating": 4.8,
+      "reviewCount": 78,
+      "location": {
+        "lat": 62.21522220000001,
+        "lng": 59.30503219999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJpVVuiW4djEMRuFJ_bLt4XRs"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from Novosibirsk via Tolmachevo (OVB), with economy flights where needed, midrange lodging, meals, local transfers, required fees and a realistic buffer for weather or permits."
+    }
+  }] satisfies TravelSpot[];
+
+const importedSpotIds = new Set(importedSpots.map((spot) => spot.id));
+const spots = [
+  ...importedSpots,
+  ...existingSpots.filter((spot) => !importedSpotIds.has(spot.id)),
 ] satisfies TravelSpot[];
+
+
 ---
 
 <TravelSpotGuide

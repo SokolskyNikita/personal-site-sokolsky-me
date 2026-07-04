@@ -6,6 +6,12 @@ export type TravelSpot = {
   area: string;
   kind: string;
   access: string;
+  scores: {
+    globallyUnique: number;
+    laymenInterest: number;
+    easeOfAccess: number;
+    lowTouristCrowds: number;
+  };
   uniqueness: string;
   why: string;
   realityCheck: string;
@@ -17,9 +23,10 @@ export type TravelSpot = {
   map: {
     name: string;
     formattedAddress?: string;
-    placeId: string;
+    placeId?: string;
     rating?: number;
     reviewCount?: number;
+    query?: string;
     location: { lat: number; lng: number };
     googleMapsUrl: string;
   };
@@ -45,6 +52,7 @@ type Props = {
   mapZoom: number;
   mapErrorLabel: string;
   spots: TravelSpot[];
+  showMap?: boolean;
   themeColorLight?: string;
   themeColorDark?: string;
 };
@@ -64,6 +72,7 @@ const {
   mapZoom,
   mapErrorLabel,
   spots,
+  showMap = true,
   themeColorLight = "#f7f0e5",
   themeColorDark = "#15120e",
 } = Astro.props;
@@ -72,11 +81,48 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 const googleMapsApiKey =
-  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
-  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
-  "";
+  showMap
+    ? (import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+      process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+      "")
+    : "";
 
-const rankedSpotsWithTrip = spots;
+const getScoreTotal = (spot: TravelSpot) =>
+  spot.scores.globallyUnique +
+  spot.scores.laymenInterest +
+  spot.scores.easeOfAccess +
+  spot.scores.lowTouristCrowds;
+const scoreEntries = [
+  ["Globally unique", "globallyUnique"],
+  ["Laymen interest", "laymenInterest"],
+  ["Ease of access", "easeOfAccess"],
+  ["Low tourist crowds", "lowTouristCrowds"],
+] as const;
+const scoringCriteriaText =
+  "Ranking score is the straight sum of four 0-10 criteria: globally unique, laymen interest, ease of access and low tourist crowds. Low tourist crowds is positive: 0 means Venice-level crowding, 10 means effectively no one goes there. Ties break by laymen interest.";
+const validateScore = (spot: TravelSpot, key: keyof TravelSpot["scores"]) => {
+  const score = spot.scores[key];
+  if (!Number.isInteger(score) || score < 0 || score > 10) {
+    throw new Error(`${pageTitle} spot "${spot.id}" has invalid ${key} score.`);
+  }
+};
+
+spots.forEach((spot) => {
+  scoreEntries.forEach(([, key]) => validateScore(spot, key));
+});
+
+const rankedSpotsWithTrip = spots
+  .map((spot, originalIndex) => ({
+    ...spot,
+    originalIndex,
+    totalScore: getScoreTotal(spot),
+  }))
+  .sort(
+    (a, b) =>
+      b.totalScore - a.totalScore ||
+      b.scores.laymenInterest - a.scores.laymenInterest ||
+      a.originalIndex - b.originalIndex,
+  );
 const spotIds = new Set(rankedSpotsWithTrip.map((spot) => spot.id));
 
 if (spotIds.size !== rankedSpotsWithTrip.length) {
@@ -103,6 +149,8 @@ const spotMapData = rankedSpotsWithTrip.map((spot, index) => ({
   kind: spot.kind,
   countries: spot.countries,
   uniqueness: spot.uniqueness,
+  totalScore: spot.totalScore,
+  scores: spot.scores,
   position: spot.map.location,
   googleMapsUrl: spot.map.googleMapsUrl,
 }));
@@ -200,25 +248,27 @@ const structuredData = {
           <p class="eyebrow">Selection rule</p>
           <h2 id="criteria-heading">What "interesting" means here</h2>
         </div>
-        <p>{criteriaText}</p>
+        <p>{criteriaText} {scoringCriteriaText}</p>
       </section>
 
-      <section class="map-section" aria-labelledby="map-heading">
-        <div class="map-copy">
-          <p class="eyebrow">Map</p>
-          <h2 id="map-heading">{mapHeading}</h2>
-          <p id="map-status" class="map-status">
-            Showing all {rankedSpotsWithTrip.length} spots.
-          </p>
-        </div>
-        {googleMapsApiKey ? (
-          <div id="spots-map" class="spots-map" aria-label={mapAriaLabel}></div>
-        ) : (
-          <p class="map-unavailable">
-            Map unavailable because the Google Maps public key is not configured.
-          </p>
-        )}
-      </section>
+      {showMap && (
+        <section class="map-section" aria-labelledby="map-heading">
+          <div class="map-copy">
+            <p class="eyebrow">Map</p>
+            <h2 id="map-heading">{mapHeading}</h2>
+            <p id="map-status" class="map-status">
+              Showing all {rankedSpotsWithTrip.length} spots.
+            </p>
+          </div>
+          {googleMapsApiKey ? (
+            <div id="spots-map" class="spots-map" aria-label={mapAriaLabel}></div>
+          ) : (
+            <p class="map-unavailable">
+              Map unavailable because the Google Maps public key is not configured.
+            </p>
+          )}
+        </section>
+      )}
 
       <section class="toolbar" aria-label="Spot filters">
         <label class="filter-field" for="country-filter">
@@ -238,7 +288,11 @@ const structuredData = {
         <label class="filter-field" for="sort-select">
           <span>Sort</span>
           <select id="sort-select" autocomplete="off">
-            <option value="uniqueness">Uniqueness</option>
+            <option value="score">Total score</option>
+            <option value="globallyUnique">Globally unique</option>
+            <option value="laymenInterest">Laymen interest</option>
+            <option value="easeOfAccess">Ease of access</option>
+            <option value="lowTouristCrowds">Low tourist crowds</option>
             <option value="popularity">Popularity (GMaps reviews)</option>
             <option value="cost">Cost (low to high)</option>
             <option value="time">Time required (short to long)</option>
@@ -257,7 +311,12 @@ const structuredData = {
             data-cost-usd={spot.trip.costUsd}
             data-trip-days={spot.trip.days}
             data-review-count={spot.map.reviewCount ?? 0}
-            data-uniqueness-rank={index + 1}
+            data-score-rank={index + 1}
+            data-total-score={spot.totalScore}
+            data-globally-unique={spot.scores.globallyUnique}
+            data-laymen-interest={spot.scores.laymenInterest}
+            data-ease-of-access={spot.scores.easeOfAccess}
+            data-low-tourist-crowds={spot.scores.lowTouristCrowds}
           >
             <div class="spot-rank" aria-label={`Rank ${index + 1}`}>
               {String(index + 1).padStart(2, "0")}
@@ -302,6 +361,20 @@ const structuredData = {
                     GMaps {spot.map.rating.toFixed(1)} · {formatter.format(spot.map.reviewCount ?? 0)} reviews
                   </span>
                 )}
+              </div>
+              <div class="score-panel" aria-label={`${spot.name} ranking scores`}>
+                <div class="score-total">
+                  <span>Total score</span>
+                  <strong>{spot.totalScore}/40</strong>
+                </div>
+                <dl class="score-grid">
+                  {scoreEntries.map(([label, key]) => (
+                    <div>
+                      <dt>{label}</dt>
+                      <dd>{spot.scores[key]}/10</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
               <p class="uniqueness">{spot.uniqueness}</p>
               <p>{spot.why}</p>
@@ -436,32 +509,45 @@ const structuredData = {
   const getNumberData = (element, key) => Number(element.dataset[key] ?? 0);
 
   const sortedSpotCards = () => {
-    const selectedSort = sortSelect?.value ?? "uniqueness";
+    const selectedSort = sortSelect?.value ?? "score";
 
     return [...spotCards].sort((a, b) => {
-      const uniquenessDelta =
-        getNumberData(a, "uniquenessRank") - getNumberData(b, "uniquenessRank");
+      const scoreDelta =
+        getNumberData(b, "totalScore") - getNumberData(a, "totalScore") ||
+        getNumberData(b, "laymenInterest") - getNumberData(a, "laymenInterest") ||
+        getNumberData(a, "scoreRank") - getNumberData(b, "scoreRank");
+
+      if (
+        ["globallyUnique", "laymenInterest", "easeOfAccess", "lowTouristCrowds"].includes(
+          selectedSort,
+        )
+      ) {
+        const selectedScoreDelta =
+          getNumberData(b, selectedSort) - getNumberData(a, selectedSort);
+
+        return selectedScoreDelta || scoreDelta;
+      }
 
       if (selectedSort === "popularity") {
         const popularityDelta =
           getNumberData(b, "reviewCount") - getNumberData(a, "reviewCount");
 
-        return popularityDelta || uniquenessDelta;
+        return popularityDelta || scoreDelta;
       }
 
       if (selectedSort === "cost") {
         const costDelta = getNumberData(a, "costUsd") - getNumberData(b, "costUsd");
 
-        return costDelta || uniquenessDelta;
+        return costDelta || scoreDelta;
       }
 
       if (selectedSort === "time") {
         const timeDelta = getNumberData(a, "tripDays") - getNumberData(b, "tripDays");
 
-        return timeDelta || uniquenessDelta;
+        return timeDelta || scoreDelta;
       }
 
-      return uniquenessDelta;
+      return scoreDelta;
     });
   };
 
@@ -543,7 +629,7 @@ const structuredData = {
   resetFiltersButton?.addEventListener("click", () => {
     if (countryFilter) countryFilter.value = "";
     if (kindFilter) kindFilter.value = "";
-    if (sortSelect) sortSelect.value = "uniqueness";
+    if (sortSelect) sortSelect.value = "score";
     applyFilters();
   });
   window.addEventListener("pageshow", applyFilters);
@@ -883,6 +969,59 @@ const structuredData = {
     margin-bottom: 16px;
   }
 
+  .score-panel {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.42fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--panel-strong) 54%, transparent);
+    padding: 12px;
+  }
+
+  .score-total,
+  .score-grid div {
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--panel) 62%, transparent);
+    padding: 10px;
+  }
+
+  .score-total {
+    display: grid;
+    align-content: center;
+    gap: 4px;
+  }
+
+  .score-total span,
+  .score-grid dt {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .score-total strong {
+    color: var(--accent-strong);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+  }
+
+  .score-grid dd {
+    margin: 4px 0 0;
+    color: var(--text);
+    font-size: 1.08rem;
+    font-weight: 850;
+  }
+
   .uniqueness {
     margin-bottom: 10px;
     color: var(--accent-strong);
@@ -950,6 +1089,11 @@ const structuredData = {
 
     .spot-card {
       padding: 18px;
+    }
+
+    .score-panel,
+    .score-grid {
+      grid-template-columns: 1fr;
     }
 
     .spot-rank {

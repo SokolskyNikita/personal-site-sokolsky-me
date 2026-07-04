@@ -15,6 +15,9 @@ export default defineConfig({
   compressHTML: true,
   redirects: {
     '/apartments/palermo': '/apartments/buenos-aires',
+    '/travel/best-of-antarctica': '/travel/best-of-polar-regions',
+    '/travel/best-of-arctic': '/travel/best-of-polar-regions',
+    '/travel/best-of-sa': '/travel/best-of-south-america',
   },
   integrations: [
     sitemap({

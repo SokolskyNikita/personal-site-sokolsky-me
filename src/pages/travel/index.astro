@@ -1,0 +1,240 @@
+---
+export const prerender = true;
+
+import { extractTravelSpotsFromSource } from "../../data/travelRawParser";
+
+const pageSources = import.meta.glob<string>("./best-of-*.astro", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
+type TravelRegion = {
+  region: string;
+  href: string;
+  spotCount: number;
+};
+
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const pageTitle = "Travel";
+const pageDescription = "Travel pages by region and site count.";
+
+const formatRegionName = (slug: string) =>
+  slug
+    .replace(/^best-of-/, "")
+    .split("-")
+    .map((word) => (word === "usa" ? "USA" : word[0].toUpperCase() + word.slice(1)))
+    .join(" ");
+
+const regionalSpotCounts = Object.fromEntries(
+  Object.entries(pageSources)
+    .filter(([path]) => !path.endsWith("/best-of-world.astro"))
+    .map(([path, source]) => [
+      path,
+      extractTravelSpotsFromSource(String(source)).length,
+    ]),
+);
+const worldSpotCount = Object.values(regionalSpotCounts).reduce((sum, count) => sum + count, 0);
+
+const regions = Object.entries(pageSources)
+  .map(([path, source]) => {
+    const slug = path.replace("./", "").replace(/\.astro$/, "");
+    const spotCount =
+      slug === "best-of-world"
+        ? worldSpotCount
+        : (regionalSpotCounts[path] ?? extractTravelSpotsFromSource(String(source)).length);
+
+    return {
+      region: formatRegionName(slug),
+      href: `/travel/${slug}/`,
+      spotCount,
+    };
+  })
+  .sort((a, b) => a.region.localeCompare(b.region)) satisfies TravelRegion[];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: regions.length,
+    itemListElement: regions.map((region, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${siteUrl}${region.href}`,
+      name: region.region,
+    })),
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="travel directory, unique travel regions, globally distinctive places"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#f7f0e5" />
+    <meta name="theme-color" content="#15120e" media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content="#15120e" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#15120e" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <h1>Travel</h1>
+      <ul class="region-list">
+        {regions.map((region) => (
+          <li>
+            <a href={region.href}>
+              <span>{region.region}</span>
+              <span>{region.spotCount.toLocaleString("en-US")} sites</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f0e5;
+    --text: #1d1710;
+    --text-muted: #6f5d49;
+    --border: #dfc9aa;
+    --accent: #8d4d1f;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15120e;
+      --text: #f5eadc;
+      --text-muted: #c6ad91;
+      --border: #4a3a2b;
+      --accent: #e3a15f;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(720px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 32px 0 56px;
+  }
+
+  h1 {
+    margin: 0 0 24px;
+    font-size: clamp(2.4rem, 8vw, 4.5rem);
+    letter-spacing: -0.05em;
+    line-height: 1;
+  }
+
+  .region-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .region-list li {
+    border-top: 1px solid var(--border);
+  }
+
+  .region-list li:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .region-list a {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 0;
+    color: inherit;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .region-list a:hover {
+    color: var(--accent);
+  }
+
+  .region-list span:last-child {
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      width: min(100% - 20px, 1120px);
+    }
+
+    .region-list a {
+      font-size: 1rem;
+    }
+  }
+</style>
