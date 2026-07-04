@@ -1,0 +1,925 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+export const prerender = true;
+
+const spots = [
+  {
+    "id": "naica",
+    "name": "Cave of the Crystals, Naica",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Chihuahua",
+    "kind": "Cave geology",
+    "access": "Closed to normal visitors",
+    "uniqueness": "The largest known natural crystals on Earth, in a lethal, sealed and reflooded mine cave",
+    "why": "Naica is the standard for geological singularity in Mexico: selenite crystals reached tree-sized proportions because hot, mineral-laden groundwater stayed in the right growth window for immense spans of time. The largest documented crystal is about 11.4 meters long and roughly 12 tonnes.",
+    "realityCheck": "Do not plan to visit the cave. Mining pumps stopped and the chamber reflooded, which protects the crystals but makes normal access effectively impossible; it belongs here as a world-record phenomenon to understand.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cave_of_the_Crystals",
+    "source": {
+      "label": "National Geographic",
+      "url": "https://www.nationalgeographic.com/science/article/giant-crystal-cave-mexico-mystery-solved"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1500,
+      "note": "Assumes travel from Cancun: a Chihuahua-focused trip with external context only, not cave entry: flights, regional lodging, local transport, meals and buffer."
+    },
+    "map": {
+      "name": "Cave of the Crystals",
+      "formattedAddress": "Terreros 7, 33640 Naica, Chih., Mexico",
+      "placeId": "ChIJz7X30a8164YRM2ls09cUvUw",
+      "rating": 4.3,
+      "reviewCount": 86,
+      "location": {
+        "lat": 27.850833,
+        "lng": -105.496389
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Cave%20of%20the%20Crystals&query_place_id=ChIJz7X30a8164YRM2ls09cUvUw"
+    }
+  },
+  {
+    "id": "sac-actun",
+    "name": "Chicxulub cenote ring and Yucatan underwater caves",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Quintana Roo / Yucatan",
+    "kind": "Karst hydrology",
+    "access": "Guided cenote visits; cave diving only for specialists",
+    "uniqueness": "A surface ring tied to the Chicxulub impact structure plus the planet’s longest flooded cave systems",
+    "why": "This is two singular geologies overlapping: cenotes trace the buried Chicxulub crater rim in the Yucatan karst, while Quintana Roo holds the giant Sac Actun and Ox Bel Ha flooded cave systems. The asteroid did not punch individual cenotes; it shaped the structural boundary where karst collapse concentrates.",
+    "realityCheck": "Non-divers can snorkel or swim selected cenotes; cave diving is specialist territory. Cave-length records change as divers survey new passages, so treat exact kilometer rankings as time-stamped.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sistema_Sac_Actun",
+    "source": {
+      "label": "Northwestern Karst Geochemistry and Hydrogeology",
+      "url": "https://sites.northwestern.edu/monroyrios/ring-of-cenotes/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 800,
+      "note": "Assumes travel from Cancun: flights to Cancun, Tulum-area lodging, guided cenote/cave visits, meals, local transport and reserve fees."
+    },
+    "map": {
+      "name": "Cenotes Sac Actún",
+      "formattedAddress": "Carretera Federal 307 (Cancun-Chetumal) pasando, Xel-Ha, un kilometro hacia, 77760 Tulum, Q.R., Mexico",
+      "placeId": "ChIJB3zWJkctTo8Rn9Nvn7vkguM",
+      "rating": 4.8,
+      "reviewCount": 1425,
+      "location": {
+        "lat": 20.3181998,
+        "lng": -87.41056979999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Cenotes%20Sac%20Act%C3%BAn&query_place_id=ChIJB3zWJkctTo8Rn9Nvn7vkguM"
+    }
+  },
+  {
+    "id": "monarch-butterfly",
+    "name": "Monarch Butterfly Biosphere Reserve",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Michoacan / State of Mexico",
+    "kind": "Migration ecology",
+    "access": "Seasonal mountain sanctuaries",
+    "uniqueness": "The one overwintering concentration for eastern North America’s monarch migration, called a superlative natural phenomenon by UNESCO",
+    "why": "Each winter, monarchs from across eastern North America concentrate in a few oyamel fir forests west of Mexico City, often in such density that branches sag. The astonishing part is generational navigation: the butterflies arriving have never personally made the full journey before.",
+    "realityCheck": "Go roughly late November to March and aim for warm midday conditions. Population numbers fluctuate and remain under pressure, so this is a singular spectacle under real ecological threat.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Monarch_Butterfly_Biosphere_Reserve",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1290/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Mexico City, road transfer to Angangueo or Valle de Bravo area, guided sanctuary visit, lodging, meals and seasonal buffer."
+    },
+    "map": {
+      "name": "Mariposa Monarca",
+      "formattedAddress": "Michoacán, Mexico",
+      "placeId": "ChIJuedEGh-W0oURCaXM2bZI2BM",
+      "rating": 4.6,
+      "reviewCount": 21221,
+      "location": {
+        "lat": 19.5637943,
+        "lng": -100.2968927
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mariposa%20Monarca&query_place_id=ChIJuedEGh-W0oURCaXM2bZI2BM"
+    }
+  },
+  {
+    "id": "laguna-san-ignacio",
+    "name": "Laguna San Ignacio gray whales",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Baja California Sur",
+    "kind": "Wildlife encounter",
+    "access": "Seasonal panga trips, January to April",
+    "uniqueness": "One of the rare places where wild gray whales routinely initiate friendly contact with small boats",
+    "why": "Eastern Pacific gray whales migrate from Arctic feeding grounds to Baja calving lagoons, and in Laguna San Ignacio some mothers and calves famously approach boats on their own terms. The “friendly whales” behavior is astonishing because this was once the same region where whalers feared grays as “devil fish.”",
+    "realityCheck": "It is wild, seasonal and remote, not a guaranteed petting zoo. Go for multiple days with operators that respect whale behavior and local rules.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/San_Ignacio_Lagoon",
+    "source": {
+      "label": "BBC Travel",
+      "url": "https://www.bbc.com/travel/article/20240930-the-only-place-where-whales-come-to-watch-you"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2300,
+      "note": "Assumes travel from Cancun: flights to Baja California Sur, long ground transfer or regional logistics, whale camp/lodging, panga outings, meals and weather buffer."
+    },
+    "map": {
+      "name": "San Ignacio Lagoon",
+      "formattedAddress": "San Ignacio Lagoon, 23915, Mexico",
+      "placeId": "ChIJ6RPV44xvNYERiwHkWbz6SXE",
+      "rating": 4.6,
+      "reviewCount": 34,
+      "location": {
+        "lat": 26.8783333,
+        "lng": -113.1661111
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=San%20Ignacio%20Lagoon&query_place_id=ChIJ6RPV44xvNYERiwHkWbz6SXE"
+    }
+  },
+  {
+    "id": "whale-sharks-isla-mujeres",
+    "name": "Mexican Caribbean whale-shark aggregation",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Isla Mujeres / Holbox / Yum Balam",
+    "kind": "Marine megafauna",
+    "access": "Seasonal boat trips, usually summer",
+    "uniqueness": "Peer-reviewed reports describe the Afuera event as the largest whale-shark aggregation recorded",
+    "why": "The waters off the northeast Yucatán can host extraordinary seasonal gatherings of whale sharks feeding on plankton and fish spawn. A PLOS ONE paper on the Afuera aggregation reported up to 420 whale sharks in a single aerial survey.",
+    "realityCheck": "This is seasonal and regulated, and operator ethics matter. Choose low-impact tours and do not confuse the geographic aggregation with a guaranteed close encounter on any given day.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Whale_shark",
+    "source": {
+      "label": "PLOS ONE",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3084747/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Cancun, Isla Mujeres/Holbox logistics, licensed whale-shark outing, lodging, meals and weather/season buffer."
+    },
+    "map": {
+      "name": "Isla Mujeres",
+      "formattedAddress": "Isla Mujeres, Q.R., Mexico",
+      "placeId": "ChIJ07LODlclTI8Re4xeoiXrcFg",
+      "location": {
+        "lat": 21.2366438,
+        "lng": -86.7357804
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Isla%20Mujeres&query_place_id=ChIJ07LODlclTI8Re4xeoiXrcFg"
+    }
+  },
+  {
+    "id": "sotano-golondrinas",
+    "name": "Sótano de las Golondrinas",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Huasteca Potosina, San Luis Potosí",
+    "kind": "Vertical cave shaft",
+    "access": "Rim viewpoint; technical descent only for specialists",
+    "uniqueness": "One of the world’s largest free-fall cave shafts, animated by dawn and dusk bird spirals",
+    "why": "The shaft drops hundreds of meters from a jungle-rim opening into a chamber wider at the bottom than at the mouth. The daily movement of white-collared swifts and green parakeets makes the depth feel alive rather than just numerical.",
+    "realityCheck": "Go before sunrise or near dusk for the bird movement. Rappelling is technical, and BASE jumping has been restricted because of disturbance to birds.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cave_of_Swallows",
+    "source": {
+      "label": "Association for Mexican Cave Studies",
+      "url": "https://www.mexicancaves.org/bul/bul2.pdf"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Mexico City or San Luis Potosí, Huasteca road travel, Xilitla/Aquismón lodging, local guide, meals and early-morning logistics."
+    },
+    "map": {
+      "name": "Cave of Swallows",
+      "formattedAddress": "Cave of Swallows, 79766 San Luis Potosi, Mexico",
+      "placeId": "ChIJVwbWC1OH1oURiOGU1Ggi_w0",
+      "rating": 4.7,
+      "reviewCount": 431,
+      "location": {
+        "lat": 21.5996827,
+        "lng": -99.0987612
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Cave%20of%20Swallows&query_place_id=ChIJVwbWC1OH1oURiOGU1Ggi_w0"
+    }
+  },
+  {
+    "id": "cholula-pyramid",
+    "name": "Great Pyramid of Cholula",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Puebla",
+    "kind": "Archaeological superlative",
+    "access": "Easy trip from Puebla or Mexico City",
+    "uniqueness": "Guinness-listed largest pyramid by volume, hidden under a church-topped hill",
+    "why": "Cholula’s singular image is almost absurd: the world’s largest pyramid by volume looks like a natural hill, with Nuestra Señora de los Remedios crowning it. The site collapses pre-Hispanic monumentality and colonial religious layering into one walkable object.",
+    "realityCheck": "The pyramid reads better if you understand what is under the hill. Visit the tunnels/site museum and then climb to the church for the scale.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Great_Pyramid_of_Cholula",
+    "source": {
+      "label": "Guinness World Records",
+      "url": "https://www.guinnessworldrecords.com/world-records/largest-pyramid"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Cancun: flights to Mexico City, Puebla/Cholula lodging or day trip, site access, meals and local transport."
+    },
+    "map": {
+      "name": "Zona Arqueológica de Cholula",
+      "formattedAddress": "C. 14 Pte. S/N, San Miguel, Zona Arqueológica San Andrés Cholula, 72810 San Andrés Cholula, Pue., Mexico",
+      "placeId": "ChIJZbmfJy_Gz4URgVYZhn1Y2Mg",
+      "rating": 4.7,
+      "reviewCount": 42475,
+      "location": {
+        "lat": 19.0569202,
+        "lng": -98.3031623
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Zona%20Arqueol%C3%B3gica%20de%20Cholula&query_place_id=ChIJZbmfJy_Gz4URgVYZhn1Y2Mg"
+    }
+  },
+  {
+    "id": "hierve-el-agua",
+    "name": "Hierve el Agua",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Oaxaca",
+    "kind": "Travertine springs",
+    "access": "Road access from Oaxaca, sometimes locally restricted",
+    "uniqueness": "Rare travertine formations that look like waterfalls frozen over a cliff",
+    "why": "Mineral-laden spring water leaves calcium-carbonate deposits over the cliff edge, creating “petrified waterfall” forms above natural pools. The strongest version of the claim is rarity, not literal uniqueness: comparable travertine systems exist, but few are this visually legible and culturally layered.",
+    "realityCheck": "Road access and local disputes can affect visits. Go early, and avoid repeating the “only two in the world” claim too literally.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Hierve_el_Agua",
+    "source": {
+      "label": "Oaxaca tourism",
+      "url": "https://www.oaxaca.travel/index.php/en-us/all-destinations/hierve-el-agua-en"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Cancun: flights to Oaxaca, city lodging, day trip transport/guide, meals and timing buffer for road/access conditions."
+    },
+    "map": {
+      "name": "Hierve el Agua",
+      "formattedAddress": "Hierve el Agua, 70477 Oaxaca de Juárez, Oax., Mexico",
+      "placeId": "ChIJ45FElP7IwIUR_Y671emlmy0",
+      "rating": 4.6,
+      "reviewCount": 23263,
+      "location": {
+        "lat": 16.8656531,
+        "lng": -96.27600650000001
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Hierve%20el%20Agua&query_place_id=ChIJ45FElP7IwIUR_Y671emlmy0"
+    }
+  },
+  {
+    "id": "el-pinacate",
+    "name": "El Pinacate and Gran Desierto de Altar",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Sonora",
+    "kind": "Volcanic desert",
+    "access": "Road access with desert precautions",
+    "uniqueness": "A UNESCO volcanic desert with North America’s active sand sea and ten enormous maar craters",
+    "why": "El Pinacate combines a dark volcanic shield, hundreds of cones, lava fields and the Gran Desierto de Altar dunes. UNESCO notes the concentration of enormous near-circular maar craters, and Apollo-era astronaut training used the terrain as a lunar analogue.",
+    "realityCheck": "Heat, distances and border-region logistics matter. The reserve is best treated as desert fieldwork, not a quick roadside photo.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/El_Pinacate_y_Gran_Desierto_de_Altar_Biosphere_Reserve",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1410/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1400,
+      "note": "Assumes travel from Cancun: flights to Phoenix or Hermosillo, car rental, Puerto Penasco or Sonoyta-area lodging, reserve access, meals and desert buffer."
+    },
+    "map": {
+      "name": "El Pinacate and Gran Altar Desert",
+      "formattedAddress": "Carretera Sonoyta-Puerto Peñasco Km 51 Ejido Los Norteños, 83550 Son., Mexico",
+      "placeId": "ChIJB0yToigc1oARR-hkR1mXoK4",
+      "rating": 4.7,
+      "reviewCount": 4406,
+      "location": {
+        "lat": 31.9026759,
+        "lng": -113.8584737
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=El%20Pinacate%20and%20Gran%20Altar%20Desert&query_place_id=ChIJB0yToigc1oARR-hkR1mXoK4"
+    }
+  },
+  {
+    "id": "xochimilco-axolotl",
+    "name": "Xochimilco axolotl canals",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Mexico City",
+    "kind": "Endangered urban ecology",
+    "access": "Trajinera canals and conservation projects",
+    "uniqueness": "The last wild habitat of the axolotl, a neotenic salamander famous for regeneration",
+    "why": "Xochimilco is a living remnant of the lake-and-chinampa system beneath Mexico City and the last wild home of the axolotl. BioScience documents the species’ collapse from thousands per square kilometer to tiny densities, making the canals globally singular and precarious.",
+    "realityCheck": "You are unlikely to see a wild axolotl. Treat this as a conservation and chinampa-culture visit, not a wildlife-sighting promise.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Xochimilco",
+    "source": {
+      "label": "BioScience / PMC",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7051018/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Cancun: flights to Mexico City, city lodging, Xochimilco boat/conservation visit, meals and local transport."
+    },
+    "map": {
+      "name": "Parque Ecológico de Xochimilco",
+      "formattedAddress": "Anillo Perif. 1, Col. Ciénega Grande, Xochimilco, 16036 Ciudad de México, CDMX, Mexico",
+      "placeId": "ChIJVzA29SwCzoURM1Dq1KcwIek",
+      "rating": 4.6,
+      "reviewCount": 17608,
+      "location": {
+        "lat": 19.297332,
+        "lng": -99.09460899999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Parque%20Ecol%C3%B3gico%20de%20Xochimilco&query_place_id=ChIJVzA29SwCzoURM1Dq1KcwIek"
+    }
+  },
+  {
+    "id": "palenque",
+    "name": "Palenque",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Chiapas",
+    "kind": "Archaeology",
+    "access": "Road or regional flight access",
+    "uniqueness": "The Maya pyramid that proved royal tombs could be built inside temple-pyramids",
+    "why": "Palenque’s singular core is Pakal’s tomb inside the Temple of the Inscriptions: an internal stairway to a royal crypt, a cosmological sarcophagus lid, one of the longest Maya texts and the nearby Red Queen burial. The site is compact but unusually elegant and readable.",
+    "realityCheck": "Humidity, rain and regional travel time matter. Build in time for the site museum, because the tomb and sculpture context are what make Palenque more than a pretty ruin in rainforest.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Palenque",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/411/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from Cancun: flights via Mexico City to Villahermosa or Tuxtla, road transfer, Palenque lodging, meals, site fees and regional buffer."
+    },
+    "map": {
+      "name": "Zona Arqueológica Palenque",
+      "formattedAddress": "Carretera a Palenque- Zona Archaeologica Km. 8, 29960 Palenque, Chiapas, Mexico",
+      "placeId": "ChIJ3du9d8dE8oUR8dxdmXHqu24",
+      "rating": 4.8,
+      "reviewCount": 20292,
+      "location": {
+        "lat": 17.4847697,
+        "lng": -92.0458949
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Zona%20Arqueol%C3%B3gica%20Palenque&query_place_id=ChIJ3du9d8dE8oUR8dxdmXHqu24"
+    }
+  },
+  {
+    "id": "monte-alban",
+    "name": "Monte Albán",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Oaxaca",
+    "kind": "Archaeology",
+    "access": "Easy trip from Oaxaca City",
+    "uniqueness": "An early Zapotec city whose flattened mountaintop plaza carries some of Mesoamerica’s early writing and calendar evidence",
+    "why": "Monte Albán is interesting because the hill itself was engineered into a civic platform above the Oaxaca valleys. The Danzantes slabs, tombs, plazas and sightlines show early urbanism, warfare imagery and writing at city scale.",
+    "realityCheck": "It is easy to visit, but the exposed plateau gets hot. Pairing with Oaxaca’s museums makes the glyphs, tombs and gold-work finds more meaningful.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Monte_Alb%C3%A1n",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/415/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Cancun: flights to Oaxaca, city lodging, local site transport or guide, meals and museum/site fees."
+    },
+    "map": {
+      "name": "Monte Albán",
+      "formattedAddress": "Monte Albán, Oax., Mexico",
+      "placeId": "ChIJGbI6eX0Yx4UREyTDP-cqxr4",
+      "location": {
+        "lat": 17.0438035,
+        "lng": -96.7681104
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Monte%20Alb%C3%A1n&query_place_id=ChIJGbI6eX0Yx4UREyTDP-cqxr4"
+    }
+  },
+  {
+    "id": "teotihuacan",
+    "name": "Teotihuacan",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "State of Mexico",
+    "kind": "Archaeology",
+    "access": "Easy day trip from Mexico City",
+    "uniqueness": "The largest city of the ancient Americas at its height, laid out on a rigid grid by builders whose identity remains unresolved",
+    "why": "Teotihuacan's singularity is urban: apartment compounds, murals, obsidian, the Avenue of the Dead and regional influence point to one of the world’s great early cities, while its language and self-name remain unknown.",
+    "realityCheck": "It is popular and exposed. Go early, use a guide if possible and spend time on the city plan, not only pyramid viewpoints.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Teotihuacan",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/414/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Cancun: flights to Mexico City, city lodging, a Teotihuacan day trip, meals, local transport and site fees."
+    },
+    "map": {
+      "name": "Teotihuacán",
+      "formattedAddress": "Pirámide del Sol, 54273 Teotihuacán de Arista, Méx., Mexico",
+      "placeId": "ChIJxY3RFsPr0YURtj0nPj9mGGI",
+      "rating": 4.8,
+      "reviewCount": 107530,
+      "location": {
+        "lat": 19.6933426,
+        "lng": -98.84729410000001
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Teotihuac%C3%A1n&query_place_id=ChIJxY3RFsPr0YURtj0nPj9mGGI"
+    }
+  },
+  {
+    "id": "calakmul",
+    "name": "Calakmul",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Campeche rainforest",
+    "kind": "Archaeology",
+    "access": "Long road access",
+    "uniqueness": "A remote Snake Kingdom capital inside a UNESCO mixed site and one of the Americas’ largest tropical forest reserves",
+    "why": "Calakmul is compelling because city and biosphere still read together: huge Maya structures rise above canopy in the forest that held Tikal’s great rival, while jaguar, tapir, puma and monkeys make the archaeological setting feel alive.",
+    "realityCheck": "It is remote by Yucatan standards, and that is the point. Expect long drives, limited services and a much quieter experience than Chichen Itza.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Calakmul",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1061/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1300,
+      "note": "Assumes travel from Cancun: flights to Mexico City and Campeche or Chetumal/Cancun routing, rental car or guided transfer, jungle-area lodging, meals and road buffer."
+    },
+    "map": {
+      "name": "Zona Arqueológica de Calakmul",
+      "formattedAddress": "Calakmul Municipality, 24655 Campeche, Mexico",
+      "placeId": "ChIJ-Q0Hra2zWI8RwTwjeIChCMY",
+      "rating": 4.8,
+      "reviewCount": 3132,
+      "location": {
+        "lat": 18.1058665,
+        "lng": -89.81023239999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Zona%20Arqueol%C3%B3gica%20de%20Calakmul&query_place_id=ChIJ-Q0Hra2zWI8RwTwjeIChCMY"
+    }
+  },
+  {
+    "id": "chichen-itza",
+    "name": "Chichen Itza and the Great Ball Court",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Yucatan",
+    "kind": "Archaeology",
+    "access": "Easy but crowded",
+    "uniqueness": "The largest known Mesoamerican ballcourt inside a Maya-Toltec ceremonial city",
+    "why": "Chichen Itza earns its fame when you focus on what is actually singular: the Great Ball Court, the rubber-ball game tradition invented in Mesoamerica, El Castillo’s solar choreography, the sacred cenote and a sculptural program that broadcasts regional power.",
+    "realityCheck": "Crowds and vendors are real. Arrive at opening and pair it with less crowded Puuc, Ek Balam or cenote sites if you want context.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Chichen_Itza",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/483/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 700,
+      "note": "Assumes travel from Cancun: flights to Cancun or Merida, car or guided day trip, midrange lodging, meals and site fees."
+    },
+    "map": {
+      "name": "Chichén Itzá",
+      "formattedAddress": "97751 Yucatan, Mexico",
+      "placeId": "ChIJ58CR48Y4UY8Rmk2ZaKGgHnw",
+      "rating": 4.8,
+      "reviewCount": 137075,
+      "location": {
+        "lat": 20.6842849,
+        "lng": -88.5677826
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Chich%C3%A9n%20Itz%C3%A1&query_place_id=ChIJ58CR48Y4UY8Rmk2ZaKGgHnw"
+    }
+  },
+  {
+    "id": "patzcuaro",
+    "name": "Day of the Dead around Lake Pátzcuaro",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Michoacan",
+    "kind": "Living ritual",
+    "access": "Road trip; security-sensitive region",
+    "uniqueness": "One of Mexico’s most singular Indigenous Day of the Dead lake-basin observances",
+    "why": "Día de Muertos is national, but the Pátzcuaro lake basin gives it a distinctive Purépecha form: cemetery vigils, candles, marigolds, copal smoke and boats moving between lakeside communities and Janitzio. UNESCO recognizes the Indigenous festivity dedicated to the dead as intangible heritage.",
+    "realityCheck": "It is powerful but crowded around November 1. Smaller lakeside communities can be more intimate than Janitzio, and Michoacán security conditions should be checked before remote routing.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/P%C3%A1tzcuaro",
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Mexico City or Morelia, trusted ground transfer, Patzcuaro lodging, meals, lake/town visits and security buffer."
+    },
+    "source": {
+      "label": "UNESCO Intangible Cultural Heritage",
+      "url": "https://ich.unesco.org/en/RL/indigenous-festivity-dedicated-to-the-dead-00054"
+    },
+    "map": {
+      "name": "Pátzcuaro",
+      "formattedAddress": "Pátzcuaro, Michoacán, Mexico",
+      "placeId": "ChIJOa7WuKiWLYQRyrHxhviVVuk",
+      "location": {
+        "lat": 19.5134546,
+        "lng": -101.6091876
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=P%C3%A1tzcuaro&query_place_id=ChIJOa7WuKiWLYQRyrHxhviVVuk"
+    }
+  },
+  {
+    "id": "voladores-papantla",
+    "name": "Voladores de Papantla",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Papantla / El Tajín, Veracruz",
+    "kind": "Living ritual",
+    "access": "Regular performances in Papantla and El Tajín",
+    "uniqueness": "A UNESCO-listed pre-Hispanic fertility rite performed from a tall pole",
+    "why": "The Voladores ceremony is a living ritual of flight: four men descend head-down on ropes while a fifth plays flute and drum atop the pole. UNESCO inscribed the ritual ceremony of the Voladores in 2009 as intangible cultural heritage.",
+    "realityCheck": "It is performed for visitors, but it is still ritual rather than a stunt show. The best context is Papantla and El Tajín, where Totonac culture and archaeology are close together.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Danza_de_los_Voladores",
+    "source": {
+      "label": "UNESCO Intangible Cultural Heritage",
+      "url": "https://ich.unesco.org/en/RL/ritual-ceremony-of-the-voladores-00175"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Cancun: flights to Mexico City or Veracruz/Poza Rica routing, Papantla lodging, El Tajín visit, meals and ground transfers."
+    },
+    "map": {
+      "name": "Voladores de Papantla",
+      "formattedAddress": "Reforma s/n, Centro, Barrio del Naranjo, 93400 Papantla de Olarte, Ver., Mexico",
+      "placeId": "ChIJyVGLyztE2oURciSSvXgwSy8",
+      "rating": 4.8,
+      "reviewCount": 78,
+      "location": {
+        "lat": 20.4460933,
+        "lng": -97.32221159999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Voladores%20de%20Papantla&query_place_id=ChIJyVGLyztE2oURciSSvXgwSy8"
+    }
+  },
+  {
+    "id": "wirikuta",
+    "name": "Wixárika route to Wirikuta",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Nayarit / Jalisco / Zacatecas / Durango / San Luis Potosí",
+    "kind": "Sacred cultural route",
+    "access": "Respect from a distance; not casual tourism",
+    "uniqueness": "A 2025 UNESCO World Heritage serial route of 20 sacred Wixárika sites spanning more than 500 km",
+    "why": "The route to Wirikuta is one of Mexico’s most important living Indigenous sacred routes: a pilgrimage through sites tied to Wixárika cosmology, peyote ceremony and the birthplace-of-the-sun narrative. UNESCO inscribed it as a serial property in 2025.",
+    "realityCheck": "This is not psychedelic tourism. Mining, agribusiness and peyote poaching are real threats; the ethical stance is respect, learning and distance unless invited through legitimate community channels.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Wirikuta",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1704/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1200,
+      "note": "Assumes travel from Cancun: a San Luis Potosí / Real de Catorce cultural-context trip only, with no participation in sacred rites, plus lodging, meals and ground transport."
+    },
+    "map": {
+      "name": "desierto Wirikuta",
+      "formattedAddress": "Catorce, 78547 San Luis Potosi, Mexico",
+      "placeId": "ChIJF_KkB7LHgIYRgxG43pC8Cwg",
+      "rating": 4.8,
+      "reviewCount": 20,
+      "location": {
+        "lat": 23.5573218,
+        "lng": -101.0390979
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=desierto%20Wirikuta&query_place_id=ChIJF_KkB7LHgIYRgxG43pC8Cwg"
+    }
+  },
+  {
+    "id": "oaxaca-cuisine-mezcal",
+    "name": "Oaxacan cuisine and mezcal",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Oaxaca City and surrounding valleys",
+    "kind": "Food culture",
+    "access": "Markets, kitchens, mezcal palenques and guided tastings",
+    "uniqueness": "One of the world’s densest living food cultures: moles, insects, maize, cacao, agave and mezcal in one region",
+    "why": "Oaxaca is where Mexico’s culinary singularity becomes concentrated: complex moles, tlayudas, chapulines and other insects, cacao drinks, nixtamalized maize and mezcal made from cultivated and wild agaves. It is a biocultural system as much as a restaurant scene.",
+    "realityCheck": "Mezcal tourism can extract as much as it educates. Favor small producers, responsible guides and markets/kitchens where the cultural context is not stripped away.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Oaxacan_cuisine",
+    "source": {
+      "label": "UNESCO",
+      "url": "https://www.unesco.org/en/articles/traditional-mexican-cuisine-living-heritage-societies-and-planets-wellbeing"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Cancun: flights to Oaxaca, city lodging, market/cooking/mezcal visits, meals and local transport."
+    },
+    "map": {
+      "name": "Oaxaca",
+      "formattedAddress": "Oaxaca, Mexico",
+      "placeId": "ChIJsdkm30kix4URO_zfV3aniKw",
+      "location": {
+        "lat": 17.0731842,
+        "lng": -96.7265889
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Oaxaca&query_place_id=ChIJsdkm30kix4URO_zfV3aniKw"
+    }
+  },
+  {
+    "id": "las-pozas",
+    "name": "Las Pozas, Xilitla",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Huasteca Potosina, San Luis Potosí",
+    "kind": "Surrealist garden",
+    "access": "Guided timed entry",
+    "uniqueness": "Edward James’s surrealist concrete jungle, with stairs, arches and rooms that behave like dreams",
+    "why": "Las Pozas is a human-made singularity: an English surrealist patron and local craftsmen built concrete structures that frame nothing, stop mid-air, merge with waterfalls and let the rainforest take over the composition.",
+    "realityCheck": "Book ahead and treat it as a guided art site, not a water park. It pairs naturally with Sótano de las Golondrinas in the same broader Huasteca trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Las_Pozas",
+    "source": {
+      "label": "Edward James Sculpture Garden",
+      "url": "https://en.laspozasxilitla.org.mx/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Mexico City or San Luis Potosí, road transfer to Xilitla, guided entry, lodging, meals and Huasteca road buffer."
+    },
+    "map": {
+      "name": "Las Pozas",
+      "formattedAddress": "Camino Paseo Las Pozas s/n Barrio La Conchita, 79902 Xilitla, S.L.P., Mexico",
+      "placeId": "ChIJ6Zx9eWyQ1oURRLLivXwGsjA",
+      "rating": 4.7,
+      "reviewCount": 20246,
+      "location": {
+        "lat": 21.3967398,
+        "lng": -98.99662839999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Las%20Pozas&query_place_id=ChIJ6Zx9eWyQ1oURRLLivXwGsjA"
+    }
+  },
+  {
+    "id": "guanajuato",
+    "name": "Guanajuato",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Bajio",
+    "kind": "Lebedev favorite city",
+    "access": "Road trip from Leon/Mexico City",
+    "uniqueness": "A silver city of underground streets, ravine topography and naturally mummified dead",
+    "why": "Mining geography created Guanajuato’s tunnels, stacked streets, tight alleys and ravine-folded street plan. The mummy museum adds a macabre local preservation story that makes the urban culture stranger and more specific.",
+    "realityCheck": "It is popular but still deeply walkable. The mummies are unusual but not unique worldwide; the stronger reason to go is the whole mine-city topography.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Guanajuato_City",
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Mexico City or Leon, ground transfer, city lodging, meals, local museums and walking time."
+    },
+    "source": {
+      "label": "Guanajuato Capital",
+      "url": "https://www.guanajuatocapital.gob.mx/"
+    },
+    "map": {
+      "name": "Guanajuato Capital",
+      "formattedAddress": "Pl. De La Paz 12, Zona Centro, 36000 Guanajuato, Gto., Mexico",
+      "placeId": "ChIJ48GA-vdzK4QRaeEQPB5kHc4",
+      "rating": 4.8,
+      "reviewCount": 711,
+      "location": {
+        "lat": 21.0161691,
+        "lng": -101.2535982
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Guanajuato%20Capital&query_place_id=ChIJ48GA-vdzK4QRaeEQPB5kHc4"
+    }
+  },
+  {
+    "id": "sian-kaan",
+    "name": "Sian Ka'an",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Quintana Roo",
+    "kind": "Coastal ecology",
+    "access": "Boat and road access; guide recommended",
+    "uniqueness": "A Maya-named coastal biosphere of reefs, lagoons, mangroves and tropical forest",
+    "why": "Sian Ka'an is the antidote to resort-coast simplification. It shows the Yucatan coast as a linked system of groundwater, wetlands, reef, forest and archaeological traces.",
+    "realityCheck": "Roads can be rough and tours vary. Choose operators that take the reserve seriously rather than speed-running wildlife sightings.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sian_Ka%CA%BCan_Biosphere_Reserve",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/410/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 900,
+      "note": "Assumes travel from Cancun: flights to Cancun, Tulum or Punta Allen logistics, guided reserve outing, lodging, meals and transport buffer."
+    },
+    "map": {
+      "name": "Reserva de la Biósfera Sian Ka'an",
+      "formattedAddress": "Quintana Roo, Mexico",
+      "placeId": "ChIJRbIUlxYJUI8RLuVQChePHQQ",
+      "rating": 4.6,
+      "reviewCount": 4051,
+      "location": {
+        "lat": 19.8509509,
+        "lng": -87.63934309999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Reserva%20de%20la%20Bi%C3%B3sfera%20Sian%20Ka'an&query_place_id=ChIJRbIUlxYJUI8RLuVQChePHQQ"
+    }
+  },
+  {
+    "id": "tehuacan-cuicatlan",
+    "name": "Tehuacan-Cuicatlan Valley",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Puebla / Oaxaca",
+    "kind": "Biocultural valley",
+    "access": "Road trip; guide useful",
+    "uniqueness": "Cactus forests and some of the earliest evidence for plant domestication in the Americas",
+    "why": "The valley links desert biodiversity with human food history. Cacti, agaves, caves and irrigation traces show how people and dryland plants shaped each other over thousands of years.",
+    "realityCheck": "It is less polished than marquee sites. A guide or careful route plan helps turn scenery into a biocultural story.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tehuac%C3%A1n-Cuicatl%C3%A1n_Biosphere_Reserve",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1534/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 700,
+      "note": "Assumes travel from Cancun: flights to Mexico City or Puebla, rental car or guided transfer, regional lodging, meals and reserve/site access."
+    },
+    "map": {
+      "name": "Reserva de la Biosfera Tehuacán- Cuicatlán",
+      "formattedAddress": "Oaxaca-Tehuacán, Barrio del Agua Buena, 68593 Santiago Suchilquitongo, Oax., Mexico",
+      "placeId": "ChIJ63d1mQrWxYURfY-Byw4FDpw",
+      "rating": 4.7,
+      "reviewCount": 10,
+      "location": {
+        "lat": 17.9373816,
+        "lng": -97.1795282
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Reserva%20de%20la%20Biosfera%20Tehuac%C3%A1n-%20Cuicatl%C3%A1n&query_place_id=ChIJ63d1mQrWxYURfY-Byw4FDpw"
+    }
+  },
+  {
+    "id": "copper-canyon",
+    "name": "Copper Canyon",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Chihuahua / Sierra Tarahumara",
+    "kind": "Canyon system",
+    "access": "Rail and road travel",
+    "uniqueness": "A canyon system larger and more culturally layered than a single viewpoint suggests",
+    "why": "Copper Canyon is really a network of barrancas, forests, rail engineering and Raramuri homelands. The interesting part is the combination of scale and living mountain culture.",
+    "realityCheck": "Security and route choice matter. The train is the easiest spine, but deeper trips should be planned with current local advice.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Copper_Canyon",
+    "source": {
+      "label": "Visit Mexico",
+      "url": "https://visitmexico.com/en/chihuahua/barrancas-del-cobre"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1500,
+      "note": "Assumes travel from Cancun: flights to Chihuahua or Los Mochis, Chepe train segments, midrange lodging, meals, transfers and security/logistics buffer."
+    },
+    "map": {
+      "name": "Copper Canyon",
+      "formattedAddress": "Copper Canyon, 33233 Chihuahua, Mexico",
+      "placeId": "ChIJHe-0N7GgwIYRATin7H0csd4",
+      "rating": 4.8,
+      "reviewCount": 424,
+      "location": {
+        "lat": 27.5280556,
+        "lng": -107.7561111
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Copper%20Canyon&query_place_id=ChIJHe-0N7GgwIYRATin7H0csd4"
+    }
+  },
+  {
+    "id": "san-miguel-de-allende",
+    "name": "San Miguel de Allende",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Guanajuato",
+    "kind": "Lebedev favorite city",
+    "access": "Road trip from Mexico City/Leon/Queretaro",
+    "uniqueness": "Lebedev-rated favorite: preserved Bajio townscape and hill-town light",
+    "why": "San Miguel de Allende is one of the Mexican urban places that surfaces in Lebedev's rating. It is included for its compact historic fabric, color, courtyards, churches and position in the Bajio colonial network.",
+    "realityCheck": "It can feel expatriate-polished. Pair it with Guanajuato, Queretaro or smaller towns to keep context.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/San_Miguel_de_Allende",
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Cancun: flights to Mexico City/Leon/Queretaro, ground transfer, lodging, meals and town/region walks."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/san-miguel-de-allende/"
+    },
+    "map": {
+      "name": "San Miguel de Allende",
+      "formattedAddress": "San Miguel de Allende, Guanajuato, Mexico",
+      "placeId": "ChIJD7xxmK9RK4QRpLAHHQMBMWU",
+      "location": {
+        "lat": 20.9144491,
+        "lng": -100.745235
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=San%20Miguel%20de%20Allende&query_place_id=ChIJD7xxmK9RK4QRpLAHHQMBMWU"
+    }
+  },
+  {
+    "id": "ek-balam",
+    "name": "Ek Balam",
+    "countries": [
+      "Mexico"
+    ],
+    "area": "Yucatan",
+    "kind": "Lakeman-loved ruins",
+    "access": "Road access from Valladolid",
+    "uniqueness": "Matt Lakeman pick: a climbable Maya acropolis above jungle canopy",
+    "why": "Lakeman was lukewarm on the Yucatan as a whole, but singled out standing on top of Ek Balam's main pyramid and seeing jungle in every direction as the best moment among the Mexican ruins he visited.",
+    "realityCheck": "It is smaller and pricier than expected for its size. The payoff is the less-crowded climb and canopy view, not Chichen Itza-scale monumentality.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ek%CA%BC_Balam",
+    "source": {
+      "label": "Matt Lakeman travel notes",
+      "url": "https://mattlakeman.org/2022/03/18/notes-on-the-yucatan/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 700,
+      "note": "Assumes travel from Cancun: flights to Cancun or Merida, Valladolid base, rental car or taxi to Ek Balam, lodging, meals and site fees."
+    },
+    "map": {
+      "name": "Zona Arqueológica de Ek Balam",
+      "formattedAddress": "VVQ8+F4, 97743 Ekbalam, Yuc., Mexico",
+      "placeId": "ChIJzw0p_SydUY8R-V3OOdYYiSw",
+      "rating": 4.7,
+      "reviewCount": 11041,
+      "location": {
+        "lat": 20.8923409,
+        "lng": -88.1359758
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Zona%20Arqueol%C3%B3gica%20de%20Ek%20Balam&query_place_id=ChIJzw0p_SydUY8R-V3OOdYYiSw"
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Mexico"}
+  pageDescription={"A researched field guide to Mexico's most unique archaeology, deserts, caves, biosphere reserves and cultural sites, with Google Maps pins."}
+  subject={"Unique places to visit in Mexico"}
+  keywords={"Mexico travel, unique places Mexico, Mexico archaeology, Mexico geology, cenotes Mexico, Mexico map"}
+  eyebrow={"Mexico field guide"}
+  dek={"A Mexico list built around civilizations, caves, migration ecology, volcanic desert and water systems rather than resort logic."}
+  criteriaText={"Trip estimates are per person from Cancun via Cancun International (CUN), using the region's busiest city airport for international passenger traffic among million-plus city areas as the cost origin. The order is the ranking. Higher means rarer globally, more mind-expanding or more difficult to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Cancun"}
+  mapHeading={"Pins across Mexico"}
+  mapAriaLabel={"Google Map with pins for interesting Mexico places"}
+  mapCenter={{"lat":22.5,"lng":-102}}
+  mapZoom={4}
+  mapErrorLabel={"Mexico"}
+  spots={spots}
+/>

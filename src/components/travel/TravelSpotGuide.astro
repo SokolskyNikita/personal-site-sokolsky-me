@@ -1,0 +1,969 @@
+---
+export type TravelSpot = {
+  id: string;
+  name: string;
+  countries: string[];
+  area: string;
+  kind: string;
+  access: string;
+  uniqueness: string;
+  why: string;
+  realityCheck: string;
+  wikiUrl?: string;
+  source?: {
+    label: string;
+    url: string;
+  };
+  map: {
+    name: string;
+    formattedAddress?: string;
+    placeId: string;
+    rating?: number;
+    reviewCount?: number;
+    location: { lat: number; lng: number };
+    googleMapsUrl: string;
+  };
+  trip: {
+    days: number;
+    costUsd: number;
+    note: string;
+  };
+};
+
+type Props = {
+  pageTitle: string;
+  pageDescription: string;
+  subject: string;
+  keywords: string;
+  eyebrow: string;
+  dek: string;
+  criteriaText: string;
+  tripOriginLabel: string;
+  mapHeading: string;
+  mapAriaLabel: string;
+  mapCenter: { lat: number; lng: number };
+  mapZoom: number;
+  mapErrorLabel: string;
+  spots: TravelSpot[];
+  themeColorLight?: string;
+  themeColorDark?: string;
+};
+
+const {
+  pageTitle,
+  pageDescription,
+  subject,
+  keywords,
+  eyebrow,
+  dek,
+  criteriaText,
+  tripOriginLabel,
+  mapHeading,
+  mapAriaLabel,
+  mapCenter,
+  mapZoom,
+  mapErrorLabel,
+  spots,
+  themeColorLight = "#f7f0e5",
+  themeColorDark = "#15120e",
+} = Astro.props;
+
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+
+const rankedSpotsWithTrip = spots;
+const spotIds = new Set(rankedSpotsWithTrip.map((spot) => spot.id));
+
+if (spotIds.size !== rankedSpotsWithTrip.length) {
+  throw new Error(`${pageTitle} spot IDs must be unique.`);
+}
+
+const formatter = new Intl.NumberFormat("en-US");
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+const countryOptions = [...new Set(rankedSpotsWithTrip.flatMap((spot) => spot.countries))].sort(
+  (a, b) => a.localeCompare(b),
+);
+const tripEstimateLabel = `${tripOriginLabel.replace(/^From /, "From-")} trip estimate`;
+const kindOptions = [...new Set(rankedSpotsWithTrip.map((spot) => spot.kind))].sort((a, b) =>
+  a.localeCompare(b),
+);
+const spotMapData = rankedSpotsWithTrip.map((spot, index) => ({
+  id: spot.id,
+  rank: index + 1,
+  name: spot.name,
+  kind: spot.kind,
+  countries: spot.countries,
+  uniqueness: spot.uniqueness,
+  position: spot.map.location,
+  googleMapsUrl: spot.map.googleMapsUrl,
+}));
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: rankedSpotsWithTrip.length,
+  itemListElement: rankedSpotsWithTrip.map((spot, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "TouristAttraction",
+      name: spot.name,
+      description: spot.why,
+      sameAs: spot.map.googleMapsUrl,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: spot.map.location.lat,
+        longitude: spot.map.location.lng,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content={subject} />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="keywords" content={keywords} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/">sokolsky.me</a>
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{pageTitle}</h1>
+        <p class="dek">{dek}</p>
+      </header>
+
+      <section class="criteria" aria-labelledby="criteria-heading">
+        <div>
+          <p class="eyebrow">Selection rule</p>
+          <h2 id="criteria-heading">What "interesting" means here</h2>
+        </div>
+        <p>{criteriaText}</p>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="map-heading">{mapHeading}</h2>
+          <p id="map-status" class="map-status">
+            Showing all {rankedSpotsWithTrip.length} spots.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div id="spots-map" class="spots-map" aria-label={mapAriaLabel}></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
+
+      <section class="toolbar" aria-label="Spot filters">
+        <label class="filter-field" for="country-filter">
+          <span>Country</span>
+          <select id="country-filter" autocomplete="off">
+            <option value="">All countries</option>
+            {countryOptions.map((country) => <option value={country}>{country}</option>)}
+          </select>
+        </label>
+        <label class="filter-field" for="kind-filter">
+          <span>Type</span>
+          <select id="kind-filter" autocomplete="off">
+            <option value="">All types</option>
+            {kindOptions.map((kind) => <option value={kind}>{kind}</option>)}
+          </select>
+        </label>
+        <label class="filter-field" for="sort-select">
+          <span>Sort</span>
+          <select id="sort-select" autocomplete="off">
+            <option value="uniqueness">Uniqueness</option>
+            <option value="popularity">Popularity (GMaps reviews)</option>
+            <option value="cost">Cost (low to high)</option>
+            <option value="time">Time required (short to long)</option>
+          </select>
+        </label>
+        <button id="reset-filters" class="reset-button" type="button">Reset</button>
+      </section>
+
+      <section class="spot-list" aria-label={subject}>
+        {rankedSpotsWithTrip.map((spot, index) => (
+          <article
+            id={spot.id}
+            class="spot-card"
+            data-country-list={spot.countries.join("|")}
+            data-kind={spot.kind}
+            data-cost-usd={spot.trip.costUsd}
+            data-trip-days={spot.trip.days}
+            data-review-count={spot.map.reviewCount ?? 0}
+            data-uniqueness-rank={index + 1}
+          >
+            <div class="spot-rank" aria-label={`Rank ${index + 1}`}>
+              {String(index + 1).padStart(2, "0")}
+            </div>
+            <div class="spot-body">
+              <div class="spot-heading">
+                <div>
+                  <p class="spot-area">{spot.area}</p>
+                  <h2>
+                    {spot.wikiUrl ? (
+                      <a
+                        class="spot-title-link"
+                        href={spot.wikiUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      >
+                        {spot.name}
+                      </a>
+                    ) : (
+                      spot.name
+                    )}
+                  </h2>
+                </div>
+                <a
+                  class="maps-link"
+                  href={spot.map.googleMapsUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Open map
+                </a>
+              </div>
+              <div class="badges" aria-label={`${spot.name} attributes`}>
+                <span>{spot.kind}</span>
+                <span>{spot.countries.join(" / ")}</span>
+                <span>{spot.access}</span>
+                <span>
+                  {tripOriginLabel}: {spot.trip.days} days · {usdFormatter.format(spot.trip.costUsd)}
+                </span>
+                {typeof spot.map.rating === "number" && (
+                  <span>
+                    GMaps {spot.map.rating.toFixed(1)} · {formatter.format(spot.map.reviewCount ?? 0)} reviews
+                  </span>
+                )}
+              </div>
+              <p class="uniqueness">{spot.uniqueness}</p>
+              <p>{spot.why}</p>
+              <p class="reality-check">{spot.realityCheck}</p>
+              <p class="trip-estimate">
+                <strong>{tripEstimateLabel}:</strong> {spot.trip.days} days · {usdFormatter.format(spot.trip.costUsd)}. {spot.trip.note}
+              </p>
+              {spot.source && (
+                <p class="source-link">
+                  Source: <a href={spot.source.url} target="_blank" rel="noreferrer noopener">{spot.source.label}</a>
+                </p>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ googleMapsApiKey, spotMapData, mapCenter, mapZoom, mapErrorLabel }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const countryFilter = document.querySelector("#country-filter");
+  const kindFilter = document.querySelector("#kind-filter");
+  const sortSelect = document.querySelector("#sort-select");
+  const resetFiltersButton = document.querySelector("#reset-filters");
+  const spotList = document.querySelector(".spot-list");
+  const spotCards = [...document.querySelectorAll(".spot-card")];
+  const mapElement = document.querySelector("#spots-map");
+  const mapStatus = document.querySelector("#map-status");
+  const markerRecords = [];
+  let spotsMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getVisibleSpots = (selectedCountry, selectedKind) =>
+    spotMapData.filter(
+      (spot) =>
+        (!selectedCountry || spot.countries.includes(selectedCountry)) &&
+        (!selectedKind || spot.kind === selectedKind),
+    );
+
+  const updateMapStatus = (selectedCountry, selectedKind) => {
+    if (!mapStatus) return;
+
+    const visibleCount = getVisibleSpots(selectedCountry, selectedKind).length;
+    const label = visibleCount === 1 ? "spot" : "spots";
+    const filterLabel = [selectedCountry, selectedKind].filter(Boolean).join(" · ");
+    mapStatus.textContent = filterLabel
+      ? `Showing ${visibleCount} ${label} for ${filterLabel}.`
+      : `Showing all ${visibleCount} ${label}.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!spotsMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      spotsMap.setCenter(visibleRecords[0].spot.position);
+      spotsMap.setZoom(8);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    for (const { spot } of visibleRecords) {
+      bounds.extend(spot.position);
+    }
+    spotsMap.fitBounds(bounds, 42);
+  };
+
+  const syncMapMarkers = (selectedCountry, selectedKind) => {
+    updateMapStatus(selectedCountry, selectedKind);
+    if (!spotsMap) return;
+
+    const visibleIds = new Set(
+      getVisibleSpots(selectedCountry, selectedKind).map((spot) => spot.id),
+    );
+    const visibleRecords = [];
+
+    for (const record of markerRecords) {
+      const isVisible = visibleIds.has(record.spot.id);
+      record.marker.setMap(isVisible ? spotsMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const getNumberData = (element, key) => Number(element.dataset[key] ?? 0);
+
+  const sortedSpotCards = () => {
+    const selectedSort = sortSelect?.value ?? "uniqueness";
+
+    return [...spotCards].sort((a, b) => {
+      const uniquenessDelta =
+        getNumberData(a, "uniquenessRank") - getNumberData(b, "uniquenessRank");
+
+      if (selectedSort === "popularity") {
+        const popularityDelta =
+          getNumberData(b, "reviewCount") - getNumberData(a, "reviewCount");
+
+        return popularityDelta || uniquenessDelta;
+      }
+
+      if (selectedSort === "cost") {
+        const costDelta = getNumberData(a, "costUsd") - getNumberData(b, "costUsd");
+
+        return costDelta || uniquenessDelta;
+      }
+
+      if (selectedSort === "time") {
+        const timeDelta = getNumberData(a, "tripDays") - getNumberData(b, "tripDays");
+
+        return timeDelta || uniquenessDelta;
+      }
+
+      return uniquenessDelta;
+    });
+  };
+
+  const syncCardOrderAndRanks = () => {
+    const sortedCards = sortedSpotCards();
+    let visibleIndex = 0;
+
+    for (const card of sortedCards) {
+      spotList?.append(card);
+
+      if (card.hidden) continue;
+
+      visibleIndex += 1;
+      const rank = card.querySelector(".spot-rank");
+      if (!rank) continue;
+
+      rank.textContent = String(visibleIndex).padStart(2, "0");
+      rank.setAttribute("aria-label", `Display rank ${visibleIndex}`);
+    }
+  };
+
+  const applyFilters = () => {
+    const selectedCountry = countryFilter?.value ?? "";
+    const selectedKind = kindFilter?.value ?? "";
+
+    for (const card of spotCards) {
+      const countries = card.dataset.countryList?.split("|") ?? [];
+      const countryMismatch =
+        Boolean(selectedCountry) && !countries.includes(selectedCountry);
+      const kindMismatch =
+        Boolean(selectedKind) && card.dataset.kind !== selectedKind;
+      card.hidden = countryMismatch || kindMismatch;
+    }
+
+    syncCardOrderAndRanks();
+    syncMapMarkers(selectedCountry, selectedKind);
+  };
+
+  const initMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    spotsMap = new Map(mapElement, {
+      center: mapCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: mapZoom,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const spot of spotMapData) {
+      const marker = new google.maps.Marker({
+        map: spotsMap,
+        position: spot.position,
+        title: `${spot.rank}. ${spot.name}`,
+        label: String(spot.rank),
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(
+          `<strong>${escapeHtml(spot.rank)}. ${escapeHtml(spot.name)}</strong><br>${escapeHtml(spot.uniqueness)}<br><a href="${escapeHtml(spot.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(spotsMap, marker);
+      });
+
+      markerRecords.push({ spot, marker });
+    }
+
+    applyFilters();
+  };
+
+  countryFilter?.addEventListener("change", applyFilters);
+  kindFilter?.addEventListener("change", applyFilters);
+  sortSelect?.addEventListener("change", applyFilters);
+  resetFiltersButton?.addEventListener("click", () => {
+    if (countryFilter) countryFilter.value = "";
+    if (kindFilter) kindFilter.value = "";
+    if (sortSelect) sortSelect.value = "uniqueness";
+    applyFilters();
+  });
+  window.addEventListener("pageshow", applyFilters);
+  initMap().catch((error) => {
+    console.error(`Unable to initialize ${mapErrorLabel} spots map`, error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. The list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f0e5;
+    --panel: #fffaf2;
+    --panel-strong: #ede0cd;
+    --text: #1e1912;
+    --muted: #6e604f;
+    --border: #dfcfb8;
+    --accent: #8a4b2a;
+    --accent-strong: #4f2b18;
+    --shadow: 0 22px 70px rgba(64, 43, 24, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15120e;
+      --panel: #211c16;
+      --panel-strong: #30271d;
+      --text: #f4eadb;
+      --muted: #c0ae97;
+      --border: #493a2a;
+      --accent: #e0a069;
+      --accent-strong: #ffd3a9;
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(138, 75, 42, 0.18), transparent 28rem),
+      linear-gradient(180deg, var(--bg), var(--panel-strong));
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.55;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 32px 0 72px;
+  }
+
+  .hero,
+  .criteria,
+  .map-section,
+  .toolbar,
+  .spot-card {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    box-shadow: var(--shadow);
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 520px;
+    padding: clamp(28px, 7vw, 72px);
+    border-radius: 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 28px;
+    border-radius: 28px;
+    border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -8%;
+    top: -16%;
+    width: min(58vw, 620px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      linear-gradient(120deg, transparent 42%, color-mix(in srgb, var(--accent) 40%, transparent) 43% 45%, transparent 46%),
+      repeating-linear-gradient(155deg, transparent 0 20px, color-mix(in srgb, var(--accent) 18%, transparent) 21px 22px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .home-link {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    z-index: 1;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .eyebrow,
+  .spot-area {
+    margin: 0 0 10px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    position: relative;
+    z-index: 1;
+    max-width: min(100%, 1080px);
+    margin-bottom: 18px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.75rem, 6.8vw, 6.4rem);
+    line-height: 0.96;
+    letter-spacing: -0.065em;
+  }
+
+  h2 {
+    margin-bottom: 8px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3vw, 2.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .dek {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin-bottom: 28px;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .badges span {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--panel) 70%, transparent);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 6px 10px;
+  }
+
+  .criteria,
+  .map-section,
+  .toolbar {
+    margin-top: 22px;
+    border-radius: 26px;
+    padding: 24px;
+  }
+
+  .criteria {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.25fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .criteria p:last-child {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .map-section {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .map-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .map-status {
+    margin-bottom: 0;
+    color: var(--muted);
+  }
+
+  .spots-map {
+    min-height: 520px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--panel-strong);
+  }
+
+  .map-unavailable {
+    margin: 0;
+    border: 1px dashed var(--border);
+    border-radius: 22px;
+    padding: 24px;
+    color: var(--muted);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: end;
+    box-shadow: none;
+  }
+
+  .filter-field {
+    display: grid;
+    gap: 6px;
+    min-width: min(260px, 100%);
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  select,
+  .reset-button {
+    min-height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    padding: 0 14px;
+  }
+
+  .reset-button {
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .spot-list {
+    display: grid;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .spot-card {
+    display: grid;
+    grid-template-columns: 86px minmax(0, 1fr);
+    gap: 18px;
+    border-radius: 26px;
+    padding: 22px;
+  }
+
+  .spot-card[hidden] {
+    display: none;
+  }
+
+  .spot-rank {
+    display: grid;
+    place-items: center;
+    align-self: start;
+    width: 68px;
+    height: 68px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--accent-strong);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+  }
+
+  .spot-heading {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 14px;
+  }
+
+  .spot-heading h2 {
+    margin-bottom: 0;
+  }
+
+  .spot-title-link {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.12em;
+  }
+
+  .spot-title-link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .maps-link {
+    flex: 0 0 auto;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent-strong);
+    font-size: 0.86rem;
+    font-weight: 800;
+    padding: 8px 12px;
+    text-decoration: none;
+  }
+
+  .badges {
+    margin-bottom: 16px;
+  }
+
+  .uniqueness {
+    margin-bottom: 10px;
+    color: var(--accent-strong);
+    font-size: 1.08rem;
+    font-weight: 800;
+  }
+
+  .spot-body p:not(.spot-area, .uniqueness) {
+    color: var(--muted);
+  }
+
+  .reality-check {
+    border-left: 3px solid var(--accent);
+    padding-left: 14px;
+  }
+
+  .trip-estimate {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--panel-strong) 48%, transparent);
+    padding: 12px 14px;
+  }
+
+  .trip-estimate strong,
+  .source-link a {
+    color: var(--accent-strong);
+  }
+
+  .source-link {
+    margin-bottom: 0;
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 820px) {
+    .page {
+      width: min(100% - 20px, 1180px);
+      padding-top: 10px;
+    }
+
+    .hero {
+      min-height: 560px;
+      border-radius: 24px;
+      padding: 82px 22px 28px;
+    }
+
+    .hero::before {
+      inset: 12px;
+      border-radius: 20px;
+    }
+
+    .home-link {
+      top: 22px;
+      left: 22px;
+    }
+
+    .criteria,
+    .map-section,
+    .spot-card {
+      grid-template-columns: 1fr;
+    }
+
+    .spots-map {
+      min-height: 420px;
+    }
+
+    .spot-card {
+      padding: 18px;
+    }
+
+    .spot-rank {
+      width: 54px;
+      height: 54px;
+      font-size: 1.1rem;
+    }
+
+    .spot-heading {
+      display: grid;
+    }
+
+    .maps-link {
+      justify-self: start;
+    }
+  }
+</style>

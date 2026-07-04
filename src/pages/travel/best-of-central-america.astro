@@ -1,0 +1,962 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+export const prerender = true;
+
+const spots = [
+  {
+    "id": "darien",
+    "name": "Darién National Park and the Darién Gap",
+    "countries": [
+      "Panama"
+    ],
+    "area": "Darién Gap",
+    "kind": "Rainforest",
+    "access": "Difficult; guide and permits essential",
+    "uniqueness": "A UNESCO rainforest at the only roadless break in the Pan-American Highway",
+    "why": "Darién matters because it is both ecological corridor and human frontier: rainforest, rivers, Indigenous territories, migration routes and the one place where a road system linking Alaska to South America stops.",
+    "realityCheck": "Do not attempt to cross the gap. Security, migration and access conditions are serious; experience the Panamanian edge or permitted park fringes only with current local guidance and reputable operators.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Dari%C3%A9n_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/159/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1900,
+      "note": "Assumes travel from Panama City: flights to Panama City, permitted guided access to safer park-edge areas, lodging, meals, transport and large security/logistics buffer."
+    },
+    "map": {
+      "name": "Darien National Park",
+      "formattedAddress": "Panama",
+      "placeId": "ChIJ5QX323bdUY4RKJCnA83cits",
+      "rating": 4.4,
+      "reviewCount": 307,
+      "location": {
+        "lat": 7.736014900000001,
+        "lng": -77.5470713
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Darien%20National%20Park&query_place_id=ChIJ5QX323bdUY4RKJCnA83cits"
+    }
+  },
+  {
+    "id": "cocos-island",
+    "name": "Cocos Island National Park",
+    "countries": [
+      "Costa Rica"
+    ],
+    "area": "Eastern Pacific",
+    "kind": "Marine ecology",
+    "access": "Liveaboard only",
+    "uniqueness": "Remote hammerhead-shark and pelagic biodiversity hotspot",
+    "why": "Cocos is Central America pushed into the open Pacific: a volcanic island and marine reserve famous for large animals, currents and isolation rather than beaches.",
+    "realityCheck": "This is mostly a serious dive destination. Non-divers will find the logistics hard to justify.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cocos_Island",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/820/"
+    },
+    "trip": {
+      "days": 12,
+      "costUsd": 4800,
+      "note": "Assumes travel from Panama City: flights to San Jose, liveaboard dive package from Puntarenas, meals on board, park fees, equipment and buffer nights."
+    },
+    "map": {
+      "name": "Cocos Island National Park Costa Rica",
+      "formattedAddress": "GWMM+887, Provincia de Puntarenas, Puntarenas, 60110, Costa Rica",
+      "placeId": "ChIJr3-8TYvvko8RcAhcdocT1gc",
+      "rating": 4.6,
+      "reviewCount": 105,
+      "location": {
+        "lat": 5.533299899999999,
+        "lng": -87.0667
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Cocos%20Island%20National%20Park%20Costa%20Rica&query_place_id=ChIJr3-8TYvvko8RcAhcdocT1gc"
+    }
+  },
+  {
+    "id": "masaya",
+    "name": "Masaya Volcano",
+    "countries": [
+      "Nicaragua"
+    ],
+    "area": "Near Managua",
+    "kind": "Volcanology",
+    "access": "Road access; conditions vary",
+    "uniqueness": "One of the very few persistent lava-lake volcanoes on Earth, with unusually easy crater-rim access when open",
+    "why": "Masaya collapses the distance between everyday travel and active volcanism. Smithsonian activity reports confirm recurring lava-lake activity at Santiago crater, and its road access near Managua makes the phenomenon far more reachable than most lava lakes.",
+    "realityCheck": "Access changes with lava level, gas, rockfall and government rules. Check current INETER or park status before building a trip around visible lava.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Masaya_Volcano",
+    "source": {
+      "label": "Smithsonian Global Volcanism Program",
+      "url": "https://volcano.si.edu/volcano.cfm?vn=344100"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Panama City: flights to Managua, local transport or guide, Granada/Managua lodging, meals and condition buffer."
+    },
+    "map": {
+      "name": "Parque Nacional Volcán Masaya",
+      "formattedAddress": "NN-222, Nicaragua",
+      "placeId": "ChIJBcZEHyAHdI8R40tnHXy5AA0",
+      "rating": 4.6,
+      "reviewCount": 452,
+      "location": {
+        "lat": 12.0033754,
+        "lng": -86.1491221
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20Volc%C3%A1n%20Masaya&query_place_id=ChIJBcZEHyAHdI8R40tnHXy5AA0"
+    }
+  },
+  {
+    "id": "joya-de-ceren",
+    "name": "Joya de Cerén",
+    "countries": [
+      "El Salvador"
+    ],
+    "area": "La Libertad",
+    "kind": "Archaeology",
+    "access": "Easy road access",
+    "uniqueness": "The ash-preserved Maya farming village often called the Pompeii of the Americas",
+    "why": "Joya de Cerén is a rare Maya site about ordinary life: kitchens, fields, storage, tools and domestic structures sealed by volcanic ash rather than elite temples or royal monuments.",
+    "realityCheck": "The site is compact and visually quiet because the fragile structures sit under protective roofs. It pairs well with broader Salvadoran archaeology and volcano context.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Joya_de_Cer%C3%A9n",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/675/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Panama City: flights to San Salvador, local transport or guide, city lodging, meals and site fees."
+    },
+    "map": {
+      "name": "Parque Arqueológico Joya de Cerén",
+      "formattedAddress": "RJCR+V6R, Carr. San Juan Opico - Agua Escondida Km 32, Joya de Ceren, El Salvador",
+      "placeId": "ChIJ-VLGSCkhY48RRqZdv0dDnuw",
+      "rating": 4.5,
+      "reviewCount": 1713,
+      "location": {
+        "lat": 13.8279206,
+        "lng": -89.3562386
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Parque%20Arqueol%C3%B3gico%20Joya%20de%20Cer%C3%A9n&query_place_id=ChIJ-VLGSCkhY48RRqZdv0dDnuw"
+    }
+  },
+  {
+    "id": "el-mirador",
+    "name": "El Mirador and La Danta",
+    "countries": [
+      "Guatemala"
+    ],
+    "area": "Northern Peten",
+    "kind": "Archaeology",
+    "access": "Multi-day trek or helicopter",
+    "uniqueness": "A Preclassic Maya city with La Danta, listed by Guinness as the largest Maya pyramid by volume",
+    "why": "El Mirador changes the scale of early Maya history. La Danta alone is credited at about 2.8 million cubic meters, while causeways and basin-wide settlement show urban complexity centuries before the better-known Classic sites peaked.",
+    "realityCheck": "This is hard by design: multi-day mud, heat and logistics unless you pay for a helicopter. Describe La Danta as among the largest pyramids by volume, not as an uncontested world-largest pyramid.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/El_Mirador",
+    "source": {
+      "label": "Guinness World Records",
+      "url": "https://www.guinnessworldrecords.com.br/world-records/779448-largest-maya-pyramid"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2200,
+      "note": "Assumes travel from Panama City: flights to Guatemala/Flores, a 5-day trek package or partial charter logistics, simple camping, meals, mule support and buffer nights."
+    },
+    "map": {
+      "name": "Mirador Basin",
+      "formattedAddress": "Q34H+2V8, La Gloria, Guatemala",
+      "placeId": "ChIJM3i6RwRcX48RPIA98fsm4-k",
+      "rating": 4.7,
+      "reviewCount": 105,
+      "location": {
+        "lat": 17.7550307,
+        "lng": -89.92030150000001
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mirador%20Basin&query_place_id=ChIJM3i6RwRcX48RPIA98fsm4-k"
+    }
+  },
+  {
+    "id": "copan",
+    "name": "Copán",
+    "countries": [
+      "Honduras"
+    ],
+    "area": "Copan Valley",
+    "kind": "Archaeology",
+    "access": "Road access from Honduras or Guatemala",
+    "uniqueness": "The Maya site with the longest known Maya inscription, carved into the Hieroglyphic Stairway",
+    "why": "Copán is less about height and more about text and sculpture: UNESCO describes the stairway as carrying more than 1,800 glyphs, the longest known Mayan inscription, while the stelae make dynastic art unusually legible.",
+    "realityCheck": "The town is pleasant and the site is manageable. The museum and tunnels add much of the depth, and the stairway is best appreciated with a guide who can unpack the dynastic history.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cop%C3%A1n",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/129/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from Panama City: flights via Guatemala City or San Pedro Sula, road transfer, Copan lodging, guide/site tickets, meals and border/road buffer."
+    },
+    "map": {
+      "name": "Copan Maya Archaeological Site",
+      "formattedAddress": "RVQ4+CH4, CA-11, Copan Ruinas, Copan, Honduras",
+      "placeId": "ChIJc6N5jTHDY48Rb4Ek_Qf_hAA",
+      "rating": 4.8,
+      "reviewCount": 6618,
+      "location": {
+        "lat": 14.8385007,
+        "lng": -89.1435351
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Copan%20Maya%20Archaeological%20Site&query_place_id=ChIJc6N5jTHDY48Rb4Ek_Qf_hAA"
+    }
+  },
+  {
+    "id": "tikal",
+    "name": "Tikal National Park",
+    "countries": [
+      "Guatemala"
+    ],
+    "area": "Peten",
+    "kind": "Archaeology",
+    "access": "Road or regional flight access",
+    "uniqueness": "A rare mixed UNESCO site where monumental Maya architecture rises inside protected rainforest",
+    "why": "Tikal is a Maya city inside protected rainforest. Temple IV, twin-pyramid complexes, reservoirs, causeways and wildlife make it one of the best places to see Maya urbanism and tropical ecology at once; UNESCO inscribed it for both cultural and natural criteria.",
+    "realityCheck": "The best experience starts early. Heat, howler monkeys, distances and guide quality shape the day; treat “tallest” claims carefully because Maya height records are contested.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tikal",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/64/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Panama City: flights via Panama or another hub to Guatemala City/Flores, Tikal-area lodging or Flores base, guide, meals and transfers."
+    },
+    "map": {
+      "name": "Tikal National Park",
+      "formattedAddress": "Tikal, Guatemala",
+      "placeId": "ChIJc8ZiAsumX48RVRE-8jzDyd4",
+      "rating": 4.8,
+      "reviewCount": 10233,
+      "location": {
+        "lat": 17.2220409,
+        "lng": -89.6236995
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Tikal%20National%20Park&query_place_id=ChIJc8ZiAsumX48RVRE-8jzDyd4"
+    }
+  },
+  {
+    "id": "atm-cave",
+    "name": "Actun Tunichil Muknal",
+    "countries": [
+      "Belize"
+    ],
+    "area": "Cayo District",
+    "kind": "Cave archaeology",
+    "access": "Guided wet cave trip",
+    "uniqueness": "A Maya ritual cave where artifacts and human remains stay in situ",
+    "why": "ATM is powerful because the cave is both geology and sacred space. You move through water and chambers before encountering ceramics, offerings and calcified remains where they were left.",
+    "realityCheck": "Guided access is mandatory and physical. Cameras are banned for good reason after past damage.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Actun_Tunichil_Muknal",
+    "source": {
+      "label": "Belize Tourism Board",
+      "url": "https://www.travelbelize.org/attraction/actun-tunichil-muknal/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from Panama City: flights to Belize City, San Ignacio lodging, licensed ATM guide, meals, transfers and an extra day for weather."
+    },
+    "map": {
+      "name": "Actun Tunichil Muknal (ATM Cave)",
+      "formattedAddress": "44HX+9GM, Seven Miles El Progresso, Belize",
+      "placeId": "ChIJ-8RlF2l6Xo8Ruhp70pMXxXs",
+      "rating": 4.9,
+      "reviewCount": 749,
+      "location": {
+        "lat": 17.1284677,
+        "lng": -88.8511935
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Actun%20Tunichil%20Muknal%20(ATM%20Cave)&query_place_id=ChIJ-8RlF2l6Xo8Ruhp70pMXxXs"
+    }
+  },
+  {
+    "id": "ostional",
+    "name": "Ostional Wildlife Refuge",
+    "countries": [
+      "Costa Rica"
+    ],
+    "area": "Nicoya Peninsula",
+    "kind": "Mass turtle nesting",
+    "access": "Guided beach access during arribadas",
+    "uniqueness": "One of the world’s major olive-ridley arribada beaches, where nesting happens in synchronized waves",
+    "why": "Ostional is built around the rare arribada phenomenon: thousands to hundreds of thousands of olive ridley turtles can come ashore over a few nights. The refuge is also notable for its regulated community role in protecting and managing the nesting beach.",
+    "realityCheck": "Timing matters: arribadas follow lunar and seasonal patterns, and access rules are strict. Visit only with sanctioned local guides and do not treat nesting turtles as a casual beach spectacle.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ostional_Wildlife_Refuge",
+    "source": {
+      "label": "Wildlife Conservation Association Nosara",
+      "url": "https://www.wcanosara.org/refuge"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1600,
+      "note": "Assumes travel from Panama City: flights to San Jose or Liberia, road transfer to Nosara/Ostional, local lodging, guide fees, meals and timing buffer."
+    },
+    "map": {
+      "name": "Refugio de Vida Silvestre Ostional",
+      "formattedAddress": "X8Q2+XQ8, Guanacaste Province, Ostional, Costa Rica",
+      "placeId": "ChIJuaTXGWlRno8RiWtVwmQvulo",
+      "rating": 4.7,
+      "reviewCount": 405,
+      "location": {
+        "lat": 9.989921599999999,
+        "lng": -85.6980463
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Refugio%20de%20Vida%20Silvestre%20Ostional&query_place_id=ChIJuaTXGWlRno8RiWtVwmQvulo"
+    }
+  },
+  {
+    "id": "coiba",
+    "name": "Coiba National Park",
+    "countries": [
+      "Panama"
+    ],
+    "area": "Pacific Panama",
+    "kind": "Marine ecology",
+    "access": "Boat access from Santa Catalina or Gulf of Chiriqui",
+    "uniqueness": "A former prison island protecting eastern Pacific marine biodiversity",
+    "why": "Coiba is fascinating because isolation did conservation work. The former penal colony limited development, leaving forests, reefs, sharks, rays and island endemism unusually intact.",
+    "realityCheck": "Sea conditions and operator quality matter. The strongest trips are nature-focused, not party-boat versions.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Coiba",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1138/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1600,
+      "note": "Assumes travel from Panama City: flights to Panama City, overland transfer to Santa Catalina, boat/snorkel or dive trips, lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Coiba National Park",
+      "formattedAddress": "C6FW+824 Isla de Coiba, El Trapiche, Provincia de Veraguas, Panama",
+      "placeId": "ChIJd8ezpRU5sI8RqnfEMQnNHGc",
+      "rating": 4.9,
+      "reviewCount": 361,
+      "location": {
+        "lat": 7.423262499999999,
+        "lng": -81.7549219
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Coiba%20National%20Park&query_place_id=ChIJd8ezpRU5sI8RqnfEMQnNHGc"
+    }
+  },
+  {
+    "id": "corcovado",
+    "name": "Corcovado National Park",
+    "countries": [
+      "Costa Rica"
+    ],
+    "area": "Osa Peninsula",
+    "kind": "Rainforest",
+    "access": "Permit and guide required for many routes",
+    "uniqueness": "The Osa Peninsula rainforest often described as one of the most biologically intense places on Earth",
+    "why": "Corcovado concentrates tapirs, scarlet macaws, monkeys, big cats and primary forest on a peninsula that is wildly biodiverse for its size. The Sirena area is the classic hard-access core, reached by boat or small plane with regulated guided entry.",
+    "realityCheck": "It is hot, wet, regulated and sometimes closed seasonally. Book guides and permits early, and do not treat wildlife density as a guarantee of every headline species.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Corcovado_National_Park",
+    "source": {
+      "label": "Costa Rica National System of Conservation Areas",
+      "url": "https://www.sinac.go.cr/EN-US/ac/acosa/pnc/Pages/default.aspx"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1700,
+      "note": "Assumes travel from Panama City: flights to San Jose, domestic flight or road/boat transfer to Drake Bay or Puerto Jimenez, guided park access, lodging and meals."
+    },
+    "map": {
+      "name": "Corcovado National Park",
+      "formattedAddress": "Osa Peninsula, Provincia de Puntarenas, Costa Rica",
+      "placeId": "ChIJ9UsxeymBo48R9dxnGwzufHI",
+      "rating": 4.6,
+      "reviewCount": 1257,
+      "location": {
+        "lat": 8.540835399999999,
+        "lng": -83.57096399999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Corcovado%20National%20Park&query_place_id=ChIJ9UsxeymBo48R9dxnGwzufHI"
+    }
+  },
+  {
+    "id": "monteverde",
+    "name": "Monteverde Cloud Forest",
+    "countries": [
+      "Costa Rica"
+    ],
+    "area": "Cordillera de Tilaran",
+    "kind": "Cloud forest",
+    "access": "Road access; reserve trails",
+    "uniqueness": "A famous tropical cloud forest where the continental divide wrings water directly from mist",
+    "why": "Monteverde makes vertical ecology visible: mosses, orchids, bromeliads, birds and amphibians thrive because clouds are part of the habitat, not weather passing through. It is also one of the region’s most accessible ways to understand cloud-forest rarity.",
+    "realityCheck": "It is popular and developed compared with wilder parks. Go for ecology, night walks, quetzal habitat and canopy structure, not solitude.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Monteverde_Cloud_Forest_Reserve",
+    "source": {
+      "label": "Tropical Science Center",
+      "url": "https://cloudforestmonteverde.com/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Panama City: flights to San Jose, shuttle or rental car to Monteverde, reserve entries, night walk, lodging and meals."
+    },
+    "map": {
+      "name": "Monteverde Cloud Forest Biological Preserve",
+      "formattedAddress": "Puntarenas Province, Monteverde, Costa Rica",
+      "placeId": "ChIJzxHsVYcZoI8RZs7pnue4L68",
+      "rating": 4.5,
+      "reviewCount": 5894,
+      "location": {
+        "lat": 10.2989417,
+        "lng": -84.7681559
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Monteverde%20Cloud%20Forest%20Biological%20Preserve&query_place_id=ChIJzxHsVYcZoI8RZs7pnue4L68"
+    }
+  },
+  {
+    "id": "ometepe",
+    "name": "Ometepe",
+    "countries": [
+      "Nicaragua"
+    ],
+    "area": "Lake Nicaragua",
+    "kind": "Volcanic island",
+    "access": "Ferry plus road travel",
+    "uniqueness": "A freshwater island formed by twin volcanoes",
+    "why": "Ometepe's appeal is the geometry: two volcanic cones rising from a giant tropical lake, with petroglyphs, farms, cloud forest and shore villages wrapped around them.",
+    "realityCheck": "Ferries, roads and volcano hikes require patience. It is better as a slow island stay than a checklist stop.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ometepe",
+    "source": {
+      "label": "UNESCO Biosphere Reserves",
+      "url": "https://en.unesco.org/biosphere/lac/ometepe-island"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Panama City: flights to Managua, transfer and ferry to Ometepe, simple-to-midrange lodging, meals, local transport and weather buffer."
+    },
+    "map": {
+      "name": "Ometepe",
+      "formattedAddress": "Ometepe, Nicaragua",
+      "placeId": "ChIJ8yjPRvH3dI8Rjz7WkAWzyBA",
+      "rating": 4.7,
+      "reviewCount": 863,
+      "location": {
+        "lat": 11.5141431,
+        "lng": -85.58179109999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Ometepe&query_place_id=ChIJ8yjPRvH3dI8Rjz7WkAWzyBA"
+    }
+  },
+  {
+    "id": "caracol",
+    "name": "Caracol",
+    "countries": [
+      "Belize"
+    ],
+    "area": "Chiquibul Forest",
+    "kind": "Archaeology",
+    "access": "Long road trip; guide recommended",
+    "uniqueness": "A major Maya city deep in forest with huge causeways and plazas",
+    "why": "Caracol shows Maya urbanism beyond the most famous names. Its scale, forest setting and rivalry with Tikal make it one of the best places to think regionally about Maya power.",
+    "realityCheck": "Roads can be rough and remote. Start early from San Ignacio and check current access/security conditions.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Caracol",
+    "source": {
+      "label": "Belize Institute of Archaeology",
+      "url": "https://www.nichbelize.org/ia-caracol/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from Panama City: flights to Belize City, San Ignacio base, guided Caracol day trip, lodging, meals and road buffer."
+    },
+    "map": {
+      "name": "Caracol Natural Monument Reservation",
+      "formattedAddress": "QV7J+6VM, Chiquibil Forest Reserve, Belize",
+      "placeId": "ChIJqaMY-Qs9Xo8RB5bZ08HWyJw",
+      "rating": 4.9,
+      "reviewCount": 549,
+      "location": {
+        "lat": 16.7630815,
+        "lng": -89.1178134
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Caracol%20Natural%20Monument%20Reservation&query_place_id=ChIJqaMY-Qs9Xo8RB5bZ08HWyJw"
+    }
+  },
+  {
+    "id": "atitlan",
+    "name": "Lake Atitlán",
+    "countries": [
+      "Guatemala"
+    ],
+    "area": "Guatemalan Highlands",
+    "kind": "Volcanic lake",
+    "access": "Road and boat travel",
+    "uniqueness": "Central America’s deepest lake, a volcanic caldera ringed by living Maya towns",
+    "why": "Atitlán is compelling because geology and culture are inseparable: a deep volcanic basin, steep slopes, boat-linked villages and Tz’utujil/Kaqchikel communities with distinct identities around the shore.",
+    "realityCheck": "It can be over-touristed in pockets. Choose villages carefully and respect that this is a lived-in lake, not a backdrop.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lake_Atitl%C3%A1n",
+    "source": {
+      "label": "NASA Earth Observatory",
+      "url": "https://earthobservatory.nasa.gov/images/149675/lake-atitlan-guatemala"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Panama City: flights to Guatemala City, transfer to Panajachel or another lake town, boat travel, lodging, meals and road buffer."
+    },
+    "map": {
+      "name": "Lake Atitlán",
+      "formattedAddress": "Lake Atitlán, Guatemala",
+      "placeId": "ChIJk7SDwMdKiYUREEm11vczbgo",
+      "rating": 4.8,
+      "reviewCount": 1763,
+      "location": {
+        "lat": 14.6906713,
+        "lng": -91.20252070000001
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Lake%20Atitl%C3%A1n&query_place_id=ChIJk7SDwMdKiYUREEm11vczbgo"
+    }
+  },
+  {
+    "id": "cerro-negro",
+    "name": "Cerro Negro",
+    "countries": [
+      "Nicaragua"
+    ],
+    "area": "Near León",
+    "kind": "Volcano boarding",
+    "access": "Guided hike and board descent",
+    "uniqueness": "The original global icon of volcano boarding on an active young cinder cone",
+    "why": "Cerro Negro is the place that made volcano boarding a real travel activity: hike the black cinder cone near León, then descend loose volcanic gravel on a reinforced board. It is also the youngest volcano in Central America, first erupting in 1850.",
+    "realityCheck": "This is hot, dusty and mildly ridiculous in the best way. Use a reputable operator, wear the protective gear and remember that “only volcano you can sled down” is a tourism shorthand rather than a geological category.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cerro_Negro",
+    "source": {
+      "label": "Volcano boarding overview",
+      "url": "https://en.wikipedia.org/wiki/Volcano_boarding"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from Panama City: flights to Managua, León lodging, guided volcano-boarding trip, meals, transfers and heat/weather buffer."
+    },
+    "map": {
+      "name": "Cerro Negro",
+      "formattedAddress": "Cerro Negro, Nicaragua",
+      "placeId": "ChIJE7gPkSoXcY8ReKQlyG5qe98",
+      "rating": 4.7,
+      "reviewCount": 377,
+      "location": {
+        "lat": 12.5077778,
+        "lng": -86.7022222
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Cerro%20Negro&query_place_id=ChIJE7gPkSoXcY8ReKQlyG5qe98"
+    }
+  },
+  {
+    "id": "panama-canal",
+    "name": "Panama Canal and Miraflores Locks",
+    "countries": [
+      "Panama"
+    ],
+    "area": "Panama City / Canal Zone",
+    "kind": "Mega-engineering",
+    "access": "Visitor center or partial/full transit",
+    "uniqueness": "A lock-and-lake water staircase over the continental divide, not a sea-level ditch",
+    "why": "The canal lifts ships roughly 26 meters to Gatun Lake and lowers them again, using freshwater and locks to connect two oceans through the isthmus. It is one of the clearest places on Earth to watch geography, engineering and world trade become one mechanism.",
+    "realityCheck": "Miraflores is easy and popular. For the deeper experience, time your visit around ship movements or book a partial/full transit rather than only viewing from the museum deck.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Panama_Canal",
+    "source": {
+      "label": "Panama Canal Authority",
+      "url": "https://pancanal.com/en/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Panama City: flights to Panama City, city lodging, meals, Miraflores visit or transit tour and local transport."
+    },
+    "map": {
+      "name": "Miraflores Visitor Center",
+      "formattedAddress": "XCW5+WF2, Panama City, Panamá Oeste Province, Panama",
+      "placeId": "ChIJZ0w5Lk2mrI8RRkUdX6_3je4",
+      "rating": 4.6,
+      "reviewCount": 25596,
+      "location": {
+        "lat": 8.9972715,
+        "lng": -79.5913604
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Miraflores%20Visitor%20Center&query_place_id=ChIJZ0w5Lk2mrI8RRkUdX6_3je4"
+    }
+  },
+  {
+    "id": "rio-celeste",
+    "name": "Río Celeste",
+    "countries": [
+      "Costa Rica"
+    ],
+    "area": "Tenorio Volcano National Park",
+    "kind": "Optical geology",
+    "access": "Park trail hike",
+    "uniqueness": "A river whose blue color appears where two clear streams mix and scatter sunlight",
+    "why": "Río Celeste is not blue because of dye or a dissolved chemical. A PLOS ONE study attributes the sky-blue color to light scattering by suspended aluminosilicate particles after the acidic Quebrada Agria mixes with the Río Buenavista.",
+    "realityCheck": "Heavy rain can muddy the water and the trail. The blue is a phenomenon to time and understand, not guaranteed Instagram saturation every day.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tenorio_Volcano_National_Park",
+    "source": {
+      "label": "PLOS ONE",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0075165"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Panama City: flights to San Jose, rental car or shuttle, La Fortuna/Bijagua area lodging, park entry, meals and rain buffer."
+    },
+    "map": {
+      "name": "Parque Nacional Volcán Tenorio",
+      "formattedAddress": "Katira centro, Provincia de Alajuela, Guatuso, 21504, Costa Rica",
+      "placeId": "ChIJB8xHJftTdY8RU912ppUhqbQ",
+      "rating": 4.6,
+      "reviewCount": 2730,
+      "location": {
+        "lat": 10.7150425,
+        "lng": -84.9875342
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Parque%20Nacional%20Volc%C3%A1n%20Tenorio&query_place_id=ChIJB8xHJftTdY8RU912ppUhqbQ"
+    }
+  },
+  {
+    "id": "semuc-champey",
+    "name": "Semuc Champey",
+    "countries": [
+      "Guatemala"
+    ],
+    "area": "Alta Verapaz",
+    "kind": "Karst river bridge",
+    "access": "Rough road via Lanquín",
+    "uniqueness": "A natural limestone bridge where the Cahabón River disappears beneath turquoise pools",
+    "why": "Semuc Champey is unusual because the main river hides under the formation while stepped pools sit above it. The Qʼeqchiʼ name is literal: this is a place where the river goes under the earth.",
+    "realityCheck": "It is remote for the size of the site, and the road from Lanquín can be rough. Go for the geology and jungle setting more than the swimming-hole photos.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Semuc_Champey",
+    "source": {
+      "label": "Visit Centroamérica",
+      "url": "https://www.visitcentroamerica.com/en/visit/semuc-champey/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1100,
+      "note": "Assumes travel from Panama City: flights to Guatemala City, long road transfer to Lanquín, simple lodging, local transport, entry fees, meals and road buffer."
+    },
+    "map": {
+      "name": "Semuc Champey",
+      "formattedAddress": "San Agustín Lanquín, Guatemala",
+      "placeId": "ChIJxe4T-RzZYY8Rr4iJ2EdCpb8",
+      "rating": 4.8,
+      "reviewCount": 5611,
+      "location": {
+        "lat": 15.5337702,
+        "lng": -89.95897749999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Semuc%20Champey&query_place_id=ChIJxe4T-RzZYY8Rr4iJ2EdCpb8"
+    }
+  },
+  {
+    "id": "izalco",
+    "name": "Izalco Volcano",
+    "countries": [
+      "El Salvador"
+    ],
+    "area": "Cerro Verde National Park",
+    "kind": "Young volcanic cone",
+    "access": "Guided hike from Cerro Verde area",
+    "uniqueness": "The “Lighthouse of the Pacific,” a young cone famous for near-continuous historical eruptions",
+    "why": "Smithsonian’s Global Volcanism Program notes Izalco originated in 1770 on Santa Ana’s flank and became known as the Lighthouse of the Pacific because frequent Strombolian eruptions were visible to ships. It is one of the cleanest young-volcano stories in the region.",
+    "realityCheck": "The lighthouse era is historical; the volcano is not currently glowing nightly for sailors. Check park access, guide rules and weather before hiking the exposed cone.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Izalco_(volcano)",
+    "source": {
+      "label": "Smithsonian Global Volcanism Program",
+      "url": "https://volcano.si.edu/volcano.cfm?vn=343030"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Panama City: flights to San Salvador, road transfer to Cerro Verde/Santa Ana area, guide, lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Izalco",
+      "formattedAddress": "Izalco, El Salvador",
+      "placeId": "ChIJzSQHXa7GYo8RSwLM8rUXVFc",
+      "rating": 4.7,
+      "reviewCount": 250,
+      "location": {
+        "lat": 13.8136576,
+        "lng": -89.6326382
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Izalco&query_place_id=ChIJzSQHXa7GYo8RSwLM8rUXVFc"
+    }
+  },
+  {
+    "id": "rio-platano",
+    "name": "Río Plátano Biosphere Reserve",
+    "countries": [
+      "Honduras"
+    ],
+    "area": "La Mosquitia",
+    "kind": "Remote rainforest",
+    "access": "Expedition logistics only",
+    "uniqueness": "One of Central America’s largest remaining rainforest blocks, tied to Mosquitia lost-city archaeology",
+    "why": "UNESCO identifies Río Plátano as Honduras’s largest protected area, in the Mosquitia region, with exceptional rainforest and Indigenous cultural value. The wider Mosquitia is also the setting for LiDAR-documented pre-Columbian ruins often discussed under Ciudad Blanca / Lost City stories.",
+    "realityCheck": "This is not a casual detour. Logistics, conservation rules and security conditions are serious; use expert operators and treat “lost city” narratives carefully rather than sensationally.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/R%C3%ADo_Pl%C3%A1tano_Biosphere_Reserve",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/196/"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 2500,
+      "note": "Assumes travel from Panama City: flights to Honduras, specialist internal transport, guide/operator logistics, simple lodging/camping, meals, permits and contingency days."
+    },
+    "map": {
+      "name": "Reserva de la Biósfera del Río Plátano",
+      "formattedAddress": "G6MC+4FW, Okra Bank, Honduras",
+      "placeId": "ChIJddyUAALQFI8RzhV0qvZcs0c",
+      "rating": 4.5,
+      "reviewCount": 184,
+      "location": {
+        "lat": 15.5328513,
+        "lng": -84.7787852
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Reserva%20de%20la%20Bi%C3%B3sfera%20del%20R%C3%ADo%20Pl%C3%A1tano&query_place_id=ChIJddyUAALQFI8RzhV0qvZcs0c"
+    }
+  },
+  {
+    "id": "guna-yala",
+    "name": "Guna Yala",
+    "countries": [
+      "Panama"
+    ],
+    "area": "Caribbean Panama",
+    "kind": "Indigenous comarca",
+    "access": "Community-controlled island/coastal visits",
+    "uniqueness": "A self-governing Indigenous comarca shaped by the 1925 Guna Revolution",
+    "why": "Guna Yala is globally distinctive as a living political and cultural territory. Guna institutions control access and business, mola textiles are central art, and low-lying communities are now facing active climate relocation.",
+    "realityCheck": "Visit through Guna-approved arrangements, buy crafts directly and do not treat the comarca as a generic beach destination. Some islands and communities are changing rapidly because of sea-level rise.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Guna_Yala",
+    "source": {
+      "label": "NDN Collective",
+      "url": "https://ndncollective.org/guna-yala-the-islands-that-fought-for-and-won-their-liberation/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Panama City: flights to Panama City, permitted transfer or boat logistics into Guna Yala, community lodging, meals, fees and weather buffer."
+    },
+    "map": {
+      "name": "Guna Yala Comarca",
+      "formattedAddress": "Guna Yala Comarca, Panama",
+      "placeId": "ChIJzwYbKNQ9UY4RMPakCySw2RM",
+      "location": {
+        "lat": 9.238864999999999,
+        "lng": -78.2248291
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Guna%20Yala%20Comarca&query_place_id=ChIJzwYbKNQ9UY4RMPakCySw2RM"
+    }
+  },
+  {
+    "id": "lake-nicaragua",
+    "name": "Lake Nicaragua / Cocibolca",
+    "countries": [
+      "Nicaragua"
+    ],
+    "area": "Southern Nicaragua",
+    "kind": "Freshwater lake ecology",
+    "access": "Road, ferry and boat access",
+    "uniqueness": "Central America’s largest lake, famous for bull sharks that migrate through the San Juan River system",
+    "why": "Lake Nicaragua is not unique because it has a separate endemic shark species; that older claim was disproved. The better story is stranger: bull sharks can move between Caribbean saltwater and this enormous freshwater lake through the San Juan River.",
+    "realityCheck": "The shark story is ecological history, not a reliable tourist encounter. For visitors, the lake is usually experienced through Granada’s islets, Ometepe or the San Juan River corridor.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lake_Nicaragua",
+    "source": {
+      "label": "Thorson shark appraisal",
+      "url": "https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1040&context=ichthynicar"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Panama City: flights to Managua, Granada/Ometepe or San Juan River routing, ferries/boats, lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Lake Nicaragua",
+      "formattedAddress": "Lake Nicaragua, Nicaragua",
+      "placeId": "ChIJp-1idXOOdI8ROhmxM1N_1iQ",
+      "rating": 4.6,
+      "reviewCount": 704,
+      "location": {
+        "lat": 11.5786576,
+        "lng": -85.35496499999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Lake%20Nicaragua&query_place_id=ChIJp-1idXOOdI8ROhmxM1N_1iQ"
+    }
+  },
+  {
+    "id": "antigua-guatemala",
+    "name": "Antigua Guatemala",
+    "countries": [
+      "Guatemala"
+    ],
+    "area": "Guatemalan Highlands",
+    "kind": "Lebedev favorite city",
+    "access": "Easy road access from Guatemala City",
+    "uniqueness": "Lebedev-rated favorite: ruined colonial capital framed by volcanoes",
+    "why": "Antigua Guatemala is one of the highest-ranked Central American places in Lebedev's city rating. Earthquakes, baroque ruins, courtyards, cobbles and volcano views make it more than a pretty colonial town.",
+    "realityCheck": "It is heavily touristed. Stay overnight and walk early if you want the ruins and street grid to feel alive.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Antigua_Guatemala",
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Panama City: flights to Guatemala City, transfer to Antigua, lodging, meals, churches/ruins and a volcano or village side trip."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/antigua-guatemala/"
+    },
+    "map": {
+      "name": "Antigua Guatemala",
+      "formattedAddress": "Antigua Guatemala, Guatemala",
+      "placeId": "ChIJFQslsHQOiYURPXIDKSu6hvc",
+      "location": {
+        "lat": 14.5572969,
+        "lng": -90.73322329999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Antigua%20Guatemala&query_place_id=ChIJFQslsHQOiYURPXIDKSu6hvc"
+    }
+  },
+  {
+    "id": "granada-nicaragua",
+    "name": "Granada, Nicaragua",
+    "countries": [
+      "Nicaragua"
+    ],
+    "area": "Lake Nicaragua",
+    "kind": "Lebedev favorite city",
+    "access": "Road access from Managua",
+    "uniqueness": "Lebedev-rated favorite: colonial grid beside lake, volcanoes and islets",
+    "why": "Granada ranks well in Lebedev's Central America entries. It earns a card as a city where Spanish colonial fabric, Lake Nicaragua, Mombacho and the isletas create a compact regional base.",
+    "realityCheck": "It is easy to over-romanticize. Use it as an anchor for lake/volcano context, not only painted facades.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Granada,_Nicaragua",
+    "trip": {
+      "days": 6,
+      "costUsd": 900,
+      "note": "Assumes travel from Panama City: flights to Managua, transfer to Granada, lodging, meals, isletas/volcano/local walks and buffer."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/granada-nicaragua/"
+    },
+    "map": {
+      "name": "Granada",
+      "formattedAddress": "Granada, Nicaragua",
+      "placeId": "ChIJkxVrcJEMdI8RjLTOyE2QjDs",
+      "location": {
+        "lat": 11.9344073,
+        "lng": -85.9560005
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Granada&query_place_id=ChIJkxVrcJEMdI8RjLTOyE2QjDs"
+    }
+  },
+  {
+    "id": "la-fortuna",
+    "name": "La Fortuna and Arenal",
+    "countries": [
+      "Costa Rica"
+    ],
+    "area": "Alajuela Province",
+    "kind": "Lebedev favorite town",
+    "access": "Road access; tourism infrastructure",
+    "uniqueness": "Lebedev-rated favorite: volcano town, hot springs and rainforest tourism hub",
+    "why": "La Fortuna is present in Lebedev's American ranking and fits this guide as the accessible face of Costa Rica's volcano-and-rainforest tourism system around Arenal.",
+    "realityCheck": "It is developed and activity-driven. Choose carefully so it remains about volcano ecology and hot-water geology rather than packaged adrenaline.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/La_Fortuna,_San_Carlos",
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from Panama City: flights to San Jose, transfer or rental car to La Fortuna, lodging, meals, hot springs/volcano trails and road buffer."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/la-fortuna/"
+    },
+    "map": {
+      "name": "Arenal Volcano",
+      "formattedAddress": "Arenal Volcano, Alajuela Province, San Carlos, Costa Rica",
+      "placeId": "ChIJ0XttjekOoI8RY4kmeiTn3hQ",
+      "rating": 4.7,
+      "reviewCount": 1628,
+      "location": {
+        "lat": 10.4626262,
+        "lng": -84.7031794
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Arenal%20Volcano&query_place_id=ChIJ0XttjekOoI8RY4kmeiTn3hQ"
+    }
+  },
+  {
+    "id": "el-valle-de-anton",
+    "name": "El Valle de Anton",
+    "countries": [
+      "Panama"
+    ],
+    "area": "Cocle Province",
+    "kind": "Lakeman-loved hiking base",
+    "access": "Road access from Panama City",
+    "uniqueness": "Matt Lakeman recommendation: jungle hiking and crater-town roads in interior Panama",
+    "why": "Lakeman says most of his Panama trip was jungle hiking, which he calls amazing and highly recommended, and describes spending two days in this beautiful hill-top interior town. It adds Panama beyond the canal and capital skyline.",
+    "realityCheck": "Roads off the highway can be rough and slow. This is more about hiking, driving and country feel than a single monument.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/El_Valle_de_Ant%C3%B3n",
+    "source": {
+      "label": "Matt Lakeman travel notes",
+      "url": "https://mattlakeman.org/2021/08/22/notes-on-panama/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Panama City: flights to Panama City, rental car or transfer to El Valle, lodging, meals, hiking time and road/weather buffer."
+    },
+    "map": {
+      "name": "El Valle de Antón",
+      "formattedAddress": "El Valle de Antón, Coclé Province, Panama",
+      "placeId": "ChIJJWm86MBYrI8RTD6DNLjvJ6o",
+      "location": {
+        "lat": 8.6041089,
+        "lng": -80.13064380000002
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=El%20Valle%20de%20Ant%C3%B3n&query_place_id=ChIJJWm86MBYrI8RTD6DNLjvJ6o"
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Central America"}
+  pageDescription={"A researched field guide to Central America's most unique ruins, volcanoes, cloud forests, caves, reefs and rainforests, excluding Caribbean island destinations, with Google Maps pins."}
+  subject={"Unique places to visit in Central America"}
+  keywords={"Central America travel, unique places Central America, Guatemala ruins, Costa Rica parks, Panama Darien, Belize caves, Central America map"}
+  eyebrow={"Central America field guide"}
+  dek={"A mainland Central America list: Maya cities, volcanic lakes, cloud forests, Pacific islands, cave ritual sites and rainforest frontiers without folding in the island Caribbean."}
+  criteriaText={"Trip estimates are per person from Panama City via Tocumen (PTY), using the region's busiest city airport for international passenger traffic among million-plus city areas as the cost origin. The order is the ranking. Higher means rarer globally, more mind-expanding or more difficult to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Panama City"}
+  mapHeading={"Pins across mainland Central America"}
+  mapAriaLabel={"Google Map with pins for interesting Central America places"}
+  mapCenter={{"lat":12.7,"lng":-85.5}}
+  mapZoom={5}
+  mapErrorLabel={"Central America"}
+  spots={spots}
+/>

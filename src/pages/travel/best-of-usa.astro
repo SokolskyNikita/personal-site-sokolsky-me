@@ -1,0 +1,861 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+export const prerender = true;
+
+const spots = [
+  {
+    "id": "yellowstone",
+    "name": "Yellowstone National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "Wyoming / Montana / Idaho",
+    "kind": "Geothermal",
+    "access": "Road-accessible but seasonal",
+    "uniqueness": "The planet’s densest accessible hydrothermal system, with roughly half of Earth’s active geysers",
+    "why": "Yellowstone is the clearest US case for planetary uniqueness: more than 10,000 thermal features, the world’s greatest geyser concentration, hot springs, mudpots, fumaroles, travertine terraces and thermophile microbiology all sit on one active caldera.",
+    "realityCheck": "The boardwalks are crowded because the system is genuinely singular. Stay on them: thin crust and boiling water are not scenic hazards but active geology.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Yellowstone_National_Park",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/yell/learn/nature/hydrothermal-systems.htm"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2100,
+      "note": "Assumes travel from New York City: flights via the western US to Bozeman, Jackson or Salt Lake City, car rental, park lodging or gateway hotels, meals, fuel and park fees."
+    },
+    "map": {
+      "name": "Yellowstone National Park",
+      "formattedAddress": "United States",
+      "placeId": "ChIJVVVVVVXlUVMRu-GPNDD5qKw",
+      "rating": 4.8,
+      "reviewCount": 45146,
+      "location": {
+        "lat": 44.5979182,
+        "lng": -110.561249
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Yellowstone%20National%20Park&query_place_id=ChIJVVVVVVXlUVMRu-GPNDD5qKw"
+    }
+  },
+  {
+    "id": "mammoth-cave",
+    "name": "Mammoth Cave National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "Kentucky",
+    "kind": "Cave system",
+    "access": "Guided cave tours",
+    "uniqueness": "The longest known cave system on Earth by a wide margin",
+    "why": "Mammoth Cave is a tour cave and still an active frontier of mapping, cave biology and karst hydrology. NPS reports more than 426 surveyed miles of passage, making it the world’s longest known cave system.",
+    "realityCheck": "The record is underground, not all visible on one tour. Choose routes by geology/history interest and reserve ahead for popular tours.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mammoth_Cave_National_Park",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/articles/000/exploring-the-worlds-longest-known-cave.htm"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from New York City: flights to Nashville or Louisville, car rental, midrange lodging, cave tours, meals and park/gateway logistics."
+    },
+    "map": {
+      "name": "Mammoth Cave National Park",
+      "formattedAddress": "Kentucky, USA",
+      "placeId": "ChIJV3vJlE0CZogRwKOAYKCziB8",
+      "rating": 4.7,
+      "reviewCount": 12552,
+      "location": {
+        "lat": 37.1989548,
+        "lng": -86.11559559999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mammoth%20Cave%20National%20Park&query_place_id=ChIJV3vJlE0CZogRwKOAYKCziB8"
+    }
+  },
+  {
+    "id": "white-sands",
+    "name": "White Sands National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "New Mexico",
+    "kind": "Geology",
+    "access": "Easy road access",
+    "uniqueness": "The world’s largest gypsum dunefield, trapped in a closed desert basin",
+    "why": "Gypsum usually dissolves before it can become dune sand. White Sands exists because the Tularosa Basin has no outlet, trapping gypsum until wind mills it into 275 square miles of brilliant white dunes and drives pale endemic adaptations.",
+    "realityCheck": "The dunes are accessible and playful, but the missile-range setting and heat matter. Check closures and bring sun protection even though the gypsum stays relatively cool underfoot.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/White_Sands_National_Park",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/whsa/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1200,
+      "note": "Assumes travel from New York City: flights to El Paso or Albuquerque, car rental, Alamogordo or Las Cruces lodging, meals, park access and desert-driving buffer."
+    },
+    "map": {
+      "name": "White Sands National Park",
+      "formattedAddress": "New Mexico, USA",
+      "placeId": "ChIJ83IQBwNj4IYRwyC_Z4cY0TY",
+      "rating": 4.8,
+      "reviewCount": 18707,
+      "location": {
+        "lat": 32.7872403,
+        "lng": -106.3256816
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=White%20Sands%20National%20Park&query_place_id=ChIJ83IQBwNj4IYRwyC_Z4cY0TY"
+    }
+  },
+  {
+    "id": "general-sherman",
+    "name": "General Sherman and the giant sequoia groves",
+    "countries": [
+      "USA"
+    ],
+    "area": "Sequoia National Park, California",
+    "kind": "Giant tree",
+    "access": "Paved park access, seasonal road conditions",
+    "uniqueness": "The largest known living single-stem tree by volume, in a species naturally limited to the Sierra Nevada",
+    "why": "General Sherman is the precision version of “world’s largest tree”: not tallest or oldest, but largest known living single-stem tree by trunk volume. Giant sequoias themselves grow naturally only in a narrow Sierra Nevada range.",
+    "realityCheck": "Use the exact wording. Clonal colonies and fungi can be larger by other definitions, and coast redwoods are taller.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/General_Sherman_(tree)",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/seki/learn/nature/sherman.htm"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from New York City: flights to California, rental car, Sequoia/Kings Canyon lodging or gateway base, park entry, meals and mountain-road buffer."
+    },
+    "map": {
+      "name": "General Sherman Tree",
+      "formattedAddress": "Three Rivers, CA 93262, USA",
+      "placeId": "ChIJE736_ZZelYARiJF-wMV5JrI",
+      "rating": 4.8,
+      "reviewCount": 11775,
+      "location": {
+        "lat": 36.5817069,
+        "lng": -118.751442
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=General%20Sherman%20Tree&query_place_id=ChIJE736_ZZelYARiJF-wMV5JrI"
+    }
+  },
+  {
+    "id": "ancient-bristlecone",
+    "name": "Ancient Bristlecone Pine Forest and Methuselah",
+    "countries": [
+      "USA"
+    ],
+    "area": "White Mountains, California",
+    "kind": "Ancient organism",
+    "access": "Seasonal mountain road and hiking",
+    "uniqueness": "Home of Methuselah, the oldest known non-clonal living tree",
+    "why": "The singularity is time: Great Basin bristlecone pines in the White Mountains have persisted as individual organisms for nearly five millennia. The Forest Service keeps Methuselah’s exact location secret, turning the grove into a lesson in reverence rather than tree hunting.",
+    "realityCheck": "The road is high and seasonal, and the exact tree is not marked. The point is standing among ancient bristlecones, not doxxing Methuselah.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ancient_Bristlecone_Pine_Forest",
+    "source": {
+      "label": "USDA",
+      "url": "https://www.usda.gov/about-usda/news/blog/methuselah-bristlecone-pine-thought-be-oldest-living-organism-earth"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1900,
+      "note": "Assumes travel from New York City: flights to California/Nevada, Eastern Sierra car rental, Bishop-area lodging, mountain-road access, meals and altitude/weather buffer."
+    },
+    "map": {
+      "name": "Ancient Bristlecone Pine Forest Visitor Center",
+      "formattedAddress": "White Mountain Rd, Bishop, CA 93514, USA",
+      "placeId": "ChIJTQ-7MOZJvoARur09wU6GbWI",
+      "rating": 4.8,
+      "reviewCount": 924,
+      "location": {
+        "lat": 37.3853054,
+        "lng": -118.1782446
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Ancient%20Bristlecone%20Pine%20Forest%20Visitor%20Center&query_place_id=ChIJTQ-7MOZJvoARur09wU6GbWI"
+    }
+  },
+  {
+    "id": "lechuguilla-cave",
+    "name": "Lechuguilla Cave",
+    "countries": [
+      "USA"
+    ],
+    "area": "Carlsbad Caverns National Park, New Mexico",
+    "kind": "Closed scientific cave",
+    "access": "Closed except approved research and management trips",
+    "uniqueness": "A pristine sulfuric-acid cave with rare formations and deep-cave microbiology",
+    "why": "Lechuguilla is the closed counterpart to Carlsbad Caverns: over 145 mapped miles, extreme depth, sulfuric-acid speleogenesis, gypsum chandeliers, hydromagnesite balloons and microbes studied because the cave stayed sealed and pristine.",
+    "realityCheck": "You cannot visit as a tourist. The honest substitute is Carlsbad Caverns, while Lechuguilla remains in the guide because its inaccessibility is part of why it is scientifically singular.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lechuguilla_Cave",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/cave/learn/nature/lechuguilla_cave.htm"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1600,
+      "note": "Assumes travel from New York City: a Carlsbad-area trip for external context only, not Lechuguilla entry: flights, car rental, lodging, cave tours, meals and desert buffer."
+    },
+    "map": {
+      "name": "Lechuguilla Canyon",
+      "formattedAddress": "Lechuguilla Canyon, New Mexico 88220, USA",
+      "placeId": "ChIJETs3sCOI44YRgfZKKWyNHn4",
+      "rating": 4.3,
+      "reviewCount": 7,
+      "location": {
+        "lat": 32.2440014,
+        "lng": -104.4991194
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Lechuguilla%20Cave%20New%20Mexico&query_place_id=ChIJETs3sCOI44YRgfZKKWyNHn4"
+    }
+  },
+  {
+    "id": "hawaii-volcanoes",
+    "name": "Hawaiian evolutionary radiations and Kilauea",
+    "countries": [
+      "USA"
+    ],
+    "area": "Hawaii Island and the Hawaiian archipelago",
+    "kind": "Volcanology",
+    "access": "Road access; eruption-dependent",
+    "uniqueness": "Textbook island evolution paired with one of Earth’s most active volcanoes",
+    "why": "Hawaii combines live hotspot volcanism with evolutionary radiations found nowhere else: honeycreepers, silverswords and other lineages exploded into forms shaped by extreme isolation. Kilauea adds active land-making and lava-lake history to that biology.",
+    "realityCheck": "Eruption viewing changes constantly, and many endemic species are threatened or hard to see. Treat the Big Island park as one chapter in the whole Hawaiian isolation story.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Hawai%CA%BBi_Volcanoes_National_Park",
+    "source": {
+      "label": "USGS Hawaiian Volcano Observatory",
+      "url": "https://www.usgs.gov/volcanoes/kilauea"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 3600,
+      "note": "Assumes travel from New York City: flights to Kona or Hilo, car rental, midrange lodging, meals, park access and extra time for island logistics."
+    },
+    "map": {
+      "name": "Hawaiʻi Volcanoes National Park",
+      "formattedAddress": "Hawaii, USA",
+      "placeId": "ChIJscm5wLZhUXkRJq6EPCZ7Wz4",
+      "rating": 4.8,
+      "reviewCount": 13451,
+      "location": {
+        "lat": 19.4963669,
+        "lng": -155.4661859
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Hawai%CA%BBi%20Volcanoes%20National%20Park&query_place_id=ChIJscm5wLZhUXkRJq6EPCZ7Wz4"
+    }
+  },
+  {
+    "id": "papahanaumokuakea",
+    "name": "Papahanaumokuakea",
+    "countries": [
+      "USA"
+    ],
+    "area": "Northwestern Hawaiian Islands",
+    "kind": "Marine ecology",
+    "access": "No normal visitor access",
+    "uniqueness": "A vast cultural seascape of reefs, seabirds, endemic species and Native Hawaiian cosmology",
+    "why": "This is included because the monument is one of the most important places in the United States, not because it is easy to visit. It links seamount geology, coral ecosystems, endangered species and Hawaiian origin stories at oceanic scale.",
+    "realityCheck": "Normal tourism is not the point. For most people this is a place to understand through museums, science communication and strict protection rather than visitation.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Papah%C4%81naumoku%C4%81kea_Marine_National_Monument",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1326/"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 3500,
+      "note": "Assumes travel from New York City: a Hawaii trip based in Honolulu with Bishop Museum and coastal context rather than entry to the protected monument itself; includes flights, lodging, meals and local transport."
+    },
+    "map": {
+      "name": "Papahanaumokuakea Marine National Monument",
+      "formattedAddress": "Papahanaumokuakea Marine National Monument, United States",
+      "placeId": "ChIJP5H9E5sqj3wRNyGzSM4N5bw",
+      "location": {
+        "lat": 25.6788883,
+        "lng": -169.7399875
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Papahanaumokuakea%20Marine%20National%20Monument&query_place_id=ChIJP5H9E5sqj3wRNyGzSM4N5bw"
+    }
+  },
+  {
+    "id": "racetrack-playa",
+    "name": "Racetrack Playa sailing stones",
+    "countries": [
+      "USA"
+    ],
+    "area": "Death Valley, California",
+    "kind": "Desert playa physics",
+    "access": "Remote high-clearance road",
+    "uniqueness": "A desert lakebed where rocks move across mud by rare ice-shove conditions",
+    "why": "Racetrack Playa passed from folklore to observed science in 2014, when GPS and time-lapse documented thin ice panels pushing stones across the flat playa. The trails are the visible result of an extremely specific winter combination of water, ice, wind and mud.",
+    "realityCheck": "You will almost certainly see trails, not motion. Racetrack Road is tire-destroying and remote; use a proper high-clearance vehicle and do not walk on wet playa.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Racetrack_Playa",
+    "source": {
+      "label": "PLOS ONE",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0105948"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 1700,
+      "note": "Assumes travel from New York City: flights to Las Vegas or California, 4WD/high-clearance rental logistics, Death Valley lodging/camping, fuel, meals and road buffer."
+    },
+    "map": {
+      "name": "Racetrack Playa",
+      "formattedAddress": "Racetrack Playa, California, USA",
+      "placeId": "ChIJ6aySSZdgv4AReqeZrW7iXf0",
+      "rating": 4.7,
+      "reviewCount": 99,
+      "location": {
+        "lat": 36.6813,
+        "lng": -117.5627
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Racetrack%20Playa&query_place_id=ChIJ6aySSZdgv4AReqeZrW7iXf0"
+    }
+  },
+  {
+    "id": "mono-lake",
+    "name": "Mono Lake tufa and endemic brine shrimp",
+    "countries": [
+      "USA"
+    ],
+    "area": "Eastern Sierra, California",
+    "kind": "Alkaline lake ecology",
+    "access": "Road access; South Tufa boardwalk/trails",
+    "uniqueness": "An ancient soda lake with tufa towers and an endemic brine-shrimp ecosystem",
+    "why": "Mono Lake is extreme but productive: alkaline, salty, fishless water supports algae, alkali flies and Artemia monica, a brine shrimp found only here, feeding massive migratory bird use. Tufa towers make the chemistry visible.",
+    "realityCheck": "Lake level changes affect the tufa and shoreline. South Tufa is the easiest access, but the ecological story is stronger than the photo alone.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mono_Lake",
+    "source": {
+      "label": "Mono Lake Committee",
+      "url": "https://www.monolake.org/today/mono-lake-brine-shrimp-then-and-now/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1600,
+      "note": "Assumes travel from New York City: flights to California/Nevada, Eastern Sierra car rental, Lee Vining/Mammoth-area lodging, meals and lake/weather buffer."
+    },
+    "map": {
+      "name": "South Tufa Area",
+      "formattedAddress": "South Tufa Area, California 93541, USA",
+      "placeId": "ChIJo8VBL2I4loARoGyIrnmRDOQ",
+      "rating": 4.8,
+      "reviewCount": 106,
+      "location": {
+        "lat": 37.9421991,
+        "lng": -119.0289864
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=South%20Tufa%20Area&query_place_id=ChIJo8VBL2I4loARoGyIrnmRDOQ"
+    }
+  },
+  {
+    "id": "everglades",
+    "name": "Everglades alligator-crocodile mosaic",
+    "countries": [
+      "USA"
+    ],
+    "area": "South Florida",
+    "kind": "Wetland ecology",
+    "access": "Road, boardwalk, boat and guided access",
+    "uniqueness": "The only place where American alligators and American crocodiles naturally coexist",
+    "why": "The Everglades is a freshwater-to-saltwater sheet-flow wetland where the alligator’s southern range and the American crocodile’s northern range overlap. That coexistence is the strongest singularity claim in a globally famous wetland.",
+    "realityCheck": "It is huge and seasonal. Mosquitoes, heat, water levels and route choice determine whether you see an ecosystem or just a road through grass.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Everglades_National_Park",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/ever/learn/nature/crocodile.htm"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1500,
+      "note": "Assumes travel from New York City: flights to Miami/Fort Lauderdale, car rental, Everglades lodging or day-trip base, boat/trail outings, meals and season/weather buffer."
+    },
+    "map": {
+      "name": "Everglades National Park",
+      "formattedAddress": "Florida, USA",
+      "placeId": "ChIJ2wVsejCo0IgRlzEvdlY-4A8",
+      "rating": 4.6,
+      "reviewCount": 13466,
+      "location": {
+        "lat": 25.2866155,
+        "lng": -80.89865089999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Everglades%20National%20Park&query_place_id=ChIJ2wVsejCo0IgRlzEvdlY-4A8"
+    }
+  },
+  {
+    "id": "chaco",
+    "name": "Chaco Culture National Historical Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "New Mexico",
+    "kind": "Archaeology",
+    "access": "Remote road access",
+    "uniqueness": "Ancestral Pueblo great-house architecture tuned to solar and lunar cycles at city scale",
+    "why": "Chaco is a high-desert system of great houses, roads, sightlines and dark skies. Its architecture tracks cardinal directions, solstices and the 18.6-year lunar standstill cycle.",
+    "realityCheck": "Roads are rough and weather-sensitive. Camp or stay nearby if you want the dark-sky and astronomical context rather than a rushed dirt-road day trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Chaco_Culture_National_Historical_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/353/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from New York City: flights to Albuquerque, rental car, lodging in Farmington or camping, meals, park access and rough-road/weather buffer."
+    },
+    "map": {
+      "name": "Chaco Culture National Historical Park",
+      "formattedAddress": "New Mexico, USA",
+      "placeId": "ChIJKUIDHdGoPIcREkWgK6CkrYU",
+      "rating": 4.8,
+      "reviewCount": 1630,
+      "location": {
+        "lat": 36.05299979999999,
+        "lng": -107.955924
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Chaco%20Culture%20National%20Historical%20Park&query_place_id=ChIJKUIDHdGoPIcREkWgK6CkrYU"
+    }
+  },
+  {
+    "id": "mesa-verde",
+    "name": "Mesa Verde National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "Colorado",
+    "kind": "Archaeology",
+    "access": "Road access plus ranger-led tours",
+    "uniqueness": "The largest US archaeological preserve, with hundreds of Ancestral Pueblo cliff dwellings",
+    "why": "Mesa Verde’s global value is density and preservation: UNESCO cites about 600 cliff dwellings and thousands of archaeological sites, including Cliff Palace, the largest cliff dwelling in North America.",
+    "realityCheck": "Many of the best cliff dwellings require timed or ranger-led access. The site is strongest when paired with mesa-top history, not only balcony photos.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mesa_Verde_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/27/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from New York City: flights to Durango or Albuquerque, rental car, midrange lodging, guided site tickets, meals and road buffer."
+    },
+    "map": {
+      "name": "Mesa Verde National Park",
+      "formattedAddress": "Colorado, USA",
+      "placeId": "ChIJH3HXLr9gOYcRYxj2G6KV9nk",
+      "rating": 4.8,
+      "reviewCount": 10716,
+      "location": {
+        "lat": 37.2308729,
+        "lng": -108.4618335
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mesa%20Verde%20National%20Park&query_place_id=ChIJH3HXLr9gOYcRYxj2G6KV9nk"
+    }
+  },
+  {
+    "id": "cahokia",
+    "name": "Cahokia Mounds",
+    "countries": [
+      "USA"
+    ],
+    "area": "Illinois",
+    "kind": "Archaeology",
+    "access": "Easy road access",
+    "uniqueness": "The largest pre-Columbian settlement north of Mexico and the apex of Mississippian mound urbanism",
+    "why": "Cahokia is North America’s great overlooked urban monument: Monks Mound, plazas, mounds and settlement traces show a city-scale Mississippian world near modern St. Louis.",
+    "realityCheck": "The interpretive center context matters. Without it, the mounds can read as grassy hills rather than the remains of a large pre-Columbian city.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cahokia",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/198/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from New York City: flights to St. Louis, local transport or car rental, midrange lodging, meals and site time."
+    },
+    "map": {
+      "name": "Cahokia Mounds UNESCO World Heritage Site",
+      "formattedAddress": "30 Ramey St, Collinsville, IL 62234, USA",
+      "placeId": "ChIJr5WV11Kr2IcR9spRqpGRZzA",
+      "rating": 4.7,
+      "reviewCount": 5023,
+      "location": {
+        "lat": 38.6550643,
+        "lng": -90.0618228
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Cahokia%20Mounds%20UNESCO%20World%20Heritage%20Site&query_place_id=ChIJr5WV11Kr2IcR9spRqpGRZzA"
+    }
+  },
+  {
+    "id": "devils-tower",
+    "name": "Devils Tower / Bear Lodge",
+    "countries": [
+      "USA"
+    ],
+    "area": "Wyoming",
+    "kind": "Columnar jointing and sacred site",
+    "access": "Road access and loop trail",
+    "uniqueness": "The world’s largest example of columnar jointing and the first US national monument",
+    "why": "NPS describes Devils Tower as the largest example of columnar jointing in the world. The phonolite-porphyry tower rises from the plains and is sacred to many Plains tribes as Bear Lodge.",
+    "realityCheck": "Geologists still debate the exact emplacement history. Also respect voluntary climbing closures and tribal significance, especially in June.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Devils_Tower",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/deto/learn/nature/tower-formation.htm"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1400,
+      "note": "Assumes travel from New York City: flights to Rapid City/Denver/Billings, car rental, Black Hills/Wyoming lodging, park visit, meals and road buffer."
+    },
+    "map": {
+      "name": "Devils Tower National Monument",
+      "formattedAddress": "Devils Tower, WY 82714, USA",
+      "placeId": "ChIJOT5U8z8GM1MResed1BOdJKk",
+      "rating": 4.8,
+      "reviewCount": 19931,
+      "location": {
+        "lat": 44.5902098,
+        "lng": -104.7146168
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Devils%20Tower%20National%20Monument&query_place_id=ChIJOT5U8z8GM1MResed1BOdJKk"
+    }
+  },
+  {
+    "id": "carlsbad-caverns",
+    "name": "Carlsbad Caverns National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "New Mexico",
+    "kind": "Cave system",
+    "access": "Timed-entry cave visit",
+    "uniqueness": "Huge sulfuric-acid cave chambers and desert bat ecology",
+    "why": "Carlsbad is not Mammoth Cave repeated. Its cave origin, room scale, speleothem density and evening bat flights make it a different kind of underground system.",
+    "realityCheck": "The cave is accessible, but the region is remote. Pair it with Guadalupe Mountains or White Sands only if you like long desert drives.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Carlsbad_Caverns_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/721/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from New York City: flights to El Paso or Midland/Odessa, car rental, Carlsbad lodging, cave reservations, meals and desert-driving buffer."
+    },
+    "map": {
+      "name": "Carlsbad Caverns National Park",
+      "formattedAddress": "Carlsbad, NM 88220, USA",
+      "placeId": "ChIJW9e4xBN544YRvbI7vfc91G4",
+      "rating": 4.9,
+      "reviewCount": 18282,
+      "location": {
+        "lat": 32.137045,
+        "lng": -104.5437529
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Carlsbad%20Caverns%20National%20Park&query_place_id=ChIJW9e4xBN544YRvbI7vfc91G4"
+    }
+  },
+  {
+    "id": "grand-canyon",
+    "name": "Grand Canyon National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "Arizona",
+    "kind": "Geology",
+    "access": "Road access; serious hiking below rim",
+    "uniqueness": "A readable cross-section through nearly two billion years of rock",
+    "why": "The canyon is famous enough to seem obvious, but its real value is stratigraphic scale. Few places let a non-geologist look across space and time so directly.",
+    "realityCheck": "Rim viewpoints are easy; the inner canyon is extreme desert. Do not confuse popularity with safety or simplicity.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Grand_Canyon_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/75/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1500,
+      "note": "Assumes travel from New York City: flights to Phoenix or Las Vegas, car rental, South Rim lodging, meals, park fees and one buffer day for weather or long drives."
+    },
+    "map": {
+      "name": "Grand Canyon National Park",
+      "formattedAddress": "Arizona, USA",
+      "placeId": "ChIJFU2bda4SM4cRKSCRyb6pOB8",
+      "rating": 4.8,
+      "reviewCount": 63449,
+      "location": {
+        "lat": 36.2678855,
+        "lng": -112.3535253
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Grand%20Canyon%20National%20Park&query_place_id=ChIJFU2bda4SM4cRKSCRyb6pOB8"
+    }
+  },
+  {
+    "id": "fly-geyser",
+    "name": "Fly Geyser",
+    "countries": [
+      "USA"
+    ],
+    "area": "Black Rock Desert, Nevada",
+    "kind": "Human-caused geothermal formation",
+    "access": "Limited guided Fly Ranch walks",
+    "uniqueness": "A continuously building, human-triggered geothermal geyser with vivid thermophile colors",
+    "why": "Fly Geyser is lower on the purity scale because it began with a geothermal well, but the ongoing mineral deposition, terraces, pools and microbial colors make it a genuinely strange living landform on Fly Ranch.",
+    "realityCheck": "Access is not open wandering. Book official Fly Ranch walks and avoid trespassing or treating it as a roadside stop.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Fly_Geyser",
+    "source": {
+      "label": "Fly Ranch",
+      "url": "https://flyranch.burningman.org/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from New York City: flights to Reno, car rental, Gerlach/Black Rock logistics, official Fly Ranch walk, lodging/camping, meals and desert buffer."
+    },
+    "map": {
+      "name": "Fly Ranch Geyser",
+      "formattedAddress": "Gerlach, NV 89412, USA",
+      "placeId": "ChIJUegPmV3Ln4ARWlZeuhKSVNI",
+      "rating": 3.8,
+      "reviewCount": 112,
+      "location": {
+        "lat": 40.8594506,
+        "lng": -119.3318711
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Fly%20Ranch%20Geyser&query_place_id=ChIJUegPmV3Ln4ARWlZeuhKSVNI"
+    }
+  },
+  {
+    "id": "poverty-point",
+    "name": "Poverty Point",
+    "countries": [
+      "USA"
+    ],
+    "area": "Louisiana",
+    "kind": "Archaeology",
+    "access": "Road access",
+    "uniqueness": "A 3,000-year-old earthwork complex built before agriculture dominated the region",
+    "why": "Poverty Point is strange because hunter-fisher-gatherer communities built a massive, planned earthwork and exchange center. It complicates the usual agriculture-first story of monumentality.",
+    "realityCheck": "The geometry reads best from interpretation, diagrams and walking the ridges, not from one single viewpoint.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Poverty_Point",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1435/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 900,
+      "note": "Assumes travel from New York City: flights to New Orleans, Jackson or Monroe, car rental, regional lodging, meals and site fees."
+    },
+    "map": {
+      "name": "Poverty Point World Heritage Site",
+      "formattedAddress": "6859 LA-577, Pioneer, LA 71266, USA",
+      "placeId": "ChIJ850nNYvGLoYRfVw-RHh5Fvc",
+      "rating": 4.8,
+      "reviewCount": 793,
+      "location": {
+        "lat": 32.6362244,
+        "lng": -91.4035019
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Poverty%20Point%20World%20Heritage%20Site&query_place_id=ChIJ850nNYvGLoYRfVw-RHh5Fvc"
+    }
+  },
+  {
+    "id": "mauna-kea",
+    "name": "Mauna Kea summit and observatories",
+    "countries": [
+      "USA"
+    ],
+    "area": "Hawaii Island",
+    "kind": "Astronomy and sacred mountain",
+    "access": "Visitor station easy; summit requires conditions, vehicle and altitude caution",
+    "uniqueness": "One of Earth’s premier ground-based astronomy sites and a sacred Native Hawaiian summit",
+    "why": "Mauna Kea combines altitude, dry air, inversion-layer isolation and Pacific darkness with a summit that is culturally sacred. The observatory complex is globally important, but the ethics and governance of access are part of the story.",
+    "realityCheck": "Altitude, weather, rental-car rules and Native Hawaiian stewardship concerns matter. Many visitors should stop at the visitor station rather than pushing to the summit.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mauna_Kea_Observatories",
+    "source": {
+      "label": "Maunakea Observatories",
+      "url": "https://www.maunakeaobservatories.org/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 3600,
+      "note": "Assumes travel from New York City: flights to Hawaii Island, car rental, lodging, visitor-station/summit logistics where appropriate, meals and weather/altitude buffer."
+    },
+    "map": {
+      "name": "Maunakea Visitor Information Station",
+      "formattedAddress": "Mauna Kea Access Rd, Hilo, HI, USA",
+      "placeId": "ChIJK4b_bAC_U3kR0eAjVpvOkJU",
+      "rating": 4.7,
+      "reviewCount": 80,
+      "location": {
+        "lat": 19.7592729,
+        "lng": -155.4561238
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Maunakea%20Visitor%20Information%20Station&query_place_id=ChIJK4b_bAC_U3kR0eAjVpvOkJU"
+    }
+  },
+  {
+    "id": "smokies-fireflies",
+    "name": "Synchronous fireflies at Elkmont",
+    "countries": [
+      "USA"
+    ],
+    "area": "Great Smoky Mountains, Tennessee",
+    "kind": "Seasonal bioluminescence",
+    "access": "Short seasonal lottery window",
+    "uniqueness": "One of the best-known places to see synchronous fireflies flash in coordinated waves",
+    "why": "For about two weeks around late May or early June, Photinus carolinus males flash in pulses and darkness intervals, turning the forest into a natural oscillator. The rarity is temporal as much as spatial.",
+    "realityCheck": "You need the NPS lottery or careful legal access, and the dates shift yearly. Bad timing means you miss the phenomenon entirely.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Photinus_carolinus",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/grsm/learn/nature/fireflies.htm"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 900,
+      "note": "Assumes travel from New York City: flights to Knoxville/Asheville/Atlanta, Smokies lodging, lottery or permitted access, meals, rental car and timing buffer."
+    },
+    "map": {
+      "name": "Elkmont Campground",
+      "formattedAddress": "Great Smoky Mountains National Park, Elkmont Cg Kiosk, Elkmont Campground Rd A, Gatlinburg, TN 37738, USA",
+      "placeId": "ChIJQeS9izNVWYgRpDVflcu33PQ",
+      "rating": 4.6,
+      "reviewCount": 534,
+      "location": {
+        "lat": 35.6577006,
+        "lng": -83.5835055
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Elkmont%20Campground&query_place_id=ChIJQeS9izNVWYgRpDVflcu33PQ"
+    }
+  },
+  {
+    "id": "death-valley",
+    "name": "Death Valley National Park",
+    "countries": [
+      "USA"
+    ],
+    "area": "California / Nevada",
+    "kind": "Desert geology",
+    "access": "Road access; extreme seasonal heat",
+    "uniqueness": "North America's lowest basin plus salt flats, dunes, badlands and heat extremes",
+    "why": "Death Valley is a basin-and-range lesson written in salt, alluvial fans, playas, volcanic craters and folded badlands. The uniqueness is the combination of relief, aridity and active surface processes.",
+    "realityCheck": "Summer can be dangerous. Distances are large, water planning matters and many interesting places require high-clearance roads.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Death_Valley_National_Park",
+    "source": {
+      "label": "National Park Service",
+      "url": "https://www.nps.gov/deva/index.htm"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from New York City: flights to Las Vegas, rental car, park or gateway lodging, meals, fuel and seasonal safety buffer."
+    },
+    "map": {
+      "name": "Death Valley National Park",
+      "formattedAddress": "United States",
+      "placeId": "ChIJR4qudndLx4ARVLDye3zwycw",
+      "rating": 4.7,
+      "reviewCount": 19174,
+      "location": {
+        "lat": 36.5053891,
+        "lng": -117.0794078
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Death%20Valley%20National%20Park&query_place_id=ChIJR4qudndLx4ARVLDye3zwycw"
+    }
+  },
+  {
+    "id": "kodiak",
+    "name": "Kodiak",
+    "countries": [
+      "USA"
+    ],
+    "area": "Alaska",
+    "kind": "Lebedev favorite city",
+    "access": "Regional flight or ferry",
+    "uniqueness": "Lebedev-rated favorite: Alaska port town, island weather and bear-country edge",
+    "why": "Kodiak stands out in Lebedev's American ranking because it is not generic Alaska scenery. It is a remote working island town shaped by fishing, Russian traces, military history, storms and huge wilderness nearby.",
+    "realityCheck": "Weather can rearrange plans. The town is the anchor, but the island and wildlife context are why it matters.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Kodiak,_Alaska",
+    "trip": {
+      "days": 10,
+      "costUsd": 3400,
+      "note": "Assumes travel from New York City: flights to Anchorage and Kodiak, local lodging, meals, car or guided outings, ferry/flight/weather buffer."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/kodiak/"
+    },
+    "map": {
+      "name": "Kodiak",
+      "formattedAddress": "Kodiak, AK, USA",
+      "placeId": "ChIJj4GuoG_E6lYRc-TW-0wnKW0",
+      "location": {
+        "lat": 57.79000000000001,
+        "lng": -152.4072222
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Kodiak&query_place_id=ChIJj4GuoG_E6lYRc-TW-0wnKW0"
+    }
+  },
+  {
+    "id": "hawaii-humpback-sanctuary",
+    "name": "Hawaiian Islands Humpback Whale Sanctuary",
+    "countries": [
+      "USA"
+    ],
+    "area": "Maui and the Hawaiian Islands",
+    "kind": "Travel.SE unique wildlife",
+    "access": "Seasonal whale watching, snorkeling or diving",
+    "uniqueness": "Travel.SE-mentioned winter breeding waters for North Pacific humpbacks around Hawaii",
+    "why": "In a Travel Stack Exchange thread about hearing humpback whale songs, Hawaii is recommended as probably the best place, especially in late February and March. The uniqueness is acoustic and ecological: winter mating, calving and nursing waters where songs can sometimes be heard underwater.",
+    "realityCheck": "This is seasonal and wildlife-dependent. Use responsible whale-watching operators, respect approach rules and do not assume every snorkel produces whale song.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Hawaiian_Islands_Humpback_Whale_National_Marine_Sanctuary",
+    "source": {
+      "label": "Travel Stack Exchange",
+      "url": "https://travel.stackexchange.com/questions/86379/where-is-the-best-possible-location-that-i-might-have-to-hear-humpback-whale-sounds"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 3600,
+      "note": "Assumes travel from New York City: flights via the US mainland to Maui or Honolulu, lodging, meals, whale-watch or snorkel/diving outings and seasonal buffer."
+    },
+    "map": {
+      "name": "Hawaiian Islands Humpback Whale National Marine Sanctuary Visitor Center",
+      "formattedAddress": "726 S Kihei Rd, Kihei, HI 96753, USA",
+      "placeId": "ChIJA3hP707QVHkR7ZOVBRZXZtc",
+      "rating": 4.7,
+      "reviewCount": 223,
+      "location": {
+        "lat": 20.7643793,
+        "lng": -156.4588146
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Hawaiian%20Islands%20Humpback%20Whale%20National%20Marine%20Sanctuary%20Visitor%20Center&query_place_id=ChIJA3hP707QVHkR7ZOVBRZXZtc"
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in the USA"}
+  pageDescription={"A researched field guide to the USA's most unique geology, archaeology, ecosystems and cultural sites, including Hawaii, with Google Maps pins."}
+  subject={"Unique places to visit in the USA"}
+  keywords={"USA travel, unique places United States, USA archaeology, USA geology, Hawaii volcanoes, USA map"}
+  eyebrow={"USA field guide"}
+  dek={"A United States list that treats Hawaii as central, not an add-on: geothermal systems, cave worlds, Indigenous urbanism, desert extremes and living seascapes."}
+  criteriaText={"Trip estimates are per person from New York City via JFK, using the region's busiest city airport for international passenger traffic among million-plus city areas as the cost origin. The order is the ranking. Higher means rarer globally, more mind-expanding or more difficult to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From NYC"}
+  mapHeading={"Pins across the United States and Hawaii"}
+  mapAriaLabel={"Google Map with pins for interesting USA places"}
+  mapCenter={{"lat":39,"lng":-112}}
+  mapZoom={3}
+  mapErrorLabel={"USA"}
+  spots={spots}
+/>

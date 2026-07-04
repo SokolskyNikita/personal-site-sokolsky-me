@@ -1,0 +1,1186 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+export const prerender = true;
+
+const spots = [
+  {
+    "id": "jigokudani-snow-monkeys",
+    "name": "Jigokudani snow monkeys",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Nagano",
+    "kind": "Wildlife behaviour",
+    "access": "Normal winter trail visit",
+    "uniqueness": "The only known wild monkey troop that regularly bathes in hot springs",
+    "why": "At Jigokudani, Japanese macaques descend into a hot-spring pool in winter, a behaviour that began in the 1960s and is associated with this local troop. It is one of the clearest cases where a single learned animal behaviour makes a place globally recognizable.",
+    "realityCheck": "The pool is partly managed for viewing and the monkeys are wild, so bathing is never guaranteed. December to March is best, after a 1.6 km forest walk that can be icy.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Jigokudani_Monkey_Park",
+    "source": {
+      "label": "Jigokudani Yaen-Koen",
+      "url": "https://en.jigokudani-yaenkoen.co.jp/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1000,
+      "note": "Assumes travel from Seoul/Incheon: flights to Tokyo, rail/bus to Nagano/Yudanaka, ryokan or hotel lodging, monkey park visit, meals and winter transport buffer."
+    },
+    "map": {
+      "name": "Jigokudani Monkey Park",
+      "formattedAddress": "6845 Hirao, Yamanouchi, Shimotakai District, Nagano 381-0401, Japan",
+      "placeId": "ChIJzyCiTOzzHWARH9aN73OLTfY",
+      "rating": 4.5,
+      "reviewCount": 11329,
+      "location": {
+        "lat": 36.7326856,
+        "lng": 138.4621364
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jigokudani%20Monkey%20Park&query_place_id=ChIJzyCiTOzzHWARH9aN73OLTfY",
+      "query": "Jigokudani Yaen Koen Nagano Japan"
+    }
+  },
+  {
+    "id": "wulingyuan",
+    "name": "Wulingyuan / Zhangjiajie quartzite pillars",
+    "countries": [
+      "China"
+    ],
+    "area": "Hunan",
+    "kind": "Quartz-sandstone pillar geology",
+    "access": "Park shuttle and trail/cable car system",
+    "uniqueness": "A globally exceptional forest of quartz-sandstone pillars, not limestone karst",
+    "why": "Wulingyuan's more than 3,000 narrow pillars rise from thick quartz-sandstone beds that were uplifted and then cut by water, jointing, freeze-thaw and gravity collapse. That process and scale make Zhangjiajie different from the limestone tower karst found elsewhere, and explain why the site reads as impossible vertical stone rather than ordinary mountains.",
+    "realityCheck": "It is highly developed and crowded at peak times, with elevators, cable cars and glass viewpoints. The geology is still the point: go early, use multiple viewpoints and expect infrastructure rather than wilderness solitude.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Wulingyuan",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/640/"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 2100,
+      "note": "Assumes travel from Seoul/Incheon: flights to China via major hubs, domestic connection to Zhangjiajie, park lodging, meals, entry/shuttle fees and buffer."
+    },
+    "map": {
+      "name": "Wulingyuan Scenic Area",
+      "formattedAddress": "China, Hu Nan Sheng, Zhang Jia Jie Shi, Wu Ling Yuan Qu, 军地坪 邮政编码: 427499",
+      "placeId": "ChIJUyM0FVwGmzYRBZfSzn_jkI8",
+      "rating": 4.7,
+      "reviewCount": 87,
+      "location": {
+        "lat": 29.335749,
+        "lng": 110.481305
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Wulingyuan%20Scenic%20Area&query_place_id=ChIJUyM0FVwGmzYRBZfSzn_jkI8"
+    }
+  },
+  {
+    "id": "zhangye-danxia",
+    "name": "Zhangye Danxia",
+    "countries": [
+      "China"
+    ],
+    "area": "Gansu",
+    "kind": "Sedimentary geology",
+    "access": "Park bus/viewpoint system",
+    "uniqueness": "One of the clearest large-scale rainbow Danxia formations",
+    "why": "Zhangye's coloured ridges come from Cretaceous red sandstone and siltstone shaped by tectonic uplift, water and wind, with iron oxides and trace minerals producing the red, orange, yellow and pale bands. Danxia exists elsewhere in China, but Zhangye is exceptional for the combination of scale, colour variety, arid preservation and accessible boardwalk viewpoints.",
+    "realityCheck": "The colours depend heavily on light and recent rain. It is a broad site rather than one perfect Instagram hill, so build time for several platforms and avoid oversaturated-photo expectations.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Zhangye_National_Geopark",
+    "source": {
+      "label": "Zhangye National Geopark",
+      "url": "https://www.zhangyegeopark.cn/en/h-nd-188.html"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 2100,
+      "note": "Assumes travel from Seoul/Incheon: flights to China and Zhangye or Lanzhou plus rail/road, park access, lodging, meals and desert-corridor buffer."
+    },
+    "map": {
+      "name": "Zhangye Danxia National Geopark",
+      "formattedAddress": "Linze County, Zhangye, Gansu, China",
+      "placeId": "manual-zhangye-danxia",
+      "location": {
+        "lat": 38.9462,
+        "lng": 100.0698
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Zhangye%20Danxia%20National%20Geological%20Park"
+    }
+  },
+  {
+    "id": "harbin-ice-world",
+    "name": "Harbin Ice and Snow World",
+    "countries": [
+      "China"
+    ],
+    "area": "Heilongjiang",
+    "kind": "Seasonal engineered ice city",
+    "access": "Normal visit in deep winter",
+    "uniqueness": "The world’s largest temporary ice-and-snow theme park rebuilt every winter",
+    "why": "Harbin turns blocks cut from the Songhua River into a temporary city of lit ice. Xinhua reported the 27th Ice and Snow World opening in December 2025 at a record 1.2 million square metres, using about 400,000 cubic metres of ice and snow.",
+    "realityCheck": "The season is short and brutally cold, often around late December through February. Verify the current edition's opening dates and dress for standing outside at subzero night temperatures.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Harbin_International_Ice_and_Snow_Sculpture_Festival",
+    "source": {
+      "label": "Xinhua",
+      "url": "https://english.news.cn/20251215/95098c9eff8e40cf9b63bb2998398595/c.html"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from Seoul/Incheon: flights/rail to Harbin, winter lodging, Ice and Snow World entry, local transport, meals and cold-weather gear buffer."
+    },
+    "map": {
+      "name": "Harbin Ice & Snow World",
+      "formattedAddress": "China, Hei Long Jiang Sheng, Ha Er Bin Shi, Dao Li Qu, 兆麟公园 邮政编码: 150036",
+      "placeId": "ChIJq6raXBaAQ14RfdXnDxVFhCc",
+      "rating": 4.7,
+      "reviewCount": 177,
+      "location": {
+        "lat": 45.7776401,
+        "lng": 126.6228455
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Harbin%20Ice%20%26%20Snow%20World&query_place_id=ChIJq6raXBaAQ14RfdXnDxVFhCc",
+      "query": "Harbin Ice and Snow World Heilongjiang China"
+    }
+  },
+  {
+    "id": "aogashima",
+    "name": "Aogashima",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Izu Islands, Tokyo",
+    "kind": "Inhabited double caldera",
+    "access": "Weather-sensitive helicopter or ferry via Hachijojima",
+    "uniqueness": "A tiny inhabited volcano-within-a-volcano village in the Philippine Sea",
+    "why": "Aogashima is a rare lived-in double caldera: the island is a volcanic rim, with the Maruyama cone sitting inside the larger caldera and a small village surviving on the outer slopes. Residents use geothermal steam, and Tokyo's island materials map the caldera viewpoints and geothermal sauna.",
+    "realityCheck": "Access is the trip. The helicopter has very limited seats and the ferry is often cancelled by sea conditions, so base from Hachijojima and build in buffer days.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Aogashima",
+    "source": {
+      "label": "GO TOKYO",
+      "url": "https://www.gotokyo.org/en/destinations/izu-and-ogasawara-islands/aogashima-island/index.html"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2000,
+      "note": "Assumes travel from Seoul/Incheon: flights to Tokyo and Hachijojima, helicopter or ferry attempt to Aogashima, simple lodging/camping, meals and multiple weather-buffer days."
+    },
+    "map": {
+      "name": "Aogashima",
+      "formattedAddress": "Aogashima, Tokyo 100-1701, Japan",
+      "placeId": "ChIJfbCpf_S5amARP5CYHlWYzNc",
+      "location": {
+        "lat": 32.4665329,
+        "lng": 139.7636109
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Aogashima&query_place_id=ChIJfbCpf_S5amARP5CYHlWYzNc",
+      "query": "Aogashima Tokyo Japan"
+    }
+  },
+  {
+    "id": "sokushinbutsu-yamagata",
+    "name": "Sokushinbutsu temples of Yamagata",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Dewa Sanzan / Mount Yudono",
+    "kind": "Ascetic relic tradition",
+    "access": "Temple visits by car; etiquette required",
+    "uniqueness": "Japan’s concentrated cluster of self-mummified “living Buddhas”",
+    "why": "Around Mount Yudono and the Dewa Sanzan are temples preserving sokushinbutsu, monks who underwent years of severe ascetic practice aimed at self-mummification and eternal meditation. Nippon.com and regional sources describe Yamagata as the main concentration of these rare Japanese Buddhist mummies.",
+    "realityCheck": "These are venerated religious relics, not a dark-tourism exhibit. Some temples have limited hours, Japanese-only reservations or ritual protocols, so plan with care.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sokushinbutsu",
+    "source": {
+      "label": "Nippon.com",
+      "url": "https://www.nippon.com/en/japan-topics/g02008/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1500,
+      "note": "Assumes travel from Seoul/Incheon: rail or flight to Yamagata/Tsuruoka, rental car to Dainichibo/Churenji/Kaikoji-area temples, lodging, meals and reservation buffer."
+    },
+    "map": {
+      "name": "Dainichibo Temple",
+      "formattedAddress": "Nyūdō-11 Ōami, Tsuruoka, Yamagata 997-0531, Japan",
+      "placeId": "ChIJrWG_NQIKjF8Rd1ALP1b9fvg",
+      "rating": 4.1,
+      "reviewCount": 554,
+      "location": {
+        "lat": 38.59252,
+        "lng": 139.900334
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Dainichibo%20Temple&query_place_id=ChIJrWG_NQIKjF8Rd1ALP1b9fvg",
+      "query": "Dainichibo Temple Tsuruoka Yamagata Japan"
+    }
+  },
+  {
+    "id": "osorezan-itako",
+    "name": "Osorezan and the itako",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Aomori / Shimokita Peninsula",
+    "kind": "Liminal ritual site",
+    "access": "Seasonal temple visit; festival-specific ritual",
+    "uniqueness": "A volcanic “gateway to the afterlife” where itako mediums still appear at festivals",
+    "why": "Osorezan's sulfur vents, grey ground and acidic lake are mapped onto Buddhist hell-and-paradise imagery, but the living singularity is the itako: traditionally blind female mediums associated with channeling the dead. Tohoku tourism materials list the grand festival dates around July 20-24, when visitors seek these rituals.",
+    "realityCheck": "Itako are few and aging, and the ritual is not a guaranteed performance. Visit respectfully, check festival timing and remember that people are coming with grief, not with tourist curiosity.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mount_Osore",
+    "source": {
+      "label": "Tohoku Tourism",
+      "url": "https://www.tohokukanko.jp/en/attractions/detail_10020.html"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1600,
+      "note": "Assumes travel from Seoul/Incheon: flights or Shinkansen to Aomori/Hachinohe, rail/bus or car to Mutsu/Osorezan, lodging, meals and seasonal transport buffer."
+    },
+    "map": {
+      "name": "Osorezan Bodaiji Temple",
+      "formattedAddress": "Usoriyama-3-2 Tanabu, Mutsu, Aomori 035-0021, Japan",
+      "placeId": "ChIJfzzUlcY9nF8Rq-lho5eIx-0",
+      "rating": 4.4,
+      "reviewCount": 2503,
+      "location": {
+        "lat": 41.3282428,
+        "lng": 141.0898174
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Osorezan%20Bodaiji%20Temple&query_place_id=ChIJfzzUlcY9nF8Rq-lho5eIx-0",
+      "query": "Osorezan Bodaiji Temple Aomori Japan"
+    }
+  },
+  {
+    "id": "korean-dmz-jsa",
+    "name": "Korean DMZ and JSA",
+    "countries": [
+      "South Korea",
+      "North Korea"
+    ],
+    "area": "Panmunjom / border north of Seoul",
+    "kind": "Live geopolitical border",
+    "access": "Guided tour only; JSA access fluid",
+    "uniqueness": "The world’s most fortified armistice border and a live Cold War threshold",
+    "why": "The DMZ is a military scar that accidentally became a wildlife corridor, while the Joint Security Area at Panmunjom is the symbolic point where the two Koreas face each other across the Military Demarcation Line. Few places make geopolitical abstraction so physically legible.",
+    "realityCheck": "Standard DMZ tours are easier than JSA access. JSA tours require advance booking, passport checks and security approval, and access to the blue conference buildings has changed repeatedly, so confirm current rules before anchoring a trip around it.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Korean_Demilitarized_Zone",
+    "source": {
+      "label": "Visit Korea",
+      "url": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=107338"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 600,
+      "note": "Assumes travel from Seoul/Incheon: flights to Seoul, guided DMZ/JSA or fallback DMZ tour, city lodging, meals and flexibility if security conditions suspend access."
+    },
+    "map": {
+      "name": "Joint Security Area (JSA)",
+      "formattedAddress": "South Korea, 경기도 개성 진서면 어룡리",
+      "placeId": "ChIJG60EO0b3fDURNBTtxPxZ6hg",
+      "rating": 4.4,
+      "reviewCount": 66,
+      "location": {
+        "lat": 37.9556362,
+        "lng": 126.6765157
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Joint%20Security%20Area%20(JSA)&query_place_id=ChIJG60EO0b3fDURNBTtxPxZ6hg",
+      "query": "Panmunjom Joint Security Area Korea"
+    }
+  },
+  {
+    "id": "yanshui-beehive-fireworks",
+    "name": "Yanshui Beehive Fireworks Festival",
+    "countries": [
+      "Taiwan"
+    ],
+    "area": "Tainan",
+    "kind": "Rocket-barrage religious festival",
+    "access": "Public festival with serious protective gear",
+    "uniqueness": "A plague-expulsion ritual where bottle rockets are fired horizontally into protected crowds",
+    "why": "Yanshui's beehive towers launch dense barrages of bottle rockets into the street crowd during the Lantern Festival, with participants wearing helmets, thick clothing and towels because being hit is considered auspicious. Tainan's official festival site lists the 2026 event around March 2-3.",
+    "realityCheck": "This is not a normal fireworks show. Full protective gear is mandatory, injuries happen, and you should follow local marshal instructions instead of chasing the densest rocket barrage.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Yanshui_Beehive_Fireworks_Festival",
+    "source": {
+      "label": "Tainan City Government",
+      "url": "https://www.twtainan.net/yanshuifireworks/en"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 600,
+      "note": "Assumes travel from Seoul/Incheon: flights to Taipei/Kaohsiung, train to Tainan, festival lodging booked early, protective gear, meals and crowd/transport buffer."
+    },
+    "map": {
+      "name": "Yanshuei Wu Miao",
+      "formattedAddress": "No. 87號, Wumiao Rd, Jincheng Village, Yanshui District, Tainan City, Taiwan 737",
+      "placeId": "ChIJWfuxqhGEbjQRWk6fFM2j-XA",
+      "rating": 4.6,
+      "reviewCount": 1122,
+      "location": {
+        "lat": 23.3238234,
+        "lng": 120.2657785
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Yanshuei%20Wu%20Miao&query_place_id=ChIJWfuxqhGEbjQRWk6fFM2j-XA",
+      "query": "Yanshui Wu Miao Tainan Taiwan"
+    }
+  },
+  {
+    "id": "gunkanjima",
+    "name": "Gunkanjima / Hashima Island",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Nagasaki",
+    "kind": "Industrial ruin island",
+    "access": "Licensed boat tour; landing weather-dependent",
+    "uniqueness": "A complete abandoned vertical coal-mining town on a tiny ocean rock",
+    "why": "Hashima packed mines, schools, shops and concrete apartment blocks onto a 480-by-160-metre island, reaching more than 5,000 residents before the coal mine closed in 1974. Its battleship silhouette and frozen-in-decay company-town fabric make it the definitive Japanese industrial ruin.",
+    "realityCheck": "Landing depends on weather and operator rules, and the wartime forced-labor history is contested and important. Book backup days and read beyond the ruin aesthetics.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Hashima_Island",
+    "source": {
+      "label": "Discover Nagasaki",
+      "url": "https://www.discover-nagasaki.com/en/featured-topics/gunkanjima-landing-tour"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1100,
+      "note": "Assumes travel from Seoul/Incheon: flights/rail to Nagasaki, licensed Gunkanjima tour, city lodging, meals and at least one backup day for sea conditions."
+    },
+    "map": {
+      "name": "Hashima Island",
+      "formattedAddress": "Hashima Island, Takashimamachi, Nagasaki, 851-1315, Japan",
+      "placeId": "ChIJeSN4S51GFTURpO7LblMx06g",
+      "rating": 4.3,
+      "reviewCount": 1258,
+      "location": {
+        "lat": 32.6276331,
+        "lng": 129.7385256
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Hashima%20Island&query_place_id=ChIJeSN4S51GFTURpO7LblMx06g",
+      "query": "Hashima Island Nagasaki Japan"
+    }
+  },
+  {
+    "id": "fujian-tulou",
+    "name": "Fujian tulou",
+    "countries": [
+      "China"
+    ],
+    "area": "Fujian",
+    "kind": "Communal earthen architecture",
+    "access": "Road/bus tours from Xiamen; some homestays",
+    "uniqueness": "Fortified rammed-earth clan buildings designed as equal communal housing",
+    "why": "The tulou are giant circular and rectangular earthen houses, often three to five stories high, that historically housed whole clans as village units. UNESCO notes that some housed up to 800 people; their unusual social architecture gave families near-identical rooms around a shared courtyard and ancestral core rather than encoding hierarchy in the plan.",
+    "realityCheck": "Some tulou are still lived in, and the famous clusters can feel tour-bus-heavy. Choose routes that include inhabited buildings and treat residents' homes as homes.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Fujian_tulou",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1113/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 900,
+      "note": "Assumes travel from Seoul/Incheon: flights or rail to Xiamen, bus/private car to Nanjing/Yongding tulou clusters, simple lodging or tulou homestay, meals and local guide/translation buffer."
+    },
+    "map": {
+      "name": "Fujian Tulou （Nanjing） Scenic Area",
+      "formattedAddress": "China, 福建省漳州市南靖县书洋镇H3R9+MVG 邮政编码: 363608",
+      "placeId": "ChIJ85YhQLysFjQR5KuzF5HyPe4",
+      "rating": 4.6,
+      "reviewCount": 39,
+      "location": {
+        "lat": 24.5916808,
+        "lng": 117.0696979
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Fujian%20Tulou%20%EF%BC%88Nanjing%EF%BC%89%20Scenic%20Area&query_place_id=ChIJ85YhQLysFjQR5KuzF5HyPe4",
+      "query": "Fujian Tulou UNESCO Nanjing Fujian China"
+    }
+  },
+  {
+    "id": "jeju-haenyeo",
+    "name": "Jeju haenyeo",
+    "countries": [
+      "South Korea"
+    ],
+    "area": "Jeju Island",
+    "kind": "Living diving culture",
+    "access": "Museum and coastal demonstrations",
+    "uniqueness": "A UNESCO-recognized community of women breath-hold divers with a declining matrifocal work culture",
+    "why": "Jeju's haenyeo dive without oxygen tanks for shellfish and seafood, often to around 10 metres and often at older ages. UNESCO recognizes the culture as intangible heritage; the distinctive sumbisori exhale, cooperative work groups and decline from tens of thousands of divers make it globally singular and time-sensitive.",
+    "realityCheck": "Demonstrations near tourist sites are only a window into a working culture. Go through the Haenyeo Museum and local communities, and do not treat active divers as props.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Haenyeo",
+    "source": {
+      "label": "UNESCO Intangible Cultural Heritage",
+      "url": "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 700,
+      "note": "Assumes travel from Seoul/Incheon: flights to Jeju, rental car or local tours, Haenyeo Museum and coastal demonstration stops, lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Jeju Haenyeo Museum",
+      "formattedAddress": "26 Haenyeobangmulgwan-gil, Gujwa-eup, 특별자치도, Cheju, Jeju-do, South Korea",
+      "placeId": "ChIJdU_EpXYWDTURfTQfg14zAKw",
+      "rating": 4.4,
+      "reviewCount": 2700,
+      "location": {
+        "lat": 33.52364740000001,
+        "lng": 126.8634357
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jeju%20Haenyeo%20Museum&query_place_id=ChIJdU_EpXYWDTURfTQfg14zAKw",
+      "query": "Jeju Haenyeo Museum Jeju South Korea"
+    }
+  },
+  {
+    "id": "kowloon-walled-city",
+    "name": "Kowloon Walled City Park",
+    "countries": [
+      "Hong Kong"
+    ],
+    "area": "Kowloon City",
+    "kind": "Vanished hyperdense city memory site",
+    "access": "Easy city park visit",
+    "uniqueness": "The memory of the densest self-built urban enclave in modern history",
+    "why": "Kowloon Walled City once compressed tens of thousands of residents into about 2.6 hectares of self-built towers, alleys, workshops and clinics before demolition in 1993-94. The park is a memory site: fragments, models and layout hints stand in for a vanished urban anomaly that will not be built again.",
+    "realityCheck": "The physical city is gone. Include this only if you are interested in urban history and absence; otherwise it is a quiet park with interpretive traces.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Kowloon_Walled_City",
+    "source": {
+      "label": "Kowloon Walled City Park",
+      "url": "https://www.lcsd.gov.hk/en/parks/kwcp/index.html"
+    },
+    "trip": {
+      "days": 4,
+      "costUsd": 600,
+      "note": "Assumes travel from Seoul/Incheon: flights to Hong Kong, city lodging, MTR/bus to Kowloon City, park visit, meals and nearby Kowloon exploration."
+    },
+    "map": {
+      "name": "Kowloon Walled City Park",
+      "formattedAddress": "Kowloon City, Hong Kong",
+      "placeId": "ChIJa6mQFCoHBDQRng426-QsDHg",
+      "rating": 4.3,
+      "reviewCount": 5287,
+      "location": {
+        "lat": 22.3321296,
+        "lng": 114.1903285
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Kowloon%20Walled%20City%20Park&query_place_id=ChIJa6mQFCoHBDQRng426-QsDHg",
+      "query": "Kowloon Walled City Park Hong Kong"
+    }
+  },
+  {
+    "id": "cheung-chau-bun-festival",
+    "name": "Cheung Chau Bun Festival",
+    "countries": [
+      "Hong Kong"
+    ],
+    "area": "Cheung Chau Island",
+    "kind": "Plague-dispelling festival",
+    "access": "Ferry day trip; date-specific crowds",
+    "uniqueness": "A bun-tower scramble and floating-child parade with no real global twin",
+    "why": "Cheung Chau's festival combines Taoist plague-expulsion rites, a vegetarian island period, the Piu Sik parade of children appearing to float on hidden supports, and a midnight bun-scrambling final up a tower covered in buns. Hong Kong Tourism Board listed the 2026 main events for May 24-25.",
+    "realityCheck": "Ferries and streets get packed. The bun scramble uses modern safety gear after past accidents, so the singularity is ritual and island atmosphere rather than reckless danger.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Cheung_Chau_Bun_Festival",
+    "source": {
+      "label": "Hong Kong Tourism Board",
+      "url": "https://partnernet.hktb.com/india/en/destination/events_festivals/index.html?eventID=86444"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 800,
+      "note": "Assumes travel from Seoul/Incheon: flights to Hong Kong, city lodging, ferry to Cheung Chau, festival day/evening timing, meals and crowd buffer."
+    },
+    "map": {
+      "name": "Yuk Hui Temple (Pak Tai Temple)",
+      "formattedAddress": "Pak She St, Cheung Chau, Hong Kong",
+      "placeId": "ChIJ1con9IxWATQROVEpABtUZn4",
+      "rating": 4.2,
+      "reviewCount": 159,
+      "location": {
+        "lat": 22.2123785,
+        "lng": 114.027849
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Yuk%20Hui%20Temple%20(Pak%20Tai%20Temple)&query_place_id=ChIJ1con9IxWATQROVEpABtUZn4",
+      "query": "Pak Tai Temple Cheung Chau Hong Kong"
+    }
+  },
+  {
+    "id": "bayan-olgii-eagle-hunters",
+    "name": "Kazakh eagle hunters of Bayan-Ölgii",
+    "countries": [
+      "Mongolia"
+    ],
+    "area": "Altai Mountains / Bayan-Ölgii",
+    "kind": "Living falconry culture",
+    "access": "Festival or homestay with local guides",
+    "uniqueness": "A horseback golden-eagle falconry tradition maintained by Kazakh berkutchi",
+    "why": "In far-western Mongolia, Kazakh hunters train female golden eagles to hunt from horseback, a living Altai tradition rather than a museum reconstruction. The Golden Eagle Festival gathers real hunters for competitions and demonstrations and is widely billed as the only festival dedicated to golden-eagle falconry.",
+    "realityCheck": "Festival tourism can flatten a real winter hunting culture into spectacle. Use reputable local guides, consider family homestays outside festival dates and respect how hunters care for and eventually release eagles.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Golden_Eagle_Festival",
+    "source": {
+      "label": "Golden Eagle Festival",
+      "url": "https://www.discoveraltai.com/the-golden-eagle-festival-altai-mountains/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 3100,
+      "note": "Assumes travel from Seoul/Incheon: flights to Ulaanbaatar and Ölgii, festival or hunter-family guide package, ger/homestay or simple hotel lodging, meals and weather/flight buffer."
+    },
+    "map": {
+      "name": "Ölgii",
+      "formattedAddress": "Ölgii, Bayan-Ölgii, Mongolia",
+      "placeId": "ChIJxcuNVGKztEIRCX4GodfC_m0",
+      "location": {
+        "lat": 48.9706758,
+        "lng": 89.96783820000002
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%C3%96lgii&query_place_id=ChIJxcuNVGKztEIRCX4GodfC_m0",
+      "query": "Olgii Bayan-Olgii Mongolia"
+    }
+  },
+  {
+    "id": "reed-flute-guilin-karst",
+    "name": "Reed Flute Cave and Guilin karst",
+    "countries": [
+      "China"
+    ],
+    "area": "Guangxi",
+    "kind": "Karst cave and painted-scroll scenery",
+    "access": "Easy city and river itinerary",
+    "uniqueness": "A canonical Chinese karst scene rather than a strict global one-off",
+    "why": "Reed Flute Cave is a visitor-friendly limestone cave filled with stalactites, stalagmites, columns and curtains, while Guilin and the Li River anchor the peak-and-river scenery that shaped centuries of Chinese painting. The result is culturally singular even if tower karst itself has analogues in Vietnam and elsewhere.",
+    "realityCheck": "This is the least strict 'globally unique' entry in the list. Include it for the specific Guilin art-historical context and cave spectacle, not because karst caves are rare worldwide.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Reed_Flute_Cave",
+    "source": {
+      "label": "Embassy of China in Bulgaria",
+      "url": "https://bg.china-embassy.gov.cn/eng/kjwh/kj/200406/t20040613_2368578.htm"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 600,
+      "note": "Assumes travel from Seoul/Incheon: flights or high-speed rail to Guilin, Reed Flute Cave visit, Li River/Yangshuo day, midrange lodging, meals and local transport."
+    },
+    "map": {
+      "name": "Reed Flute Cave",
+      "formattedAddress": "1 Lu Di Lu, Xiu Feng Qu, Gui Lin Shi, Guang Xi Zhuang Zu Zi Zhi Qu, China, 541002",
+      "placeId": "ChIJs8zoz1f0pDYRWhx3YnA2xV0",
+      "rating": 4.4,
+      "reviewCount": 354,
+      "location": {
+        "lat": 25.304409,
+        "lng": 110.273614
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Reed%20Flute%20Cave&query_place_id=ChIJs8zoz1f0pDYRWhx3YnA2xV0",
+      "query": "Reed Flute Cave Guilin Guangxi China"
+    }
+  },
+  {
+    "id": "naoshima-teshima-art",
+    "name": "Naoshima and Teshima art islands",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Seto Inland Sea",
+    "kind": "Site-specific art environment",
+    "access": "Ferries plus timed museum tickets",
+    "uniqueness": "Depopulated islands remade through underground and weather-open contemporary art",
+    "why": "The Benesse Art Site islands put contemporary art into depopulated island villages and purpose-built museums. Chichu Art Museum is mostly underground and lit by natural light, while Teshima Art Museum is a droplet-like shell where water, wind and light form the work. The Art House Project embeds art in restored village houses.",
+    "realityCheck": "Reserve Chichu and Teshima tickets ahead, check ferry schedules and avoid trying to compress both islands into a rushed half-day. The art works because of slowness and place.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Naoshima,_Kagawa",
+    "source": {
+      "label": "Benesse Art Site Naoshima",
+      "url": "https://benesse-artsite.jp/en/art/chichu.html"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1700,
+      "note": "Assumes travel from Seoul/Incheon: flights/rail to Okayama/Takamatsu, ferry via Uno or Takamatsu, island lodging or Takamatsu base, reserved museum tickets, meals and ferry buffer."
+    },
+    "map": {
+      "name": "Chichu Art Museum",
+      "formattedAddress": "3449-1, Naoshima, Kagawa District, Kagawa 761-3110, Japan",
+      "placeId": "ChIJ4WHu5yvuUzURCXiEZmVSozw",
+      "rating": 4.4,
+      "reviewCount": 4572,
+      "location": {
+        "lat": 34.4477479,
+        "lng": 133.9847175
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Chichu%20Art%20Museum&query_place_id=ChIJ4WHu5yvuUzURCXiEZmVSozw",
+      "query": "Chichu Art Museum Naoshima Japan"
+    }
+  },
+  {
+    "id": "jeju",
+    "name": "Jeju Volcanic Island and Lava Tubes",
+    "countries": [
+      "South Korea"
+    ],
+    "area": "Jeju Island",
+    "kind": "Volcanology",
+    "access": "Road access; some caves restricted",
+    "uniqueness": "A shield volcano island with lava tubes, tuff cone and Hallasan at its center",
+    "why": "Jeju is a volcanic island textbook: Hallasan, Manjanggul lava tube, Seongsan Ilchulbong and oreum cones show different pieces of basaltic island-building in one compact place.",
+    "realityCheck": "Some lava-tube sections close for conservation or maintenance. Check current access and avoid treating the island as only a resort destination.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Jeju_Volcanic_Island_and_Lava_Tubes",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1264/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 1600,
+      "note": "Assumes travel from Seoul/Incheon: flights via Seoul to Jeju, car rental or local tours, midrange lodging, meals, cave/park access and weather buffer."
+    },
+    "map": {
+      "name": "Manjanggul Lava Tube",
+      "formattedAddress": "182 Manjanggul-gil, Gujwa-eup, Cheju, Jeju-do, South Korea",
+      "placeId": "ChIJmWohlsQZDTURppUrDPCrZrs",
+      "rating": 4.2,
+      "reviewCount": 11894,
+      "location": {
+        "lat": 33.5282463,
+        "lng": 126.7702874
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Manjanggul%20Lava%20Tube&query_place_id=ChIJmWohlsQZDTURppUrDPCrZrs"
+    }
+  },
+  {
+    "id": "mogao",
+    "name": "Mogao Caves",
+    "countries": [
+      "China"
+    ],
+    "area": "Dunhuang, Gansu",
+    "kind": "Buddhist cave art",
+    "access": "Timed ticket system",
+    "uniqueness": "A millennium of Silk Road Buddhist art preserved in desert caves",
+    "why": "Mogao is one of the world's great image archives: murals, manuscripts, sculpture and patronage from a desert crossroads where China, Central Asia and India met.",
+    "realityCheck": "Access is controlled and some caves rotate. The digital center and guide system exist for conservation, not simple bureaucracy.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mogao_Caves",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/440/"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 2300,
+      "note": "Assumes travel from Seoul/Incheon: flights to China and Dunhuang, timed cave ticket, lodging, meals, local transport and desert-route buffer."
+    },
+    "map": {
+      "name": "Mogao Caves",
+      "formattedAddress": "2RR5+HMR, Dunhuang, Jiuquan, Gansu, China, 736206",
+      "placeId": "ChIJb6UmllS36jcR_mervV8qx9A",
+      "rating": 4.6,
+      "reviewCount": 696,
+      "location": {
+        "lat": 40.041476,
+        "lng": 94.809133
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mogao%20Caves&query_place_id=ChIJb6UmllS36jcR_mervV8qx9A"
+    }
+  },
+  {
+    "id": "yakushima",
+    "name": "Yakushima",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Kagoshima Prefecture",
+    "kind": "Island ecology",
+    "access": "Ferry or regional flight plus hiking",
+    "uniqueness": "Ancient cedar forest on a wet subtropical mountain island",
+    "why": "Yakushima is interesting because rainfall, granite mountains, old-growth cedars and island isolation create a vertical forest world that feels older than its size suggests.",
+    "realityCheck": "Trails are wet, slippery and sometimes long. The island rewards extra days more than a rushed Jomon Sugi attempt.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Yakushima",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/662/"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 2700,
+      "note": "Assumes travel from Seoul/Incheon: flights to Tokyo/Osaka and Kagoshima, ferry or regional flight, island lodging, meals, car/bus transport and rain buffer."
+    },
+    "map": {
+      "name": "Yakushima National Park",
+      "formattedAddress": "Yakushima, Kumage District, Kagoshima, Japan",
+      "placeId": "ChIJA8gQJwojPTURK5yL8KkXvfE",
+      "rating": 4.8,
+      "reviewCount": 151,
+      "location": {
+        "lat": 30.3464332,
+        "lng": 130.5058872
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Yakushima%20National%20Park&query_place_id=ChIJA8gQJwojPTURK5yL8KkXvfE"
+    }
+  },
+  {
+    "id": "ogasawara",
+    "name": "Ogasawara Islands",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Remote Pacific islands",
+    "kind": "Island evolution",
+    "access": "24-hour ferry from Tokyo; no airport",
+    "uniqueness": "Oceanic islands with high endemism and no land connection to a continent",
+    "why": "Ogasawara is Japan's Galapagos-like argument for isolation: snails, plants, birds and marine life evolved on small volcanic islands far from the mainland.",
+    "realityCheck": "The ferry schedule controls the trip and usually forces a multi-day stay. Biosecurity and conservation rules matter.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Bonin_Islands",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1362/"
+    },
+    "trip": {
+      "days": 13,
+      "costUsd": 3000,
+      "note": "Assumes travel from Seoul/Incheon: flights to Tokyo, round-trip ferry to Chichijima, island lodging, meals, local tours and ferry-schedule buffer."
+    },
+    "map": {
+      "name": "Ogasawara Islands",
+      "formattedAddress": "Ogasawara Islands",
+      "placeId": "ChIJX-ArOLzE8GAR8ugkCPXpUUQ",
+      "rating": 4,
+      "reviewCount": 106,
+      "location": {
+        "lat": 26.976281,
+        "lng": 141.6948692
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Ogasawara%20Islands&query_place_id=ChIJX-ArOLzE8GAR8ugkCPXpUUQ"
+    }
+  },
+  {
+    "id": "huangshan",
+    "name": "Mount Huangshan",
+    "countries": [
+      "China"
+    ],
+    "area": "Anhui",
+    "kind": "Granite mountain",
+    "access": "Cable cars, stairs and mountain hotels",
+    "uniqueness": "Granite peaks, cloud seas and ancient pines that shaped East Asian mountain aesthetics",
+    "why": "Huangshan is interesting not only as scenery but as a source image: its rocks, clouds and pines fed painting, poetry and garden imagination across China.",
+    "realityCheck": "It is highly developed and stair-heavy. Stay overnight if you want light and clouds without the day-trip crush.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Huangshan",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/547/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 2200,
+      "note": "Assumes travel from Seoul/Incheon: flights to Shanghai/Hangzhou/Huangshan routing, park access and cable cars, mountain or gateway lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Huangshan Mountain",
+      "formattedAddress": "Huangshan Mountain, Huangshan District, Huangshan City, China, 245801",
+      "placeId": "ChIJPY1nCYzGNTQRflFhHC-RbXA",
+      "rating": 4.8,
+      "reviewCount": 400,
+      "location": {
+        "lat": 30.137803,
+        "lng": 118.165201
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Huangshan%20Mountain&query_place_id=ChIJPY1nCYzGNTQRflFhHC-RbXA"
+    }
+  },
+  {
+    "id": "jiuzhaigou",
+    "name": "Jiuzhaigou Valley",
+    "countries": [
+      "China"
+    ],
+    "area": "Sichuan",
+    "kind": "Karst lakes",
+    "access": "Park bus and boardwalk system",
+    "uniqueness": "Mineral-blue lakes, travertine terraces and waterfalls in a Tibetan-edge valley",
+    "why": "Jiuzhaigou's colors are not a filter; carbonate chemistry, clear water, forests and glacial-valley form create an unusually vivid hydrological system.",
+    "realityCheck": "Earthquakes, closures and crowd control have affected access. Check current conditions and book early.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Jiuzhaigou",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/637/"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 2500,
+      "note": "Assumes travel from Seoul/Incheon: flights to Chengdu and onward road/air transfer, park lodging, entry/shuttle fees, meals and altitude/weather buffer."
+    },
+    "map": {
+      "name": "Jiuzhai Valley National Park",
+      "formattedAddress": "Jiuzhaigou County, Ngawa Tibetan and Qiang Autonomous Prefecture, Sichuan, China, 623402",
+      "placeId": "ChIJKWccnva99zYRxgz2tcjo_ck",
+      "rating": 4.7,
+      "reviewCount": 1143,
+      "location": {
+        "lat": 33.26004210000001,
+        "lng": 103.9185994
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jiuzhai%20Valley%20National%20Park&query_place_id=ChIJKWccnva99zYRxgz2tcjo_ck"
+    }
+  },
+  {
+    "id": "south-china-karst",
+    "name": "South China Karst / Shilin Stone Forest",
+    "countries": [
+      "China"
+    ],
+    "area": "Yunnan",
+    "kind": "Karst geology",
+    "access": "Road access from Kunming",
+    "uniqueness": "A dramatic stone-forest expression of one of the world's great karst regions",
+    "why": "Shilin makes karst vertical and walkable: limestone dissolution leaves blades, corridors and towers that feel architectural even though water did the work.",
+    "realityCheck": "Shilin is only one component of a much larger UNESCO karst series. It is the easiest gateway, not the whole story.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/South_China_Karst",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1248/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 2200,
+      "note": "Assumes travel from Seoul/Incheon: flights to Kunming, day trip or regional car, lodging, meals, entry fees and time for Yunnan logistics."
+    },
+    "map": {
+      "name": "Stone Forest Scenic",
+      "formattedAddress": "Shi Lin Zhong Lu, Shi Lin Yi Zu Zi Zhi Xian, Kun Ming Shi, China, 652207",
+      "placeId": "ChIJ518e8PAQ0DYRlBfTYRTjoR0",
+      "rating": 4.5,
+      "reviewCount": 139,
+      "location": {
+        "lat": 24.81677,
+        "lng": 103.32617
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Stone%20Forest%20Scenic&query_place_id=ChIJ518e8PAQ0DYRlBfTYRTjoR0"
+    }
+  },
+  {
+    "id": "terracotta",
+    "name": "Mausoleum of the First Qin Emperor and Terracotta Army",
+    "countries": [
+      "China"
+    ],
+    "area": "Xi'an, Shaanxi",
+    "kind": "Archaeology",
+    "access": "Easy day trip from Xi'an",
+    "uniqueness": "A life-size underground army built for imperial afterlife politics",
+    "why": "The Terracotta Army is powerful because individuality and mass production coexist: thousands of figures, weapons and pits built into a death complex for the first emperor.",
+    "realityCheck": "It is crowded and museum-like. The deeper story is the mausoleum system, not only Pit 1.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Terracotta_Army",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/441/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 1900,
+      "note": "Assumes travel from Seoul/Incheon: flights to China and Xi'an, museum/site visit, city lodging, meals, local transport and China travel buffer."
+    },
+    "map": {
+      "name": "Emperor Qinshihuang's Mausoleum Site Museum",
+      "formattedAddress": "Lintong District, Xi'An, Shaanxi, China, 710612",
+      "placeId": "ChIJowMUgi2nZDYRxz_j6XQ-48M",
+      "rating": 4.6,
+      "reviewCount": 8370,
+      "location": {
+        "lat": 34.3841153,
+        "lng": 109.2784918
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Emperor%20Qinshihuang's%20Mausoleum%20Site%20Museum&query_place_id=ChIJowMUgi2nZDYRxz_j6XQ-48M"
+    }
+  },
+  {
+    "id": "fuji",
+    "name": "Mount Fuji",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Honshu",
+    "kind": "Sacred volcano",
+    "access": "Seasonal climb or viewpoints",
+    "uniqueness": "A near-perfect stratovolcano that became a national sacred and artistic symbol",
+    "why": "Fuji is interesting because its geology and image history are fused. Pilgrimage routes, lakes, shrines and woodblock prints turned a volcano into a cultural system.",
+    "realityCheck": "Climbing season is short and busy. Seeing Fuji from cultural sites may be more rewarding than joining the summit queue.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mount_Fuji",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1418/"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 2400,
+      "note": "Assumes travel from Seoul/Incheon: flights to Tokyo, rail/bus to Fuji Five Lakes or climbing route, lodging, meals, local transport and weather buffer."
+    },
+    "map": {
+      "name": "Mount Fuji",
+      "formattedAddress": "Mount Fuji, Kitayama, Fujinomiya, Shizuoka 418-0112, Japan",
+      "placeId": "ChIJmcj9QppiGWAR36TzFsn8oaY",
+      "rating": 4.6,
+      "reviewCount": 13210,
+      "location": {
+        "lat": 35.3606255,
+        "lng": 138.7273634
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mount%20Fuji&query_place_id=ChIJmcj9QppiGWAR36TzFsn8oaY"
+    }
+  },
+  {
+    "id": "flaming-cliffs",
+    "name": "Flaming Cliffs",
+    "countries": [
+      "Mongolia"
+    ],
+    "area": "Gobi Desert",
+    "kind": "Paleontology",
+    "access": "Remote overland trip",
+    "uniqueness": "The fossil beds where dinosaur eggs entered scientific history",
+    "why": "Bayanzag matters because the Gobi changed dinosaur science: eggs, nests, Protoceratops and Velociraptor-era discoveries came from these red desert cliffs.",
+    "realityCheck": "The cliffs are remote and fragile. Use local guides and do not remove fossils or fragments.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Flaming_Cliffs",
+    "source": {
+      "label": "American Museum of Natural History",
+      "url": "https://www.amnh.org/explore/news-blogs/research-posts/the-flaming-cliffs"
+    },
+    "trip": {
+      "days": 12,
+      "costUsd": 3100,
+      "note": "Assumes travel from Seoul/Incheon: flights to Ulaanbaatar, guided Gobi overland tour, ger camps, meals, park/local fees and desert buffer."
+    },
+    "map": {
+      "name": "Flaming Cliffs",
+      "formattedAddress": "Flaming Cliffs, Ömnögovi, Mongolia",
+      "placeId": "ChIJS5dACS74JzYRLNjpzLmenF8",
+      "rating": 4.6,
+      "reviewCount": 181,
+      "location": {
+        "lat": 44.1398307,
+        "lng": 103.7158846
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Flaming%20Cliffs&query_place_id=ChIJS5dACS74JzYRLNjpzLmenF8"
+    }
+  },
+  {
+    "id": "fenghuang",
+    "name": "Fenghuang Ancient Town",
+    "countries": [
+      "China"
+    ],
+    "area": "Hunan",
+    "kind": "Lebedev favorite town",
+    "access": "Rail/road from regional hubs",
+    "uniqueness": "Lebedev-rated favorite: stilt houses, river bends and preserved minority-region townscape",
+    "why": "Fenghuang is the highest East Asian city/town in Lebedev's global rating. It deserves explicit inclusion as a river town of stilt houses, bridges, alleys and Miao/Tujia regional identity.",
+    "realityCheck": "Tourism and lighting can turn it theatrical. Walk early and look beyond the most staged riverfront.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Fenghuang_County",
+    "trip": {
+      "days": 11,
+      "costUsd": 2000,
+      "note": "Assumes travel from Seoul/Incheon: flights to China, rail/road via Changsha/Zhangjiajie/Fenghuang, lodging, meals and regional transfer buffer."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/fenghuang/"
+    },
+    "map": {
+      "name": "Fenghuang County",
+      "formattedAddress": "Fenghuang County, Xiangxi Tujia and Miao Autonomous Prefecture, Hunan, China",
+      "placeId": "ChIJU7AqpP99lzYRxiv3b5fuAOs",
+      "location": {
+        "lat": 27.9484299,
+        "lng": 109.59832
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Fenghuang%20County&query_place_id=ChIJU7AqpP99lzYRxiv3b5fuAOs"
+    }
+  },
+  {
+    "id": "miyajima",
+    "name": "Miyajima / Itsukushima Shrine",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Hiroshima Bay",
+    "kind": "Lebedev favorite place",
+    "access": "Rail and ferry access",
+    "uniqueness": "Lebedev-rated favorite: shrine-island composition of mountain, forest, sea and floating torii",
+    "why": "Miyajima appears high in Lebedev's Asian list and fits this guide as a compact sacred-island composition: shrine, deer, forested mountain and inland sea views.",
+    "realityCheck": "Day-trip crowds are heavy. Stay late or overnight if possible.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Itsukushima_Shrine",
+    "trip": {
+      "days": 11,
+      "costUsd": 2600,
+      "note": "Assumes travel from Seoul/Incheon: flights to Japan, rail to Hiroshima/Miyajima, lodging, meals, ferry/site fees and rail buffer."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/miyadjima/"
+    },
+    "map": {
+      "name": "Itsukushima Jinja",
+      "formattedAddress": "1-1 Miyajimachō, Hatsukaichi, Hiroshima 739-0588, Japan",
+      "placeId": "ChIJj23HfgTjGmARkNW10PcocjU",
+      "rating": 4.6,
+      "reviewCount": 35823,
+      "location": {
+        "lat": 34.29598960000001,
+        "lng": 132.3198285
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Itsukushima%20Jinja&query_place_id=ChIJj23HfgTjGmARkNW10PcocjU"
+    }
+  },
+  {
+    "id": "nagasaki",
+    "name": "Nagasaki",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Kyushu",
+    "kind": "Lebedev favorite city",
+    "access": "Rail/flight access",
+    "uniqueness": "Lebedev-rated favorite: harbor city of Dutch, Chinese, Christian and atomic-age layers",
+    "why": "Nagasaki ranks well for Lebedev and gives Japan a different urban story from Tokyo/Kyoto: steep harbor geography, Dejima, churches, Chinese temples and atomic memory.",
+    "realityCheck": "It is not as frictionless as the Tokyo-Kyoto route. The layered history is the reason to go.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Nagasaki",
+    "trip": {
+      "days": 11,
+      "costUsd": 2600,
+      "note": "Assumes travel from Seoul/Incheon: flights to Japan and rail/flight to Nagasaki, lodging, meals, local transit and history/site visits."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/nagasaki/"
+    },
+    "map": {
+      "name": "Nagasaki",
+      "formattedAddress": "Nagasaki, Japan",
+      "placeId": "ChIJZ9oYhFRMFTURk8wyyu2m94s",
+      "location": {
+        "lat": 32.7504527,
+        "lng": 129.8790402
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Nagasaki&query_place_id=ChIJZ9oYhFRMFTURk8wyyu2m94s"
+    }
+  },
+  {
+    "id": "shanghai-maglev",
+    "name": "Shanghai Maglev Train",
+    "countries": [
+      "China"
+    ],
+    "area": "Shanghai",
+    "kind": "Travel.SE unique transport",
+    "access": "Public airport rail service",
+    "uniqueness": "Travel.SE-mentioned commercial maglev, among the fastest regular land transport experiences a tourist can buy",
+    "why": "Travel Stack Exchange points to the Shanghai Maglev as an unusual public transport experience: wheel-less, commercially operating, and capable of 430 kph service speeds between Pudong Airport and Longyang Road.",
+    "realityCheck": "The ride is short and ends outside the city center. Treat it as a deliberate transport/engineering stop, not a full-day attraction.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Shanghai_maglev_train",
+    "source": {
+      "label": "Travel Stack Exchange",
+      "url": "https://travel.stackexchange.com/questions/7862/what-unusual-means-of-public-share-transportation-exist-around-the-world"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 1900,
+      "note": "Assumes travel from Seoul/Incheon: flights to Shanghai, city lodging, meals, transit and a planned airport or Pudong-side maglev ride."
+    },
+    "map": {
+      "name": "Longyang Road Station",
+      "formattedAddress": "Pudong, Shanghai, China, 201204",
+      "placeId": "ChIJwzT_R0J3sjUR_ymhz05rj6w",
+      "rating": 4.3,
+      "reviewCount": 319,
+      "location": {
+        "lat": 31.202491,
+        "lng": 121.557725
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Longyang%20Road%20Station&query_place_id=ChIJwzT_R0J3sjUR_ymhz05rj6w"
+    }
+  },
+  {
+    "id": "tanggula-pass-railway",
+    "name": "Qinghai-Tibet Railway at Tanggula Pass",
+    "countries": [
+      "China"
+    ],
+    "area": "Tibet / Qinghai high plateau",
+    "kind": "Travel.SE unique railway",
+    "access": "Long-distance train route; permits/logistics for Tibet",
+    "uniqueness": "Travel.SE-mentioned highest railway section in the world at Tanggula Pass",
+    "why": "A Travel Stack Exchange timetable question specifically calls out Tanggula Pass on the Qinghai-Tibet Railway as the world's highest railway section, at about 5,072 meters, and worth timing for daylight views.",
+    "realityCheck": "The experience is route- and permit-dependent, and altitude is real. It is best understood as a rail journey across the plateau rather than a normal station visit.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Tanggula_railway_station",
+    "source": {
+      "label": "Travel Stack Exchange",
+      "url": "https://travel.stackexchange.com/questions/105383/detailed-timetable-for-the-qinghai-tibet-railway"
+    },
+    "trip": {
+      "days": 12,
+      "costUsd": 2700,
+      "note": "Assumes travel from Seoul/Incheon: flights to China, rail routing toward Lhasa, Tibet permit logistics where applicable, simple lodging/meals and altitude buffer."
+    },
+    "map": {
+      "name": "Tanggula Railway Station",
+      "formattedAddress": "Tanggulazhen, Golmud, Haixi Mongol and Tibetan Autonomous Prefecture, Qinghai, China, 816004",
+      "placeId": "ChIJs8cg6QseeDcRoW4CiabdTfQ",
+      "rating": 4.4,
+      "reviewCount": 16,
+      "location": {
+        "lat": 34.213448,
+        "lng": 92.44480399999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Tanggula%20Railway%20Station&query_place_id=ChIJs8cg6QseeDcRoW4CiabdTfQ"
+    }
+  },
+  {
+    "id": "asa-coast-dmv",
+    "name": "Asa Coast Railway dual-mode vehicle",
+    "countries": [
+      "Japan"
+    ],
+    "area": "Tokushima / Kochi, Shikoku",
+    "kind": "Travel.SE unique transport",
+    "access": "Public regional service",
+    "uniqueness": "Travel.SE-mentioned hybrid bus/train vehicle operating on both road and rail",
+    "why": "Travel Stack Exchange points to the Asa Coast Railway DMV as an unusual public transport case: a scheduled dual-mode vehicle that runs as a bus on roads and as a train on rails.",
+    "realityCheck": "This is a transport oddity in a rural part of Shikoku. It is best for rail/transit obsessives or as part of a wider Shikoku trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Dual-mode_vehicle",
+    "source": {
+      "label": "Travel Stack Exchange",
+      "url": "https://travel.stackexchange.com/questions/7862/what-unusual-means-of-public-share-transportation-exist-around-the-world"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 2600,
+      "note": "Assumes travel from Seoul/Incheon: flights to Japan, rail/road travel to Shikoku, regional lodging, meals, DMV ride and schedule buffer."
+    },
+    "map": {
+      "name": "Awa-Kainan Station",
+      "formattedAddress": "Machinishi Shihohara, Kaiyo, Kaifu District, Tokushima 775-0202, Japan",
+      "placeId": "ChIJmYkP3vdeUjURtxnlCArd4Uo",
+      "rating": 4.2,
+      "reviewCount": 118,
+      "location": {
+        "lat": 33.6067521,
+        "lng": 134.3510145
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Awa-Kainan%20Station&query_place_id=ChIJmYkP3vdeUjURtxnlCArd4Uo"
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in East Asia"}
+  pageDescription={"A researched field guide to East Asia's most unique mountains, karst, caves, islands, rock art, archaeology and volcanic sites, with Google Maps pins."}
+  subject={"Unique places to visit in East Asia"}
+  keywords={"East Asia travel, unique places East Asia, China geology, Japan islands, Korea lava tubes, Mongolia fossils, East Asia map"}
+  eyebrow={"East Asia field guide"}
+  dek={"An East Asia list that mixes China, Japan, Korea and Mongolia through places that are hard to substitute: karst towers, sacred mountains, cave art, island evolution and desert fossils."}
+  criteriaText={"Trip estimates are per person from Seoul/Incheon via Incheon International (ICN), using the region's busiest city airport for international passenger traffic among million-plus city areas as the cost origin. The order is the ranking. Higher means rarer globally, more mind-expanding or more difficult to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Seoul/Incheon"}
+  mapHeading={"Pins across East Asia"}
+  mapAriaLabel={"Google Map with pins for interesting East Asia places"}
+  mapCenter={{"lat":34,"lng":115}}
+  mapZoom={4}
+  mapErrorLabel={"East Asia"}
+  spots={spots}
+/>

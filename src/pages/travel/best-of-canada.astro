@@ -1,0 +1,972 @@
+---
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
+
+export const prerender = true;
+
+const spots = [
+  {
+    "id": "bay-of-fundy",
+    "name": "Bay of Fundy / Burntcoat Head",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Nova Scotia / New Brunswick",
+    "kind": "Tidal phenomenon",
+    "access": "Easy road access at tide-aware sites",
+    "uniqueness": "The top of the planet for tidal range, statistically tied with Leaf Basin by newer data",
+    "why": "At Burntcoat Head in the Minas Basin, the Bay of Fundy has long been the benchmark for the world's highest tides, with ranges around 16 metres caused by resonance between the bay's shape and the tidal cycle. Newer Canadian Hydrographic Service comparisons suggest Leaf Basin in Nunavik may be statistically tied or slightly higher, so the honest claim is that Fundy remains one of the two extreme tidal places on Earth and the most accessible one.",
+    "realityCheck": "The site only works if you time it. Check tide tables, do not walk exposed flats casually, and treat superlative signage with the Leaf Basin caveat in mind.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Bay_of_Fundy",
+    "source": {
+      "label": "UNESCO Cliffs of Fundy Global Geopark",
+      "url": "https://www.unesco.org/en/iggp/cliffs-fundy-unesco-global-geopark"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from Toronto: flights to Halifax or Moncton, rental car around the Minas Basin and Fundy coast, midrange lodging, meals, park fees and tide-timing buffer."
+    },
+    "map": {
+      "name": "Burntcoat Head Park",
+      "formattedAddress": "45 Faulkner Ln, Noel, NS B0N 2C0, Canada",
+      "placeId": "ChIJv9T-_Fo9WUsRakcAzYR6TQE",
+      "rating": 4.8,
+      "reviewCount": 1577,
+      "location": {
+        "lat": 45.3112291,
+        "lng": -63.8070319
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Burntcoat%20Head%20Park&query_place_id=ChIJv9T-_Fo9WUsRakcAzYR6TQE",
+      "query": "Burntcoat Head Park Nova Scotia Canada"
+    }
+  },
+  {
+    "id": "mistaken-point",
+    "name": "Mistaken Point",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Avalon Peninsula, Newfoundland",
+    "kind": "Paleontology",
+    "access": "Guided coastal walk",
+    "uniqueness": "The oldest abundant, diverse assemblage of large complex fossils known",
+    "why": "Mistaken Point preserves 580-560 million-year-old Ediacaran seafloors with thousands of large fossil impressions, predating the Cambrian explosion by more than 40 million years. It is the place where the phrase 'life got big' becomes a walkable rock surface.",
+    "realityCheck": "Access is by guided tour and the fossil surfaces are fragile. Fog, wind and schedule constraints are part of the experience, not exceptions.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Mistaken_Point_Ecological_Reserve",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1497/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1600,
+      "note": "Assumes travel from Toronto: flights to St. John's, rental car to the Avalon Peninsula, guided reserve visit, midrange lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Newfoundland Ecological Reserve",
+      "formattedAddress": "NL-10, Portugal Cove South, NL A0A 1S0, Canada",
+      "placeId": "ChIJAQAAAGWbDUsR4VjNjJ4-q-g",
+      "rating": 4.6,
+      "reviewCount": 10,
+      "location": {
+        "lat": 46.7125237,
+        "lng": -53.2584497
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Newfoundland%20Ecological%20Reserve&query_place_id=ChIJAQAAAGWbDUsR4VjNjJ4-q-g"
+    }
+  },
+  {
+    "id": "burgess-shale",
+    "name": "Burgess Shale",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Yoho National Park / Canadian Rockies",
+    "kind": "Paleontology",
+    "access": "Guided hike only",
+    "uniqueness": "Exceptional soft-bodied fossils from the Cambrian explosion",
+    "why": "The Burgess Shale captures roughly 508-million-year-old marine animals with soft tissues preserved, including forms such as Anomalocaris, Hallucigenia and Opabinia. IUGS describes it as the most complete fossil record of Cambrian marine ecosystems, making it one of the primary places where early animal evolution became legible.",
+    "realityCheck": "The fossil beds are protected and reached only by guided hikes. That control is part of why the site can still be studied and visited without being loved to death.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Burgess_Shale",
+    "source": {
+      "label": "IUGS Geoheritage",
+      "url": "https://iugs-geoheritage.org/geoheritage_sites/burgess-shale-cambrian-palaeontological-record/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1900,
+      "note": "Assumes travel from Toronto: flights to Calgary, rental car or shuttle to Field/Lake Louise, guided Burgess Shale hike, midrange lodging, meals and a backup hiking day."
+    },
+    "map": {
+      "name": "Burgess Shale",
+      "formattedAddress": "Trans-Canada Hwy, Field, BC V0A 1L0, Canada",
+      "placeId": "ChIJZ-vx3Olhd1MRDcHG8W4ynVM",
+      "rating": 4.8,
+      "reviewCount": 13,
+      "location": {
+        "lat": 51.4323716,
+        "lng": -116.4669178
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Burgess%20Shale&query_place_id=ChIJZ-vx3Olhd1MRDcHG8W4ynVM"
+    }
+  },
+  {
+    "id": "joggins",
+    "name": "Joggins Fossil Cliffs",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Bay of Fundy, Nova Scotia",
+    "kind": "Paleontology",
+    "access": "Easy road access; tide-aware",
+    "uniqueness": "The world's most complete fossil record of the Carboniferous Coal Age",
+    "why": "Fundy tides continually expose upright fossil forests, trackways and early land-vertebrate evidence at Joggins. UNESCO describes the cliffs as the 'Coal Age Galapagos,' and IUGS singles out Hylonomus lyelli, the earliest reptile and amniote in the fossil record.",
+    "realityCheck": "Tides control the beach and fossil collecting is restricted. A guided walk from the centre is the best way to understand what is weathering out of the cliffs.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Joggins_Fossil_Cliffs",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1285/"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1300,
+      "note": "Assumes travel from Toronto: flights to Halifax or Moncton, rental car, midrange lodging, meals, site access and Bay of Fundy timing buffer."
+    },
+    "map": {
+      "name": "Joggins Fossil Cliffs & Centre",
+      "formattedAddress": "100 Main St, Joggins, NS B0L 1A0, Canada",
+      "placeId": "ChIJCSFFUvGxWEsRuQb7L7oPrys",
+      "rating": 4.6,
+      "reviewCount": 1181,
+      "location": {
+        "lat": 45.6946383,
+        "lng": -64.4497835
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Joggins%20Fossil%20Cliffs%20%26%20Centre&query_place_id=ChIJCSFFUvGxWEsRuQb7L7oPrys"
+    }
+  },
+  {
+    "id": "miguasha",
+    "name": "Miguasha National Park",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Gaspé Peninsula, Quebec",
+    "kind": "Paleontology",
+    "access": "Road access with museum and protected fossil areas",
+    "uniqueness": "The world's outstanding fossil window into the Devonian Age of Fishes",
+    "why": "UNESCO describes Miguasha as the world's most outstanding illustration of Devonian vertebrate life. Its lobe-finned fishes, especially Elpistostege, are central to understanding the fish-to-tetrapod transition; a complete specimen described in Nature revealed finger-like bones inside a fin.",
+    "realityCheck": "The museum is the anchor. The fossil cliffs are protected, so this is a science-site visit rather than a fossil-hunting beach day.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Miguasha_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/686/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1800,
+      "note": "Assumes travel from Toronto: flights to Quebec/Montreal or regional airports, rental car around Gaspé, midrange lodging, museum visit, meals and driving buffer."
+    },
+    "map": {
+      "name": "Miguasha National Park",
+      "formattedAddress": "231 Rte de Miguasha O, Nouvelle, QC G0C 2E0, Canada",
+      "placeId": "ChIJD6Kz7PIxmEwR55HnzBcfTuk",
+      "rating": 4.4,
+      "reviewCount": 717,
+      "location": {
+        "lat": 48.1042679,
+        "lng": -66.3481915
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Miguasha%20National%20Park&query_place_id=ChIJD6Kz7PIxmEwR55HnzBcfTuk",
+      "query": "Miguasha National Park Quebec Canada"
+    }
+  },
+  {
+    "id": "dinosaur-provincial",
+    "name": "Dinosaur Provincial Park",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Alberta badlands",
+    "kind": "Paleontology",
+    "access": "Road access plus guided fossil areas",
+    "uniqueness": "The world's most abundant and diverse dinosaur locality, per IUGS",
+    "why": "Dinosaur Provincial Park preserves Red Deer River badlands from about 75-77 million years ago. UNESCO cites more than 44 dinosaur species, while IUGS calls it the world's most abundant and diverse dinosaur locality, with more than 166 vertebrate taxa including 51 non-avian dinosaur species.",
+    "realityCheck": "The surface badlands are easy to visit, but the most important fossil zones are protected. Guided access is the right way to see the scientific ground rather than just the scenery.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Dinosaur_Provincial_Park",
+    "source": {
+      "label": "IUGS Geoheritage",
+      "url": "https://iugs-geoheritage.org/geoheritage_sites/dinosaur-provincial-park/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 1700,
+      "note": "Assumes travel from Toronto: flights to Calgary, rental car to the Brooks area, guided park programs, midrange lodging, meals and driving buffer."
+    },
+    "map": {
+      "name": "Dinosaur Provincial Park",
+      "formattedAddress": "Alberta, Canada",
+      "placeId": "ChIJRYYmL0-pclMRx75NHoGAHMs",
+      "rating": 4.8,
+      "reviewCount": 2302,
+      "location": {
+        "lat": 50.75949420000001,
+        "lng": -111.5192426
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Dinosaur%20Provincial%20Park&query_place_id=ChIJRYYmL0-pclMRx75NHoGAHMs"
+    }
+  },
+  {
+    "id": "manicouagan-crater",
+    "name": "Manicouagan Crater / Eye of Quebec",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Côte-Nord, Quebec",
+    "kind": "Impact geology",
+    "access": "Remote road trip or aerial/satellite-view objective",
+    "uniqueness": "One of Earth's largest confirmed impact structures, visible as a vast ring lake",
+    "why": "The Manicouagan structure was formed about 214 million years ago by a large impact and now reads as an annular reservoir around the eroded central uplift. NASA calls it one of the largest preserved impact craters on Earth's surface, and its geometry makes it one of Canada's most recognizable features from space.",
+    "realityCheck": "The crater is too large to experience from one roadside viewpoint. It is best understood through maps, flights, dam/road access and the knowledge that the ring lake marks an eroded impact scar.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Manicouagan_Reservoir",
+    "source": {
+      "label": "NASA Earth Observatory",
+      "url": "https://science.nasa.gov/earth/earth-observatory/manicouagan-impact-structure-quebec-1993/"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2700,
+      "note": "Assumes travel from Toronto: flights to Quebec or Baie-Comeau, long rental-car routing on the North Shore, simple lodging, meals, fuel and substantial driving buffer."
+    },
+    "map": {
+      "name": "Manicouagan Reservoir",
+      "formattedAddress": "Manicouagan Reservoir, Manicouagan Regional County Municipality, QC G4Z 0A7, Canada",
+      "placeId": "ChIJ0XyS6jXe8kwR6gRv-l_c6Zk",
+      "rating": 4.6,
+      "reviewCount": 39,
+      "location": {
+        "lat": 51.383333,
+        "lng": -68.7
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Manicouagan%20Reservoir&query_place_id=ChIJ0XyS6jXe8kwR6gRv-l_c6Zk",
+      "query": "Manicouagan Reservoir Quebec Canada"
+    }
+  },
+  {
+    "id": "pingo-landmark",
+    "name": "Pingo Canadian Landmark",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Tuktoyaktuk, Northwest Territories",
+    "kind": "Permafrost landforms",
+    "access": "Arctic road/boat access with local conditions",
+    "uniqueness": "The global reference area for pingos, including Canada’s tallest and the world’s second-tallest",
+    "why": "The Mackenzie Delta region has the highest concentration of pingos on Earth, roughly 1,350 ice-cored hills formed in permafrost. Parks Canada protects eight at Pingo Canadian Landmark, including Ibyuk Pingo, Canada's tallest and the world's second-tallest at about 49 metres.",
+    "realityCheck": "These are fragile ice-cored landforms in Inuvialuit territory. Access depends on season, ground conditions and local guidance from Tuktoyaktuk.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Pingo_Canadian_Landmark",
+    "source": {
+      "label": "Parks Canada",
+      "url": "https://parks.canada.ca/lhn-nhs/nt/pingo"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 4100,
+      "note": "Assumes travel from Toronto: flights through Edmonton/Yellowknife/Inuvik, Dempster Highway or local transfer to Tuktoyaktuk, simple lodging, meals and weather/road buffer."
+    },
+    "map": {
+      "name": "Pingo Canadian Landmark",
+      "formattedAddress": "near, Tuktoyaktuk, NT X0E 0T0, Canada",
+      "placeId": "ChIJSwDVbRHJE1ER6yiiEAt4ds0",
+      "rating": 4.8,
+      "reviewCount": 24,
+      "location": {
+        "lat": 69.3975774,
+        "lng": -133.1048274
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Pingo%20Canadian%20Landmark&query_place_id=ChIJSwDVbRHJE1ER6yiiEAt4ds0",
+      "query": "Pingo Canadian Landmark Tuktoyaktuk Northwest Territories Canada"
+    }
+  },
+  {
+    "id": "spotted-lake",
+    "name": "Spotted Lake / kłlilx'w",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Osoyoos, British Columbia",
+    "kind": "Sacred mineral lake",
+    "access": "Roadside viewing only",
+    "uniqueness": "A sacred alkali lake that separates into hundreds of mineral pools in summer",
+    "why": "As evaporation concentrates magnesium, calcium and sodium sulphates, kłlilx'w becomes a field of coloured circular pools and mineral crusts. The pattern is close to unique globally, and the lake is a protected Syilx Okanagan medicine site rather than a normal roadside attraction.",
+    "realityCheck": "Public access to the shore is restricted. View from the Highway 3 pullout and do not treat the mineral crusts as a walkable attraction.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Spotted_Lake",
+    "source": {
+      "label": "Syilx Okanagan Nation",
+      "url": "https://syilx.org/about-us/syilx-nation/spotted-lake-2/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1500,
+      "note": "Assumes travel from Toronto: flights to Kelowna or Vancouver, rental car through the Okanagan, roadside viewing, lodging, meals and nearby desert/ecology stops."
+    },
+    "map": {
+      "name": "Spotted Lake",
+      "formattedAddress": "Spotted Lake, Okanagan-Similkameen, BC V0H 1V5, Canada",
+      "placeId": "ChIJL1Cb_hLDglQRlVKjJzZckFs",
+      "rating": 4.2,
+      "reviewCount": 287,
+      "location": {
+        "lat": 49.07801790000001,
+        "lng": -119.5675024
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Spotted%20Lake&query_place_id=ChIJL1Cb_hLDglQRlVKjJzZckFs",
+      "query": "Spotted Lake Osoyoos British Columbia Canada"
+    }
+  },
+  {
+    "id": "gros-morne",
+    "name": "Gros Morne Tablelands",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Newfoundland",
+    "kind": "Mantle geology",
+    "access": "Road trip with day hikes",
+    "uniqueness": "One of the clearest places on Earth to walk on uplifted mantle rock",
+    "why": "The Tablelands are orange peridotite from Earth's upper mantle and oceanic crust pushed onto a continent as the Iapetus Ocean closed. UNESCO and IUGS treat Gros Morne as an exceptional, readable proof of plate tectonics: a place where the Moho is not a textbook boundary but a trail under your boots.",
+    "realityCheck": "The barren plateau is visually austere. The payoff is geological: knowing that the hostile, vegetation-poor rock is mantle material normally buried kilometres below the crust.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Gros_Morne_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/419/"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2100,
+      "note": "Assumes travel from Toronto: flights via Toronto or Montreal to Deer Lake, car rental, midrange lodging around Rocky Harbour, meals, park access and weather buffer."
+    },
+    "map": {
+      "name": "Gros Morne National Park",
+      "formattedAddress": "Newfoundland and Labrador, Canada",
+      "placeId": "ChIJ72vPHCBFeUsRdjmRPWNqdWU",
+      "rating": 4.9,
+      "reviewCount": 2087,
+      "location": {
+        "lat": 49.652015,
+        "lng": -57.755758
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Gros%20Morne%20National%20Park&query_place_id=ChIJ72vPHCBFeUsRdjmRPWNqdWU"
+    }
+  },
+  {
+    "id": "lanse-aux-meadows",
+    "name": "L'Anse aux Meadows",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Northern Newfoundland",
+    "kind": "Archaeology",
+    "access": "Long road trip or regional flights",
+    "uniqueness": "The only confirmed Norse/Viking site in the Americas outside Greenland",
+    "why": "L'Anse aux Meadows turns the Vinland story into archaeology: turf buildings, ironworking evidence and Norse artifacts at the tip of Newfoundland. A 2021 Nature study used the AD 993 solar-storm radiocarbon spike and tree-ring counts to date Norse activity here precisely to AD 1021, about five centuries before Columbus.",
+    "realityCheck": "The original remains are quiet turf outlines, so the reconstructions matter. The global significance is proof and precision, not monumentality.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/L%27Anse_aux_Meadows",
+    "source": {
+      "label": "Nature",
+      "url": "https://www.nature.com/articles/s41586-021-03972-8"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2200,
+      "note": "Assumes travel from Toronto: flights to Newfoundland, rental car or regional connection to the Northern Peninsula, midrange lodging, meals and weather/road buffer."
+    },
+    "map": {
+      "name": "L'Anse aux Meadows National Historic Site",
+      "formattedAddress": "436 L'Anse aux Meadows Road, Terre-Neuve-et-Labrador A0K 2X0, Canada",
+      "placeId": "ChIJXYE5IQr-g0sRQw_NiWDZN1k",
+      "rating": 4.8,
+      "reviewCount": 1111,
+      "location": {
+        "lat": 51.5963922,
+        "lng": -55.53336419999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=L'Anse%20aux%20Meadows%20National%20Historic%20Site&query_place_id=ChIJXYE5IQr-g0sRQw_NiWDZN1k"
+    }
+  },
+  {
+    "id": "churchill",
+    "name": "Churchill",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Hudson Bay, Manitoba",
+    "kind": "Arctic wildlife",
+    "access": "Flight or train plus seasonal guided tours",
+    "uniqueness": "The most accessible place to watch wild polar bears gather, plus summer belugas",
+    "why": "Each autumn, polar bears congregate near Churchill while waiting for Hudson Bay sea ice to form, making the town the practical world capital for seeing wild polar bears without a ship-based expedition. The same ecological junction supports summer beluga gatherings and frequent aurora viewing.",
+    "realityCheck": "The Western Hudson Bay polar bear population has declined sharply, with recent estimates around 618 bears, so avoid old '1,000 bears' expectations. October-November bear season and July beluga season require early booking and guided logistics.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Churchill,_Manitoba",
+    "source": {
+      "label": "Polar Bears International",
+      "url": "https://polarbearsinternational.org/polar-bears/polar-bear-facts/status/western-hudson-bay-polar-bears/"
+    },
+    "trip": {
+      "days": 7,
+      "costUsd": 5000,
+      "note": "Assumes travel from Toronto: flights through Winnipeg to Churchill or train routing, guided bear or beluga excursions, specialized lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Churchill",
+      "formattedAddress": "Churchill, MB R0B 0E0, Canada",
+      "placeId": "ChIJN_X5yEnZb1IR3WI3QthEDNE",
+      "location": {
+        "lat": 58.7679415,
+        "lng": -94.1695807
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Churchill&query_place_id=ChIJN_X5yEnZb1IR3WI3QthEDNE",
+      "query": "Churchill Manitoba Canada"
+    }
+  },
+  {
+    "id": "lancaster-sound-floe-edge",
+    "name": "Lancaster Sound / Tallurutiup Imanga floe edge",
+    "countries": [
+      "Canada"
+    ],
+    "area": "North Baffin Island, Nunavut",
+    "kind": "Arctic marine wildlife",
+    "access": "Expedition floe-edge travel from Pond Inlet",
+    "uniqueness": "One of Earth's great Arctic floe-edge wildlife concentrations and narwhal corridors",
+    "why": "At the spring floe edge where landfast ice meets open water, sun and upwelling concentrate seals, polar bears, seabirds, belugas, bowheads and narwhal. Tallurutiup Imanga/Lancaster Sound is repeatedly cited as critical habitat for a huge share of the world's narwhals, making it one of the most plausible places to see the 'unicorn of the sea' in the wild.",
+    "realityCheck": "This is expensive, seasonal and weather-dependent expedition travel, usually May-June from Pond Inlet. Narwhals are never guaranteed, and ice conditions can rewrite the itinerary.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Lancaster_Sound",
+    "source": {
+      "label": "IUCN",
+      "url": "https://iucn.org/news/protected-areas/201708/canada%E2%80%99s-newest-and-largest-marine-protected-area-tallurutiup-imanga-%E2%80%93-lancaster-sound"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 8700,
+      "note": "Assumes travel from Toronto: flights through Ottawa/Iqaluit to Pond Inlet, outfitted floe-edge camp or guided day trips, cold-weather gear, meals and serious weather buffer."
+    },
+    "map": {
+      "name": "Pond Inlet",
+      "formattedAddress": "Pond Inlet, NU, Canada",
+      "placeId": "ChIJ9TYVURF1Fk4RGGLsYLdU2xo",
+      "location": {
+        "lat": 72.7001169,
+        "lng": -77.9585316
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Pond%20Inlet&query_place_id=ChIJ9TYVURF1Fk4RGGLsYLdU2xo",
+      "query": "Pond Inlet Nunavut Canada"
+    }
+  },
+  {
+    "id": "wood-buffalo",
+    "name": "Wood Buffalo National Park",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Alberta / Northwest Territories",
+    "kind": "Ecology",
+    "access": "Long road trip or regional flight",
+    "uniqueness": "Canada's largest national park, the largest dark-sky preserve and core wood-bison/whooping-crane habitat",
+    "why": "Wood Buffalo stacks superlatives: it is larger than Switzerland, sustains the world's largest herd of free-roaming wood bison, protects the only natural nesting ground of the endangered whooping crane, includes the Peace-Athabasca Delta and is widely described as the world's largest dark-sky preserve.",
+    "realityCheck": "Scale is the difficulty. Roads and visitor facilities cover only a small part of the park, and the famous wildlife or beaver dam is not something to expect from a quick drive-by.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Wood_Buffalo_National_Park",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/256/"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2300,
+      "note": "Assumes travel from Toronto: flights to Edmonton or Fort Smith, car rental or regional connections, simple lodging, meals, park driving and buffer time."
+    },
+    "map": {
+      "name": "Wood Buffalo National Park of Canada",
+      "formattedAddress": "Canada",
+      "placeId": "ChIJMYch5Vblt1MRYCRaAt-2_t4",
+      "rating": 4.2,
+      "reviewCount": 327,
+      "location": {
+        "lat": 59.4395031,
+        "lng": -112.8764021
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Wood%20Buffalo%20National%20Park%20of%20Canada&query_place_id=ChIJMYch5Vblt1MRYCRaAt-2_t4"
+    }
+  },
+  {
+    "id": "athabasca-sand-dunes",
+    "name": "Athabasca Sand Dunes",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Northern Saskatchewan",
+    "kind": "Boreal dune ecosystem",
+    "access": "Fly-in or boat-supported wilderness trip",
+    "uniqueness": "The most northerly major active dune field, with plants found nowhere else",
+    "why": "The Athabasca Sand Dunes stretch roughly 100 kilometres along Lake Athabasca near 59 degrees north, an active dune system embedded in boreal forest rather than desert. Conservation literature records narrowly distributed endemic plants such as Mackenzie hairgrass and Athabasca-area willows, making the dunes an evolutionary outlier.",
+    "realityCheck": "There is no road. Expect floatplane or boat logistics, wilderness camping, bugs, wind and strict low-impact travel in a fragile dune ecosystem.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Athabasca_Sand_Dunes_Provincial_Park",
+    "source": {
+      "label": "Tourism Saskatchewan",
+      "url": "https://www.tourismsaskatchewan.com/provincialpark/1414/athabasca-sand-dunes-provincial-park"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 4100,
+      "note": "Assumes travel from Toronto: flights to northern Saskatchewan, charter floatplane or boat support, camping/outfitter costs, meals and weather buffer."
+    },
+    "map": {
+      "name": "Athabasca Sand Dunes Provincial Park",
+      "formattedAddress": "Laronge, SK S0J 1L0, Canada",
+      "placeId": "ChIJQxVbH47btFMRUFA9cdao9bA",
+      "rating": 4.7,
+      "reviewCount": 43,
+      "location": {
+        "lat": 59.0831293,
+        "lng": -109.0699387
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Athabasca%20Sand%20Dunes%20Provincial%20Park&query_place_id=ChIJQxVbH47btFMRUFA9cdao9bA",
+      "query": "Athabasca Sand Dunes Provincial Park Saskatchewan Canada"
+    }
+  },
+  {
+    "id": "nahanni",
+    "name": "Nahanni National Park Reserve",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Northwest Territories",
+    "kind": "River wilderness",
+    "access": "Remote fly-in or river expedition",
+    "uniqueness": "A canyon river with Niagara-scale falls and Canada's largest tufa mounds",
+    "why": "Nahanni combines a rare antecedent river, deep limestone canyons, Náįlįcho/Virginia Falls and Gahnįhthah/Rabbitkettle hot-spring tufa mounds, which Parks Canada identifies as the largest tufa mounds in Canada. It is one of the original 1978 UNESCO natural sites because the river system makes northern karst, tectonics and wilderness visible at expedition scale.",
+    "realityCheck": "The tufa mounds are fragile and sacred, with access by permit and guided barefoot walk when available. Most visitors experience Nahanni through fly-in or river-expedition logistics, not casual road access.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Nahanni_National_Park_Reserve",
+    "source": {
+      "label": "Parks Canada",
+      "url": "https://parks.canada.ca/pn-np/nt/nahanni/activ"
+    },
+    "trip": {
+      "days": 10,
+      "costUsd": 3700,
+      "note": "Assumes travel from Toronto: flights to Yellowknife or Fort Simpson, charter or outfitter-supported access, simple expedition lodging/camping, meals, permits and buffer days."
+    },
+    "map": {
+      "name": "Nahanni National Park Reserve",
+      "formattedAddress": "Nahanni National Park Reserve #1, Northwest Territories, Canada",
+      "placeId": "ChIJybuQCDo94VMRoDoXiK4h0J4",
+      "rating": 4.4,
+      "reviewCount": 143,
+      "location": {
+        "lat": 61.50069730000001,
+        "lng": -125.5004694
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Nahanni%20National%20Park%20Reserve&query_place_id=ChIJybuQCDo94VMRoDoXiK4h0J4"
+    }
+  },
+  {
+    "id": "great-bear-rainforest",
+    "name": "Great Bear Rainforest and spirit bear country",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Central and north coast, British Columbia",
+    "kind": "Endemic wildlife rainforest",
+    "access": "Boat or floatplane-based guided travel",
+    "uniqueness": "The main home of the white Kermode spirit bear in a vast intact coastal temperate rainforest",
+    "why": "The white spirit bear is a rare colour morph of the black bear linked to a recessive MC1R gene and found overwhelmingly on BC's central coast, especially islands in the Great Bear Rainforest. In the right territories, including around Klemtu and Gribbell Island, a phenomenon that is almost absent globally becomes a real wildlife possibility.",
+    "realityCheck": "Sightings depend on season, salmon runs, guide access and Indigenous permissions. The bear is rare even here, so choose responsible operators and treat the forest, not a guaranteed white bear photo, as the trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Great_Bear_Rainforest",
+    "source": {
+      "label": "Spirit Bear Lodge",
+      "url": "https://spiritbear.com/wildlife/spirit-bear/"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 6400,
+      "note": "Assumes travel from Toronto: flights to Vancouver and onward to the central coast, Indigenous-owned lodge or boat-based guiding, meals, permits and weather buffer."
+    },
+    "map": {
+      "name": "Spirit Bear Lodge",
+      "formattedAddress": "300 Marine Dr, Klemtu, BC V0T 1L0, Canada",
+      "placeId": "ChIJGeaaW6oycFQRu_ybsCLFxko",
+      "rating": 4.7,
+      "reviewCount": 60,
+      "location": {
+        "lat": 52.5871732,
+        "lng": -128.5187408
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Spirit%20Bear%20Lodge&query_place_id=ChIJGeaaW6oycFQRu_ybsCLFxko",
+      "query": "Spirit Bear Lodge Klemtu British Columbia Canada"
+    }
+  },
+  {
+    "id": "sable-island",
+    "name": "Sable Island",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Offshore Nova Scotia",
+    "kind": "Remote sandbar ecosystem",
+    "access": "Permit-controlled flight or expedition access",
+    "uniqueness": "A shifting offshore sand island with wild horses, the world's largest grey-seal breeding colony and endemic insects",
+    "why": "Sable Island is a 42-kilometre crescent of sand far out on the continental shelf. Parks Canada records roughly 500 wild horses, hundreds of thousands of grey seals and endemic life such as the Sable Island sweat bee, all in a place famous as the Graveyard of the Atlantic.",
+    "realityCheck": "Access is tightly controlled and weather cancels trips. This is a fragile national park reserve, not a casual beach landing.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Sable_Island",
+    "source": {
+      "label": "Parks Canada",
+      "url": "https://parks.canada.ca/nature/science/conservation/sable"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 6000,
+      "note": "Assumes travel from Toronto: travel to Halifax, charter or expedition access subject to Parks Canada approval, weather standby, simple logistics, meals and cancellation buffer."
+    },
+    "map": {
+      "name": "Sable Island National Park Reserve",
+      "formattedAddress": "Sable Island, Halifax Regional Municipality, NS B0J 1M0, Canada",
+      "placeId": "ChIJN4cU1oOJRksRsVQ5H2R8V9Y",
+      "rating": 4.7,
+      "reviewCount": 47,
+      "location": {
+        "lat": 43.9320919,
+        "lng": -59.9067654
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Sable%20Island%20National%20Park%20Reserve&query_place_id=ChIJN4cU1oOJRksRsVQ5H2R8V9Y",
+      "query": "Sable Island National Park Reserve Nova Scotia Canada"
+    }
+  },
+  {
+    "id": "bonaventure-island",
+    "name": "Bonaventure Island and Percé Rock",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Gaspé Peninsula, Quebec",
+    "kind": "Seabird colony",
+    "access": "Seasonal boat and island trails",
+    "uniqueness": "The largest and most accessible northern gannet colony in North America",
+    "why": "Bonaventure Island supports tens of thousands of breeding northern gannet pairs, with trails that bring visitors unusually close to the colony. The defensible claim is North American scale and accessibility; Bass Rock in Scotland is usually treated as the world's largest single gannet colony.",
+    "realityCheck": "Go in the island's operating season and expect weather-dependent boats. The colony can be intense in sound and smell, which is part of the point.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Bonaventure_Island",
+    "source": {
+      "label": "Environment and Climate Change Canada",
+      "url": "https://www.canada.ca/en/environment-climate-change/services/migratory-bird-sanctuaries/locations/bonaventure-island-perce-rock.html"
+    },
+    "trip": {
+      "days": 6,
+      "costUsd": 1700,
+      "note": "Assumes travel from Toronto: flights to Quebec/Montreal or regional access, rental car to Percé, boat to Bonaventure, midrange lodging, meals and weather buffer."
+    },
+    "map": {
+      "name": "Bonaventure Island National Park and Percé Rock",
+      "formattedAddress": "P.310, 4 Rue du Quai C, Percé, QC G0C 2L0, Canada",
+      "placeId": "ChIJo1Ugj4P4m0wRVzLZOYpPENw",
+      "rating": 4.8,
+      "reviewCount": 1854,
+      "location": {
+        "lat": 48.5217265,
+        "lng": -64.2130347
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Bonaventure%20Island%20National%20Park%20and%20Perc%C3%A9%20Rock&query_place_id=ChIJo1Ugj4P4m0wRVzLZOYpPENw",
+      "query": "Bonaventure Island and Perce Rock National Park Quebec Canada"
+    }
+  },
+  {
+    "id": "sgang-gwaay",
+    "name": "SGang Gwaay Llnagaay",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Haida Gwaii",
+    "kind": "Culture",
+    "access": "Remote boat access with Haida Watchmen",
+    "uniqueness": "The largest original-location stand of Haida memorial and mortuary poles",
+    "why": "On remote Anthony Island, SGang Gwaay preserves cedar long-house remains and Haida poles still standing in their original village context. The Haida choice to let the poles return naturally to the forest makes this a living Haida place rather than a removed museum collection.",
+    "realityCheck": "Access is limited, marine-weather dependent and guided through Gwaii Haanas with Haida Watchmen. The right expectation is respect and restraint, not spectacle hunting.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Ninstints",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/157/"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 3000,
+      "note": "Assumes travel from Toronto: flights through Vancouver to Haida Gwaii, boat-based access or a guided Gwaii Haanas trip, lodging, meals, permits and marine-weather buffer."
+    },
+    "map": {
+      "name": "SGang Gwaay UNESCO World Heritage Site and National Historic Site",
+      "formattedAddress": "Skeena-Queen Charlotte E, Anthony Island, BC V0T 1S0, Canada",
+      "placeId": "ChIJuYykt6SyblQRL2mDMnRR_qk",
+      "rating": 4.9,
+      "reviewCount": 14,
+      "location": {
+        "lat": 52.098,
+        "lng": -131.217
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=SGang%20Gwaay%20UNESCO%20World%20Heritage%20Site%20and%20National%20Historic%20Site&query_place_id=ChIJuYykt6SyblQRL2mDMnRR_qk"
+    }
+  },
+  {
+    "id": "red-bay-basque-whaling",
+    "name": "Red Bay Basque Whaling Station",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Labrador Strait, Newfoundland and Labrador",
+    "kind": "Industrial archaeology",
+    "access": "Remote coastal road trip or ferry-linked Labrador itinerary",
+    "uniqueness": "The earliest, most complete and best-preserved archaeological testimony of a pre-industrial whaling station",
+    "why": "In the 16th century, Basque crews crossed the Atlantic to hunt whales and render oil at Red Bay. UNESCO treats the terrestrial and underwater remains as the most complete surviving evidence of this early industrial-scale exploitation of North Atlantic resources.",
+    "realityCheck": "Red Bay is remote and seasonal, with logistics tied to Labrador roads, ferries and weather. The interpretive centre and archaeological context carry the visit more than visible ruins alone.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Red_Bay_National_Historic_Site",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/1412/"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2500,
+      "note": "Assumes travel from Toronto: flights or ferry/road routing through Newfoundland and Labrador, rental car, simple lodging, meals, site visit and weather/road buffer."
+    },
+    "map": {
+      "name": "Red Bay National Historic Site & World Heritage Site",
+      "formattedAddress": "Red Bay, NL A0K 0K3, Canada",
+      "placeId": "ChIJYQ4mIMskgUsRHk9niEeFb8Q",
+      "rating": 4.7,
+      "reviewCount": 179,
+      "location": {
+        "lat": 51.7303512,
+        "lng": -56.42805139999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Red%20Bay%20National%20Historic%20Site%20%26%20World%20Heritage%20Site&query_place_id=ChIJYQ4mIMskgUsRHk9niEeFb8Q",
+      "query": "Red Bay National Historic Site Labrador Canada"
+    }
+  },
+  {
+    "id": "head-smashed-in",
+    "name": "Head-Smashed-In Buffalo Jump",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Alberta foothills",
+    "kind": "Archaeology",
+    "access": "Easy road access",
+    "uniqueness": "One of the oldest, largest and best-preserved buffalo jumps in the world",
+    "why": "For nearly 6,000 years, Plains peoples used this cliff, drive lanes and surrounding grassland to hunt bison communally. UNESCO calls it the most outstanding surviving bison jump in the Americas, with the archaeological deposits and terrain still readable together.",
+    "realityCheck": "The site can look understated without context. The interpretive centre built into the cliff is essential for understanding the hunting system and Blackfoot cultural knowledge behind it.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Head-Smashed-In_Buffalo_Jump",
+    "source": {
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/158/"
+    },
+    "trip": {
+      "days": 5,
+      "costUsd": 1100,
+      "note": "Assumes travel from Toronto: flights to Calgary, rental car through southern Alberta, two to three hotel nights, meals and site fees."
+    },
+    "map": {
+      "name": "Head-Smashed-In Buffalo Jump World Heritage Site",
+      "formattedAddress": "secondary Highway #785, 275068 AB-785, Fort MacLeod, AB T0L 0Z0, Canada",
+      "placeId": "ChIJ6XI7h41NblMRS7tShRTniM8",
+      "rating": 4.7,
+      "reviewCount": 2246,
+      "location": {
+        "lat": 49.7055479,
+        "lng": -113.6532077
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Head-Smashed-In%20Buffalo%20Jump%20World%20Heritage%20Site&query_place_id=ChIJ6XI7h41NblMRS7tShRTniM8"
+    }
+  },
+  {
+    "id": "torngat",
+    "name": "Torngat Mountains National Park",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Northern Labrador",
+    "kind": "Arctic wilderness",
+    "access": "Expedition logistics",
+    "uniqueness": "Inuit homeland, polar-bear country and fjord mountains at the edge of the Arctic",
+    "why": "Torngat is interesting because the mountains, wildlife risk and Inuit presence are inseparable. It is a northern mountain coast where cultural continuity and raw geography have to be understood together.",
+    "realityCheck": "This is expensive and serious. Most visitors use the Torngat Mountains Base Camp or expedition cruises, and polar-bear safety is non-negotiable.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Torngat_Mountains_National_Park",
+    "source": {
+      "label": "Parks Canada",
+      "url": "https://parks.canada.ca/pn-np/nl/torngats"
+    },
+    "trip": {
+      "days": 11,
+      "costUsd": 5400,
+      "note": "Assumes travel from Toronto: multi-leg flights to Labrador or expedition-cruise style access, base-camp package or guided logistics, meals, bear-safety support and weather buffer."
+    },
+    "map": {
+      "name": "Torngat Mountains National Park",
+      "formattedAddress": "Torngat Mountains, Nain, NL A0P 1L0, Canada",
+      "placeId": "ChIJtxyScnvgOEwR2z0kWqNPfAo",
+      "rating": 4.2,
+      "reviewCount": 80,
+      "location": {
+        "lat": 59.22460509999999,
+        "lng": -63.99337480000001
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Torngat%20Mountains%20National%20Park&query_place_id=ChIJtxyScnvgOEwR2z0kWqNPfAo"
+    }
+  },
+  {
+    "id": "pingualuit",
+    "name": "Pingualuit Crater",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Nunavik, Quebec",
+    "kind": "Impact geology",
+    "access": "Remote fly-in",
+    "uniqueness": "A near-perfect meteorite crater lake in Arctic tundra",
+    "why": "Pingualuit is a clean circular impact scar filled with exceptionally clear water. The drama is the geometry: a cosmic event preserved as a blue lake in treeless tundra.",
+    "realityCheck": "Access is expensive and highly seasonal through Nunavik logistics. This is a specialist trip, not a side quest from Montreal.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Pingualuit_crater",
+    "source": {
+      "label": "Nunavik Parks",
+      "url": "https://www.nunavikparks.ca/en/parks/pingualuit"
+    },
+    "trip": {
+      "days": 9,
+      "costUsd": 5100,
+      "note": "Assumes travel from Toronto: flights through Montreal and Nunavik communities, park-arranged logistics, simple lodging/camping, meals and weather buffer."
+    },
+    "map": {
+      "name": "Pingualuit National Park",
+      "formattedAddress": "Nunavik, QC J0M, Canada",
+      "placeId": "ChIJ4Xg-j_QRyU0RqbbVV-vS3Gg",
+      "rating": 4.2,
+      "reviewCount": 31,
+      "location": {
+        "lat": 61.30262599999999,
+        "lng": -73.6833061
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Pingualuit%20National%20Park&query_place_id=ChIJ4Xg-j_QRyU0RqbbVV-vS3Gg"
+    }
+  },
+  {
+    "id": "quebec-city",
+    "name": "Old Quebec",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Quebec City",
+    "kind": "Lebedev favorite city",
+    "access": "Easy city trip",
+    "uniqueness": "Lebedev-rated favorite: a walled French North American city core",
+    "why": "Lebedev ranks Quebec City highly among his North American city visits. It fits this guide as an urban time capsule: fortified walls, steep streets, river geography and French colonial layers that are hard to replace elsewhere in Canada.",
+    "realityCheck": "This is a city entry rather than a wilderness phenomenon. The interesting part is the preserved urban fabric and topography, not a single attraction.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Old_Quebec",
+    "trip": {
+      "days": 7,
+      "costUsd": 1800,
+      "note": "Assumes travel from Toronto: flights via Toronto or Montreal, Quebec City lodging, meals, local transport and a day for the old city and river viewpoints."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/quebec/"
+    },
+    "map": {
+      "name": "Old Quebec",
+      "formattedAddress": "Old Quebec, Québec City, QC, Canada",
+      "placeId": "ChIJK7_LO9aVuEwRUPWWmG87KwQ",
+      "location": {
+        "lat": 46.8121818,
+        "lng": -71.20649329999999
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Old%20Quebec&query_place_id=ChIJK7_LO9aVuEwRUPWWmG87KwQ"
+    }
+  },
+  {
+    "id": "niagara-falls-canada",
+    "name": "Niagara Falls",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Ontario",
+    "kind": "Lebedev favorite city",
+    "access": "Easy road/rail access",
+    "uniqueness": "Lebedev-rated favorite: spectacle waterfall plus strange border-tourism city",
+    "why": "Lebedev rates Niagara Falls highly enough that it should be represented. The interesting part is double: a genuine hydrological spectacle wrapped in one of North America's oddest tourist urban fabrics.",
+    "realityCheck": "The Canadian side is the stronger view, but the surrounding kitsch is part of the experience rather than a mistake.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Niagara_Falls",
+    "trip": {
+      "days": 6,
+      "costUsd": 1500,
+      "note": "Assumes travel from Toronto: flights to Toronto or Buffalo, ground transfer, one or two nights near the falls, meals and local attraction fees."
+    },
+    "source": {
+      "label": "Artemy Lebedev travel rating",
+      "url": "https://www.tema.ru/travel/niagara-falls/"
+    },
+    "map": {
+      "name": "Niagara Falls",
+      "formattedAddress": "Niagara Falls, ON, Canada",
+      "placeId": "ChIJuU2C7F5E04kRiKK9VmHF0kY",
+      "location": {
+        "lat": 43.0896084,
+        "lng": -79.0849647
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Niagara%20Falls&query_place_id=ChIJuU2C7F5E04kRiKK9VmHF0kY"
+    }
+  },
+  {
+    "id": "peak-2-peak",
+    "name": "Peak 2 Peak Gondola",
+    "countries": [
+      "Canada"
+    ],
+    "area": "Whistler, British Columbia",
+    "kind": "Travel.SE unique transport",
+    "access": "Resort gondola access, seasonal",
+    "uniqueness": "Travel.SE-mentioned rare 3S gondola with an enormous unsupported span between Whistler and Blackcomb",
+    "why": "Travel Stack Exchange cites Whistler's Peak 2 Peak while explaining rare 3S gondola systems and notes its more than 3 km of hanging distance between the furthest-apart towers. It adds a built-infrastructure wonder to the Canada page, distinct from the wilderness parks.",
+    "realityCheck": "This is a resort lift, not remote wilderness. Weather, ski/bike season operations and ticket prices determine whether it is worth building into a trip.",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Peak_2_Peak_Gondola",
+    "source": {
+      "label": "Travel Stack Exchange",
+      "url": "https://travel.stackexchange.com/questions/7862/what-unusual-means-of-public-share-transportation-exist-around-the-world"
+    },
+    "trip": {
+      "days": 8,
+      "costUsd": 2400,
+      "note": "Assumes travel from Toronto: flights to Vancouver, ground transfer to Whistler, lodging, meals, lift ticket and mountain-weather buffer."
+    },
+    "map": {
+      "name": "Peak 2 Peak Gondola Whistler",
+      "formattedAddress": "Peak 2 Peak Gondola Whistler, Alder Creek, Whistler, BC V0N 1B4, Canada",
+      "placeId": "ChIJJSo016ojh1QRYYiOLQopfAs",
+      "location": {
+        "lat": 50.06934829999999,
+        "lng": -122.9460833
+      },
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Peak%202%20Peak%20Gondola%20Whistler&query_place_id=ChIJJSo016ojh1QRYYiOLQopfAs"
+    }
+  }
+] satisfies TravelSpot[];
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Canada"}
+  pageDescription={"A researched field guide to Canada's most unique geology, fossils, archaeology, boreal wilderness and Arctic places, with Google Maps pins."}
+  subject={"Unique places to visit in Canada"}
+  keywords={"Canada travel, unique places Canada, Canada archaeology, Canada geology, Canada map"}
+  eyebrow={"Canada field guide"}
+  dek={"A Canada list biased toward deep time, fossil records, Indigenous cultural sites, plate tectonics, Arctic scale and ecological oddities rather than famous viewpoints alone."}
+  criteriaText={"Trip estimates are per person from Toronto via Toronto Pearson (YYZ), using the region's busiest city airport for international passenger traffic among million-plus city areas as the cost origin. The order is the ranking. Higher means rarer globally, more mind-expanding or more difficult to replace with a similar trip. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From Toronto"}
+  mapHeading={"Pins across Canada"}
+  mapAriaLabel={"Google Map with pins for interesting Canada places"}
+  mapCenter={{"lat":56,"lng":-96}}
+  mapZoom={3}
+  mapErrorLabel={"Canada"}
+  spots={spots}
+/>
