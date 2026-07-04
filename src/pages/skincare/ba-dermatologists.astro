@@ -1,0 +1,1206 @@
+---
+export const prerender = true;
+
+const pageTitle = "Buenos Aires dermatologist ranking";
+const pageDescription =
+  "A public-evidence ranking of aesthetics-focused dermatologists and dermatologist-led skincare clinics in Buenos Aires.";
+const themeColorLight = "#f5efe6";
+const themeColorDark = "#15120f";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date());
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+});
+
+type Source = {
+  label: string;
+  url: string;
+};
+
+type Metric = {
+  label: string;
+  value: number;
+  max: number;
+};
+
+type Dermatologist = {
+  name: string;
+  rankLabel: string;
+  neighborhood: string;
+  providerType: "Individual" | "Clinic" | "Hospital";
+  bestFor: string;
+  score: number;
+  reviewSignal: string;
+  credentialSignal: string;
+  aestheticSignal: string;
+  caution: string;
+  sources: Source[];
+  metrics: Metric[];
+};
+
+const metrics = [
+  {
+    name: "Dermatology credential",
+    weight: 25,
+    note: "Public evidence that a dermatologist, dermatology team, or dermatology service is directly involved.",
+  },
+  {
+    name: "Aesthetic fit",
+    weight: 25,
+    note: "Botox, fillers, facial rejuvenation, lasers, skin quality, natural-result framing, and other non-surgical aesthetics.",
+  },
+  {
+    name: "Review strength",
+    weight: 20,
+    note: "Visible Doctoralia, TopDoctors, Google snippets, and testimonial volume. Verified medical-directory reviews count more than site testimonials.",
+  },
+  {
+    name: "Technology depth",
+    weight: 15,
+    note: "Public evidence of lasers, IPL, CO2, ultrasound, skin-quality devices, or other medical technology.",
+  },
+  {
+    name: "Experience depth",
+    weight: 10,
+    note: "Years in practice, team depth, teaching, society membership, hospital links, or research signals.",
+  },
+  {
+    name: "Transparency",
+    weight: 5,
+    note: "Clear address, booking path, procedure pages, and enough public information to evaluate fit before contacting them.",
+  },
+];
+
+const dermatologists: Dermatologist[] = [
+  {
+    name: "Dra. Florencia Galván",
+    rankLabel: "Dermatología y Estética Integral",
+    neighborhood: "Recoleta",
+    providerType: "Individual",
+    bestFor: "A first-call aesthetic dermatologist with unusually strong patient-review volume.",
+    score: 92,
+    reviewSignal:
+      "Doctoralia shows 578 opinions; search snippets also surfaced a Google Maps signal of 4.8 from 19 reviews.",
+    credentialSignal:
+      "Listed as a dermatologist in Capital Federal; an Esteticas.com.ar profile says she is a dermatology specialist with UBA aesthetic-surgery training.",
+    aestheticSignal:
+      "Public profiles describe a dermatology and aesthetic-integral clinic, plus patient reviews mentioning aesthetic treatment visits.",
+    caution:
+      "The public evidence is review-heavy; confirm the exact injector, device, and follow-up protocol before booking.",
+    sources: [
+      {
+        label: "Doctoralia profile",
+        url: "https://www.doctoraliar.com/florencia-galvan/dermatologo/capital-federal",
+      },
+      {
+        label: "Esteticas.com.ar profile",
+        url: "https://www.esteticas.com.ar/centros/dra-florencia-galvan",
+      },
+      {
+        label: "Infoisinfo listing",
+        url: "https://recoleta.infoisinfo-ar.com/ficha/centro-de-estetica-dra-florencia-galvan/284736",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 24, max: 25 },
+      { label: "Aesthetic fit", value: 23, max: 25 },
+      { label: "Reviews", value: 20, max: 20 },
+      { label: "Technology", value: 11, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "Dra. Verónica Muchnik",
+    rankLabel: "Skin Solutions",
+    neighborhood: "Palermo / Belgrano search footprint",
+    providerType: "Individual",
+    bestFor: "Laser-led facial rejuvenation, fillers, and a conservative natural-result aesthetic.",
+    score: 90,
+    reviewSignal:
+      "TopDoctors lists no patient reviews, but independent public signals include a large social audience, press coverage, and specialist-directory presence.",
+    credentialSignal:
+      "TopDoctors and LinkedIn describe her as a UBA-trained dermatologist with postgraduate training in aesthetic medicine and laser medicine.",
+    aestheticSignal:
+      "TopDoctors, Estética Online, LinkedIn, and press coverage emphasize facial rejuvenation, botulinum toxin, fillers, rinomodelación, lasers, and complication management.",
+    caution:
+      "Great expert signal, weaker public review volume. Best evaluated by consultation quality and before/after relevance.",
+    sources: [
+      {
+        label: "TopDoctors profile",
+        url: "https://www.topdoctors.com.ar/doctor/veronica-muchnik/",
+      },
+      {
+        label: "Estética Online profile",
+        url: "https://esteticaonline.com.ar/profesionales/dra-muchnik/",
+      },
+      {
+        label: "LinkedIn profile",
+        url: "https://linkedin.com/in/dra-ver%C3%B3nica-muchnik-50a52352",
+      },
+      {
+        label: "Caras interview",
+        url: "https://caras.perfil.com/noticias/caras-like/el-camino-de-la-dra-veronica-muchnik-en-la-dermatologia-y-medicina-estetica.phtml",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 11, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+    ],
+  },
+  {
+    name: "Buenos Aires Skin",
+    rankLabel: "Dr. Fernando Stengel, Dr. Matías Maskin, Dra. Mónica Noguera and team",
+    neighborhood: "Centro / Retiro edge",
+    providerType: "Clinic",
+    bestFor: "A dermatologist-led clinic where aesthetics sits beside strong medical dermatology.",
+    score: 89,
+    reviewSignal:
+      "The official site publishes Google Maps testimonials; third-party listings repeat a long-standing reputation signal.",
+    credentialSignal:
+      "The clinic describes a multi-dermatologist team with UBA, CEMIC, Sociedad Argentina de Dermatología, teaching, and research ties.",
+    aestheticSignal:
+      "Public service pages include rejuvenation, laser and IPL, fillers, botulinum toxin, PRP, mesotherapy, hilos tensores, scars, and tattoo removal.",
+    caution:
+      "This is a clinic ranking rather than a single-doctor ranking. Ask who performs the procedure and who handles complications.",
+    sources: [
+      { label: "Official site", url: "https://ba-skin.com/" },
+      {
+        label: "Older official about page",
+        url: "http://www.ba-skin.com.ar/v2/nosotros",
+      },
+      {
+        label: "Médicos en Argentina listing",
+        url: "https://medicosenargentina.com/clinicas/dermatologicas/buenos-aires-skin_26.html",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 22, max: 25 },
+      { label: "Reviews", value: 12, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "Dr. André Amaral",
+    rankLabel: "Medicina Estética",
+    neighborhood: "Puerto Madero",
+    providerType: "Individual",
+    bestFor: "Aesthetics-first injectables with very strong Doctoralia patient volume.",
+    score: 88,
+    reviewSignal:
+      "Doctoralia shows 198 opinions and repeated patient mentions of detailed explanations, facilities, and botulinum-toxin visits.",
+    credentialSignal:
+      "Doctoralia labels him as both médico estético and dermatologist in Capital Federal.",
+    aestheticSignal:
+      "The public profile lists botox, hyaluronic-acid fillers, MD Codes, rinomodelación, Profhilo, Radiesse, Sculptra, Ultraformer III, peels, PDO threads, PRP, and mesotherapy.",
+    caution:
+      "Because the profile is aesthetics-heavy, verify dermatology board/specialty details directly if that matters to your risk tolerance.",
+    sources: [
+      {
+        label: "Doctoralia profile",
+        url: "https://www.doctoraliar.com/andre-amaral/medico-estetico-dermatologo/san-juan-capital",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 20, max: 25 },
+      { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 18, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 8, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "PG Skin Lab / Dr. Pablo González",
+    rankLabel: "Clinical & Cosmetic Dermatology",
+    neighborhood: "Recoleta",
+    providerType: "Clinic",
+    bestFor: "A polished cosmetic-dermatology experience with premium skin-quality positioning.",
+    score: 87,
+    reviewSignal:
+      "The official site publishes five-star testimonials; public search confirms a strong cosmetic dermatology brand footprint.",
+    credentialSignal:
+      "The site positions Dr. Pablo González as director of a clinical and cosmetic dermatology center.",
+    aestheticSignal:
+      "The clinic highlights cosmetic dermatology, botulinum toxin, hyaluronic acid, IPL, vascular laser, melasma, tattoo removal, and natural-looking custom designs.",
+    caution:
+      "Most review evidence scraped here is owned-site testimonial copy, so independent review volume is less transparent.",
+    sources: [
+      { label: "Official site", url: "https://pgskinlab.com/" },
+      { label: "About page", url: "https://pgskinlab.com/en/about" },
+    ],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 25, max: 25 },
+      { label: "Reviews", value: 10, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+    ],
+  },
+  {
+    name: "Hospital Italiano Dermatología Estética",
+    rankLabel: "Dermatología Estética del Hospital Italiano",
+    neighborhood: "Almagro / hospital network",
+    providerType: "Hospital",
+    bestFor: "A conservative hospital-backed option for laser and procedure safety.",
+    score: 84,
+    reviewSignal:
+      "The microsite publishes patient testimonials for laser, fillers, CO2, manchas, and blepharoplasty outcomes.",
+    credentialSignal:
+      "The public page frames the service as a dermatology-aesthetic area inside Hospital Italiano.",
+    aestheticSignal:
+      "Procedures include Laser 5D, CO2, manchas and cicatrices laser, peels, mesotherapy, bioestimuladores, hilos, fillers, and botulinum toxin.",
+    caution:
+      "The page is service-level rather than doctor-level; the ranking depends on institutional trust more than named-provider review volume.",
+    sources: [
+      {
+        label: "Official dermatología estética site",
+        url: "https://dermatologiaestetica-hospitalitaliano.com.ar/",
+      },
+      {
+        label: "Hospital Italiano article",
+        url: "http://www.hospitalitaliano.org.ar/hiba/es/news/sector-de-estetica-y-laser-atencion-profesional-integral-y-segura",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 22, max: 25 },
+      { label: "Aesthetic fit", value: 24, max: 25 },
+      { label: "Reviews", value: 8, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "Dr. Pedro Rovere",
+    rankLabel: "Dermatología Estética",
+    neighborhood: "Belgrano",
+    providerType: "Individual",
+    bestFor: "Laser-heavy dermatology aesthetics with a long track record.",
+    score: 83,
+    reviewSignal:
+      "Review volume was not clearly visible in the scraped sources; ranking comes from credentials, experience, and procedure breadth.",
+    credentialSignal:
+      "His official site lists him as a university specialist in dermatology, UBA graduate, with 34 years of experience.",
+    aestheticSignal:
+      "The site emphasizes dermatología estética, Candela Alexandrite 755, DEKA fractional CO2, high-definition cutaneous ultrasound, and hyaluronic-acid fillers.",
+    caution:
+      "Great technical signal, weaker public review signal. Ask to see examples for the exact concern you want treated.",
+    sources: [
+      { label: "Official site", url: "https://drpedrorovere.com.ar/" },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 22, max: 25 },
+      { label: "Reviews", value: 7, max: 20 },
+      { label: "Technology", value: 15, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+    ],
+  },
+  {
+    name: "Dra. Eliana Maldonado / Piel Atelier",
+    rankLabel: "Dermatología y Estética Médica",
+    neighborhood: "Recoleta / Barrio Norte",
+    providerType: "Individual",
+    bestFor: "A warmer, consultation-led option for skin, antiaging, botox, PRP, and hair treatments.",
+    score: 80,
+    reviewSignal:
+      "The official site publishes detailed patient testimonials, but independent review volume was not prominent in search.",
+    credentialSignal:
+      "Her site lists UBA dermatology specialization, dermatologic oncology, laser and medical technologies, antiaging training, and trichology.",
+    aestheticSignal:
+      "The clinic frames its work as dermatology, medical aesthetics, collagen biostimulators, botox, PRP, mesotherapy, and antiaging care.",
+    caution:
+      "Owned-site testimonials are useful but less strong than verified directory review volume.",
+    sources: [{ label: "Official site", url: "https://pielatelier.com/" }],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 22, max: 25 },
+      { label: "Reviews", value: 7, max: 20 },
+      { label: "Technology", value: 14, max: 15 },
+      { label: "Experience", value: 9, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "Dra. Laura Diana Szafirstein",
+    rankLabel: "Dermatología Clínica y Estética",
+    neighborhood: "Las Cañitas / Palermo",
+    providerType: "Individual",
+    bestFor: "Straightforward dermatology aesthetics with society-directory and TopDoctors presence.",
+    score: 78,
+    reviewSignal:
+      "TopDoctors surfaced a 5.0 signal from one review in broader dermatología estética search results.",
+    credentialSignal:
+      "Search results list her as a dermatologist in CABA; CILAD directory results show a Buenos Aires dermatology consultorio.",
+    aestheticSignal:
+      "Public pages mention dermatología clínica y estética, botulinum toxin, hyaluronic acid, cryosurgery, and vulvar pathology.",
+    caution:
+      "Promising credential fit, but public review depth is light compared with the top-ranked entries.",
+    sources: [
+      {
+        label: "TopDoctors profile",
+        url: "https://www.topdoctors.com.ar/doctor/laura-diana-szafirstein/",
+      },
+      {
+        label: "Official site",
+        url: "http://www.lauraszafirstein.com.ar/",
+      },
+      {
+        label: "CILAD directory",
+        url: "https://www.cilad.org/directorio-de-dermatologos-br/83692/laura-szafirstein/",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 24, max: 25 },
+      { label: "Aesthetic fit", value: 20, max: 25 },
+      { label: "Reviews", value: 6, max: 20 },
+      { label: "Technology", value: 13, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "Dra. Carina Simionato",
+    rankLabel: "Dermatología integral",
+    neighborhood: "Caballito / Ituzaingó footprint",
+    providerType: "Individual",
+    bestFor: "A clinical dermatologist with aesthetic-medicine training and hospital grounding.",
+    score: 76,
+    reviewSignal:
+      "Doctoralia shows positive patient comments, but the scraped search result did not expose a high review count.",
+    credentialSignal:
+      "Doctoralia lists dermatology; the profile says she has served in Hospital Británico dermatology since 2004 and holds a postgraduate diploma in aesthetic medicine.",
+    aestheticSignal:
+      "Public evidence includes botulinum toxin and a dermatología integral positioning.",
+    caution:
+      "Aesthetic signal is present but less extensive than the laser/filler-focused clinics above.",
+    sources: [
+      {
+        label: "Doctoralia profile",
+        url: "https://www.doctoraliar.com/carina-simionato-2/dermatologo/ciudad-autonoma-de-buenos-aires",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 18, max: 25 },
+      { label: "Reviews", value: 6, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 5, max: 5 },
+    ],
+  },
+  {
+    name: "Dra. Karina Bobadilla",
+    rankLabel: "Renova Derm",
+    neighborhood: "Rafael Calzada / AMBA",
+    providerType: "Individual",
+    bestFor: "AMBA patients who want a clinically serious dermatologist with aesthetic services.",
+    score: 74,
+    reviewSignal:
+      "TopDoctors shows 5.0 from one review, so the independent review signal is positive but thin.",
+    credentialSignal:
+      "TopDoctors lists her as a dermatologist; LinkedIn/search results show UBA, hospital dermatology, academic coordination, and Sociedad Argentina de Dermatología signals.",
+    aestheticSignal:
+      "TopDoctors lists botulinum toxin, facial fillers, lip augmentation, acne, alopecia, and psoriasis; her consultorio is described as dermatología clínica y medicina estética.",
+    caution:
+      "Lower because public aesthetics evidence is narrower and the practice is outside central CABA.",
+    sources: [
+      {
+        label: "TopDoctors profile",
+        url: "https://www.topdoctors.com.ar/doctor/karina-bobadilla/",
+      },
+      {
+        label: "LinkedIn profile",
+        url: "https://linkedin.com/in/karina-gabriela-bobadilla-545a5062",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 25, max: 25 },
+      { label: "Aesthetic fit", value: 18, max: 25 },
+      { label: "Reviews", value: 5, max: 20 },
+      { label: "Technology", value: 12, max: 15 },
+      { label: "Experience", value: 10, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+    ],
+  },
+  {
+    name: "Dra. Rosi Flom",
+    rankLabel: "Dermatología Premium",
+    neighborhood: "Belgrano / Núñez search footprint",
+    providerType: "Individual",
+    bestFor: "A premium aesthetic-dermatology shortlist option to vet in person.",
+    score: 72,
+    reviewSignal:
+      "Search showed official/social presence and media mentions, but not enough independent review depth to rank higher.",
+    credentialSignal:
+      "Her official site and search results describe her as a UBA-trained medical dermatologist focused on clinical and aesthetic dermatology.",
+    aestheticSignal:
+      "Public snippets mention dermatología premium, lasers, vascular laser, skin texture, manchas, wrinkles, and natural personalized care.",
+    caution:
+      "Treat as a shortlist lead until you verify independent reviews, exact devices, and procedure ownership.",
+    sources: [
+      { label: "Official site", url: "https://www.drarosiflom.com/" },
+      {
+        label: "Interview",
+        url: "https://www.bettinafrumboli.com/magazine/entrevistas/rosi-flom-el-maquillaje-y-la-belleza-del-rostro",
+      },
+    ],
+    metrics: [
+      { label: "Credential", value: 23, max: 25 },
+      { label: "Aesthetic fit", value: 20, max: 25 },
+      { label: "Reviews", value: 4, max: 20 },
+      { label: "Technology", value: 14, max: 15 },
+      { label: "Experience", value: 7, max: 10 },
+      { label: "Transparency", value: 4, max: 5 },
+    ],
+  },
+];
+
+const screenedOut = [
+  {
+    name: "Dra. Yamile Alejandra Llahyah",
+    reason:
+      "Excellent TopDoctors signal for dermatology aesthetics, but the actual profile places consultations in Rosario/Santa Fe rather than Buenos Aires.",
+  },
+  {
+    name: "Non-dermatologist aesthetic clinics",
+    reason:
+      "A few strong aesthetics businesses appeared in search, but were not included unless a dermatologist or dermatology service was clearly central to the offer.",
+  },
+];
+
+const totalReviewMentions = dermatologists
+  .map((dermatologist) => dermatologist.reviewSignal.match(/\d+/g)?.map(Number) ?? [])
+  .flat()
+  .filter((value) => value > 10)
+  .reduce((sum, value) => sum + value, 0);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: dermatologists.length,
+  itemListElement: dermatologists.map((dermatologist, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": dermatologist.providerType === "Individual" ? "Physician" : "MedicalClinic",
+      name: dermatologist.name,
+      medicalSpecialty: "Dermatology",
+      url: dermatologist.sources[0]?.url,
+      description: dermatologist.bestFor,
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Buenos Aires dermatologist ranking" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires dermatologist ranking, dermatología estética Buenos Aires, dermatologist Botox Buenos Aires, fillers Buenos Aires, laser dermatology Buenos Aires"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Buenos Aires guide</p>
+            <h1>{pageTitle}</h1>
+            <p class="intro">
+              A research-backed shortlist of aesthetics-focused dermatologists and
+              dermatologist-led clinics in Buenos Aires, compiled from regular search,
+              BrightData search, Doctoralia, TopDoctors, official pages, and public
+              review snippets.
+            </p>
+          </div>
+          <aside class="scorecard" aria-label="Ranking summary">
+            <span class="scorecard-number">{dermatologists.length}</span>
+            <span class="scorecard-label">ranked providers</span>
+            <span class="scorecard-detail">
+              {formatter.format(totalReviewMentions)}+ visible review mentions across the strongest public signals
+            </span>
+          </aside>
+        </div>
+        <p class="disclaimer">
+          This is not medical advice or a clinical endorsement. It ranks public evidence
+          for non-surgical aesthetic dermatology: injectables, skin quality, lasers,
+          rejuvenation, scars, pigment, and cosmetic skin concerns.
+        </p>
+      </header>
+
+      <section class="method" aria-labelledby="method-heading">
+        <div>
+          <p class="eyebrow">Method</p>
+          <h2 id="method-heading">How the ranking was scored</h2>
+        </div>
+        <div class="method-grid">
+          {metrics.map((metric) => (
+            <article class="method-card">
+              <div>
+                <span class="metric-weight">{metric.weight}</span>
+                <span class="metric-unit">pts</span>
+              </div>
+              <h3>{metric.name}</h3>
+              <p>{metric.note}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="ranking" aria-labelledby="ranking-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Ranking</p>
+          <h2 id="ranking-heading">Best public-evidence matches</h2>
+        </div>
+
+        {dermatologists.map((dermatologist, index) => (
+          <article class="doctor-card">
+            <div class="rank">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{dermatologist.score}</strong>
+              <small>/100</small>
+            </div>
+            <div class="doctor-main">
+              <div class="doctor-head">
+                <div>
+                  <p class="doctor-type">
+                    {dermatologist.providerType} · {dermatologist.neighborhood}
+                  </p>
+                  <h3>{dermatologist.name}</h3>
+                  <p class="rank-label">{dermatologist.rankLabel}</p>
+                </div>
+                <p class="best-for">{dermatologist.bestFor}</p>
+              </div>
+
+              <div class="evidence-grid">
+                <div>
+                  <h4>Credential signal</h4>
+                  <p>{dermatologist.credentialSignal}</p>
+                </div>
+                <div>
+                  <h4>Aesthetic signal</h4>
+                  <p>{dermatologist.aestheticSignal}</p>
+                </div>
+                <div>
+                  <h4>Review signal</h4>
+                  <p>{dermatologist.reviewSignal}</p>
+                </div>
+                <div>
+                  <h4>Check before booking</h4>
+                  <p>{dermatologist.caution}</p>
+                </div>
+              </div>
+
+              <div class="bars" aria-label={`${dermatologist.name} metric scores`}>
+                {dermatologist.metrics.map((metric) => (
+                  <div
+                    class="bar-row"
+                    style={`--bar-width: ${(metric.value / metric.max) * 100}%`}
+                  >
+                    <span>{metric.label}</span>
+                    <div class="bar-track" aria-hidden="true">
+                      <span></span>
+                    </div>
+                    <strong>{metric.value}/{metric.max}</strong>
+                  </div>
+                ))}
+              </div>
+
+              <div class="sources">
+                {dermatologist.sources.map((source) => (
+                  <a href={source.url} rel="nofollow noopener noreferrer" target="_blank">
+                    {source.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section class="notes" aria-labelledby="notes-heading">
+        <div>
+          <p class="eyebrow">Notes</p>
+          <h2 id="notes-heading">What did not make the list</h2>
+        </div>
+        <div class="note-list">
+          {screenedOut.map((item) => (
+            <article>
+              <h3>{item.name}</h3>
+              <p>{item.reason}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>
+          Updated {updatedDate}. Search/scrape sources included BrightData Google
+          searches, BrightData page scraping, and regular web search. Public pages can
+          change quickly; verify current credentials, pricing, complications policy,
+          and who performs each procedure.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f5efe6;
+    --paper-strong: #fffaf2;
+    --ink: #201912;
+    --muted: #746553;
+    --line: rgba(62, 45, 31, 0.17);
+    --accent: #9f4f30;
+    --accent-dark: #61301e;
+    --sage: #6d755d;
+    --shadow: 0 24px 80px rgba(67, 43, 24, 0.11);
+    font-family:
+      ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 15% 0%, rgba(159, 79, 48, 0.16), transparent 32rem),
+      linear-gradient(140deg, #f5efe6 0%, #fbf8f0 42%, #eadfce 100%);
+    font-family:
+      ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(1180px, calc(100% - clamp(2rem, 5vw, 5rem)));
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(4rem, 9vw, 7rem);
+  }
+
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    margin-bottom: clamp(4rem, 12vw, 9rem);
+    color: var(--muted);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .home-link:hover {
+    color: var(--accent-dark);
+  }
+
+  .hero {
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: end;
+  }
+
+  .eyebrow {
+    margin: 0 0 1rem;
+    color: var(--accent-dark);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 13ch;
+    margin-bottom: 1.4rem;
+    font-size: clamp(4rem, 12vw, 9.5rem);
+    font-weight: 500;
+    letter-spacing: -0.075em;
+    line-height: 0.86;
+  }
+
+  h2 {
+    max-width: 12ch;
+    margin-bottom: 0;
+    font-size: clamp(2.2rem, 6vw, 5.2rem);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+  }
+
+  h3 {
+    font-size: clamp(1.45rem, 3vw, 2.45rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .intro {
+    max-width: 48rem;
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: clamp(1.2rem, 2vw, 1.65rem);
+    line-height: 1.45;
+  }
+
+  .scorecard {
+    display: grid;
+    gap: 0.15rem;
+    padding: clamp(1.2rem, 3vw, 1.8rem);
+    background: rgba(255, 250, 242, 0.68);
+    border: 1px solid var(--line);
+    border-radius: 999px 999px 2rem 2rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .scorecard-number {
+    font-size: clamp(4.5rem, 10vw, 8rem);
+    letter-spacing: -0.08em;
+    line-height: 0.9;
+  }
+
+  .scorecard-label,
+  .scorecard-detail,
+  .doctor-type,
+  .rank-label,
+  .footer,
+  .disclaimer {
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .scorecard-label {
+    color: var(--accent-dark);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .scorecard-detail {
+    max-width: 16rem;
+    margin: 0.4rem auto 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .disclaimer {
+    max-width: 54rem;
+    margin: clamp(2rem, 5vw, 4rem) 0 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--accent);
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .method,
+  .ranking,
+  .notes {
+    padding: clamp(3rem, 8vw, 6rem) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .method,
+  .notes {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.36fr) 1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .method-grid,
+  .note-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .method-card,
+  .note-list article {
+    padding: clamp(1.1rem, 3vw, 1.5rem);
+    background: rgba(255, 250, 242, 0.58);
+    border: 1px solid var(--line);
+    border-radius: 1.4rem;
+  }
+
+  .method-card > div {
+    margin-bottom: 2rem;
+    color: var(--accent);
+  }
+
+  .metric-weight {
+    font-size: 2.5rem;
+    letter-spacing: -0.07em;
+    line-height: 1;
+  }
+
+  .metric-unit {
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .method-card h3,
+  .note-list h3 {
+    margin-bottom: 0.7rem;
+    font-size: 1.3rem;
+    letter-spacing: -0.035em;
+  }
+
+  .method-card p,
+  .note-list p {
+    margin-bottom: 0;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .section-heading {
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .doctor-card {
+    display: grid;
+    grid-template-columns: minmax(7rem, 10rem) 1fr;
+    gap: clamp(1.2rem, 4vw, 3rem);
+    padding: clamp(1rem, 3vw, 1.5rem) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .doctor-card:first-of-type {
+    border-top: 0;
+  }
+
+  .rank {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    display: grid;
+    gap: 0.1rem;
+    color: var(--accent-dark);
+  }
+
+  .rank span {
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+  }
+
+  .rank strong {
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 500;
+    letter-spacing: -0.08em;
+    line-height: 0.82;
+  }
+
+  .rank small {
+    color: var(--muted);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .doctor-main {
+    padding: clamp(1.1rem, 3vw, 2rem);
+    background:
+      linear-gradient(115deg, rgba(255, 250, 242, 0.84), rgba(255, 250, 242, 0.45)),
+      var(--paper-strong);
+    border: 1px solid var(--line);
+    border-radius: clamp(1.4rem, 3vw, 2.2rem);
+    box-shadow: var(--shadow);
+  }
+
+  .doctor-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.44fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .doctor-type,
+  .rank-label {
+    margin-bottom: 0.65rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .rank-label {
+    margin: 0.45rem 0 0;
+    color: var(--sage);
+    letter-spacing: 0.06em;
+    text-transform: none;
+  }
+
+  .best-for {
+    margin-bottom: 0;
+    color: var(--accent-dark);
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-style: italic;
+    line-height: 1.35;
+  }
+
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .evidence-grid div {
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  h4 {
+    margin-bottom: 0.45rem;
+    color: var(--accent-dark);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .evidence-grid p {
+    margin-bottom: 0;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .bars {
+    display: grid;
+    gap: 0.65rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(5rem, 1fr) 3.4rem;
+    gap: 0.75rem;
+    align-items: center;
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 750;
+  }
+
+  .bar-row span {
+    color: var(--muted);
+  }
+
+  .bar-track {
+    height: 0.45rem;
+    overflow: hidden;
+    background: rgba(32, 25, 18, 0.11);
+    border-radius: 999px;
+  }
+
+  .bar-track span {
+    display: block;
+    width: var(--bar-width);
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--sage));
+    border-radius: inherit;
+  }
+
+  .bar-row strong {
+    text-align: right;
+  }
+
+  .sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .sources a {
+    display: inline-flex;
+    min-height: 2.15rem;
+    align-items: center;
+    padding: 0 0.8rem;
+    color: var(--accent-dark);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .sources a:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .footer {
+    max-width: 58rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 880px) {
+    .hero-grid,
+    .method,
+    .notes,
+    .doctor-card,
+    .doctor-head,
+    .evidence-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .home-link {
+      margin-bottom: 3rem;
+    }
+
+    .scorecard {
+      width: min(100%, 24rem);
+      border-radius: 2rem;
+    }
+
+    .rank {
+      position: static;
+      grid-template-columns: auto auto auto;
+      align-items: end;
+      width: max-content;
+    }
+
+    .rank strong {
+      font-size: 4rem;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .page {
+      width: min(100% - 1.25rem, 1180px);
+    }
+
+    h1 {
+      font-size: clamp(3.3rem, 20vw, 5.2rem);
+    }
+
+    .method-grid,
+    .note-list {
+      grid-template-columns: 1fr;
+    }
+
+    .doctor-main {
+      padding: 1rem;
+      border-radius: 1.2rem;
+    }
+
+    .bar-row {
+      grid-template-columns: 1fr 3rem;
+    }
+
+    .bar-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>

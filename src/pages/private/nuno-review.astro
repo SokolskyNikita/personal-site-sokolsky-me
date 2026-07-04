@@ -1,0 +1,235 @@
+---
+export const prerender = true;
+
+const pageTitle = "Nuño review";
+const pageDescription =
+  "Private reference note from Nikita Sokolsky about working with Nuño.";
+const themeColorLight = "#f8f5ef";
+const themeColorDark = "#15120e";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main class="page">
+      <article class="note" aria-label={pageTitle}>
+        <p>
+          Hi, I'm Nikita, an operator of a small niche business -
+          <a href="https://getdatingphotos.com/" target="_blank" rel="noreferrer noopener">https://getdatingphotos.com/</a>
+        </p>
+
+        <p>
+          I've met Nuño after I did a photoshoot/restyle for him, and he
+          convinced me to actually take the idea seriously. We've made a trade
+          where in exchange for 5% of the business he'd let me use his
+          face/photos on my public site & use him as a reference. Looking back I
+          think this was an excellent deal, given that I underestimated how well
+          known Nuño is in the Rationality-adjacent circles & how many people
+          recognized his "glow up" as being insanely transformational.
+        </p>
+
+        <p>
+          Other than his "personality rights" so to speak, his primary
+          contribution was to hold me accountable in developing the business
+          further and actually getting myself to do shit to expand it vs saying
+          "fuck it". Mostly our interactions were in the form of me spamming Nuño
+          at all hours of the day with various ideas/concerns I had & Nuño
+          periodically responding to offer support/criticism and to push me to do
+          better. I'm convinced that without his involvement it would've stayed
+          frozen at
+          <a href="https://web.archive.org/web/20251212160448/https://getdatingphotos.com/" target="_blank" rel="noreferrer noopener">the way it was in 2025</a>.
+        </p>
+
+        <p>
+          Nuño has solid business acumen - 98th percentile or higher among ACX
+          readers is my estimate. I mean, I might be wrong about this, but being
+          convinced that this is true has so far done wonders for business
+          development. He's also got solid contacts among other small-time
+          businessmen (aka "powerseekers") that he's happy to introduce you to
+          with and without prompting. I've been so happy with our arrangement
+          that I've signed an extra deal with him to increase his share to 10% of
+          the business in exchange for additional work to improve my deal flow.
+        </p>
+
+        <p>
+          If you're the kind of guy who can trivially get into YC, then yeah,
+          probably Nuño's not your guy, but for everyone else I can recommend him
+          as a small-stake partner when starting out. Just remember that the
+          initial valuation of any business is
+          <a href="https://www.artlebedev.com/mandership/161/" target="_blank" rel="noreferrer noopener">actually negative</a>,
+          so in your negotiation avoid being overly greedy and trying to offer
+          him something like 0.1% or something - without a sufficient stake I'm
+          not confident he would be as helpful for you as he was for me.
+        </p>
+
+        <p>
+          Disclaimer: I wrote this at Nuño's request, but I'm getting nothing in
+          exchange, directly or indirectly. I'm also confident that if I wrote a
+          much more negative perspective this wouldn't have damaged our
+          relationship in any way & that he would've still shared this with you.
+        </p>
+
+        <footer class="written-date">
+          Written down on July 3rd, 2026
+        </footer>
+      </article>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f8f5ef;
+    --card: #fffdf8;
+    --text: #211a13;
+    --muted: #786c5f;
+    --link: #6d3b13;
+    --link-hover: #3f220b;
+    --border: rgba(55, 38, 22, 0.13);
+    --shadow: 0 24px 80px rgba(45, 31, 18, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15120e;
+      --card: #1f1a14;
+      --text: #f2eadf;
+      --muted: #b9aa99;
+      --link: #f0b36c;
+      --link-hover: #ffd9a5;
+      --border: rgba(255, 238, 212, 0.14);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-height: 100%;
+    background:
+      radial-gradient(circle at top left, rgba(183, 125, 58, 0.16), transparent 34rem),
+      var(--bg);
+    color: var(--text);
+    font-family:
+      ui-serif,
+      Georgia,
+      Cambria,
+      "Times New Roman",
+      Times,
+      serif;
+    font-size: 17px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .page {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 4vw, 4rem);
+  }
+
+  .note {
+    width: min(100%, 46rem);
+    padding: clamp(1.5rem, 5vw, 4.5rem);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  p + p {
+    margin-top: 1.45em;
+  }
+
+  .written-date {
+    margin-top: 2.4rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link) 38%, transparent);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--link-hover);
+    text-decoration-color: currentColor;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 16px;
+      line-height: 1.68;
+      background: var(--card);
+    }
+
+    .page {
+      display: block;
+      min-height: auto;
+      padding: 0;
+    }
+
+    .note {
+      width: 100%;
+      min-height: 100vh;
+      padding: 1.35rem 1.15rem 2rem;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+</style>

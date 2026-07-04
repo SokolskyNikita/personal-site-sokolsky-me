@@ -37,6 +37,7 @@ interface CfProperties {
 }
 
 const AI_COMPASS_RESULT_PATH = "/api/ai-compass/result";
+const PRIVATE_PATH_PREFIX = "/private/";
 const AXIS_KEYS = ["T", "V", "S", "I", "P"] as const;
 
 export default {
@@ -61,6 +62,10 @@ export default {
 
     if (url.pathname === AI_COMPASS_RESULT_PATH) {
       return handleAiCompassResult(request, env, url);
+    }
+
+    if (isPrivatePath(url.pathname)) {
+      return withNoIndexHeaders(await env.ASSETS.fetch(request));
     }
 
     return env.ASSETS.fetch(request);
@@ -269,6 +274,21 @@ function isFiniteNumber(value: unknown): value is number {
 
 function isIntegerInRange(value: unknown, min: number, max: number): value is number {
   return Number.isInteger(value) && value >= min && value <= max;
+}
+
+function isPrivatePath(pathname: string): boolean {
+  return pathname === "/private" || pathname.startsWith(PRIVATE_PATH_PREFIX);
+}
+
+function withNoIndexHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
 function deviceCategory(userAgent: string): string {

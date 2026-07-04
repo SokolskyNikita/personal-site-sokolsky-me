@@ -1,0 +1,1249 @@
+---
+export const prerender = true;
+
+const pageTitle = "FIFA 2026 streaming options";
+const pageDescription =
+  "A compact comparison of FIFA World Cup 2026 streaming options for Argentina and the US, with prices normalized to USD.";
+const themeColorLight = "#f7f2e7";
+const themeColorDark = "#17130d";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const checkedDate = "July 3, 2026";
+const exchangeRate = "ARS 1,488.50 per USD";
+
+type Option = {
+  name: string;
+  tag: string;
+  price: string;
+  href: string;
+  coverage: string;
+  access: string;
+  macAccess: string;
+  language: string;
+  picture: string;
+  latency: string;
+  bestFor: string;
+  caveat: string;
+  pick?: boolean;
+};
+
+type Channel = {
+  name: string;
+  tag: string;
+  scope: string;
+  href: string;
+  bestFor: string;
+  where: string;
+  resolution: string;
+  delay: string;
+  remaining: string;
+  pros: string;
+  cons: string;
+  caveat: string;
+};
+
+const decisionCards = [
+  {
+    label: "Cheapest all-match plan",
+    title: "Paramount+ Argentina with DSports",
+    detail:
+      "About $5.75/mo for all 104 matches in Spanish, assuming an Argentina IP and local payment works."
+  },
+  {
+    label: "English plus 4K",
+    title: "FOX One",
+    detail:
+      "About $20/mo for every match in English, live and on-demand, with FOX saying every match is in 4K."
+  },
+  {
+    label: "Lowest-delay helper",
+    title: "Fastest practical feeds",
+    detail:
+      "If spoilers matter, pick the shortest signal path before you pick the cheapest app.",
+    items: [
+      {
+        label: "Argentina all-match",
+        value:
+          "DIRECTV satellite / DSports: 9s median. DGO or Paramount+ apps: 30s median."
+      },
+      {
+        label: "US",
+        value:
+          "OTA FOX antenna or home tuner: 19s median. Cable: 38s. Major apps: 50s."
+      },
+      {
+        label: "Argentina TV",
+        value:
+          "TDA Telefe or TV Publica: 5s median. Cable: 7s. Apps: 30s."
+      }
+    ]
+  }
+];
+
+const argentinaOptions: Option[] = [
+  {
+    name: "Paramount+ Argentina / DSports",
+    tag: "Lowest price",
+    price: "$5.75/mo est.",
+    href: "https://www.paramountplus.com/ar/shows/world-cup/",
+    coverage: "All 104 matches live and on-demand through DSports in Paramount+.",
+    access: "Argentina IP. Local subscription and payment may matter.",
+    macAccess:
+      "Yes. Use Paramount+ in a supported Mac browser such as Chrome, Safari, Firefox or Edge.",
+    language: "Spanish, Argentina / LatAm feed.",
+    picture:
+      "HD / Full HD is the realistic baseline. Do not rely on 4K unless your account and device expose it.",
+    latency: "Median delay: 30s.",
+    bestFor:
+      "The lowest-cost all-match option if Spanish commentary is fine.",
+    caveat:
+      "No other all-match paid option on this page comes close on price."
+  },
+  {
+    name: "Flow Full",
+    tag: "Paid TV bundle",
+    price: "$19.20/mo est.",
+    href: "https://www.personal.com.ar/flow/planes",
+    coverage:
+      "All World Cup matches through TyC Sports, DSports, DSports 2, Telefe and TV Publica inside Flow.",
+    access: "Argentina account. No extra World Cup add-on if the channels are already in your Flow plan.",
+    macAccess:
+      "Yes. Flow works from a Mac browser: Chrome, Opera, Firefox or Safari.",
+    language: "Spanish.",
+    picture:
+      "Flow confirmed Full HD for DSports, TyC Sports, Telefe and TV Publica. App quality can fall back to HD.",
+    latency:
+      "Median delay: 10s on Flow box/IPTV; 30s in the Flow app.",
+    bestFor:
+      "Someone already in the Personal / Flow ecosystem who wants one app for TV plus the tournament.",
+    caveat:
+      "Estimate uses the midpoint between current discounted and standard monthly prices."
+  },
+  {
+    name: "DGO / DIRECTV Argentina",
+    tag: "DSports direct route",
+    price: "$22.50/mo est.",
+    href: "https://www.directvla.com/ar/mundial",
+    coverage:
+      "All 104 matches through DSports, with DGO streaming plans or DIRECTV satellite plans.",
+    access: "Argentina account. DGO works as the streaming-first route.",
+    macAccess:
+      "Yes for DGO in-browser viewing. Use Chrome or Firefox; DIRECTV satellite still needs its TV setup.",
+    language: "Spanish.",
+    picture:
+      "DIRECTV/DGO reports are mixed: compatible DIRECTV boxes may show 4K, but the safer baseline is HD / Full HD.",
+    latency:
+      "Median delay: 9s on DIRECTV satellite; 28s in the DGO app.",
+    bestFor:
+      "A traditional sports-TV setup or the safest DSports-branded option.",
+    caveat:
+      "The cheaper sports plan and the pure streaming plan differ by included channels and simultaneous screens."
+  },
+  {
+    name: "Mi Telefe, TV Publica and TyC Sports Play",
+    tag: "Partial / free",
+    price: "$0/mo est.",
+    href: "https://www.mitelefe.com/mundial-fifa-2026",
+    coverage:
+      "Selected matches, especially Argentina games and major late-stage fixtures. Not full tournament coverage.",
+    access:
+      "Mi Telefe and TV Publica are the free paths. TyC Sports Play may require registration or TV-provider access for some live events.",
+    macAccess:
+      "Yes. Use the web players from a Mac browser; TyC live video may require cable-operator validation.",
+    language: "Spanish.",
+    picture:
+      "TDA Telefe / TV Publica are HD. TyC and Telefe web streams are HD, not 4K.",
+    latency:
+      "Median delay: 5s on TDA; 7s on cable TyC; 30s on web/app streams.",
+    bestFor:
+      "Argentina matches when you do not need every simultaneous or lower-profile fixture.",
+    caveat:
+      "Good backup, but not an all-match plan."
+  }
+];
+
+const argentinaChannels: Channel[] = [
+  {
+    name: "DSports, DSports 2 and DSports+",
+    tag: "All-match channel family",
+    scope: "All remaining matches",
+    href: "https://www.tycsports.com/mundial/partidos-mundial-2026-en-vivo-donde-ver-por-tv-y-online-la-copa-mundial-de-la-fifa-id734306.html",
+    bestFor:
+      "The channel family to anchor around if you want every remaining fixture, including simultaneous or lower-profile matches.",
+    where:
+      "DirecTV 610/1610, 612/1612 and 613/1613; Flow 109 and 110 for DSports signals; Claro TV 116 and 117 for DSports and DSports 2.",
+    resolution:
+      "DIRECTV may offer a 4K feed on compatible boxes; Flow and Claro are Full HD / HD. If no 4K channel appears, assume HD.",
+    delay:
+      "Median delay: 9s on DIRECTV satellite; 10s on Flow/Claro cable or IPTV; 30s in DGO/Paramount+ apps.",
+    remaining:
+      "DSports is the only Argentina TV signal family listed with 104/104 tournament coverage, so it remains the all-match route through the final.",
+    pros:
+      "All 104 matches, multiple DSports signals, DGO tie-in and the same rights base used by Paramount+ Argentina.",
+    cons:
+      "Paid access. On Flow, some matches may be presented through TyC Sports rather than the DSports cable feed when sublicensing applies.",
+    caveat:
+      "For a one-screen casual setup this can be overkill; for full coverage, it is the safest channel answer."
+  },
+  {
+    name: "TyC Sports",
+    tag: "Cable sports pick",
+    scope: "52 matches total",
+    href: "https://www.tycsports.com/mundial/partidos-mundial-2026-en-vivo-donde-ver-por-tv-y-online-la-copa-mundial-de-la-fifa-id734306.html",
+    bestFor:
+      "Argentina matches plus a selected-match cable package with familiar local sports coverage.",
+    where:
+      "Flow 22/101, DirecTV 629/1629, Telecentro 106/1018 and Claro TV 105.",
+    resolution:
+      "Use the HD channel where available. Realistically 720p/1080i on cable, with SD fallback channels still listed.",
+    delay:
+      "Median delay: 7s on cable; 30s in TyC Sports Play.",
+    remaining:
+      "TyC says its package includes all Argentina matches, plus selected knockouts: 6 round-of-32 matches, 4 round-of-16 matches, 1 quarterfinal, 1 semifinal and the final, with some assignments still to confirm.",
+    pros:
+      "TyC studio coverage, cable availability, TyC Sports Play support and 30 pay-TV-exclusive matches across the tournament.",
+    cons:
+      "Not all-match coverage. TyC Sports Play requires registration and cable-operator validation for the live signal.",
+    caveat:
+      "Use it as the default Argentina sports-channel route, not as your only plan for every match."
+  },
+  {
+    name: "Telefe",
+    tag: "Open TV private channel",
+    scope: "32 matches total",
+    href: "https://www.mitelefe.com/mundial-fifa-2026",
+    bestFor:
+      "Free or familiar open-TV viewing for Argentina matches and selected headline games.",
+    where:
+      "Flow 10/1001, Telecentro 10, DirecTV 123/1123 and Claro TV 10.",
+    resolution:
+      "TDA is HD; provider HD feeds are usually 720p/1080i. Mi Telefe is HD, not 4K.",
+    delay:
+      "Median delay: 5s on TDA; 7s on cable; 30s in Mi Telefe streaming.",
+    remaining:
+      "Telefe's package is 32 matches total, including Argentina and selected big fixtures. Check the daily schedule for non-Argentina knockouts.",
+    pros:
+      "Easy open-TV access, Mi Telefe streaming, match clips and a channel most people can find quickly.",
+    cons:
+      "Selected matches only, so many remaining games will be elsewhere. Web streaming can lag behind broadcast.",
+    caveat:
+      "Good as the no-friction Argentina-match option; weak as a tournament-wide plan."
+  },
+  {
+    name: "TV Publica",
+    tag: "Free public route",
+    scope: "10 matches total",
+    href: "https://www.tvpublica.com.ar/programa/mundial-de-la-fifa-2026/",
+    bestFor:
+      "The simplest free public-broadcast route when Argentina is on.",
+    where:
+      "Flow 11, DirecTV 121/1121, Telecentro 8/1007 and Claro TV 11.",
+    resolution:
+      "TDA 23.2 and provider HD feeds are HD where available; otherwise SD. Web quality is HD-ish, not 4K.",
+    delay:
+      "Median delay: 5s on TDA; 7s on cable; 30s on the web stream.",
+    remaining:
+      "TV Publica's official World Cup page is Argentina-focused; check its live schedule for late-stage matches.",
+    pros:
+      "Free, public, easy to find and available through the official TV Publica stream.",
+    cons:
+      "Smallest match package and not a production-first alternative; reports describe it as retransmitting DSports production.",
+    caveat:
+      "Treat it as a free Argentina backup, not a reliable way to browse the rest of the bracket."
+  }
+];
+
+const usOptions: Option[] = [
+  {
+    name: "FOX One",
+    tag: "English 4K",
+    price: "$20/mo est.",
+    href: "https://www.fox.com/soccer/fifa-world-cup",
+    coverage:
+      "All 104 matches live and on-demand, with 70 on FOX and 34 on FS1 across the full tournament.",
+    access: "US access. A Seattle tunnel should work if your payment and account are accepted.",
+    macAccess:
+      "Yes. FOX One supports desktop browsers including Chrome, Safari, Firefox, Edge and Opera.",
+    language: "English.",
+    picture:
+      "4K HDR on supported devices, built from FOX's 1080p HDR10 world feed. If support fails, expect HD.",
+    latency: "Median delay: 45s.",
+    bestFor:
+      "English commentary, full tournament access and 4K without a live-TV bundle.",
+    caveat:
+      "If you already pay for a TV provider with FOX and FS1, you may not need this."
+  },
+  {
+    name: "Peacock Premium",
+    tag: "Spanish US stream",
+    price: "$14/mo est.",
+    href: "https://www.nbcuniversal.com/article/stream-telemundos-spanish-language-coverage-fifa-world-cup-2026tm-peacock-including-live-matches",
+    coverage:
+      "All 104 matches live in Spanish through Telemundo and Universo coverage.",
+    access: "US access. The paid Peacock sports tier is the practical baseline.",
+    macAccess:
+      "Yes. Peacock supports current Mac browsers including Chrome, Firefox, Edge and Safari.",
+    language: "Spanish only, including audio and subtitles.",
+    picture:
+      "4K and 1080p HDR on supported devices, with Dolby Vision and Dolby Atmos for Telemundo coverage.",
+    latency: "Median delay: 48s.",
+    bestFor:
+      "Spanish commentary, mobile-friendly extras and the lowest full-coverage US price.",
+    caveat:
+      "Plan differences do not change World Cup match access."
+  },
+  {
+    name: "Over-the-air FOX with a home tuner",
+    tag: "Lowest delay",
+    price: "$0/mo est.",
+    href: "https://www.foxcorporation.com/news/corp-press-releases/2026/fox-sports-unveils-historic-fifa-world-cup-2026-broadcast-schedule/",
+    coverage:
+      "From the July 4 Round of 16 onward, every remaining match through the final airs on broadcast FOX.",
+    access:
+      "A Seattle tunnel is not enough by itself. You need an antenna or remote tuner at home.",
+    macAccess:
+      "Yes, but only through a network tuner app such as HDHomeRun. An antenna alone does not plug into a Mac.",
+    language: "English.",
+    picture:
+      "Broadcast FOX is usually 720p HD. FOX's 4K World Cup path is FOX One or supported pay TV, not basic OTA.",
+    latency: "Median delay: 19s.",
+    bestFor:
+      "Big matches where spoilers from group chats, alerts or neighbors matter.",
+    caveat:
+      "This is a broadcast setup, not a pure streaming subscription."
+  },
+  {
+    name: "Live-TV bundles",
+    tag: "Fallback",
+    price: "$86/mo est.",
+    href: "https://tv.youtube.com/welcome/",
+    coverage:
+      "YouTube TV, Fubo, Hulu + Live TV and DIRECTV Stream can cover FOX and FS1 if the package includes both.",
+    access: "US account and local channel availability.",
+    macAccess:
+      "Yes. YouTube TV, Fubo and Hulu + Live TV all support current Mac browsers.",
+    language: "English, with Spanish depending on package.",
+    picture:
+      "HD by default. FOX says 4K is on most major pay TV providers when the provider, device and feed support it.",
+    latency:
+      "Median delay: 38s on cable; 55s in live-TV apps.",
+    bestFor:
+      "People who already want a wider live-TV bundle, DVR or household account sharing.",
+    caveat:
+      "Not cost-effective if the World Cup is the only thing you need."
+  }
+];
+
+const sourceLinks = [
+  {
+    label: "FOX Sports schedule and 4K statement",
+    href: "https://www.foxcorporation.com/news/corp-press-releases/2026/fox-sports-unveils-historic-fifa-world-cup-2026-broadcast-schedule/"
+  },
+  {
+    label: "FOX One 4K device note",
+    href: "https://foxonepressroom.com/foxone/news/view/fox-one-the-official-english-language-streaming-platform-of-the-fifa-world-cup-2026tm-unveils-a-new-immersive-viewing-experience-built-to-maximize-eve"
+  },
+  {
+    label: "Sportico World Cup latency and formats",
+    href: "https://www.sportico.com/business/media/2026/world-cup-stream-online-tv-fox-settings-latency-blur-cost-1234903220/"
+  },
+  {
+    label: "FOX One plans",
+    href: "https://help.fox.com/s/article/FOX-One-Plans"
+  },
+  {
+    label: "FOX One supported browsers",
+    href: "https://help.fox.com/s/article/Purchase-Switch-Plans-and-supported-devices"
+  },
+  {
+    label: "NBCUniversal Peacock World Cup page",
+    href: "https://www.nbcuniversal.com/article/stream-telemundos-spanish-language-coverage-fifa-world-cup-2026tm-peacock-including-live-matches"
+  },
+  {
+    label: "Peacock supported browsers",
+    href: "https://www.peacocktv.com/help/article/what-devices-and-platforms-are-supported-by-peacock"
+  },
+  {
+    label: "NBCUniversal Peacock Dolby Vision note",
+    href: "https://www.nbcuniversal.com/article/dolby-vision-and-dolby-atmos-power-telemundos-2026-fifa-world-cup-tm-coverage-peacock-streaming"
+  },
+  {
+    label: "Paramount+ Argentina World Cup page",
+    href: "https://www.paramountplus.com/ar/shows/world-cup/"
+  },
+  {
+    label: "Paramount+ supported browsers",
+    href: "https://support.paramountplus.com/s/article/PI-Which-browsers-are-supported-for-Paramount"
+  },
+  {
+    label: "Flow World Cup and plan pages",
+    href: "https://www.personal.com.ar/flow/mundial"
+  },
+  {
+    label: "Flow supported devices",
+    href: "https://www.personal.com.ar/flow"
+  },
+  {
+    label: "TyC Sports Argentina channel guide",
+    href: "https://www.tycsports.com/mundial/partidos-mundial-2026-en-vivo-donde-ver-por-tv-y-online-la-copa-mundial-de-la-fifa-id734306.html"
+  },
+  {
+    label: "La Nacion Argentina TV rights summary",
+    href: "https://www.lanacion.com.ar/deportes/futbol/donde-ver-los-partidos-del-mundial-2026-en-la-argentina-nid12062026/"
+  },
+  {
+    label: "Mi Telefe World Cup page",
+    href: "https://www.mitelefe.com/mundial-fifa-2026"
+  },
+  {
+    label: "DGO / DIRECTV World Cup page",
+    href: "https://www.directvla.com/ar/mundial"
+  },
+  {
+    label: "DGO supported devices",
+    href: "https://www.directvla.com/ar/servicios/dgo"
+  },
+  {
+    label: "TyC Sports Play help",
+    href: "https://play.tycsports.com/ayuda.html"
+  },
+  {
+    label: "TV Publica World Cup page",
+    href: "https://www.tvpublica.com.ar/programa/mundial-de-la-fifa-2026/"
+  },
+  {
+    label: "YouTube TV supported browsers",
+    href: "https://support.google.com/youtubetv/answer/7129767"
+  },
+  {
+    label: "HDHomeRun Mac app",
+    href: "https://info.hdhomerun.com/info/app:mac"
+  },
+  {
+    label: "Perfil Argentina resolution and delay",
+    href: "https://www.perfil.com/noticias/cordoba/ver-el-mundial-en-4k-imposible-en-argentina-que-canal-tiene-menos-delay-y-por-que-tu-televisor-no-puede-hacer-magia.phtml"
+  },
+  {
+    label: "Chequeado Argentina delay guide",
+    href: "https://chequeado.com/el-explicador/mundial-2026-que-plataformas-tienen-menos-delay-y-como-evitar-que-te-griten-los-goles-antes/"
+  },
+  {
+    label: "El Litoral Argentina picture and latency",
+    href: "https://www.ellitoral.com/deportes/horarios-tv-pantalla-calidad-imagen-latencia-hd-4k-mundial-futbol-seleccion-argentina_0_E5kQPpozWE.html"
+  },
+  {
+    label: "USD/ARS reference",
+    href: "https://www.ambito.com/finanzas/dolar-hoy-cuanto-cerro-este-viernes-3-julio-n6295855"
+  }
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  dateModified: "2026-07-03",
+  inLanguage: "en",
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  }
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="topbar">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+          <p class="updated">Checked {checkedDate}</p>
+        </div>
+
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">World Cup viewing plan</p>
+            <h1>{pageTitle}</h1>
+            <p class="dek">
+              Practical options for watching the 2026 World Cup from Argentina or
+              the US, with prices normalized to USD and the recommendations tuned
+              for cost, language, picture quality and delay.
+            </p>
+          </div>
+
+          <aside class="conversion-note" aria-label="Price conversion note">
+            <span>Price basis</span>
+            <strong>All prices are shown in USD.</strong>
+            <p>
+              Argentina plan prices were converted at about {exchangeRate}; each
+              card shows one median-style estimate for easier comparison.
+            </p>
+          </aside>
+        </div>
+
+      </header>
+
+      <section class="panel quick-answer" id="quick-answer" aria-labelledby="quick-answer-heading">
+        <div class="section-copy">
+          <p class="eyebrow">Bottom line</p>
+          <h2 id="quick-answer-heading">Pick by feed, not by rights chaos</h2>
+          <p>
+            In the US, every remaining knockout match is on FOX in English and
+            Telemundo in Spanish, so the choice is mostly language, picture
+            quality, price and delay. In Argentina, DSports is the all-match TV
+            signal family; Paramount+ with DSports is the standout cheap stream,
+            while TyC Sports, Telefe and TV Publica are selected-match channels.
+          </p>
+        </div>
+
+        <div class="decision-grid">
+          {decisionCards.map((card) => (
+            <article class="decision-card">
+              <p>{card.label}</p>
+              <h3>{card.title}</h3>
+              <span>{card.detail}</span>
+              {card.items && (
+                <dl class="latency-helper">
+                  {card.items.map((item) => (
+                    <div>
+                      <dt>{item.label}</dt>
+                      <dd>{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="region" id="argentina-options" aria-labelledby="argentina-heading">
+        <div class="region-heading">
+          <p class="eyebrow">Argentina options</p>
+          <h2 id="argentina-heading">Cheap all-match coverage exists</h2>
+          <p>
+            If you can subscribe from Argentina, the question is whether you want
+            the lowest all-match stream, a TV bundle or free partial coverage for
+            Argentina-heavy viewing.
+          </p>
+        </div>
+
+        <div class="option-grid">
+          {argentinaOptions.map((option) => (
+            <article class={`option-card${option.pick ? " is-pick" : ""}`}>
+              <div class="option-topline">
+                <span>{option.tag}</span>
+                <strong>{option.price}</strong>
+              </div>
+              <h3>
+                <a href={option.href} target="_blank" rel="noreferrer noopener">
+                  {option.name}
+                </a>
+              </h3>
+              <p class="best-for">{option.bestFor}</p>
+              <dl class="facts">
+                <div>
+                  <dt>Coverage</dt>
+                  <dd>{option.coverage}</dd>
+                </div>
+                <div>
+                  <dt>Access</dt>
+                  <dd>{option.access}</dd>
+                </div>
+                <div>
+                  <dt>Can watch via Mac?</dt>
+                  <dd>{option.macAccess}</dd>
+                </div>
+                <div>
+                  <dt>Language</dt>
+                  <dd>{option.language}</dd>
+                </div>
+                <div>
+                  <dt>Resolution</dt>
+                  <dd>{option.picture}</dd>
+                </div>
+                <div>
+                  <dt>Delay</dt>
+                  <dd>{option.latency}</dd>
+                </div>
+              </dl>
+              <p class="caveat">{option.caveat}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="region" id="argentina-channels" aria-labelledby="argentina-channels-heading">
+        <div class="region-heading">
+          <p class="eyebrow">Argentina TV channels</p>
+          <h2 id="argentina-channels-heading">What to tune for the remaining games</h2>
+          <p>
+            These are the actual TV/cable signals carrying the tournament in
+            Argentina. DSports is the only all-match family; the other channels
+            are useful because they carry Argentina and selected high-interest
+            fixtures.
+          </p>
+        </div>
+
+        <div class="channel-grid">
+          {argentinaChannels.map((channel) => (
+            <article class="channel-card">
+              <div class="option-topline">
+                <span>{channel.tag}</span>
+                <strong>{channel.scope}</strong>
+              </div>
+              <h3>
+                <a href={channel.href} target="_blank" rel="noreferrer noopener">
+                  {channel.name}
+                </a>
+              </h3>
+              <p class="best-for">{channel.bestFor}</p>
+              <dl class="facts">
+                <div>
+                  <dt>Coverage</dt>
+                  <dd>{channel.remaining}</dd>
+                </div>
+                <div>
+                  <dt>Access</dt>
+                  <dd>{channel.where}</dd>
+                </div>
+                <div>
+                  <dt>Language</dt>
+                  <dd>Spanish.</dd>
+                </div>
+                <div>
+                  <dt>Resolution</dt>
+                  <dd>{channel.resolution}</dd>
+                </div>
+                <div>
+                  <dt>Delay</dt>
+                  <dd>{channel.delay}</dd>
+                </div>
+              </dl>
+              <div class="tradeoffs">
+                <p><strong>Pros:</strong> {channel.pros}</p>
+                <p><strong>Cons:</strong> {channel.cons}</p>
+              </div>
+              <p class="caveat">{channel.caveat}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="region" id="us-options" aria-labelledby="us-heading">
+        <div class="region-heading">
+          <p class="eyebrow">US options</p>
+          <h2 id="us-heading">English is FOX, Spanish is Peacock</h2>
+          <p>
+            The cheap US split is clean: FOX One for English, Peacock for
+            Spanish. Both have 4K paths on supported devices. Use OTA or cable
+            only when latency matters more than app convenience.
+          </p>
+        </div>
+
+        <div class="option-grid">
+          {usOptions.map((option) => (
+            <article class={`option-card${option.pick ? " is-pick" : ""}`}>
+              <div class="option-topline">
+                <span>{option.tag}</span>
+                <strong>{option.price}</strong>
+              </div>
+              <h3>
+                <a href={option.href} target="_blank" rel="noreferrer noopener">
+                  {option.name}
+                </a>
+              </h3>
+              <p class="best-for">{option.bestFor}</p>
+              <dl class="facts">
+                <div>
+                  <dt>Coverage</dt>
+                  <dd>{option.coverage}</dd>
+                </div>
+                <div>
+                  <dt>Access</dt>
+                  <dd>{option.access}</dd>
+                </div>
+                <div>
+                  <dt>Can watch via Mac?</dt>
+                  <dd>{option.macAccess}</dd>
+                </div>
+                <div>
+                  <dt>Language</dt>
+                  <dd>{option.language}</dd>
+                </div>
+                <div>
+                  <dt>Resolution</dt>
+                  <dd>{option.picture}</dd>
+                </div>
+                <div>
+                  <dt>Delay</dt>
+                  <dd>{option.latency}</dd>
+                </div>
+              </dl>
+              <p class="caveat">{option.caveat}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="panel notes" aria-labelledby="notes-heading">
+        <div>
+          <p class="eyebrow">Operating notes</p>
+          <h2 id="notes-heading">What I would actually run</h2>
+        </div>
+        <div class="note-columns">
+          <p>
+            Use <strong>Paramount+ Argentina</strong> as the default for most
+            matches if Spanish is acceptable. It is dramatically cheaper than a
+            US live-TV bundle and still gives every match.
+          </p>
+          <p>
+            Switch to <strong>FOX One</strong> for big matches where English and
+            4K matter. For spoiler-sensitive Argentina or US matches, prefer the
+            fastest broadcast feed you can reach instead of any app.
+          </p>
+        </div>
+      </section>
+
+      <section class="sources" id="sources" aria-labelledby="sources-heading">
+        <div class="region-heading">
+          <p class="eyebrow">Sources</p>
+          <h2 id="sources-heading">Checked against live sources</h2>
+          <p>
+            Source pages were checked with regular web search and BrightData MCP.
+            Prices and rights can change during the tournament.
+          </p>
+        </div>
+
+        <ul class="source-list">
+          {sourceLinks.map((source) => (
+            <li>
+              <a href={source.href} target="_blank" rel="noreferrer noopener">
+                {source.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
+
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f2e7;
+        --paper: #fffaf0;
+        --paper-strong: #fff3d2;
+        --ink: #21180f;
+        --muted: #6f5f4a;
+        --line: rgb(75 51 25 / 16%);
+        --accent: #b43f1d;
+        --accent-strong: #762813;
+        --green: #2d6b4b;
+        --shadow: 0 24px 70px rgb(68 42 16 / 12%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+          --bg: #17130d;
+          --paper: #211a12;
+          --paper-strong: #2e2417;
+          --ink: #f5ead6;
+          --muted: #c8b89d;
+          --line: rgb(245 234 214 / 16%);
+          --accent: #ff9d64;
+          --accent-strong: #ffc9a6;
+          --green: #93d2ac;
+          --shadow: 0 24px 70px rgb(0 0 0 / 28%);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--bg);
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 12% 0%, rgb(255 162 79 / 25%), transparent 30rem),
+          linear-gradient(135deg, rgb(255 255 255 / 28%), transparent 26rem),
+          var(--bg);
+        color: var(--ink);
+        font-family:
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration-color: color-mix(in srgb, var(--accent) 58%, transparent);
+        text-decoration-thickness: 0.08em;
+        text-underline-offset: 0.18em;
+      }
+
+      a:hover {
+        color: var(--accent-strong);
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      dl,
+      dd {
+        margin: 0;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - clamp(28px, 5vw, 72px)));
+        margin: 0 auto;
+        padding: clamp(18px, 3.2vw, 42px) 0 clamp(32px, 6vw, 72px);
+      }
+
+      .hero,
+      .panel,
+      .region,
+      .sources {
+        border: 1px solid var(--line);
+        border-radius: clamp(22px, 3vw, 34px);
+        background:
+          linear-gradient(145deg, rgb(255 255 255 / 38%), transparent 34rem),
+          var(--paper);
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        padding: clamp(20px, 3.8vw, 42px);
+      }
+
+      .topbar,
+      .hero-grid,
+      .region-heading,
+      .quick-answer,
+      .notes {
+        display: grid;
+        gap: clamp(16px, 2.4vw, 28px);
+      }
+
+      .topbar {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        margin-bottom: clamp(28px, 5vw, 54px);
+      }
+
+      .home-link,
+      .updated,
+      .eyebrow,
+      .option-topline span,
+      .decision-card p,
+      dt {
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .home-link {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .updated {
+        color: var(--muted);
+      }
+
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        max-width: 1120px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.7rem, 5.1vw, 4rem);
+        font-weight: 780;
+        letter-spacing: -0.07em;
+        line-height: 0.9;
+        text-wrap: balance;
+      }
+
+      .dek {
+        max-width: 760px;
+        margin-top: clamp(18px, 2.6vw, 28px);
+        color: var(--muted);
+        font-size: clamp(1.06rem, 1.8vw, 1.35rem);
+        line-height: 1.45;
+      }
+
+      .conversion-note {
+        max-width: 760px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--paper-strong);
+        padding: 18px;
+      }
+
+      .conversion-note span {
+        display: block;
+        color: var(--accent);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .conversion-note strong {
+        display: block;
+        margin-top: 10px;
+        font-size: clamp(1.12rem, 1.9vw, 1.5rem);
+        line-height: 1.1;
+      }
+
+      .conversion-note p {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.96rem;
+        line-height: 1.5;
+      }
+
+      .panel,
+      .region,
+      .sources {
+        margin-top: clamp(14px, 2vw, 22px);
+        padding: clamp(20px, 3.8vw, 42px);
+      }
+
+      .quick-answer {
+        grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1fr);
+        align-items: start;
+      }
+
+      h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.1rem, 2.28vw, 2rem);
+        letter-spacing: -0.045em;
+        line-height: 1;
+        text-wrap: balance;
+      }
+
+      .section-copy p,
+      .region-heading p,
+      .note-columns p {
+        color: var(--muted);
+        font-size: clamp(1rem, 1.4vw, 1.1rem);
+        line-height: 1.6;
+      }
+
+      .section-copy p:not(.eyebrow),
+      .region-heading p:not(.eyebrow) {
+        margin-top: 14px;
+        max-width: 760px;
+      }
+
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .decision-card:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+
+      .decision-card {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: color-mix(in srgb, var(--paper-strong) 72%, var(--paper));
+        padding: 16px;
+      }
+
+      .decision-card p {
+        color: var(--accent);
+      }
+
+      .decision-card h3 {
+        margin-top: 10px;
+        font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+      }
+
+      .decision-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.45;
+      }
+
+      .latency-helper {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .decision-card:nth-child(3) .latency-helper {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .latency-helper div {
+        border-top: 1px solid var(--line);
+        padding-top: 8px;
+      }
+
+      .latency-helper dt {
+        color: var(--accent);
+        font-size: 0.68rem;
+      }
+
+      .latency-helper dd {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+
+      .region-heading {
+        grid-template-columns: minmax(420px, 0.82fr) minmax(260px, 0.44fr);
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .region-heading .eyebrow {
+        grid-column: 1 / -1;
+        margin-bottom: -6px;
+      }
+
+      .option-grid,
+      .channel-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .option-card,
+      .channel-card {
+        display: grid;
+        gap: 14px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background:
+          linear-gradient(160deg, rgb(255 255 255 / 30%), transparent 18rem),
+          color-mix(in srgb, var(--paper) 88%, var(--paper-strong));
+        padding: clamp(16px, 2.4vw, 24px);
+      }
+
+      .option-topline {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .option-topline span {
+        color: var(--green);
+      }
+
+      .option-topline strong {
+        color: var(--accent-strong);
+        font-size: clamp(1.12rem, 2vw, 1.55rem);
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .option-card h3,
+      .channel-card h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.4rem, 2.7vw, 2.35rem);
+        letter-spacing: -0.045em;
+        line-height: 1;
+        text-wrap: balance;
+      }
+
+      .best-for {
+        color: color-mix(in srgb, var(--ink) 86%, var(--accent));
+        font-size: clamp(1.02rem, 1.45vw, 1.13rem);
+        font-weight: 760;
+        line-height: 1.42;
+      }
+
+      .facts {
+        display: grid;
+        gap: 8px;
+      }
+
+      .facts div {
+        display: grid;
+        grid-template-columns: 7.5rem minmax(0, 1fr);
+        gap: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 8px;
+      }
+
+      dt {
+        color: var(--muted);
+      }
+
+      dd {
+        color: var(--muted);
+        font-size: 0.96rem;
+        line-height: 1.42;
+      }
+
+      .tradeoffs {
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.46;
+      }
+
+      .tradeoffs strong {
+        color: var(--ink);
+      }
+
+      .caveat {
+        border-left: 3px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+        padding-left: 12px;
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.48;
+      }
+
+      .notes {
+        grid-template-columns: minmax(360px, 0.72fr) minmax(0, 1fr);
+        align-items: start;
+      }
+
+      .note-columns {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .note-columns p {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgb(255 255 255 / 22%);
+        padding: 16px;
+      }
+
+      .source-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 18px;
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      .source-list li {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      @media (max-width: 920px) {
+        .hero-grid,
+        .quick-answer,
+        .region-heading,
+        .notes {
+          grid-template-columns: 1fr;
+        }
+
+        .decision-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .decision-card:nth-child(3) .latency-helper {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(100% - 20px, 1180px);
+          padding-top: 10px;
+        }
+
+        .topbar {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-bottom: 24px;
+        }
+
+        .option-grid,
+        .channel-grid,
+        .note-columns,
+        .source-list {
+          grid-template-columns: 1fr;
+        }
+
+        .option-topline {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .option-topline strong {
+          white-space: normal;
+        }
+
+        .facts div {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+
+        .hero,
+        .panel,
+        .region,
+        .sources {
+          border-radius: 22px;
+        }
+      }
+    </style>
+  </body>
+</html>
