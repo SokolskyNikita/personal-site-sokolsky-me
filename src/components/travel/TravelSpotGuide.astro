@@ -3,6 +3,7 @@ export type TravelSpot = {
   id: string;
   name: string;
   countries: string[];
+  region?: string;
   area: string;
   kind: string;
   access: string;
@@ -106,6 +107,20 @@ const validateScore = (spot: TravelSpot, key: keyof TravelSpot["scores"]) => {
     throw new Error(`${pageTitle} spot "${spot.id}" has invalid ${key} score.`);
   }
 };
+const getGoogleMapsUrl = (spot: TravelSpot) => {
+  const query =
+    spot.map.query ??
+    [spot.map.name || spot.name, spot.map.formattedAddress, ...spot.countries]
+      .filter(Boolean)
+      .join(", ");
+  const params = new URLSearchParams({ api: "1", query });
+
+  if (spot.map.placeId) {
+    params.set("query_place_id", spot.map.placeId);
+  }
+
+  return `https://www.google.com/maps/search/?${params.toString()}`;
+};
 
 spots.forEach((spot) => {
   scoreEntries.forEach(([, key]) => validateScore(spot, key));
@@ -116,6 +131,7 @@ const rankedSpotsWithTrip = spots
     ...spot,
     originalIndex,
     totalScore: getScoreTotal(spot),
+    googleMapsUrl: getGoogleMapsUrl(spot),
   }))
   .sort(
     (a, b) =>
@@ -135,9 +151,24 @@ const usdFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
   maximumFractionDigits: 0,
 });
-const countryOptions = [...new Set(rankedSpotsWithTrip.flatMap((spot) => spot.countries))].sort(
-  (a, b) => a.localeCompare(b),
-);
+const getLocationValues = (spot: TravelSpot) =>
+  (spot.region ? spot.region.split("/") : spot.countries)
+    .map((location) => location.trim())
+    .filter(Boolean);
+const usesRegionFilter = rankedSpotsWithTrip.every((spot) => Boolean(spot.region));
+const locationFilterLabel = usesRegionFilter ? "State" : "Country";
+const locationFilterAllLabel = usesRegionFilter ? "All states" : "All countries";
+const locationCounts = new Map<string, number>();
+
+rankedSpotsWithTrip.forEach((spot) => {
+  getLocationValues(spot).forEach((location) => {
+    locationCounts.set(location, (locationCounts.get(location) ?? 0) + 1);
+  });
+});
+
+const locationOptions = [...locationCounts.entries()]
+  .map(([value, count]) => ({ value, label: `${value} (${formatter.format(count)})` }))
+  .sort((a, b) => a.value.localeCompare(b.value));
 const tripEstimateLabel = `${tripOriginLabel.replace(/^From /, "From-")} trip estimate`;
 const kindOptions = [...new Set(rankedSpotsWithTrip.map((spot) => spot.kind))].sort((a, b) =>
   a.localeCompare(b),
@@ -147,12 +178,12 @@ const spotMapData = rankedSpotsWithTrip.map((spot, index) => ({
   rank: index + 1,
   name: spot.name,
   kind: spot.kind,
-  countries: spot.countries,
+  locations: getLocationValues(spot),
   uniqueness: spot.uniqueness,
   totalScore: spot.totalScore,
   scores: spot.scores,
   position: spot.map.location,
-  googleMapsUrl: spot.map.googleMapsUrl,
+  googleMapsUrl: spot.googleMapsUrl,
 }));
 const structuredData = {
   "@context": "https://schema.org",
@@ -168,7 +199,7 @@ const structuredData = {
       "@type": "TouristAttraction",
       name: spot.name,
       description: spot.why,
-      sameAs: spot.map.googleMapsUrl,
+      sameAs: spot.googleMapsUrl,
       geo: {
         "@type": "GeoCoordinates",
         latitude: spot.map.location.lat,
@@ -271,11 +302,11 @@ const structuredData = {
       )}
 
       <section class="toolbar" aria-label="Spot filters">
-        <label class="filter-field" for="country-filter">
-          <span>Country</span>
-          <select id="country-filter" autocomplete="off">
-            <option value="">All countries</option>
-            {countryOptions.map((country) => <option value={country}>{country}</option>)}
+        <label class="filter-field" for="location-filter">
+          <span>{locationFilterLabel}</span>
+          <select id="location-filter" autocomplete="off">
+            <option value="">{locationFilterAllLabel}</option>
+            {locationOptions.map((option) => <option value={option.value}>{option.label}</option>)}
           </select>
         </label>
         <label class="filter-field" for="kind-filter">
@@ -306,7 +337,7 @@ const structuredData = {
           <article
             id={spot.id}
             class="spot-card"
-            data-country-list={spot.countries.join("|")}
+            data-location-list={getLocationValues(spot).join("|")}
             data-kind={spot.kind}
             data-cost-usd={spot.trip.costUsd}
             data-trip-days={spot.trip.days}
@@ -342,7 +373,7 @@ const structuredData = {
                 </div>
                 <a
                   class="maps-link"
-                  href={spot.map.googleMapsUrl}
+                  href={spot.googleMapsUrl}
                   target="_blank"
                   rel="noreferrer noopener"
                 >
@@ -351,7 +382,7 @@ const structuredData = {
               </div>
               <div class="badges" aria-label={`${spot.name} attributes`}>
                 <span>{spot.kind}</span>
-                <span>{spot.countries.join(" / ")}</span>
+                <span>{spot.region ?? spot.countries.join(" / ")}</span>
                 <span>{spot.access}</span>
                 <span>
                   {tripOriginLabel}: {spot.trip.days} days · {usdFormatter.format(spot.trip.costUsd)}
@@ -433,7 +464,7 @@ const structuredData = {
     });
   }
 
-  const countryFilter = document.querySelector("#country-filter");
+  const locationFilter = document.querySelector("#location-filter");
   const kindFilter = document.querySelector("#kind-filter");
   const sortSelect = document.querySelector("#sort-select");
   const resetFiltersButton = document.querySelector("#reset-filters");
@@ -454,19 +485,19 @@ const structuredData = {
       "'": "&#39;",
     })[character]);
 
-  const getVisibleSpots = (selectedCountry, selectedKind) =>
+  const getVisibleSpots = (selectedLocation, selectedKind) =>
     spotMapData.filter(
       (spot) =>
-        (!selectedCountry || spot.countries.includes(selectedCountry)) &&
+        (!selectedLocation || spot.locations.includes(selectedLocation)) &&
         (!selectedKind || spot.kind === selectedKind),
     );
 
-  const updateMapStatus = (selectedCountry, selectedKind) => {
+  const updateMapStatus = (selectedLocation, selectedKind) => {
     if (!mapStatus) return;
 
-    const visibleCount = getVisibleSpots(selectedCountry, selectedKind).length;
+    const visibleCount = getVisibleSpots(selectedLocation, selectedKind).length;
     const label = visibleCount === 1 ? "spot" : "spots";
-    const filterLabel = [selectedCountry, selectedKind].filter(Boolean).join(" · ");
+    const filterLabel = [selectedLocation, selectedKind].filter(Boolean).join(" · ");
     mapStatus.textContent = filterLabel
       ? `Showing ${visibleCount} ${label} for ${filterLabel}.`
       : `Showing all ${visibleCount} ${label}.`;
@@ -488,12 +519,12 @@ const structuredData = {
     spotsMap.fitBounds(bounds, 42);
   };
 
-  const syncMapMarkers = (selectedCountry, selectedKind) => {
-    updateMapStatus(selectedCountry, selectedKind);
+  const syncMapMarkers = (selectedLocation, selectedKind) => {
+    updateMapStatus(selectedLocation, selectedKind);
     if (!spotsMap) return;
 
     const visibleIds = new Set(
-      getVisibleSpots(selectedCountry, selectedKind).map((spot) => spot.id),
+      getVisibleSpots(selectedLocation, selectedKind).map((spot) => spot.id),
     );
     const visibleRecords = [];
 
@@ -570,20 +601,20 @@ const structuredData = {
   };
 
   const applyFilters = () => {
-    const selectedCountry = countryFilter?.value ?? "";
+    const selectedLocation = locationFilter?.value ?? "";
     const selectedKind = kindFilter?.value ?? "";
 
     for (const card of spotCards) {
-      const countries = card.dataset.countryList?.split("|") ?? [];
-      const countryMismatch =
-        Boolean(selectedCountry) && !countries.includes(selectedCountry);
+      const locations = card.dataset.locationList?.split("|") ?? [];
+      const locationMismatch =
+        Boolean(selectedLocation) && !locations.includes(selectedLocation);
       const kindMismatch =
         Boolean(selectedKind) && card.dataset.kind !== selectedKind;
-      card.hidden = countryMismatch || kindMismatch;
+      card.hidden = locationMismatch || kindMismatch;
     }
 
     syncCardOrderAndRanks();
-    syncMapMarkers(selectedCountry, selectedKind);
+    syncMapMarkers(selectedLocation, selectedKind);
   };
 
   const initMap = async () => {
@@ -623,11 +654,11 @@ const structuredData = {
     applyFilters();
   };
 
-  countryFilter?.addEventListener("change", applyFilters);
+  locationFilter?.addEventListener("change", applyFilters);
   kindFilter?.addEventListener("change", applyFilters);
   sortSelect?.addEventListener("change", applyFilters);
   resetFiltersButton?.addEventListener("click", () => {
-    if (countryFilter) countryFilter.value = "";
+    if (locationFilter) locationFilter.value = "";
     if (kindFilter) kindFilter.value = "";
     if (sortSelect) sortSelect.value = "score";
     applyFilters();
