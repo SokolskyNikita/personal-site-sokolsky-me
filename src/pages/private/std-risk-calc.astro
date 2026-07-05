@@ -117,6 +117,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 <strong id="condom-saved">-</strong>
               </div>
             </div>
+            <div class="comparison-row benefit-row">
+              <h3>Vaccines can reduce QALY impact by</h3>
+              <div class="comparison-value benefit">
+                <span>HPV-preventable burden</span>
+                <strong id="vaccine-benefit">-</strong>
+              </div>
+            </div>
             <div class="comparison-row">
               <h3>Odds of at least 1 pregnancy</h3>
               <div class="comparison-value without">
@@ -164,9 +171,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <h2>Assumptions</h2>
           </div>
           <ul>
-            <li>Each STI uses partner prevalence, transmission over the exposure window and sex-specific QALY loss per infection.</li>
+            <li>Each STI uses partner prevalence, transmission over the exposure window and sex-specific QALY loss per infection. The HPV-attributable oropharyngeal-cancer row is modeled as a lifetime-risk term, not a per-partner compounding event.</li>
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
-            <li>Pregnancy uses first-year failure rates: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, male condom 18%.</li>
+            <li>Pregnancy uses first-year failure rates: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
+            <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
             <li>Median children uses a simple binomial model over the same 10 years and assumes 50% of unintended pregnancies result in a child.</li>
             <li>Female pregnancy QALY uses 159 healthy days per unintended pregnancy from Schwarz et al. Male direct-health pregnancy QALY is 0, but pregnancy probability is still shown.</li>
             <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity and pregnancy utility.</li>
@@ -177,7 +185,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC contraception and HIV tables, NHANES HPV/HSV prevalence, Li et al. STI QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Winer NEJM genital HPV condom data and Schwarz et al. unintended-pregnancy utility.
+          This is a calculator, not a clinical forecast. It uses CDC contraception, HIV and HPV vaccination tables, NHANES HPV/HSV prevalence, Li et al. STI QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Winer NEJM genital HPV condom data and Schwarz et al. unintended-pregnancy utility.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -185,6 +193,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://www.cdc.gov/sti/about/about-sti-risk-and-oral-sex.html" target="_blank" rel="noreferrer noopener">CDC STI risk and oral sex</a></li>
           <li><a href="https://www.cdc.gov/sti-statistics/annual/index.html" target="_blank" rel="noreferrer noopener">CDC 2024 STI surveillance</a></li>
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db280.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HPV prevalence data brief</a></li>
+          <li><a href="https://www.cdc.gov/hpv/vaccines/index.html" target="_blank" rel="noreferrer noopener">CDC HPV vaccine prevention summary</a></li>
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db304.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HSV-1/HSV-2 prevalence data brief</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10112678/" target="_blank" rel="noreferrer noopener">QALYs lost from chlamydia, gonorrhea and trichomoniasis</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
@@ -202,18 +211,20 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const WEEKS_PER_QALY = DAYS_PER_QALY / 7;
       const PREGNANCY_QALY_DAYS = 159;
       const CHILD_PER_PREGNANCY = 0.5;
+      const HPV_VACCINE_EFFECTIVENESS = 0.9;
 
       const DISEASES = [
         {
-          name: "Oral HPV -> OPC",
-          route: "perPartner",
+          name: "HPV-attributable OPC",
+          route: "lifetime",
           repeatable: false,
-          note: "Oral exposure. Condoms do not change this term. Male OPC risk is much higher than female OPC risk.",
-          perPartner: {
+          note: "Approximate lifetime oropharyngeal-cancer burden. Condoms do not change this term; male OPC risk is much higher than female OPC risk.",
+          lifetimeRisk: {
             college: { female: 0.0035, male: 0.0095 },
             broad: { female: 0.0045, male: 0.011 }
           },
           condomEffectiveness: { female: 0, male: 0 },
+          vaccineEffectiveness: HPV_VACCINE_EFFECTIVENESS,
           qalyPerCase: { female: 0.025, male: 0.041 }
         },
         {
@@ -226,6 +237,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             broad: { female: 0.03, male: 0.027 }
           },
           condomEffectiveness: { female: 0.55, male: 0.55 },
+          vaccineEffectiveness: HPV_VACCINE_EFFECTIVENESS,
           qalyPerCase: { female: 0.012, male: 0.003 }
         },
         {
@@ -331,7 +343,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         implant: { label: "Contraceptive implant", annualFailure: 0.0005 }
       };
 
-      const CONDOM_ANNUAL_FAILURE = 0.18;
+      const CONDOM_ANNUAL_FAILURE = 0.02;
       const PREGNANCY_QALY_PER_CASE = {
         female: PREGNANCY_QALY_DAYS / DAYS_PER_QALY,
         male: 0
@@ -353,6 +365,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         noMedianChildren: document.querySelector("#no-median-children"),
         condomTotal: document.querySelector("#condom-total"),
         condomSaved: document.querySelector("#condom-saved"),
+        vaccineBenefit: document.querySelector("#vaccine-benefit"),
         condomPregRisk: document.querySelector("#condom-preg-risk"),
         condomMedianChildren: document.querySelector("#condom-median-children")
       };
@@ -383,6 +396,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return baseRisk * condomMultiplier;
       }
 
+      function lifetimeRisk(disease, perspective, withCondom, tier) {
+        const baseRisk = disease.lifetimeRisk[tier][perspective];
+        const condomMultiplier = withCondom ? 1 - disease.condomEffectiveness[perspective] : 1;
+        return baseRisk * condomMultiplier;
+      }
+
       function diseaseOutcome(disease, context, withCondom) {
         const perPartner = disease.route === "perAct"
           ? perActPartnerRisk(
@@ -393,8 +412,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               context.actsPerPartner,
               withCondom
             )
-          : perPartnerRisk(disease, context.perspective, withCondom, context.tier);
-        const probability = probabilityAcrossPartners(perPartner, context.partners);
+          : disease.route === "lifetime"
+            ? lifetimeRisk(disease, context.perspective, withCondom, context.tier)
+            : perPartnerRisk(disease, context.perspective, withCondom, context.tier);
+        const probability = disease.route === "lifetime"
+          ? perPartner
+          : probabilityAcrossPartners(perPartner, context.partners);
         const expectedCases = disease.repeatable ? perPartner * context.partners : probability;
         const qaly = expectedCases * disease.qalyPerCase[context.perspective];
 
@@ -488,6 +511,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             condomCases: condom.expectedCases,
             noCondom: noCondom.qaly,
             condom: condom.qaly,
+            vaccineBenefit: noCondom.qaly * (disease.vaccineEffectiveness ?? 0),
             benefit: noCondom.qaly - condom.qaly
           };
         });
@@ -517,7 +541,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const partners = clampPartners(partnersRange.value);
         const perspective = new FormData(form).get("perspective") || "female";
         const onlyCollege = collegeOnly.checked;
-        const noCondomBirthControl = BIRTH_CONTROL[birthControl.value] || BIRTH_CONTROL.pullout;
+        const birthControlKey = birthControl.value;
+        const noCondomBirthControl = BIRTH_CONTROL[birthControlKey] || BIRTH_CONTROL.pullout;
 
         partnersRange.value = String(partners);
         partnersNumber.value = String(partners);
@@ -525,6 +550,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const diseaseRows = calculateDiseaseTotals({ perspective, partners, onlyCollege });
         const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
         const condomSti = diseaseRows.reduce((total, row) => total + row.condom, 0);
+        const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
         const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure, perspective);
         const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE, perspective);
         const noCondomTotal = noCondomSti + noCondomPregnancy.qaly;
@@ -547,6 +573,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         setText(ids.condomTotal, weeksText(condomTotal));
         setText(ids.condomSaved, signedTimeText(benefit));
+        setText(ids.vaccineBenefit, weeksText(vaccineBenefit));
         setText(ids.condomPregRisk, percentText(condomPregnancy.probability));
         setText(ids.condomMedianChildren, String(condomPregnancy.medianChildren));
 
