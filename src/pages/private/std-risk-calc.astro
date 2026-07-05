@@ -61,7 +61,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </div>
             <input id="partners-range" name="partners-range" type="range" min="1" max="200" step="1" value="10" />
             <p class="hint">
-              STI exposure splits 3 acts/week across partners. Pregnancy treats each partner as a separate contraceptive-failure exposure.
+              STI exposure splits 3 acts/week across partners. Pregnancy projections use partner-level contraceptive failure with a post-pregnancy infertility window.
             </p>
           </div>
 
@@ -87,7 +87,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <section class="results" aria-live="polite" aria-label="Calculated results">
           <div class="headline">
             <div>
-              <p class="kicker">QALYs saved by using condoms</p>
+              <p class="kicker">STI QALYs saved by using condoms</p>
               <p class="headline-value" id="condom-benefit">-</p>
               <p class="headline-note" id="benefit-note">Waiting for inputs</p>
             </div>
@@ -100,7 +100,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
           <div class="comparison-grid">
             <div class="comparison-row">
-              <h3>Total lifetime healthy weeks lost</h3>
+              <h3>Total STI healthy weeks lost</h3>
               <div class="comparison-value without">
                 <span>Without condoms</span>
                 <strong id="no-total">-</strong>
@@ -111,7 +111,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               </div>
             </div>
             <div class="comparison-row benefit-row">
-              <h3>QALYs saved by using condoms</h3>
+              <h3>STI QALYs saved by using condoms</h3>
               <div class="comparison-value benefit">
                 <span>Compared with no condoms</span>
                 <strong id="condom-saved">-</strong>
@@ -153,11 +153,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="detail-grid">
         <article class="panel">
           <div class="section-heading">
-            <p class="eyebrow">Impact breakdown</p>
-            <h2>Lifetime healthy weeks lost by condition</h2>
+            <p class="eyebrow">STI breakdown</p>
+            <h2>Lifetime healthy weeks lost by disease</h2>
           </div>
           <div class="breakdown-head" aria-hidden="true">
-            <span>Condition</span>
+            <span>Disease</span>
             <span>Without condoms</span>
             <span>With condoms</span>
             <span>Benefit</span>
@@ -175,9 +175,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
             <li>Pregnancy uses first-year-equivalent failure rates per partner: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
-            <li>The impact breakdown includes pregnancy, so changes to the partner count reconcile with the total healthy weeks lost. Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
-            <li>Female pregnancy QALY uses 159 healthy days per unintended pregnancy from Schwarz et al. Male direct-health pregnancy QALY is 0, but pregnancy probability is still shown.</li>
-            <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity and pregnancy utility.</li>
+            <li>Pregnancy is shown separately and is excluded from QALY totals. Each pregnancy removes roughly 2 years from future pregnancy exposure while pregnant and breastfeeding; this is modeled as one shared fertility clock for female perspective and partner-specific clocks for male perspective.</li>
+            <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
+            <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity and pregnancy recurrence after birth/breastfeeding.</li>
           </ul>
         </aside>
       </section>
@@ -185,7 +185,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC contraception, HIV and HPV vaccination tables, NHANES HPV/HSV prevalence, Li et al. STI QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Winer NEJM genital HPV condom data and Schwarz et al. unintended-pregnancy utility.
+          This is a calculator, not a clinical forecast. It uses CDC contraception, HIV and HPV vaccination tables, NHANES HPV/HSV prevalence, Li et al. STI QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies and Winer NEJM genital HPV condom data.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -197,7 +197,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db304.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HSV-1/HSV-2 prevalence data brief</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10112678/" target="_blank" rel="noreferrer noopener">QALYs lost from chlamydia, gonorrhea and trichomoniasis</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
-          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2580059/" target="_blank" rel="noreferrer noopener">Unintended pregnancy utility / QALY study</a></li>
         </ul>
       </section>
     </main>
@@ -210,7 +209,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const BASELINE_PARTNERS = 10;
       const DAYS_PER_QALY = 365.25;
       const WEEKS_PER_QALY = DAYS_PER_QALY / 7;
-      const PREGNANCY_QALY_DAYS = 159;
+      const PREGNANCY_INFERTILE_YEARS = 2;
       const CHILD_PER_PREGNANCY = 0.5;
       const HPV_VACCINE_EFFECTIVENESS = 0.9;
 
@@ -346,10 +345,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       };
 
       const CONDOM_ANNUAL_FAILURE = 0.02;
-      const PREGNANCY_QALY_PER_CASE = {
-        female: PREGNANCY_QALY_DAYS / DAYS_PER_QALY,
-        male: 0
-      };
 
       const form = document.querySelector("#risk-controls");
       const partnersRange = document.querySelector("#partners-range");
@@ -426,16 +421,46 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return { perPartner, probability, expectedCases, qaly };
       }
 
+      function expectedPregnanciesWithSharedInfertility(annualFailure, partners) {
+        const cooldownSlots = Math.ceil((PREGNANCY_INFERTILE_YEARS / YEARS) * partners);
+        let states = new Array(cooldownSlots + 1).fill(0);
+        let expectedPregnancies = 0;
+        states[0] = 1;
+
+        for (let partnerIndex = 0; partnerIndex < partners; partnerIndex += 1) {
+          const nextStates = new Array(cooldownSlots + 1).fill(0);
+
+          states.forEach((probability, cooldown) => {
+            if (probability === 0) return;
+
+            if (cooldown > 0) {
+              nextStates[cooldown - 1] += probability;
+              return;
+            }
+
+            const pregnancyProbability = probability * annualFailure;
+            expectedPregnancies += pregnancyProbability;
+            nextStates[cooldownSlots] += pregnancyProbability;
+            nextStates[0] += probability * (1 - annualFailure);
+          });
+
+          states = nextStates;
+        }
+
+        return expectedPregnancies;
+      }
+
       function pregnancyFor(annualFailure, perspective, partners) {
-        const expectedPregnancies = annualFailure * partners;
+        const expectedPregnancies = perspective === "female"
+          ? expectedPregnanciesWithSharedInfertility(annualFailure, partners)
+          : annualFailure * partners;
         const atLeastOne = probabilityAcrossPartners(annualFailure, partners);
         const projectedChildren = expectedPregnancies * CHILD_PER_PREGNANCY;
 
         return {
           probability: atLeastOne,
           expected: expectedPregnancies,
-          projectedChildren,
-          qaly: expectedPregnancies * PREGNANCY_QALY_PER_CASE[perspective]
+          projectedChildren
         };
       }
 
@@ -516,18 +541,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           .join("");
       }
 
-      function pregnancyBreakdownRow(noCondomPregnancy, condomPregnancy, perspective) {
-        return {
-          name: "Pregnancy",
-          note: perspective === "female"
-            ? "Unintended-pregnancy health burden from the selected no-condom method versus perfect-use condoms."
-            : "Pregnancy odds are shown above; direct-health QALY burden is modeled as 0 for the male perspective.",
-          noCondom: noCondomPregnancy.qaly,
-          condom: condomPregnancy.qaly,
-          benefit: noCondomPregnancy.qaly - condomPregnancy.qaly
-        };
-      }
-
       function setText(node, text) {
         if (node) node.textContent = text;
       }
@@ -548,12 +561,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
         const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure, perspective, partners);
         const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE, perspective, partners);
-        const breakdownRows = [
-          ...diseaseRows,
-          pregnancyBreakdownRow(noCondomPregnancy, condomPregnancy, perspective)
-        ];
-        const noCondomTotal = noCondomSti + noCondomPregnancy.qaly;
-        const condomTotal = condomSti + condomPregnancy.qaly;
+        const noCondomTotal = noCondomSti;
+        const condomTotal = condomSti;
         const benefit = noCondomTotal - condomTotal;
         const actsPerPartner = TOTAL_ACTS / partners;
 
@@ -562,8 +571,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         setText(
           ids.benefitNote,
           benefit >= 0
-            ? `Using condoms saves ${weeksText(Math.abs(benefit))} of healthy time over this 10-year exposure window.`
-            : `Without condoms is lower here because ${noCondomBirthControl.label.toLowerCase()} prevents pregnancy better than condoms in this model.`
+            ? `Using condoms saves ${weeksText(Math.abs(benefit))} of STI-related healthy time. Pregnancy is excluded from QALY totals.`
+            : `Condoms add no modeled STI/QALY benefit in this input set. Pregnancy is excluded from QALY totals.`
         );
 
         setText(ids.noTotal, weeksText(noCondomTotal));
@@ -576,7 +585,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         setText(ids.condomPregRisk, percentText(condomPregnancy.probability));
         setText(ids.condomProjectedChildren, childrenText(condomPregnancy.projectedChildren));
 
-        renderBreakdown(breakdownRows);
+        renderBreakdown(diseaseRows);
       }
 
       partnersRange.addEventListener("input", () => {
