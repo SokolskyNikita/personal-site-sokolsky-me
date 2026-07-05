@@ -489,6 +489,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return "No modeled benefit";
       }
 
+      function childrenText(value) {
+        return value.toFixed(1);
+      }
+
       function calculateDiseaseTotals({ perspective, partners, onlyCollege }) {
         const context = {
           perspective,
@@ -569,13 +573,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         setText(ids.noTotal, weeksText(noCondomTotal));
         setText(ids.noPregRisk, percentText(noCondomPregnancy.probability));
-        setText(ids.noMedianChildren, String(noCondomPregnancy.medianChildren));
+        setText(ids.noMedianChildren, childrenText(noCondomPregnancy.medianChildren));
 
         setText(ids.condomTotal, weeksText(condomTotal));
         setText(ids.condomSaved, signedTimeText(benefit));
         setText(ids.vaccineBenefit, weeksText(vaccineBenefit));
         setText(ids.condomPregRisk, percentText(condomPregnancy.probability));
-        setText(ids.condomMedianChildren, String(condomPregnancy.medianChildren));
+        setText(ids.condomMedianChildren, childrenText(condomPregnancy.medianChildren));
 
         renderBreakdown(diseaseRows);
       }
