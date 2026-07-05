@@ -878,6 +878,11 @@ const sections = [
     ],
   },
 ];
+
+const totalSkincareItemCount = sections.reduce(
+  (count, section) => count + section.items.length,
+  0,
+);
 ---
 
 <!doctype html>
@@ -905,6 +910,8 @@ const sections = [
       <p><a href="/">sokolsky.me</a></p>
 
       <h1>{pageTitle}</h1>
+
+      <p class="count">{totalSkincareItemCount} skincare items</p>
 
       <p>
         Current skincare inventory from Ari's photos and notes, compiled July 2026.
@@ -997,7 +1004,7 @@ const sections = [
     margin: 2rem 0 0.7rem;
     padding-top: 1rem;
     border-top: 1px solid var(--border);
-    font-size: 1.05rem;
+    font-size: 1.155rem;
     line-height: 1.2;
   }
 
@@ -1031,6 +1038,12 @@ const sections = [
 
   .links {
     margin-bottom: 0.55rem;
+  }
+
+  .count {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 600;
   }
 
   .small {
