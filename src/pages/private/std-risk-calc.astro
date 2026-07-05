@@ -61,7 +61,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </div>
             <input id="partners-range" name="partners-range" type="range" min="1" max="200" step="1" value="10" />
             <p class="hint">
-              Total sex frequency stays fixed at 3 times/week. More partners means fewer acts per partner.
+              STI exposure splits 3 acts/week across partners. Pregnancy treats each partner as a separate contraceptive-failure exposure.
             </p>
           </div>
 
@@ -173,9 +173,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <ul>
             <li>Each STI uses partner prevalence, transmission over the exposure window and sex-specific QALY loss per infection. The HPV-attributable oropharyngeal-cancer row is modeled as a lifetime-risk term, not a per-partner compounding event.</li>
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
-            <li>Pregnancy uses first-year failure rates: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
+            <li>Pregnancy uses first-year-equivalent failure rates per partner: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
-            <li>Projected children uses expected pregnancies over the same 10 years and assumes 50% of unintended pregnancies result in a child.</li>
+            <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
             <li>Female pregnancy QALY uses 159 healthy days per unintended pregnancy from Schwarz et al. Male direct-health pregnancy QALY is 0, but pregnancy probability is still shown.</li>
             <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity and pregnancy utility.</li>
           </ul>
@@ -424,9 +424,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return { perPartner, probability, expectedCases, qaly };
       }
 
-      function pregnancyFor(annualFailure, perspective) {
-        const expectedPregnancies = annualFailure * YEARS;
-        const atLeastOne = 1 - Math.pow(1 - annualFailure, YEARS);
+      function pregnancyFor(annualFailure, perspective, partners) {
+        const expectedPregnancies = annualFailure * partners;
+        const atLeastOne = probabilityAcrossPartners(annualFailure, partners);
         const projectedChildren = expectedPregnancies * CHILD_PER_PREGNANCY;
 
         return {
@@ -532,8 +532,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
         const condomSti = diseaseRows.reduce((total, row) => total + row.condom, 0);
         const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
-        const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure, perspective);
-        const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE, perspective);
+        const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure, perspective, partners);
+        const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE, perspective, partners);
         const noCondomTotal = noCondomSti + noCondomPregnancy.qaly;
         const condomTotal = condomSti + condomPregnancy.qaly;
         const benefit = noCondomTotal - condomTotal;
