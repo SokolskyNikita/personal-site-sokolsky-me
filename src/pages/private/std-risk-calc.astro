@@ -171,7 +171,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <h2>Assumptions</h2>
           </div>
           <ul>
-            <li>Each STI uses partner prevalence, transmission over the exposure window and sex-specific QALY loss per infection. The HPV-attributable oropharyngeal-cancer row is modeled as a lifetime-risk term, not a per-partner compounding event.</li>
+            <li>Each STI uses partner prevalence, transmission over the exposure window and sex-specific QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
             <li>Pregnancy uses first-year-equivalent failure rates per partner: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
@@ -207,6 +207,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const ACTS_PER_WEEK = 3;
       const WEEKS_PER_YEAR = 52;
       const TOTAL_ACTS = YEARS * WEEKS_PER_YEAR * ACTS_PER_WEEK;
+      const BASELINE_PARTNERS = 10;
       const DAYS_PER_QALY = 365.25;
       const WEEKS_PER_QALY = DAYS_PER_QALY / 7;
       const PREGNANCY_QALY_DAYS = 159;
@@ -218,7 +219,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HPV-attributable OPC",
           route: "lifetime",
           repeatable: false,
-          note: "Approximate lifetime oropharyngeal-cancer burden. Condoms do not change this term; male OPC risk is much higher than female OPC risk.",
+          note: "Approximate lifetime oropharyngeal-cancer burden, calibrated to the default partner count. Condoms do not change this term; male OPC risk is much higher than female OPC risk.",
+          baselinePartners: BASELINE_PARTNERS,
           lifetimeRisk: {
             college: { female: 0.0035, male: 0.0095 },
             broad: { female: 0.0045, male: 0.011 }
@@ -398,8 +400,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       function lifetimeRisk(disease, perspective, withCondom, tier) {
         const baseRisk = disease.lifetimeRisk[tier][perspective];
+        const baselinePartners = disease.baselinePartners ?? BASELINE_PARTNERS;
+        const perPartnerEquivalent = 1 - Math.pow(1 - baseRisk, 1 / baselinePartners);
         const condomMultiplier = withCondom ? 1 - disease.condomEffectiveness[perspective] : 1;
-        return baseRisk * condomMultiplier;
+        return perPartnerEquivalent * condomMultiplier;
       }
 
       function diseaseOutcome(disease, context, withCondom) {
@@ -415,9 +419,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           : disease.route === "lifetime"
             ? lifetimeRisk(disease, context.perspective, withCondom, context.tier)
             : perPartnerRisk(disease, context.perspective, withCondom, context.tier);
-        const probability = disease.route === "lifetime"
-          ? perPartner
-          : probabilityAcrossPartners(perPartner, context.partners);
+        const probability = probabilityAcrossPartners(perPartner, context.partners);
         const expectedCases = disease.repeatable ? perPartner * context.partners : probability;
         const qaly = expectedCases * disease.qalyPerCase[context.perspective];
 
