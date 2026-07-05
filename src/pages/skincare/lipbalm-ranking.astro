@@ -705,48 +705,85 @@ const structuredData = {
         <a class="home-link" href="/">Nikita Sokolsky</a>
         <p class="eyebrow">Skincare notes</p>
         <h1>{pageTitle}</h1>
-        <p class="summary">
-          Each product scored 0-10 on four repair criteria; the rank is the weighted
-          total, not brand reputation.
-        </p>
       </header>
 
-      <section class="ranking" aria-labelledby="ranking-heading">
-        <h2 id="ranking-heading">Ranking</h2>
-        <p class="methodology">
-          Scoring: <strong>barrier repair</strong> ({weightPercent("barrier")}) - how
-          strongly the base seals cracked lips against water loss, where
-          petrolatum-heavy ointments set the ceiling; <strong>healing actives</strong>
-          ({weightPercent("actives")}) - clinical evidence behind ingredients such as
-          dexpanthenol, 1% hydrocortisone, lanolin, and urea;
-          <strong>irritant-free</strong> ({weightPercent("irritantFree")}) - penalized
-          for fragrance, flavor, menthol, camphor, phenol, and salicylic acid;
-          <strong>daily use</strong> ({weightPercent("dailyUse")}) - safe to use
-          indefinitely, which caps the steroid rescue balms.
-        </p>
+      <section class="ranking" aria-label="Ranking">
         <div class="table-wrap">
-          <table>
+          <table class="sortable-table">
             <thead>
               <tr>
-                <th scope="col" class="rank-column">Rank</th>
-                <th scope="col">Product</th>
-                <th scope="col">Region</th>
-                <th scope="col">Type</th>
-                <th scope="col">Key ingredients</th>
-                <th scope="col" class="score-column">
-                  Barrier repair <span class="weight">{weightPercent("barrier")}</span>
+                <th
+                  scope="col"
+                  class="rank-column"
+                  data-sort-type="number"
+                  data-sort-default="ascending"
+                >
+                  <button type="button" class="sort-button">Rank</button>
                 </th>
-                <th scope="col" class="score-column">
-                  Healing actives <span class="weight">{weightPercent("actives")}</span>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Product</button>
                 </th>
-                <th scope="col" class="score-column">
-                  Irritant-free <span class="weight">{weightPercent("irritantFree")}</span>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Region</button>
                 </th>
-                <th scope="col" class="score-column">
-                  Daily use <span class="weight">{weightPercent("dailyUse")}</span>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Type</button>
                 </th>
-                <th scope="col" class="score-column">Score</th>
-                <th scope="col">Best for</th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Key ingredients</button>
+                </th>
+                <th
+                  scope="col"
+                  class="score-column"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">
+                    Barrier repair
+                  </button>
+                </th>
+                <th
+                  scope="col"
+                  class="score-column"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">
+                    Healing actives
+                  </button>
+                </th>
+                <th
+                  scope="col"
+                  class="score-column"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">
+                    Irritant-free
+                  </button>
+                </th>
+                <th
+                  scope="col"
+                  class="score-column"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">
+                    Daily use
+                  </button>
+                </th>
+                <th
+                  scope="col"
+                  class="score-column"
+                  aria-sort="descending"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">Score</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Best for</button>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -777,8 +814,112 @@ const structuredData = {
             </tbody>
           </table>
         </div>
+        <aside class="methodology" aria-label="Scoring criteria">
+          <p class="methodology-title">Scoring criteria</p>
+          <ul class="criteria-list">
+            <li>
+              <strong>Barrier repair</strong> ({weightPercent("barrier")}) - how strongly
+              the base seals cracked lips against water loss, where petrolatum-heavy
+              ointments set the ceiling.
+            </li>
+            <li>
+              <strong>Healing actives</strong> ({weightPercent("actives")}) - clinical
+              evidence behind ingredients such as dexpanthenol, 1% hydrocortisone,
+              lanolin, and urea.
+            </li>
+            <li>
+              <strong>Irritant-free</strong> ({weightPercent("irritantFree")}) -
+              penalized for fragrance, flavor, menthol, camphor, phenol, and salicylic
+              acid.
+            </li>
+            <li>
+              <strong>Daily use</strong> ({weightPercent("dailyUse")}) - safe to use
+              indefinitely, which caps the steroid rescue balms.
+            </li>
+          </ul>
+        </aside>
       </section>
     </main>
+    <script>
+      const sortableTable = document.querySelector<HTMLTableElement>(".sortable-table");
+
+      if (sortableTable) {
+        const sortableHeaders = Array.from(
+          sortableTable.querySelectorAll<HTMLTableCellElement>("th[data-sort-type]"),
+        );
+        const tableBody = sortableTable.tBodies[0];
+        let currentSort = { columnIndex: 9, direction: "descending" };
+
+        const normalizeText = (value: string): string =>
+          value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+
+        const getCellValue = (row: HTMLTableRowElement, columnIndex: number): string =>
+          row.cells[columnIndex]?.textContent ?? "";
+
+        const compareRows = (
+          firstRow: HTMLTableRowElement,
+          secondRow: HTMLTableRowElement,
+          columnIndex: number,
+          sortType: string,
+          direction: string,
+        ): number => {
+          const multiplier = direction === "ascending" ? 1 : -1;
+          const firstValue = getCellValue(firstRow, columnIndex);
+          const secondValue = getCellValue(secondRow, columnIndex);
+
+          if (sortType === "number") {
+            const firstNumber = Number.parseFloat(firstValue);
+            const secondNumber = Number.parseFloat(secondValue);
+
+            if (Number.isNaN(firstNumber) && Number.isNaN(secondNumber)) return 0;
+            if (Number.isNaN(firstNumber)) return 1;
+            if (Number.isNaN(secondNumber)) return -1;
+
+            return (firstNumber - secondNumber) * multiplier;
+          }
+
+          return (
+            normalizeText(firstValue).localeCompare(normalizeText(secondValue), undefined, {
+              numeric: true,
+              sensitivity: "base",
+            }) * multiplier
+          );
+        };
+
+        const updateSortState = (
+          activeHeader: HTMLTableCellElement,
+          direction: string,
+        ): void => {
+          sortableHeaders.forEach((header) => header.removeAttribute("aria-sort"));
+          activeHeader.setAttribute("aria-sort", direction);
+        };
+
+        sortableHeaders.forEach((header) => {
+          const button = header.querySelector<HTMLButtonElement>(".sort-button");
+
+          button?.addEventListener("click", () => {
+            const columnIndex = header.cellIndex;
+            const sortType = header.dataset.sortType ?? "text";
+            const defaultDirection =
+              header.dataset.sortDefault ?? (sortType === "number" ? "descending" : "ascending");
+            const direction =
+              currentSort.columnIndex === columnIndex && currentSort.direction === defaultDirection
+                ? defaultDirection === "ascending"
+                  ? "descending"
+                  : "ascending"
+                : defaultDirection;
+
+            const sortedRows = Array.from(tableBody.rows).sort((firstRow, secondRow) =>
+              compareRows(firstRow, secondRow, columnIndex, sortType, direction),
+            );
+
+            tableBody.append(...sortedRows);
+            currentSort = { columnIndex, direction };
+            updateSortState(header, direction);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
 
@@ -893,14 +1034,27 @@ const structuredData = {
 
   .methodology {
     max-width: 118ch;
-    margin: 0 0 0.6rem;
+    margin: 0.75rem 0 0;
     color: var(--muted);
     font-size: 0.82rem;
+  }
+
+  .methodology-title {
+    margin: 0 0 0.34rem;
+    color: var(--text);
+    font-weight: 860;
   }
 
   .methodology strong {
     color: var(--text);
     font-weight: 760;
+  }
+
+  .criteria-list {
+    display: grid;
+    gap: 0.24rem;
+    margin: 0;
+    padding-left: 1.1rem;
   }
 
   .table-wrap {
@@ -941,6 +1095,48 @@ const structuredData = {
     font-weight: 860;
     letter-spacing: 0.07em;
     text-transform: uppercase;
+  }
+
+  .sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.24rem;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+  }
+
+  .sort-button::after {
+    content: "";
+    color: var(--accent);
+    font-size: 0.62rem;
+    line-height: 1;
+  }
+
+  th[aria-sort="ascending"] .sort-button::after {
+    content: "▲";
+  }
+
+  th[aria-sort="descending"] .sort-button::after {
+    content: "▼";
+  }
+
+  .score-column .sort-button {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .sort-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 0.18rem;
+    border-radius: 0.2rem;
   }
 
   td {
