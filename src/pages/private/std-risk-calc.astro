@@ -153,11 +153,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="detail-grid">
         <article class="panel">
           <div class="section-heading">
-            <p class="eyebrow">STI breakdown</p>
-            <h2>Lifetime healthy weeks lost by disease</h2>
+            <p class="eyebrow">Impact breakdown</p>
+            <h2>Lifetime healthy weeks lost by condition</h2>
           </div>
           <div class="breakdown-head" aria-hidden="true">
-            <span>Disease</span>
+            <span>Condition</span>
             <span>Without condoms</span>
             <span>With condoms</span>
             <span>Benefit</span>
@@ -175,7 +175,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
             <li>Pregnancy uses first-year-equivalent failure rates per partner: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
-            <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
+            <li>The impact breakdown includes pregnancy, so changes to the partner count reconcile with the total healthy weeks lost. Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
             <li>Female pregnancy QALY uses 159 healthy days per unintended pregnancy from Schwarz et al. Male direct-health pregnancy QALY is 0, but pregnancy probability is still shown.</li>
             <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity and pregnancy utility.</li>
           </ul>
@@ -516,6 +516,18 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           .join("");
       }
 
+      function pregnancyBreakdownRow(noCondomPregnancy, condomPregnancy, perspective) {
+        return {
+          name: "Pregnancy",
+          note: perspective === "female"
+            ? "Unintended-pregnancy health burden from the selected no-condom method versus perfect-use condoms."
+            : "Pregnancy odds are shown above; direct-health QALY burden is modeled as 0 for the male perspective.",
+          noCondom: noCondomPregnancy.qaly,
+          condom: condomPregnancy.qaly,
+          benefit: noCondomPregnancy.qaly - condomPregnancy.qaly
+        };
+      }
+
       function setText(node, text) {
         if (node) node.textContent = text;
       }
@@ -536,6 +548,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
         const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure, perspective, partners);
         const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE, perspective, partners);
+        const breakdownRows = [
+          ...diseaseRows,
+          pregnancyBreakdownRow(noCondomPregnancy, condomPregnancy, perspective)
+        ];
         const noCondomTotal = noCondomSti + noCondomPregnancy.qaly;
         const condomTotal = condomSti + condomPregnancy.qaly;
         const benefit = noCondomTotal - condomTotal;
@@ -560,7 +576,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         setText(ids.condomPregRisk, percentText(condomPregnancy.probability));
         setText(ids.condomProjectedChildren, childrenText(condomPregnancy.projectedChildren));
 
-        renderBreakdown(diseaseRows);
+        renderBreakdown(breakdownRows);
       }
 
       partnersRange.addEventListener("input", () => {
