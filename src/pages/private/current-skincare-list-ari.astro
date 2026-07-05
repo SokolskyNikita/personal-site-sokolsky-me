@@ -1,0 +1,1049 @@
+---
+export const prerender = true;
+
+const pageTitle = "Current skincare list - Ari";
+const pageDescription =
+  "Private current skincare inventory for Ari, compiled from photos and notes with product comments, ingredient anchors, and lookup links.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+const googleSearch = (query: string) => ({
+  label: "Google search",
+  url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+});
+
+const mercadoLibreSearch = (query: string) => ({
+  label: "Mercado Libre search",
+  url: `https://listado.mercadolibre.com.ar/${encodeURIComponent(query).replace(/%20/g, "-")}`,
+});
+
+const amazonSearch = (query: string) => ({
+  label: "Amazon search",
+  url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+});
+
+const sections = [
+  {
+    title: "Face moisturisers and barrier creams",
+    items: [
+      {
+        name: "Irene Bermejo moisturiser",
+        descriptor:
+          "Benchmark moisturiser. Best one tried so far for deep moisture, calming, and skin-barrier recovery. Heavy, so not for every climate.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+          {
+            label: "WhatsApp clinic",
+            url: "https://wa.me/5491157804080",
+          },
+          mercadoLibreSearch("Irene Bermejo humectacion intensa"),
+        ],
+        ingredients:
+          "Exact old preferred formula not publicly verified. Current Irene Bermejo hydrating creams vary by product; treat the package label as the source of truth.",
+        ingredientsNote:
+          "Keep this as the reference target when comparing barrier-repair moisturisers.",
+      },
+      {
+        name: "Bioderma Hydrabio Creme Rich / Creme Riche",
+        descriptor:
+          "Overall great for deep moisture while using acids. Excellent for fixing the skin barrier after strong acids or when much hydration is needed. In AM it does not leave the face greasy, but it is not matte either; on oily skin use mostly at night.",
+        buy: [
+          {
+            label: "Bioderma UK",
+            url: "https://www.bioderma.co.uk/our-products/hydrabio/cream-rich",
+          },
+          {
+            label: "Bioderma US",
+            url: "https://www.bioderma.us/en/p/hydrabio-rich.html",
+          },
+          mercadoLibreSearch("Bioderma Hydrabio Creme Rich"),
+        ],
+        ingredients:
+          "Recent/public formulas center on glycerin, niacinamide, squalane, sodium hyaluronate, biomimetic lipids, and Bioderma Aquagenium technology. One verified EU list includes Aqua/Water/Eau, Glycerin, Triethylhexanoin, Tridecyl Trimellitate, C10-18 Triglycerides, Cetyl Palmitate, Glyceryl Behenate, Lauroyl Lysine, Niacinamide, Pentylene Glycol, Squalane, Sunflower Seed Wax, Polyglyceryl-3 Methylglucose Distearate, Propylene Glycol, Arachidyl Alcohol, Carbomer, Fragrance, Glyceryl Caprylate/Caprate, Behenyl Alcohol, Caprylyl Glycol, Fructooligosaccharides, Sodium Citrate, Arachidyl Glucoside, Mannitol, Xylitol, Hexyldecanol, Sodium PCA, Citric Acid, Sodium Hyaluronate, Saccharide Isomerate, Apple Seed Extract, Rapeseed Sterols, Tocopherol.",
+        ingredientsNote:
+          "Bioderma publishes country-specific formulas; check the exact box if buying in Argentina or Europe.",
+      },
+      {
+        name: "Mixsoon Bifida Cream",
+        descriptor:
+          "Fine but not impressive. Does not help much with barrier recovery. Better for night time.",
+        buy: [
+          {
+            label: "Mixsoon global",
+            url: "https://mixsoon.us/products/bifida-cream",
+          },
+          amazonSearch("mixsoon bifida cream"),
+          mercadoLibreSearch("mixsoon bifida cream"),
+        ],
+        ingredients:
+          "Core ingredients commonly listed: Bifida Ferment Extract, Water, Glycerin, Butylene Glycol, Hydrogenated Polydecene, Cetearyl Alcohol, Squalane, Panthenol, Ceramide NP, Cholesterol, fatty acids, and preservative/emulsifier system.",
+        ingredientsNote:
+          "Formula lists vary by retailer; check jar/box for the current batch.",
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Cream",
+        descriptor:
+          "Good daytime moisture, almost matte finish, and good with acids underneath. Better suited to dry climate. Not good enough when the skin barrier is compromised.",
+        buy: [
+          {
+            label: "SKIN1004",
+            url: "https://www.skin1004.com/products/skin1004-madagascar-centella-cream",
+          },
+          amazonSearch("SKIN1004 Madagascar Centella Cream"),
+          mercadoLibreSearch("SKIN1004 Madagascar Centella Cream"),
+        ],
+        ingredients:
+          "Common INCI anchor: Centella Asiatica Extract, Water, Glycerin, Caprylic/Capric Triglyceride, Cetearyl Alcohol, Stearic Acid, Glyceryl Stearate, Arginine, Panthenol, Niacinamide, and centella actives such as Madecassoside/Asiaticoside depending on version.",
+        ingredientsNote:
+          "The label in the photo is the 75 ml Madagascar Centella Cream tube.",
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Probio-Cica Enrich Cream",
+        descriptor:
+          "Heavier than the regular Centella Cream. Leaves a light brightness/glow and gives okay moisture, but still does not recover a compromised barrier well.",
+        buy: [
+          {
+            label: "YesStyle",
+            url: "https://us.yesstyle.com/en/skin1004-madagascar-centella-probio-cica-enrich-cream-50ml/info.html/pid.1120208637",
+          },
+          {
+            label: "iHerb",
+            url: "https://www.iherb.com/pr/skin1004-madagascar-centella-probio-cica-enrich-cream-1-69-fl-oz-50-ml/122911",
+          },
+          mercadoLibreSearch("SKIN1004 Probio-Cica Enrich Cream"),
+        ],
+        ingredients:
+          "Centella Asiatica Extract, Glycerin, Diglycerin, 1,2-Hexanediol, Butylene Glycol, Niacinamide, Water, Polyglyceryl-3 Distearate, Caprylic/Capric Triglyceride, Neopentyl Glycol Diheptanoate, Isostearyl Isostearate, Pentaerythrityl Tetraisostearate, Hydrogenated Poly(C6-14 Olefin), Heptyl Undecylenate, Lactobacillus/Centella Asiatica Extract Ferment Filtrate, Bis-Diglyceryl Polyacyladipate-2, Glyceryl Stearate, C14-22 Alcohols, Cetearyl Alcohol, Shea Butter, Arginine, Squalane, Macadamia Seed Oil, Sodium Hyaluronate, Moringa Seed Oil, Ceramide NP, Phytosphingosine, Madecassic Acid, Asiaticoside, Asiatic Acid, Polyglutamic Acid.",
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Poremizing Light Gel Cream",
+        descriptor:
+          "AM: with glycolic acid underneath it does not sting; gel texture is very nice and light. Too shiny after SPF and leaves residue through the day. Not hydrating enough when using acids.",
+        buy: [
+          {
+            label: "SKIN1004",
+            url: "https://www.skin1004.com/products/poremizing-light-gel-cream",
+          },
+          {
+            label: "Ulta",
+            url: "https://www.ulta.com/p/madagascar-centella-poremizing-light-gel-cream-pimprod2045886",
+          },
+          mercadoLibreSearch("SKIN1004 Poremizing Light Gel Cream"),
+        ],
+        ingredients:
+          "Water, Propanediol, Aloe Barbadensis Leaf Extract, 1,2-Hexanediol, Niacinamide, Glycerin, Xylitol, Butylene Glycol, Centella Asiatica Extract, Carbomer, Tromethamine, Sodium Polyacryloyldimethyl Taurate, Biosaccharide Gum-1, Betaine, PVP, Sedum Sarmentosum Extract, Hydrogenated Polydecene, Ethylhexylglycerin, Adenosine, Hydroxyethylcellulose, plant extracts, Sea Water, Panthenol, Hyaluronic Acid, Hydrolyzed Hyaluronic Acid, Sodium Hyaluronate, Witch Hazel Leaf Water, Chamaecyparis Obtusa Water, Allantoin, Kaolin, Mineral Salts.",
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Soothing Cream",
+        descriptor:
+          "Gel-like, brownish color, okay absorption. Leaves skin hydrated and glass-skin shiny. Good hydration after acids plus Eno Bright. Not as calming as a normal cream.",
+        buy: [
+          {
+            label: "SKIN1004",
+            url: "https://www.skin1004.com/products/skin1004-madagascar-centella-soothing-cream",
+          },
+          amazonSearch("SKIN1004 Madagascar Centella Soothing Cream"),
+          mercadoLibreSearch("SKIN1004 Madagascar Centella Soothing Cream"),
+        ],
+        ingredients:
+          "Centella Asiatica Extract, Water, Glycerin, Butylene Glycol, 1,2-Hexanediol, Cetearyl Alcohol, Betaine, Panthenol, Carbomer, Tromethamine, Squalane, Sodium Hyaluronate, Ceramide NP, Cholesterol, Phytosphingosine, and centella-derived soothing components depending on batch.",
+        ingredientsNote:
+          "Ingredient lists vary by retailer; verify exact jar/tube label.",
+      },
+      {
+        name: "Laneige Water Bank Blue Hyaluronic Moisture Cream",
+        descriptor:
+          "AM with glycolic 4% plus Eno Bright: no stinging, light texture, good hydration.",
+        buy: [
+          {
+            label: "Laneige US",
+            url: "https://us.laneige.com/products/water-bank-blue-hyaluronic-cream-moisturizer",
+          },
+          amazonSearch("Laneige Water Bank Blue Hyaluronic Moisture Cream"),
+          mercadoLibreSearch("Laneige Water Bank Blue Hyaluronic Moisture Cream"),
+        ],
+        ingredients:
+          "A public Water Bank Blue Hyaluronic Moisture Cream list includes Water/Aqua/Eau, Propanediol, Glycerin, Meadowfoam Seed Oil, Betaine, Behenyl Alcohol, 1,2-Hexanediol, Carbomer, Tromethamine, Jojoba Esters, Arachidyl Alcohol, Glyceryl Caprylate, Butylene Glycol, Ethylhexylglycerin, Disodium EDTA, Arachidyl Glucoside, Mentha Arvensis Leaf Extract, Fragrance, Hydrolyzed Hyaluronic Acid, Malachite Extract, Aureobasidium Pullulans Ferment, Tocopherol, Undaria Pinnatifida Extract.",
+        ingredientsNote:
+          "Laneige has renamed/renewed Water Bank creams by market, so match the blue hyaluronic moisture cream packaging.",
+      },
+      {
+        name: "Bioderma Hydrabio Creme Rich Moisturising Care",
+        descriptor:
+          "Same Bioderma Hydrabio rich moisturiser family as above; screenshot note says any product underneath causes residue when touching the face and white cast when reapplying SPF, but it is very calming and barrier-repairing.",
+        buy: [
+          {
+            label: "Bioderma UK",
+            url: "https://www.bioderma.co.uk/our-products/hydrabio/cream-rich",
+          },
+          mercadoLibreSearch("Bioderma Hydrabio Rich"),
+        ],
+        ingredients:
+          "Glycerin, hyaluronic acid/sodium hyaluronate, niacinamide, squalane or biomimetic lipids, and Bioderma Aquagenium-style hydration complex depending on regional version.",
+        ingredientsNote:
+          "Kept as a separate item because it appears separately in the screenshot notes.",
+      },
+      {
+        name: "Cetaphil Optimal Hydration Creme de Jour Revitalisante",
+        descriptor:
+          "Light. With nothing underneath it is okay. With glycolic or retinoic acid underneath it stings and leaves the face red. Mild hydration, not very hydrating.",
+        buy: [
+          googleSearch("Cetaphil Optimal Hydration Creme de Jour Revitalisante"),
+          amazonSearch("Cetaphil Optimal Hydration daily glow cream"),
+          mercadoLibreSearch("Cetaphil Optimal Hydration crema dia revitalizante"),
+        ],
+        ingredients:
+          "Usually built around water, glycerin, emollients/silicones, niacinamide, panthenol, hydrolyzed hyaluronic acid or sodium hyaluronate, and Cetaphil's hydration complex. Exact EU/LatAm INCI should be checked on the jar/box.",
+      },
+      {
+        name: "Neutrogena Hydro Boost Aqua Intensivpflege",
+        descriptor:
+          "Not really like Hydro Boost in performance. Feels heavy when spreading and does not hydrate much. Stings and does not help with or without acids.",
+        buy: [
+          googleSearch("Neutrogena Hydro Boost Aqua Intensivpflege ingredients"),
+          amazonSearch("Neutrogena Hydro Boost Aqua Intensivpflege"),
+          mercadoLibreSearch("Neutrogena Hydro Boost aqua gel crema"),
+        ],
+        ingredients:
+          "Hydro Boost face formulas commonly center on water, glycerin, dimethicone/silicones, synthetic wax/emollients, sodium hyaluronate, carbomer, preservatives, fragrance, and blue colorants depending on country.",
+        ingredientsNote:
+          "German/EU naming and formulas vary; use the exact jar/tube label if replacing.",
+      },
+      {
+        name: "Laneige Cica Sleeping Mask",
+        descriptor:
+          "Light. PM without acids gives good hydration and works for dry/sensitive skin. Woke up with skin looking very bright and nice.",
+        buy: [
+          {
+            label: "Laneige US",
+            url: "https://us.laneige.com/products/cica-sleeping-mask",
+          },
+          amazonSearch("Laneige Cica Sleeping Mask"),
+          mercadoLibreSearch("Laneige Cica Sleeping Mask"),
+        ],
+        ingredients:
+          "Water, Glycerin, Butylene Glycol, Propanediol, Squalane, Panthenol, Cetearyl Alcohol, Shea Butter, Forest Yeast/Ferment or cica-focused soothing complex depending on version, plus emulsifiers, thickeners, and preservatives.",
+        ingredientsNote:
+          "Laneige cica mask formulas have changed; verify current packaging.",
+      },
+      {
+        name: "Jumiso Snail EX Ultimate Barrier Facial Cream",
+        descriptor:
+          "Very good skin-barrier recovery. PM after retinoic acid plus hyaluronic acid works very well as hydration. Less sticky than COSRX Snail 96, still a little sticky but easy to spread. Good hydration and no pimples.",
+        buy: [
+          {
+            label: "YesStyle",
+            url: "https://www.yesstyle.com/en/jumiso-snail-ex-ultimate-barrier-facial-cream-100ml/info.html/pid.1122324701",
+          },
+          amazonSearch("Jumiso Snail EX Ultimate Barrier Facial Cream"),
+          mercadoLibreSearch("Jumiso Snail EX Ultimate Barrier Facial Cream"),
+        ],
+        ingredients:
+          "Snail Secretion Filtrate (85.48%), Caprylic/Capric Triglyceride, Glycerin, Dipropylene Glycol, 1,2-Hexanediol, Cetearyl Alcohol, Cetearyl Olivate, Sorbitan Olivate, Hydrolyzed Hibiscus Esculentus Extract, Lupinus Albus Seed Extract, Moringa Oleifera Seed Extract, Sodium Hyaluronate, Water, Dimethicone, Sodium Polyacrylate, Palmitic Acid, Tromethamine, Stearic Acid, Ethylhexylglycerin, Adenosine, Allantoin, Betaine, Myristic Acid, Arachidic Acid, Lauric Acid, Oleic Acid, Tocopherol, Carbomer, Xanthan Gum, Phenoxyethanol.",
+      },
+      {
+        name: "Sulwhasoo Concentrated Ginseng Renewing Cream",
+        descriptor:
+          "Very light with a nice light fragrance. PM: does not sting over acids. Okay hydration with mild acid, not enough for retinoic acid 0.025%. With Vichy Mineral 89 it is okay but still not dense enough; needs one more moisturizing touch.",
+        buy: [
+          {
+            label: "Sulwhasoo US",
+            url: "https://us.sulwhasoo.com/products/concentrated-ginseng-renewing-cream",
+          },
+          amazonSearch("Sulwhasoo Concentrated Ginseng Renewing Cream"),
+          mercadoLibreSearch("Sulwhasoo Concentrated Ginseng Renewing Cream"),
+        ],
+        ingredients:
+          "Water, glycerin, butylene glycol, emollients, waxes/oils, Panax Ginseng Root Extract and ginseng-derived complexes, squalane or botanical oils depending on version, plus fragrance and preservative system.",
+        ingredientsNote:
+          "There are classic, soft, light, and renewed versions; match the jar/sachet name when buying.",
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        descriptor:
+          "Meh; okay skin recovery. Included because it appears in the barrier-recovery photo.",
+        buy: [
+          {
+            label: "La Roche-Posay",
+            url: "https://www.laroche-posay.us/our-products/face/face-moisturizer/cicaplast-balm-b5-for-dry-skin-irritations-3337872412998.html",
+          },
+          mercadoLibreSearch("La Roche Posay Cicaplast Baume B5+"),
+        ],
+        ingredients:
+          "Typical B5+ formula: Aqua/Water, Hydrogenated Polyisobutene, Dimethicone, Glycerin, Butyrospermum Parkii Butter, Panthenol, Butylene Glycol, Aluminum Starch Octenylsuccinate, Propanediol, Cetyl PEG/PPG-10/1 Dimethicone, Tribioma/prebiotic complex depending on version, Madecassoside, zinc/manganese/copper salts, and preservative/emulsifier system.",
+        ingredientsNote:
+          "Formula changed from B5 to B5+ in many markets; check the exact tube.",
+      },
+      {
+        name: "Dr. Althea 345 Relief Cream",
+        descriptor:
+          "Barrier-recovery cream to try; not yet tested in the notes.",
+        buy: [
+          {
+            label: "Dr. Althea",
+            url: "https://doctoraltheaglobal.com/products/345-relief-cream",
+          },
+          amazonSearch("Dr Althea 345 Relief Cream"),
+          mercadoLibreSearch("Dr Althea 345 Relief Cream"),
+        ],
+        ingredients:
+          "Known ingredient story: 3 blemish-care ingredients, 4 nourishing ingredients, and 5 soothing ingredients, with niacinamide, panthenol, opuntia ficus-indica stem extract, houttuynia cordata, and centella-related soothing components often highlighted. Verify full INCI on box.",
+      },
+      {
+        name: "Tatcha The Dewy Skin Cream",
+        descriptor:
+          "Barely moisturises and makes skin react.",
+        buy: [
+          {
+            label: "Tatcha",
+            url: "https://www.tatcha.com/product/dewy-skin-cream-replenishing-and-plumping-moisturizer/CA06110T.html",
+          },
+          amazonSearch("Tatcha The Dewy Skin Cream"),
+        ],
+        ingredients:
+          "Rice, algae, and green tea/Hadasei-3 complex with rich emollients and humectants. Exact INCI depends on regional packaging; use official box as source of truth.",
+      },
+      {
+        name: "La Roche-Posay Effaclar Mat",
+        descriptor:
+          "Matte finish. Great for humid hot weather with mild acid usage.",
+        buy: [
+          {
+            label: "La Roche-Posay search",
+            url: "https://www.laroche-posay.us/search?q=effaclar%20mat",
+          },
+          mercadoLibreSearch("La Roche Posay Effaclar Mat"),
+        ],
+        ingredients:
+          "Mattifying moisturiser formula varies by country; commonly includes Aqua/Water, Glycerin, Dimethicone, Perlite, Silica, Sebulyse/Sarcosine or oil-control components, and La Roche-Posay thermal water.",
+        ingredientsNote:
+          "Useful climate/finish note matters more than ingredient matching here.",
+      },
+      {
+        name: "COSRX Advanced Snail 96 Mucin Power Essence",
+        descriptor:
+          "Makes her break out. Included as a do-not-buy/reference product.",
+        buy: [
+          {
+            label: "COSRX",
+            url: "https://www.cosrx.com/products/advanced-snail-96-mucin-power-essence",
+          },
+          amazonSearch("COSRX Advanced Snail 96 Mucin Power Essence"),
+        ],
+        ingredients:
+          "Snail Secretion Filtrate, Betaine, Butylene Glycol, 1,2-Hexanediol, Sodium Polyacrylate, Phenoxyethanol, Sodium Hyaluronate, Allantoin, Carbomer, Panthenol, Arginine.",
+      },
+    ],
+  },
+  {
+    title: "Hydration serums, mists, and simple sprays",
+    items: [
+      {
+        name: "Vichy Mineral 89 Booster",
+        descriptor:
+          "Still the best hyaluronic acid tried. Great moisture boost. In combination with Sulwhasoo it helps but is not quite dense enough by itself.",
+        buy: [
+          {
+            label: "Vichy Argentina",
+            url: "https://www.vichyargentina.com.ar/todos-los-productos/cuidado-de-la-piel/serums-faciales/sequedad/mineral-89-potenciador",
+          },
+          {
+            label: "Farmacity",
+            url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
+          },
+          mercadoLibreSearch("Vichy Mineral 89"),
+        ],
+        ingredients:
+          "Aqua / Water / Eau, Propanediol, Glycerin, PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin, Methyl Gluceth-20, Citric Acid, Hydroxyacetophenone, Sodium Hyaluronate, Biosaccharide Gum-1, Butylene Glycol, Caprylyl Glycol, Carbomer, Maltodextrin.",
+      },
+      {
+        name: "Clinique Moisture Surge Face Spray",
+        descriptor:
+          "Meh, okay. Preference is plain mineral water or thermal water mist instead.",
+        buy: [
+          {
+            label: "Clinique",
+            url: "https://www.clinique.com/product/1687/5081/skincare/moisturizers/moisture-surge-face-spray-thirsty-skin-relief",
+          },
+          mercadoLibreSearch("Clinique Moisture Surge Face Spray"),
+        ],
+        ingredients:
+          "Water/Aqua/Eau, Aloe Barbadensis Leaf Water, Glycerin, Trehalose, Sucrose, Caffeine, Sodium Hyaluronate, and botanical extracts depending on version.",
+        ingredientsNote:
+          "Exact list changes by market; if replacing, a simpler thermal water mist is preferred.",
+      },
+      {
+        name: "Thermal or mineral water mist",
+        descriptor:
+          "Preferred over Clinique spray. La Roche-Posay, Avene, Vichy, or a plain mineral-water mist is fine.",
+        buy: [
+          {
+            label: "La Roche-Posay at Farmacity",
+            url: "https://www.farmacity.com/search?q=la%20roche%20posay%20agua%20termal",
+          },
+          {
+            label: "Avene at Farmacity",
+            url: "https://www.farmacity.com/search?q=avene%20agua%20termal",
+          },
+          mercadoLibreSearch("agua termal spray rostro"),
+        ],
+        ingredients:
+          "Usually Aqua/Water only for true thermal-water mists, with naturally occurring minerals and no added fragrance, alcohol, or preservatives.",
+      },
+      {
+        name: "Prontomed HypoClear Akne-Spray",
+        descriptor:
+          "Hypochlorous acid spray. Useful for on-the-go acne prevention. Any brand is probably fine as long as it avoids unnecessary extra ingredients.",
+        buy: [
+          {
+            label: "Prontomed instructions",
+            url: "https://www.prontomed.de/gbr/prontomed-hypoclear/",
+          },
+          amazonSearch("Prontomed HypoClear Akne Spray"),
+          googleSearch("hypochlorous acid spray acne ingredients"),
+        ],
+        ingredients:
+          "Aqua, <0.03% Sodium Hypochlorite / Hypochlorous Acid.",
+        ingredientsNote:
+          "Look for HOCl formulas that are basically water plus hypochlorous acid/sodium hypochlorite, without fragrance or extras.",
+      },
+    ],
+  },
+  {
+    title: "Cleansers",
+    items: [
+      {
+        name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
+        descriptor:
+          "Great for humid hot climate. A bit drying for humid winter.",
+        buy: [
+          {
+            label: "Some By Mi global",
+            url: "https://somebymi.com/products/aha-bha-pha-30-days-miracle-acne-clear-foam",
+          },
+          amazonSearch("Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam"),
+          mercadoLibreSearch("Some By Mi AHA BHA PHA Miracle Acne Clear Foam"),
+        ],
+        ingredients:
+          "Typical formula centers on water, glycerin, stearic acid/myristic acid cleansing base, potassium hydroxide, cocamidopropyl betaine, salicylic acid/BHA, gluconolactone/PHA, tea tree leaf water/extract/oil, centella asiatica extract, and botanical extracts.",
+        ingredientsNote:
+          "Strong active cleanser; keep the drying-climate note.",
+      },
+      {
+        name: "Beauty of Joseon Ginseng Cleansing Oil",
+        descriptor:
+          "Great when double cleansing is needed.",
+        buy: [
+          {
+            label: "Beauty of Joseon",
+            url: "https://beautyofjoseon.com/products/ginseng-cleansing-oil",
+          },
+          amazonSearch("Beauty of Joseon Ginseng Cleansing Oil"),
+          mercadoLibreSearch("Beauty of Joseon Ginseng Cleansing Oil"),
+        ],
+        ingredients:
+          "Glycine Soja (Soybean) Oil, Cetyl Ethylhexanoate, Sorbeth-30 Tetraoleate, Caprylic/Capric Triglyceride, Panax Ginseng Seed Oil, Panax Ginseng Root Extract, plus fragrance/allergen-free support ingredients depending on version.",
+      },
+      {
+        name: "La Roche-Posay Effaclar Gel Moussant Purifiant",
+        descriptor:
+          "Good for every climate, but a little drying when using all the acids she uses.",
+        buy: [
+          {
+            label: "La Roche-Posay",
+            url: "https://www.laroche-posay-me.com/en/effaclar/effaclar-purifying-foaming-gel",
+          },
+          mercadoLibreSearch("La Roche Posay Effaclar Gel Moussant Purifiant"),
+        ],
+        ingredients:
+          "Aqua / Water, Sodium Laureth Sulfate, PEG-8, Coco-Betaine, Hexylene Glycol, Sodium Chloride, PEG-120 Methyl Glucose Dioleate, Zinc PCA, Sodium Hydroxide, Caprylyl Glycol, Citric Acid, Sodium Benzoate, Phenoxyethanol, Parfum / Fragrance.",
+      },
+      {
+        name: "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling",
+        descriptor:
+          "Good when a deeper cleanse is wanted; not for everyday.",
+        buy: [
+          {
+            label: "La Roche-Posay search",
+            url: "https://www.laroche-posay.com/search?q=effaclar%20micro-peeling",
+          },
+          mercadoLibreSearch("La Roche Posay Effaclar Micro Peeling Gel"),
+        ],
+        ingredients:
+          "Common active profile: salicylic acid/LHA exfoliating cleanser with zinc and La Roche-Posay thermal water. Exact INCI varies by market; check the tube.",
+      },
+      {
+        name: "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser",
+        descriptor:
+          "Stings on her skin. She wants something like this that does not make her skin react.",
+        buy: [
+          {
+            label: "La Roche-Posay search",
+            url: "https://www.laroche-posay.com/search?q=lait%20demaquillant",
+          },
+          mercadoLibreSearch("La Roche Posay lait demaquillant Toleriane dermo nettoyant"),
+        ],
+        ingredients:
+          "Milky cleanser family; commonly built around water, ethylhexyl palmitate or other emollients, glycerin, carbomer, sodium hydroxide, caprylyl glycol/caprylyl glycol family preservatives, and thermal water. Verify exact product name and INCI.",
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Ampoule Foam",
+        descriptor:
+          "Candidate to compare; maybe mild enough. Never tried in the notes.",
+        buy: [
+          {
+            label: "SKIN1004",
+            url: "https://www.skin1004.com/products/skin1004-madagascar-centella-ampoule-foam",
+          },
+          amazonSearch("SKIN1004 Madagascar Centella Ampoule Foam"),
+          mercadoLibreSearch("SKIN1004 Centella Ampoule Foam"),
+        ],
+        ingredients:
+          "Known profile: centella asiatica extract, soda powder, coconut-derived surfactants, and pH-balanced foaming base. Check full INCI on tube.",
+      },
+      {
+        name: "CeraVe SA Smoothing Cleanser",
+        descriptor:
+          "Needs a replacement that is not CeraVe for shower/body use.",
+        buy: [
+          googleSearch("CeraVe SA Smoothing Cleanser alternative salicylic acid body wash"),
+          mercadoLibreSearch("gel limpiador acido salicilico cuerpo"),
+        ],
+        ingredients:
+          "Reference product active profile: salicylic acid cleanser with ceramides, niacinamide, and gentle surfactants. Replacement should keep salicylic acid/body-smoothing function without CeraVe.",
+        ingredientsNote:
+          "This is a replacement target, not something to repurchase.",
+      },
+    ],
+  },
+  {
+    title: "Pigmentation and antioxidants",
+    items: [
+      {
+        name: "Dr. Althea Vitamin C Boosting Serum",
+        descriptor:
+          "Great. In the photo this is the Dr. Althea Vitamin C Boosting Serum / renewed dark spot serum.",
+        buy: [
+          {
+            label: "Dr. Althea",
+            url: "https://doctoraltheaglobal.com/products/vitamin-c-boosting-serum",
+          },
+          amazonSearch("Dr Althea Vitamin C Boosting Serum"),
+          mercadoLibreSearch("Dr Althea Vitamin C Boosting Serum"),
+        ],
+        ingredients:
+          "Hippophae Rhamnoides Water, Centella Asiatica Leaf Water, Niacinamide, Butylene Glycol, 1,2-Hexanediol, Dipropylene Glycol, Water, Methyl Gluceth-20, Methylpropanediol, Betaine, Tranexamic Acid, Glycerin, Pentylene Glycol, Propanediol, Hydroxyethyl Urea, Laminaria Japonica Extract, Eclipta Prostrata Leaf Extract, Ficus Carica Fruit Extract, Centella Asiatica Extract, Hydrogenated Lecithin, Sodium Hyaluronate, Carbomer, 3-O-Ethyl Ascorbic Acid, Panthenol, Adenosine, Beta-Glucan, Ascorbic Acid, Hydrolyzed Hyaluronic Acid, Ceramide NP, Alpha-Arbutin, Tocopherol, Bifida Ferment Lysate, Bisabolol, Ubiquinone, Hydroxydecyl Ubiquinone, Sodium Acetylated Hyaluronate.",
+        ingredientsNote:
+          "Official page says 63% Hippophae Rhamnoides Water, 5% Niacinamide, and 2% Tranexamic Acid.",
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
+        descriptor:
+          "Still trying it; does not make her skin react so far.",
+        buy: [
+          {
+            label: "SKIN1004",
+            url: "https://www.skin1004.com/products/skin1004-madagascar-centella-tone-brightening-capsule-ampoule",
+          },
+          amazonSearch("SKIN1004 Tone Brightening Capsule Ampoule"),
+          mercadoLibreSearch("SKIN1004 Tone Brightening Capsule Ampoule"),
+        ],
+        ingredients:
+          "Centella Asiatica Extract, Butylene Glycol, Glycerin, Niacinamide, Tranexamic Acid, 3-O-Ethyl Ascorbic Acid, Madecassoside or centella actives, and encapsulated brightening components depending on batch.",
+        ingredientsNote:
+          "Photo label shows the Madagascar Centella Tone Brightening Capsule Ampoule.",
+      },
+      {
+        name: "Some By Mi Yuja Niacin Anti-Blemish Serum",
+        descriptor:
+          "Good to alternate with Dr. Althea vitamin C.",
+        buy: [
+          {
+            label: "iHerb",
+            url: "https://www.iherb.com/pr/some-by-mi-yuja-niacin-anti-blemish-serum-1-69-fl-oz-50-ml/135945",
+          },
+          amazonSearch("Some By Mi Yuja Niacin Anti Blemish Serum"),
+          mercadoLibreSearch("Some By Mi Yuja Niacin Serum"),
+        ],
+        ingredients:
+          "Citrus Junos Fruit Extract (83%), Niacinamide (10%), Caprylic/Capric Triglyceride, 1,2-Hexanediol, Hydrogenated Poly(C6-14 Olefin), Alpha-Bisabolol, Carbomer, Arginine, Brassica Campestris Seed Oil, Xanthan Gum, Ethylhexylglycerin, Adenosine, Citrus Junos Peel Oil, Melia Azadirachta Flower Extract, Ocimum Sanctum Leaf Extract, Licorice Root Extract, Curcuma Longa Root Extract, Glycerin, Butylene Glycol, 3-O-Ethyl Ascorbic Acid, Hydrogenated Lecithin, Panthenol, Sodium Ascorbyl Phosphate, Tocopherol, Disodium EDTA, Limonene, Linalool.",
+      },
+      {
+        name: "Codexial Enobright Radiance Day",
+        descriptor:
+          "Best vitamin C tried so far. French brand, difficult shipping.",
+        buy: [
+          googleSearch("Codexial Enobright Radiance Day"),
+          googleSearch("Codexial Enobright Radiance Day ingredients"),
+        ],
+        ingredients:
+          "Exact INCI not re-verified here. Keep as the vitamin C benchmark; identify by Codexial Enobright Radiance Day / Eno Bright Radiance Day naming.",
+      },
+      {
+        name: "La Roche-Posay Vitamin C serum",
+        descriptor:
+          "Leaves orange cast, lasts too little, okay results.",
+        buy: [
+          {
+            label: "La Roche-Posay Pure Vitamin C10",
+            url: "https://www.laroche-posay.us/our-products/face/face-serum/pure-vitamin-c10-serum-3337875660570.html",
+          },
+          mercadoLibreSearch("La Roche Posay vitamina C serum"),
+        ],
+        ingredients:
+          "Pure Vitamin C10 family generally uses ascorbic acid with salicylic acid, neurosensine/peptide soothing component, hyaluronic acid, and La Roche-Posay thermal water. Exact list varies by market.",
+      },
+    ],
+  },
+  {
+    title: "Acids, retinoids, peels, and spot treatment",
+    items: [
+      {
+        name: "Murad Deep Relief Acne Treatment",
+        descriptor:
+          "Deep spot treatment. Enough said.",
+        buy: [
+          {
+            label: "Murad",
+            url: "https://www.murad.com/products/deep-relief-acne-treatment",
+          },
+          amazonSearch("Murad Deep Relief Acne Treatment"),
+          mercadoLibreSearch("Murad Deep Relief Acne Treatment"),
+        ],
+        ingredients:
+          "Active: 2% Salicylic Acid. Other key components marketed around soothing phytosteroid/comfort ingredients. Check bottle for full OTC drug facts and inactive ingredients.",
+      },
+      {
+        name: "COSRX BHA Blackhead Power Liquid",
+        descriptor:
+          "Still assessing results. Does not break her out and does not make skin react.",
+        buy: [
+          {
+            label: "COSRX",
+            url: "https://www.cosrx.com/products/bha-blackhead-power-liquid",
+          },
+          amazonSearch("COSRX BHA Blackhead Power Liquid"),
+          mercadoLibreSearch("COSRX BHA Blackhead Power Liquid"),
+        ],
+        ingredients:
+          "Salix Alba (Willow) Bark Water, Butylene Glycol, Betaine Salicylate, Niacinamide, 1,2-Hexanediol, Arginine, Panthenol, Sodium Hyaluronate, Xanthan Gum.",
+        ingredientsNote:
+          "Uses betaine salicylate as the BHA-like exfoliant, not classic 2% salicylic acid.",
+      },
+      {
+        name: "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution",
+        descriptor:
+          "Light, not a deep peel. Gives soft skin next day. Good for lazy nights.",
+        buy: [
+          {
+            label: "SKINTIFIC",
+            url: "https://skintific.com/products/12-aha-bha-pha-lha-peeling-solution-serum",
+          },
+          amazonSearch("SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution"),
+          mercadoLibreSearch("SKINTIFIC 12% AHA BHA PHA LHA"),
+        ],
+        ingredients:
+          "Aqua, Glycolic Acid, Lactic Acid, Succinic Acid, Sodium Hydroxide, Salicylic Acid, Niacinamide, Capryloyl Salicylic Acid, Gluconolactone, Lactobionic Acid, Glycerin, Xanthan Gum, 1,2-Hexanediol, Hydroxyacetophenone, Butylene Glycol, Propylene Glycol, Enantia Chlorantha Bark Extract, Gardenia Florida Fruit Extract, Glycerophosphoinositol Choline, Bacillus Ferment, Brassica Oleracea Acephala Leaf Extract, Phenoxyethanol, Potassium Sorbate, Ethylhexylglycerin, Oleanolic Acid, Cyclodextrin.",
+        ingredientsNote:
+          "Official page describes 10% AHA, 1% BHA, 0.5% PHA, and 0.5% LHA.",
+      },
+      {
+        name: "NeoStrata Resurface Glycolic Renewal Smoothing Lotion",
+        descriptor:
+          "Great. Closest found to Irene Bermejo's glycolic acid.",
+        buy: [
+          {
+            label: "NeoStrata",
+            url: "https://www.neostrata.com/products/resurface-glycolic-renewal-smoothing-lotion/F30275X.html",
+          },
+          amazonSearch("NeoStrata Resurface Glycolic Renewal Smoothing Lotion"),
+          mercadoLibreSearch("NeoStrata Resurface Glycolic Renewal Smoothing Lotion"),
+        ],
+        ingredients:
+          "High-strength glycolic acid/AHA body-face smoothing lotion family. Public lists vary, but the key active is glycolic acid in a leave-on lotion base with emollients, humectants, pH adjusters, preservatives, and fragrance depending on market.",
+      },
+      {
+        name: "Irene Bermejo White Cream Glico 4%",
+        descriptor:
+          "Reference glycolic cream. The 4% version is the mild acid benchmark; 8% would be a stronger step-up.",
+        buy: [
+          {
+            label: "Irene Bermejo",
+            url: "https://irenebermejo.com/tienda/crema-para-rostro-con-acido-glicolico-al-4-50-gr/",
+          },
+          mercadoLibreSearch("Irene Bermejo White Cream Glico 4"),
+        ],
+        ingredients:
+          "Water, Mineral Oil, Cetearyl Alcohol and Ceteareth-20, Glycolic Acid, Propylene Glycol, Triethanolamine, Tocopheryl Acetate, DMDM Hydantoin, Imidazolidinyl Urea, Fragrance, BHT, Disodium EDTA.",
+      },
+      {
+        name: "Cordes VAS 0.5 mg/g Creme",
+        descriptor:
+          "Great but very strong. Can easily ruin skin barrier if not careful. Closest found in Germany to Irene Bermejo's 0.025% retinoic acid, but this is 0.05%, so she had to step up very slowly. Ideally keep it, but also useful to have 0.025% for skin that is not at 100%.",
+        buy: [
+          {
+            label: "Apotheken Umschau leaflet",
+            url: "https://www.apotheken-umschau.de/medikamente/beipackzettel/cordes-vas-creme-2137594.html",
+          },
+          googleSearch("Cordes VAS Creme 0.5 mg/g kaufen"),
+        ],
+        ingredients:
+          "Active: Tretinoin 0.5 mg per 1 g cream (0.05%). Excipients: Butylhydroxytoluene, Cetylstearyl Alcohol, Tris[alkyl(C16-C18)-poly(oxyethylen)-4]-phosphate, Citric Acid Monohydrate, Glycerol Monostearate, Isopropyl Myristate, Palmitoyl Ascorbic Acid, Macrogol-7-Glycerol Cocoate / PEG-7 Glyceryl Cocoate, Propylene Glycol, Sorbitan Stearate, Sorbic Acid, Purified Water.",
+        ingredientsNote:
+          "Prescription medicine; do not treat as a cosmetic swap.",
+      },
+      {
+        name: "Irene Bermejo Retinoico 0.025%",
+        descriptor:
+          "Preferred lower-strength retinoic acid option for when the skin barrier is not at 100%. Mentioned as the original strength before Cordes VAS.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+          {
+            label: "WhatsApp clinic",
+            url: "https://wa.me/5491157804080",
+          },
+        ],
+        ingredients:
+          "Active: Acido Retinoico / Tretinoin 0.025%. Full compounded base not publicly verified.",
+      },
+      {
+        name: "Irene Bermejo Retinoico 0.05%",
+        descriptor:
+          "Higher-strength retinoic acid reference from the Argentina list; comparable strength to Cordes VAS 0.5 mg/g.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+          {
+            label: "WhatsApp clinic",
+            url: "https://wa.me/5491157804080",
+          },
+        ],
+        ingredients:
+          "Active: Acido Retinoico / Tretinoin 0.05%. Full compounded base not publicly verified.",
+      },
+    ],
+  },
+  {
+    title: "Sunscreens",
+    items: [
+      {
+        name: "Canmake Mermaid Skin Gel UV SPF50+ PA++++",
+        descriptor:
+          "Ideal when a little extra moisture is needed after moisturiser. Skin is a bit bright after, not heavy. Good for humid climate.",
+        buy: [
+          {
+            label: "Canmake",
+            url: "https://www.canmake.com/en/item/detail/67",
+          },
+          amazonSearch("Canmake Mermaid Skin Gel UV SPF50 PA++++"),
+          mercadoLibreSearch("Canmake Mermaid Skin Gel UV"),
+        ],
+        ingredients:
+          "Hybrid Japanese sunscreen formula; common filters include Zinc Oxide, Titanium Dioxide, Ethylhexyl Methoxycinnamate, Uvinul A Plus, and Tinosorb S depending on version, plus humectants and botanical extracts.",
+        ingredientsNote:
+          "There are clear/white/mint and regional variants; match the exact tube.",
+      },
+      {
+        name: "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++",
+        descriptor:
+          "Great texture, does not dry the skin, does not feel heavy, leaves very slight brightness, absorbs great. Good for humid climate.",
+        buy: [
+          {
+            label: "Bioré US",
+            url: "https://www.biore.com/en-us/products/uv-aqua-rich-watery-essence-sunscreen-spf-50/",
+          },
+          amazonSearch("Biore UV Aqua Rich Watery Essence SPF50 PA++++"),
+          mercadoLibreSearch("Biore UV Aqua Rich Watery Essence"),
+        ],
+        ingredients:
+          "Watery Essence formulas vary by Japan/US/EU. Common sunscreen filters include Ethylhexyl Methoxycinnamate, Uvinul A Plus, Tinosorb S, Octocrylene or region-specific alternatives, plus alcohol, glycerin, hyaluronic acid, royal jelly extract, and water-gel base components.",
+      },
+      {
+        name: "Skin Aqua Super Moisture Gel SPF50+ PA++++",
+        descriptor:
+          "Loved in dry climate. In humidity it does not absorb completely.",
+        buy: [
+          googleSearch("Skin Aqua Super Moisture Gel SPF50 PA++++"),
+          amazonSearch("Skin Aqua Super Moisture Gel SPF50 PA++++"),
+          mercadoLibreSearch("Skin Aqua Super Moisture Gel SPF50"),
+        ],
+        ingredients:
+          "Japanese Rohto Skin Aqua gel sunscreen family; formulas commonly include water, alcohol, UV filters such as ethylhexyl methoxycinnamate, Uvinul A Plus, Tinosorb S or Tinosorb M depending on version, hyaluronic acid forms, glycerin, and gel-forming polymers.",
+        ingredientsNote:
+          "Exact bottle in photo is the pump Skin Aqua Super Moisture Gel.",
+      },
+      {
+        name: "Benton Air Fit UV Defense Sun Cream SPF50+ PA++++",
+        descriptor:
+          "In dry climate it gives a matte finish and she loves it. On the way now to try in this climate.",
+        buy: [
+          {
+            label: "StyleKorean",
+            url: "https://www.stylekorean.com/shop/benton-air-fit-uv-defense-sun-cream-spf50-pa-50ml/1628221477/",
+          },
+          amazonSearch("Benton Air Fit UV Defense Sun Cream"),
+          mercadoLibreSearch("Benton Air Fit UV Defense Sun Cream"),
+        ],
+        ingredients:
+          "Water, Dibutyl Adipate, Propanediol, Diethylamino Hydroxybenzoyl Hexyl Benzoate, Polymethylsilsesquioxane, Ethylhexyl Triazone, Niacinamide, Methylene Bis-Benzotriazolyl Tetramethylbutylphenol, Coco-Caprylate/Caprate, Caprylyl Methicone, Diethylhexyl Butamido Triazone, Glycerin, 1,2-Hexanediol, Butylene Glycol, Pentylene Glycol, Centella Asiatica Extract, Behenyl Alcohol, Panthenol, Tocopherol, Dipotassium Glycyrrhizate, Madecassoside, Madecassic Acid, Asiaticoside, Asiatic Acid, Adenosine, Rosemary Leaf Oil, Xanthan Gum.",
+      },
+      {
+        name: "INGU BluVlite Ultra-Light Daily Sunscreen SPF50+ PA++++ + Biome Balance",
+        descriptor:
+          "On the way; will try soon. Lightweight daily sunscreen with blue-light/pollution positioning.",
+        buy: [
+          {
+            label: "Watsons Thailand",
+            url: "https://www.watsons.co.th/en/ingu-ingu-bluvlite-ultra-light-daily-sunscreen-spf50-pa-biome-balance-80g./p/BP_327320",
+          },
+          googleSearch("INGU BluVlite Ultra-Light Daily Sunscreen SPF50 PA++++ Biome Balance"),
+        ],
+        ingredients:
+          "Aqua (Water), Dibutyl Adipate, Butylene Glycol, Diethylamino Hydroxybenzoyl Hexyl Benzoate, Diethylhexyl Butamido Triazone, Dimethicone, Phenylbenzimidazole Sulfonic Acid, Isohexadecane, Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine, Tromethamine, Methylene Bis-Benzotriazolyl Tetramethylbutylphenol (Nano), Potassium Cetyl Phosphate, Cetearyl Alcohol, Ectoin, Silica, Titanium Dioxide, Avena Sativa Leaf/Stalk Extract, Saccharomyces Ferment Lysate Filtrate, Punica Granatum Peel Extract, Biosaccharide Gum-4, Clitoria Ternatea Flower Extract, Garcinia Mangostana Peel Extract, Tocopherol.",
+        ingredientsNote:
+          "Watsons listing says fragrance and essential-oil free.",
+      },
+    ],
+  },
+  {
+    title: "Body and hands",
+    items: [
+      {
+        name: "Dermaglos Emulsion Corporal Hidratacion + Regeneracion",
+        descriptor:
+          "Purple-letter body moisturiser. Great for Argentina climate.",
+        buy: [
+          {
+            label: "Farmacity",
+            url: "https://www.farmacity.com/crema-corporal-dermaglos-regeneracion-intensiva-x-300-gr/p",
+          },
+          mercadoLibreSearch("Dermaglos Hidratacion Regeneracion Emulsion Corporal"),
+        ],
+        ingredients:
+          "Water, Mineral Oil, Glycerin, Propylene Glycol, Sorbitol, Glyceryl Stearate, PEG-100 Stearate, Dimethicone, Polysorbate 60, Bis-Diglyceryl Polyacyladipate-2, Cetyl Alcohol, Carbomer, Allantoin, Methylparaben, Retinyl Palmitate, Benzethonium Chloride, Sodium Citrate, Propylparaben, Sodium Hydroxide, Disodium EDTA, Tocopheryl Acetate, Citric Acid, BHT, Fragrance, BHA.",
+      },
+      {
+        name: "Biotherm Eau d'Energie body moisturiser",
+        descriptor:
+          "Great for every climate.",
+        buy: [
+          googleSearch("Biotherm Eau d'Energie body milk"),
+          amazonSearch("Biotherm Eau d'Energie body milk"),
+          mercadoLibreSearch("Biotherm Eau d'Energie"),
+        ],
+        ingredients:
+          "Exact product format not fully specified in notes. Eau d'Energie body products typically center on water, glycerin/emollients, citrus/fragrance components, and Biotherm Life Plankton-style ingredients depending on product.",
+        ingredientsNote:
+          "Match the specific Eau d'Energie body lotion/milk packaging if buying.",
+      },
+      {
+        name: "Neutrogena Hydro Boost body moisturiser",
+        descriptor:
+          "Great for every climate.",
+        buy: [
+          {
+            label: "Neutrogena Argentina",
+            url: "https://www.neutrogena.com.ar/corporal/humectacion/neutrogena-hydro-boost-water-gel-hidratante-corporal-400ml",
+          },
+          mercadoLibreSearch("Neutrogena Hydro Boost corporal"),
+        ],
+        ingredients:
+          "Aqua, Glycerin, Isopropyl Palmitate, Petrolatum, Dimethicone, Cetyl Alcohol, Phenoxyethanol, Sodium Polyacrylate, Cetearyl Olivate, Caprylyl Glycol, Ethylhexylglycerin, Sorbitan Olivate, Parfum, Carbomer, Sodium Hyaluronate, Sodium Hydroxide, CI 42090.",
+      },
+      {
+        name: "Natura Ekos Castanha hand cream",
+        descriptor:
+          "Hand moisturiser. Loved.",
+        buy: [
+          {
+            label: "Natura Argentina search",
+            url: "https://www.naturacosmeticos.com.ar/busqueda?text=ekos%20casta%C3%B1a%20manos",
+          },
+          mercadoLibreSearch("Natura Ekos Castanha crema manos"),
+        ],
+        ingredients:
+          "Castanha/Brazil nut hand cream family with Brazil nut oil or extract, glycerin, emollients, waxes, and fragrance. Exact Argentina/LatAm INCI should be checked on tube.",
+      },
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main>
+      <p><a href="/">sokolsky.me</a></p>
+
+      <h1>{pageTitle}</h1>
+
+      <p>
+        Current skincare inventory from Ari's photos and notes, compiled July 2026.
+        Hair oil, toothpaste, swim/clothing/photo-chat items, and other non-skincare notes are intentionally omitted.
+      </p>
+
+      <p class="small">
+        Ingredient lists can change by batch and country. For prescription, clinic-dispensed,
+        or region-specific products, the package label should win over this page.
+      </p>
+
+      {sections.map((section) => (
+        <section>
+          <h2>{section.title}</h2>
+          <ul class="products">
+            {section.items.map((item) => (
+              <li>
+                <p><strong>{item.name}</strong></p>
+                <p>{item.descriptor}</p>
+
+                {item.buy.length > 0 && (
+                  <>
+                    <p><strong>Buy:</strong></p>
+                    <ul class="links">
+                      {item.buy.map((link) => (
+                        <li>
+                          <a href={link.url} target="_blank" rel="noreferrer noopener">
+                            {link.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                <p><strong>Ingredients:</strong> {item.ingredients}</p>
+                {"ingredientsNote" in item && <p class="small">{item.ingredientsNote}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --muted: #555555;
+    --link: #111111;
+    --border: #dddddd;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --link: #eeeeee;
+      --border: #333333;
+    }
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+
+  body {
+    margin: 0;
+    padding: 1.25rem;
+  }
+
+  main {
+    max-width: 50rem;
+  }
+
+  h1 {
+    margin: 1.25rem 0 0.8rem;
+    font-size: 1.7rem;
+    line-height: 1.15;
+  }
+
+  h2 {
+    margin: 2rem 0 0.7rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  p,
+  ul {
+    margin: 0 0 0.9rem;
+  }
+
+  ul {
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin: 0.2rem 0;
+  }
+
+  .products {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .products > li {
+    margin: 0 0 1.35rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+  }
+
+  .products > li > p {
+    margin-bottom: 0.45rem;
+  }
+
+  .links {
+    margin-bottom: 0.55rem;
+  }
+
+  .small {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  body > main > p:first-child {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+</style>
