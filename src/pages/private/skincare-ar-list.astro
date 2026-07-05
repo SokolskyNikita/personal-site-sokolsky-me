@@ -1,0 +1,485 @@
+---
+export const prerender = true;
+
+const pageTitle = "Skincare - Argentina list";
+const pageDescription =
+  "Private Argentina skincare shopping list with product notes, ingredients, and direct purchase links where available.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+const sections = [
+  {
+    title: "Hair",
+    items: [
+      {
+        name: "Johnson's Baby Shampoo Original",
+        descriptor:
+          "Default liquid shampoo. This is the neutral/original baby shampoo, historically the orange-gold bottle; the current Argentina formula is dye-free and can look clearer than the old version.",
+        buy: [
+          {
+            label: "Johnson's Argentina",
+            url: "https://www.johnsonsbaby.com.ar/productos/cuidado-del-cabello-del-bebe/shampoo-ph-balanceado-johnsons-baby",
+          },
+          {
+            label: "Farmacity - direct 400 ml",
+            url: "https://www.farmacity.com/shampoo-con-ph-balanceado-suave-para-ojos-y-cabello-x-400-ml/p",
+          },
+          {
+            label: "Mercado Libre search",
+            url: "https://listado.mercadolibre.com.ar/johnsons-baby-shampoo-original",
+          },
+        ],
+        ingredients:
+          "Aqua, Cocamidopropyl Betaine, Decyl Glucoside, Sodium Cocoyl Isethionate, PEG-80 Sorbitan Laurate, Glycerin, Citric Acid, Sodium Benzoate, PEG-150 Distearate, Sodium Methyl Cocoyl Taurate, Parfum, Polyquaternium-10, Disodium EDTA.",
+        ingredientsNote:
+          "Argentina product pages confirm pH fisiologico and no dyes, parabens, sulfates, or phthalates; check the bottle if the packaging changes again.",
+      },
+      {
+        name: "The Mash Store Shampoo Solido Ortiga",
+        descriptor:
+          "Solid shampoo backup. Pick the Ortiga/nettle bar specifically, not another The Mash Store solid shampoo.",
+        buy: [
+          {
+            label: "The Mash Store - 50 g",
+            url: "https://www.themashstore.com.ar/productos/shampoo-solido-ortiga-50g/",
+          },
+          {
+            label: "The Mash Store on Mercado Libre",
+            url: "https://listado.mercadolibre.com.ar/themashstore",
+          },
+        ],
+        ingredients:
+          "Sodium Cocoyl Isethionate, Water, Cocos Nucifera (Coconut) Oil, Bentonite, Melaleuca Alternifolia (Tea Tree) Leaf Oil, Inulin, Urtica Dioica Leaf, Fragrance, Citrus Limon Juice, Phenoxyethanol, Ethylhexylglycerin.",
+        ingredientsNote:
+          "This is from the Ortiga listing/reseller data I could verify. Solid-bar formulas can vary by batch, so check the specific bar label.",
+      },
+      {
+        name: "Garnier Fructis Hair Food Palta Acondicionador",
+        descriptor:
+          "Preferred conditioner. Palta/avocado is the dry-hair option; the Hair Food line is marketed as vegan, silicone-free, paraben-free, and roughly 97-98% natural-origin depending on the country label.",
+        buy: [
+          {
+            label: "Garnier Argentina",
+            url: "https://www.garnier.com.ar/fructis/hair-food/fructis-hair-food-conditioner-palta",
+          },
+          {
+            label: "Farmamix - 300 ml",
+            url: "https://www.farmamix.com.ar/productos/fructis-acondicionador-nutricion-hair-food-palta-300-ml/",
+          },
+          {
+            label: "Mercado Libre search",
+            url: "https://listado.mercadolibre.com.ar/garnier-fructis-hair-food-acondicionador",
+          },
+        ],
+        ingredients:
+          "Aqua / Water, Cetearyl Alcohol, Glycerin, Isopropyl Myristate, Stearamidopropyl Dimethylamine, Glycine Soja Oil / Soybean Oil, Helianthus Annuus Seed Oil / Sunflower Seed Oil, Punica Granatum Extract, Cocos Nucifera Oil / Coconut Oil, Citrullus Lanatus Fruit Extract / Watermelon Fruit Extract, Coco-Caprylate/Caprate, Hydroxypropyl Guar, Hydroxypropyltrimonium Chloride, Caprylyl Glycol, Citric Acid, Tartaric Acid, Cetyl Esters, Salicylic Acid, Linalool, Geraniol, Limonene, Citral, Benzyl Alcohol, Parfum / Fragrance.",
+        ingredientsNote:
+          "Argentina page confirms the product and claims; full INCI was available from Garnier's LatAm label pages. Check the tube for the current AR batch.",
+      },
+      {
+        name: "Garnier Fructis Hair Food Coco Acondicionador",
+        descriptor:
+          "Conditioner alternative if palta is unavailable. Coco is the damaged-hair/reparacion version.",
+        buy: [
+          {
+            label: "Garnier Argentina",
+            url: "https://www.garnier.com.ar/fructis/hair-food/fructis-hair-food-acondicionador-coco",
+          },
+          {
+            label: "Farmamix - 300 ml",
+            url: "https://www.farmamix.com.ar/productos/fructis-acondicionador-hair-food-coco-300-ml/",
+          },
+          {
+            label: "Mercado Libre search",
+            url: "https://listado.mercadolibre.com.ar/garnier-fructis-hair-food-acondicionador",
+          },
+        ],
+        ingredients:
+          "Aqua / Water / Eau, Cetearyl Alcohol, Glycerin, Isopropyl Myristate, Stearamidopropyl Dimethylamine, Glycine Soja Oil / Soybean Oil, Parfum / Fragrance, Helianthus Annuus Seed Oil / Sunflower Seed Oil, Coco-Caprylate/Caprate, Cetyl Esters, Tartaric Acid, Benzyl Alcohol, Caprylyl Glycol, Salicylic Acid, Limonene, Sodium Hydroxide, Hydroxypropyl Guar Hydroxypropyltrimonium Chloride, Cocos Nucifera Oil / Coconut Oil, Cocos Nucifera Fruit Extract / Coconut Fruit Extract, Xanthan Gum, Potassium Sorbate, Citric Acid.",
+        ingredientsNote:
+          "Full INCI was available from Garnier's LatAm label pages. Check the tube for the current AR batch.",
+      },
+    ],
+  },
+  {
+    title: "Body",
+    items: [
+      {
+        name: "Salicylic acid foam/gel for shower",
+        descriptor: "TBD.",
+        buy: [],
+        ingredients: "TBD.",
+      },
+      {
+        name: "Farmacity Jabon de Glicerina Neutro",
+        descriptor:
+          "Neutral glycerin soap. Prefer fragrance-free/neutral; supermarket or pharmacy generic is fine if the label is simple.",
+        buy: [
+          {
+            label: "Farmacity search",
+            url: "https://www.farmacity.com/search?q=jab%C3%B3n%20glicerina%20neutro",
+          },
+          {
+            label: "Mercado Libre search",
+            url: "https://listado.mercadolibre.com.ar/jabon-glicerina-neutro",
+          },
+        ],
+        ingredients:
+          "Typical neutral glycerin-bar base: Sodium Palmate or Sodium Cocoate, Sodium Palm Kernelate, Aqua, Glycerin, Sodium Chloride, Sodium Citrate, Tetrasodium EDTA. Exact INCI varies by brand.",
+        ingredientsNote:
+          "The Farmacity neutral soap public OCR was incomplete/noisy, so the package label should be treated as the source of truth.",
+      },
+      {
+        name: "Dermaglos Emulsion Corporal Hidratacion + Regeneracion",
+        descriptor:
+          "Purple body moisturiser for dry and very dry skin. Official/reseller pages support the Vitamin A + Vitamin E + allantoin hydration/regeneration version; I did not verify Lipexel for this body product.",
+        buy: [
+          {
+            label: "Farmacity - 300 ml",
+            url: "https://www.farmacity.com/crema-corporal-dermaglos-regeneracion-intensiva-x-300-gr/p",
+          },
+          {
+            label: "Farmacias Patagonicas - 300 ml",
+            url: "https://www.farmaciaspatagonicas.com/dermaglos-emulsion-corporal-piel-seca-y-extra-seca-hidratacion---regeneracion--300-ml/p",
+          },
+          {
+            label: "Mercado Libre",
+            url: "https://www.mercadolibre.com.ar/dermaglos-hidratacion-regeneracion-emulsion-corporal-300ml/p/MLA28417966",
+          },
+        ],
+        ingredients:
+          "Water, Mineral Oil, Glycerin, Propylene Glycol, Sorbitol, Glyceryl Stearate, PEG-100 Stearate, Dimethicone, Polysorbate 60, Bis-Diglyceryl Polyacyladipate-2, Cetyl Alcohol, Carbomer, Allantoin, Methylparaben, Retinyl Palmitate, Benzethonium Chloride, Sodium Citrate, Propylparaben, Sodium Hydroxide, Disodium EDTA, Tocopheryl Acetate, Citric Acid, BHT, Fragrance, BHA.",
+        ingredientsNote:
+          "Key actives from product pages: Vitamin A/Retinyl Palmitate, Vitamin E/Tocopheryl Acetate, Allantoin, plus humectants such as glycerin.",
+      },
+      {
+        name: "Neutrogena Hydro Boost Water Gel Corporal",
+        descriptor:
+          "Blue body gel option. Lighter-feeling than Dermaglos; the line is built around hyaluronic acid in a water-gel body base.",
+        buy: [
+          {
+            label: "Farmacity - 200 ml",
+            url: "https://www.farmacity.com/gel-hidratante-corporal-neutrogena-hydroboost-x-200-ml/p",
+          },
+          {
+            label: "Neutrogena Argentina - 400 ml",
+            url: "https://www.neutrogena.com.ar/corporal/humectacion/neutrogena-hydro-boost-water-gel-hidratante-corporal-400ml",
+          },
+          {
+            label: "Mercado Libre - 200 ml",
+            url: "https://www.mercadolibre.com.ar/crema-corporal-gel-neutrogena-hydro-boost-water-gel-x-200-ml/p/MLA21710804",
+          },
+        ],
+        ingredients:
+          "Aqua, Glycerin, Isopropyl Palmitate, Petrolatum, Dimethicone, Cetyl Alcohol, Phenoxyethanol, Sodium Polyacrylate, Cetearyl Olivate, Caprylyl Glycol, Ethylhexylglycerin, Sorbitan Olivate, Parfum, Carbomer, Sodium Hyaluronate, Sodium Hydroxide, CI 42090.",
+      },
+    ],
+  },
+  {
+    title: "Face",
+    items: [
+      {
+        name: "Cleanser",
+        descriptor: "TBD.",
+        buy: [],
+        ingredients: "TBD.",
+      },
+      {
+        name: "Irene Bermejo Humectacion Intensa - 50 gr (glass jar)",
+        descriptor:
+          "Ask specifically for the old glass-jar humectant, not the newer plastic-container reformulation. I could not verify a public page for the exact old jar; current Irene Bermejo 50 g moisturisers include Hydra Filler Intense, Hydra 360, and Liss Extreme.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+          {
+            label: "WhatsApp clinic",
+            url: "https://wa.me/5491157804080",
+          },
+        ],
+        ingredients:
+          "Old glass-jar INCI not publicly verified. If substituting the current Hydra Filler Intense 50 g, published INCI is: Water/Aqua, Cetyl Alcohol, Glyceryl Stearate, PEG-75 Stearate, Ceteth-20, Steareth-20, Caprylic/Capric Triglycerides, Carrageenan, Glucose, Caprylyl Methicone, Glycerin, Jojoba Esters, Helianthus Annuus Seed Wax, Acacia Decurrens Flower Wax, Polyglycerin-3, Pseudoalteromonas Ferment Extract, Hydrolyzed Wheat Protein, Hydrolyzed Soy Protein, Tripeptide-10 Citrulline, Tripeptide-1, Propylene Glycol, Sodium PCA, Arginine, Lepidium Meyenii (Maca) Root Extract, Zingiber Officinale (Ginger) Root Extract, Xylitylglucoside, Anhydroxylitol, Xylitol, Acetyl Hexapeptide-51 Amide, Saccharide Isomerate, Butyrospermum Parkii (Shea) Butter Extract, Argania Spinosa Kernel Oil, Spent Grain Wax, Phenoxyethanol, Chlorphenesin, Phenyl Salicylate, Farnesol, Chloroxylenol, Dibromohexamidine Isethionate, Polyaminopropyl Biguanide, Polyacrylate-13, Titanium Dioxide, Sodium Hyaluronate.",
+      },
+      {
+        name: "Irene Bermejo Retinoico 0,05% - 30 gr",
+        descriptor:
+          "Prescription-strength retinoic acid/tretinoin item, not cosmetic retinol. Treat as clinic/pharmacy-dispensed and verify the label.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+          {
+            label: "WhatsApp clinic",
+            url: "https://wa.me/5491157804080",
+          },
+        ],
+        ingredients:
+          "Confirmed active: Acido Retinoico / Tretinoin 0.05%. Full base/excipients were not publicly listed in the product pages found.",
+      },
+      {
+        name: "Irene Bermejo White Cream Glico 4% - 50 gr",
+        descriptor:
+          "Glycolic cream. Use the 4% version, not the 8% unless intentionally stepping up. Clinic copy suggests using it at night and pairing it with moisturiser to reduce irritation.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/crema-para-rostro-con-acido-glicolico-al-4-50-gr/",
+          },
+          {
+            label: "Mercado Libre",
+            url: "https://www.mercadolibre.com.ar/antiaging-white-cream--glico-al-4--50gr-irene-bermejo/up/MLAU244298699",
+          },
+        ],
+        ingredients:
+          "Water, Mineral Oil, Cetearyl Alcohol and Ceteareth-20, Glycolic Acid, Propylene Glycol, Triethanolamine, Tocopheryl Acetate, DMDM Hydantoin, Imidazolidinyl Urea, Fragrance, BHT, Disodium EDTA.",
+      },
+      {
+        name: "Vitamin C",
+        descriptor: "TBD.",
+        buy: [],
+        ingredients: "TBD.",
+      },
+      {
+        name: "Vichy Mineral 89 Booster",
+        descriptor:
+          "Hyaluronic acid serum. Keep the standard 50 ml Mineral 89 booster; do not assume the newer refill/other-market formula unless the box INCI says so.",
+        buy: [
+          {
+            label: "Farmacity - 50 ml",
+            url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
+          },
+          {
+            label: "Vichy Argentina",
+            url: "https://www.vichyargentina.com.ar/todos-los-productos/cuidado-de-la-piel/serums-faciales/sequedad/mineral-89-potenciador",
+          },
+          {
+            label: "Mercado Libre search",
+            url: "https://listado.mercadolibre.com.ar/vichy-mineral-89",
+          },
+        ],
+        ingredients:
+          "Aqua / Water / Eau, Propanediol, Glycerin, PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin, Methyl Gluceth-20, Citric Acid, Hydroxyacetophenone, Sodium Hyaluronate, Biosaccharide Gum-1, Butylene Glycol, Caprylyl Glycol, Carbomer, Maltodextrin.",
+      },
+    ],
+  },
+  {
+    title: "Sun",
+    items: [
+      {
+        name: "ISDIN Fotoprotector Gel Cream Dry Touch SPF 50+",
+        descriptor: "SPF. Buy the sin color/no-colour version only. Do not buy the color/tinted version.",
+        buy: [
+          {
+            label: "SVFarma - sin color",
+            url: "https://www.svfarma.com.ar/shop/product/fotoprotector-isdin-gel-cream-dry-touch-spf-50-sin-color-WS27969",
+          },
+          {
+            label: "Mercado Libre",
+            url: "https://www.mercadolibre.com.ar/fotoprotector-isdin-gel-cream-dry-touch-spf-50/p/MLA19504500",
+          },
+          {
+            label: "ISDIN Argentina",
+            url: "https://www.isdin.com/es-AR/producto/fotoprotector-isdin/gel-cream-dry-touch-spf-50",
+          },
+        ],
+        ingredients:
+          "Aqua / Water, Alcohol Denat., Octocrylene, C12-15 Alkyl Benzoate, Butyl Methoxydibenzoylmethane, Dibutyl Adipate, Talc, Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine, Cyclopentasiloxane, Tromethamine, Cyclohexasiloxane, Ammonium Acryloyldimethyltaurate/VP Copolymer, Cellulose, Methylene Bis-Benzotriazolyl Tetramethylbutylphenol [nano], Phenylbenzimidazole Sulfonic Acid, Polymethylsilsesquioxane, Polyacrylamide, PEG-40 Hydrogenated Castor Oil, C13-14 Isoparaffin, Carbomer, Panthenol, Tocopheryl Acetate, Parfum / Fragrance, Decyl Glucoside, Xanthan Gum, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Disodium EDTA, Laureth-7, BHT, Sodium Lauroyl Glutamate, Linalool, Lysine, Propylene Glycol, Magnesium Chloride.",
+        ingredientsNote:
+          "ISDIN Argentina publishes only 'Filtros UVA-UVB' on the product page; full INCI was cross-checked from pharmacy listings for the non-tinted version.",
+      },
+      {
+        name: "La Roche-Posay Agua Termal",
+        descriptor:
+          "Thermal spring water mist. La Roche-Posay, Avene, or Vichy are all acceptable; choose whichever is easy to buy.",
+        buy: [
+          {
+            label: "La Roche-Posay at Farmacity",
+            url: "https://www.farmacity.com/search?q=la%20roche%20posay%20agua%20termal",
+          },
+          {
+            label: "Avene at Farmacity",
+            url: "https://www.farmacity.com/search?q=avene%20agua%20termal",
+          },
+          {
+            label: "Vichy at Farmacity",
+            url: "https://www.farmacity.com/search?q=vichy%20agua%20termal",
+          },
+        ],
+        ingredients:
+          "Aqua / Water for La Roche-Posay and equivalent single-ingredient thermal-water mists. Naturally mineral-rich; no added fragrance, alcohol, or parabens.",
+      },
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main>
+      <p><a href="/">sokolsky.me</a></p>
+
+      <h1>{pageTitle}</h1>
+
+      <p>
+        A practical Buenos Aires/Argentina shopping list. Product names are kept close to the original notes, with the exact version to buy, ingredients, and direct links where I could verify them.
+      </p>
+
+      <p class="small">
+        Ingredient lists can change by batch and country. For anything prescription-like, compounded, or clinic-dispensed, the package label should win over this page.
+      </p>
+
+      {sections.map((section) => (
+        <section>
+          <h2>{section.title}</h2>
+          <ul class="products">
+            {section.items.map((item) => (
+              <li>
+                <p><strong>{item.name}</strong></p>
+                <p>{item.descriptor}</p>
+
+                {item.buy.length > 0 && (
+                  <>
+                    <p><strong>Buy:</strong></p>
+                    <ul class="links">
+                      {item.buy.map((link) => (
+                        <li>
+                          <a href={link.url} target="_blank" rel="noreferrer noopener">
+                            {link.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                <p><strong>Ingredients:</strong> {item.ingredients}</p>
+                {"ingredientsNote" in item && <p class="small">{item.ingredientsNote}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --muted: #555555;
+    --link: #111111;
+    --border: #dddddd;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --link: #eeeeee;
+      --border: #333333;
+    }
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+
+  body {
+    margin: 0;
+    padding: 1.25rem;
+  }
+
+  main {
+    max-width: 50rem;
+  }
+
+  h1 {
+    margin: 1.25rem 0 0.8rem;
+    font-size: 1.7rem;
+    line-height: 1.15;
+  }
+
+  h2 {
+    margin: 2rem 0 0.7rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  p,
+  ul {
+    margin: 0 0 0.9rem;
+  }
+
+  ul {
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin: 0.2rem 0;
+  }
+
+  .products {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .products > li {
+    margin: 0 0 1.35rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+  }
+
+  .products > li > p {
+    margin-bottom: 0.45rem;
+  }
+
+  .links {
+    margin-bottom: 0.55rem;
+  }
+
+  .small {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  body > main > p:first-child {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+</style>
