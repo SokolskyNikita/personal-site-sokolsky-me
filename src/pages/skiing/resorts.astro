@@ -222,24 +222,6 @@ const structuredData = {
           least 1,000 ft of vertical. The score is the estimated share of a
           no-wait top-to-base lap spent moving downhill.
         </p>
-        <dl class="summary-grid" aria-label="Ranking summary">
-          <div>
-            <dt>Qualified resorts</dt>
-            <dd>{formatter.format(skiResorts.length)}</dd>
-          </div>
-          <div>
-            <dt>Sources checked</dt>
-            <dd>
-              {formatter.format(skiResortSource.wikipediaInfoboxPagesChecked)} infobox pages +{" "}
-              {skiResortSource.wikipediaListPagesChecked.length} wiki list pages +{" "}
-              {skiResortSource.skiresortInfoPagesChecked.length} Skiresort.info pages
-            </dd>
-          </div>
-          <div>
-            <dt>Top estimated ski share</dt>
-            <dd>{percentFormatter.format(skiResorts[0].skiingShare)}</dd>
-          </div>
-        </dl>
       </header>
 
       <section class="methodology" aria-labelledby="methodology-heading">
@@ -413,21 +395,6 @@ const structuredData = {
         </div>
       </section>
 
-      <section class="notes" aria-labelledby="notes-heading">
-        <h2 id="notes-heading">Coverage notes</h2>
-        <p>
-          Corpus rule: {skiResortSource.inclusionRule} Pages that use the ski-area
-          infobox for race courses rather than resorts were excluded. The selected
-          wiki list pages and targeted Skiresort.info pages were checked for
-          qualifying misses.
-          {skiResortSource.operatingWindowRule} {skiResortSource.snowDepthRule}
-        </p>
-        <p>
-          This is a speed-of-lap model, not a quality model. It ignores terrain
-          variety, grooming, snow quality, chair capacity, weather, lines, crowds
-          and the time it takes to skate across base areas.
-        </p>
-      </section>
     </main>
   </body>
 </html>
@@ -686,7 +653,7 @@ const structuredData = {
   h1 {
     max-width: 840px;
     margin-bottom: 16px;
-    font-size: clamp(2.5rem, 7.4vw, 6.15rem);
+    font-size: clamp(1.67rem, 4.96vw, 4.12rem);
     letter-spacing: -0.07em;
     line-height: 0.92;
   }
@@ -697,41 +664,6 @@ const structuredData = {
     color: var(--muted);
     font-size: clamp(1rem, 1.8vw, 1.25rem);
     line-height: 1.4;
-  }
-
-  .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    max-width: 870px;
-    margin: 0;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 26px;
-    background: var(--line);
-    box-shadow: var(--shadow);
-  }
-
-  .summary-grid div {
-    padding: 16px 18px;
-    background: color-mix(in srgb, var(--surface) 90%, transparent);
-  }
-
-  .summary-grid dt {
-    margin-bottom: 8px;
-    color: var(--muted);
-    font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .summary-grid dd {
-    margin: 0;
-    font-size: clamp(1.55rem, 3vw, 2.45rem);
-    font-weight: 900;
-    letter-spacing: -0.06em;
-    line-height: 1;
   }
 
   section {
@@ -747,8 +679,7 @@ const structuredData = {
   }
 
   .section-copy h2,
-  .table-heading h2,
-  .notes h2 {
+  .table-heading h2 {
     margin-bottom: 0;
     font-size: clamp(1.65rem, 3.6vw, 3.2rem);
     letter-spacing: -0.06em;
@@ -761,8 +692,7 @@ const structuredData = {
     gap: 10px;
   }
 
-  .method-grid article,
-  .notes {
+  .method-grid article {
     border: 1px solid var(--line);
     border-radius: 26px;
     background: color-mix(in srgb, var(--surface) 88%, transparent);
@@ -770,8 +700,7 @@ const structuredData = {
   }
 
   .method-grid p,
-  .table-heading p,
-  .notes p {
+  .table-heading p {
     color: var(--muted);
   }
 
@@ -784,8 +713,7 @@ const structuredData = {
     font-size: 1rem;
   }
 
-  .method-grid p,
-  .notes p {
+  .method-grid p {
     margin-bottom: 0;
   }
 
@@ -814,6 +742,10 @@ const structuredData = {
     display: grid;
     gap: 5px;
     min-width: min(220px, 100%);
+  }
+
+  .filter-field[hidden] {
+    display: none;
   }
 
   .filter-field span {
@@ -952,35 +884,14 @@ const structuredData = {
     font-weight: 950;
   }
 
-  .notes {
-    max-width: 820px;
-    padding: 16px;
-  }
-
-  .notes h2 {
-    margin-bottom: 8px;
-    font-size: clamp(1.5rem, 3vw, 2.35rem);
-  }
-
-  .notes p + p {
-    margin-top: 8px;
-  }
-
   @media (max-width: 820px) {
-    .summary-grid,
     .method-grid,
     .section-copy,
     .table-heading {
       grid-template-columns: 1fr;
     }
 
-    .summary-grid {
-      border-radius: 22px;
-    }
-
-    .summary-grid div,
-    .method-grid article,
-    .notes {
+    .method-grid article {
       padding: 14px;
     }
 

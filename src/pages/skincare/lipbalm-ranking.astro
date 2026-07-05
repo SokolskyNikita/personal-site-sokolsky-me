@@ -3,70 +3,58 @@ export const prerender = true;
 
 const pageTitle = "Lip balm ranking";
 const pageDescription =
-  "A global ranking of lip repair and maintenance products by real repair efficacy, not marketing.";
+  "A global ranking of lip repair and maintenance products, scored on objective criteria: barrier repair, healing actives, irritant load, and daily-use safety.";
 const themeColorLight = "#f8f2ea";
 const themeColorDark = "#16110d";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-const updatedDate = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-}).format(new Date());
 
 type ProductLink = {
   label: string;
   url: string;
 };
 
-type LipProduct = {
-  rank: number;
+type CriterionScores = {
+  barrier: number;
+  actives: number;
+  irritantFree: number;
+  dailyUse: number;
+};
+
+type LipProductInput = {
   product: string;
   links: ProductLink[];
   region: string;
   productType: string;
-  keyActives: string;
+  mainActives: string;
+  scores: CriterionScores;
   bestFor: string;
-  chatGptRank: number | null;
 };
 
-type TextBlock = {
-  title: string;
-  text: string;
+const scoreWeights: Record<keyof CriterionScores, number> = {
+  barrier: 0.35,
+  actives: 0.25,
+  irritantFree: 0.25,
+  dailyUse: 0.15,
 };
 
-const lipProducts: LipProduct[] = [
+const weightedTotal = ({
+  barrier,
+  actives,
+  irritantFree,
+  dailyUse,
+}: CriterionScores): number =>
+  barrier * scoreWeights.barrier +
+  actives * scoreWeights.actives +
+  irritantFree * scoreWeights.irritantFree +
+  dailyUse * scoreWeights.dailyUse;
+
+const weightPercent = (criterion: keyof CriterionScores): string =>
+  `${Math.round(scoreWeights[criterion] * 100)}%`;
+
+const lipProductInputs: LipProductInput[] = [
   {
-    rank: 1,
-    product: "Dr. Dan's CortiBalm",
-    links: [{ label: "Dr. Dan's CortiBalm", url: "https://drdanslipbalm.com/" }],
-    region: "USA",
-    productType: "Medicated drug",
-    keyActives: "1% hydrocortisone in petrolatum base",
-    bestFor:
-      "Severe cracked/inflamed lips, retinoid/Accutane cheilitis, flares. Rescue only, not months of daily use.",
-    chatGptRank: 1,
-  },
-  {
-    rank: 2,
-    product: "Shiseido Moilip",
-    links: [
-      {
-        label: "Shiseido Moilip",
-        url: "https://japanesetaste.com/products/shiseido-moilip-medicated-lip-cream-8g",
-      },
-    ],
-    region: "Japan",
-    productType: "Medicated quasi-drug",
-    keyActives:
-      "Vit E, vit B6, panthenol, allantoin, glycyrrhetinic acid",
-    bestFor:
-      "Deep repair of cracked/peeling lips; strongest OTC medicated cream that isn't a steroid.",
-    chatGptRank: 2,
-  },
-  {
-    rank: 3,
     product: "CeraVe Healing Ointment",
     links: [
       {
@@ -76,31 +64,13 @@ const lipProducts: LipProduct[] = [
     ],
     region: "USA",
     productType: "Barrier ointment",
-    keyActives:
+    mainActives:
       "46.5% petrolatum + ceramides + hyaluronic acid; fragrance- and lanolin-free",
+    scores: { barrier: 9.5, actives: 6.5, irritantFree: 10, dailyUse: 9 },
     bestFor:
       "Heavy overnight repair for sensitive/reactive lips - the safest strong occlusive.",
-    chatGptRank: 4,
   },
   {
-    rank: 4,
-    product: "Aquaphor Healing Ointment",
-    links: [
-      {
-        label: "Aquaphor Healing Ointment",
-        url: "https://www.aquaphorus.com/products/healing-ointment/aquaphor-healing-ointment",
-      },
-    ],
-    region: "USA/Germany",
-    productType: "Barrier ointment",
-    keyActives:
-      "41% petrolatum + glycerin + panthenol + bisabolol + lanolin alcohol",
-    bestFor:
-      "Overnight repair, cracked corners, barrier rebuild - if you tolerate lanolin.",
-    chatGptRank: 3,
-  },
-  {
-    rank: 5,
     product: "Vaseline Lip Therapy / pure petrolatum",
     links: [
       {
@@ -110,13 +80,44 @@ const lipProducts: LipProduct[] = [
     ],
     region: "Global",
     productType: "Occlusive",
-    keyActives: "100% petrolatum",
+    mainActives: "100% petrolatum",
+    scores: { barrier: 10, actives: 5, irritantFree: 10, dailyUse: 9 },
     bestFor:
       "Cheap, near-zero-irritation daily seal; best layered over damp lips or a humectant.",
-    chatGptRank: 5,
   },
   {
-    rank: 6,
+    product: "Aquaphor Healing Ointment",
+    links: [
+      {
+        label: "Aquaphor Healing Ointment",
+        url: "https://www.aquaphorus.com/products/healing-ointment/aquaphor-healing-ointment",
+      },
+    ],
+    region: "USA/Germany",
+    productType: "Barrier ointment",
+    mainActives:
+      "41% petrolatum + glycerin + panthenol + bisabolol + lanolin alcohol",
+    scores: { barrier: 9.5, actives: 7, irritantFree: 8.5, dailyUse: 9 },
+    bestFor:
+      "Overnight repair, cracked corners, barrier rebuild - if you tolerate lanolin.",
+  },
+  {
+    product: "ISDIN Acniben Repair Lip Balm",
+    links: [
+      {
+        label: "ISDIN Acniben Repair Lip Balm",
+        url: "https://www.isdin.com/de/produkt/acniben-rx/lippenbalsam-regenerierende-lippenpflege",
+      },
+    ],
+    region: "Spain/Europe/LatAm",
+    productType: "Dermocosmetic repair",
+    mainActives:
+      "Petrolatum + mineral oil/waxes + panthenol + hyaluronic acid + shea + glycyrrhetinate",
+    scores: { barrier: 8, actives: 7.5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Retinoid/isotretinoin-type lip dryness when you want a fragrance-free repair balm that is more treatment-like than a basic stick.",
+  },
+  {
     product: "Bepanthol / Bepanthen Lip",
     links: [
       {
@@ -126,13 +127,12 @@ const lipProducts: LipProduct[] = [
     ],
     region: "Germany/Europe/LatAm",
     productType: "Dermocosmetic repair",
-    keyActives: "Dexpanthenol (panthenol) + lipids",
+    mainActives: "Dexpanthenol (panthenol) + lipids",
+    scores: { barrier: 7.5, actives: 8.5, irritantFree: 8.5, dailyUse: 9 },
     bestFor:
       "Panthenol is one of the most evidence-backed repair actives; excellent European pharmacy pick.",
-    chatGptRank: 12,
   },
   {
-    rank: 7,
     product: "Eucerin Aquaphor SOS Lip Repair",
     links: [
       {
@@ -142,91 +142,43 @@ const lipProducts: LipProduct[] = [
     ],
     region: "Germany",
     productType: "Dermocosmetic repair",
-    keyActives: "Glycerin + dexpanthenol + bisabolol + vit C/E",
+    mainActives: "Glycerin + dexpanthenol + bisabolol + vit C/E",
+    scores: { barrier: 8, actives: 7.5, irritantFree: 8.5, dailyUse: 9 },
     bestFor: "Panthenol repair in a lip-tube format, less greasy than a tub.",
-    chatGptRank: 6,
   },
   {
-    rank: 8,
-    product: "La Roche-Posay Cicaplast Lips (B5)",
+    product: "Yuskin Medical Lip Cream",
     links: [
       {
-        label: "La Roche-Posay Cicaplast Lips (B5)",
-        url: "https://www.laroche-posay.ca/en_CA/cicaplast-levres/30106659.html",
+        label: "Yuskin Medical Lip Cream",
+        url: "https://www.yuskin.co.jp/products/series/series_04.html",
       },
     ],
-    region: "France",
-    productType: "Dermocosmetic repair",
-    keyActives: "Panthenol + shea + madecassoside + wax base",
+    region: "Japan",
+    productType: "Medicated drug (non-steroid)",
+    mainActives:
+      "Allantoin + glycyrrhetinic acid + vitamins E/B6/B2 (Class 3 OTC drug)",
+    scores: { barrier: 7.5, actives: 8, irritantFree: 9, dailyUse: 8 },
     bestFor:
-      "Elegant real repair balm for cracked lips; the best everyday dermocosmetic.",
-    chatGptRank: 7,
+      "Japan's dedicated OTC treatment for cheilitis and angular cheilitis - Moilip's jar-format rival with a richer base.",
   },
   {
-    rank: 9,
-    product: "Avène Cicalfate+ Lips",
+    product: "Shiseido Moilip",
     links: [
       {
-        label: "Avène Cicalfate+ Lips",
-        url: "https://www.aveneusa.com/cicalfate-lips-restorative-lip-cream",
+        label: "Shiseido Moilip",
+        url: "https://japanesetaste.com/products/shiseido-moilip-medicated-lip-cream-8g",
       },
     ],
-    region: "France",
-    productType: "Dermocosmetic repair",
-    keyActives: "Nourishing oils/waxes + soothing thermal-water actives",
+    region: "Japan",
+    productType: "Medicated drug (non-steroid)",
+    mainActives:
+      "Vit E, vit B6, panthenol, allantoin, glycyrrhetinic acid",
+    scores: { barrier: 7, actives: 8, irritantFree: 9, dailyUse: 8.5 },
     bestFor:
-      "Sensitive, irritated, post-chapping repair when you want gentle over heavy.",
-    chatGptRank: 9,
+      "Deep repair of cracked/peeling lips; classic OTC medicated cream that isn't a steroid.",
   },
   {
-    rank: 10,
-    product: "Uriage Bariéderm-Cica Lips",
-    links: [
-      {
-        label: "Uriage Bariéderm-Cica Lips",
-        url: "https://uriage.ca/products/bariederm-cica-lips",
-      },
-    ],
-    region: "France",
-    productType: "Barrier protectant",
-    keyActives: "Mineral oil/waxes/dimethicone + cica",
-    bestFor:
-      "Durable protective film against cold/wind; protection more than inflammation control.",
-    chatGptRank: 8,
-  },
-  {
-    rank: 11,
-    product: "Nuxe Rêve de Miel",
-    links: [
-      {
-        label: "Nuxe Rêve de Miel",
-        url: "https://us.nuxe.com/reve-de-miel-honey-lip-balm-15g/",
-      },
-    ],
-    region: "France",
-    productType: "Nourishing balm",
-    keyActives: "Honey, shea, plant oils",
-    bestFor:
-      "Cult overnight nourisher; matte-drying finish some love; strong on softness.",
-    chatGptRank: null,
-  },
-  {
-    rank: 12,
-    product: "Lucas' Papaw Ointment",
-    links: [
-      {
-        label: "Lucas' Papaw Ointment",
-        url: "https://lucaspapaw.com.au/products/lucas-papaw-ointment-25g",
-      },
-    ],
-    region: "Australia",
-    productType: "Occlusive multipurpose",
-    keyActives: "Petrolatum + fermented papaya",
-    bestFor: "Cult all-rounder; solid occlusion with a mild soothing active.",
-    chatGptRank: null,
-  },
-  {
-    rank: 13,
     product: "Lanolips 101 Ointment",
     links: [
       {
@@ -236,44 +188,284 @@ const lipProducts: LipProduct[] = [
     ],
     region: "Australia",
     productType: "Occlusive lanolin",
-    keyActives: "Ultra-pure lanolin",
+    mainActives: "Ultra-pure lanolin",
+    scores: { barrier: 8.5, actives: 7.5, irritantFree: 7, dailyUse: 9 },
     bestFor:
       "Heavy overnight moisture for dry climates - only if lanolin agrees with you.",
-    chatGptRank: 10,
   },
   {
-    rank: 14,
-    product: "Weleda Skin Food Lip Butter",
+    product: "Mentholatum Medical Lip nc",
     links: [
       {
-        label: "Weleda Skin Food Lip Butter",
-        url: "https://www.weleda.com/product/skin-food-lip-butter-g008846",
+        label: "Mentholatum Medical Lip nc",
+        url: "https://www.shop.rohto.co.jp/category/medicine/mentholatum/mentholatum_lip/109951.html",
       },
     ],
-    region: "Germany/Switzerland",
-    productType: "Nourishing balm",
-    keyActives: "Sunflower/shea + plant extracts",
-    bestFor: "Natural emollient daily maintenance for normal-to-dry lips.",
-    chatGptRank: null,
+    region: "Japan",
+    productType: "Medicated drug (non-steroid)",
+    mainActives:
+      "Allantoin + glycyrrhetinic acid + vitamins E/B6 (Class 3 OTC drug); zero menthol/camphor",
+    scores: { barrier: 7, actives: 7.5, irritantFree: 9, dailyUse: 8.5 },
+    bestFor:
+      "Medicated repair in a stick with no cooling agents - the sensitive-lips version of Japan's classic drugstore stick.",
   },
   {
-    rank: 15,
-    product: "Bioderma Atoderm Lip Stick",
+    product: "Lucas' Papaw Ointment",
     links: [
       {
-        label: "Bioderma Atoderm Lip Stick",
-        url: "https://www.bioderma.us/en/p/atoderm-lip-stick.html",
+        label: "Lucas' Papaw Ointment",
+        url: "https://lucaspapaw.com.au/products/lucas-papaw-ointment-25g",
+      },
+    ],
+    region: "Australia",
+    productType: "Occlusive multipurpose",
+    mainActives: "Petrolatum + fermented papaya",
+    scores: { barrier: 8.5, actives: 4.5, irritantFree: 9.5, dailyUse: 9 },
+    bestFor:
+      "Cult all-rounder that is essentially petrolatum with a small papaw dose; ranks on its occlusive base, not the marketing.",
+  },
+  {
+    product: "Curél Lip Care Balm",
+    links: [
+      {
+        label: "Curél Lip Care Balm",
+        url: "https://www.kao-kirei.com/ja/item/kbb/curel/4901301364869/",
+      },
+    ],
+    region: "Japan",
+    productType: "Medicated quasi-drug",
+    mainActives:
+      "Pseudo-ceramide + anti-inflammatory active in an overnight lip-pack base; fragrance-free",
+    scores: { barrier: 7, actives: 6.5, irritantFree: 9.5, dailyUse: 9 },
+    bestFor:
+      "Overnight ceramide lip pack from Japan's flagship sensitive-skin brand; the gentlest maintenance jar in the ranking.",
+  },
+  {
+    product: "Eucerin Acute Lip Balm",
+    links: [
+      {
+        label: "Eucerin Acute Lip Balm",
+        url: "https://www.eucerin.co.uk/products/urea-repair/acute-lip-balm",
+      },
+    ],
+    region: "Germany/UK/EU",
+    productType: "Dermocosmetic repair",
+    mainActives: "Panthenol + licochalcone A/licorice + glycerol + evening primrose oil",
+    scores: { barrier: 6.5, actives: 7.5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Dry, cracked lips and perioral irritation, including cheilitis or lip-lick eczema patterns.",
+  },
+  {
+    product: "Dr. Dan's CortiBalm",
+    links: [{ label: "Dr. Dan's CortiBalm", url: "https://drdanslipbalm.com/" }],
+    region: "USA",
+    productType: "Medicated drug",
+    mainActives: "1% hydrocortisone in petrolatum base",
+    scores: { barrier: 8, actives: 9.5, irritantFree: 9, dailyUse: 2 },
+    bestFor:
+      "Severe cracked/inflamed lips, retinoid/Accutane cheilitis, flares. Strongest healer of inflamed lips, but rescue only - the daily-use cap keeps it out of the top spots.",
+  },
+  {
+    product: "Ducray Keracnyl Repair Lip Balm",
+    links: [
+      {
+        label: "Ducray Keracnyl Repair Lip Balm",
+        url: "https://www.ducray.com/en/p/keracnyl-repair-lip-balm-3282770395716-5e13c847",
       },
     ],
     region: "France",
-    productType: "Cosmetic stick",
-    keyActives: "Shea + mineral oil",
+    productType: "Dermocosmetic repair",
+    mainActives:
+      "Castor oil + glycerin + squalane/emollients + beeswax + 10-hydroxydecenoic acid",
+    scores: { barrier: 7, actives: 6.5, irritantFree: 9, dailyUse: 9 },
     bestFor:
-      "Basic carry-and-reapply daily maintenance; not a rescue product.",
-    chatGptRank: 11,
+      "Severely chapped lips from acne medication. Fragrance-free and built around Hydroxydecine rather than a plain cosmetic stick.",
   },
   {
-    rank: 16,
+    product: "La Roche-Posay Cicaplast Lips (B5)",
+    links: [
+      {
+        label: "La Roche-Posay Cicaplast Lips (B5)",
+        url: "https://www.laroche-posay.ca/en_CA/cicaplast-levres/30106659.html",
+      },
+    ],
+    region: "France",
+    productType: "Dermocosmetic repair",
+    mainActives: "Panthenol + shea + madecassoside + wax base",
+    scores: { barrier: 6.5, actives: 7, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Daily repair balm for cracked lips when you want panthenol in a cleaner pharmacy format.",
+  },
+  {
+    product: "Uriage Bariéderm-Cica Lips",
+    links: [
+      {
+        label: "Uriage Bariéderm-Cica Lips",
+        url: "https://uriage.ca/products/bariederm-cica-lips",
+      },
+    ],
+    region: "France",
+    productType: "Barrier protectant",
+    mainActives: "Mineral oil/waxes/dimethicone + cica",
+    scores: { barrier: 7.5, actives: 5.5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Durable protective film against cold/wind; protection more than inflammation control.",
+  },
+  {
+    product: "FixMySkin 1% Hydrocortisone Healing Lip Balm",
+    links: [
+      {
+        label: "FixMySkin 1% Hydrocortisone Healing Lip Balm",
+        url: "https://www.fixmyskin.com/products/fixmyskin-healing-lip-balm-unflavored-with-1-hydrocortisone",
+      },
+    ],
+    region: "USA",
+    productType: "Medicated drug",
+    mainActives: "1% hydrocortisone + castor oil + beeswax + meadowfoam + shea/cocoa butters",
+    scores: { barrier: 7.5, actives: 9.5, irritantFree: 9, dailyUse: 2 },
+    bestFor:
+      "Inflamed cracked lips when you want steroid rescue in a stick. Stronger for flares than Moilip, but still short-term only.",
+  },
+  {
+    product: "Bioderma Cicabio Lip Repair",
+    links: [
+      {
+        label: "Bioderma Cicabio Lip Repair",
+        url: "https://www.bioderma.co.uk/our-products/cicabio/lip-repair",
+      },
+    ],
+    region: "France",
+    productType: "Dermocosmetic repair",
+    mainActives:
+      "Castor oil + shea oil + glycerin + xylose + squalane + sodium polyglutamate + hyaluronic acid",
+    scores: { barrier: 6.5, actives: 6.5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Cracked or irritated lips when you want a newer repair balm with clinical testing that included isotretinoin cheilitis.",
+  },
+  {
+    product: "O'Keeffe's Lip Repair Unscented",
+    links: [
+      {
+        label: "O'Keeffe's Lip Repair Unscented",
+        url: "https://www.okeeffescompany.com/products/lip-repair-unscented",
+      },
+    ],
+    region: "USA/Canada/UK",
+    productType: "Barrier stick",
+    mainActives: "Dimethicone + petrolatum + waxes/emollients",
+    scores: { barrier: 7.5, actives: 5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Cheap, practical stick for cracked lips when you want dimethicone/petrolatum protection without fragrance.",
+  },
+  {
+    product: "Avène Cicalfate+ Lips",
+    links: [
+      {
+        label: "Avène Cicalfate+ Lips",
+        url: "https://www.aveneusa.com/cicalfate-lips-restorative-lip-cream",
+      },
+    ],
+    region: "France",
+    productType: "Dermocosmetic repair",
+    mainActives: "Nourishing oils/waxes + soothing thermal-water actives",
+    scores: { barrier: 6.5, actives: 6, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Sensitive, irritated, post-chapping repair when you want gentle over heavy.",
+  },
+  {
+    product: "SVR Cicavit+ Lips",
+    links: [
+      {
+        label: "SVR Cicavit+ Lips",
+        url: "https://uk.svr.com/products/civavit-lip-protect-repair-balm",
+      },
+    ],
+    region: "France",
+    productType: "Barrier/nourishing repair",
+    mainActives:
+      "Castor oil + almond oil + coconut oil + shea + beeswax + glycerin + prebiotic sugars",
+    scores: { barrier: 6.5, actives: 5.5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Dry, chapped lips that need a protective film and oil-heavy repair, not a steroid or acne-treatment balm.",
+  },
+  {
+    product: "Illiyoon Ceramide Unscented Vegan Lip Balm",
+    links: [
+      {
+        label: "Illiyoon Ceramide Unscented Vegan Lip Balm",
+        url: "https://global.oliveyoung.com/product/detail?prdtNo=GA251236292",
+      },
+    ],
+    region: "South Korea",
+    productType: "Ceramide balm stick",
+    mainActives: "Ceramide NP + panthenol; unscented vegan melting stick",
+    scores: { barrier: 6, actives: 5.5, irritantFree: 9.5, dailyUse: 9 },
+    bestFor:
+      "Cheap, genuinely fragrance-free ceramide-plus-panthenol stick - the best K-beauty daily maintenance pick.",
+  },
+  {
+    product: "Torriden Solid-In Ceramide Lip Essence",
+    links: [
+      {
+        label: "Torriden Solid-In Ceramide Lip Essence",
+        url: "https://www.torriden.com/goods/goods_view.php?goodsNo=125",
+      },
+    ],
+    region: "South Korea",
+    productType: "Ceramide lip essence",
+    mainActives:
+      "Petrolatum + 5% jojoba oil + 5 ceramides (NP/NS/AS/AP/EOP); unscented",
+    scores: { barrier: 6.5, actives: 5, irritantFree: 9, dailyUse: 9 },
+    bestFor:
+      "Olive Young's #1 lip care item; unscented petrolatum-plus-ceramide gel balm for daily and overnight maintenance.",
+  },
+  {
+    product: "DHC Lip Cream",
+    links: [
+      {
+        label: "DHC Lip Cream",
+        url: "https://www.dhccare.com/products/lip-cream",
+      },
+    ],
+    region: "Japan",
+    productType: "Nourishing stick",
+    mainActives: "Olive oil + lanolin + licorice extract + vitamin E; fragrance-free",
+    scores: { barrier: 6.5, actives: 5, irritantFree: 8.5, dailyUse: 9 },
+    bestFor:
+      "Japan's best-selling daily stick for decades; solid fragrance-free maintenance, not a treatment.",
+  },
+  {
+    product: "Dr.Jart+ Ceramidin Lip Balm",
+    links: [
+      {
+        label: "Dr.Jart+ Ceramidin Lip Balm",
+        url: "https://www.drjart.com/product/52383/125140/lip/ceramidintm-hydrating-ceramide-korean-lip-balm-for-dry-lips",
+      },
+    ],
+    region: "South Korea",
+    productType: "Ceramide balm stick",
+    mainActives: "Ceramide NP + shea butter + sea buckthorn oil",
+    scores: { barrier: 6, actives: 5.5, irritantFree: 8.5, dailyUse: 9 },
+    bestFor:
+      "Ceramide NP stick with K-derma branding; fine repair-adjacent maintenance, but pricier than Illiyoon for a similar formula.",
+  },
+  {
+    product: "ACM Boréade R Soothing Repair Lipstick",
+    links: [
+      {
+        label: "ACM Boréade R Soothing Repair Lipstick",
+        url: "https://labo-acm.com/en/products/soothing-repair-lipstick",
+      },
+    ],
+    region: "France",
+    productType: "Dermocosmetic repair stick",
+    mainActives:
+      "Sunflower oil + coconut oil + shea + quinoa peptide + bisabolol + ceramide NP",
+    scores: { barrier: 6.5, actives: 6, irritantFree: 6.5, dailyUse: 8.5 },
+    bestFor:
+      "Dry lips from isotretinoin or weather when you want a stick format. Fragrance keeps it below the cleaner repair balms.",
+  },
+  {
     product: "Jack Black Intense Therapy SPF 25",
     links: [
       {
@@ -283,13 +475,90 @@ const lipProducts: LipProduct[] = [
     ],
     region: "USA",
     productType: "SPF daytime balm",
-    keyActives: "Emollients + broad-spectrum SPF 25",
+    mainActives: "Emollients + broad-spectrum SPF 25",
+    scores: { barrier: 6.5, actives: 5.5, irritantFree: 6.5, dailyUse: 9 },
     bestFor:
       "Best daytime pick - lips need UV protection too, especially if they keep getting irritated outdoors.",
-    chatGptRank: 13,
   },
   {
-    rank: 17,
+    product: "Dermal Therapy / Flexitol Lip Balm Original",
+    links: [
+      {
+        label: "Dermal Therapy Lip Balm Original",
+        url: "https://dermaltherapy.com.au/product/lip-balm-original/",
+      },
+      {
+        label: "Flexitol Lip Balm",
+        url: "https://incidecoder.com/products/flexitol-lip-balm",
+      },
+    ],
+    region: "Australia/UK/Canada/Middle East",
+    productType: "Urea repair balm",
+    mainActives: "Petrolatum + cocoa butter + lanolin + 2.5% urea + camphor/menthol",
+    scores: { barrier: 8, actives: 7, irritantFree: 4.5, dailyUse: 6 },
+    bestFor:
+      "Severely dry lips when you tolerate menthol/camphor. Effective base and urea, but the irritants cost it dearly on damaged lips.",
+  },
+  {
+    product: "Bioderma Atoderm Lip Stick",
+    links: [
+      {
+        label: "Bioderma Atoderm Lip Stick",
+        url: "https://www.bioderma.us/en/p/atoderm-lip-stick.html",
+      },
+    ],
+    region: "France",
+    productType: "Cosmetic stick",
+    mainActives: "Shea + mineral oil",
+    scores: { barrier: 6, actives: 4.5, irritantFree: 7.5, dailyUse: 9 },
+    bestFor:
+      "Basic carry-and-reapply daily maintenance; not a rescue product.",
+  },
+  {
+    product: "Nuxe Rêve de Miel",
+    links: [
+      {
+        label: "Nuxe Rêve de Miel",
+        url: "https://us.nuxe.com/reve-de-miel-honey-lip-balm-15g/",
+      },
+    ],
+    region: "France",
+    productType: "Nourishing balm",
+    mainActives: "Honey, shea, plant oils",
+    scores: { barrier: 6, actives: 5, irritantFree: 5.5, dailyUse: 8 },
+    bestFor:
+      "Cult overnight nourisher; matte-drying finish some love; fragrance drags it down for damaged lips.",
+  },
+  {
+    product: "Weleda Skin Food Lip Butter",
+    links: [
+      {
+        label: "Weleda Skin Food Lip Butter",
+        url: "https://www.weleda.com/product/skin-food-lip-butter-g008846",
+      },
+    ],
+    region: "Germany/Switzerland",
+    productType: "Nourishing balm",
+    mainActives: "Sunflower/shea + plant extracts",
+    scores: { barrier: 6, actives: 4.5, irritantFree: 5.5, dailyUse: 8 },
+    bestFor:
+      "Natural emollient daily maintenance for normal-to-dry lips; fragranced, so not for reactive lips.",
+  },
+  {
+    product: "Medicube PDRN Lip Sleeping Mask",
+    links: [
+      {
+        label: "Medicube PDRN Lip Sleeping Mask",
+        url: "https://medicube.us/products/pdrn-pink-lip-sleeping-mask",
+      },
+    ],
+    region: "South Korea",
+    productType: "Cosmetic overnight mask",
+    mainActives: "PDRN, ceramides, cica",
+    scores: { barrier: 5.5, actives: 3.5, irritantFree: 6.5, dailyUse: 8 },
+    bestFor: "K-beauty maintenance; decent feel, but PDRN marketing outruns the evidence.",
+  },
+  {
     product: "Laneige Lip Sleeping Mask",
     links: [
       {
@@ -299,64 +568,12 @@ const lipProducts: LipProduct[] = [
     ],
     region: "South Korea",
     productType: "Cosmetic overnight mask",
-    keyActives: "Shea/murumuru/coconut emollients + fragrance",
+    mainActives: "Shea/murumuru/coconut emollients + fragrance",
+    scores: { barrier: 6, actives: 4, irritantFree: 4, dailyUse: 7.5 },
     bestFor:
-      "Pleasant cosmetic overnight softness for mild dryness; not for cracked/inflamed lips.",
-    chatGptRank: 14,
+      "Pleasant cosmetic overnight softness for mild dryness; fragrance and flavor make it a poor pick for cracked/inflamed lips.",
   },
   {
-    rank: 18,
-    product: "Medicube PDRN / Torriden masks",
-    links: [
-      {
-        label: "Medicube PDRN",
-        url: "https://medicube.us/products/pdrn-pink-lip-sleeping-mask",
-      },
-      {
-        label: "Torriden masks",
-        url: "https://www.torriden.com/",
-      },
-    ],
-    region: "South Korea",
-    productType: "Cosmetic overnight mask",
-    keyActives: "PDRN, ceramides, cica",
-    bestFor: "K-beauty maintenance; decent feel, marketing outruns evidence.",
-    chatGptRank: null,
-  },
-  {
-    rank: 19,
-    product: "Carmex Classic",
-    links: [
-      {
-        label: "Carmex Classic",
-        url: "https://www.mycarmex.com/products/classic-lip-balm-original-jar/",
-      },
-    ],
-    region: "USA",
-    productType: "Mentholated balm",
-    keyActives: "Menthol + camphor + salicylic acid + phenol",
-    bestFor:
-      "Feels soothing, widely sold - but the actives perpetuate irritation on chronic cracked lips.",
-    chatGptRank: 15,
-  },
-  {
-    rank: 20,
-    product: "Blistex Medicated",
-    links: [
-      {
-        label: "Blistex Medicated",
-        url: "https://blistex.com/product/medicated-lip-balm/",
-      },
-    ],
-    region: "USA",
-    productType: "Mentholated balm",
-    keyActives: "Menthol + camphor + phenol",
-    bestFor:
-      'Same problem as Carmex; "medicated" tingle is counterproductive for damaged lips.',
-    chatGptRank: null,
-  },
-  {
-    rank: 21,
     product: "Burt's Bees Beeswax",
     links: [
       {
@@ -366,87 +583,47 @@ const lipProducts: LipProduct[] = [
     ],
     region: "USA",
     productType: "Natural waxy balm",
-    keyActives: "Beeswax + peppermint oil",
+    mainActives: "Beeswax + peppermint oil",
+    scores: { barrier: 5, actives: 3, irritantFree: 3.5, dailyUse: 6.5 },
     bestFor:
       "Fine for normal lips; peppermint makes it a poor choice for reactive/peeling lips.",
-    chatGptRank: 16,
+  },
+  {
+    product: "Carmex Classic",
+    links: [
+      {
+        label: "Carmex Classic",
+        url: "https://www.mycarmex.com/products/classic-lip-balm-original-jar/",
+      },
+    ],
+    region: "USA",
+    productType: "Mentholated balm",
+    mainActives: "Menthol + camphor + salicylic acid + phenol",
+    scores: { barrier: 7, actives: 1.5, irritantFree: 2, dailyUse: 3.5 },
+    bestFor:
+      "Feels soothing, widely sold - but the actives perpetuate irritation on chronic cracked lips.",
+  },
+  {
+    product: "Blistex Medicated",
+    links: [
+      {
+        label: "Blistex Medicated",
+        url: "https://blistex.com/product/medicated-lip-balm/",
+      },
+    ],
+    region: "USA",
+    productType: "Mentholated balm",
+    mainActives: "Menthol + camphor + phenol",
+    scores: { barrier: 6.5, actives: 1.5, irritantFree: 2, dailyUse: 3.5 },
+    bestFor:
+      'Same problem as Carmex; "medicated" tingle is counterproductive for damaged lips.',
   },
 ];
 
-const comparisonBasis = [
-  "Occlusion: petrolatum, lanolin, and waxes sealing water in.",
-  "Humectants/emollients: glycerin, shea, hyaluronic acid, and similar moisturizers.",
-  "Active repair/anti-inflammatory ingredients: hydrocortisone, panthenol, allantoin, glycyrrhetinic acid, ceramides, and madecassoside.",
-];
-
-const divergenceNotes: TextBlock[] = [
-  {
-    title: "Panthenol products move up",
-    text: "Dexpanthenol is among the best-evidenced barrier-repair actives, so Bepanthol moves from #12 to #6 and the Cicaplast/Eucerin panthenol cluster becomes a real repair tier.",
-  },
-  {
-    title: "CeraVe over Aquaphor by default",
-    text: "Same-class occlusion, but CeraVe adds ceramides + HA and drops lanolin and fragrance. Aquaphor wins only if you specifically like lanolin.",
-  },
-  {
-    title: "Menthol/fragrance balms drop",
-    text: 'Carmex and Burt\'s Bees are near the bottom for chronically damaged lips because the "active" sensation is often the irritant. Blistex Medicated joins that avoid tier.',
-  },
-  {
-    title: "Added omitted standouts",
-    text: "Nuxe Rêve de Miel, Lucas' Papaw, Weleda Skin Food Lip, and the K-beauty PDRN class are common enough to include, even if none crack the top tier.",
-  },
-  {
-    title: "Podium mostly unchanged",
-    text: "Dr. Dan's and Moilip stay at the top, and pure petrolatum remains the backbone of repair. The disagreement is mainly middle and bottom tiers.",
-  },
-];
-
-const quickPicks: TextBlock[] = [
-  {
-    title: "Emergency: severely cracked / bleeding / inflamed",
-    text: "Dr. Dan's CortiBalm for a few days, then step down to an ointment.",
-  },
-  {
-    title: "Best all-round OTC treatment, non-steroid",
-    text: "Shiseido Moilip.",
-  },
-  {
-    title: "Overnight barrier rebuild",
-    text: "CeraVe Healing Ointment for sensitive lips, or Aquaphor if lanolin is OK.",
-  },
-  {
-    title: "Cheapest reliable maintenance",
-    text: "Pure petrolatum / Vaseline over damp lips.",
-  },
-  {
-    title: "Elegant daily dermocosmetic",
-    text: "La Roche-Posay Cicaplast Lips or Bepanthol.",
-  },
-  {
-    title: "Daytime outdoors",
-    text: "Jack Black SPF 25. UV is a leading cause of recurrent lip damage.",
-  },
-  {
-    title: "Angular cheilitis that won't heal",
-    text: "Often fungal/bacterial, so plain balms won't fix it. It needs an antifungal/steroid combo rather than any product on this list.",
-  },
-];
-
-const sourcingNotes: TextBlock[] = [
-  {
-    title: "Seattle",
-    text: "CeraVe, Aquaphor, Vaseline, Dr. Dan's, Jack Black, and Laneige are easy. Moilip is import/eBay/Asian-goods stores.",
-  },
-  {
-    title: "Prague/EU",
-    text: "Bepanthol, Cicaplast, Cicalfate, Uriage, Bioderma, Nuxe, Weleda, and Eucerin are pharmacy-shelf products. Dr. Dan's is import-only.",
-  },
-  {
-    title: "Buenos Aires",
-    text: "Bepanthol-family panthenol products and Vaseline/petrolatum are findable in farmacias. Most French dermocosmetics and all Japanese/Australian/Korean items are import-only.",
-  },
-];
+const lipProducts = lipProductInputs
+  .map((input) => ({ ...input, score: weightedTotal(input.scores) }))
+  .sort((a, b) => b.score - a.score)
+  .map((scoredProduct, index) => ({ ...scoredProduct, rank: index + 1 }));
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -488,7 +665,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="lip balm ranking, best lip balm, cracked lips, cortibalm, aquaphor, cerave healing ointment, vaseline lip therapy"
+      content="lip balm ranking, best lip balm, cracked lips, cerave healing ointment, vaseline lip therapy, aquaphor, bepanthen, moilip, yuskin medical lip, mentholatum medical lip nc, curel lip care balm, dhc lip cream, illiyoon ceramide lip balm, torriden solid-in lip essence, dr jart ceramidin lip balm, lanolips, cortibalm, fixmyskin, acniben, isdin, ducray keracnyl, eucerin acute lip balm, bioderma cicabio lip repair"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -529,31 +706,47 @@ const structuredData = {
         <p class="eyebrow">Skincare notes</p>
         <h1>{pageTitle}</h1>
         <p class="summary">
-          Global repair-first ranking: drug actives, real barrier repair, then maintenance.
-          Updated {updatedDate}.
+          Each product scored 0-10 on four repair criteria; the rank is the weighted
+          total, not brand reputation.
         </p>
-        <div class="basis" aria-label="Ranking basis">
-          {
-            comparisonBasis.map((basisItem) => (
-              <span class="basis-pill">{basisItem}</span>
-            ))
-          }
-        </div>
       </header>
 
       <section class="ranking" aria-labelledby="ranking-heading">
         <h2 id="ranking-heading">Ranking</h2>
+        <p class="methodology">
+          Scoring: <strong>barrier repair</strong> ({weightPercent("barrier")}) - how
+          strongly the base seals cracked lips against water loss, where
+          petrolatum-heavy ointments set the ceiling; <strong>healing actives</strong>
+          ({weightPercent("actives")}) - clinical evidence behind ingredients such as
+          dexpanthenol, 1% hydrocortisone, lanolin, and urea;
+          <strong>irritant-free</strong> ({weightPercent("irritantFree")}) - penalized
+          for fragrance, flavor, menthol, camphor, phenol, and salicylic acid;
+          <strong>daily use</strong> ({weightPercent("dailyUse")}) - safe to use
+          indefinitely, which caps the steroid rescue balms.
+        </p>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th scope="col" class="rank-column">My rank</th>
+                <th scope="col" class="rank-column">Rank</th>
                 <th scope="col">Product</th>
                 <th scope="col">Region</th>
                 <th scope="col">Type</th>
-                <th scope="col">Key actives</th>
+                <th scope="col">Key ingredients</th>
+                <th scope="col" class="score-column">
+                  Barrier repair <span class="weight">{weightPercent("barrier")}</span>
+                </th>
+                <th scope="col" class="score-column">
+                  Healing actives <span class="weight">{weightPercent("actives")}</span>
+                </th>
+                <th scope="col" class="score-column">
+                  Irritant-free <span class="weight">{weightPercent("irritantFree")}</span>
+                </th>
+                <th scope="col" class="score-column">
+                  Daily use <span class="weight">{weightPercent("dailyUse")}</span>
+                </th>
+                <th scope="col" class="score-column">Score</th>
                 <th scope="col">Best for</th>
-                <th scope="col">ChatGPT rank</th>
               </tr>
             </thead>
             <tbody>
@@ -571,61 +764,19 @@ const structuredData = {
                     </td>
                     <td>{lipProduct.region}</td>
                     <td>{lipProduct.productType}</td>
-                    <td>{lipProduct.keyActives}</td>
+                    <td>{lipProduct.mainActives}</td>
+                    <td class="score-cell">{lipProduct.scores.barrier}</td>
+                    <td class="score-cell">{lipProduct.scores.actives}</td>
+                    <td class="score-cell">{lipProduct.scores.irritantFree}</td>
+                    <td class="score-cell">{lipProduct.scores.dailyUse}</td>
+                    <td class="score-cell total-cell">{lipProduct.score.toFixed(2)}</td>
                     <td>{lipProduct.bestFor}</td>
-                    <td>
-                      <span class:list={["rank-badge", lipProduct.chatGptRank === null && "rank-badge-new"]}>
-                        {lipProduct.chatGptRank ?? "New"}
-                      </span>
-                    </td>
                   </tr>
                 ))
               }
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section class="notes-grid" aria-labelledby="divergence-heading">
-        <div class="section-header">
-          <h2 id="divergence-heading">Where this diverges</h2>
-        </div>
-        {
-          divergenceNotes.map((note) => (
-            <article class="note-card">
-              <h3>{note.title}</h3>
-              <p>{note.text}</p>
-            </article>
-          ))
-        }
-      </section>
-
-      <section class="notes-grid quick-picks" aria-labelledby="quick-picks-heading">
-        <div class="section-header">
-          <h2 id="quick-picks-heading">Quick picks</h2>
-        </div>
-        {
-          quickPicks.map((pick) => (
-            <article class="note-card">
-              <h3>{pick.title}</h3>
-              <p>{pick.text}</p>
-            </article>
-          ))
-        }
-      </section>
-
-      <section class="notes-grid sourcing" aria-labelledby="sourcing-heading">
-        <div class="section-header">
-          <h2 id="sourcing-heading">Sourcing</h2>
-        </div>
-        {
-          sourcingNotes.map((note) => (
-            <article class="note-card">
-              <h3>{note.title}</h3>
-              <p>{note.text}</p>
-            </article>
-          ))
-        }
       </section>
     </main>
   </body>
@@ -736,27 +887,20 @@ const structuredData = {
     font-size: 0.9rem;
   }
 
-  .basis {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    max-width: 980px;
-    margin-top: 0.12rem;
-  }
-
-  .basis-pill {
-    border: 1px solid rgb(155 77 37 / 0.18);
-    border-radius: 999px;
-    padding: 0.22rem 0.48rem;
-    background: rgb(255 250 243 / 0.8);
-    color: #664431;
-    font-size: 0.73rem;
-    font-weight: 690;
-    line-height: 1.2;
-  }
-
   .ranking {
     margin: 0;
+  }
+
+  .methodology {
+    max-width: 118ch;
+    margin: 0 0 0.6rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .methodology strong {
+    color: var(--text);
+    font-weight: 760;
   }
 
   .table-wrap {
@@ -769,7 +913,7 @@ const structuredData = {
 
   table {
     width: 100%;
-    min-width: 1180px;
+    min-width: 1420px;
     border-collapse: collapse;
   }
 
@@ -823,6 +967,30 @@ const structuredData = {
     text-align: center;
   }
 
+  .score-column {
+    width: 5.2rem;
+    text-align: center;
+  }
+
+  .weight {
+    display: block;
+    margin-top: 0.12rem;
+    color: var(--muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+  }
+
+  .score-cell {
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .total-cell {
+    color: var(--accent);
+    font-weight: 860;
+  }
+
   .product-cell {
     width: 12rem;
     font-size: 0.86rem;
@@ -832,67 +1000,6 @@ const structuredData = {
   .link-separator {
     color: var(--muted);
     font-weight: 560;
-  }
-
-  .rank-badge {
-    display: inline-block;
-    min-width: max-content;
-    border: 1px solid rgb(155 77 37 / 0.18);
-    border-radius: 999px;
-    padding: 0.18rem 0.42rem;
-    background: var(--accent-soft);
-    color: #623417;
-    font-size: 0.75rem;
-    font-weight: 760;
-    line-height: 1.1;
-  }
-
-  .rank-badge-new {
-    background: transparent;
-    color: var(--muted);
-  }
-
-  .notes-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0.55rem;
-    margin-top: 0.72rem;
-  }
-
-  .section-header {
-    grid-column: 1 / -1;
-    margin-bottom: -0.2rem;
-  }
-
-  .note-card {
-    margin: 0;
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    padding: 0.58rem 0.62rem;
-    background: rgb(255 250 243 / 0.78);
-  }
-
-  .note-card h3 {
-    margin: 0 0 0.24rem;
-    color: var(--text);
-    font-size: 0.82rem;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-  }
-
-  .note-card p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.78rem;
-    line-height: 1.34;
-  }
-
-  .quick-picks {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-  }
-
-  .sourcing {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   @media (max-width: 720px) {
@@ -917,16 +1024,6 @@ const structuredData = {
       font-size: 0.84rem;
     }
 
-    .basis {
-      display: grid;
-      gap: 0.28rem;
-    }
-
-    .basis-pill {
-      border-radius: 10px;
-      font-size: 0.7rem;
-    }
-
     .table-wrap {
       border-radius: 13px;
     }
@@ -936,17 +1033,6 @@ const structuredData = {
       padding: 0.48rem 0.52rem;
     }
 
-    .notes-grid,
-    .quick-picks,
-    .sourcing {
-      grid-template-columns: 1fr;
-      gap: 0.4rem;
-      margin-top: 0.58rem;
-    }
-
-    .section-header {
-      margin-bottom: -0.12rem;
-    }
   }
 
   @media (prefers-color-scheme: dark) {
@@ -976,17 +1062,5 @@ const structuredData = {
       background: rgb(255 255 255 / 0.025);
     }
 
-    .basis-pill,
-    .note-card {
-      background: rgb(255 255 255 / 0.035);
-    }
-
-    .basis-pill {
-      color: #f3cdb0;
-    }
-
-    .rank-badge {
-      color: #ffd9bd;
-    }
   }
 </style>
