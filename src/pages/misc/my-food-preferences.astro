@@ -1,0 +1,175 @@
+---
+export const prerender = true;
+
+const pageTitle = "My food preferences";
+const pageDescription =
+  "A compact dietary profile covering vegetarian baseline, favorite foods, foods to avoid, and allowed exceptions.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main>
+      <p><a href="/">sokolsky.me</a></p>
+
+      <h1>{pageTitle}</h1>
+
+      <p><strong>Dietary profile</strong></p>
+
+      <p><strong>Baseline</strong></p>
+      <ul>
+        <li><strong>Diet:</strong> Ovo-lacto vegetarian. Honey is acceptable.</li>
+        <li><strong>Flavor/smell:</strong> Must avoid any dishes with a noticeable meat or fish flavor or smell.</li>
+        <li><strong>Note:</strong> Trace or imperceptible non-vegetarian ingredients, such as gelatin, are acceptable.</li>
+      </ul>
+
+      <p><strong>Favorite foods</strong></p>
+      <ul>
+        <li><strong>Taco Bell:</strong> Vegetarian items, especially bean-and-cheese burritos, cheese quesadillas, and potato tacos. <em>No fajita vegetables. No sofritas.</em></li>
+        <li><strong>Chipotle:</strong> Veggie burrito bowl. <em>No fajita vegetables. No sofritas.</em></li>
+        <li><strong>Vareniki / pierogi:</strong> Potato and cheese; sweet cherry as dessert. <em>No mushroom.</em></li>
+        <li><strong>Pizza:</strong> Cheese and tomato. <em>No cooked-vegetable toppings.</em></li>
+        <li><strong>Pasta with tomato sauces:</strong> Marinara/pomodoro; cheese ravioli with tomato sauce. <em>No cooked-vegetable add-ins.</em></li>
+      </ul>
+
+      <p><strong>Other favorites</strong></p>
+      <ul>
+        <li>Tomato soup with grilled cheese.</li>
+        <li>Potatoes: hash browns, baked potatoes, and latkes.</li>
+        <li>Hummus with pita and fresh vegetables.</li>
+        <li>Bean-and-cheese burritos or bowls with vegetarian beans and no fajita vegetables.</li>
+        <li>Vegetable spring rolls and samosas.</li>
+        <li>Vegetable sushi, especially cucumber or avocado rolls.</li>
+        <li>Fried cheese, including Czech smazeny syr, mozzarella sticks, and cheese curds.</li>
+        <li>Egg-and-cheese items, including cheese omelets and breakfast sandwiches without cooked vegetables.</li>
+      </ul>
+
+      <p><em>Note: Mentioning Taco Bell and Chipotle does not imply a preference for "authentic" Mexican cuisine, which is generally avoided.</em></p>
+
+      <p><strong>Foods to avoid</strong></p>
+      <ul>
+        <li><strong>Proteins:</strong> Meat, fish, poultry.</li>
+        <li><strong>Meat/tofu analogs:</strong> Tofu, Impossible/Beyond products, tempeh, seitan.</li>
+        <li><strong>Cooked vegetables:</strong> All cooked vegetables, including boiled, sauteed, and roasted vegetables, except the specific items listed as allowed.</li>
+        <li><strong>Mushrooms:</strong> Mushrooms in any form.</li>
+      </ul>
+
+      <p><strong>Allowed foods and exceptions</strong></p>
+      <ul>
+        <li><strong>General categories:</strong> Dairy, eggs, honey, gelatin; all grains, breads, pastas, and rice; all fruit.</li>
+        <li><strong>Raw vegetables:</strong> Any type of fresh, uncooked vegetable is acceptable.</li>
+        <li><strong>Cooked-vegetable exceptions:</strong> Potatoes, tomatoes, and corn are acceptable in any form, including boiled, sauteed, and roasted. This includes tomato sauces and soups.</li>
+        <li><strong>Onion and garlic:</strong> Acceptable in small amounts when fried and mixed into dishes, but not as standalone cooked sides.</li>
+        <li><strong>Legumes:</strong> Cooked beans and chickpeas are acceptable, including hummus and bean burritos.</li>
+        <li><strong>Other exceptions:</strong> Pickled or fermented vegetables, such as pickles and sauerkraut; seaweed in small amounts, such as nori wraps; vegetable-filled fried or wrapped items similar to spring rolls and samosas.</li>
+      </ul>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --muted: #555555;
+    --link: #111111;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --link: #eeeeee;
+    }
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+
+  body {
+    margin: 0;
+    padding: 1.25rem;
+  }
+
+  main {
+    max-width: 44rem;
+  }
+
+  h1 {
+    margin: 1.25rem 0;
+    font-size: 1.7rem;
+    line-height: 1.15;
+  }
+
+  p,
+  ul {
+    margin: 0 0 0.9rem;
+  }
+
+  ul {
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin: 0.2rem 0;
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  body > main > p:first-child {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+</style>
