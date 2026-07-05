@@ -5,7 +5,7 @@ export const prerender = true;
 
 const pageTitle = "Global ski resort efficiency ranking";
 const pageDescription =
-  "A wiki-backed ranking of operating ski resorts with at least 1,000 ft of vertical drop, sorted by the estimated share of lap time spent skiing.";
+  "A source-backed ranking of operating ski resorts with at least 1,000 ft of vertical drop, sorted by the estimated share of lap time spent skiing.";
 const themeColorLight = "#f4efe6";
 const themeColorDark = "#121412";
 const siteUrl =
@@ -28,8 +28,115 @@ const snowFormatter = new Intl.NumberFormat("en-US", {
 const wikiSnowCount = skiResorts.filter(
   (resort) => resort.snowEstimateSource === "wiki annual snowfall field",
 ).length;
-const fallbackSnowCount = skiResorts.length - wikiSnowCount;
-const topResorts = skiResorts.slice(0, 3);
+const skiresortSnowCount = skiResorts.filter(
+  (resort) => resort.snowEstimateSource === "skiresort.info peak snow average",
+).length;
+const fallbackSnowCount = skiResorts.length - wikiSnowCount - skiresortSnowCount;
+const collator = new Intl.Collator("en", {
+  sensitivity: "base",
+  numeric: true,
+});
+const continentOrder = [
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "Oceania",
+  "South America",
+] as const;
+const continentOptions = continentOrder
+  .map((continent) => ({
+    name: continent,
+    count: skiResorts.filter((resort) => resort.continent === continent).length,
+  }))
+  .filter((option) => option.count > 0);
+const usStateNames = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+] as const;
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const getUsState = (location: string, country: string) => {
+  if (country !== "United States") return "";
+  return (
+    usStateNames.find((state) =>
+      new RegExp(`(^|[^A-Za-z])${escapeRegExp(state)}([^A-Za-z]|$)`).test(
+        location,
+      ),
+    ) ?? ""
+  );
+};
+const countryCounts = skiResorts.reduce((counts, resort) => {
+  counts.set(resort.country, (counts.get(resort.country) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const countryContinents = skiResorts.reduce((continents, resort) => {
+  continents.set(resort.country, resort.continent);
+  return continents;
+}, new Map<string, string>());
+const countryOptions = [...countryCounts.entries()]
+  .sort(([first], [second]) => collator.compare(first, second))
+  .map(([name, count]) => ({
+    name,
+    count,
+    continent: countryContinents.get(name),
+  }));
+const usStateCounts = skiResorts.reduce((counts, resort) => {
+  const state = getUsState(resort.location, resort.country);
+  if (state) counts.set(state, (counts.get(state) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const usStateOptions = [...usStateCounts.entries()]
+  .sort(([first], [second]) => collator.compare(first, second))
+  .map(([name, count]) => ({ name, count }));
 
 const feet = (value: number | null) =>
   value === null ? "not listed" : `${formatter.format(value)} ft`;
@@ -111,9 +218,9 @@ const structuredData = {
         <p class="eyebrow">Skiing research</p>
         <h1>{pageTitle}</h1>
         <p class="intro">
-          Operating English Wikipedia ski-area infoboxes with at least 1,000 ft
-          of vertical. The score is the estimated share of a no-wait top-to-base
-          lap spent moving downhill.
+          Operating resorts from ski-area source pages and list rows with at
+          least 1,000 ft of vertical. The score is the estimated share of a
+          no-wait top-to-base lap spent moving downhill.
         </p>
         <dl class="summary-grid" aria-label="Ranking summary">
           <div>
@@ -121,8 +228,12 @@ const structuredData = {
             <dd>{formatter.format(skiResorts.length)}</dd>
           </div>
           <div>
-            <dt>Wiki infobox pages checked</dt>
-            <dd>{formatter.format(skiResortSource.wikipediaInfoboxPagesChecked)}</dd>
+            <dt>Sources checked</dt>
+            <dd>
+              {formatter.format(skiResortSource.wikipediaInfoboxPagesChecked)} infobox pages +{" "}
+              {skiResortSource.wikipediaListPagesChecked.length} wiki list pages +{" "}
+              {skiResortSource.skiresortInfoPagesChecked.length} Skiresort.info pages
+            </dd>
           </div>
           <div>
             <dt>Top estimated ski share</dt>
@@ -130,30 +241,6 @@ const structuredData = {
           </div>
         </dl>
       </header>
-
-      <section class="podium" aria-labelledby="podium-heading">
-        <div class="section-copy">
-          <p class="eyebrow">Leaders</p>
-          <h2 id="podium-heading">Fastest no-wait laps</h2>
-        </div>
-        <div class="podium-grid">
-          {topResorts.map((resort) => (
-            <article class="podium-card">
-              <p class="rank">#{resort.rank}</p>
-              <h3>
-                <a href={resort.wikiUrl} target="_blank" rel="noreferrer noopener">
-                  {resort.name}
-                </a>
-              </h3>
-              <p class="location">{resort.location}</p>
-              <p class="score">{percentFormatter.format(resort.skiingShare)} skiing</p>
-              <p class="lap">
-                {minutes(resort.descentMinutes)} down / {minutes(resort.ascentMinutes)} up
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
 
       <section class="methodology" aria-labelledby="methodology-heading">
         <div class="section-copy">
@@ -164,10 +251,10 @@ const structuredData = {
           <article>
             <h3>Vertical</h3>
             <p>
-              Inclusion comes from Wikipedia's ski-area infobox vertical field.
-              When the field distinguishes total, hike-to and lift-served
-              values, the lift-served value is used. Closed, defunct and
-              inaccessible resorts are excluded.
+              Inclusion comes from ski-area infoboxes, selected list rows or
+              targeted Skiresort.info source pages. When a field distinguishes
+              total, hike-to and lift-served vertical, the lift-served value is
+              used. Closed, defunct and inaccessible resorts are excluded.
             </p>
           </article>
           <article>
@@ -181,9 +268,11 @@ const structuredData = {
           <article>
             <h3>Snow</h3>
             <p>
-              Base/top peak-season snow is a median snowpack estimate, not part
-              of the ranking. {wikiSnowCount} rows use wiki annual snowfall fields;
-              {fallbackSnowCount} use regional/elevation fallbacks.
+              Base/top peak-season snow is a median snowpack estimate. Resorts
+              below 3 ft at the top or 2 ft at the base are excluded, but snow is
+              not part of the ranking. {wikiSnowCount} rows use wiki annual
+              snowfall fields; {skiresortSnowCount} use Skiresort.info peak
+              snow averages; {fallbackSnowCount} use regional/elevation fallbacks.
             </p>
           </article>
         </div>
@@ -201,33 +290,109 @@ const structuredData = {
           </p>
         </div>
 
+        <div class="filter-bar" aria-label="Resort filters">
+          <label class="filter-field" for="continent-filter">
+            <span>Continent</span>
+            <select id="continent-filter" name="continent" autocomplete="off">
+              <option value="">All ({skiResorts.length})</option>
+              {continentOptions.map((option) => (
+                <option value={option.name}>
+                  {option.name} ({option.count})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label class="filter-field" for="country-filter">
+            <span>Country</span>
+            <select id="country-filter" name="country" autocomplete="off">
+              <option value="">All ({skiResorts.length})</option>
+              {countryOptions.map((option) => (
+                <option value={option.name} data-continent={option.continent}>
+                  {option.name} ({option.count})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label class="filter-field" for="state-filter" id="state-filter-field" hidden>
+            <span>State</span>
+            <select id="state-filter" name="state" autocomplete="off">
+              <option value="">All US states ({countryCounts.get("United States") ?? 0})</option>
+              {usStateOptions.map((option) => (
+                <option value={option.name}>
+                  {option.name} ({option.count})
+                </option>
+              ))}
+            </select>
+          </label>
+          <p id="filter-status" class="filter-status">
+            Showing all {skiResorts.length} resorts.
+          </p>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th scope="col">Rank</th>
-                <th scope="col">Resort</th>
-                <th scope="col">Vertical</th>
-                <th scope="col">Skiing share</th>
-                <th scope="col">Down</th>
-                <th scope="col">Up</th>
-                <th scope="col">Median base snow</th>
-                <th scope="col">Median top snow</th>
-                <th scope="col">Lift assumption</th>
-                <th scope="col">Wiki data</th>
+                <th scope="col" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort-key="name" data-sort-default="asc">
+                    Resort
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort-key="vertical" data-sort-default="desc">
+                    Vertical
+                  </button>
+                </th>
+                <th scope="col" aria-sort="descending">
+                  <button class="sort-button" type="button" data-sort-key="share" data-sort-default="desc">
+                    Skiing share
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort-key="down" data-sort-default="desc">
+                    Down
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort-key="up" data-sort-default="asc">
+                    Up
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort-key="baseSnow" data-sort-default="desc">
+                    Median base snow
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort-key="topSnow" data-sort-default="desc">
+                    Median top snow
+                  </button>
+                </th>
               </tr>
             </thead>
             <tbody>
               {skiResorts.map((resort) => (
-                <tr>
+                <tr
+                  data-continent={resort.continent}
+                  data-country={resort.country}
+                  data-state={getUsState(resort.location, resort.country)}
+                  data-name={resort.name}
+                  data-vertical={resort.verticalFt}
+                  data-share={resort.skiingShare}
+                  data-down={resort.descentMinutes}
+                  data-up={resort.ascentMinutes}
+                  data-base-snow={resort.snowAtBaseFt}
+                  data-top-snow={resort.snowAtTopFt}
+                >
                   <th scope="row">#{resort.rank}</th>
                   <td class="resort-cell">
                     <a href={resort.wikiUrl} target="_blank" rel="noreferrer noopener">
                       {resort.name}
                     </a>
-                    <span>{resort.location}</span>
+                    <span>{resort.location} · {resort.country}</span>
                   </td>
-                  <td title={`Wiki vertical field: ${resort.wikiVerticalField}`}>
+                  <td title={`Source vertical field: ${resort.wikiVerticalField}`}>
                     {feet(resort.verticalFt)}
                   </td>
                   <td class="score-cell">
@@ -241,12 +406,6 @@ const structuredData = {
                   <td title={resort.snowEstimateSource}>
                     {snowFeet(resort.snowAtTopFt)}
                   </td>
-                  <td title={resort.liftSystem}>{resort.liftRouteAssumption}</td>
-                  <td>
-                    <a href={resort.wikiUrl} target="_blank" rel="noreferrer noopener">
-                      source
-                    </a>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -258,8 +417,10 @@ const structuredData = {
         <h2 id="notes-heading">Coverage notes</h2>
         <p>
           Corpus rule: {skiResortSource.inclusionRule} Pages that use the ski-area
-          infobox for race courses rather than resorts were excluded.
-          {skiResortSource.operatingWindowRule}
+          infobox for race courses rather than resorts were excluded. The selected
+          wiki list pages and targeted Skiresort.info pages were checked for
+          qualifying misses.
+          {skiResortSource.operatingWindowRule} {skiResortSource.snowDepthRule}
         </p>
         <p>
           This is a speed-of-lap model, not a quality model. It ignores terrain
@@ -270,6 +431,159 @@ const structuredData = {
     </main>
   </body>
 </html>
+
+<script is:inline>
+  const continentFilter = document.querySelector("#continent-filter");
+  const countryFilter = document.querySelector("#country-filter");
+  const stateFilter = document.querySelector("#state-filter");
+  const stateFilterField = document.querySelector("#state-filter-field");
+  const filterStatus = document.querySelector("#filter-status");
+  const resortTableBody = document.querySelector("tbody");
+  const resortRows = [...document.querySelectorAll("tbody tr[data-continent]")];
+  const sortButtons = [...document.querySelectorAll(".sort-button")];
+  const totalResorts = resortRows.length;
+  const collator = new Intl.Collator("en", {
+    sensitivity: "base",
+    numeric: true,
+  });
+  let currentSort = {
+    key: "share",
+    direction: "desc",
+  };
+
+  const updateCountryOptions = () => {
+    const selectedContinent = continentFilter?.value ?? "";
+    const options = [...(countryFilter?.options ?? [])];
+
+    for (const option of options) {
+      if (!option.value) continue;
+      option.hidden = Boolean(
+        selectedContinent && option.dataset.continent !== selectedContinent,
+      );
+    }
+
+    const selectedCountry = countryFilter?.selectedOptions?.[0];
+    if (selectedCountry?.hidden && countryFilter) {
+      countryFilter.value = "";
+    }
+  };
+
+  const updateStateFilter = () => {
+    const isUnitedStatesSelected = countryFilter?.value === "United States";
+
+    if (stateFilterField) {
+      stateFilterField.hidden = !isUnitedStatesSelected;
+    }
+
+    if (!isUnitedStatesSelected && stateFilter) {
+      stateFilter.value = "";
+    }
+  };
+
+  const updateFilters = () => {
+    updateCountryOptions();
+    updateStateFilter();
+
+    const selectedContinent = continentFilter?.value ?? "";
+    const selectedCountry = countryFilter?.value ?? "";
+    const selectedState =
+      selectedCountry === "United States" ? (stateFilter?.value ?? "") : "";
+    let visibleCount = 0;
+
+    for (const row of resortRows) {
+      const isVisible =
+        (!selectedContinent || row.dataset.continent === selectedContinent) &&
+        (!selectedCountry || row.dataset.country === selectedCountry) &&
+        (!selectedState || row.dataset.state === selectedState);
+
+      row.hidden = !isVisible;
+      if (isVisible) visibleCount += 1;
+    }
+
+    if (filterStatus) {
+      filterStatus.textContent =
+        visibleCount === totalResorts
+          ? `Showing all ${totalResorts} resorts.`
+          : `Showing ${visibleCount} of ${totalResorts} resorts.`;
+    }
+  };
+
+  const getSortValue = (row, key) => {
+    if (key === "name") return row.dataset.name ?? "";
+    return Number(row.dataset[key] ?? 0);
+  };
+
+  const compareRows = (firstRow, secondRow) => {
+    const firstValue = getSortValue(firstRow, currentSort.key);
+    const secondValue = getSortValue(secondRow, currentSort.key);
+    const multiplier = currentSort.direction === "asc" ? 1 : -1;
+
+    if (currentSort.key === "name") {
+      return multiplier * collator.compare(String(firstValue), String(secondValue));
+    }
+
+    const numericDifference = Number(firstValue) - Number(secondValue);
+    if (numericDifference !== 0) return multiplier * numericDifference;
+
+    return collator.compare(
+      firstRow.dataset.name ?? "",
+      secondRow.dataset.name ?? "",
+    );
+  };
+
+  const updateSortState = () => {
+    for (const button of sortButtons) {
+      const isActive = button.dataset.sortKey === currentSort.key;
+      button.dataset.sortDirection = isActive ? currentSort.direction : "";
+      button.closest("th")?.setAttribute(
+        "aria-sort",
+        isActive
+          ? currentSort.direction === "asc"
+            ? "ascending"
+            : "descending"
+          : "none",
+      );
+    }
+  };
+
+  const sortRows = () => {
+    if (!resortTableBody) return;
+
+    const sortedRows = [...resortRows].sort(compareRows);
+    for (const row of sortedRows) {
+      resortTableBody.append(row);
+    }
+
+    updateSortState();
+    updateFilters();
+  };
+
+  continentFilter?.addEventListener("change", updateFilters);
+  countryFilter?.addEventListener("change", updateFilters);
+  stateFilter?.addEventListener("change", updateFilters);
+  for (const button of sortButtons) {
+    button.addEventListener("click", () => {
+      const sortKey = button.dataset.sortKey;
+      if (!sortKey) return;
+
+      const defaultDirection = button.dataset.sortDefault ?? "desc";
+      currentSort =
+        currentSort.key === sortKey
+          ? {
+              key: sortKey,
+              direction: currentSort.direction === "asc" ? "desc" : "asc",
+            }
+          : {
+              key: sortKey,
+              direction: defaultDirection,
+            };
+
+      sortRows();
+    });
+  }
+
+  sortRows();
+</script>
 
 <style>
   :root {
@@ -441,14 +755,12 @@ const structuredData = {
     line-height: 1;
   }
 
-  .podium-grid,
   .method-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
   }
 
-  .podium-card,
   .method-grid article,
   .notes {
     border: 1px solid var(--line);
@@ -457,43 +769,10 @@ const structuredData = {
     box-shadow: var(--shadow);
   }
 
-  .podium-card {
-    padding: 16px;
-  }
-
-  .rank {
-    margin-bottom: 16px;
-    color: var(--accent);
-    font-size: clamp(1.9rem, 5vw, 3.6rem);
-    font-weight: 950;
-    letter-spacing: -0.08em;
-    line-height: 0.8;
-  }
-
-  .podium-card h3 {
-    margin-bottom: 6px;
-    font-size: clamp(1.15rem, 2.2vw, 1.55rem);
-    letter-spacing: -0.045em;
-    line-height: 1;
-  }
-
-  .location,
-  .lap,
   .method-grid p,
   .table-heading p,
   .notes p {
     color: var(--muted);
-  }
-
-  .score {
-    display: inline-flex;
-    margin: 8px 0 6px;
-    padding: 5px 9px;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-size: 0.88rem;
-    font-weight: 900;
   }
 
   .method-grid article {
@@ -521,6 +800,46 @@ const structuredData = {
   .table-heading p {
     max-width: 560px;
     margin-bottom: 4px;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 12px;
+  }
+
+  .filter-field {
+    display: grid;
+    gap: 5px;
+    min-width: min(220px, 100%);
+  }
+
+  .filter-field span {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-field select {
+    min-height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 750;
+    padding: 7px 34px 7px 10px;
+  }
+
+  .filter-status {
+    margin: 0 0 8px auto;
+    color: var(--muted);
+    font-size: 0.9rem;
   }
 
   .table-wrap {
@@ -557,6 +876,40 @@ const structuredData = {
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .sort-button {
+    display: inline-flex;
+    gap: 5px;
+    align-items: baseline;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    letter-spacing: inherit;
+    padding: 0;
+    text-align: left;
+    text-transform: inherit;
+  }
+
+  .sort-button:hover {
+    color: var(--accent);
+  }
+
+  .sort-button::after {
+    content: "";
+    color: var(--accent);
+    font-size: 0.85em;
+    letter-spacing: 0;
+  }
+
+  .sort-button[data-sort-direction="asc"]::after {
+    content: "↑";
+  }
+
+  .sort-button[data-sort-direction="desc"]::after {
+    content: "↓";
   }
 
   tbody tr:nth-child(even) {
@@ -615,7 +968,6 @@ const structuredData = {
 
   @media (max-width: 820px) {
     .summary-grid,
-    .podium-grid,
     .method-grid,
     .section-copy,
     .table-heading {
@@ -627,7 +979,6 @@ const structuredData = {
     }
 
     .summary-grid div,
-    .podium-card,
     .method-grid article,
     .notes {
       padding: 14px;
@@ -635,6 +986,15 @@ const structuredData = {
 
     .home-link {
       margin-bottom: 28px;
+    }
+
+    .filter-field,
+    .filter-status {
+      width: 100%;
+    }
+
+    .filter-status {
+      margin-left: 0;
     }
   }
 </style>

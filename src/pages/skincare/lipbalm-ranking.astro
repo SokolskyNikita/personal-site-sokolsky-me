@@ -1,0 +1,992 @@
+---
+export const prerender = true;
+
+const pageTitle = "Lip balm ranking";
+const pageDescription =
+  "A global ranking of lip repair and maintenance products by real repair efficacy, not marketing.";
+const themeColorLight = "#f8f2ea";
+const themeColorDark = "#16110d";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date());
+
+type ProductLink = {
+  label: string;
+  url: string;
+};
+
+type LipProduct = {
+  rank: number;
+  product: string;
+  links: ProductLink[];
+  region: string;
+  productType: string;
+  keyActives: string;
+  bestFor: string;
+  chatGptRank: number | null;
+};
+
+type TextBlock = {
+  title: string;
+  text: string;
+};
+
+const lipProducts: LipProduct[] = [
+  {
+    rank: 1,
+    product: "Dr. Dan's CortiBalm",
+    links: [{ label: "Dr. Dan's CortiBalm", url: "https://drdanslipbalm.com/" }],
+    region: "USA",
+    productType: "Medicated drug",
+    keyActives: "1% hydrocortisone in petrolatum base",
+    bestFor:
+      "Severe cracked/inflamed lips, retinoid/Accutane cheilitis, flares. Rescue only, not months of daily use.",
+    chatGptRank: 1,
+  },
+  {
+    rank: 2,
+    product: "Shiseido Moilip",
+    links: [
+      {
+        label: "Shiseido Moilip",
+        url: "https://japanesetaste.com/products/shiseido-moilip-medicated-lip-cream-8g",
+      },
+    ],
+    region: "Japan",
+    productType: "Medicated quasi-drug",
+    keyActives:
+      "Vit E, vit B6, panthenol, allantoin, glycyrrhetinic acid",
+    bestFor:
+      "Deep repair of cracked/peeling lips; strongest OTC medicated cream that isn't a steroid.",
+    chatGptRank: 2,
+  },
+  {
+    rank: 3,
+    product: "CeraVe Healing Ointment",
+    links: [
+      {
+        label: "CeraVe Healing Ointment",
+        url: "https://www.cerave.com/skincare/moisturizers/healing-ointment",
+      },
+    ],
+    region: "USA",
+    productType: "Barrier ointment",
+    keyActives:
+      "46.5% petrolatum + ceramides + hyaluronic acid; fragrance- and lanolin-free",
+    bestFor:
+      "Heavy overnight repair for sensitive/reactive lips - the safest strong occlusive.",
+    chatGptRank: 4,
+  },
+  {
+    rank: 4,
+    product: "Aquaphor Healing Ointment",
+    links: [
+      {
+        label: "Aquaphor Healing Ointment",
+        url: "https://www.aquaphorus.com/products/healing-ointment/aquaphor-healing-ointment",
+      },
+    ],
+    region: "USA/Germany",
+    productType: "Barrier ointment",
+    keyActives:
+      "41% petrolatum + glycerin + panthenol + bisabolol + lanolin alcohol",
+    bestFor:
+      "Overnight repair, cracked corners, barrier rebuild - if you tolerate lanolin.",
+    chatGptRank: 3,
+  },
+  {
+    rank: 5,
+    product: "Vaseline Lip Therapy / pure petrolatum",
+    links: [
+      {
+        label: "Vaseline Lip Therapy",
+        url: "https://www.vaseline.com/uk/p/vaseline-lip-therapy-original.html/05099802150117",
+      },
+    ],
+    region: "Global",
+    productType: "Occlusive",
+    keyActives: "100% petrolatum",
+    bestFor:
+      "Cheap, near-zero-irritation daily seal; best layered over damp lips or a humectant.",
+    chatGptRank: 5,
+  },
+  {
+    rank: 6,
+    product: "Bepanthol / Bepanthen Lip",
+    links: [
+      {
+        label: "Bepanthol / Bepanthen Lip",
+        url: "https://www.onlineapo.at/en/Bepanthol-Regenerating-Lip-Cream/RA2001067",
+      },
+    ],
+    region: "Germany/Europe/LatAm",
+    productType: "Dermocosmetic repair",
+    keyActives: "Dexpanthenol (panthenol) + lipids",
+    bestFor:
+      "Panthenol is one of the most evidence-backed repair actives; excellent European pharmacy pick.",
+    chatGptRank: 12,
+  },
+  {
+    rank: 7,
+    product: "Eucerin Aquaphor SOS Lip Repair",
+    links: [
+      {
+        label: "Eucerin Aquaphor SOS Lip Repair",
+        url: "https://int.eucerin.com/products/aquaphor/sos-lip-repair",
+      },
+    ],
+    region: "Germany",
+    productType: "Dermocosmetic repair",
+    keyActives: "Glycerin + dexpanthenol + bisabolol + vit C/E",
+    bestFor: "Panthenol repair in a lip-tube format, less greasy than a tub.",
+    chatGptRank: 6,
+  },
+  {
+    rank: 8,
+    product: "La Roche-Posay Cicaplast Lips (B5)",
+    links: [
+      {
+        label: "La Roche-Posay Cicaplast Lips (B5)",
+        url: "https://www.laroche-posay.ca/en_CA/cicaplast-levres/30106659.html",
+      },
+    ],
+    region: "France",
+    productType: "Dermocosmetic repair",
+    keyActives: "Panthenol + shea + madecassoside + wax base",
+    bestFor:
+      "Elegant real repair balm for cracked lips; the best everyday dermocosmetic.",
+    chatGptRank: 7,
+  },
+  {
+    rank: 9,
+    product: "Avène Cicalfate+ Lips",
+    links: [
+      {
+        label: "Avène Cicalfate+ Lips",
+        url: "https://www.aveneusa.com/cicalfate-lips-restorative-lip-cream",
+      },
+    ],
+    region: "France",
+    productType: "Dermocosmetic repair",
+    keyActives: "Nourishing oils/waxes + soothing thermal-water actives",
+    bestFor:
+      "Sensitive, irritated, post-chapping repair when you want gentle over heavy.",
+    chatGptRank: 9,
+  },
+  {
+    rank: 10,
+    product: "Uriage Bariéderm-Cica Lips",
+    links: [
+      {
+        label: "Uriage Bariéderm-Cica Lips",
+        url: "https://uriage.ca/products/bariederm-cica-lips",
+      },
+    ],
+    region: "France",
+    productType: "Barrier protectant",
+    keyActives: "Mineral oil/waxes/dimethicone + cica",
+    bestFor:
+      "Durable protective film against cold/wind; protection more than inflammation control.",
+    chatGptRank: 8,
+  },
+  {
+    rank: 11,
+    product: "Nuxe Rêve de Miel",
+    links: [
+      {
+        label: "Nuxe Rêve de Miel",
+        url: "https://us.nuxe.com/reve-de-miel-honey-lip-balm-15g/",
+      },
+    ],
+    region: "France",
+    productType: "Nourishing balm",
+    keyActives: "Honey, shea, plant oils",
+    bestFor:
+      "Cult overnight nourisher; matte-drying finish some love; strong on softness.",
+    chatGptRank: null,
+  },
+  {
+    rank: 12,
+    product: "Lucas' Papaw Ointment",
+    links: [
+      {
+        label: "Lucas' Papaw Ointment",
+        url: "https://lucaspapaw.com.au/products/lucas-papaw-ointment-25g",
+      },
+    ],
+    region: "Australia",
+    productType: "Occlusive multipurpose",
+    keyActives: "Petrolatum + fermented papaya",
+    bestFor: "Cult all-rounder; solid occlusion with a mild soothing active.",
+    chatGptRank: null,
+  },
+  {
+    rank: 13,
+    product: "Lanolips 101 Ointment",
+    links: [
+      {
+        label: "Lanolips 101 Ointment",
+        url: "https://lanolips.com/products/101-ointment-multipurpose-superbalm",
+      },
+    ],
+    region: "Australia",
+    productType: "Occlusive lanolin",
+    keyActives: "Ultra-pure lanolin",
+    bestFor:
+      "Heavy overnight moisture for dry climates - only if lanolin agrees with you.",
+    chatGptRank: 10,
+  },
+  {
+    rank: 14,
+    product: "Weleda Skin Food Lip Butter",
+    links: [
+      {
+        label: "Weleda Skin Food Lip Butter",
+        url: "https://www.weleda.com/product/skin-food-lip-butter-g008846",
+      },
+    ],
+    region: "Germany/Switzerland",
+    productType: "Nourishing balm",
+    keyActives: "Sunflower/shea + plant extracts",
+    bestFor: "Natural emollient daily maintenance for normal-to-dry lips.",
+    chatGptRank: null,
+  },
+  {
+    rank: 15,
+    product: "Bioderma Atoderm Lip Stick",
+    links: [
+      {
+        label: "Bioderma Atoderm Lip Stick",
+        url: "https://www.bioderma.us/en/p/atoderm-lip-stick.html",
+      },
+    ],
+    region: "France",
+    productType: "Cosmetic stick",
+    keyActives: "Shea + mineral oil",
+    bestFor:
+      "Basic carry-and-reapply daily maintenance; not a rescue product.",
+    chatGptRank: 11,
+  },
+  {
+    rank: 16,
+    product: "Jack Black Intense Therapy SPF 25",
+    links: [
+      {
+        label: "Jack Black Intense Therapy SPF 25",
+        url: "https://www.getjackblack.com/intense-therapy-lip-balm-spf-25.aspx",
+      },
+    ],
+    region: "USA",
+    productType: "SPF daytime balm",
+    keyActives: "Emollients + broad-spectrum SPF 25",
+    bestFor:
+      "Best daytime pick - lips need UV protection too, especially if they keep getting irritated outdoors.",
+    chatGptRank: 13,
+  },
+  {
+    rank: 17,
+    product: "Laneige Lip Sleeping Mask",
+    links: [
+      {
+        label: "Laneige Lip Sleeping Mask",
+        url: "https://us.laneige.com/products/lip-sleeping-mask",
+      },
+    ],
+    region: "South Korea",
+    productType: "Cosmetic overnight mask",
+    keyActives: "Shea/murumuru/coconut emollients + fragrance",
+    bestFor:
+      "Pleasant cosmetic overnight softness for mild dryness; not for cracked/inflamed lips.",
+    chatGptRank: 14,
+  },
+  {
+    rank: 18,
+    product: "Medicube PDRN / Torriden masks",
+    links: [
+      {
+        label: "Medicube PDRN",
+        url: "https://medicube.us/products/pdrn-pink-lip-sleeping-mask",
+      },
+      {
+        label: "Torriden masks",
+        url: "https://www.torriden.com/",
+      },
+    ],
+    region: "South Korea",
+    productType: "Cosmetic overnight mask",
+    keyActives: "PDRN, ceramides, cica",
+    bestFor: "K-beauty maintenance; decent feel, marketing outruns evidence.",
+    chatGptRank: null,
+  },
+  {
+    rank: 19,
+    product: "Carmex Classic",
+    links: [
+      {
+        label: "Carmex Classic",
+        url: "https://www.mycarmex.com/products/classic-lip-balm-original-jar/",
+      },
+    ],
+    region: "USA",
+    productType: "Mentholated balm",
+    keyActives: "Menthol + camphor + salicylic acid + phenol",
+    bestFor:
+      "Feels soothing, widely sold - but the actives perpetuate irritation on chronic cracked lips.",
+    chatGptRank: 15,
+  },
+  {
+    rank: 20,
+    product: "Blistex Medicated",
+    links: [
+      {
+        label: "Blistex Medicated",
+        url: "https://blistex.com/product/medicated-lip-balm/",
+      },
+    ],
+    region: "USA",
+    productType: "Mentholated balm",
+    keyActives: "Menthol + camphor + phenol",
+    bestFor:
+      'Same problem as Carmex; "medicated" tingle is counterproductive for damaged lips.',
+    chatGptRank: null,
+  },
+  {
+    rank: 21,
+    product: "Burt's Bees Beeswax",
+    links: [
+      {
+        label: "Burt's Bees Beeswax",
+        url: "https://www.burtsbees.com/product/beeswax-lip-balm/",
+      },
+    ],
+    region: "USA",
+    productType: "Natural waxy balm",
+    keyActives: "Beeswax + peppermint oil",
+    bestFor:
+      "Fine for normal lips; peppermint makes it a poor choice for reactive/peeling lips.",
+    chatGptRank: 16,
+  },
+];
+
+const comparisonBasis = [
+  "Occlusion: petrolatum, lanolin, and waxes sealing water in.",
+  "Humectants/emollients: glycerin, shea, hyaluronic acid, and similar moisturizers.",
+  "Active repair/anti-inflammatory ingredients: hydrocortisone, panthenol, allantoin, glycyrrhetinic acid, ceramides, and madecassoside.",
+];
+
+const divergenceNotes: TextBlock[] = [
+  {
+    title: "Panthenol products move up",
+    text: "Dexpanthenol is among the best-evidenced barrier-repair actives, so Bepanthol moves from #12 to #6 and the Cicaplast/Eucerin panthenol cluster becomes a real repair tier.",
+  },
+  {
+    title: "CeraVe over Aquaphor by default",
+    text: "Same-class occlusion, but CeraVe adds ceramides + HA and drops lanolin and fragrance. Aquaphor wins only if you specifically like lanolin.",
+  },
+  {
+    title: "Menthol/fragrance balms drop",
+    text: 'Carmex and Burt\'s Bees are near the bottom for chronically damaged lips because the "active" sensation is often the irritant. Blistex Medicated joins that avoid tier.',
+  },
+  {
+    title: "Added omitted standouts",
+    text: "Nuxe Rêve de Miel, Lucas' Papaw, Weleda Skin Food Lip, and the K-beauty PDRN class are common enough to include, even if none crack the top tier.",
+  },
+  {
+    title: "Podium mostly unchanged",
+    text: "Dr. Dan's and Moilip stay at the top, and pure petrolatum remains the backbone of repair. The disagreement is mainly middle and bottom tiers.",
+  },
+];
+
+const quickPicks: TextBlock[] = [
+  {
+    title: "Emergency: severely cracked / bleeding / inflamed",
+    text: "Dr. Dan's CortiBalm for a few days, then step down to an ointment.",
+  },
+  {
+    title: "Best all-round OTC treatment, non-steroid",
+    text: "Shiseido Moilip.",
+  },
+  {
+    title: "Overnight barrier rebuild",
+    text: "CeraVe Healing Ointment for sensitive lips, or Aquaphor if lanolin is OK.",
+  },
+  {
+    title: "Cheapest reliable maintenance",
+    text: "Pure petrolatum / Vaseline over damp lips.",
+  },
+  {
+    title: "Elegant daily dermocosmetic",
+    text: "La Roche-Posay Cicaplast Lips or Bepanthol.",
+  },
+  {
+    title: "Daytime outdoors",
+    text: "Jack Black SPF 25. UV is a leading cause of recurrent lip damage.",
+  },
+  {
+    title: "Angular cheilitis that won't heal",
+    text: "Often fungal/bacterial, so plain balms won't fix it. It needs an antifungal/steroid combo rather than any product on this list.",
+  },
+];
+
+const sourcingNotes: TextBlock[] = [
+  {
+    title: "Seattle",
+    text: "CeraVe, Aquaphor, Vaseline, Dr. Dan's, Jack Black, and Laneige are easy. Moilip is import/eBay/Asian-goods stores.",
+  },
+  {
+    title: "Prague/EU",
+    text: "Bepanthol, Cicaplast, Cicalfate, Uriage, Bioderma, Nuxe, Weleda, and Eucerin are pharmacy-shelf products. Dr. Dan's is import-only.",
+  },
+  {
+    title: "Buenos Aires",
+    text: "Bepanthol-family panthenol products and Vaseline/petrolatum are findable in farmacias. Most French dermocosmetics and all Japanese/Australian/Korean items are import-only.",
+  },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: lipProducts.length,
+  itemListElement: lipProducts.map((lipProduct) => ({
+    "@type": "ListItem",
+    position: lipProduct.rank,
+    item: {
+      "@type": "Product",
+      name: lipProduct.product,
+      url: lipProduct.links[0]?.url,
+      description: lipProduct.bestFor,
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content={pageTitle} />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="lip balm ranking, best lip balm, cracked lips, cortibalm, aquaphor, cerave healing ointment, vaseline lip therapy"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <p class="eyebrow">Skincare notes</p>
+        <h1>{pageTitle}</h1>
+        <p class="summary">
+          Global repair-first ranking: drug actives, real barrier repair, then maintenance.
+          Updated {updatedDate}.
+        </p>
+        <div class="basis" aria-label="Ranking basis">
+          {
+            comparisonBasis.map((basisItem) => (
+              <span class="basis-pill">{basisItem}</span>
+            ))
+          }
+        </div>
+      </header>
+
+      <section class="ranking" aria-labelledby="ranking-heading">
+        <h2 id="ranking-heading">Ranking</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col" class="rank-column">My rank</th>
+                <th scope="col">Product</th>
+                <th scope="col">Region</th>
+                <th scope="col">Type</th>
+                <th scope="col">Key actives</th>
+                <th scope="col">Best for</th>
+                <th scope="col">ChatGPT rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                lipProducts.map((lipProduct) => (
+                  <tr>
+                    <td class="rank-cell">{lipProduct.rank}</td>
+                    <td class="product-cell">
+                      {lipProduct.links.map((link, index) => (
+                        <>
+                          {index > 0 && <span class="link-separator"> / </span>}
+                          <a href={link.url}>{link.label}</a>
+                        </>
+                      ))}
+                    </td>
+                    <td>{lipProduct.region}</td>
+                    <td>{lipProduct.productType}</td>
+                    <td>{lipProduct.keyActives}</td>
+                    <td>{lipProduct.bestFor}</td>
+                    <td>
+                      <span class:list={["rank-badge", lipProduct.chatGptRank === null && "rank-badge-new"]}>
+                        {lipProduct.chatGptRank ?? "New"}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="notes-grid" aria-labelledby="divergence-heading">
+        <div class="section-header">
+          <h2 id="divergence-heading">Where this diverges</h2>
+        </div>
+        {
+          divergenceNotes.map((note) => (
+            <article class="note-card">
+              <h3>{note.title}</h3>
+              <p>{note.text}</p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="notes-grid quick-picks" aria-labelledby="quick-picks-heading">
+        <div class="section-header">
+          <h2 id="quick-picks-heading">Quick picks</h2>
+        </div>
+        {
+          quickPicks.map((pick) => (
+            <article class="note-card">
+              <h3>{pick.title}</h3>
+              <p>{pick.text}</p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="notes-grid sourcing" aria-labelledby="sourcing-heading">
+        <div class="section-header">
+          <h2 id="sourcing-heading">Sourcing</h2>
+        </div>
+        {
+          sourcingNotes.map((note) => (
+            <article class="note-card">
+              <h3>{note.title}</h3>
+              <p>{note.text}</p>
+            </article>
+          ))
+        }
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f8f2ea;
+    --panel: #fffaf3;
+    --panel-strong: #fff3e4;
+    --text: #211915;
+    --muted: #6b5e54;
+    --border: #dfd1c2;
+    --accent: #9b4d25;
+    --accent-soft: #f1d8c4;
+    --shadow: 0 18px 42px rgb(65 36 18 / 0.1);
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top left, rgb(255 232 209 / 0.75), transparent 34rem),
+      linear-gradient(180deg, #fff8f0 0%, var(--bg) 22rem);
+    font-size: 14px;
+    line-height: 1.42;
+  }
+
+  a {
+    color: var(--accent);
+    font-weight: 760;
+    text-decoration-color: rgb(155 77 37 / 0.35);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .page {
+    width: min(100% - 1rem, 1460px);
+    margin: 0 auto;
+    padding: 0.9rem 0.5rem 1.25rem;
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.34rem;
+    margin: 0 0 0.65rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 720;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 860;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.04;
+  }
+
+  h1 {
+    max-width: 18ch;
+    font-size: clamp(1.55rem, 3.2vw, 2.45rem);
+    letter-spacing: -0.055em;
+  }
+
+  h2 {
+    margin-bottom: 0.35rem;
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    letter-spacing: -0.035em;
+  }
+
+  .summary {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .basis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    max-width: 980px;
+    margin-top: 0.12rem;
+  }
+
+  .basis-pill {
+    border: 1px solid rgb(155 77 37 / 0.18);
+    border-radius: 999px;
+    padding: 0.22rem 0.48rem;
+    background: rgb(255 250 243 / 0.8);
+    color: #664431;
+    font-size: 0.73rem;
+    font-weight: 690;
+    line-height: 1.2;
+  }
+
+  .ranking {
+    margin: 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 0.56rem 0.62rem;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid rgb(223 209 194 / 0.65);
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th:first-child,
+  td:first-child {
+    border-left: 0;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--panel-strong);
+    color: #4b3324;
+    font-size: 0.68rem;
+    font-weight: 860;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  td {
+    font-size: 0.8rem;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgb(255 246 237 / 0.66);
+  }
+
+  .rank-column {
+    width: 4.8rem;
+  }
+
+  .rank-cell {
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 860;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .product-cell {
+    width: 12rem;
+    font-size: 0.86rem;
+    line-height: 1.22;
+  }
+
+  .link-separator {
+    color: var(--muted);
+    font-weight: 560;
+  }
+
+  .rank-badge {
+    display: inline-block;
+    min-width: max-content;
+    border: 1px solid rgb(155 77 37 / 0.18);
+    border-radius: 999px;
+    padding: 0.18rem 0.42rem;
+    background: var(--accent-soft);
+    color: #623417;
+    font-size: 0.75rem;
+    font-weight: 760;
+    line-height: 1.1;
+  }
+
+  .rank-badge-new {
+    background: transparent;
+    color: var(--muted);
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.72rem;
+  }
+
+  .section-header {
+    grid-column: 1 / -1;
+    margin-bottom: -0.2rem;
+  }
+
+  .note-card {
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 0.58rem 0.62rem;
+    background: rgb(255 250 243 / 0.78);
+  }
+
+  .note-card h3 {
+    margin: 0 0 0.24rem;
+    color: var(--text);
+    font-size: 0.82rem;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+
+  .note-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.34;
+  }
+
+  .quick-picks {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .sourcing {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 720px) {
+    body {
+      font-size: 13px;
+    }
+
+    .page {
+      width: min(100% - 0.6rem, 1460px);
+      padding: 0.75rem 0.2rem 1rem;
+    }
+
+    .page-header {
+      margin-bottom: 0.55rem;
+    }
+
+    h1 {
+      font-size: 1.62rem;
+    }
+
+    .summary {
+      font-size: 0.84rem;
+    }
+
+    .basis {
+      display: grid;
+      gap: 0.28rem;
+    }
+
+    .basis-pill {
+      border-radius: 10px;
+      font-size: 0.7rem;
+    }
+
+    .table-wrap {
+      border-radius: 13px;
+    }
+
+    th,
+    td {
+      padding: 0.48rem 0.52rem;
+    }
+
+    .notes-grid,
+    .quick-picks,
+    .sourcing {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+      margin-top: 0.58rem;
+    }
+
+    .section-header {
+      margin-bottom: -0.12rem;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16110d;
+      --panel: #221a14;
+      --panel-strong: #2d2118;
+      --text: #fff4e9;
+      --muted: #cab8aa;
+      --border: #4b3729;
+      --accent: #ffb171;
+      --accent-soft: #4a2c19;
+      --shadow: 0 18px 42px rgb(0 0 0 / 0.35);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgb(105 54 24 / 0.42), transparent 34rem),
+        linear-gradient(180deg, #211711 0%, var(--bg) 22rem);
+    }
+
+    th {
+      color: #ffd3b0;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgb(255 255 255 / 0.025);
+    }
+
+    .basis-pill,
+    .note-card {
+      background: rgb(255 255 255 / 0.035);
+    }
+
+    .basis-pill {
+      color: #f3cdb0;
+    }
+
+    .rank-badge {
+      color: #ffd9bd;
+    }
+  }
+</style>
