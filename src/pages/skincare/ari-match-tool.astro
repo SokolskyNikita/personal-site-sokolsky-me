@@ -51,7 +51,7 @@ const farmacitySearch = (query: string): Link => ({
 const priceByName: Record<string, PriceInfo> = {
   "Irene Bermejo moisturiser": {
     arUsd: "~US$48",
-    note: "ARS 71,280 current Liss Extreme proxy; old jar price not public",
+    note: "current Liss Extreme proxy; old jar price not public",
   },
   "Bioderma Hydrabio Creme Rich / Creme Riche": {
     abroadUsd: "~US$21-23 UK/EU",
@@ -319,13 +319,35 @@ const priceByName: Record<string, PriceInfo> = {
 
 const getPrice = (name: string) => priceByName[name];
 
+const midpointUsd = (value?: string) => {
+  const matches = value?.match(/\d+(?:\.\d+)?/g);
+  if (!matches?.length) return undefined;
+
+  const numbers = matches.slice(0, 2).map(Number);
+  return numbers.reduce((total, number) => total + number, 0) / numbers.length;
+};
+
+const localMarkup = (price?: PriceInfo) => {
+  const localPrice = midpointUsd(price?.arUsd);
+  const abroadPrice = midpointUsd(price?.abroadUsd);
+  if (!localPrice || !abroadPrice) return undefined;
+
+  const markup = Math.round(((localPrice - abroadPrice) / abroadPrice) * 100);
+  return `local markup: ${markup > 0 ? "+" : ""}${markup}% vs abroad`;
+};
+
 const priceParts = (price?: PriceInfo, sourcePrice?: PriceInfo) =>
   [
-    price?.arUsd && `AR: ${price.arUsd}`,
+    price?.arUsd && `local: ${price.arUsd}`,
     price?.abroadUsd && `abroad: ${price.abroadUsd}`,
     sourcePrice?.abroadUsd && `OG abroad: ${sourcePrice.abroadUsd}`,
     price?.note,
   ].filter(Boolean) as string[];
+
+const directPriceParts = (name: string) => {
+  const price = getPrice(name);
+  return [...priceParts(price), localMarkup(price)].filter(Boolean) as string[];
+};
 
 const sourcePriceParts = (name: string) => {
   const price = getPrice(name);
@@ -1318,7 +1340,7 @@ const mappedItems = totalItems - directItems;
       </section>
 
       <p class="note">
-        Prices are rough USD reads from public listings, using 1 USD ≈ 1,500 ARS. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
+        Prices are rough public-listing USD estimates. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
       </p>
 
       {
@@ -1346,9 +1368,9 @@ const mappedItems = totalItems - directItems;
                     {item.anchors.map((anchor) => <li>{anchor}</li>)}
                   </ul>
 
-                  {item.status === "direct" && priceParts(getPrice(item.source)).length > 0 && (
+                  {item.status === "direct" && directPriceParts(item.source).length > 0 && (
                     <p class="price-line">
-                      {priceParts(getPrice(item.source)).map((part) => (
+                      {directPriceParts(item.source).map((part) => (
                         <span>{part}</span>
                       ))}
                     </p>
