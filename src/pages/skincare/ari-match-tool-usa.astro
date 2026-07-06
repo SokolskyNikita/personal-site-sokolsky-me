@@ -1,0 +1,1813 @@
+---
+export const prerender = true;
+
+type Link = {
+  label: string;
+  url: string;
+};
+
+type PriceInfo = {
+  localUsd?: string;
+  abroadUsd?: string;
+  note?: string;
+};
+
+type RankedMatch = {
+  name: string;
+  percent: number;
+  reason: string;
+  buy: Link[];
+};
+
+type ProductMatch = {
+  group: string;
+  source: string;
+  anchors: string[];
+  status: "direct" | "mapped";
+  direct?: Link;
+  matches?: RankedMatch[];
+  note?: string;
+};
+
+const pageTitle = "Ari match tool USA";
+const pageDescription =
+  "Compact US match tool for Ari's current skincare list, with domestic direct buys and ingredient-match substitutes.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+const amazonSearch = (query: string): Link => ({
+  label: "Amazon US search",
+  url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+});
+
+const targetSearch = (query: string): Link => ({
+  label: "Target search",
+  url: `https://www.target.com/s?searchTerm=${encodeURIComponent(query)}`,
+});
+
+const sephoraSearch = (query: string): Link => ({
+  label: "Sephora search",
+  url: `https://www.sephora.com/search?keyword=${encodeURIComponent(query)}`,
+});
+
+const priceByName: Record<string, PriceInfo> = {
+  "Irene Bermejo moisturiser": {
+    abroadUsd: "~US$48 Argentina",
+    note: "not domestically sold in the US",
+  },
+  "Bioderma Hydrabio Creme Rich / Creme Riche": {
+    abroadUsd: "~US$21-23 UK/EU",
+    note: "US Bioderma line is easier for Hydrabio Gel-Cream than Creme Rich",
+  },
+  "Bioderma Hydrabio Creme Rich Moisturising Care": {
+    abroadUsd: "~US$21-23 UK/EU",
+    note: "US Bioderma line is easier for Hydrabio Gel-Cream than Creme Rich",
+  },
+  "Mixsoon Bifida Cream": {
+    localUsd: "~US$24-30",
+    abroadUsd: "~US$22-30 KR",
+  },
+  "SKIN1004 Madagascar Centella Cream": {
+    localUsd: "~US$18-25",
+    abroadUsd: "~US$16-20 KR",
+  },
+  "SKIN1004 Madagascar Centella Probio-Cica Enrich Cream": {
+    localUsd: "~US$20-27",
+    abroadUsd: "~US$20-24 KR",
+  },
+  "SKIN1004 Probio-Cica Enrich Cream": {
+    localUsd: "~US$20-27",
+    abroadUsd: "~US$20-24 KR",
+  },
+  "SKIN1004 Madagascar Centella Poremizing Light Gel Cream": {
+    localUsd: "~US$19-25",
+    abroadUsd: "~US$18-22 KR",
+  },
+  "SKIN1004 Madagascar Centella Soothing Cream": {
+    localUsd: "~US$20-26",
+    abroadUsd: "~US$18-25 KR",
+  },
+  "Laneige Water Bank Blue Hyaluronic Moisture Cream": {
+    localUsd: "~US$43",
+    abroadUsd: "~US$43 US",
+  },
+  "Cetaphil Optimal Hydration Creme de Jour Revitalisante": {
+    localUsd: "~US$22-27",
+    abroadUsd: "~US$25 EU",
+  },
+  "Cetaphil Optimal Hydration crema facial": {
+    localUsd: "~US$22-27",
+    abroadUsd: "~US$25 EU",
+  },
+  "Neutrogena Hydro Boost Aqua Intensivpflege": {
+    abroadUsd: "~US$14-17 Germany",
+  },
+  "Neutrogena Hydro Boost Water Gel": {
+    localUsd: "~US$20-27",
+  },
+  "Neutrogena Hydro Boost Water Gel Body": {
+    localUsd: "~US$10-14",
+  },
+  "Vichy Minéral 89 Booster": {
+    localUsd: "~US$35-40",
+    abroadUsd: "~US$35-40 US/EU",
+  },
+  "Vichy Mineral 89 Booster": {
+    localUsd: "~US$35-40",
+    abroadUsd: "~US$35-40 US/EU",
+  },
+  "La Roche-Posay Cicaplast Baume B5+": {
+    localUsd: "~US$16-20",
+    abroadUsd: "~US$16-20 US/EU",
+  },
+  "Laneige Cica Sleeping Mask": {
+    localUsd: "~US$34",
+    abroadUsd: "~US$34 US",
+  },
+  "Jumiso Snail EX Ultimate Barrier Facial Cream": {
+    abroadUsd: "~US$12-20 KR",
+    note: "US domestic availability is less reliable than the alternatives below",
+  },
+  "COSRX Advanced Snail 96 Mucin Power Essence": {
+    localUsd: "~US$18-25",
+    abroadUsd: "~US$18-25 KR",
+  },
+  "Sulwhasoo Concentrated Ginseng Renewing Cream": {
+    localUsd: "~US$260",
+    abroadUsd: "~US$260 US",
+  },
+  "Dr. Althea 345 Relief Cream": {
+    localUsd: "~US$24-30",
+    abroadUsd: "~US$24-30 KR",
+  },
+  "Tatcha The Dewy Skin Cream": {
+    localUsd: "~US$72",
+    abroadUsd: "~US$72 US",
+  },
+  "La Roche-Posay Effaclar Mat": {
+    localUsd: "~US$30-35",
+    abroadUsd: "~US$30-35 US/EU",
+  },
+  "Clinique Moisture Surge Face Spray": {
+    localUsd: "~US$36",
+    abroadUsd: "~US$36 US",
+  },
+  "Thermal or mineral water mist": {
+    localUsd: "~US$12-20",
+    abroadUsd: "~US$12-20 US/EU",
+  },
+  "Prontomed HypoClear Akne-Spray": {
+    abroadUsd: "~US$9-11 Germany",
+  },
+  "Tower 28 SOS Daily Rescue Facial Spray": {
+    localUsd: "~US$28",
+  },
+  "Briotech Topical HOCl 2 oz": {
+    localUsd: "~US$14-18",
+    abroadUsd: "~US$14-18 US",
+  },
+  "Prequel Universal Skin Solution": {
+    localUsd: "~US$17",
+  },
+  "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam": {
+    localUsd: "~US$15-25",
+    abroadUsd: "~US$15-25 KR",
+  },
+  "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser": {
+    localUsd: "~US$18-25",
+    abroadUsd: "~US$18-25 KR",
+  },
+  "SOME BY MI AHA.BHA.PHA 30 Days Miracle Clear Body Cleanser": {
+    localUsd: "~US$18-25",
+    abroadUsd: "~US$18-25 KR",
+  },
+  "La Roche-Posay Effaclar Medicated Gel Cleanser": {
+    localUsd: "~US$17",
+  },
+  "La Roche-Posay Effaclar Gel Moussant Purifiant": {
+    localUsd: "~US$18-25",
+    abroadUsd: "~US$18-25 EU",
+  },
+  "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling": {
+    abroadUsd: "~US$18-25 EU",
+    note: "US uses Effaclar Medicated Gel Cleanser as the closest domestic salicylic cleanser",
+  },
+  "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser": {
+    abroadUsd: "~US$8-18 EU",
+    note: "US substitute is Toleriane Hydrating Gentle Cleanser, not the same milky cleanser",
+  },
+  "La Roche-Posay Toleriane Hydrating Gentle Cleanser": {
+    localUsd: "~US$16",
+  },
+  "Vanicream Gentle Facial Cleanser": {
+    localUsd: "~US$10",
+  },
+  "SKIN1004 Madagascar Centella Ampoule Foam": {
+    localUsd: "~US$12-18",
+    abroadUsd: "~US$12-18 KR",
+  },
+  "CeraVe SA Smoothing Cleanser": {
+    abroadUsd: "~US$14-21 US",
+  },
+  "Neutrogena Body Clear Body Wash": {
+    localUsd: "~US$9",
+  },
+  "Beauty of Joseon Ginseng Cleansing Oil": {
+    localUsd: "~US$15-20",
+    abroadUsd: "~US$15-20 KR",
+  },
+  "Dr. Althea Vitamin C Boosting Serum": {
+    localUsd: "~US$24-30",
+    abroadUsd: "~US$24 KR",
+  },
+  "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule": {
+    localUsd: "~US$18-25",
+    abroadUsd: "~US$18-25 KR",
+  },
+  "Some By Mi Yuja Niacin Anti-Blemish Serum": {
+    localUsd: "~US$16-20",
+    abroadUsd: "~US$16-20 KR",
+  },
+  "Codexial Enobright Radiance Day": {
+    abroadUsd: "~US$32-45 France",
+  },
+  "Naturium Multi-Bright Tranexamic Acid Treatment": {
+    localUsd: "~US$22",
+  },
+  "La Roche-Posay Pure Vitamin C10": {
+    localUsd: "~US$45",
+    abroadUsd: "~US$45 US/EU",
+  },
+  "La Roche-Posay Vitamin C serum": {
+    localUsd: "~US$45",
+    abroadUsd: "~US$45 US/EU",
+  },
+  "Murad Deep Relief Acne Treatment": {
+    localUsd: "~US$45",
+    abroadUsd: "~US$45 US",
+  },
+  "COSRX BHA Blackhead Power Liquid": {
+    localUsd: "~US$20",
+    abroadUsd: "~US$20 KR",
+  },
+  "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution": {
+    localUsd: "~US$14-18",
+    abroadUsd: "~US$14-28 KR",
+  },
+  "NeoStrata Resurface Glycolic Renewal Smoothing Lotion": {
+    localUsd: "~US$46",
+    abroadUsd: "~US$46 US",
+  },
+  "Irene Bermejo White Cream Glico 4%": {
+    abroadUsd: "~US$39 Argentina",
+  },
+  "CÉPAGE Renovateurs Glicólico 5": {
+    abroadUsd: "~US$37 Argentina",
+  },
+  "Paula's Choice Skin Perfecting 8% AHA Gel": {
+    localUsd: "~US$35",
+  },
+  "The Ordinary Glycolic Acid 7% Exfoliating Toner": {
+    localUsd: "~US$13",
+  },
+  "Detenage G Ácido Glicólico 8%": {
+    abroadUsd: "~US$29 Argentina",
+  },
+  "Cordes VAS 0.5 mg/g Creme": {
+    abroadUsd: "~US$18-21 Germany rx",
+  },
+  "US tretinoin 0.05% prescription": {
+    localUsd: "rx price varies",
+  },
+  "US tretinoin 0.025% prescription": {
+    localUsd: "rx price varies",
+  },
+  "Differin Gel adapalene 0.1%": {
+    localUsd: "~US$15",
+  },
+  "Irene Bermejo Retinoico 0.05%": {
+    note: "not domestically sold in the US",
+  },
+  "Irene Bermejo Retinoico 0.025%": {
+    note: "not domestically sold in the US",
+  },
+  "Cosmética Argentina Ácido Retinoico 0.05%": {
+    abroadUsd: "~US$34 Argentina",
+  },
+  "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
+    localUsd: "~US$12-18",
+    abroadUsd: "~US$8-12 Japan",
+  },
+  "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
+    localUsd: "~US$12-18",
+    abroadUsd: "~US$8-18 Japan",
+  },
+  "Skin Aqua Super Moisture Gel SPF50+ PA++++": {
+    localUsd: "~US$15-22",
+    abroadUsd: "~US$8-12 Japan",
+  },
+  "Benton Air Fit UV Defense Sun Cream SPF50+ PA++++": {
+    localUsd: "~US$15-18",
+    abroadUsd: "~US$15-18 KR",
+  },
+  "Benton Air Fit UV Defense Sun Cream": {
+    localUsd: "~US$15-18",
+    abroadUsd: "~US$15-18 KR",
+  },
+  "INGU BluVlite Ultra-Light Daily Sunscreen SPF50+ PA++++ + Biome Balance": {
+    abroadUsd: "~US$10-20 Thailand",
+  },
+  "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++": {
+    localUsd: "~US$14-20",
+    abroadUsd: "~US$14-20 KR",
+  },
+  "Beauty of Joseon Relief Sun SPF50+ PA++++": {
+    localUsd: "~US$16-20",
+    abroadUsd: "~US$12-18 KR",
+  },
+  "Isntree Hyaluronic Acid Watery Sun Gel SPF50+ PA++++": {
+    localUsd: "~US$15-22",
+    abroadUsd: "~US$15-22 KR",
+  },
+  "Dermaglos Emulsion Corporal Hidratacion + Regeneracion": {
+    abroadUsd: "~US$14-19 Argentina",
+  },
+  "Eucerin Advanced Repair Lotion": {
+    localUsd: "~US$12",
+  },
+  "Biotherm Eau d'Energie body moisturiser": {
+    abroadUsd: "~US$25-35 EU",
+  },
+  "Kiehl's Creme de Corps Body Lotion": {
+    localUsd: "~US$39",
+  },
+  "Nécessaire The Body Lotion": {
+    localUsd: "~US$28",
+  },
+  "Biotherm Lait Corporel": {
+    abroadUsd: "~US$25-35 EU",
+  },
+  "Neutrogena Hydro Boost body moisturiser": {
+    localUsd: "~US$10-14",
+    abroadUsd: "~US$10-14 US/EU",
+  },
+  "Natura Ekos Castanha hand cream": {
+    localUsd: "~US$22",
+  },
+};
+
+const getPrice = (name: string) => priceByName[name];
+
+const midpointUsd = (value?: string) => {
+  const matches = value?.match(/\d+(?:\.\d+)?/g);
+  if (!matches?.length) return undefined;
+
+  const numbers = matches.slice(0, 2).map(Number);
+  return numbers.reduce((total, number) => total + number, 0) / numbers.length;
+};
+
+const localMarkupPercent = (price?: PriceInfo) => {
+  const localPrice = midpointUsd(price?.localUsd);
+  const abroadPrice = midpointUsd(price?.abroadUsd);
+  if (!localPrice || !abroadPrice) return undefined;
+
+  return Math.round(((localPrice - abroadPrice) / abroadPrice) * 100);
+};
+
+const formatMarkup = (value: number) => `${value > 0 ? "+" : ""}${value}%`;
+
+const localMarkup = (price?: PriceInfo) => {
+  const markup = localMarkupPercent(price);
+  return markup === undefined ? undefined : `local markup: ${formatMarkup(markup)} vs abroad`;
+};
+
+const median = (values: number[]) => {
+  if (values.length === 0) return undefined;
+
+  const sorted = [...values].sort((left, right) => left - right);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? Math.round((sorted[middle - 1] + sorted[middle]) / 2)
+    : sorted[middle];
+};
+
+const priceParts = (price?: PriceInfo, sourcePrice?: PriceInfo) =>
+  [
+    price?.localUsd && `US: ${price.localUsd}`,
+    price?.abroadUsd && `abroad: ${price.abroadUsd}`,
+    sourcePrice?.abroadUsd && `OG abroad: ${sourcePrice.abroadUsd}`,
+    price?.note,
+  ].filter(Boolean) as string[];
+
+const directPriceParts = (name: string) => {
+  const price = getPrice(name);
+  return [...priceParts(price), localMarkup(price)].filter(Boolean) as string[];
+};
+
+const sourcePriceParts = (name: string) => {
+  const price = getPrice(name);
+  return [price?.abroadUsd && `OG abroad: ${price.abroadUsd}`, price?.note].filter(Boolean) as string[];
+};
+
+const highMarkupAlternatives: Record<string, RankedMatch[]> = {
+  "Canmake Mermaid Skin Gel UV SPF50+ PA++++": [
+    {
+      name: "Beauty of Joseon Relief Sun SPF50+ PA++++",
+      percent: 60,
+      reason: "Lower-markup Korean SPF with a soft hydrating finish; less exact than Canmake's gel texture.",
+      buy: [amazonSearch("Beauty of Joseon Relief Sun SPF50")],
+    },
+    {
+      name: "Benton Air Fit UV Defense Sun Cream",
+      percent: 58,
+      reason: "Lower-markup Korean SPF50+ sunscreen with centella and a lighter finish.",
+      buy: [amazonSearch("Benton Air Fit UV Defense Sun Cream")],
+    },
+  ],
+  "Skin Aqua Super Moisture Gel SPF50+ PA++++": [
+    {
+      name: "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+      percent: 64,
+      reason: "Hydrating watery sunscreen replacement that is easier to buy domestically.",
+      buy: [amazonSearch("SKIN1004 Hyalu-Cica Water-Fit Sun Serum")],
+    },
+    {
+      name: "Beauty of Joseon Relief Sun SPF50+ PA++++",
+      percent: 58,
+      reason: "Good lower-markup daily sunscreen if Skin Aqua is too dewy or slow to absorb.",
+      buy: [amazonSearch("Beauty of Joseon Relief Sun SPF50")],
+    },
+  ],
+};
+
+const highMarkupAlternativesFor = (name: string) => {
+  const markup = localMarkupPercent(getPrice(name));
+  return markup !== undefined && markup > 99 ? (highMarkupAlternatives[name] ?? []) : [];
+};
+
+const matches: ProductMatch[] = [
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Irene Bermejo moisturiser",
+    anchors: ["barrier cream", "glycerin", "peptides", "oils"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Dr. Althea 345 Relief Cream",
+        percent: 68,
+        reason: "Closest US-domestic barrier-leaning candidate from Ari's list. Still not proven equal to Irene Bermejo.",
+        buy: [amazonSearch("Dr. Althea 345 Relief Cream")],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 62,
+        reason: "Panthenol and madecassoside recovery role, but Ari called LRP only meh/okay for recovery.",
+        buy: [targetSearch("La Roche-Posay Cicaplast Baume B5")],
+      },
+      {
+        name: "Cetaphil Optimal Hydration crema facial",
+        percent: 58,
+        reason: "Good humectant overlap, but not an Irene-level calming/barrier recovery match.",
+        buy: [amazonSearch("Cetaphil Optimal Hydration face cream")],
+      },
+    ],
+    note: "Ari: best moisturiser she has tried for deep moisture, calming and barrier recovery.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Bioderma Hydrabio Creme Rich / Creme Riche",
+    anchors: ["glycerin", "niacinamide", "hyaluronic acid", "lipids"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Cetaphil Optimal Hydration crema facial",
+        percent: 72,
+        reason: "Best easy US overlap on hyaluronic acid, niacinamide, panthenol and squalane.",
+        buy: [amazonSearch("Cetaphil Optimal Hydration face cream")],
+      },
+      {
+        name: "Vichy Minéral 89 Booster",
+        percent: 54,
+        reason: "Excellent humectant booster, but needs a cream over it.",
+        buy: [amazonSearch("Vichy Mineral 89 Booster")],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 52,
+        reason: "Richer recovery-style fallback; Ari finds it only okay for recovery.",
+        buy: [targetSearch("La Roche-Posay Cicaplast Baume B5")],
+      },
+    ],
+    note: "Ari: Bioderma Hydrabio Cream is overall great for deep moisture while using acids.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Mixsoon Bifida Cream",
+    anchors: ["bifida ferment", "glycerin", "squalane", "ceramide"],
+    status: "direct",
+    direct: amazonSearch("Mixsoon Bifida Cream"),
+    note: "Ari: fine, not impressive; better at night and does not help barrier recovery.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Cream",
+    anchors: ["centella", "glycerin", "panthenol", "niacinamide"],
+    status: "direct",
+    direct: amazonSearch("SKIN1004 Madagascar Centella Cream"),
+    note: "Ari: good daytime moisture, almost matte, works with acids below; not for compromised barrier.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Probio-Cica Enrich Cream",
+    anchors: ["centella ferment", "niacinamide", "squalane", "ceramide"],
+    status: "direct",
+    direct: amazonSearch("SKIN1004 Probio-Cica Enrich Cream"),
+    note: "Ari: heavier, a little bright, okay moisture; does not recover a compromised barrier.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Poremizing Light Gel Cream",
+    anchors: ["centella", "niacinamide", "hyaluronic acid", "gel cream"],
+    status: "direct",
+    direct: amazonSearch("SKIN1004 Poremizing Light Gel Cream"),
+    note: "Skin1004 moisturisers are better suited for dry climate; do not use as barrier-recovery picks.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Soothing Cream",
+    anchors: ["centella", "glycerin", "panthenol", "ceramide"],
+    status: "direct",
+    direct: amazonSearch("SKIN1004 Centella Soothing Cream"),
+    note: "Skin1004 moisturisers are better suited for dry climate; do not use as barrier-recovery picks.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Laneige Water Bank Blue Hyaluronic Moisture Cream",
+    anchors: ["glycerin", "betaine", "hyaluronic acid", "light cream"],
+    status: "direct",
+    direct: sephoraSearch("Laneige Water Bank Blue Hyaluronic Moisture Cream"),
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Bioderma Hydrabio Creme Rich Moisturising Care",
+    anchors: ["glycerin", "niacinamide", "hyaluronic acid", "lipids"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Cetaphil Optimal Hydration crema facial",
+        percent: 72,
+        reason: "Best easy US overlap on hyaluronic acid, niacinamide, panthenol and squalane.",
+        buy: [amazonSearch("Cetaphil Optimal Hydration face cream")],
+      },
+      {
+        name: "Vichy Minéral 89 Booster",
+        percent: 54,
+        reason: "Excellent humectant booster, but needs a cream over it.",
+        buy: [amazonSearch("Vichy Mineral 89 Booster")],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 52,
+        reason: "Richer recovery-style fallback; Ari finds it only okay for recovery.",
+        buy: [targetSearch("La Roche-Posay Cicaplast Baume B5")],
+      },
+    ],
+    note: "Ari: Bioderma Hydrabio Cream is overall great for deep moisture while using acids.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Cetaphil Optimal Hydration Creme de Jour Revitalisante",
+    anchors: ["hyaluronic acid", "niacinamide", "panthenol", "squalane"],
+    status: "direct",
+    direct: amazonSearch("Cetaphil Optimal Hydration face cream"),
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Neutrogena Hydro Boost Aqua Intensivpflege",
+    anchors: ["glycerin", "silicones", "hyaluronic acid", "gel cream"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Neutrogena Hydro Boost Water Gel",
+        percent: 78,
+        reason: "Closest US Hydro Boost face product: glycerin, dimethicone-style slip and hyaluronic acid.",
+        buy: [targetSearch("Neutrogena Hydro Boost Water Gel")],
+      },
+      {
+        name: "Vichy Minéral 89 Booster",
+        percent: 68,
+        reason: "Keeps the hyaluronic-acid booster role, but not the cream base.",
+        buy: [amazonSearch("Vichy Mineral 89 Booster")],
+      },
+    ],
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Laneige Cica Sleeping Mask",
+    anchors: ["glycerin", "squalane", "panthenol", "shea butter"],
+    status: "direct",
+    direct: sephoraSearch("Laneige Cica Sleeping Mask"),
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Jumiso Snail EX Ultimate Barrier Facial Cream",
+    anchors: ["snail filtrate", "glycerin", "allantoin", "hyaluronic acid"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Dr. Althea 345 Relief Cream",
+        percent: 52,
+        reason: "Barrier-leaning US-domestic cream to try; Ari had not tested it yet, so not a proven Jumiso replacement.",
+        buy: [amazonSearch("Dr. Althea 345 Relief Cream")],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 47,
+        reason: "Panthenol/madecassoside recovery role, but Ari called LRP only meh/okay for skin recovery.",
+        buy: [targetSearch("La Roche-Posay Cicaplast Baume B5")],
+      },
+    ],
+    note: "Ari: Jumiso is very good for skin-barrier recovery. COSRX snail is not listed because it makes her break out.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Sulwhasoo Concentrated Ginseng Renewing Cream",
+    anchors: ["ginseng", "glycerin", "squalane", "fragrance"],
+    status: "direct",
+    direct: sephoraSearch("Sulwhasoo Concentrated Ginseng Renewing Cream"),
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "La Roche-Posay Cicaplast Baume B5+",
+    anchors: ["panthenol", "madecassoside", "shea butter", "glycerin"],
+    status: "direct",
+    direct: targetSearch("La Roche-Posay Cicaplast Baume B5"),
+    note: "Ari: meh, okay skin recovery. Do not rank as the strongest barrier-recovery option.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Dr. Althea 345 Relief Cream",
+    anchors: ["niacinamide", "panthenol", "centella", "barrier cream"],
+    status: "direct",
+    direct: amazonSearch("Dr. Althea 345 Relief Cream"),
+    note: "Ari had this as a barrier-recovery cream still to try.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Tatcha The Dewy Skin Cream",
+    anchors: ["rich cream", "rice", "algae", "green tea"],
+    status: "direct",
+    direct: sephoraSearch("Tatcha The Dewy Skin Cream"),
+    note: "Ari: barely moisturises and makes her skin react. Listed for completeness, not recommended.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "La Roche-Posay Effaclar Mat",
+    anchors: ["glycerin", "dimethicone", "perlite", "matte"],
+    status: "direct",
+    direct: amazonSearch("La Roche-Posay Effaclar Mat"),
+    note: "Ari: great matte finish for humid hot weather with mild acid usage.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "COSRX Advanced Snail 96 Mucin Power Essence",
+    anchors: ["snail filtrate", "betaine", "panthenol", "allantoin"],
+    status: "direct",
+    direct: amazonSearch("COSRX Advanced Snail 96 Mucin Power Essence"),
+    note: "Ari: makes her break out. Listed because the source list tracks it, not as a recommended buy.",
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Vichy Mineral 89 Booster",
+    anchors: ["volcanic water", "hyaluronic acid", "glycerin"],
+    status: "direct",
+    direct: amazonSearch("Vichy Mineral 89 Booster"),
+    note: "Ari: still the best hyaluronic acid she has tried; great moisture boost.",
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Clinique Moisture Surge Face Spray",
+    anchors: ["aloe", "glycerin", "sodium hyaluronate", "mist"],
+    status: "direct",
+    direct: {
+      label: "Clinique US",
+      url: "https://www.clinique.com/product/1573/5449/3-step/step-2-exfoliate/moisture-surge-face-spray-thirsty-skin-relief",
+    },
+    note: "Ari: meh/okay; prefers plain mineral or thermal water mist.",
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Thermal or mineral water mist",
+    anchors: ["water", "minerals", "mist"],
+    status: "direct",
+    direct: targetSearch("La Roche-Posay thermal spring water spray"),
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Prontomed HypoClear Akne-Spray",
+    anchors: ["hypochlorous acid", "sodium hypochlorite", "water"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Briotech Topical HOCl 2 oz",
+        percent: 82,
+        reason: "Plain HOCl spray with minimal ingredients; closest US-domestic match for Ari's on-the-go acne prevention use.",
+        buy: [amazonSearch("Briotech Topical Skin Spray 2 oz")],
+      },
+      {
+        name: "Prequel Universal Skin Solution",
+        percent: 78,
+        reason: "US-domestic HOCl spray with minimal acne-prevention role.",
+        buy: [targetSearch("Prequel Universal Skin Solution")],
+      },
+      {
+        name: "Tower 28 SOS Daily Rescue Facial Spray",
+        percent: 70,
+        reason: "Easy US HOCl option. Good if extra cosmetic positioning is acceptable.",
+        buy: [sephoraSearch("Tower 28 SOS Daily Rescue Facial Spray")],
+      },
+    ],
+    note: "Ari: any hypochlorous acid brand should work as long as it avoids unnecessary extras.",
+  },
+  {
+    group: "Cleansers",
+    source: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
+    anchors: ["salicylic acid", "PHA", "tea tree", "foaming cleanser"],
+    status: "direct",
+    direct: amazonSearch("Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam"),
+    note: "Ari: Some By Mi is great for humid hot climate, but a bit drying in humid winter.",
+  },
+  {
+    group: "Cleansers",
+    source: "Beauty of Joseon Ginseng Cleansing Oil",
+    anchors: ["soybean oil", "ginseng oil", "cleansing oil"],
+    status: "direct",
+    direct: amazonSearch("Beauty of Joseon Ginseng Cleansing Oil"),
+    note: "Ari: great when double cleansing is needed.",
+  },
+  {
+    group: "Cleansers",
+    source: "La Roche-Posay Effaclar Gel Moussant Purifiant",
+    anchors: ["zinc PCA", "foaming gel", "oily skin"],
+    status: "direct",
+    direct: targetSearch("La Roche-Posay Effaclar Purifying Foaming Gel Cleanser"),
+    note: "Ari: good for every climate, but a bit drying when using all her acids.",
+  },
+  {
+    group: "Cleansers",
+    source: "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling",
+    anchors: ["salicylic acid", "LHA", "zinc", "micro-peeling gel"],
+    status: "mapped",
+    matches: [
+      {
+        name: "La Roche-Posay Effaclar Medicated Gel Cleanser",
+        percent: 72,
+        reason: "Closest US-domestic Effaclar salicylic cleanser. Still a deeper-cleanse style, not an everyday default.",
+        buy: [targetSearch("La Roche-Posay Effaclar Medicated Gel Cleanser")],
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Ampoule Foam",
+        percent: 48,
+        reason: "Possible mild fallback when less stripping matters more than acids. Ari has not tried it.",
+        buy: [amazonSearch("SKIN1004 Madagascar Centella Ampoule Foam")],
+      },
+    ],
+    note: "Ari: this deeper-cleansing lane is good when needed, not for everyday.",
+  },
+  {
+    group: "Cleansers",
+    source: "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser",
+    anchors: ["milky cleanser", "glycerin", "thermal water"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Vanicream Gentle Facial Cleanser",
+        percent: 48,
+        reason: "Low-reactivity US cleanser candidate for the sensitive-cleanser job.",
+        buy: [targetSearch("Vanicream Gentle Facial Cleanser")],
+      },
+      {
+        name: "La Roche-Posay Toleriane Hydrating Gentle Cleanser",
+        percent: 46,
+        reason: "US Toleriane gentle cleanser, but Ari's LRP milky cleanser stings, so treat cautiously.",
+        buy: [targetSearch("La Roche-Posay Toleriane Hydrating Gentle Cleanser")],
+      },
+      {
+        name: "Beauty of Joseon Ginseng Cleansing Oil",
+        percent: 40,
+        reason: "Better if the use case is sunscreen/makeup removal rather than a milk-cleanser texture.",
+        buy: [amazonSearch("Beauty of Joseon Ginseng Cleansing Oil")],
+      },
+    ],
+    note: "Ari: the LRP milky cleanser stings. These are cautious replacements, not direct endorsements.",
+  },
+  {
+    group: "Cleansers",
+    source: "SKIN1004 Madagascar Centella Ampoule Foam",
+    anchors: ["centella", "foam", "mild pH", "coconut surfactants"],
+    status: "direct",
+    direct: amazonSearch("SKIN1004 Madagascar Centella Ampoule Foam"),
+    note: "Ari has not tried it; compare as a possible mild CeraVe/LRP replacement.",
+  },
+  {
+    group: "Cleansers",
+    source: "CeraVe SA Smoothing Cleanser",
+    anchors: ["salicylic acid", "ceramides", "niacinamide", "body cleanser"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser",
+        percent: 72,
+        reason: "Keeps the salicylic-acid shower/body-cleanser role and adds AHA/PHA. Best climate fit is humid hot; can be drying in humid winter.",
+        buy: [amazonSearch("Some By Mi AHA BHA PHA 30 Days Miracle Body Cleanser")],
+      },
+      {
+        name: "La Roche-Posay Effaclar Medicated Gel Cleanser",
+        percent: 66,
+        reason: "Same exfoliating-cleanser job with salicylic acid, but Ari treats this lane as deeper cleansing, not everyday.",
+        buy: [targetSearch("La Roche-Posay Effaclar Medicated Gel Cleanser")],
+      },
+      {
+        name: "Neutrogena Body Clear Body Wash",
+        percent: 58,
+        reason: "Cheap US shower/body salicylic-acid option if a body wash is enough.",
+        buy: [targetSearch("Neutrogena Body Clear Body Wash")],
+      },
+    ],
+    note: "Ari asked for a non-CeraVe shower replacement.",
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "Dr. Althea Vitamin C Boosting Serum",
+    anchors: ["sea buckthorn", "niacinamide", "tranexamic acid", "vitamin C"],
+    status: "direct",
+    direct: amazonSearch("Dr. Althea Vitamin C Boosting Serum"),
+    note: "Ari: great.",
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
+    anchors: ["centella", "niacinamide", "tranexamic acid", "ethyl ascorbic acid"],
+    status: "direct",
+    direct: amazonSearch("SKIN1004 Tone Brightening Capsule Ampoule"),
+    note: "Ari: still trying; has not made her skin react so far.",
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "Some By Mi Yuja Niacin Anti-Blemish Serum",
+    anchors: ["yuja", "niacinamide", "bisabolol", "vitamin C"],
+    status: "direct",
+    direct: amazonSearch("Some By Mi Yuja Niacin Anti-Blemish Serum"),
+    note: "Ari: good to alternate with Dr. Althea Vitamin C.",
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "Codexial Enobright Radiance Day",
+    anchors: ["vitamin C", "radiance cream", "pigmentation"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Dr. Althea Vitamin C Boosting Serum",
+        percent: 72,
+        reason: "Strongest US-domestic match for Ari's brightening actives: niacinamide, tranexamic acid and vitamin derivatives.",
+        buy: [amazonSearch("Dr. Althea Vitamin C Boosting Serum")],
+      },
+      {
+        name: "Naturium Multi-Bright Tranexamic Acid Treatment",
+        percent: 66,
+        reason: "US brightening option with tranexamic-acid direction; not the same cream base.",
+        buy: [targetSearch("Naturium Multi-Bright Tranexamic Acid Treatment")],
+      },
+      {
+        name: "La Roche-Posay Pure Vitamin C10",
+        percent: 52,
+        reason: "Easy pharmacy vitamin C, but Ari says it leaves an orange cast and runs out fast.",
+        buy: [amazonSearch("La Roche-Posay Pure Vitamin C10")],
+      },
+    ],
+    note: "Ari: Codexial is the best vitamin C she has tried, but it is difficult to ship.",
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "La Roche-Posay Vitamin C serum",
+    anchors: ["ascorbic acid", "salicylic acid", "hyaluronic acid"],
+    status: "direct",
+    direct: amazonSearch("La Roche-Posay Pure Vitamin C10"),
+    note: "Ari: leaves orange cast, lasts too little, okay results.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Murad Deep Relief Acne Treatment",
+    anchors: ["2% salicylic acid", "spot treatment", "acne"],
+    status: "direct",
+    direct: {
+      label: "Murad US",
+      url: "https://www.murad.com/products/deep-relief-acne-treatment",
+    },
+    note: "Ari: preferred deep spot treatment. Unlike Argentina, this is domestic in the US.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "COSRX BHA Blackhead Power Liquid",
+    anchors: ["willow bark water", "betaine salicylate", "niacinamide"],
+    status: "direct",
+    direct: amazonSearch("COSRX BHA Blackhead Power Liquid"),
+    note: "Ari: still assessing results; does not break her out or make her skin react so far.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution",
+    anchors: ["glycolic acid", "salicylic acid", "gluconolactone", "LHA"],
+    status: "direct",
+    direct: amazonSearch("SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution"),
+    note: "Ari: light, not a deep peel; soft skin the next day, good for lazy nights.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "NeoStrata Resurface Glycolic Renewal Smoothing Lotion",
+    anchors: ["glycolic acid", "leave-on lotion", "AHA"],
+    status: "direct",
+    direct: amazonSearch("NeoStrata Resurface Glycolic Renewal Smoothing Lotion"),
+    note: "Ari: great, closest she found to Irene Bermejo glycolic acid.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Irene Bermejo White Cream Glico 4%",
+    anchors: ["glycolic acid", "mineral oil", "cream base"],
+    status: "mapped",
+    matches: [
+      {
+        name: "NeoStrata Resurface Glycolic Renewal Smoothing Lotion",
+        percent: 72,
+        reason: "Closest US-domestic glycolic product already validated by Ari as close to Irene Bermejo glycolic acid.",
+        buy: [amazonSearch("NeoStrata Resurface Glycolic Renewal Smoothing Lotion")],
+      },
+      {
+        name: "Paula's Choice Skin Perfecting 8% AHA Gel",
+        percent: 65,
+        reason: "US leave-on glycolic option near the stronger-glycolic lane.",
+        buy: [amazonSearch("Paula's Choice 8% AHA Gel")],
+      },
+      {
+        name: "The Ordinary Glycolic Acid 7% Exfoliating Toner",
+        percent: 52,
+        reason: "Cheap glycolic-acid option, but liquid toner format instead of cream.",
+        buy: [sephoraSearch("The Ordinary Glycolic Acid 7% Exfoliating Toner")],
+      },
+    ],
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Cordes VAS 0.5 mg/g Creme",
+    anchors: ["tretinoin 0.05%", "cream base", "prescription"],
+    status: "mapped",
+    matches: [
+      {
+        name: "US tretinoin 0.05% prescription",
+        percent: 92,
+        reason: "Same active and strength; requires US prescription and prescriber guidance.",
+        buy: [
+          {
+            label: "GoodRx tretinoin",
+            url: "https://www.goodrx.com/tretinoin",
+          },
+        ],
+      },
+      {
+        name: "US tretinoin 0.025% prescription",
+        percent: 72,
+        reason: "Lower-strength tretinoin for when skin is not at 100%; still prescription-only.",
+        buy: [
+          {
+            label: "GoodRx tretinoin",
+            url: "https://www.goodrx.com/tretinoin",
+          },
+        ],
+      },
+      {
+        name: "Differin Gel adapalene 0.1%",
+        percent: 42,
+        reason: "OTC retinoid fallback, not tretinoin and not a true Cordes match.",
+        buy: [targetSearch("Differin Gel adapalene 0.1")],
+      },
+    ],
+    note: "Ari: Cordes 0.05% is great but very strong and can easily ruin the skin barrier.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Irene Bermejo Retinoico 0.025%",
+    anchors: ["tretinoin 0.025%", "prescription"],
+    status: "mapped",
+    matches: [
+      {
+        name: "US tretinoin 0.025% prescription",
+        percent: 92,
+        reason: "Same active and strength; prescription-only.",
+        buy: [
+          {
+            label: "GoodRx tretinoin",
+            url: "https://www.goodrx.com/tretinoin",
+          },
+        ],
+      },
+      {
+        name: "Differin Gel adapalene 0.1%",
+        percent: 42,
+        reason: "OTC retinoid fallback if prescription tretinoin is not practical.",
+        buy: [targetSearch("Differin Gel adapalene 0.1")],
+      },
+    ],
+    note: "Ari: useful when skin is not at 100%.",
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Irene Bermejo Retinoico 0.05%",
+    anchors: ["tretinoin 0.05%", "prescription"],
+    status: "mapped",
+    matches: [
+      {
+        name: "US tretinoin 0.05% prescription",
+        percent: 92,
+        reason: "Same active and strength; prescription-only.",
+        buy: [
+          {
+            label: "GoodRx tretinoin",
+            url: "https://www.goodrx.com/tretinoin",
+          },
+        ],
+      },
+      {
+        name: "US tretinoin 0.025% prescription",
+        percent: 72,
+        reason: "Lower-strength option for slower re-entry after irritation.",
+        buy: [
+          {
+            label: "GoodRx tretinoin",
+            url: "https://www.goodrx.com/tretinoin",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Sunscreens",
+    source: "Canmake Mermaid Skin Gel UV SPF50+ PA++++",
+    anchors: ["SPF50", "gel", "Japanese sunscreen", "hydrating"],
+    status: "direct",
+    direct: amazonSearch("Canmake Mermaid Skin Gel UV SPF50"),
+    note: "Ari: ideal when she needs extra moisture after moisturiser; not heavy, good for humid climate.",
+  },
+  {
+    group: "Sunscreens",
+    source: "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++",
+    anchors: ["SPF50", "watery gel", "hyaluronic acid", "alcohol"],
+    status: "direct",
+    direct: amazonSearch("Biore UV Aqua Rich Watery Essence SPF50"),
+    note: "Ari: great texture, absorbs well, slight brightness, good for humid climate.",
+  },
+  {
+    group: "Sunscreens",
+    source: "Skin Aqua Super Moisture Gel SPF50+ PA++++",
+    anchors: ["SPF50", "gel", "hyaluronic acid", "pump"],
+    status: "direct",
+    direct: amazonSearch("Skin Aqua Super Moisture Gel SPF50"),
+    note: "Ari: loves it for dry climate; with humidity it does not absorb completely.",
+  },
+  {
+    group: "Sunscreens",
+    source: "Benton Air Fit UV Defense Sun Cream SPF50+ PA++++",
+    anchors: ["SPF50", "centella", "niacinamide", "modern filters"],
+    status: "direct",
+    direct: amazonSearch("Benton Air Fit UV Defense Sun Cream"),
+    note: "Ari: matte finish and loved in dry climate; still testing for this climate.",
+  },
+  {
+    group: "Sunscreens",
+    source: "INGU BluVlite Ultra-Light Daily Sunscreen SPF50+ PA++++ + Biome Balance",
+    anchors: ["SPF50", "modern filters", "silica", "ectoin"],
+    status: "mapped",
+    matches: [
+      {
+        name: "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+        percent: 73,
+        reason: "Light serum sunscreen with modern filters, centella and hyaluronic acid.",
+        buy: [amazonSearch("SKIN1004 Hyalu-Cica Water-Fit Sun Serum")],
+      },
+      {
+        name: "Beauty of Joseon Relief Sun SPF50+ PA++++",
+        percent: 68,
+        reason: "US-domestic Korean sunscreen with comfortable daily texture.",
+        buy: [amazonSearch("Beauty of Joseon Relief Sun SPF50")],
+      },
+      {
+        name: "Benton Air Fit UV Defense Sun Cream",
+        percent: 64,
+        reason: "Modern filters, niacinamide, centella and a light cream finish.",
+        buy: [amazonSearch("Benton Air Fit UV Defense Sun Cream")],
+      },
+    ],
+    note: "Ari: INGU was on the way, not tested yet.",
+  },
+  {
+    group: "Body and hands",
+    source: "Dermaglos Emulsion Corporal Hidratacion + Regeneracion",
+    anchors: ["mineral oil", "glycerin", "allantoin", "vitamins A and E"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Neutrogena Hydro Boost Water Gel Body",
+        percent: 58,
+        reason: "US body moisturiser Ari likes for every climate; lighter than Dermaglos.",
+        buy: [targetSearch("Neutrogena Hydro Boost Body Gel Cream")],
+      },
+      {
+        name: "Eucerin Advanced Repair Lotion",
+        percent: 54,
+        reason: "Practical US dry-skin body lotion with glycerin and barrier support, but less cosmetically similar.",
+        buy: [targetSearch("Eucerin Advanced Repair Lotion")],
+      },
+    ],
+    note: "Ari: Dermaglos is great for Argentina climate, but not a US-domestic product.",
+  },
+  {
+    group: "Body and hands",
+    source: "Biotherm Eau d'Energie body moisturiser",
+    anchors: ["body milk", "citrus fragrance", "glycerin"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Neutrogena Hydro Boost Water Gel Body",
+        percent: 54,
+        reason: "US-domestic body hydration Ari likes for every climate; drops the Biotherm citrus fragrance.",
+        buy: [targetSearch("Neutrogena Hydro Boost Body Gel Cream")],
+      },
+      {
+        name: "Kiehl's Creme de Corps Body Lotion",
+        percent: 46,
+        reason: "US body-lotion option with a richer cosmetic feel, but not the same fragrance line.",
+        buy: [amazonSearch("Kiehl's Creme de Corps Body Lotion")],
+      },
+      {
+        name: "Nécessaire The Body Lotion",
+        percent: 44,
+        reason: "Fragrance-free US body lotion with good daily texture; not a Biotherm dupe.",
+        buy: [sephoraSearch("Necessaire The Body Lotion")],
+      },
+    ],
+    note: "Ari: Eau d'Energie is great for every climate.",
+  },
+  {
+    group: "Body and hands",
+    source: "Neutrogena Hydro Boost body moisturiser",
+    anchors: ["glycerin", "petrolatum", "dimethicone", "sodium hyaluronate"],
+    status: "direct",
+    direct: targetSearch("Neutrogena Hydro Boost Body Gel Cream"),
+    note: "Ari: great for every climate.",
+  },
+  {
+    group: "Body and hands",
+    source: "Natura Ekos Castanha hand cream",
+    anchors: ["Brazil nut", "glycerin", "hand cream"],
+    status: "direct",
+    direct: {
+      label: "Natura US",
+      url: "https://www.naturabrasil.com/search?q=castanha%20hand%20cream",
+    },
+    note: "Ari: loves it.",
+  },
+];
+
+const groupedMatches = matches.reduce(
+  (groups, item) => {
+    if (!groups.has(item.group)) {
+      groups.set(item.group, []);
+    }
+    groups.get(item.group)?.push(item);
+    return groups;
+  },
+  new Map<string, ProductMatch[]>(),
+);
+
+const totalItems = matches.length;
+const directItems = matches.filter((item) => item.status === "direct").length;
+const mappedItems = totalItems - directItems;
+const displayedProductNames = Array.from(
+  new Set(matches.flatMap((item) => [item.source, ...(item.matches ?? []).map((match) => match.name)])),
+);
+const localMarkupValues = displayedProductNames
+  .map((name) => localMarkupPercent(getPrice(name)))
+  .filter((value): value is number => value !== undefined);
+const medianLocalMarkup = median(localMarkupValues);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main>
+      <p class="home"><a href="/">sokolsky.me</a></p>
+
+      <header class="page-head">
+        <div>
+          <h1>{pageTitle}</h1>
+          <p>
+            Each item from Ari's current list is mapped to a US buy. Exact domestic listings show one link. Items without domestic as-is stock show the closest ingredient matches, ranked by percent.
+          </p>
+        </div>
+        <p class="count">{totalItems} items · {directItems} direct · {mappedItems} mapped</p>
+      </header>
+
+      <section class="markup-summary" aria-label="Median local markup">
+        <span>median US markup</span>
+        <strong>{medianLocalMarkup === undefined ? "n/a" : formatMarkup(medianLocalMarkup)}</strong>
+        <span>across {localMarkupValues.length} priced items with abroad benchmarks</span>
+      </section>
+
+      <section class="controls" aria-label="Match controls">
+        <label>
+          Search
+          <input id="match-search" type="search" placeholder="product, ingredient or category" autocomplete="off" />
+        </label>
+        <label class="checkbox">
+          <input id="mapped-only" type="checkbox" />
+          mapped only
+        </label>
+        <p id="visible-count">{totalItems} shown</p>
+      </section>
+
+      <p class="note">
+        Prices are rough public-listing USD estimates. Scores compare ingredient overlap, product role, texture notes and Ari's preferences. Amazon search links should still be checked for seller and shipper before buying.
+      </p>
+
+      {
+        Array.from(groupedMatches.entries()).map(([group, groupItems]) => (
+          <section class="group" data-group={group}>
+            <h2>{group}</h2>
+            <div class="cards">
+              {groupItems.map((item) => (
+                <article
+                  class={`card ${item.status}`}
+                  data-status={item.status}
+                  data-haystack={`${item.group} ${item.source} ${item.anchors.join(" ")} ${
+                    item.direct?.label ?? ""
+                  } ${(item.matches ?? [])
+                    .map(
+                      (match) =>
+                        `${match.name} ${match.reason} ${highMarkupAlternativesFor(match.name)
+                          .map((alt) => `${alt.name} ${alt.reason}`)
+                          .join(" ")}`,
+                    )
+                    .join(" ")} ${highMarkupAlternativesFor(item.source)
+                    .map((match) => `${match.name} ${match.reason}`)
+                    .join(" ")}`.toLowerCase()}
+                >
+                  <div class="card-top">
+                    <div>
+                      <p class="eyebrow">{item.status === "direct" ? "direct" : "ingredient match"}</p>
+                      <h3>{item.source}</h3>
+                    </div>
+                    <span class={`pill ${item.status}`}>{item.status === "direct" ? "as-is" : "ranked"}</span>
+                  </div>
+
+                  <ul class="anchors" aria-label={`Ingredient anchors for ${item.source}`}>
+                    {item.anchors.map((anchor) => <li>{anchor}</li>)}
+                  </ul>
+
+                  {item.status === "direct" && directPriceParts(item.source).length > 0 && (
+                    <p class="price-line">
+                      {directPriceParts(item.source).map((part) => (
+                        <span>{part}</span>
+                      ))}
+                    </p>
+                  )}
+
+                  {item.status === "direct" && item.direct && (
+                    <p class="direct-link">
+                      <a href={item.direct.url} target="_blank" rel="noreferrer noopener">
+                        {item.direct.label}
+                      </a>
+                    </p>
+                  )}
+
+                  {item.status === "direct" && highMarkupAlternativesFor(item.source).length > 0 && (
+                    <div class="direct-alts">
+                      <p class="alt-heading">lower-markup alternatives</p>
+                      <ol class="ranked">
+                        {highMarkupAlternativesFor(item.source).map((match) => (
+                          <li>
+                            <div class="rank-line">
+                              <strong>{match.percent}%</strong>
+                              <span>{match.name}</span>
+                            </div>
+                            <p>{match.reason}</p>
+                            {priceParts(getPrice(match.name), getPrice(item.source)).length > 0 && (
+                              <p class="price-line match-price">
+                                {priceParts(getPrice(match.name), getPrice(item.source)).map((part) => (
+                                  <span>{part}</span>
+                                ))}
+                              </p>
+                            )}
+                            <ul class="buy">
+                              {match.buy.map((link) => (
+                                <li>
+                                  <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                    {link.label}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+
+                  {item.status === "mapped" && item.matches && (
+                    <>
+                      {sourcePriceParts(item.source).length > 0 && (
+                        <p class="price-line source-price">
+                          {sourcePriceParts(item.source).map((part) => (
+                            <span>{part}</span>
+                          ))}
+                        </p>
+                      )}
+                      <ol class="ranked">
+                        {item.matches.map((match) => (
+                          <li>
+                            <div class="rank-line">
+                              <strong>{match.percent}%</strong>
+                              <span>{match.name}</span>
+                            </div>
+                            <p>{match.reason}</p>
+                            {priceParts(getPrice(match.name), getPrice(item.source)).length > 0 && (
+                              <p class="price-line match-price">
+                                {priceParts(getPrice(match.name), getPrice(item.source)).map((part) => (
+                                  <span>{part}</span>
+                                ))}
+                              </p>
+                            )}
+                            <ul class="buy">
+                              {match.buy.map((link) => (
+                                <li>
+                                  <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                    {link.label}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                            {highMarkupAlternativesFor(match.name).length > 0 && (
+                              <div class="direct-alts">
+                                <p class="alt-heading">lower-markup alternatives</p>
+                                <ol class="ranked">
+                                  {highMarkupAlternativesFor(match.name).map((alt) => (
+                                    <li>
+                                      <div class="rank-line">
+                                        <strong>{alt.percent}%</strong>
+                                        <span>{alt.name}</span>
+                                      </div>
+                                      <p>{alt.reason}</p>
+                                      {priceParts(getPrice(alt.name), getPrice(match.name)).length > 0 && (
+                                        <p class="price-line match-price">
+                                          {priceParts(getPrice(alt.name), getPrice(match.name)).map((part) => (
+                                            <span>{part}</span>
+                                          ))}
+                                        </p>
+                                      )}
+                                      <ul class="buy">
+                                        {alt.buy.map((link) => (
+                                          <li>
+                                            <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                              {link.label}
+                                            </a>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </li>
+                                  ))}
+                                </ol>
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ol>
+                    </>
+                  )}
+
+                  {item.note && <p class="item-note">{item.note}</p>}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </main>
+
+    <script>
+      const searchInput = document.querySelector("#match-search");
+      const mappedOnly = document.querySelector("#mapped-only");
+      const visibleCount = document.querySelector("#visible-count");
+      const cards = Array.from(document.querySelectorAll(".card"));
+      const groups = Array.from(document.querySelectorAll(".group"));
+
+      const updateCards = () => {
+        const query = searchInput instanceof HTMLInputElement ? searchInput.value.trim().toLowerCase() : "";
+        const onlyMapped = mappedOnly instanceof HTMLInputElement && mappedOnly.checked;
+        let shown = 0;
+
+        cards.forEach((card) => {
+          const haystack = card.getAttribute("data-haystack") ?? "";
+          const status = card.getAttribute("data-status");
+          const visible = haystack.includes(query) && (!onlyMapped || status === "mapped");
+          card.toggleAttribute("hidden", !visible);
+          if (visible) shown += 1;
+        });
+
+        groups.forEach((group) => {
+          const hasVisibleCards = Boolean(group.querySelector(".card:not([hidden])"));
+          group.toggleAttribute("hidden", !hasVisibleCards);
+        });
+
+        if (visibleCount) {
+          visibleCount.textContent = `${shown} shown`;
+        }
+      };
+
+      searchInput?.addEventListener("input", updateCards);
+      mappedOnly?.addEventListener("change", updateCards);
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --panel: #f8f8f8;
+    --text: #111111;
+    --muted: #555555;
+    --link: #111111;
+    --border: #dddddd;
+    --direct: #0f6a3d;
+    --mapped: #7a4a00;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --panel: #181818;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --link: #eeeeee;
+      --border: #333333;
+      --direct: #70d89c;
+      --mapped: #e3b15f;
+    }
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.35;
+  }
+
+  body {
+    margin: 0;
+    padding: 0.75rem;
+  }
+
+  main {
+    max-width: 88rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.16em;
+  }
+
+  .home {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .page-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.7rem;
+    align-items: end;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.15rem;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-head p {
+    max-width: 48rem;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .count {
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  .markup-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: baseline;
+    width: fit-content;
+    margin: -0.2rem 0 0.65rem;
+    padding: 0.28rem 0.42rem;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .markup-summary strong {
+    color: var(--text);
+    font-size: 0.96rem;
+  }
+
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: end;
+    padding: 0.55rem;
+    margin-bottom: 0.65rem;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .controls label {
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  input[type="search"] {
+    display: block;
+    width: min(24rem, 78vw);
+    margin-top: 0.18rem;
+    padding: 0.38rem 0.45rem;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+  }
+
+  .checkbox {
+    display: flex;
+    gap: 0.28rem;
+    align-items: center;
+    padding-bottom: 0.38rem;
+  }
+
+  #visible-count {
+    margin-left: auto;
+    padding-bottom: 0.38rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .note {
+    max-width: 54rem;
+    margin-bottom: 0.8rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .group {
+    margin-top: 0.8rem;
+  }
+
+  h2 {
+    margin-bottom: 0.45rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 0.55rem;
+  }
+
+  .card {
+    padding: 0.65rem;
+    border: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .card.direct {
+    border-left: 0.25rem solid var(--direct);
+  }
+
+  .card.mapped {
+    border-left: 0.25rem solid var(--mapped);
+  }
+
+  .card-top {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.42rem;
+  }
+
+  .eyebrow {
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    margin-top: 0.08rem;
+    font-size: 0.92rem;
+    line-height: 1.18;
+  }
+
+  .pill {
+    flex: 0 0 auto;
+    padding: 0.12rem 0.32rem;
+    border: 1px solid currentColor;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .pill.direct {
+    color: var(--direct);
+  }
+
+  .pill.mapped {
+    color: var(--mapped);
+  }
+
+  .anchors,
+  .buy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.24rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .anchors {
+    margin-bottom: 0.45rem;
+  }
+
+  .anchors li {
+    padding: 0.12rem 0.28rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  .direct-link,
+  .item-note,
+  .price-line,
+  .ranked p {
+    font-size: 0.8rem;
+  }
+
+  .price-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.24rem;
+    margin: -0.1rem 0 0.42rem;
+    color: var(--muted);
+  }
+
+  .price-line span {
+    padding: 0.1rem 0.28rem;
+    border: 1px dotted var(--border);
+    background: color-mix(in srgb, var(--bg) 58%, transparent);
+  }
+
+  .source-price {
+    margin-bottom: 0.46rem;
+  }
+
+  .direct-alts {
+    margin-top: 0.5rem;
+    padding-top: 0.45rem;
+    border-top: 1px dotted var(--border);
+  }
+
+  .alt-heading {
+    margin-bottom: 0.28rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .ranked .match-price {
+    margin: 0.14rem 0 0.24rem;
+    font-size: 0.74rem;
+  }
+
+  .item-note {
+    margin-top: 0.42rem;
+    color: var(--muted);
+  }
+
+  .ranked {
+    display: grid;
+    gap: 0.45rem;
+    padding-left: 1.1rem;
+  }
+
+  .ranked > li::marker {
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .rank-line {
+    display: flex;
+    gap: 0.38rem;
+    align-items: baseline;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .rank-line strong {
+    color: var(--mapped);
+    font-size: 0.9rem;
+  }
+
+  .ranked p {
+    margin: 0.12rem 0 0.22rem;
+    color: var(--muted);
+  }
+
+  .buy a {
+    font-size: 0.76rem;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 48rem) {
+    .page-head {
+      grid-template-columns: 1fr;
+    }
+
+    .count {
+      white-space: normal;
+    }
+
+    #visible-count {
+      width: 100%;
+      margin-left: 0;
+      padding-bottom: 0;
+    }
+  }
+</style>
