@@ -1,15 +1,16 @@
 ---
-import TravelSpotGuide from "../../components/travel/TravelSpotGuide.astro";
+import TravelSpotGuide, { type TravelSpot } from "../../components/travel/TravelSpotGuide.astro";
 import { extractTravelSpotsFromSource } from "../../data/travelRawParser";
 
 const pageSources = import.meta.glob<string>(
-  ["./best-of-*.astro", "!./best-of-world.astro"],
+  ["./best-of-*.astro", "!./best-of-world.astro", "!./best-of-europe.astro"],
   {
     eager: true,
     query: "?raw",
     import: "default",
   },
 );
+const importedSpotPages = import.meta.glob<{ travelSpots: TravelSpot[] }>("./best-of-europe.astro");
 
 const formatRegionName = (slug: string) =>
   slug
@@ -18,16 +19,31 @@ const formatRegionName = (slug: string) =>
     .map((word) => (word === "usa" ? "USA" : word[0].toUpperCase() + word.slice(1)))
     .join(" ");
 
-const allTravelSpots = Object.entries(pageSources).flatMap(([path, source]) => {
+const normalizeRegionSpots = (path: string, spots: TravelSpot[]) => {
   const slug = path.replace("./", "").replace(/\.astro$/, "");
   const region = formatRegionName(slug);
 
-  return extractTravelSpotsFromSource(String(source)).map((spot) => ({
+  return spots.map((spot) => ({
     ...spot,
     id: `${slug}-${spot.id}`,
     area: `${region} · ${spot.area}`,
   }));
+};
+
+const parsedTravelSpots = Object.entries(pageSources).flatMap(([path, source]) => {
+  return normalizeRegionSpots(path, extractTravelSpotsFromSource(String(source)));
 });
+
+const importedTravelSpots = (
+  await Promise.all(
+    Object.entries(importedSpotPages).map(async ([path, loadPage]) => {
+      const page = await loadPage();
+      return normalizeRegionSpots(path, page.travelSpots);
+    }),
+  )
+).flat();
+
+const allTravelSpots = [...parsedTravelSpots, ...importedTravelSpots];
 ---
 
 <TravelSpotGuide
