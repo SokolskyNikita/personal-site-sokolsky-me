@@ -1,0 +1,848 @@
+---
+export const prerender = true;
+
+type Link = {
+  label: string;
+  url: string;
+};
+
+type Rec = {
+  name: string;
+  origin: string;
+  markets: string[];
+  why: string;
+  anchors: string[];
+  price: string;
+  buy: Link[];
+  caution?: string;
+};
+
+type Section = {
+  title: string;
+  gap: string;
+  recs: Rec[];
+};
+
+const pageTitle = "Ari skincare recs";
+const pageDescription =
+  "New-product suggestions mapped from Ari's current skincare list: barrier repair, pigmentation, cleansers, SPF and extras, buyable in Argentina, the US, or shipped from Japan/Korea.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+const amazonSearch = (query: string): Link => ({
+  label: "Amazon US",
+  url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+});
+
+const mercadoLibreSearch = (query: string): Link => ({
+  label: "Mercado Libre AR",
+  url: `https://listado.mercadolibre.com.ar/${encodeURIComponent(query).replace(/%20/g, "-")}`,
+});
+
+const profile = [
+  "Acid-heavy routine: glycolic 4%, tretinoin 0.025-0.05%, BHA, daily vitamin C. Barrier support is the recurring bottleneck.",
+  "Benchmarks to beat: Irene Bermejo moisturiser (barrier), Codexial Enobright (vit C), Vichy Mineral 89 (hydration), NeoStrata glycolic, Murad spot treatment.",
+  "Finish rules: humid climate wants matte/fully absorbed (Effaclar Mat, Biore UV); dry climate tolerates richer (Skin Aqua, Benton, SKIN1004).",
+  "Known reactions: COSRX Snail 96 breaks her out; Tatcha Dewy Skin reacts; Cetaphil Optimal and Neutrogena Hydro Boost DE sting under acids; LRP lait demaquillant stings.",
+];
+
+const sections: Section[] = [
+  {
+    title: "Barrier repair and moisturisers",
+    gap: "Her #1 gap: nothing except Irene Bermejo (heavy, Argentina-only) truly rebuilds her barrier after tretinoin weeks. Mixsoon, both SKIN1004 centella creams, and Cicaplast all failed this in her notes.",
+    recs: [
+      {
+        name: "Aestura Atobarrier365 Cream",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "The strongest Irene Bermejo challenger. Ceramide NP + cholesterol + fatty acid capsules (same skin-lipid trio logic as pricey SkinCeuticals Triple Lipid, by the same formulator). Rich but far lighter than the IB cream, so usable in more climates.",
+        anchors: ["ceramide capsules", "cholesterol", "fatty acids", "panthenol"],
+        price: "~US$29-32 (Amazon official / Sephora)",
+        buy: [
+          {
+            label: "Amazon US (official)",
+            url: "https://www.amazon.com/AESTURA-ATOBARRIER365-Hydration-Moisturizer-Sensitive/dp/B09YDCCJBJ",
+          },
+          {
+            label: "Sephora",
+            url: "https://www.sephora.com/product/atobarrier365-cream-with-ceramides-niacinamide-for-skin-moisture-barrier-repair-P515494",
+          },
+        ],
+      },
+      {
+        name: "Etude SoonJung 2x Barrier Intensive Cream",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "For compromised-barrier weeks, the slot where Cicaplast was 'meh'. Minimal panthenol + madecassoside formula, fragrance-free, low sting risk over acids. Lighter than any baume, layers under SPF.",
+        anchors: ["panthenol", "madecassoside", "green tea", "fragrance-free"],
+        price: "~US$13-17 (Amazon / Ulta)",
+        buy: [
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Intensive-Hypoallergenic-Hydrating-Sensitive-Water-oil/dp/B091PN6NPT",
+          },
+          {
+            label: "Soko Glam",
+            url: "https://sokoglam.com/products/etude-house-soonjung-2x-barrier-intensive-cream",
+          },
+        ],
+      },
+      {
+        name: "Illiyoon Ceramide Ato Concentrate Cream",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "Cheap multi-ceramide workhorse: 200 ml tube, fragrance-free, 7-free. Face at night in dry climates plus doubles as the body cream for Seattle winter. Not glamorous, extremely reliable.",
+        anchors: ["multi-ceramide complex", "fragrance-free", "200 ml value"],
+        price: "~US$20-25 for 200 ml (Amazon)",
+        buy: [
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Pacific-illiyoon-Ceramide-Concentrate-Moisturizer/dp/B077RTL1HJ",
+          },
+          amazonSearch("Illiyoon Ceramide Ato Concentrate Cream"),
+        ],
+      },
+      {
+        name: "Avene Cicalfate+ Restorative Cream",
+        origin: "FR",
+        markets: ["AR", "US"],
+        why: "Different mechanism from Cicaplast (sucralfate + copper-zinc instead of panthenol-heavy), so worth one try where B5+ underdelivered. Buyable same-day at Farmacity.",
+        anchors: ["sucralfate", "copper-zinc", "thermal water"],
+        price: "~AR$45.000 Farmacity / ~US$28 Amazon",
+        buy: [
+          {
+            label: "Farmacity",
+            url: "https://www.farmacity.com/crema-facial-avene-cicalfate-x-40-ml/p",
+          },
+          amazonSearch("Avene Cicalfate+ Restorative Protective Cream"),
+        ],
+        caution: "If SoonJung or Aestura works, skip this one; overlapping role.",
+      },
+      {
+        name: "Dr. Althea 345 Relief Cream (already on her to-try list)",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "Her instinct checks out: reviews consistently report calming + barrier recovery on dehydrated, acid-stressed skin. Niacinamide + soothing complex, light gel-cream feel. Order it, this validates the note.",
+        anchors: ["niacinamide", "soothing complex", "light texture"],
+        price: "~US$20 (Amazon)",
+        buy: [
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Dr-Althea-Moisturizer-Soothing-Recovery-Niacinamide/dp/B0FKGJYFC8",
+          },
+          {
+            label: "Dr. Althea",
+            url: "https://doctoraltheaglobal.com/products/345-relief-cream",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Hydration serums",
+    gap: "Vichy Mineral 89 is her keeper but she noted it is 'not dense enough by itself' under light creams. A multi-weight hyaluronic + soothing serum stacks better under acids.",
+    recs: [
+      {
+        name: "Torriden DIVE-IN Low Molecular Hyaluronic Serum",
+        origin: "KR",
+        markets: ["US", "AR", "KR ship"],
+        why: "The K-beauty answer to Mineral 89: 5 weights of hyaluronic acid plus panthenol and allantoin, fragrance- and alcohol-free, watery but more cushioning than M89. Cheap enough to use generously after retinoic nights.",
+        anchors: ["5x hyaluronic acid", "panthenol", "allantoin", "fragrance-free"],
+        price: "~US$13-22 (Amazon / Olive Young US) / ~AR$29.000 Tiendamia",
+        buy: [
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Torriden-Hyaluronic-Hydration-Panthenol-Allantoin/dp/B07WZ2YTDP",
+          },
+          {
+            label: "Olive Young US",
+            url: "https://us.oliveyoung.com/products/UA56625219",
+          },
+          {
+            label: "Tiendamia AR",
+            url: "https://tiendamia.com.ar/p/amz/b07wz2ytdp/torriden-dive-in-hyaluronic-acid-serum-for-deep-hydration",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Pigmentation and vitamin C",
+    gap: "Codexial Enobright (her best-ever vit C) is really ascorbyl glucoside + 2% alpha-arbutin + dioic acid with a whisper of AHA, and it ships badly. These rebuild that combo from accessible pieces.",
+    recs: [
+      {
+        name: "Anua Niacinamide 10% + TXA 4% Serum",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "Covers two of her proven axes in one bottle: tranexamic acid (which her beloved Dr. Althea serum has at 2%, this has 4%) plus 2% arbutin, the Enobright workhorse. Natural rotation partner for Dr. Althea vit C.",
+        anchors: ["niacinamide 10%", "tranexamic acid 4%", "arbutin 2%"],
+        price: "~US$16-25 (Amazon)",
+        buy: [
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Niacinamide-Tranexamic-Hyaluronic-Sensitive-Fragrance-Free/dp/B0CLLV2T1P",
+          },
+          amazonSearch("Anua niacinamide 10 TXA 4 serum"),
+        ],
+      },
+      {
+        name: "The Ordinary Alpha Arbutin 2% + HA",
+        origin: "CA",
+        markets: ["AR", "US"],
+        why: "The exact alpha-arbutin dose of Enobright, isolated, for pocket change. Layers under any of her creams without sting. Genuinely sold in Argentina via Mercado Libre.",
+        anchors: ["alpha-arbutin 2%", "hyaluronic acid", "no acids"],
+        price: "~US$10-13 US / ~AR$22.000 Mercado Libre",
+        buy: [
+          {
+            label: "Mercado Libre AR",
+            url: "https://www.mercadolibre.com.ar/serum-alpha-arbutin-2-ha-the-ordinary-30-ml-momento-de-aplicacion-dianoche-tipo-de-piel/p/MLA26336329",
+          },
+          {
+            label: "The Ordinary",
+            url: "https://theordinary.com/en-us/alpha-arbutin-2-ha-serum-100401.html",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Mela B3 Serum (Melasyl)",
+        origin: "FR",
+        markets: ["AR", "US"],
+        why: "The one genuinely new pigment molecule of the last few years (Melasyl + 10% niacinamide), from a brand her skin already knows. For the stubborn spots Enobright never fully cleared. No orange cast, unlike the LRP vit C she disliked.",
+        anchors: ["Melasyl", "niacinamide 10%", "LRP tolerance base"],
+        price: "~AR$106.000 Farmacity / ~US$45-61 US",
+        buy: [
+          {
+            label: "Farmacity",
+            url: "https://www.farmacity.com/serum-la-roche-posay-mela-b3-antimanchas-niacinamida-x-30-ml/p",
+          },
+          {
+            label: "La Roche-Posay US",
+            url: "https://www.laroche-posay.us/our-products/face/face-serum/mela-b3-dark-spot-serum-with-melasyl-niacinamide-melab3serum.html",
+          },
+        ],
+      },
+      {
+        name: "Eucerin Anti-Pigment Dual Serum (Thiamidol)",
+        origin: "DE",
+        markets: ["AR"],
+        why: "Thiamidol is the best-evidenced OTC tyrosinase inhibitor in published trials, and Eucerin does not sell it in the US at all. Buying it in Buenos Aires is the arbitrage: Argentina pharmacy shelves beat the entire US market here.",
+        anchors: ["thiamidol", "hyaluronic acid", "US-unavailable"],
+        price: "~AR$175.000 Farmacity (watch 30-40% promos)",
+        buy: [
+          {
+            label: "Farmacity",
+            url: "https://www.farmacity.com/serum-dual-facial-eucerin-anti-pigment-x-30-ml/p",
+          },
+          mercadoLibreSearch("Eucerin Anti-Pigment dual serum"),
+        ],
+      },
+      {
+        name: "Rohto Melano CC Premium Essence",
+        origin: "JP",
+        markets: ["US", "JP ship"],
+        why: "Japan's cult vitamin C: pure ascorbic acid stabilised in an anhydrous base plus derivatives, tiny price. Good third leg in her vit C rotation (Dr. Althea, Yuja Niacin, this) and trivially ordered from Amazon US importers today.",
+        anchors: ["ascorbic acid", "vitamin C derivatives", "anhydrous"],
+        price: "~US$12-18 (Amazon importers)",
+        buy: [amazonSearch("Rohto Melano CC Premium Essence")],
+      },
+    ],
+  },
+  {
+    title: "Cleansers",
+    gap: "Two needs from her notes: a foaming cleanser mild enough for humid winter (Some By Mi dries her out), and a milk cleanser that does not sting like the LRP lait demaquillant. Plus a non-CeraVe SA body wash.",
+    recs: [
+      {
+        name: "Etude SoonJung pH 6.5 Whip Cleanser",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "Low-pH whipped foam with panthenol + madecassoside and no essential oils; the standard rec for acid-heavy routines whose cleansers over-strip. Winter-safe replacement for the Some By Mi foam.",
+        anchors: ["pH 6.5", "panthenol", "madecassoside", "fragrance-free"],
+        price: "~US$10-14 (Amazon / Ulta)",
+        buy: [
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/ETUDE-Comedogenic-Hypoallergenic-Sensitive-Fragrance-Free/dp/B0CHJGK5J7",
+          },
+          {
+            label: "Ulta",
+            url: "https://www.ulta.com/p/soonjung-ph-65-whip-cleanser-pimprod2049665?sku=2636343",
+          },
+        ],
+      },
+      {
+        name: "Avene Gentle Milk Cleanser",
+        origin: "FR",
+        markets: ["AR", "US"],
+        why: "The no-sting milk candidate: 17 ingredients total, 59% Avene thermal water, soap-free, no-rinse. Much shorter formula than the LRP lait that stings her; the delicate fragrance is the only watch item.",
+        anchors: ["59% thermal water", "17 ingredients", "no-rinse", "soap-free"],
+        price: "~US$22-28 (Amazon / Avene) / ~AR$65.000 Mercado Libre",
+        buy: [
+          {
+            label: "Avene US",
+            url: "https://www.aveneusa.com/gentle-milk-cleanser",
+          },
+          {
+            label: "Mercado Libre AR",
+            url: "https://www.mercadolibre.com.ar/avene-leche-limpiadora-desmaquillante-suavizante-pieles-sensibles/p/MLA22252976",
+          },
+        ],
+        caution: "If even this stings, the fragrance-free fallback is Uriage Cleansing Milk or Bioderma Sensibio milk.",
+      },
+      {
+        name: "Neutrogena Body Clear Body Wash (2% SA)",
+        origin: "US",
+        markets: ["US"],
+        why: "The CeraVe SA shower replacement: same 2% salicylic acid at drugstore price, lathers properly, from a body line she already rates ('great for every climate' on her Hydro Boost body note).",
+        anchors: ["salicylic acid 2%", "body acne", "non-CeraVe"],
+        price: "~US$8-10 (Target / Amazon)",
+        buy: [
+          {
+            label: "Target",
+            url: "https://www.target.com/p/neutrogena-body-clear-acne-body-wash-with-glycerin-for-breakout-treatment-8-5-fl-oz/-/A-13337869",
+          },
+          amazonSearch("Neutrogena Body Clear body wash salicylic acid"),
+        ],
+        caution: "Pick the original, not Pink Grapefruit, to minimise fragrance.",
+      },
+    ],
+  },
+  {
+    title: "Sunscreens",
+    gap: "Her SPF bench is already strong (Biore, Canmake, Skin Aqua, Benton). These add the two finishes she does not own: a true sweat-locked matte for humid heat, and Argentina-pharmacy options for when Asian imports run out.",
+    recs: [
+      {
+        name: "Anessa Perfect UV Skincare Milk",
+        origin: "JP",
+        markets: ["US", "JP ship"],
+        why: "Japan's sweat-proof benchmark: matte, water/sweat-locked (gets stronger with heat), the humid-hot-weather finish her Effaclar Mat note asks for. What Biore Aqua Rich is to comfort, Anessa is to hold.",
+        anchors: ["matte finish", "sweat/water resistant", "SPF50+ PA++++"],
+        price: "~US$25-35 (Amazon importers)",
+        buy: [amazonSearch("Anessa Perfect UV Sunscreen Skincare Milk")],
+        caution: "Contains alcohol like her Skin Aqua; fine per her history, but not for barrier-down days.",
+      },
+      {
+        name: "SKIN1004 Hyalu-Cica Water-Fit Sun Serum",
+        origin: "KR",
+        markets: ["US", "AR", "KR ship"],
+        why: "Brand her skin already tolerates everywhere. Watery serum texture, sets to satin (not the Poremizing shine problem), centella + hyaluronic base plays well over acids.",
+        anchors: ["satin finish", "centella", "hyaluronic acid"],
+        price: "~US$15-20 US / SkinFree AR (official SKIN1004 rep)",
+        buy: [
+          amazonSearch("SKIN1004 Hyalu-Cica Water-Fit Sun Serum"),
+          {
+            label: "SkinFree AR",
+            url: "https://www.skinfree.com.ar/skin1004/",
+          },
+        ],
+      },
+      {
+        name: "Round Lab Birch Juice Moisturizing Sun Cream",
+        origin: "KR",
+        markets: ["US", "KR ship"],
+        why: "The hydrating-daily slot for Seattle and dry-cool days: niacinamide + allantoin, lotion feel, no white cast, kinder than Skin Aqua when the barrier is mid-recovery.",
+        anchors: ["niacinamide", "allantoin", "no white cast"],
+        price: "~US$18-25 (Amazon / Ulta)",
+        buy: [
+          {
+            label: "Ulta",
+            url: "https://www.ulta.com/p/birch-juice-moisturizing-uvlock-spf-45-pimprod2049647?sku=2634356",
+          },
+          amazonSearch("Round Lab Birch Juice Moisturizing Sun Cream"),
+        ],
+      },
+      {
+        name: "ISDIN Fusion Water Magic SPF 50",
+        origin: "ES",
+        markets: ["AR"],
+        why: "The Argentina-pharmacy humid-weather pick: ultralight water phase, absorbs fully, designed to apply over damp skin. Farmacity stocks it everywhere, so it is the no-shipping backup when Asian SPF runs out mid-trip.",
+        anchors: ["water-phase texture", "fast absorption", "SPF50"],
+        price: "~AR$48.600 on promo (list ~AR$69.500) Farmacity",
+        buy: [
+          {
+            label: "Farmacity",
+            url: "https://www.farmacity.com/protector-solar-facial-isdin-fotoprotector-fusion-water-magic-x-50-ml/p",
+          },
+          mercadoLibreSearch("ISDIN Fusion Water Magic FPS50"),
+        ],
+      },
+      {
+        name: "Vichy Capital Soleil UV-Age Daily",
+        origin: "FR",
+        markets: ["AR", "US"],
+        why: "From the Mineral 89 house she trusts: water-fluid SPF50+ with niacinamide and peptides, absorbed finish. Second Argentina-available daily, easy Farmacity/Mercado Libre buy.",
+        anchors: ["water fluid", "niacinamide", "peptides"],
+        price: "~AR$55.000 Mercado Libre",
+        buy: [
+          {
+            label: "Vichy AR",
+            url: "https://www.vichyargentina.com.ar/todos-los-productos/proteccion-solar/protectores-solares/signos-del-envejecimiento/capital-soleil-uv-age-daily",
+          },
+          {
+            label: "Mercado Libre AR",
+            url: "https://listado.mercadolibre.com.ar/vichy-capital-soleil-uv-age",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Retinoid support and extras",
+    gap: "She wanted a 0.025% fallback for weeks when the barrier is not at 100%, and her HOCl spec is 'water + hypochlorous acid, nothing extra'.",
+    recs: [
+      {
+        name: "Differin Gel (adapalene 0.1%)",
+        origin: "US",
+        markets: ["US"],
+        why: "The barrier-down fallback retinoid: meta-analyses show adapalene 0.1% matches tretinoin 0.025% on efficacy with meaningfully less irritation, and it is OTC in the US. Keeps retinoid cadence going in the weeks Cordes VAS 0.05% would wreck her barrier.",
+        anchors: ["adapalene 0.1%", "gentler than tret", "OTC"],
+        price: "~US$13.50 for 15 g / ~US$24 for 45 g (Walmart / Target)",
+        buy: [
+          {
+            label: "Target",
+            url: "https://www.target.com/p/differin-acne-retinoid-treatment-gel-adapalene-0-1-15g/-/A-51346324",
+          },
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Differin-Adapalene-0-1-Acne-Treatment/dp/B07L1PHSY9",
+          },
+        ],
+        caution: "Different molecule than retinoic acid; treat as the recovery-week option, not the main driver.",
+      },
+      {
+        name: "Tower 28 SOS Rescue Spray",
+        origin: "US",
+        markets: ["US"],
+        why: "Her HOCl spec, literally: water, sodium chloride, hypochlorous acid, nothing else. National Eczema Association seal, Sephora-available for the Seattle restock.",
+        anchors: ["hypochlorous acid", "3 ingredients", "on-the-go acne"],
+        price: "~US$28 for 120 ml (Sephora / Amazon)",
+        buy: [
+          {
+            label: "Sephora",
+            url: "https://www.sephora.com/product/sos-save-our-skin-daily-rescue-facial-spray-P448852",
+          },
+          {
+            label: "Amazon US",
+            url: "https://www.amazon.com/Tower-28-Beauty-Rescue-Facial/dp/B0B3SCM1L6",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const avoid = [
+  {
+    name: "Beauty of Joseon Relief Sun",
+    reason:
+      "Massive hype, but the finish is dewy-glowy: the exact residue she dislikes in humid weather. Skip despite the reviews.",
+  },
+  {
+    name: "COSRX snail line",
+    reason:
+      "Snail 96 broke her out; Jumiso Snail EX already fills the snail-barrier slot without that risk. No need to retry COSRX.",
+  },
+  {
+    name: "Rich fragranced luxury creams (Tatcha-style)",
+    reason:
+      "Dewy Skin Cream both underperformed and caused a reaction; the pattern says spend on ceramide dermo brands instead.",
+  },
+];
+
+const buyingNotes = [
+  {
+    label: "US",
+    note: "Amazon official brand stores, Sephora, Ulta, Target, and us.oliveyoung.com (domestic US warehouse, 2-7 days). Olive Young Global no longer ships to the US, so for order-today-arrive-in-Seattle timing use the US site or Amazon.",
+  },
+  {
+    label: "Korea to US",
+    note: "For items only on Korean sites: YesStyle and StyleKorean ship to the US in roughly 1-3 weeks. Order today only if the Seattle date is 2+ weeks out; otherwise buy the Amazon-official listing.",
+  },
+  {
+    label: "Japan to US",
+    note: "Anessa, Melano CC, Biore restocks: Amazon US importer listings arrive in days; direct-from-Japan proxies take weeks. Amazon is the safe route for the deadline.",
+  },
+  {
+    label: "Argentina",
+    note: "Farmacity and Mercado Libre for European dermo brands (often 30-40% promos); SkinFree (official SKIN1004 rep), Planet Skin, and Somi for K-beauty locally.",
+  },
+];
+
+const totalRecs = sections.reduce((count, section) => count + section.recs.length, 0);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main>
+      <p class="home"><a href="/">sokolsky.me</a></p>
+
+      <header class="page-head">
+        <div>
+          <h1>{pageTitle}</h1>
+          <p>
+            New products to try, derived from her current list: each pick answers a gap or benchmark in her own notes.
+            Everything is buyable in Argentina, the US, or with easy shipping to the US from Japan/Korea.
+          </p>
+        </div>
+        <p class="count">{totalRecs} suggestions · {sections.length} categories</p>
+      </header>
+
+      <section class="profile" aria-label="Skin profile from her notes">
+        <h2>What her list says</h2>
+        <ul>
+          {profile.map((line) => <li>{line}</li>)}
+        </ul>
+      </section>
+
+      {sections.map((section) => (
+        <section class="group">
+          <h2>{section.title}</h2>
+          <p class="gap">{section.gap}</p>
+          <div class="cards">
+            {section.recs.map((rec) => (
+              <article class="card">
+                <div class="card-top">
+                  <h3>{rec.name}</h3>
+                  <div class="tags">
+                    <span class="pill origin">{rec.origin}</span>
+                    {rec.markets.map((market) => <span class="pill market">{market}</span>)}
+                  </div>
+                </div>
+                <p class="why">{rec.why}</p>
+                <ul class="anchors" aria-label={`Key points for ${rec.name}`}>
+                  {rec.anchors.map((anchor) => <li>{anchor}</li>)}
+                </ul>
+                <p class="price">{rec.price}</p>
+                <ul class="buy">
+                  {rec.buy.map((link) => (
+                    <li>
+                      <a href={link.url} target="_blank" rel="noreferrer noopener">{link.label}</a>
+                    </li>
+                  ))}
+                </ul>
+                {rec.caution && <p class="caution">{rec.caution}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <section class="group">
+        <h2>Skip despite the hype</h2>
+        <ul class="avoid">
+          {avoid.map((item) => (
+            <li>
+              <strong>{item.name}</strong> — {item.reason}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="group">
+        <h2>Where to buy, by route</h2>
+        <ul class="routes">
+          {buyingNotes.map((route) => (
+            <li>
+              <strong>{route.label}:</strong> {route.note}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <p class="footnote">
+        Prices are rough public-listing estimates (July 2026); Argentina prices swing with promos.
+        Ingredient claims follow current retailer/INCI listings; the box label wins if they disagree.
+      </p>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --panel: #f8f8f8;
+    --text: #111111;
+    --muted: #555555;
+    --link: #111111;
+    --border: #dddddd;
+    --accent: #0f6a3d;
+    --warn: #7a4a00;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --panel: #181818;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --link: #eeeeee;
+      --border: #333333;
+      --accent: #70d89c;
+      --warn: #e3b15f;
+    }
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.35;
+  }
+
+  body {
+    margin: 0;
+    padding: 0.75rem;
+  }
+
+  main {
+    max-width: 88rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  ul {
+    margin: 0;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.16em;
+  }
+
+  .home {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .page-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.7rem;
+    align-items: end;
+    margin-bottom: 0.7rem;
+  }
+
+  h1 {
+    font-size: 1.15rem;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-head p {
+    max-width: 48rem;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .count {
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 0.86rem;
+  }
+
+  .profile {
+    margin-bottom: 0.35rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .profile h2 {
+    border: 0;
+    padding: 0;
+    margin: 0 0 0.3rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .profile ul {
+    display: grid;
+    gap: 0.22rem;
+    padding-left: 1rem;
+    font-size: 0.82rem;
+  }
+
+  .group {
+    margin-top: 0.85rem;
+  }
+
+  h2 {
+    margin-bottom: 0.3rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .gap {
+    max-width: 60rem;
+    margin-bottom: 0.5rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 0.55rem;
+  }
+
+  .card {
+    padding: 0.65rem;
+    border: 1px solid var(--border);
+    border-left: 0.25rem solid var(--accent);
+    background: var(--panel);
+  }
+
+  .card-top {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.35rem;
+  }
+
+  h3 {
+    font-size: 0.92rem;
+    line-height: 1.18;
+  }
+
+  .tags {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 0.22rem;
+    justify-content: flex-end;
+    max-width: 9rem;
+  }
+
+  .pill {
+    padding: 0.1rem 0.3rem;
+    border: 1px solid currentColor;
+    font-size: 0.64rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .pill.origin {
+    color: var(--muted);
+  }
+
+  .pill.market {
+    color: var(--accent);
+  }
+
+  .why {
+    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .anchors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.24rem;
+    margin-bottom: 0.4rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .anchors li {
+    padding: 0.1rem 0.28rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  .price {
+    margin-bottom: 0.32rem;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+
+  .buy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.24rem 0.6rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .buy a {
+    font-size: 0.78rem;
+  }
+
+  .caution {
+    margin-top: 0.4rem;
+    color: var(--warn);
+    font-size: 0.74rem;
+  }
+
+  .avoid,
+  .routes {
+    display: grid;
+    gap: 0.3rem;
+    max-width: 60rem;
+    padding-left: 1.05rem;
+    font-size: 0.82rem;
+  }
+
+  .avoid strong {
+    color: var(--warn);
+  }
+
+  .footnote {
+    margin-top: 0.9rem;
+    max-width: 60rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  @media (max-width: 48rem) {
+    .page-head {
+      grid-template-columns: 1fr;
+    }
+
+    .count {
+      white-space: normal;
+    }
+
+    .card-top {
+      flex-direction: column;
+      gap: 0.28rem;
+    }
+
+    .tags {
+      justify-content: flex-start;
+      max-width: none;
+    }
+  }
+</style>
