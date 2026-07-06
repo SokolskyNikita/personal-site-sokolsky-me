@@ -20,6 +20,8 @@ jobs:
     env:
       SITE_URL: ${{ vars.SITE_URL }}
       GOOGLE_MAPS_API_KEY_PUBLIC: ${{ vars.GOOGLE_MAPS_API_KEY_PUBLIC }}
+      PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ vars.PUBLIC_POSTHOG_PROJECT_TOKEN }}
+      PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -42,3 +44,10 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+
+      - name: Deploy PostHog proxy with Wrangler
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config wrangler.phAnalytics.jsonc

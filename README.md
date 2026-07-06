@@ -29,7 +29,18 @@ To build and deploy manually:
 ```bash
 SITE_URL=https://sokolsky.me npm run build
 npx wrangler deploy
+npm run cf:deploy:phanalytics
 ```
+
+## posthog reverse proxy integration
+
+PostHog is routed through a Cloudflare reverse proxy on `images.sokolsky.me`, matching the `gdphotos` setup.
+
+- `astro.config.mjs` initializes the browser SDK with `api_host: https://images.sokolsky.me`.
+- `images-proxy-worker.js` forwards allowed SDK asset and event paths to PostHog Cloud.
+- `wrangler.phAnalytics.jsonc` deploys the proxy worker on `images.sokolsky.me`.
+- The ingest host is fixed in code so stale build vars cannot fall back to direct PostHog ingest.
+- Keep `PUBLIC_POSTHOG_UI_HOST` pointed at `https://us.posthog.com`.
 
 ## one-time cloudflare setup
 
@@ -60,6 +71,8 @@ Set these GitHub repository secrets:
 And set this GitHub repository variable (Settings > Secrets and variables > Actions > Variables):
 
 - `SITE_URL` (e.g., `https://sokolsky.me`)
+- `PUBLIC_POSTHOG_PROJECT_TOKEN`
+- `PUBLIC_POSTHOG_UI_HOST` (e.g., `https://us.posthog.com`)
 
 Then push to `main` and the workflow deploys automatically.
 
