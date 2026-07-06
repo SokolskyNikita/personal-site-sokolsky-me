@@ -115,9 +115,9 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$16-20 US/EU",
   },
   "Laneige Cica Sleeping Mask": {
-    arUsd: "~US$33",
-    abroadUsd: "~US$34 US",
-    note: "Clama list price; cash pickup price is about US$20",
+    arUsd: "~US$198 / 60 ml eq",
+    abroadUsd: "~US$34 / 60 ml US",
+    note: "Clama listing is 10 ml: US$33 list; cash pickup is about US$20 (= ~US$120 / 60 ml eq)",
   },
   "Jumiso Snail EX Ultimate Barrier Facial Cream": {
     abroadUsd: "~US$12-20 KR/US",
@@ -127,9 +127,9 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$18-25 KR/US",
   },
   "Sulwhasoo Concentrated Ginseng Renewing Cream": {
-    arUsd: "~US$70",
-    abroadUsd: "~US$260 US full size",
-    note: "Argentina price found for 5 ml mini",
+    arUsd: "~US$840 / 60 ml eq",
+    abroadUsd: "~US$260 / 60 ml US",
+    note: "Argentina price found for 5 ml mini: ~US$70; normalized to 60 ml for markup",
   },
   "Dr. Althea 345 Relief Cream": {
     arUsd: "~US$42",
@@ -324,10 +324,10 @@ const priceByName: Record<string, PriceInfo> = {
 const getPrice = (name: string) => priceByName[name];
 
 const midpointUsd = (value?: string) => {
-  const matches = value?.match(/\d+(?:\.\d+)?/g);
-  if (!matches?.length) return undefined;
+  const match = value?.match(/US\$\s*(\d+(?:\.\d+)?)(?:\s*-\s*(?:US\$)?\s*(\d+(?:\.\d+)?))?/i);
+  if (!match) return undefined;
 
-  const numbers = matches.slice(0, 2).map(Number);
+  const numbers = [match[1], match[2]].filter(Boolean).map(Number);
   return numbers.reduce((total, number) => total + number, 0) / numbers.length;
 };
 
@@ -379,6 +379,54 @@ const sourcePriceParts = (name: string) => {
 };
 
 const highMarkupAlternatives: Record<string, RankedMatch[]> = {
+  "Laneige Cica Sleeping Mask": [
+    {
+      name: "Dr. Althea 345 Relief Cream",
+      percent: 58,
+      reason: "Lower-markup barrier-leaning cream to try instead of paying mini-size Laneige pricing; Ari had not tested it yet.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/dr-althea-345-relief-cream-50ml-crema-ligera-calmante-y-equilibrante-con-teca-pantenol-y-ceramidas/",
+        },
+      ],
+    },
+    {
+      name: "La Roche-Posay Cicaplast Baume B5+",
+      percent: 54,
+      reason: "Cheaper recovery fallback with panthenol and madecassoside, but Ari called it only meh/okay for skin recovery.",
+      buy: [
+        {
+          label: "Farmacity listing",
+          url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
+        },
+      ],
+    },
+  ],
+  "Sulwhasoo Concentrated Ginseng Renewing Cream": [
+    {
+      name: "Laneige Water Bank Blue Hyaluronic Moisture Cream",
+      percent: 56,
+      reason: "Lower-markup light hydration option that Ari tolerated over mild acids; not a ginseng/luxury-cream dupe.",
+      buy: [
+        {
+          label: "iFans listing",
+          url: "https://www.ifansbeauty.com.ar/productos/crema-laneige-water-bank-blue-hyaluronic-cream-50ml-ifans/",
+        },
+      ],
+    },
+    {
+      name: "SKIN1004 Madagascar Centella Probio-Cica Enrich Cream",
+      percent: 48,
+      reason: "Lower-markup rich cream option, but Ari said it does not recover a compromised barrier well.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-centella-probio-cica-enrich-cream-50ml-crema-facial-hidratante-pieles-maduras/",
+        },
+      ],
+    },
+  ],
   "SKIN1004 Madagascar Centella Cream": [
     {
       name: "SKIN1004 Madagascar Centella Soothing Cream",
@@ -1766,7 +1814,7 @@ const medianLocalMarkup = median(localMarkupValues);
       </section>
 
       <p class="note">
-        Prices are rough public-listing USD estimates. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
+        Prices are rough public-listing USD estimates, normalized to comparable volume when a local listing is a mini or travel size. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
       </p>
 
       {
