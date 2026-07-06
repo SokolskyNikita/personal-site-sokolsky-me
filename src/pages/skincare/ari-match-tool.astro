@@ -115,8 +115,9 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$16-20 US/EU",
   },
   "Laneige Cica Sleeping Mask": {
+    arUsd: "~US$33",
     abroadUsd: "~US$34 US",
-    note: "Clama page found, but BD only exposed $0 / no usable local price",
+    note: "Clama list price; cash pickup price is about US$20",
   },
   "Jumiso Snail EX Ultimate Barrier Facial Cream": {
     abroadUsd: "~US$12-20 KR/US",
@@ -233,7 +234,7 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Murad Deep Relief Acne Treatment": {
     abroadUsd: "~US$45 US",
-    note: "BD found the domestic ML page, but no usable public local price",
+    note: "ML screenshot shows international import: about US$100 plus about US$21 import taxes, not counted as domestic",
   },
   "COSRX BHA Blackhead Power Liquid": {
     arUsd: "~US$44",
@@ -267,8 +268,9 @@ const priceByName: Record<string, PriceInfo> = {
     arUsd: "~US$34",
   },
   "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
+    arUsd: "~US$85",
     abroadUsd: "~US$8-12 Japan",
-    note: "BD found import-facing Argentina price only; no domestic local price",
+    note: "ML screenshot shows 35-day lead time, so treat as local marketplace price, not ready domestic stock",
   },
   "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
     arUsd: "~US$63",
@@ -381,7 +383,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "SKIN1004 Madagascar Centella Soothing Cream",
       percent: 86,
-      reason: "Same brand and centella direction with a lighter gel-cream texture and a lower local markup.",
+      reason: "Same brand and centella direction with a lighter gel-cream texture. Good daytime/dry-climate lane, not a compromised-barrier fix.",
       buy: [
         {
           label: "Skinfree listing",
@@ -392,7 +394,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "La Roche-Posay Cicaplast Baume B5+",
       percent: 67,
-      reason: "Cheaper barrier-repair substitute with panthenol, glycerin and madecassoside, but richer than the SKIN1004 cream.",
+      reason: "Cheaper recovery fallback with panthenol and madecassoside, but Ari called it only meh/okay for skin recovery.",
       buy: [
         {
           label: "Farmacity listing",
@@ -405,7 +407,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
       percent: 58,
-      reason: "Not a snail dupe, but keeps a lightweight serum step with centella, humectants and calming support at a much lower local price.",
+      reason: "Not a snail dupe, but keeps a lightweight serum step with centella and humectants. Useful because COSRX snail makes Ari break out.",
       buy: [
         {
           label: "Skinfree listing",
@@ -416,7 +418,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "SKIN1004 Probio-Cica Enrich Cream",
       percent: 54,
-      reason: "Better if the goal is barrier support rather than essence texture: centella ferment, ceramide, squalane and niacinamide.",
+      reason: "Closer if the goal is a cream step, but Ari said it is not good for compromised skin barrier.",
       buy: [
         {
           label: "Skinfree listing",
@@ -485,17 +487,6 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
         },
       ],
     },
-    {
-      name: "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser",
-      percent: 58,
-      reason: "Switches from acne gel to sensitive-skin milk cleanser; useful if Effaclar feels too stripping.",
-      buy: [
-        {
-          label: "Farmacity search",
-          url: "https://www.farmacity.com/search?q=la%20roche%20posay%20toleriane%20dermolimpiador",
-        },
-      ],
-    },
   ],
   "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling": [
     {
@@ -531,7 +522,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "La Roche-Posay Effaclar Micro-Peeling Gel",
       percent: 66,
-      reason: "Keeps the salicylic-acid exfoliating-cleanser role, though it is also locally marked up.",
+      reason: "Keeps the salicylic-acid exfoliating-cleanser role, but Ari uses this deeper-cleanse style only sometimes, not daily.",
       buy: [
         {
           label: "Farmacity listing",
@@ -555,7 +546,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser",
       percent: 52,
-      reason: "Keeps the AHA/BHA/PHA direction, but it is a body cleanser rather than a face-first swap.",
+      reason: "Keeps the AHA/BHA/PHA direction, but it is a body cleanser; Ari likes Some By Mi in humid heat and finds it drying in humid winter.",
       buy: [mercadoLibreSearch("some by mi aha bha pha body cleanser argentina")],
     },
   ],
@@ -574,7 +565,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "SKIN1004 Madagascar Centella Ampoule Foam",
       percent: 48,
-      reason: "Lower-price cleanser option if a foaming second cleanse is acceptable.",
+      reason: "Lower-price cleanser option if a foaming second cleanse is acceptable. Ari has not tried it; only a mildness candidate.",
       buy: [
         {
           label: "Skinfree listing",
@@ -598,7 +589,7 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
     {
       name: "La Roche-Posay Effaclar Micro-Peeling Gel",
       percent: 54,
-      reason: "Keeps salicylic/LHA acne logic, but as a rinse-off cleanser instead of leave-on BHA.",
+      reason: "Keeps salicylic/LHA acne logic, but as a rinse-off cleanser and not an everyday step.",
       buy: [
         {
           label: "Farmacity listing",
@@ -627,6 +618,30 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
         {
           label: "Skinfree listing",
           url: "https://www.skinfree.com.ar/productos/dr-althea-vitamin-c-boosting-serum-30ml-serum-de-vitamina-c-g7lw7/",
+        },
+      ],
+    },
+  ],
+  "Canmake Mermaid Skin Gel UV SPF50+ PA++++": [
+    {
+      name: "Benton Air Fit UV Defense Sun Cream",
+      percent: 62,
+      reason: "Much lower local price for a Korean SPF50+ sunscreen with a light finish and centella.",
+      buy: [
+        {
+          label: "Luxodia",
+          url: "https://luxodia.com/productos/benton-air-fit-uv-defense-sun-cream/",
+        },
+      ],
+    },
+    {
+      name: "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+      percent: 60,
+      reason: "Closest domestic watery sunscreen feel with centella and hyaluronic acid.",
+      buy: [
+        {
+          label: "Openfarma search",
+          url: "https://www.openfarma.com.ar/search?text=skin1004%20hyalu-cica%20water-fit%20sun%20serum",
         },
       ],
     },
@@ -696,7 +711,7 @@ const matches: ProductMatch[] = [
       label: "Irene Bermejo shop",
       url: "https://irenebermejo.com/tienda/",
     },
-    note: "Ask for the old glass jar if that is the target.",
+    note: "Ari: best moisturiser she has tried for deep moisture, calming and barrier recovery. Ask for the old glass jar if that is the target.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -718,7 +733,7 @@ const matches: ProductMatch[] = [
       {
         name: "La Roche-Posay Cicaplast Baume B5+",
         percent: 62,
-        reason: "Better barrier-repair substitute than a texture match: panthenol, shea butter, glycerin and madecassoside.",
+        reason: "Barrier-repair style substitute with panthenol, shea butter, glycerin and madecassoside, but Ari finds LRP only meh/okay for recovery.",
         buy: [
           {
             label: "Farmacity listing",
@@ -738,6 +753,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: overall great for deep moisture while using acids.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -748,6 +764,7 @@ const matches: ProductMatch[] = [
       label: "Regy Beauty",
       url: "https://regybeauty.com/shop/mixsoon-bifida-cream/",
     },
+    note: "Ari: fine, not impressive; better at night and does not help barrier recovery.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -758,6 +775,7 @@ const matches: ProductMatch[] = [
       label: "K-Beauty Argentina",
       url: "https://kbeautyargentina.empretienda.com.ar/skincare/skin1004/centella/skin1004-centella-cream-75ml",
     },
+    note: "Ari: good daytime moisture, almost matte, works with acids below; not for compromised barrier.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -768,6 +786,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/skin1004-centella-probio-cica-enrich-cream-50ml-crema-facial-hidratante-pieles-maduras/",
     },
+    note: "Ari: heavier and a little bright, okay moisture; does not recover a compromised barrier.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -778,6 +797,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/skin1004-poremizing-light-gel-cream-75ml-crema-facial-en-gel-para-pieles-mixtas-y-oleosas/",
     },
+    note: "Skin1004 moisturisers are better suited for dry climate; do not use as barrier-recovery picks.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -788,6 +808,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/skin1004-centella-soothing-cream-75ml-crema-facial-en-gel-pieles-sensibles/",
     },
+    note: "Skin1004 moisturisers are better suited for dry climate; do not use as barrier-recovery picks.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -819,7 +840,7 @@ const matches: ProductMatch[] = [
       {
         name: "La Roche-Posay Cicaplast Baume B5+",
         percent: 62,
-        reason: "Better barrier-repair substitute than a texture match: panthenol, shea butter, glycerin and madecassoside.",
+        reason: "Barrier-repair style substitute with panthenol, shea butter, glycerin and madecassoside, but Ari finds LRP only meh/okay for recovery.",
         buy: [
           {
             label: "Farmacity listing",
@@ -839,6 +860,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: overall great for deep moisture while using acids.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -908,20 +930,9 @@ const matches: ProductMatch[] = [
     status: "mapped",
     matches: [
       {
-        name: "COSRX Advanced Snail 96 Mucin Power Essence",
-        percent: 76,
-        reason: "Best ingredient anchor match: snail filtrate, betaine, panthenol, allantoin and sodium hyaluronate.",
-        buy: [
-          {
-            label: "Skinfree",
-            url: "https://www.skinfree.com.ar/productos/cosrx-advanced-snail-96-mucin-power-essence-100ml-esencia-con-96-de-mucina-de-caracol/",
-          },
-        ],
-      },
-      {
         name: "SKIN1004 Probio-Cica Enrich Cream",
-        percent: 58,
-        reason: "No snail, but closer as a barrier cream: centella ferment, ceramide, squalane and oils.",
+        percent: 52,
+        reason: "No snail, and not true barrier recovery per Ari; use only as an okay moisture cream fallback.",
         buy: [
           {
             label: "Skinfree",
@@ -930,9 +941,20 @@ const matches: ProductMatch[] = [
         ],
       },
       {
+        name: "Dr. Althea 345 Relief Cream",
+        percent: 50,
+        reason: "Barrier-leaning local cream to try; Ari had not tested it yet, so treat as a candidate, not proven replacement for Jumiso.",
+        buy: [
+          {
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/dr-althea-345-relief-cream-50ml-crema-ligera-calmante-y-equilibrante-con-teca-pantenol-y-ceramidas/",
+          },
+        ],
+      },
+      {
         name: "La Roche-Posay Cicaplast Baume B5+",
-        percent: 51,
-        reason: "Barrier-repair role with panthenol, shea butter, glycerin and madecassoside.",
+        percent: 47,
+        reason: "Panthenol/madecassoside recovery role, but Ari called La Roche-Posay only meh/okay for skin recovery.",
         buy: [
           {
             label: "Farmacity listing",
@@ -961,6 +983,7 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
     },
+    note: "Ari: meh, okay skin recovery. Do not rank as the strongest barrier-recovery option.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -981,6 +1004,7 @@ const matches: ProductMatch[] = [
       label: "Koko Inc",
       url: "https://www.kokoinc.com.ar/productos/tatcha-the-dewy-skin-cream/",
     },
+    note: "Ari: barely moisturises and makes her skin react. Listed for completeness, not recommended.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -991,6 +1015,7 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/crema-hidratante-seborregulador-matificante-effaclar-mat-x-40ml/p",
     },
+    note: "Ari: great matte finish for humid hot weather with mild acid usage.",
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -1001,7 +1026,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/cosrx-advanced-snail-96-mucin-power-essence-100ml-esencia-con-96-de-mucina-de-caracol/",
     },
-    note: "Listed because the source list tracks it, even though the notes say not to buy.",
+    note: "Ari: makes her break out. Listed because the source list tracks it, not as a recommended buy.",
   },
   {
     group: "Hydration serums, mists and sprays",
@@ -1012,6 +1037,7 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
     },
+    note: "Ari: still the best hyaluronic acid she has tried; great moisture boost.",
   },
   {
     group: "Hydration serums, mists and sprays",
@@ -1022,6 +1048,7 @@ const matches: ProductMatch[] = [
       label: "Clinique Argentina",
       url: "https://www.clinique.com.ar/product/1573/5449/3-step/step-2-exfoliate/moisture-surge-face-spray-thirsty-skin-relief",
     },
+    note: "Ari: meh/okay; prefers plain mineral or thermal water mist.",
   },
   {
     group: "Hydration serums, mists and sprays",
@@ -1042,7 +1069,7 @@ const matches: ProductMatch[] = [
       {
         name: "Medicube Hypochlorous Acid Daily Facial Spray",
         percent: 74,
-        reason: "Domestic HOCl face spray. It adds cosmetic support ingredients, so it is not as simple as Prontomed.",
+        reason: "Domestic HOCl face spray. Ari only needs HOCl without unnecessary extras, so this is less ideal than a plain formula.",
         buy: [
           {
             label: "Pigmento listing",
@@ -1053,7 +1080,7 @@ const matches: ProductMatch[] = [
       {
         name: "Briotech Topical HOCl 2 oz",
         percent: 70,
-        reason: "Closer as a plain HOCl skin spray, using a local Mercado Libre listing that did not show import shipping.",
+        reason: "Closer as a plain HOCl skin spray; useful for on-the-go acne prevention if the listing stays domestic.",
         buy: [
           {
             label: "Mercado Libre local listing",
@@ -1083,7 +1110,7 @@ const matches: ProductMatch[] = [
       {
         name: "La Roche-Posay Effaclar Micro-Peeling Gel",
         percent: 70,
-        reason: "Domestic acid cleanser with salicylic acid and zinc. Stronger daily-use caution still applies.",
+        reason: "Domestic acid cleanser with salicylic acid and zinc. Not an everyday cleanser; better as a deeper-cleanse step.",
         buy: [
           {
             label: "Farmacity listing",
@@ -1094,7 +1121,7 @@ const matches: ProductMatch[] = [
       {
         name: "SOME BY MI AHA.BHA.PHA 30 Days Miracle Clear Body Cleanser",
         percent: 64,
-        reason: "Same acid family and tea-tree acne direction, but it is a body cleanser, not the face foam.",
+        reason: "Same acid family and tea-tree acne direction, but it is a body cleanser. Ari likes Some By Mi for humid heat; it can be drying in humid winter.",
         buy: [
           {
             label: "K-Beauty Argentina",
@@ -1105,7 +1132,7 @@ const matches: ProductMatch[] = [
       {
         name: "SKIN1004 Madagascar Centella Ampoule Foam",
         percent: 52,
-        reason: "Closer texture and sensitivity profile, but it drops the acid blend.",
+        reason: "Closer texture and sensitivity profile, but it drops the acid blend. Ari has not tried it; only a mildness candidate.",
         buy: [
           {
             label: "Skinfree",
@@ -1124,6 +1151,7 @@ const matches: ProductMatch[] = [
       label: "Pigmento listing",
       url: "https://www.perfumeriaspigmento.com.ar/beauty-of-joseon-aceite-ginseng-cleansing-oil-210ml/p",
     },
+    note: "Ari: great when double cleansing is needed.",
   },
   {
     group: "Cleansers",
@@ -1134,6 +1162,7 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/gel-limpiador-la-roche-posay-effaclar-purificante-para-piel-grasa-x-400-ml/p",
     },
+    note: "Ari: good for every climate, but a bit drying when using all her acids.",
   },
   {
     group: "Cleansers",
@@ -1144,6 +1173,7 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
     },
+    note: "Ari: good for deeper cleansing, not for everyday use.",
   },
   {
     group: "Cleansers",
@@ -1154,6 +1184,7 @@ const matches: ProductMatch[] = [
       label: "Farmacia Más Vida listing",
       url: "https://farmaciamasvida.com.ar/producto/lrp-toleriane-dermolimpiad-200-cre/",
     },
+    note: "Ari: stings on her skin. Keep only as a reference for the milky-cleanser role, not a recommendation.",
   },
   {
     group: "Cleansers",
@@ -1164,6 +1195,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/skin1004-centella-ampoule-foam-125ml-limpiador-facial-en-espuma-pieles-sensibles/",
     },
+    note: "Ari has not tried it; compare as a possible mild CeraVe/LRP replacement.",
   },
   {
     group: "Cleansers",
@@ -1174,7 +1206,7 @@ const matches: ProductMatch[] = [
       {
         name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser",
         percent: 72,
-        reason: "Keeps the salicylic-acid body-cleanser role and adds AHA/PHA.",
+        reason: "Keeps the salicylic-acid shower/body-cleanser role and adds AHA/PHA. Best climate fit is humid hot; can be drying in humid winter.",
         buy: [
           {
             label: "K-Beauty Argentina",
@@ -1185,7 +1217,7 @@ const matches: ProductMatch[] = [
       {
         name: "La Roche-Posay Effaclar Micro-Peeling Gel",
         percent: 66,
-        reason: "Same exfoliating-cleanser job with salicylic acid and zinc, usable on face or body.",
+        reason: "Same exfoliating-cleanser job with salicylic acid and zinc, but Ari treats this as deeper cleansing, not everyday.",
         buy: [
           {
             label: "Farmacity listing",
@@ -1196,7 +1228,7 @@ const matches: ProductMatch[] = [
       {
         name: "SKIN1004 Madagascar Centella Ampoule Foam",
         percent: 48,
-        reason: "A gentle domestic face-cleanser fallback when the goal is less stripping, but it has no salicylic acid.",
+        reason: "Possible mild fallback when the goal is less stripping, but it has no salicylic acid and Ari has not tried it.",
         buy: [
           {
             label: "Skinfree",
@@ -1215,6 +1247,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/dr-althea-vitamin-c-boosting-serum-30ml-serum-de-vitamina-c-g7lw7/",
     },
+    note: "Ari: great.",
   },
   {
     group: "Pigmentation and antioxidants",
@@ -1225,6 +1258,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/skin1004-centella-tone-brightening-capsule-ampoule-50ml-serum-facial-aclarador-pieles-con-manchas/",
     },
+    note: "Ari: still trying; has not made her skin react so far.",
   },
   {
     group: "Pigmentation and antioxidants",
@@ -1235,6 +1269,7 @@ const matches: ProductMatch[] = [
       label: "Sentí Skincare",
       url: "https://senti.ar/productos/some-by-mi-yuja-niacin-30-days-blemish-care-serum-serum-iluminador-y-anti-manchas-50-ml/",
     },
+    note: "Ari: good to alternate with Dr. Althea Vitamin C.",
   },
   {
     group: "Pigmentation and antioxidants",
@@ -1267,7 +1302,7 @@ const matches: ProductMatch[] = [
       {
         name: "La Roche-Posay Pure Vitamin C10",
         percent: 59,
-        reason: "Ascorbic-acid serum with salicylic acid and hyaluronic acid, easier to buy in pharmacies.",
+        reason: "Ascorbic-acid serum with salicylic acid and hyaluronic acid, easier to buy in pharmacies. Ari says it leaves an orange cast and runs out fast.",
         buy: [
           {
             label: "Farmacity listing",
@@ -1286,16 +1321,49 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/serum-la-roche-posay-pure-vitamin-c-10-x-30-ml/p",
     },
+    note: "Ari: leaves orange cast, lasts too little, okay results.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
     source: "Murad Deep Relief Acne Treatment",
     anchors: ["2% salicylic acid", "spot treatment", "acne"],
-    status: "direct",
-    direct: {
-      label: "Mercado Libre local listing",
-      url: "https://www.mercadolibre.com.ar/murad-deep-relief-blemish-treatment-suero-acido-salicilico/up/MLAU4072216664",
-    },
+    status: "mapped",
+    matches: [
+      {
+        name: "COSRX BHA Blackhead Power Liquid",
+        percent: 61,
+        reason: "Closest domestic leave-on BHA direction: betaine salicylate, niacinamide and a liquid treatment texture.",
+        buy: [
+          {
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/cosrx-bha-blackhead-power-liquid-100ml-tratamiento-exfoliante-liquido/",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Effaclar Micro-Peeling Gel",
+        percent: 44,
+        reason: "Keeps the salicylic-acid acne logic, but it is a rinse-off cleanser rather than a leave-on spot treatment.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
+          },
+        ],
+      },
+      {
+        name: "CÉPAGE Renovateurs Glicólico 5",
+        percent: 32,
+        reason: "Local acid option if the goal is general texture renewal rather than a salicylic spot treatment.",
+        buy: [
+          {
+            label: "Farmacia Más Vida listing",
+            url: "https://farmaciamasvida.com.ar/producto/cepage-renovateurs-glicolico-5-crema-x-50g/",
+          },
+        ],
+      },
+    ],
+    note: "Ari: Murad is the preferred deep spot treatment, but the found Mercado Libre page is international/import-only.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
@@ -1306,6 +1374,7 @@ const matches: ProductMatch[] = [
       label: "Skinfree",
       url: "https://www.skinfree.com.ar/productos/cosrx-bha-blackhead-power-liquid-100ml-tratamiento-exfoliante-liquido/",
     },
+    note: "Ari: still assessing results; does not break her out or make her skin react so far.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
@@ -1347,6 +1416,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: light, not a deep peel; soft skin the next day, good for lazy nights.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
@@ -1388,6 +1458,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: great, closest she found to Irene Bermejo glycolic acid.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
@@ -1434,6 +1505,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: Cordes VAS 0.05% is great but very strong and can easily ruin the skin barrier; 0.025% is useful when skin is not at 100%.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
@@ -1464,6 +1536,7 @@ const matches: ProductMatch[] = [
       label: "Mercado Libre local listing",
       url: "https://www.mercadolibre.com.ar/protector-solar-y-limpiador-facial-canmake-mermaid-skin-40g/up/MLAU3934884044",
     },
+    note: "Ari: ideal when she needs extra moisture after moisturiser; not heavy, good for humid climate.",
   },
   {
     group: "Sunscreens",
@@ -1474,6 +1547,7 @@ const matches: ProductMatch[] = [
       label: "Frávega listing",
       url: "https://www.fravega.com/p/protector-solar-biore-uv-aqua-rich-watery-essence-spf-50-pa--22824772/",
     },
+    note: "Ari: great texture, absorbs well, slight brightness, good for humid climate.",
   },
   {
     group: "Sunscreens",
@@ -1484,6 +1558,7 @@ const matches: ProductMatch[] = [
       label: "Mercado Libre local listing",
       url: "https://www.mercadolibre.com.ar/gel-solar-skin-aqua-spf50-165g/up/MLAU3934889714",
     },
+    note: "Ari: loves it for dry climate; with humidity it does not absorb completely.",
   },
   {
     group: "Sunscreens",
@@ -1494,6 +1569,7 @@ const matches: ProductMatch[] = [
       label: "Luxodia listing",
       url: "https://luxodia.com/productos/benton-air-fit-uv-defense-sun-cream/",
     },
+    note: "Ari: matte finish and loved in dry climate; still testing for this climate.",
   },
   {
     group: "Sunscreens",
@@ -1535,6 +1611,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: on the way; not tested yet.",
   },
   {
     group: "Body and hands",
@@ -1545,6 +1622,7 @@ const matches: ProductMatch[] = [
       label: "Farmacity listing",
       url: "https://www.farmacity.com/crema-corporal-dermaglos-regeneracion-intensiva-x-300-gr/p",
     },
+    note: "Ari: great for Argentina climate.",
   },
   {
     group: "Body and hands",
@@ -1586,6 +1664,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
+    note: "Ari: Eau d'Energie is great for every climate.",
   },
   {
     group: "Body and hands",
@@ -1596,6 +1675,7 @@ const matches: ProductMatch[] = [
       label: "Neutrogena Argentina",
       url: "https://www.neutrogena.com.ar/corporal/humectacion/neutrogena-hydro-boost-water-gel-hidratante-corporal-400ml",
     },
+    note: "Ari: great for every climate.",
   },
   {
     group: "Body and hands",
@@ -1606,6 +1686,7 @@ const matches: ProductMatch[] = [
       label: "Natura Argentina search",
       url: "https://www.naturacosmeticos.com.ar/busqueda?text=ekos%20casta%C3%B1a%20manos",
     },
+    note: "Ari: loves it.",
   },
 ];
 
