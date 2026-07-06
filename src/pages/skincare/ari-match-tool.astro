@@ -332,9 +332,29 @@ const localMarkup = (price?: PriceInfo) => {
   const abroadPrice = midpointUsd(price?.abroadUsd);
   if (!localPrice || !abroadPrice) return undefined;
 
-  const markup = Math.round(((localPrice - abroadPrice) / abroadPrice) * 100);
-  return `local markup: ${markup > 0 ? "+" : ""}${markup}% vs abroad`;
+  const markup = localMarkupPercent(price);
+  return markup === undefined ? undefined : `local markup: ${formatMarkup(markup)} vs abroad`;
 };
+
+const localMarkupPercent = (price?: PriceInfo) => {
+  const localPrice = midpointUsd(price?.arUsd);
+  const abroadPrice = midpointUsd(price?.abroadUsd);
+  if (!localPrice || !abroadPrice) return undefined;
+
+  return Math.round(((localPrice - abroadPrice) / abroadPrice) * 100);
+};
+
+const median = (values: number[]) => {
+  if (values.length === 0) return undefined;
+
+  const sorted = [...values].sort((left, right) => left - right);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? Math.round((sorted[middle - 1] + sorted[middle]) / 2)
+    : sorted[middle];
+};
+
+const formatMarkup = (value: number) => `${value > 0 ? "+" : ""}${value}%`;
 
 const priceParts = (price?: PriceInfo, sourcePrice?: PriceInfo) =>
   [
@@ -1291,6 +1311,13 @@ const groupedMatches = matches.reduce(
 const totalItems = matches.length;
 const directItems = matches.filter((item) => item.status === "direct").length;
 const mappedItems = totalItems - directItems;
+const displayedProductNames = Array.from(
+  new Set(matches.flatMap((item) => [item.source, ...(item.matches ?? []).map((match) => match.name)])),
+);
+const localMarkupValues = displayedProductNames
+  .map((name) => localMarkupPercent(getPrice(name)))
+  .filter((value): value is number => value !== undefined);
+const medianLocalMarkup = median(localMarkupValues);
 ---
 
 <!doctype html>
@@ -1326,6 +1353,12 @@ const mappedItems = totalItems - directItems;
         </div>
         <p class="count">{totalItems} items · {directItems} direct · {mappedItems} mapped</p>
       </header>
+
+      <section class="markup-summary" aria-label="Median local markup">
+        <span>median local markup</span>
+        <strong>{medianLocalMarkup === undefined ? "n/a" : formatMarkup(medianLocalMarkup)}</strong>
+        <span>across {localMarkupValues.length} priced items with abroad benchmarks</span>
+      </section>
 
       <section class="controls" aria-label="Match controls">
         <label>
@@ -1554,6 +1587,25 @@ const mappedItems = totalItems - directItems;
   .count {
     white-space: nowrap;
     font-weight: 700;
+  }
+
+  .markup-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: baseline;
+    width: fit-content;
+    margin: -0.2rem 0 0.65rem;
+    padding: 0.28rem 0.42rem;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .markup-summary strong {
+    color: var(--text);
+    font-size: 0.96rem;
   }
 
   .controls {
