@@ -8,10 +8,19 @@ const site = process.env.SITE_URL || 'https://sokolsky.me';
 const posthogProjectToken = process.env.PUBLIC_POSTHOG_PROJECT_TOKEN || env.PUBLIC_POSTHOG_PROJECT_TOKEN || '';
 const posthogHost = 'https://images.sokolsky.me';
 const posthogUiHost = process.env.PUBLIC_POSTHOG_UI_HOST || env.PUBLIC_POSTHOG_UI_HOST || 'https://us.posthog.com';
+const trackedRedirectPaths = new Set([
+  '/apartments/palermo/',
+  '/travel/best-of-antarctica/',
+  '/travel/best-of-arctic/',
+  '/travel/best-of-sa/',
+]);
+/** @param {string} page */
 const isPrivatePage = (page) => {
   const { pathname } = new URL(page);
   return pathname === '/private' || pathname.startsWith('/private/');
 };
+/** @param {string} page */
+const isTrackedRedirectPage = (page) => trackedRedirectPaths.has(new URL(page).pathname);
 const posthogSnippet = `
 if (${JSON.stringify(posthogProjectToken)} && !window.__posthog_initialized) {
   window.__posthog_initialized = true;
@@ -33,6 +42,7 @@ if (${JSON.stringify(posthogProjectToken)} && !window.__posthog_initialized) {
   });
 }
 `;
+/** @type {import('astro').AstroIntegration} */
 const posthogAnalytics = {
   name: 'posthog-analytics',
   hooks: {
@@ -47,16 +57,10 @@ export default defineConfig({
   site,
   output: 'static',
   compressHTML: true,
-  redirects: {
-    '/apartments/palermo': '/apartments/buenos-aires',
-    '/travel/best-of-antarctica': '/travel/best-of-polar-regions',
-    '/travel/best-of-arctic': '/travel/best-of-polar-regions',
-    '/travel/best-of-sa': '/travel/best-of-south-america',
-  },
   integrations: [
     posthogAnalytics,
     sitemap({
-      filter: (page) => !isPrivatePage(page),
+      filter: (page) => !isPrivatePage(page) && !isTrackedRedirectPage(page),
     }),
   ],
 });

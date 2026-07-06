@@ -40,6 +40,7 @@ PostHog is routed through a Cloudflare reverse proxy on `images.sokolsky.me`, ma
 - `images-proxy-worker.js` forwards allowed SDK asset and event paths to PostHog Cloud.
 - `wrangler.phAnalytics.jsonc` deploys the proxy worker on `images.sokolsky.me`.
 - The ingest host is fixed in code so stale build vars cannot fall back to direct PostHog ingest.
+- `npm run verify:posthog` checks every generated HTML page for the proxy-backed snippet.
 - Keep `PUBLIC_POSTHOG_UI_HOST` pointed at `https://us.posthog.com`.
 
 ## one-time cloudflare setup

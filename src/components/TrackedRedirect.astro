@@ -1,0 +1,39 @@
+---
+interface Props {
+  to: string;
+  from: string;
+}
+
+const { to, from } = Astro.props;
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = new URL(to, siteUrl).toString();
+const redirectDelayMs = 900;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonicalUrl} />
+    <title>Redirecting to {to}</title>
+  </head>
+  <body>
+    <p>
+      Redirecting from <code>{from}</code> to <a href={to}><code>{to}</code></a>.
+    </p>
+    <noscript>
+      <p>JavaScript is disabled. Use the link above to continue.</p>
+    </noscript>
+    <script is:inline define:vars={{ to, redirectDelayMs }}>
+      window.posthog?.capture?.("legacy_redirect", {
+        from_path: window.location.pathname,
+        to_path: to,
+      });
+
+      window.setTimeout(() => {
+        window.location.replace(to);
+      }, redirectDelayMs);
+    </script>
+  </body>
+</html>

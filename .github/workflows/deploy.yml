@@ -38,6 +38,9 @@ jobs:
       - name: Build Astro project
         run: npm run build
 
+      - name: Verify PostHog tracking
+        run: npm run verify:posthog
+
       - name: Deploy with Wrangler
         uses: cloudflare/wrangler-action@v4
         with:
