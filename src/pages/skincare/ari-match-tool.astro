@@ -116,10 +116,10 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Laneige Cica Sleeping Mask": {
     abroadUsd: "~US$34 US",
-    note: "domestic mini listing, price not shown in search snippet",
+    note: "Clama page found, but BD only exposed $0 / no usable local price",
   },
   "Jumiso Snail EX Ultimate Barrier Facial Cream": {
-    abroadUsd: "~US$19-22 KR/US",
+    abroadUsd: "~US$12-20 KR/US",
   },
   "COSRX Advanced Snail 96 Mucin Power Essence": {
     arUsd: "~US$44",
@@ -136,7 +136,7 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Tatcha The Dewy Skin Cream": {
     abroadUsd: "~US$72 US",
-    note: "domestic seller page found, price not shown in search snippet",
+    note: "Koko page found, but BD still did not expose a local price",
   },
   "La Roche-Posay Effaclar Mat": {
     arUsd: "~US$42-43",
@@ -158,8 +158,9 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$18-24 KR/US",
   },
   "Briotech Topical HOCl 2 oz": {
+    arUsd: "~US$59",
     abroadUsd: "~US$14-18 US",
-    note: "domestic ML price not in snippet",
+    note: "ML snippet exposed pre-tax price only",
   },
   "La Roche-Posay Agua Termal": {
     arUsd: "~US$31",
@@ -169,16 +170,16 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$15-25 KR/US",
   },
   "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser": {
+    arUsd: "~US$66",
     abroadUsd: "~US$18-25 KR/US",
-    note: "domestic exact page found, price not shown in search snippet",
   },
   "La Roche-Posay Effaclar Micro-Peeling Gel": {
     arUsd: "~US$51-55",
     abroadUsd: "~US$18-25 EU",
   },
   "SOME BY MI AHA.BHA.PHA 30 Days Miracle Clear Body Cleanser": {
+    arUsd: "~US$66",
     abroadUsd: "~US$18-25 KR/US",
-    note: "domestic exact page found, price not shown in search snippet",
   },
   "SKIN1004 Madagascar Centella Ampoule Foam": {
     arUsd: "~US$29",
@@ -201,7 +202,7 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$8-18 EU",
   },
   "CeraVe SA Smoothing Cleanser": {
-    abroadUsd: "~US$15 US",
+    abroadUsd: "~US$14-21 US",
   },
   "Dr. Althea Vitamin C Boosting Serum": {
     arUsd: "~US$39-49",
@@ -212,8 +213,8 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$18-25 KR/US",
   },
   "Some By Mi Yuja Niacin Anti-Blemish Serum": {
-    abroadUsd: "~US$18-25 KR/US",
-    note: "domestic page found, price not shown in search snippet",
+    arUsd: "~US$44",
+    abroadUsd: "~US$16-20 KR/US",
   },
   "Codexial Enobright Radiance Day": {
     abroadUsd: "~US$32-45 France",
@@ -232,7 +233,7 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Murad Deep Relief Acne Treatment": {
     abroadUsd: "~US$45 US",
-    note: "domestic ML page found, price not shown in snippet",
+    note: "BD found the domestic ML page, but no usable public local price",
   },
   "COSRX BHA Blackhead Power Liquid": {
     arUsd: "~US$44",
@@ -251,10 +252,10 @@ const priceByName: Record<string, PriceInfo> = {
     arUsd: "~US$37",
   },
   "Detenage G Ácido Glicólico 8%": {
-    note: "domestic page found, price not shown in search snippet",
+    arUsd: "~US$29",
   },
   "Cordes VAS 0.5 mg/g Creme": {
-    abroadUsd: "Germany rx price varies",
+    abroadUsd: "~US$18-21 Germany rx",
   },
   "Irene Bermejo Retinoico 0.05%": {
     note: "clinic price not public",
@@ -267,7 +268,7 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
     abroadUsd: "~US$8-12 Japan",
-    note: "domestic ML page found, price not shown in snippet",
+    note: "BD found import-facing Argentina price only; no domestic local price",
   },
   "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
     arUsd: "~US$63",
@@ -293,8 +294,9 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$14-20 KR/US",
   },
   "Isntree Hyaluronic Acid Watery Sun Gel SPF50+ PA++++": {
+    arUsd: "~US$10",
     abroadUsd: "~US$15-22 KR/US",
-    note: "domestic page found, price not shown in search snippet",
+    note: "Mullab brand page exposed a from-price for Isntree",
   },
   "Dermaglos Emulsion Corporal Hidratacion + Regeneracion": {
     arUsd: "~US$14-19",
@@ -423,6 +425,30 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
       ],
     },
   ],
+  "Briotech Topical HOCl 2 oz": [
+    {
+      name: "Medicube Hypochlorous Acid Daily Facial Spray",
+      percent: 74,
+      reason: "Lower-markup HOCl face spray available domestically; less minimal than Briotech but the closest active match.",
+      buy: [
+        {
+          label: "Pigmento listing",
+          url: "https://www.perfumeriaspigmento.com.ar/medicube-hypochlorous-acid-daily-facial-spray/p",
+        },
+      ],
+    },
+    {
+      name: "La Roche-Posay Agua Termal",
+      percent: 28,
+      reason: "Not hypochlorous acid, but cheaper for the simple calming-mist role.",
+      buy: [
+        {
+          label: "Farmacity search",
+          url: "https://www.farmacity.com/search?q=la%20roche%20posay%20agua%20termal",
+        },
+      ],
+    },
+  ],
   "Thermal or mineral water mist": [
     {
       name: "La Roche-Posay Agua Termal",
@@ -490,6 +516,30 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
       buy: [mercadoLibreSearch("some by mi aha bha pha body cleanser argentina")],
     },
   ],
+  "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser": [
+    {
+      name: "SKIN1004 Madagascar Centella Ampoule Foam",
+      percent: 48,
+      reason: "Much lower local price and gentler cleansing, but it drops the salicylic-acid body-acne angle.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-madagascar-centella-ampoule-foam-125ml-limpiador-facial-espumoso-pieles-sensibles/",
+        },
+      ],
+    },
+    {
+      name: "La Roche-Posay Effaclar Micro-Peeling Gel",
+      percent: 66,
+      reason: "Keeps the salicylic-acid exfoliating-cleanser role, though it is also locally marked up.",
+      buy: [
+        {
+          label: "Farmacity listing",
+          url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
+        },
+      ],
+    },
+  ],
   "La Roche-Posay Effaclar Micro-Peeling Gel": [
     {
       name: "SKIN1004 Madagascar Centella Ampoule Foam",
@@ -553,6 +603,30 @@ const highMarkupAlternatives: Record<string, RankedMatch[]> = {
         {
           label: "Farmacity listing",
           url: "https://www.farmacity.com/gel-limpiador-microexfoliante-la-roche-posay-effaclar-para-piel-grasa-x-200-ml/p",
+        },
+      ],
+    },
+  ],
+  "Some By Mi Yuja Niacin Anti-Blemish Serum": [
+    {
+      name: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
+      percent: 61,
+      reason: "Lower local price for a brightening serum step with niacinamide, tranexamic acid and centella.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-centella-tone-brightening-capsule-ampoule-50ml-serum-facial-aclarador-pieles-con-manchas/",
+        },
+      ],
+    },
+    {
+      name: "Dr. Althea Vitamin C Boosting Serum",
+      percent: 68,
+      reason: "Similar brightening role with niacinamide, tranexamic acid and vitamin derivatives; price is close but markup is lower.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/dr-althea-vitamin-c-boosting-serum-30ml-serum-de-vitamina-c-g7lw7/",
         },
       ],
     },
