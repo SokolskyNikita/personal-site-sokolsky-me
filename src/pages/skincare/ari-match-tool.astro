@@ -374,6 +374,244 @@ const sourcePriceParts = (name: string) => {
   return [price?.abroadUsd && `OG abroad: ${price.abroadUsd}`, price?.note].filter(Boolean) as string[];
 };
 
+const highMarkupAlternatives: Record<string, RankedMatch[]> = {
+  "SKIN1004 Madagascar Centella Cream": [
+    {
+      name: "SKIN1004 Madagascar Centella Soothing Cream",
+      percent: 86,
+      reason: "Same brand and centella direction with a lighter gel-cream texture and a lower local markup.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-centella-soothing-cream-75ml-crema-facial-en-gel-pieles-sensibles/",
+        },
+      ],
+    },
+    {
+      name: "La Roche-Posay Cicaplast Baume B5+",
+      percent: 67,
+      reason: "Cheaper barrier-repair substitute with panthenol, glycerin and madecassoside, but richer than the SKIN1004 cream.",
+      buy: [
+        {
+          label: "Farmacity listing",
+          url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
+        },
+      ],
+    },
+  ],
+  "COSRX Advanced Snail 96 Mucin Power Essence": [
+    {
+      name: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
+      percent: 58,
+      reason: "Not a snail dupe, but keeps a lightweight serum step with centella, humectants and calming support at a much lower local price.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-centella-tone-brightening-capsule-ampoule-50ml-serum-facial-aclarador-pieles-con-manchas/",
+        },
+      ],
+    },
+    {
+      name: "SKIN1004 Probio-Cica Enrich Cream",
+      percent: 54,
+      reason: "Better if the goal is barrier support rather than essence texture: centella ferment, ceramide, squalane and niacinamide.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-centella-probio-cica-enrich-cream-50ml-crema-facial-hidratante-pieles-maduras/",
+        },
+      ],
+    },
+  ],
+  "Thermal or mineral water mist": [
+    {
+      name: "La Roche-Posay Agua Termal",
+      percent: 90,
+      reason: "Closest local mist role: simple thermal water, low interaction risk and easy pharmacy availability.",
+      buy: [
+        {
+          label: "Farmacity search",
+          url: "https://www.farmacity.com/search?q=la%20roche%20posay%20agua%20termal",
+        },
+      ],
+    },
+    {
+      name: "Medicube Hypochlorous Acid Daily Facial Spray",
+      percent: 62,
+      reason: "Better if the mist is for post-workout redness or breakouts; less neutral than thermal water.",
+      buy: [
+        {
+          label: "Pigmento listing",
+          url: "https://www.perfumeriaspigmento.com.ar/medicube-hypochlorous-acid-daily-facial-spray/p",
+        },
+      ],
+    },
+  ],
+  "La Roche-Posay Effaclar Gel Moussant Purifiant": [
+    {
+      name: "SKIN1004 Madagascar Centella Ampoule Foam",
+      percent: 70,
+      reason: "Lower local price for a gentle foaming cleanser with centella and mild surfactants, but less acne-targeted.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-madagascar-centella-ampoule-foam-125ml-limpiador-facial-espumoso-pieles-sensibles/",
+        },
+      ],
+    },
+    {
+      name: "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser",
+      percent: 58,
+      reason: "Switches from acne gel to sensitive-skin milk cleanser; useful if Effaclar feels too stripping.",
+      buy: [
+        {
+          label: "Farmacity search",
+          url: "https://www.farmacity.com/search?q=la%20roche%20posay%20toleriane%20dermolimpiador",
+        },
+      ],
+    },
+  ],
+  "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling": [
+    {
+      name: "SKIN1004 Madagascar Centella Ampoule Foam",
+      percent: 54,
+      reason: "Cheaper cleanser swap if daily exfoliating acids are not required; calmer and less active.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-madagascar-centella-ampoule-foam-125ml-limpiador-facial-espumoso-pieles-sensibles/",
+        },
+      ],
+    },
+    {
+      name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser",
+      percent: 52,
+      reason: "Keeps the AHA/BHA/PHA direction, but it is a body cleanser rather than a face-first swap.",
+      buy: [mercadoLibreSearch("some by mi aha bha pha body cleanser argentina")],
+    },
+  ],
+  "La Roche-Posay Effaclar Micro-Peeling Gel": [
+    {
+      name: "SKIN1004 Madagascar Centella Ampoule Foam",
+      percent: 54,
+      reason: "Cheaper cleanser swap if daily exfoliating acids are not required; calmer and less active.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-madagascar-centella-ampoule-foam-125ml-limpiador-facial-espumoso-pieles-sensibles/",
+        },
+      ],
+    },
+    {
+      name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser",
+      percent: 52,
+      reason: "Keeps the AHA/BHA/PHA direction, but it is a body cleanser rather than a face-first swap.",
+      buy: [mercadoLibreSearch("some by mi aha bha pha body cleanser argentina")],
+    },
+  ],
+  "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser": [
+    {
+      name: "Beauty of Joseon Ginseng Cleansing Oil",
+      percent: 62,
+      reason: "Good first-cleanse replacement for sunscreen and makeup removal; oil texture instead of milk.",
+      buy: [
+        {
+          label: "Pigmento listing",
+          url: "https://www.perfumeriaspigmento.com.ar/beauty-of-joseon-ginseng-cleansing-oil-210ml/p",
+        },
+      ],
+    },
+    {
+      name: "SKIN1004 Madagascar Centella Ampoule Foam",
+      percent: 48,
+      reason: "Lower-price cleanser option if a foaming second cleanse is acceptable.",
+      buy: [
+        {
+          label: "Skinfree listing",
+          url: "https://www.skinfree.com.ar/productos/skin1004-madagascar-centella-ampoule-foam-125ml-limpiador-facial-espumoso-pieles-sensibles/",
+        },
+      ],
+    },
+  ],
+  "COSRX BHA Blackhead Power Liquid": [
+    {
+      name: "CÉPAGE Renovateurs Glicólico 5",
+      percent: 56,
+      reason: "Local acid option with lower local price; glycolic acid replaces BHA, so it is more surface exfoliation than pore oil targeting.",
+      buy: [
+        {
+          label: "Farmacia Más Vida",
+          url: "https://farmaciamasvida.com.ar/producto/renovateurs-glicolico-5-cepage/",
+        },
+      ],
+    },
+    {
+      name: "La Roche-Posay Effaclar Micro-Peeling Gel",
+      percent: 54,
+      reason: "Keeps salicylic/LHA acne logic, but as a rinse-off cleanser instead of leave-on BHA.",
+      buy: [
+        {
+          label: "Farmacity listing",
+          url: "https://www.farmacity.com/gel-limpiador-microexfoliante-la-roche-posay-effaclar-para-piel-grasa-x-200-ml/p",
+        },
+      ],
+    },
+  ],
+  "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": [
+    {
+      name: "Benton Air Fit UV Defense Sun Cream",
+      percent: 68,
+      reason: "Cheaper local Korean sunscreen with high UVA/UVB protection and a light finish.",
+      buy: [
+        {
+          label: "Luxodia",
+          url: "https://luxodia.com/productos/benton-air-fit-uv-defense-sun-cream/",
+        },
+      ],
+    },
+    {
+      name: "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+      percent: 66,
+      reason: "Closest watery-serum sunscreen feel among domestic options, with centella and hyaluronic acid.",
+      buy: [
+        {
+          label: "Openfarma search",
+          url: "https://www.openfarma.com.ar/search?text=skin1004%20hyalu-cica%20water-fit%20sun%20serum",
+        },
+      ],
+    },
+  ],
+  "Skin Aqua Super Moisture Gel SPF50+ PA++++": [
+    {
+      name: "Benton Air Fit UV Defense Sun Cream",
+      percent: 66,
+      reason: "Best lower-price local sunscreen swap when the exact Japanese gel is heavily marked up.",
+      buy: [
+        {
+          label: "Luxodia",
+          url: "https://luxodia.com/productos/benton-air-fit-uv-defense-sun-cream/",
+        },
+      ],
+    },
+    {
+      name: "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+      percent: 64,
+      reason: "Keeps a hydrating, serum-like sunscreen feel, though it is Korean rather than Japanese.",
+      buy: [
+        {
+          label: "Openfarma search",
+          url: "https://www.openfarma.com.ar/search?text=skin1004%20hyalu-cica%20water-fit%20sun%20serum",
+        },
+      ],
+    },
+  ],
+};
+
+const highMarkupAlternativesFor = (name: string) => {
+  const markup = localMarkupPercent(getPrice(name));
+  return markup !== undefined && markup > 99 ? (highMarkupAlternatives[name] ?? []) : [];
+};
+
 const matches: ProductMatch[] = [
   {
     group: "Face moisturisers and barrier creams",
@@ -1387,7 +1625,16 @@ const medianLocalMarkup = median(localMarkupValues);
                   data-status={item.status}
                   data-haystack={`${item.group} ${item.source} ${item.anchors.join(" ")} ${
                     item.direct?.label ?? ""
-                  } ${(item.matches ?? []).map((match) => `${match.name} ${match.reason}`).join(" ")}`.toLowerCase()}
+                  } ${(item.matches ?? [])
+                    .map(
+                      (match) =>
+                        `${match.name} ${match.reason} ${highMarkupAlternativesFor(match.name)
+                          .map((alt) => `${alt.name} ${alt.reason}`)
+                          .join(" ")}`,
+                    )
+                    .join(" ")} ${highMarkupAlternativesFor(item.source)
+                    .map((match) => `${match.name} ${match.reason}`)
+                    .join(" ")}`.toLowerCase()}
                 >
                   <div class="card-top">
                     <div>
@@ -1415,6 +1662,39 @@ const medianLocalMarkup = median(localMarkupValues);
                         {item.direct.label}
                       </a>
                     </p>
+                  )}
+
+                  {item.status === "direct" && highMarkupAlternativesFor(item.source).length > 0 && (
+                    <div class="direct-alts">
+                      <p class="alt-heading">lower-markup alternatives</p>
+                      <ol class="ranked">
+                        {highMarkupAlternativesFor(item.source).map((match) => (
+                          <li>
+                            <div class="rank-line">
+                              <strong>{match.percent}%</strong>
+                              <span>{match.name}</span>
+                            </div>
+                            <p>{match.reason}</p>
+                            {priceParts(getPrice(match.name), getPrice(item.source)).length > 0 && (
+                              <p class="price-line match-price">
+                                {priceParts(getPrice(match.name), getPrice(item.source)).map((part) => (
+                                  <span>{part}</span>
+                                ))}
+                              </p>
+                            )}
+                            <ul class="buy">
+                              {match.buy.map((link) => (
+                                <li>
+                                  <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                    {link.label}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
                   )}
 
                   {item.status === "mapped" && item.matches && (
@@ -1450,6 +1730,38 @@ const medianLocalMarkup = median(localMarkupValues);
                                 </li>
                               ))}
                             </ul>
+                            {highMarkupAlternativesFor(match.name).length > 0 && (
+                              <div class="direct-alts">
+                                <p class="alt-heading">lower-markup alternatives</p>
+                                <ol class="ranked">
+                                  {highMarkupAlternativesFor(match.name).map((alt) => (
+                                    <li>
+                                      <div class="rank-line">
+                                        <strong>{alt.percent}%</strong>
+                                        <span>{alt.name}</span>
+                                      </div>
+                                      <p>{alt.reason}</p>
+                                      {priceParts(getPrice(alt.name), getPrice(match.name)).length > 0 && (
+                                        <p class="price-line match-price">
+                                          {priceParts(getPrice(alt.name), getPrice(match.name)).map((part) => (
+                                            <span>{part}</span>
+                                          ))}
+                                        </p>
+                                      )}
+                                      <ul class="buy">
+                                        {alt.buy.map((link) => (
+                                          <li>
+                                            <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                              {link.label}
+                                            </a>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </li>
+                                  ))}
+                                </ol>
+                              </div>
+                            )}
                           </li>
                         ))}
                       </ol>
@@ -1774,6 +2086,21 @@ const medianLocalMarkup = median(localMarkupValues);
 
   .source-price {
     margin-bottom: 0.46rem;
+  }
+
+  .direct-alts {
+    margin-top: 0.5rem;
+    padding-top: 0.45rem;
+    border-top: 1px dotted var(--border);
+  }
+
+  .alt-heading {
+    margin-bottom: 0.28rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .ranked .match-price {
