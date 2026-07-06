@@ -60,11 +60,11 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Bioderma Hydrabio Creme Rich / Creme Riche": {
     abroadUsd: "~US$21-23 UK/EU",
-    note: "US Bioderma line is easier for Hydrabio Gel-Cream than Creme Rich",
+    note: "Bioderma US has Hydrabio RICH, but BD/regular search showed it out of stock",
   },
   "Bioderma Hydrabio Creme Rich Moisturising Care": {
     abroadUsd: "~US$21-23 UK/EU",
-    note: "US Bioderma line is easier for Hydrabio Gel-Cream than Creme Rich",
+    note: "Bioderma US has Hydrabio RICH, but BD/regular search showed it out of stock",
   },
   "Mixsoon Bifida Cream": {
     localUsd: "~US$24-30",
@@ -129,7 +129,12 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Jumiso Snail EX Ultimate Barrier Facial Cream": {
     abroadUsd: "~US$12-20 KR",
-    note: "US domestic availability is less reliable than the alternatives below",
+    note: "older Snail EX name is mostly out of stock/no longer available in US search results",
+  },
+  "Jumiso Snail Mucin 88 + Peptide Cream": {
+    localUsd: "~US$21-25",
+    abroadUsd: "~US$12-20 KR",
+    note: "current official Jumiso USA replacement for the older Snail EX cream",
   },
   "COSRX Advanced Snail 96 Mucin Power Essence": {
     localUsd: "~US$18-25",
@@ -300,6 +305,7 @@ const priceByName: Record<string, PriceInfo> = {
   "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
     localUsd: "~US$12-18",
     abroadUsd: "~US$8-12 Japan",
+    note: "Canmake USA sells the US-compliant Mermaid Skin Gel package with UV/SPF wording removed",
   },
   "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
     localUsd: "~US$12-18",
@@ -362,10 +368,10 @@ const priceByName: Record<string, PriceInfo> = {
 const getPrice = (name: string) => priceByName[name];
 
 const midpointUsd = (value?: string) => {
-  const matches = value?.match(/\d+(?:\.\d+)?/g);
-  if (!matches?.length) return undefined;
+  const match = value?.match(/US\$\s*(\d+(?:\.\d+)?)(?:\s*-\s*(?:US\$)?\s*(\d+(?:\.\d+)?))?/i);
+  if (!match) return undefined;
 
-  const numbers = matches.slice(0, 2).map(Number);
+  const numbers = [match[1], match[2]].filter(Boolean).map(Number);
   return numbers.reduce((total, number) => total + number, 0) / numbers.length;
 };
 
@@ -508,7 +514,10 @@ const matches: ProductMatch[] = [
     source: "Mixsoon Bifida Cream",
     anchors: ["bifida ferment", "glycerin", "squalane", "ceramide"],
     status: "direct",
-    direct: amazonSearch("Mixsoon Bifida Cream"),
+    direct: {
+      label: "Mixsoon US",
+      url: "https://mixsoon.us/products/bifida-cream",
+    },
     note: "Ari: fine, not impressive; better at night and does not help barrier recovery.",
   },
   {
@@ -532,7 +541,10 @@ const matches: ProductMatch[] = [
     source: "SKIN1004 Madagascar Centella Poremizing Light Gel Cream",
     anchors: ["centella", "niacinamide", "hyaluronic acid", "gel cream"],
     status: "direct",
-    direct: amazonSearch("SKIN1004 Poremizing Light Gel Cream"),
+    direct: {
+      label: "Ulta",
+      url: "https://www.ulta.com/p/madagascar-centella-poremizing-light-gel-cream-pimprod2045886",
+    },
     note: "Skin1004 moisturisers are better suited for dry climate; do not use as barrier-recovery picks.",
   },
   {
@@ -618,9 +630,20 @@ const matches: ProductMatch[] = [
     status: "mapped",
     matches: [
       {
+        name: "Jumiso Snail Mucin 88 + Peptide Cream",
+        percent: 88,
+        reason: "Current official Jumiso USA replacement/rebrand for the older Snail EX cream; keeps snail mucin, peptides, panthenol and the barrier-repair role.",
+        buy: [
+          {
+            label: "Jumiso USA",
+            url: "https://jumiso.us/products/snail-mucin-88-peptide-cream-100ml",
+          },
+        ],
+      },
+      {
         name: "Dr. Althea 345 Relief Cream",
         percent: 52,
-        reason: "Barrier-leaning US-domestic cream to try; Ari had not tested it yet, so not a proven Jumiso replacement.",
+        reason: "Barrier-leaning US-domestic cream to try if the Jumiso rebrand is not desired; Ari had not tested it yet.",
         buy: [amazonSearch("Dr. Althea 345 Relief Cream")],
       },
       {
@@ -668,7 +691,10 @@ const matches: ProductMatch[] = [
     source: "La Roche-Posay Effaclar Mat",
     anchors: ["glycerin", "dimethicone", "perlite", "matte"],
     status: "direct",
-    direct: amazonSearch("La Roche-Posay Effaclar Mat"),
+    direct: {
+      label: "La Roche-Posay US",
+      url: "https://www.laroche-posay.us/our-products/face/acne-products/effaclar-mat-mattifying-face-moisturizer-for-oily-skin-3337872413025.html",
+    },
     note: "Ari: great matte finish for humid hot weather with mild acid usage.",
   },
   {
@@ -737,7 +763,10 @@ const matches: ProductMatch[] = [
     source: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
     anchors: ["salicylic acid", "PHA", "tea tree", "foaming cleanser"],
     status: "direct",
-    direct: amazonSearch("Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam"),
+    direct: {
+      label: "Ulta",
+      url: "https://www.ulta.com/p/aha-bha-pha-30-days-miracle-cleansing-foam-pimprod2051831",
+    },
     note: "Ari: Some By Mi is great for humid hot climate, but a bit drying in humid winter.",
   },
   {
@@ -745,7 +774,10 @@ const matches: ProductMatch[] = [
     source: "Beauty of Joseon Ginseng Cleansing Oil",
     anchors: ["soybean oil", "ginseng oil", "cleansing oil"],
     status: "direct",
-    direct: amazonSearch("Beauty of Joseon Ginseng Cleansing Oil"),
+    direct: {
+      label: "Sephora",
+      url: "https://www.sephora.com/product/ginseng-cleansing-oil-P517673",
+    },
     note: "Ari: great when double cleansing is needed.",
   },
   {
@@ -753,7 +785,10 @@ const matches: ProductMatch[] = [
     source: "La Roche-Posay Effaclar Gel Moussant Purifiant",
     anchors: ["zinc PCA", "foaming gel", "oily skin"],
     status: "direct",
-    direct: targetSearch("La Roche-Posay Effaclar Purifying Foaming Gel Cleanser"),
+    direct: {
+      label: "La Roche-Posay US",
+      url: "https://www.laroche-posay.us/our-products/face/acne-products/effaclar-gel-facial-wash-for-oily-skin-effaclargelcleanser.html",
+    },
     note: "Ari: good for every climate, but a bit drying when using all her acids.",
   },
   {
@@ -844,7 +879,10 @@ const matches: ProductMatch[] = [
     source: "Dr. Althea Vitamin C Boosting Serum",
     anchors: ["sea buckthorn", "niacinamide", "tranexamic acid", "vitamin C"],
     status: "direct",
-    direct: amazonSearch("Dr. Althea Vitamin C Boosting Serum"),
+    direct: {
+      label: "Ulta",
+      url: "https://www.ulta.com/p/vitamin-c-boosting-serum-pimprod2053609",
+    },
     note: "Ari: great.",
   },
   {
@@ -852,7 +890,10 @@ const matches: ProductMatch[] = [
     source: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
     anchors: ["centella", "niacinamide", "tranexamic acid", "ethyl ascorbic acid"],
     status: "direct",
-    direct: amazonSearch("SKIN1004 Tone Brightening Capsule Ampoule"),
+    direct: {
+      label: "Ulta",
+      url: "https://www.ulta.com/p/madagascar-centella-tone-brightening-capsule-ampoule-pimprod2053567",
+    },
     note: "Ari: still trying; has not made her skin react so far.",
   },
   {
@@ -922,7 +963,10 @@ const matches: ProductMatch[] = [
     source: "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution",
     anchors: ["glycolic acid", "salicylic acid", "gluconolactone", "LHA"],
     status: "direct",
-    direct: amazonSearch("SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution"),
+    direct: {
+      label: "SKINTIFIC US",
+      url: "https://us.skintific.com/products/12-aha-bha-pha-lha-peeling-solution-serum",
+    },
     note: "Ari: light, not a deep peel; soft skin the next day, good for lazy nights.",
   },
   {
@@ -1057,8 +1101,11 @@ const matches: ProductMatch[] = [
     source: "Canmake Mermaid Skin Gel UV SPF50+ PA++++",
     anchors: ["SPF50", "gel", "Japanese sunscreen", "hydrating"],
     status: "direct",
-    direct: amazonSearch("Canmake Mermaid Skin Gel UV SPF50"),
-    note: "Ari: ideal when she needs extra moisture after moisturiser; not heavy, good for humid climate.",
+    direct: {
+      label: "Canmake USA",
+      url: "https://canmakeusa.com/products/canmake-mermaid-skin-gel-uv",
+    },
+    note: "Ari: ideal when she needs extra moisture after moisturiser; not heavy, good for humid climate. US package may omit SPF/UV wording for compliance.",
   },
   {
     group: "Sunscreens",
