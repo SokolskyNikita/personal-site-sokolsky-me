@@ -1,0 +1,1269 @@
+---
+export const prerender = true;
+
+type Link = {
+  label: string;
+  url: string;
+};
+
+type RankedMatch = {
+  name: string;
+  percent: number;
+  reason: string;
+  buy: Link[];
+};
+
+type ProductMatch = {
+  group: string;
+  source: string;
+  anchors: string[];
+  status: "direct" | "mapped";
+  direct?: Link;
+  matches?: RankedMatch[];
+  note?: string;
+};
+
+const pageTitle = "Ari match tool";
+const pageDescription =
+  "Compact Argentina match tool for Ari's current skincare list, with direct buys and ingredient-match substitutes.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+const mercadoLibreSearch = (query: string): Link => ({
+  label: "Mercado Libre",
+  url: `https://listado.mercadolibre.com.ar/${encodeURIComponent(query).replace(/%20/g, "-")}`,
+});
+
+const farmacitySearch = (query: string): Link => ({
+  label: "Farmacity",
+  url: `https://www.farmacity.com/search?q=${encodeURIComponent(query)}`,
+});
+
+const matches: ProductMatch[] = [
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Irene Bermejo moisturiser",
+    anchors: ["barrier cream", "glycerin", "peptides", "oils"],
+    status: "direct",
+    direct: {
+      label: "Irene Bermejo shop",
+      url: "https://irenebermejo.com/tienda/",
+    },
+    note: "Ask for the old glass jar if that is the target.",
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Bioderma Hydrabio Creme Rich / Creme Riche",
+    anchors: ["glycerin", "niacinamide", "hyaluronic acid", "lipids"],
+    status: "direct",
+    direct: {
+      label: "SweetCare Argentina",
+      url: "https://www.sweetcare.com/ar/bioderma-hydrabio-cream-dehydrated-sensitive-dry-to-very-dry-skin-p-005444bd?st=01",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Mixsoon Bifida Cream",
+    anchors: ["bifida ferment", "glycerin", "squalane", "ceramide"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/mixsoon-bifida-cream-202-fl-oz-60-ml/p/MLA2030894442",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Cream",
+    anchors: ["centella", "glycerin", "panthenol", "niacinamide"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/skin1004-madagascar-centella-cream-75ml/up/MLAU3233011510",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Probio-Cica Enrich Cream",
+    anchors: ["centella ferment", "niacinamide", "squalane", "ceramide"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/skin1004-probio-cica-enrich-cream-crema-facial-50ml-dianoche-tipo-de-piel-pieles-maduras/p/MLA32975477",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Poremizing Light Gel Cream",
+    anchors: ["centella", "niacinamide", "hyaluronic acid", "gel cream"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/skin1004-madagascar-centella-poremizing-light-gel-cream-momento-de-aplicacion-dianoche-tipo-de-piel-todo-tipo-de-piel/p/MLA27021756",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "SKIN1004 Madagascar Centella Soothing Cream",
+    anchors: ["centella", "glycerin", "panthenol", "ceramide"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/crema-hidratante-skin1004-centella-soothing-cream-75-ml/up/MLAU3249145962",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Laneige Water Bank Blue Hyaluronic Moisture Cream",
+    anchors: ["glycerin", "betaine", "hyaluronic acid", "light cream"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/crema-hidratante-hialuronica-azul-laneige-water-bank/up/MLAU3987249387",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Bioderma Hydrabio Creme Rich Moisturising Care",
+    anchors: ["glycerin", "niacinamide", "hyaluronic acid", "lipids"],
+    status: "direct",
+    direct: {
+      label: "SweetCare Argentina",
+      url: "https://www.sweetcare.com/ar/bioderma-hydrabio-cream-dehydrated-sensitive-dry-to-very-dry-skin-p-005444bd?st=01",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Cetaphil Optimal Hydration Creme de Jour Revitalisante",
+    anchors: ["hyaluronic acid", "niacinamide", "panthenol", "squalane"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/crema-facial-cetaphil-optimal-hydration-x-48-g/p",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Neutrogena Hydro Boost Aqua Intensivpflege",
+    anchors: ["glycerin", "silicones", "hyaluronic acid", "gel cream"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Neutrogena Hydro Boost Water Gel Corporal",
+        percent: 74,
+        reason: "Same Hydro Boost hydration direction: glycerin, dimethicone-style slip and sodium hyaluronate.",
+        buy: [
+          {
+            label: "Neutrogena Argentina",
+            url: "https://www.neutrogena.com.ar/corporal/humectacion/neutrogena-hydro-boost-water-gel-hidratante-corporal-400ml",
+          },
+        ],
+      },
+      {
+        name: "Vichy Minéral 89 Booster",
+        percent: 68,
+        reason: "Keeps the hyaluronic-acid and glycerin part, but drops the cream base.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
+          },
+        ],
+      },
+      {
+        name: "Cetaphil Optimal Hydration crema facial",
+        percent: 63,
+        reason: "Good overlap on hyaluronic acid, niacinamide, panthenol and light moisturising base.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/crema-facial-cetaphil-optimal-hydration-x-48-g/p",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Laneige Cica Sleeping Mask",
+    anchors: ["glycerin", "squalane", "panthenol", "shea butter"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/laneige-cica-sleeping-mask-10ml-tipo-de-pele-todo-tipo-de-pele/p/MLA25841720",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Jumiso Snail EX Ultimate Barrier Facial Cream",
+    anchors: ["snail filtrate", "glycerin", "allantoin", "hyaluronic acid"],
+    status: "mapped",
+    matches: [
+      {
+        name: "COSRX Advanced Snail 96 Mucin Power Essence",
+        percent: 76,
+        reason: "Best ingredient anchor match: snail filtrate, betaine, panthenol, allantoin and sodium hyaluronate.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/cosrx-advanced-snail-96-mucin-power-essence-serum-reparador/up/MLAU3997737768",
+          },
+        ],
+      },
+      {
+        name: "SKIN1004 Probio-Cica Enrich Cream",
+        percent: 58,
+        reason: "No snail, but closer as a barrier cream: centella ferment, ceramide, squalane and oils.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/skin1004-probio-cica-enrich-cream-crema-facial-50ml-dianoche-tipo-de-piel-pieles-maduras/p/MLA32975477",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 51,
+        reason: "Barrier-repair role with panthenol, shea butter, glycerin and madecassoside.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Sulwhasoo Concentrated Ginseng Renewing Cream",
+    anchors: ["ginseng", "glycerin", "squalane", "fragrance"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/crema-rejuvenecedora-antienvejecimiento-sulwhasoo-ginseng-todo-tipo-de-piel-dianoche/p/MLA2077747250",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "La Roche-Posay Cicaplast Baume B5+",
+    anchors: ["panthenol", "madecassoside", "shea butter", "glycerin"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Dr. Althea 345 Relief Cream",
+    anchors: ["niacinamide", "panthenol", "centella", "barrier cream"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/dr-althea-cream-345-50ml-calma-y-repara-de-noche-todo-tipo-de-piel/p/MLA38462649",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "Tatcha The Dewy Skin Cream",
+    anchors: ["rich cream", "rice", "algae", "green tea"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/face-cream-tatcha-the-dewy-skin-cream-rich-hydrate-10ml/p/MLA2057246899",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "La Roche-Posay Effaclar Mat",
+    anchors: ["glycerin", "dimethicone", "perlite", "matte"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/crema-hidratante-seborregulador-matificante-effaclar-mat-x-40ml/p",
+    },
+  },
+  {
+    group: "Face moisturisers and barrier creams",
+    source: "COSRX Advanced Snail 96 Mucin Power Essence",
+    anchors: ["snail filtrate", "betaine", "panthenol", "allantoin"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/cosrx-advanced-snail-96-mucin-power-essence-serum-reparador/up/MLAU3997737768",
+    },
+    note: "Listed because the source list tracks it, even though the notes say not to buy.",
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Vichy Mineral 89 Booster",
+    anchors: ["volcanic water", "hyaluronic acid", "glycerin"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
+    },
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Clinique Moisture Surge Face Spray",
+    anchors: ["aloe", "glycerin", "sodium hyaluronate", "mist"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/spray-hidratante-face-spray-thirsty-skin-125ml-clinique/p/MLA21254142",
+    },
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Thermal or mineral water mist",
+    anchors: ["water", "minerals", "mist"],
+    status: "direct",
+    direct: {
+      label: "La Roche-Posay at Farmacity",
+      url: "https://www.farmacity.com/search?q=la%20roche%20posay%20agua%20termal",
+    },
+  },
+  {
+    group: "Hydration serums, mists and sprays",
+    source: "Prontomed HypoClear Akne-Spray",
+    anchors: ["hypochlorous acid", "sodium hypochlorite", "water"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Nuevue Bioforce HOCl 240 ml",
+        percent: 82,
+        reason: "Closest role and ingredient: an HOCl spray, sold through Mercado Libre.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/spray-de-acido-hipocloroso-nuevue-bioforce-hocl-240ml/p/MLA2062007192",
+          },
+        ],
+      },
+      {
+        name: "Briotech HOCl Cleaner 250 ml",
+        percent: 78,
+        reason: "Two-ingredient HOCl direction, but check that the seller listing is suitable for skin use.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://articulo.mercadolibre.com.ar/MLA-2435144246-spray-de-acido-hipocloroso-briotech-hocl-cleaner-250-ml-pa-_JM",
+          },
+        ],
+      },
+      {
+        name: "Medicube Hypochlorous Acid Daily Spray",
+        percent: 66,
+        reason: "Same HOCl idea, with extra cosmetic support ingredients.",
+        buy: [mercadoLibreSearch("Medicube Hypochlorous Acid Daily Spray")],
+      },
+    ],
+  },
+  {
+    group: "Cleansers",
+    source: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
+    anchors: ["salicylic acid", "PHA", "tea tree", "foaming cleanser"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/espuma-y-tonico-acne-some-by-mi-aha-bha-pha-30-dias/up/MLAU3865488305",
+    },
+  },
+  {
+    group: "Cleansers",
+    source: "Beauty of Joseon Ginseng Cleansing Oil",
+    anchors: ["soybean oil", "ginseng oil", "cleansing oil"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/beauty-of-joseon-ginseng-cleansing-oil-aplicacion-noche-para-todo-tipo-de-piel/p/MLA34792455",
+    },
+  },
+  {
+    group: "Cleansers",
+    source: "La Roche-Posay Effaclar Gel Moussant Purifiant",
+    anchors: ["zinc PCA", "foaming gel", "oily skin"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/gel-limpiador-la-roche-posay-effaclar-purificante-para-piel-grasa-x-400-ml/p",
+    },
+  },
+  {
+    group: "Cleansers",
+    source: "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling",
+    anchors: ["salicylic acid", "LHA", "zinc", "micro-peeling gel"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
+    },
+  },
+  {
+    group: "Cleansers",
+    source: "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser",
+    anchors: ["milky cleanser", "glycerin", "thermal water"],
+    status: "direct",
+    direct: {
+      label: "Farmacia Más Vida listing",
+      url: "https://farmaciamasvida.com.ar/producto/lrp-toleriane-dermolimpiad-200-cre/",
+    },
+  },
+  {
+    group: "Cleansers",
+    source: "SKIN1004 Madagascar Centella Ampoule Foam",
+    anchors: ["centella", "foam", "mild pH", "coconut surfactants"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/skin1004-madagascar-centella-ampoule-foam-125ml/p/MLA34278102",
+    },
+  },
+  {
+    group: "Cleansers",
+    source: "CeraVe SA Smoothing Cleanser",
+    anchors: ["salicylic acid", "ceramides", "niacinamide", "body cleanser"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser",
+        percent: 72,
+        reason: "Keeps the salicylic-acid body-cleanser role and adds AHA/PHA.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/some-by-mi-aha-bha-pha-30-dias-milagro-acne-clear-body-cl/p/MLA2060681185",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Effaclar Micro-Peeling Gel",
+        percent: 66,
+        reason: "Same exfoliating-cleanser job with salicylic acid and zinc, usable on face or body.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
+          },
+        ],
+      },
+      {
+        name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
+        percent: 57,
+        reason: "Closer for acne-prone face cleansing than for body smoothing.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/espuma-y-tonico-acne-some-by-mi-aha-bha-pha-30-dias/up/MLAU3865488305",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "Dr. Althea Vitamin C Boosting Serum",
+    anchors: ["sea buckthorn", "niacinamide", "tranexamic acid", "vitamin C"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/serum-potenciador-de-vitamina-c-dralthea-con-acido-tranexami/p/MLA43556653",
+    },
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule",
+    anchors: ["centella", "niacinamide", "tranexamic acid", "ethyl ascorbic acid"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre search",
+      url: "https://listado.mercadolibre.com.ar/skin1004-tone-brightening-capsule-ampoule",
+    },
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "Some By Mi Yuja Niacin Anti-Blemish Serum",
+    anchors: ["yuja", "niacinamide", "bisabolol", "vitamin C"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/some-by-mi-yuja-niacin-blemish-care-serum-50ml-corea-del-sur/up/MLAU2694702797",
+    },
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "Codexial Enobright Radiance Day",
+    anchors: ["vitamin C", "radiance cream", "pigmentation"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Dr. Althea Vitamin C Boosting Serum",
+        percent: 72,
+        reason: "Strongest local match for brightening actives: niacinamide, tranexamic acid and vitamin C derivatives.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/serum-potenciador-de-vitamina-c-dralthea-con-acido-tranexami/p/MLA43556653",
+          },
+        ],
+      },
+      {
+        name: "Dream On Vitamin C + Niacinamide + Tranexamic Acid Serum",
+        percent: 68,
+        reason: "Argentina product with the same brightening trio, though the base is not the same.",
+        buy: [
+          {
+            label: "Dream On Cosmetics",
+            url: "https://dreamoncosmetics.com/products/serum-de-vitamina-c-con-niacinamida-y-acido-tranexamico-drm19-30g",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Pure Vitamin C10",
+        percent: 59,
+        reason: "Ascorbic-acid serum with salicylic acid and hyaluronic acid, easier to buy in pharmacies.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/serum-la-roche-posay-pure-vitamin-c-10-x-30-ml/p",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Pigmentation and antioxidants",
+    source: "La Roche-Posay Vitamin C serum",
+    anchors: ["ascorbic acid", "salicylic acid", "hyaluronic acid"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/serum-la-roche-posay-pure-vitamin-c-10-x-30-ml/p",
+    },
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Murad Deep Relief Acne Treatment",
+    anchors: ["2% salicylic acid", "spot treatment", "acne"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre search",
+      url: "https://listado.mercadolibre.com.ar/murad-deep-relief-acne-treatment",
+    },
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "COSRX BHA Blackhead Power Liquid",
+    anchors: ["willow bark water", "betaine salicylate", "niacinamide"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/cosrx-bha-blackhead-powerd-liquid-exfoliante-facial-100ml-noche-todo-tipo-de-piel/p/MLA20581349",
+    },
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution",
+    anchors: ["glycolic acid", "salicylic acid", "gluconolactone", "LHA"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/solucion-exfoliante-peeling-solution-aha-bha-pha-lha/up/MLAU3566104170",
+    },
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "NeoStrata Resurface Glycolic Renewal Smoothing Lotion",
+    anchors: ["glycolic acid", "leave-on lotion", "AHA"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Irene Bermejo White Cream Glico 4%",
+        percent: 69,
+        reason: "Closest current reference in the notes: glycolic acid in a cream base.",
+        buy: [
+          {
+            label: "Irene Bermejo listing",
+            url: "https://irenebermejo.com/tienda/crema-para-rostro-con-acido-glicolico-al-4-50-gr/",
+          },
+        ],
+      },
+      {
+        name: "CÉPAGE Renovateurs Glicólico 5",
+        percent: 66,
+        reason: "Argentina pharmacy option with 5% glycolic acid in a face cream.",
+        buy: [
+          {
+            label: "Farmacia Más Vida listing",
+            url: "https://farmaciamasvida.com.ar/producto/cepage-renovateurs-glicolico-5-crema-x-50g/",
+          },
+        ],
+      },
+      {
+        name: "Detenage G Ácido Glicólico 8%",
+        percent: 61,
+        reason: "Same AHA family in a stronger cream, so it is a step up rather than a straight swap.",
+        buy: [
+          {
+            label: "SelmaDigital listing",
+            url: "https://selmadigital.com/p/detenage-g-acido-glicolico-8-crema-x-50-ml/60a137ef-aa31-4474-8fcf-6abfa8c4a2b4",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Irene Bermejo White Cream Glico 4%",
+    anchors: ["glycolic acid", "mineral oil", "cream base"],
+    status: "direct",
+    direct: {
+      label: "Irene Bermejo listing",
+      url: "https://irenebermejo.com/tienda/crema-para-rostro-con-acido-glicolico-al-4-50-gr/",
+    },
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Cordes VAS 0.5 mg/g Creme",
+    anchors: ["tretinoin 0.05%", "cream base", "prescription"],
+    status: "mapped",
+    matches: [
+      {
+        name: "Irene Bermejo Retinoico 0.05%",
+        percent: 88,
+        reason: "Same tretinoin strength. Base is not public, so check the label.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+        ],
+      },
+      {
+        name: "Cosmética Argentina Ácido Retinoico 0.05%",
+        percent: 78,
+        reason: "Same active and strength on Mercado Libre, but treat it as a pharmacy/medical item.",
+        buy: [mercadoLibreSearch("acido retinoico crema 0.05 argentina")],
+      },
+      {
+        name: "Irene Bermejo Retinoico 0.025%",
+        percent: 64,
+        reason: "Same active in a lower strength for slower re-entry after irritation.",
+        buy: [
+          {
+            label: "Irene Bermejo shop",
+            url: "https://irenebermejo.com/tienda/",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Irene Bermejo Retinoico 0.025%",
+    anchors: ["tretinoin 0.025%", "prescription"],
+    status: "direct",
+    direct: {
+      label: "Irene Bermejo shop",
+      url: "https://irenebermejo.com/tienda/",
+    },
+  },
+  {
+    group: "Acids, retinoids, peels and spot treatment",
+    source: "Irene Bermejo Retinoico 0.05%",
+    anchors: ["tretinoin 0.05%", "prescription"],
+    status: "direct",
+    direct: {
+      label: "Irene Bermejo shop",
+      url: "https://irenebermejo.com/tienda/",
+    },
+  },
+  {
+    group: "Sunscreens",
+    source: "Canmake Mermaid Skin Gel UV SPF50+ PA++++",
+    anchors: ["SPF50", "gel", "Japanese sunscreen", "hydrating"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/protector-solar-y-limpiador-facial-canmake-mermaid-skin-40g/up/MLAU3934884044",
+    },
+  },
+  {
+    group: "Sunscreens",
+    source: "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++",
+    anchors: ["SPF50", "watery gel", "hyaluronic acid", "alcohol"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/biore-protector-solar-aqua-rich-watery-essence-fps-50-50g/p/MLA22099909",
+    },
+  },
+  {
+    group: "Sunscreens",
+    source: "Skin Aqua Super Moisture Gel SPF50+ PA++++",
+    anchors: ["SPF50", "gel", "hyaluronic acid", "pump"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/gel-solar-skin-aqua-spf50-165g/up/MLAU3934889714",
+    },
+  },
+  {
+    group: "Sunscreens",
+    source: "Benton Air Fit UV Defense Sun Cream SPF50+ PA++++",
+    anchors: ["SPF50", "centella", "niacinamide", "modern filters"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/crema-solar-benton-spf50-pa-air-fit-50ml/p/MLA2078263782",
+    },
+  },
+  {
+    group: "Sunscreens",
+    source: "INGU BluVlite Ultra-Light Daily Sunscreen SPF50+ PA++++ + Biome Balance",
+    anchors: ["SPF50", "modern filters", "silica", "ectoin"],
+    status: "mapped",
+    matches: [
+      {
+        name: "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++",
+        percent: 73,
+        reason: "Light serum sunscreen with modern filters, centella and hyaluronic acid.",
+        buy: [
+          {
+            label: "Openfarma listing",
+            url: "https://openfarma.com.ar/hyalu-cica-water-fit-sun-serum-spf50-pa/p",
+          },
+        ],
+      },
+      {
+        name: "Isntree Hyaluronic Acid Watery Sun Gel SPF50+ PA++++",
+        percent: 69,
+        reason: "Watery Korean sunscreen with the same lightweight daily-use role.",
+        buy: [
+          {
+            label: "Mullab listing",
+            url: "https://mullab.com.ar/productos/isntree-hyaluronic-acid-watery-sun-gel-50ml-xks22/",
+          },
+        ],
+      },
+      {
+        name: "Benton Air Fit UV Defense Sun Cream",
+        percent: 64,
+        reason: "Modern filters, niacinamide, centella and a light cream finish.",
+        buy: [
+          {
+            label: "Mercado Libre listing",
+            url: "https://www.mercadolibre.com.ar/crema-solar-benton-spf50-pa-air-fit-50ml/p/MLA2078263782",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    group: "Body and hands",
+    source: "Dermaglos Emulsion Corporal Hidratacion + Regeneracion",
+    anchors: ["mineral oil", "glycerin", "allantoin", "vitamins A and E"],
+    status: "direct",
+    direct: {
+      label: "Farmacity listing",
+      url: "https://www.farmacity.com/crema-corporal-dermaglos-regeneracion-intensiva-x-300-gr/p",
+    },
+  },
+  {
+    group: "Body and hands",
+    source: "Biotherm Eau d'Energie body moisturiser",
+    anchors: ["body milk", "citrus fragrance", "glycerin"],
+    status: "direct",
+    direct: {
+      label: "Mercado Libre listing",
+      url: "https://www.mercadolibre.com.ar/set-perfume-biotherm-eau-energie-100ml-edt-leche-ducha-75ml/p/MLA20601037",
+    },
+  },
+  {
+    group: "Body and hands",
+    source: "Neutrogena Hydro Boost body moisturiser",
+    anchors: ["glycerin", "petrolatum", "dimethicone", "sodium hyaluronate"],
+    status: "direct",
+    direct: {
+      label: "Neutrogena Argentina",
+      url: "https://www.neutrogena.com.ar/corporal/humectacion/neutrogena-hydro-boost-water-gel-hidratante-corporal-400ml",
+    },
+  },
+  {
+    group: "Body and hands",
+    source: "Natura Ekos Castanha hand cream",
+    anchors: ["Brazil nut", "glycerin", "hand cream"],
+    status: "direct",
+    direct: {
+      label: "Natura Argentina search",
+      url: "https://www.naturacosmeticos.com.ar/busqueda?text=ekos%20casta%C3%B1a%20manos",
+    },
+  },
+];
+
+const groupedMatches = matches.reduce(
+  (groups, item) => {
+    if (!groups.has(item.group)) {
+      groups.set(item.group, []);
+    }
+    groups.get(item.group)?.push(item);
+    return groups;
+  },
+  new Map<string, ProductMatch[]>(),
+);
+
+const totalItems = matches.length;
+const directItems = matches.filter((item) => item.status === "direct").length;
+const mappedItems = totalItems - directItems;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main>
+      <p class="home"><a href="/">sokolsky.me</a></p>
+
+      <header class="page-head">
+        <div>
+          <h1>{pageTitle}</h1>
+          <p>
+            Each item from Ari's current list is mapped to an Argentina buy. Exact local listings show one link. Missing items show the closest ingredient matches, ranked by percent.
+          </p>
+        </div>
+        <p class="count">{totalItems} items · {directItems} direct · {mappedItems} mapped</p>
+      </header>
+
+      <section class="controls" aria-label="Match controls">
+        <label>
+          Search
+          <input id="match-search" type="search" placeholder="product, ingredient or category" autocomplete="off" />
+        </label>
+        <label class="checkbox">
+          <input id="mapped-only" type="checkbox" />
+          mapped only
+        </label>
+        <p id="visible-count">{totalItems} shown</p>
+      </section>
+
+      <p class="note">
+        Scores compare ingredient overlap, product role and texture notes. They are shopping shortcuts, not medical advice. For tretinoin, acids and clinic products, check with the prescriber and read the box.
+      </p>
+
+      {
+        Array.from(groupedMatches.entries()).map(([group, groupItems]) => (
+          <section class="group" data-group={group}>
+            <h2>{group}</h2>
+            <div class="cards">
+              {groupItems.map((item) => (
+                <article
+                  class={`card ${item.status}`}
+                  data-status={item.status}
+                  data-haystack={`${item.group} ${item.source} ${item.anchors.join(" ")} ${
+                    item.direct?.label ?? ""
+                  } ${(item.matches ?? []).map((match) => `${match.name} ${match.reason}`).join(" ")}`.toLowerCase()}
+                >
+                  <div class="card-top">
+                    <div>
+                      <p class="eyebrow">{item.status === "direct" ? "direct" : "ingredient match"}</p>
+                      <h3>{item.source}</h3>
+                    </div>
+                    <span class={`pill ${item.status}`}>{item.status === "direct" ? "as-is" : "ranked"}</span>
+                  </div>
+
+                  <ul class="anchors" aria-label={`Ingredient anchors for ${item.source}`}>
+                    {item.anchors.map((anchor) => <li>{anchor}</li>)}
+                  </ul>
+
+                  {item.status === "direct" && item.direct && (
+                    <p class="direct-link">
+                      <a href={item.direct.url} target="_blank" rel="noreferrer noopener">
+                        {item.direct.label}
+                      </a>
+                    </p>
+                  )}
+
+                  {item.status === "mapped" && item.matches && (
+                    <ol class="ranked">
+                      {item.matches.map((match) => (
+                        <li>
+                          <div class="rank-line">
+                            <strong>{match.percent}%</strong>
+                            <span>{match.name}</span>
+                          </div>
+                          <p>{match.reason}</p>
+                          <ul class="buy">
+                            {match.buy.map((link) => (
+                              <li>
+                                <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                  {link.label}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+
+                  {item.note && <p class="item-note">{item.note}</p>}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </main>
+
+    <script>
+      const searchInput = document.querySelector("#match-search");
+      const mappedOnly = document.querySelector("#mapped-only");
+      const visibleCount = document.querySelector("#visible-count");
+      const cards = Array.from(document.querySelectorAll(".card"));
+      const groups = Array.from(document.querySelectorAll(".group"));
+
+      const updateCards = () => {
+        const query = searchInput instanceof HTMLInputElement ? searchInput.value.trim().toLowerCase() : "";
+        const onlyMapped = mappedOnly instanceof HTMLInputElement && mappedOnly.checked;
+        let shown = 0;
+
+        cards.forEach((card) => {
+          const haystack = card.getAttribute("data-haystack") ?? "";
+          const status = card.getAttribute("data-status");
+          const visible = haystack.includes(query) && (!onlyMapped || status === "mapped");
+          card.toggleAttribute("hidden", !visible);
+          if (visible) shown += 1;
+        });
+
+        groups.forEach((group) => {
+          const hasVisibleCards = Boolean(group.querySelector(".card:not([hidden])"));
+          group.toggleAttribute("hidden", !hasVisibleCards);
+        });
+
+        if (visibleCount) {
+          visibleCount.textContent = `${shown} shown`;
+        }
+      };
+
+      searchInput?.addEventListener("input", updateCards);
+      mappedOnly?.addEventListener("change", updateCards);
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --panel: #f8f8f8;
+    --text: #111111;
+    --muted: #555555;
+    --link: #111111;
+    --border: #dddddd;
+    --direct: #0f6a3d;
+    --mapped: #7a4a00;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --panel: #181818;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --link: #eeeeee;
+      --border: #333333;
+      --direct: #70d89c;
+      --mapped: #e3b15f;
+    }
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.35;
+  }
+
+  body {
+    margin: 0;
+    padding: 0.75rem;
+  }
+
+  main {
+    max-width: 88rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.16em;
+  }
+
+  .home {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .page-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.7rem;
+    align-items: end;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.15rem;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-head p {
+    max-width: 48rem;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .count {
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: end;
+    padding: 0.55rem;
+    margin-bottom: 0.65rem;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .controls label {
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  input[type="search"] {
+    display: block;
+    width: min(24rem, 78vw);
+    margin-top: 0.18rem;
+    padding: 0.38rem 0.45rem;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+  }
+
+  .checkbox {
+    display: flex;
+    gap: 0.28rem;
+    align-items: center;
+    padding-bottom: 0.38rem;
+  }
+
+  #visible-count {
+    margin-left: auto;
+    padding-bottom: 0.38rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .note {
+    max-width: 54rem;
+    margin-bottom: 0.8rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .group {
+    margin-top: 0.8rem;
+  }
+
+  h2 {
+    margin-bottom: 0.45rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.92rem;
+    line-height: 1.2;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 0.55rem;
+  }
+
+  .card {
+    padding: 0.65rem;
+    border: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .card.direct {
+    border-left: 0.25rem solid var(--direct);
+  }
+
+  .card.mapped {
+    border-left: 0.25rem solid var(--mapped);
+  }
+
+  .card-top {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.42rem;
+  }
+
+  .eyebrow {
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    margin-top: 0.08rem;
+    font-size: 0.92rem;
+    line-height: 1.18;
+  }
+
+  .pill {
+    flex: 0 0 auto;
+    padding: 0.12rem 0.32rem;
+    border: 1px solid currentColor;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .pill.direct {
+    color: var(--direct);
+  }
+
+  .pill.mapped {
+    color: var(--mapped);
+  }
+
+  .anchors,
+  .buy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.24rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .anchors {
+    margin-bottom: 0.45rem;
+  }
+
+  .anchors li {
+    padding: 0.12rem 0.28rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  .direct-link,
+  .item-note,
+  .ranked p {
+    font-size: 0.8rem;
+  }
+
+  .item-note {
+    margin-top: 0.42rem;
+    color: var(--muted);
+  }
+
+  .ranked {
+    display: grid;
+    gap: 0.45rem;
+    padding-left: 1.1rem;
+  }
+
+  .ranked > li::marker {
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .rank-line {
+    display: flex;
+    gap: 0.38rem;
+    align-items: baseline;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .rank-line strong {
+    color: var(--mapped);
+    font-size: 0.9rem;
+  }
+
+  .ranked p {
+    margin: 0.12rem 0 0.22rem;
+    color: var(--muted);
+  }
+
+  .buy a {
+    font-size: 0.76rem;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 48rem) {
+    .page-head {
+      grid-template-columns: 1fr;
+    }
+
+    .count {
+      white-space: normal;
+    }
+
+    #visible-count {
+      width: 100%;
+      margin-left: 0;
+      padding-bottom: 0;
+    }
+  }
+</style>
