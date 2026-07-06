@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import { extractTravelSpotsFromSource } from "../../data/travelRawParser";
+import { europeTravelSpots } from "../../data/europeTravelSpots";
 
 const pageSources = import.meta.glob<string>("./best-of-*.astro", {
   eager: true,
@@ -13,6 +14,10 @@ type TravelRegion = {
   region: string;
   href: string;
   spotCount: number;
+};
+
+const importedSpotCounts: Record<string, number> = {
+  "./best-of-europe.astro": europeTravelSpots.length,
 };
 
 const siteUrl =
@@ -33,7 +38,7 @@ const regionalSpotCounts = Object.fromEntries(
     .filter(([path]) => !path.endsWith("/best-of-world.astro"))
     .map(([path, source]) => [
       path,
-      extractTravelSpotsFromSource(String(source)).length,
+      importedSpotCounts[path] ?? extractTravelSpotsFromSource(String(source)).length,
     ]),
 );
 const worldSpotCount = Object.values(regionalSpotCounts).reduce((sum, count) => sum + count, 0);
