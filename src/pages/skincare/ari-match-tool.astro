@@ -25,7 +25,7 @@ type ProductMatch = {
 
 const pageTitle = "Ari match tool";
 const pageDescription =
-  "Compact Argentina match tool for Ari's current skincare list, with direct buys and ingredient-match substitutes.";
+  "Compact Argentina match tool for Ari's current skincare list, with domestic direct buys and ingredient-match substitutes.";
 const themeColorLight = "#ffffff";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -33,7 +33,7 @@ const siteUrl =
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
 const mercadoLibreSearch = (query: string): Link => ({
-  label: "Mercado Libre",
+  label: "Mercado Libre local search",
   url: `https://listado.mercadolibre.com.ar/${encodeURIComponent(query).replace(/%20/g, "-")}`,
 });
 
@@ -58,11 +58,42 @@ const matches: ProductMatch[] = [
     group: "Face moisturisers and barrier creams",
     source: "Bioderma Hydrabio Creme Rich / Creme Riche",
     anchors: ["glycerin", "niacinamide", "hyaluronic acid", "lipids"],
-    status: "direct",
-    direct: {
-      label: "SweetCare Argentina",
-      url: "https://www.sweetcare.com/ar/bioderma-hydrabio-cream-dehydrated-sensitive-dry-to-very-dry-skin-p-005444bd?st=01",
-    },
+    status: "mapped",
+    matches: [
+      {
+        name: "Cetaphil Optimal Hydration crema facial",
+        percent: 72,
+        reason: "Best domestic overlap on glycerin, niacinamide, panthenol, squalane and hyaluronic acid.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/crema-facial-cetaphil-optimal-hydration-x-48-g/p",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 62,
+        reason: "Better barrier-repair substitute than a texture match: panthenol, shea butter, glycerin and madecassoside.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
+          },
+        ],
+      },
+      {
+        name: "Vichy Minéral 89 Booster",
+        percent: 52,
+        reason: "Keeps the humectant side with glycerin and hyaluronic acid, but needs a cream over it.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
+          },
+        ],
+      },
+    ],
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -70,8 +101,8 @@ const matches: ProductMatch[] = [
     anchors: ["bifida ferment", "glycerin", "squalane", "ceramide"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/mixsoon-bifida-cream-202-fl-oz-60-ml/p/MLA2030894442",
+      label: "Regy Beauty",
+      url: "https://regybeauty.com/shop/mixsoon-bifida-cream/",
     },
   },
   {
@@ -80,8 +111,8 @@ const matches: ProductMatch[] = [
     anchors: ["centella", "glycerin", "panthenol", "niacinamide"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/skin1004-madagascar-centella-cream-75ml/up/MLAU3233011510",
+      label: "K-Beauty Argentina",
+      url: "https://kbeautyargentina.empretienda.com.ar/skincare/skin1004/centella/skin1004-centella-cream-75ml",
     },
   },
   {
@@ -90,8 +121,8 @@ const matches: ProductMatch[] = [
     anchors: ["centella ferment", "niacinamide", "squalane", "ceramide"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/skin1004-probio-cica-enrich-cream-crema-facial-50ml-dianoche-tipo-de-piel-pieles-maduras/p/MLA32975477",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/skin1004-centella-probio-cica-enrich-cream-50ml-crema-facial-hidratante-pieles-maduras/",
     },
   },
   {
@@ -100,8 +131,8 @@ const matches: ProductMatch[] = [
     anchors: ["centella", "niacinamide", "hyaluronic acid", "gel cream"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/skin1004-madagascar-centella-poremizing-light-gel-cream-momento-de-aplicacion-dianoche-tipo-de-piel-todo-tipo-de-piel/p/MLA27021756",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/skin1004-poremizing-light-gel-cream-75ml-crema-facial-en-gel-para-pieles-mixtas-y-oleosas/",
     },
   },
   {
@@ -110,8 +141,8 @@ const matches: ProductMatch[] = [
     anchors: ["centella", "glycerin", "panthenol", "ceramide"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/crema-hidratante-skin1004-centella-soothing-cream-75-ml/up/MLAU3249145962",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/skin1004-centella-soothing-cream-75ml-crema-facial-en-gel-pieles-sensibles/",
     },
   },
   {
@@ -120,19 +151,50 @@ const matches: ProductMatch[] = [
     anchors: ["glycerin", "betaine", "hyaluronic acid", "light cream"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/crema-hidratante-hialuronica-azul-laneige-water-bank/up/MLAU3987249387",
+      label: "Ifans",
+      url: "https://www.ifansbeauty.com.ar/productos/crema-laneige-water-bank-blue-hyaluronic-cream-50ml-ifans/",
     },
   },
   {
     group: "Face moisturisers and barrier creams",
     source: "Bioderma Hydrabio Creme Rich Moisturising Care",
     anchors: ["glycerin", "niacinamide", "hyaluronic acid", "lipids"],
-    status: "direct",
-    direct: {
-      label: "SweetCare Argentina",
-      url: "https://www.sweetcare.com/ar/bioderma-hydrabio-cream-dehydrated-sensitive-dry-to-very-dry-skin-p-005444bd?st=01",
-    },
+    status: "mapped",
+    matches: [
+      {
+        name: "Cetaphil Optimal Hydration crema facial",
+        percent: 72,
+        reason: "Best domestic overlap on glycerin, niacinamide, panthenol, squalane and hyaluronic acid.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/crema-facial-cetaphil-optimal-hydration-x-48-g/p",
+          },
+        ],
+      },
+      {
+        name: "La Roche-Posay Cicaplast Baume B5+",
+        percent: 62,
+        reason: "Better barrier-repair substitute than a texture match: panthenol, shea butter, glycerin and madecassoside.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/balsamo-reparador-la-roche-posay-cicaplast-baume-b5-x-40-ml/p",
+          },
+        ],
+      },
+      {
+        name: "Vichy Minéral 89 Booster",
+        percent: 52,
+        reason: "Keeps the humectant side with glycerin and hyaluronic acid, but needs a cream over it.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/mineral-89-concentrado-fortificante-y-reconstituyente-x-50-ml/p",
+          },
+        ],
+      },
+    ],
   },
   {
     group: "Face moisturisers and barrier creams",
@@ -191,8 +253,8 @@ const matches: ProductMatch[] = [
     anchors: ["glycerin", "squalane", "panthenol", "shea butter"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/laneige-cica-sleeping-mask-10ml-tipo-de-pele-todo-tipo-de-pele/p/MLA25841720",
+      label: "Clama Store",
+      url: "https://www.clamastore.com.ar/productos/laneige-trial-size-cica-sleeping-mask-4r0zn/",
     },
   },
   {
@@ -207,8 +269,8 @@ const matches: ProductMatch[] = [
         reason: "Best ingredient anchor match: snail filtrate, betaine, panthenol, allantoin and sodium hyaluronate.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/cosrx-advanced-snail-96-mucin-power-essence-serum-reparador/up/MLAU3997737768",
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/cosrx-advanced-snail-96-mucin-power-essence-100ml-esencia-con-96-de-mucina-de-caracol/",
           },
         ],
       },
@@ -218,8 +280,8 @@ const matches: ProductMatch[] = [
         reason: "No snail, but closer as a barrier cream: centella ferment, ceramide, squalane and oils.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/skin1004-probio-cica-enrich-cream-crema-facial-50ml-dianoche-tipo-de-piel-pieles-maduras/p/MLA32975477",
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/skin1004-centella-probio-cica-enrich-cream-50ml-crema-facial-hidratante-pieles-maduras/",
           },
         ],
       },
@@ -242,8 +304,8 @@ const matches: ProductMatch[] = [
     anchors: ["ginseng", "glycerin", "squalane", "fragrance"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/crema-rejuvenecedora-antienvejecimiento-sulwhasoo-ginseng-todo-tipo-de-piel-dianoche/p/MLA2077747250",
+      label: "Paz Store",
+      url: "https://pazstore.empretienda.com.ar/skincare-and-haircare/sulwhasoo-concentrated-ginseng-rejuvenating-cream-x-5ml",
     },
   },
   {
@@ -262,8 +324,8 @@ const matches: ProductMatch[] = [
     anchors: ["niacinamide", "panthenol", "centella", "barrier cream"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/dr-althea-cream-345-50ml-calma-y-repara-de-noche-todo-tipo-de-piel/p/MLA38462649",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/dr-althea-345-relief-cream-50ml-crema-ligera-calmante-y-equilibrante-con-teca-pantenol-y-ceramidas/",
     },
   },
   {
@@ -272,8 +334,8 @@ const matches: ProductMatch[] = [
     anchors: ["rich cream", "rice", "algae", "green tea"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/face-cream-tatcha-the-dewy-skin-cream-rich-hydrate-10ml/p/MLA2057246899",
+      label: "Koko Inc",
+      url: "https://www.kokoinc.com.ar/productos/tatcha-the-dewy-skin-cream/",
     },
   },
   {
@@ -292,8 +354,8 @@ const matches: ProductMatch[] = [
     anchors: ["snail filtrate", "betaine", "panthenol", "allantoin"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/cosrx-advanced-snail-96-mucin-power-essence-serum-reparador/up/MLAU3997737768",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/cosrx-advanced-snail-96-mucin-power-essence-100ml-esencia-con-96-de-mucina-de-caracol/",
     },
     note: "Listed because the source list tracks it, even though the notes say not to buy.",
   },
@@ -313,8 +375,8 @@ const matches: ProductMatch[] = [
     anchors: ["aloe", "glycerin", "sodium hyaluronate", "mist"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/spray-hidratante-face-spray-thirsty-skin-125ml-clinique/p/MLA21254142",
+      label: "Clinique Argentina",
+      url: "https://www.clinique.com.ar/product/1573/5449/3-step/step-2-exfoliate/moisture-surge-face-spray-thirsty-skin-relief",
     },
   },
   {
@@ -334,32 +396,37 @@ const matches: ProductMatch[] = [
     status: "mapped",
     matches: [
       {
-        name: "Nuevue Bioforce HOCl 240 ml",
-        percent: 82,
-        reason: "Closest role and ingredient: an HOCl spray, sold through Mercado Libre.",
+        name: "Medicube Hypochlorous Acid Daily Facial Spray",
+        percent: 74,
+        reason: "Domestic HOCl face spray. It adds cosmetic support ingredients, so it is not as simple as Prontomed.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/spray-de-acido-hipocloroso-nuevue-bioforce-hocl-240ml/p/MLA2062007192",
+            label: "Pigmento listing",
+            url: "https://www.perfumeriaspigmento.com.ar/medicube-hypochlorous-acid-daily-facial-spray/p",
           },
         ],
       },
       {
-        name: "Briotech HOCl Cleaner 250 ml",
-        percent: 78,
-        reason: "Two-ingredient HOCl direction, but check that the seller listing is suitable for skin use.",
+        name: "Briotech Topical HOCl 2 oz",
+        percent: 70,
+        reason: "Closer as a plain HOCl skin spray, using a local Mercado Libre listing that did not show import shipping.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://articulo.mercadolibre.com.ar/MLA-2435144246-spray-de-acido-hipocloroso-briotech-hocl-cleaner-250-ml-pa-_JM",
+            label: "Mercado Libre local listing",
+            url: "https://articulo.mercadolibre.com.ar/MLA-1810346535-spray-hocl-briotech-para-piel-de-bebe-2-oz-_JM",
           },
         ],
       },
       {
-        name: "Medicube Hypochlorous Acid Daily Spray",
-        percent: 66,
-        reason: "Same HOCl idea, with extra cosmetic support ingredients.",
-        buy: [mercadoLibreSearch("Medicube Hypochlorous Acid Daily Spray")],
+        name: "La Roche-Posay Agua Termal",
+        percent: 28,
+        reason: "Not HOCl, but it covers the simple calming-mist job when hypochlorous acid is unavailable.",
+        buy: [
+          {
+            label: "Farmacity search",
+            url: "https://www.farmacity.com/search?q=la%20roche%20posay%20agua%20termal",
+          },
+        ],
       },
     ],
   },
@@ -367,11 +434,42 @@ const matches: ProductMatch[] = [
     group: "Cleansers",
     source: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
     anchors: ["salicylic acid", "PHA", "tea tree", "foaming cleanser"],
-    status: "direct",
-    direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/espuma-y-tonico-acne-some-by-mi-aha-bha-pha-30-dias/up/MLAU3865488305",
-    },
+    status: "mapped",
+    matches: [
+      {
+        name: "La Roche-Posay Effaclar Micro-Peeling Gel",
+        percent: 70,
+        reason: "Domestic acid cleanser with salicylic acid and zinc. Stronger daily-use caution still applies.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
+          },
+        ],
+      },
+      {
+        name: "SOME BY MI AHA.BHA.PHA 30 Days Miracle Clear Body Cleanser",
+        percent: 64,
+        reason: "Same acid family and tea-tree acne direction, but it is a body cleanser, not the face foam.",
+        buy: [
+          {
+            label: "K-Beauty Argentina",
+            url: "https://kbeautyargentina.empretienda.com.ar/corporales/some-by-mi-ahabhapha-30-days-miracle-clear-body-cleanser-400g",
+          },
+        ],
+      },
+      {
+        name: "SKIN1004 Madagascar Centella Ampoule Foam",
+        percent: 52,
+        reason: "Closer texture and sensitivity profile, but it drops the acid blend.",
+        buy: [
+          {
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/skin1004-centella-ampoule-foam-125ml-limpiador-facial-en-espuma-pieles-sensibles/",
+          },
+        ],
+      },
+    ],
   },
   {
     group: "Cleansers",
@@ -379,8 +477,8 @@ const matches: ProductMatch[] = [
     anchors: ["soybean oil", "ginseng oil", "cleansing oil"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/beauty-of-joseon-ginseng-cleansing-oil-aplicacion-noche-para-todo-tipo-de-piel/p/MLA34792455",
+      label: "Pigmento listing",
+      url: "https://www.perfumeriaspigmento.com.ar/beauty-of-joseon-aceite-ginseng-cleansing-oil-210ml/p",
     },
   },
   {
@@ -419,8 +517,8 @@ const matches: ProductMatch[] = [
     anchors: ["centella", "foam", "mild pH", "coconut surfactants"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/skin1004-madagascar-centella-ampoule-foam-125ml/p/MLA34278102",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/skin1004-centella-ampoule-foam-125ml-limpiador-facial-en-espuma-pieles-sensibles/",
     },
   },
   {
@@ -435,8 +533,8 @@ const matches: ProductMatch[] = [
         reason: "Keeps the salicylic-acid body-cleanser role and adds AHA/PHA.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/some-by-mi-aha-bha-pha-30-dias-milagro-acne-clear-body-cl/p/MLA2060681185",
+            label: "K-Beauty Argentina",
+            url: "https://kbeautyargentina.empretienda.com.ar/corporales/some-by-mi-ahabhapha-30-days-miracle-clear-body-cleanser-400g",
           },
         ],
       },
@@ -452,13 +550,13 @@ const matches: ProductMatch[] = [
         ],
       },
       {
-        name: "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam",
-        percent: 57,
-        reason: "Closer for acne-prone face cleansing than for body smoothing.",
+        name: "SKIN1004 Madagascar Centella Ampoule Foam",
+        percent: 48,
+        reason: "A gentle domestic face-cleanser fallback when the goal is less stripping, but it has no salicylic acid.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/espuma-y-tonico-acne-some-by-mi-aha-bha-pha-30-dias/up/MLAU3865488305",
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/skin1004-centella-ampoule-foam-125ml-limpiador-facial-en-espuma-pieles-sensibles/",
           },
         ],
       },
@@ -470,8 +568,8 @@ const matches: ProductMatch[] = [
     anchors: ["sea buckthorn", "niacinamide", "tranexamic acid", "vitamin C"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/serum-potenciador-de-vitamina-c-dralthea-con-acido-tranexami/p/MLA43556653",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/dr-althea-vitamin-c-boosting-serum-30ml-serum-de-vitamina-c-g7lw7/",
     },
   },
   {
@@ -480,8 +578,8 @@ const matches: ProductMatch[] = [
     anchors: ["centella", "niacinamide", "tranexamic acid", "ethyl ascorbic acid"],
     status: "direct",
     direct: {
-      label: "Mercado Libre search",
-      url: "https://listado.mercadolibre.com.ar/skin1004-tone-brightening-capsule-ampoule",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/skin1004-centella-tone-brightening-capsule-ampoule-50ml-serum-facial-aclarador-pieles-con-manchas/",
     },
   },
   {
@@ -490,8 +588,8 @@ const matches: ProductMatch[] = [
     anchors: ["yuja", "niacinamide", "bisabolol", "vitamin C"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/some-by-mi-yuja-niacin-blemish-care-serum-50ml-corea-del-sur/up/MLAU2694702797",
+      label: "Sentí Skincare",
+      url: "https://senti.ar/productos/some-by-mi-yuja-niacin-30-days-blemish-care-serum-serum-iluminador-y-anti-manchas-50-ml/",
     },
   },
   {
@@ -506,8 +604,8 @@ const matches: ProductMatch[] = [
         reason: "Strongest local match for brightening actives: niacinamide, tranexamic acid and vitamin C derivatives.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/serum-potenciador-de-vitamina-c-dralthea-con-acido-tranexami/p/MLA43556653",
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/dr-althea-vitamin-c-boosting-serum-30ml-serum-de-vitamina-c-g7lw7/",
           },
         ],
       },
@@ -551,8 +649,8 @@ const matches: ProductMatch[] = [
     anchors: ["2% salicylic acid", "spot treatment", "acne"],
     status: "direct",
     direct: {
-      label: "Mercado Libre search",
-      url: "https://listado.mercadolibre.com.ar/murad-deep-relief-acne-treatment",
+      label: "Mercado Libre local listing",
+      url: "https://www.mercadolibre.com.ar/murad-deep-relief-blemish-treatment-suero-acido-salicilico/up/MLAU4072216664",
     },
   },
   {
@@ -561,19 +659,50 @@ const matches: ProductMatch[] = [
     anchors: ["willow bark water", "betaine salicylate", "niacinamide"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/cosrx-bha-blackhead-powerd-liquid-exfoliante-facial-100ml-noche-todo-tipo-de-piel/p/MLA20581349",
+      label: "Skinfree",
+      url: "https://www.skinfree.com.ar/productos/cosrx-bha-blackhead-power-liquid-100ml-tratamiento-exfoliante-liquido/",
     },
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
     source: "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution",
     anchors: ["glycolic acid", "salicylic acid", "gluconolactone", "LHA"],
-    status: "direct",
-    direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/solucion-exfoliante-peeling-solution-aha-bha-pha-lha/up/MLAU3566104170",
-    },
+    status: "mapped",
+    matches: [
+      {
+        name: "La Roche-Posay Effaclar Micro-Peeling Gel",
+        percent: 67,
+        reason: "Domestic salicylic-acid exfoliating cleanser. It is a wash-off gel, not a peel serum.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/gel-microexfoliante-la-roche-posay-effaclar-x-200-ml/p",
+          },
+        ],
+      },
+      {
+        name: "CÉPAGE Renovateurs Glicólico 5",
+        percent: 59,
+        reason: "Domestic leave-on AHA cream with glycolic acid, but without BHA, PHA or LHA.",
+        buy: [
+          {
+            label: "Farmacia Más Vida listing",
+            url: "https://farmaciamasvida.com.ar/producto/cepage-renovateurs-glicolico-5-crema-x-50g/",
+          },
+        ],
+      },
+      {
+        name: "COSRX BHA Blackhead Power Liquid",
+        percent: 54,
+        reason: "Domestic leave-on BHA-style liquid with niacinamide, but it does not cover the AHA/PHA/LHA mix.",
+        buy: [
+          {
+            label: "Skinfree",
+            url: "https://www.skinfree.com.ar/productos/cosrx-bha-blackhead-power-liquid-100ml-tratamiento-exfoliante-liquido/",
+          },
+        ],
+      },
+    ],
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
@@ -688,7 +817,7 @@ const matches: ProductMatch[] = [
     anchors: ["SPF50", "gel", "Japanese sunscreen", "hydrating"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
+      label: "Mercado Libre local listing",
       url: "https://www.mercadolibre.com.ar/protector-solar-y-limpiador-facial-canmake-mermaid-skin-40g/up/MLAU3934884044",
     },
   },
@@ -698,8 +827,8 @@ const matches: ProductMatch[] = [
     anchors: ["SPF50", "watery gel", "hyaluronic acid", "alcohol"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/biore-protector-solar-aqua-rich-watery-essence-fps-50-50g/p/MLA22099909",
+      label: "Frávega listing",
+      url: "https://www.fravega.com/p/protector-solar-biore-uv-aqua-rich-watery-essence-spf-50-pa--22824772/",
     },
   },
   {
@@ -708,7 +837,7 @@ const matches: ProductMatch[] = [
     anchors: ["SPF50", "gel", "hyaluronic acid", "pump"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
+      label: "Mercado Libre local listing",
       url: "https://www.mercadolibre.com.ar/gel-solar-skin-aqua-spf50-165g/up/MLAU3934889714",
     },
   },
@@ -718,8 +847,8 @@ const matches: ProductMatch[] = [
     anchors: ["SPF50", "centella", "niacinamide", "modern filters"],
     status: "direct",
     direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/crema-solar-benton-spf50-pa-air-fit-50ml/p/MLA2078263782",
+      label: "Luxodia listing",
+      url: "https://luxodia.com/productos/benton-air-fit-uv-defense-sun-cream/",
     },
   },
   {
@@ -756,8 +885,8 @@ const matches: ProductMatch[] = [
         reason: "Modern filters, niacinamide, centella and a light cream finish.",
         buy: [
           {
-            label: "Mercado Libre listing",
-            url: "https://www.mercadolibre.com.ar/crema-solar-benton-spf50-pa-air-fit-50ml/p/MLA2078263782",
+            label: "Luxodia listing",
+            url: "https://luxodia.com/productos/benton-air-fit-uv-defense-sun-cream/",
           },
         ],
       },
@@ -777,11 +906,42 @@ const matches: ProductMatch[] = [
     group: "Body and hands",
     source: "Biotherm Eau d'Energie body moisturiser",
     anchors: ["body milk", "citrus fragrance", "glycerin"],
-    status: "direct",
-    direct: {
-      label: "Mercado Libre listing",
-      url: "https://www.mercadolibre.com.ar/set-perfume-biotherm-eau-energie-100ml-edt-leche-ducha-75ml/p/MLA20601037",
-    },
+    status: "mapped",
+    matches: [
+      {
+        name: "Biotherm Lait Corporel",
+        percent: 62,
+        reason: "Same brand and body-milk role, but not the Eau d'Energie fragrance line.",
+        buy: [
+          {
+            label: "Mercado Libre local search",
+            url: "https://listado.mercadolibre.com.ar/biotherm-lait-corporel",
+          },
+        ],
+      },
+      {
+        name: "Neutrogena Hydro Boost Water Gel Corporal",
+        percent: 54,
+        reason: "Domestic light body hydration with glycerin and sodium hyaluronate.",
+        buy: [
+          {
+            label: "Neutrogena Argentina",
+            url: "https://www.neutrogena.com.ar/corporal/humectacion/neutrogena-hydro-boost-water-gel-hidratante-corporal-400ml",
+          },
+        ],
+      },
+      {
+        name: "Dermaglos Emulsion Corporal Hidratacion + Regeneracion",
+        percent: 47,
+        reason: "More occlusive than Biotherm, but easy to buy domestically and useful for dry skin.",
+        buy: [
+          {
+            label: "Farmacity listing",
+            url: "https://www.farmacity.com/crema-corporal-dermaglos-regeneracion-intensiva-x-300-gr/p",
+          },
+        ],
+      },
+    ],
   },
   {
     group: "Body and hands",
@@ -849,7 +1009,7 @@ const mappedItems = totalItems - directItems;
         <div>
           <h1>{pageTitle}</h1>
           <p>
-            Each item from Ari's current list is mapped to an Argentina buy. Exact local listings show one link. Missing items show the closest ingredient matches, ranked by percent.
+            Each item from Ari's current list is mapped to an Argentina buy. Exact domestic listings show one link. Items without domestic as-is stock show the closest ingredient matches, ranked by percent.
           </p>
         </div>
         <p class="count">{totalItems} items · {directItems} direct · {mappedItems} mapped</p>
@@ -868,7 +1028,7 @@ const mappedItems = totalItems - directItems;
       </section>
 
       <p class="note">
-        Scores compare ingredient overlap, product role and texture notes. They are shopping shortcuts, not medical advice. For tretinoin, acids and clinic products, check with the prescriber and read the box.
+        Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
       </p>
 
       {
