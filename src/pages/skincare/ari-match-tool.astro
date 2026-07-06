@@ -6,6 +6,12 @@ type Link = {
   url: string;
 };
 
+type PriceInfo = {
+  arUsd?: string;
+  abroadUsd?: string;
+  note?: string;
+};
+
 type RankedMatch = {
   name: string;
   percent: number;
@@ -41,6 +47,290 @@ const farmacitySearch = (query: string): Link => ({
   label: "Farmacity",
   url: `https://www.farmacity.com/search?q=${encodeURIComponent(query)}`,
 });
+
+const priceByName: Record<string, PriceInfo> = {
+  "Irene Bermejo moisturiser": {
+    arUsd: "~US$48",
+    note: "ARS 71,280 current Liss Extreme proxy; old jar price not public",
+  },
+  "Bioderma Hydrabio Creme Rich / Creme Riche": {
+    abroadUsd: "~US$21-23 UK/EU",
+  },
+  "Bioderma Hydrabio Creme Rich Moisturising Care": {
+    abroadUsd: "~US$21-23 UK/EU",
+  },
+  "Mixsoon Bifida Cream": {
+    arUsd: "~US$43",
+    abroadUsd: "~US$22-30 KR/US",
+  },
+  "SKIN1004 Madagascar Centella Cream": {
+    arUsd: "~US$40",
+    abroadUsd: "~US$16-20 KR/US",
+  },
+  "SKIN1004 Madagascar Centella Probio-Cica Enrich Cream": {
+    arUsd: "~US$38",
+    abroadUsd: "~US$20-24 KR/US",
+  },
+  "SKIN1004 Probio-Cica Enrich Cream": {
+    arUsd: "~US$38",
+    abroadUsd: "~US$20-24 KR/US",
+  },
+  "SKIN1004 Madagascar Centella Poremizing Light Gel Cream": {
+    arUsd: "~US$31",
+    abroadUsd: "~US$18-22 KR/US",
+  },
+  "SKIN1004 Madagascar Centella Soothing Cream": {
+    arUsd: "~US$35",
+    abroadUsd: "~US$18-25 KR/US",
+  },
+  "Laneige Water Bank Blue Hyaluronic Moisture Cream": {
+    arUsd: "~US$77",
+    abroadUsd: "~US$43 US",
+  },
+  "Cetaphil Optimal Hydration Creme de Jour Revitalisante": {
+    arUsd: "~US$34",
+    abroadUsd: "~US$25 US/EU",
+  },
+  "Cetaphil Optimal Hydration crema facial": {
+    arUsd: "~US$34",
+    abroadUsd: "~US$25 US/EU",
+  },
+  "Neutrogena Hydro Boost Aqua Intensivpflege": {
+    abroadUsd: "~US$14-17 Germany",
+  },
+  "Neutrogena Hydro Boost Water Gel Corporal": {
+    arUsd: "~US$18-19",
+    abroadUsd: "~US$10-14 US/EU",
+  },
+  "Vichy Minéral 89 Booster": {
+    arUsd: "~US$37",
+    abroadUsd: "~US$35-40 US/EU",
+  },
+  "Vichy Mineral 89 Booster": {
+    arUsd: "~US$37",
+    abroadUsd: "~US$35-40 US/EU",
+  },
+  "La Roche-Posay Cicaplast Baume B5+": {
+    arUsd: "~US$32",
+    abroadUsd: "~US$16-20 US/EU",
+  },
+  "Laneige Cica Sleeping Mask": {
+    abroadUsd: "~US$34 US",
+    note: "domestic mini listing, price not shown in search snippet",
+  },
+  "Jumiso Snail EX Ultimate Barrier Facial Cream": {
+    abroadUsd: "~US$19-22 KR/US",
+  },
+  "COSRX Advanced Snail 96 Mucin Power Essence": {
+    arUsd: "~US$44",
+    abroadUsd: "~US$18-25 KR/US",
+  },
+  "Sulwhasoo Concentrated Ginseng Renewing Cream": {
+    arUsd: "~US$70",
+    abroadUsd: "~US$260 US full size",
+    note: "Argentina price found for 5 ml mini",
+  },
+  "Dr. Althea 345 Relief Cream": {
+    arUsd: "~US$42",
+    abroadUsd: "~US$24-30 KR/US",
+  },
+  "Tatcha The Dewy Skin Cream": {
+    abroadUsd: "~US$72 US",
+    note: "domestic seller page found, price not shown in search snippet",
+  },
+  "La Roche-Posay Effaclar Mat": {
+    arUsd: "~US$42-43",
+    abroadUsd: "~US$30-35 US/EU",
+  },
+  "Clinique Moisture Surge Face Spray": {
+    arUsd: "~US$64",
+    abroadUsd: "~US$36 US",
+  },
+  "Thermal or mineral water mist": {
+    arUsd: "~US$30-34",
+    abroadUsd: "~US$12-20 US/EU",
+  },
+  "Prontomed HypoClear Akne-Spray": {
+    abroadUsd: "~US$9-11 Germany",
+  },
+  "Medicube Hypochlorous Acid Daily Facial Spray": {
+    arUsd: "~US$36",
+    abroadUsd: "~US$18-24 KR/US",
+  },
+  "Briotech Topical HOCl 2 oz": {
+    abroadUsd: "~US$14-18 US",
+    note: "domestic ML price not in snippet",
+  },
+  "La Roche-Posay Agua Termal": {
+    arUsd: "~US$31",
+    abroadUsd: "~US$12-20 US/EU",
+  },
+  "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Foam": {
+    abroadUsd: "~US$15-25 KR/US",
+  },
+  "Some By Mi AHA BHA PHA 30 Days Miracle Acne Clear Body Cleanser": {
+    abroadUsd: "~US$18-25 KR/US",
+    note: "domestic exact page found, price not shown in search snippet",
+  },
+  "La Roche-Posay Effaclar Micro-Peeling Gel": {
+    arUsd: "~US$51-55",
+    abroadUsd: "~US$18-25 EU",
+  },
+  "SOME BY MI AHA.BHA.PHA 30 Days Miracle Clear Body Cleanser": {
+    abroadUsd: "~US$18-25 KR/US",
+    note: "domestic exact page found, price not shown in search snippet",
+  },
+  "SKIN1004 Madagascar Centella Ampoule Foam": {
+    arUsd: "~US$29",
+    abroadUsd: "~US$12-18 KR/US",
+  },
+  "Beauty of Joseon Ginseng Cleansing Oil": {
+    arUsd: "~US$34",
+    abroadUsd: "~US$15-20 KR/US",
+  },
+  "La Roche-Posay Effaclar Gel Moussant Purifiant": {
+    arUsd: "~US$45",
+    abroadUsd: "~US$18-25 EU",
+  },
+  "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling": {
+    arUsd: "~US$51-55",
+    abroadUsd: "~US$18-25 EU",
+  },
+  "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser": {
+    arUsd: "~US$48-51",
+    abroadUsd: "~US$8-18 EU",
+  },
+  "CeraVe SA Smoothing Cleanser": {
+    abroadUsd: "~US$15 US",
+  },
+  "Dr. Althea Vitamin C Boosting Serum": {
+    arUsd: "~US$39-49",
+    abroadUsd: "~US$24 KR/US",
+  },
+  "SKIN1004 Madagascar Centella Tone Brightening Capsule Ampoule": {
+    arUsd: "~US$24",
+    abroadUsd: "~US$18-25 KR/US",
+  },
+  "Some By Mi Yuja Niacin Anti-Blemish Serum": {
+    abroadUsd: "~US$18-25 KR/US",
+    note: "domestic page found, price not shown in search snippet",
+  },
+  "Codexial Enobright Radiance Day": {
+    abroadUsd: "~US$32-45 France",
+  },
+  "Dream On Vitamin C + Niacinamide + Tranexamic Acid Serum": {
+    arUsd: "~US$23",
+    note: "Argentina-only local product",
+  },
+  "La Roche-Posay Pure Vitamin C10": {
+    arUsd: "~US$53",
+    abroadUsd: "~US$45 US/EU",
+  },
+  "La Roche-Posay Vitamin C serum": {
+    arUsd: "~US$53",
+    abroadUsd: "~US$45 US/EU",
+  },
+  "Murad Deep Relief Acne Treatment": {
+    abroadUsd: "~US$45 US",
+    note: "domestic ML page found, price not shown in snippet",
+  },
+  "COSRX BHA Blackhead Power Liquid": {
+    arUsd: "~US$44",
+    abroadUsd: "~US$20 KR/US",
+  },
+  "SKINTIFIC 12% AHA BHA PHA LHA Peeling Solution": {
+    abroadUsd: "~US$14-28 KR",
+  },
+  "NeoStrata Resurface Glycolic Renewal Smoothing Lotion": {
+    abroadUsd: "~US$46 US",
+  },
+  "Irene Bermejo White Cream Glico 4%": {
+    arUsd: "~US$39",
+  },
+  "CÉPAGE Renovateurs Glicólico 5": {
+    arUsd: "~US$37",
+  },
+  "Detenage G Ácido Glicólico 8%": {
+    note: "domestic page found, price not shown in search snippet",
+  },
+  "Cordes VAS 0.5 mg/g Creme": {
+    abroadUsd: "Germany rx price varies",
+  },
+  "Irene Bermejo Retinoico 0.05%": {
+    note: "clinic price not public",
+  },
+  "Irene Bermejo Retinoico 0.025%": {
+    note: "clinic price not public",
+  },
+  "Cosmética Argentina Ácido Retinoico 0.05%": {
+    arUsd: "~US$34",
+  },
+  "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
+    abroadUsd: "~US$8-12 Japan",
+    note: "domestic ML page found, price not shown in snippet",
+  },
+  "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
+    arUsd: "~US$63",
+    abroadUsd: "~US$8-18 Japan/US",
+  },
+  "Skin Aqua Super Moisture Gel SPF50+ PA++++": {
+    arUsd: "~US$98",
+    abroadUsd: "~US$8-12 Japan",
+  },
+  "Benton Air Fit UV Defense Sun Cream SPF50+ PA++++": {
+    arUsd: "~US$21",
+    abroadUsd: "~US$15-18 KR/US",
+  },
+  "Benton Air Fit UV Defense Sun Cream": {
+    arUsd: "~US$21",
+    abroadUsd: "~US$15-18 KR/US",
+  },
+  "INGU BluVlite Ultra-Light Daily Sunscreen SPF50+ PA++++ + Biome Balance": {
+    abroadUsd: "~US$10-20 Thailand",
+  },
+  "SKIN1004 Centella Hyalu-Cica Water-Fit Sun Serum SPF50+ PA++++": {
+    arUsd: "~US$29",
+    abroadUsd: "~US$14-20 KR/US",
+  },
+  "Isntree Hyaluronic Acid Watery Sun Gel SPF50+ PA++++": {
+    abroadUsd: "~US$15-22 KR/US",
+    note: "domestic page found, price not shown in search snippet",
+  },
+  "Dermaglos Emulsion Corporal Hidratacion + Regeneracion": {
+    arUsd: "~US$14-19",
+    note: "Argentina local product",
+  },
+  "Biotherm Eau d'Energie body moisturiser": {
+    abroadUsd: "~US$25-35 EU",
+  },
+  "Biotherm Lait Corporel": {
+    arUsd: "~US$50",
+    abroadUsd: "~US$25-35 EU",
+  },
+  "Neutrogena Hydro Boost body moisturiser": {
+    arUsd: "~US$18-19",
+    abroadUsd: "~US$10-14 US/EU",
+  },
+  "Natura Ekos Castanha hand cream": {
+    arUsd: "~US$12",
+    note: "Argentina local product",
+  },
+};
+
+const getPrice = (name: string) => priceByName[name];
+
+const priceParts = (price?: PriceInfo, sourcePrice?: PriceInfo) =>
+  [
+    price?.arUsd && `AR: ${price.arUsd}`,
+    price?.abroadUsd && `abroad: ${price.abroadUsd}`,
+    sourcePrice?.abroadUsd && `OG abroad: ${sourcePrice.abroadUsd}`,
+    price?.note,
+  ].filter(Boolean) as string[];
+
+const sourcePriceParts = (name: string) => {
+  const price = getPrice(name);
+  return [price?.abroadUsd && `OG abroad: ${price.abroadUsd}`, price?.note].filter(Boolean) as string[];
+};
 
 const matches: ProductMatch[] = [
   {
@@ -1028,7 +1318,7 @@ const mappedItems = totalItems - directItems;
       </section>
 
       <p class="note">
-        Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
+        Prices are rough USD reads from public listings, using 1 USD ≈ 1,500 ARS. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
       </p>
 
       {
@@ -1056,6 +1346,14 @@ const mappedItems = totalItems - directItems;
                     {item.anchors.map((anchor) => <li>{anchor}</li>)}
                   </ul>
 
+                  {item.status === "direct" && priceParts(getPrice(item.source)).length > 0 && (
+                    <p class="price-line">
+                      {priceParts(getPrice(item.source)).map((part) => (
+                        <span>{part}</span>
+                      ))}
+                    </p>
+                  )}
+
                   {item.status === "direct" && item.direct && (
                     <p class="direct-link">
                       <a href={item.direct.url} target="_blank" rel="noreferrer noopener">
@@ -1065,26 +1363,42 @@ const mappedItems = totalItems - directItems;
                   )}
 
                   {item.status === "mapped" && item.matches && (
-                    <ol class="ranked">
-                      {item.matches.map((match) => (
-                        <li>
-                          <div class="rank-line">
-                            <strong>{match.percent}%</strong>
-                            <span>{match.name}</span>
-                          </div>
-                          <p>{match.reason}</p>
-                          <ul class="buy">
-                            {match.buy.map((link) => (
-                              <li>
-                                <a href={link.url} target="_blank" rel="noreferrer noopener">
-                                  {link.label}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      ))}
-                    </ol>
+                    <>
+                      {sourcePriceParts(item.source).length > 0 && (
+                        <p class="price-line source-price">
+                          {sourcePriceParts(item.source).map((part) => (
+                            <span>{part}</span>
+                          ))}
+                        </p>
+                      )}
+                      <ol class="ranked">
+                        {item.matches.map((match) => (
+                          <li>
+                            <div class="rank-line">
+                              <strong>{match.percent}%</strong>
+                              <span>{match.name}</span>
+                            </div>
+                            <p>{match.reason}</p>
+                            {priceParts(getPrice(match.name), getPrice(item.source)).length > 0 && (
+                              <p class="price-line match-price">
+                                {priceParts(getPrice(match.name), getPrice(item.source)).map((part) => (
+                                  <span>{part}</span>
+                                ))}
+                              </p>
+                            )}
+                            <ul class="buy">
+                              {match.buy.map((link) => (
+                                <li>
+                                  <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                    {link.label}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                      </ol>
+                    </>
                   )}
 
                   {item.note && <p class="item-note">{item.note}</p>}
@@ -1365,8 +1679,32 @@ const mappedItems = totalItems - directItems;
 
   .direct-link,
   .item-note,
+  .price-line,
   .ranked p {
     font-size: 0.8rem;
+  }
+
+  .price-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.24rem;
+    margin: -0.1rem 0 0.42rem;
+    color: var(--muted);
+  }
+
+  .price-line span {
+    padding: 0.1rem 0.28rem;
+    border: 1px dotted var(--border);
+    background: color-mix(in srgb, var(--bg) 58%, transparent);
+  }
+
+  .source-price {
+    margin-bottom: 0.46rem;
+  }
+
+  .ranked .match-price {
+    margin: 0.14rem 0 0.24rem;
+    font-size: 0.74rem;
   }
 
   .item-note {
