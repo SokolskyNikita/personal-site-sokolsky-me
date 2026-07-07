@@ -141,12 +141,28 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <option value="high">Higher estimate for uncertain inputs</option>
             </select>
           </label>
+
+          <label class="control checkbox">
+            <input id="uti-prone" name="uti-prone" type="checkbox" />
+            <span>
+              <strong>UTI-prone after sex</strong>
+              <small>Uses a recurrent/postcoital-UTI style rate for sex-attributable episodes only.</small>
+            </span>
+          </label>
+
+          <label class="control checkbox">
+            <input id="yeast-prone" name="yeast-prone" type="checkbox" />
+            <span>
+              <strong>Yeast-prone after sex-related antibiotics</strong>
+              <small>Raises yeast risk per modeled UTI/STI antibiotic course. Background antibiotics are excluded.</small>
+            </span>
+          </label>
         </form>
 
         <section class="results" aria-live="polite" aria-label="Calculated results">
           <div class="headline">
             <div>
-              <p class="kicker">STI QALYs saved by using condoms</p>
+              <p class="kicker">Healthy weeks saved by using condoms</p>
               <p class="headline-value" id="condom-benefit">-</p>
               <p class="headline-note" id="benefit-note">Waiting for inputs</p>
             </div>
@@ -159,7 +175,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
           <div class="comparison-grid">
             <div class="comparison-row">
-              <h3>Modeled STI healthy weeks lost</h3>
+              <h3>Modeled healthy weeks lost</h3>
               <div class="comparison-value without">
                 <span>Without condoms</span>
                 <strong id="no-total">-</strong>
@@ -170,7 +186,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               </div>
             </div>
             <div class="comparison-row benefit-row">
-              <h3>STI QALYs saved by using condoms</h3>
+              <h3>Healthy weeks saved by using condoms</h3>
               <div class="comparison-value benefit">
                 <span>Compared with no condoms</span>
                 <strong id="condom-saved">-</strong>
@@ -212,16 +228,17 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="detail-grid">
         <article class="panel">
           <div class="section-heading">
-            <p class="eyebrow">STI breakdown</p>
-            <h2>Modeled lifetime healthy weeks lost by disease</h2>
+            <p class="eyebrow">STI + downstream breakdown</p>
+            <h2>Modeled lifetime healthy weeks lost by condition</h2>
           </div>
           <div class="breakdown-head" aria-hidden="true">
-            <span>Disease</span>
+            <span>Condition</span>
             <span>Without condoms</span>
             <span>With condoms</span>
             <span>Benefit</span>
           </div>
           <div class="breakdown-list" id="disease-breakdown"></div>
+          <p class="breakdown-note">*Not an STI/STD. Included because sex can trigger UTIs in some people, and antibiotics used for UTIs or bacterial STIs can trigger yeast infections in some people.</p>
         </article>
 
         <aside class="panel assumptions">
@@ -233,7 +250,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <h3>What the calculator is estimating</h3>
               <ul>
                 <li>Each STI row estimates: how likely a partner is to be infectious, how likely transmission is during the 10-year exposure window, and how much healthy time one infection is expected to cost.</li>
-                <li>The STI totals are a rough expected-value model of direct physical health burden. They are not a clinical prediction for one specific person, and pregnancy is shown separately instead of being folded into STI QALYs.</li>
+                <li>The asterisked rows are not STI transmission rows. They are simple expected-value add-ons for marginal sex-attributable UTIs and yeast infections from sex-related antibiotic courses.</li>
+                <li>The totals are a rough expected-value model of direct physical health burden. They are not a clinical prediction for one specific person, and pregnancy is shown separately instead of being folded into QALYs.</li>
               </ul>
             </section>
 
@@ -297,6 +315,15 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </section>
 
             <section class="assumption-group">
+              <h3>UTIs and antibiotic-associated yeast</h3>
+              <ul>
+                <li>Post-sex UTIs are modeled as a marginal sex-associated burden, not as partner prevalence times transmission probability and not as all UTIs someone might otherwise get. The default assumes few sex-triggered UTIs; the UTI-prone toggle uses a recurrent/postcoital-UTI style rate.</li>
+                <li>Plain condoms are treated as neutral for UTIs because spermicide, lube, friction and individual anatomy can push risk in different directions. Spermicide and diaphragms are the better-supported modifiable UTI triggers.</li>
+                <li>Yeast infections are driven only by modeled antibiotic courses from post-sex UTIs and bacterial STIs acquired in this calculator. Antibiotics for unrelated illnesses are excluded. The yeast-prone toggle uses the symptomatic VVC rate from a small prospective antibiotic study as a high-susceptibility setting.</li>
+              </ul>
+            </section>
+
+            <section class="assumption-group">
               <h3>Uncertainty controls</h3>
               <ul>
                 <li>The sensitivity control scales the least certain STI inputs: HPV progression, HSV physical-only burden, bacterial STI burden, M. genitalium and high-load Ureaplasma.</li>
@@ -310,7 +337,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements and Winer NEJM genital HPV condom data.
+          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements, Winer NEJM genital HPV condom data, AUA/AAFP postcoital UTI guidance, CDC candidiasis guidance and antibiotic-associated VVC studies.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -341,6 +368,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://pubmed.ncbi.nlm.nih.gov/29924422/" target="_blank" rel="noreferrer noopener">European STI Guidelines position statement on Ureaplasma testing</a></li>
           <li><a href="https://journals.asm.org/doi/10.1128/cmr.00137-18" target="_blank" rel="noreferrer noopener">Clinical Microbiology Reviews: Ureaplasma and male NGU</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
+          <li><a href="https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti" target="_blank" rel="noreferrer noopener">AUA/CUA/SUFU recurrent uncomplicated UTI guideline</a></li>
+          <li><a href="https://www.aafp.org/pubs/afp/issues/2011/1001/p771.html" target="_blank" rel="noreferrer noopener">AAFP acute uncomplicated cystitis diagnosis and treatment</a></li>
+          <li><a href="https://www.cdc.gov/contraception/hcp/usmec/barrier-methods.html" target="_blank" rel="noreferrer noopener">CDC barrier-method guidance: spermicide/diaphragm UTI note</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9891499/" target="_blank" rel="noreferrer noopener">Uncomplicated UTI HRQoL and activity impairment study</a></li>
+          <li><a href="https://www.cdc.gov/candidiasis/risk-factors/index.html" target="_blank" rel="noreferrer noopener">CDC candidiasis risk factors</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm" target="_blank" rel="noreferrer noopener">CDC vulvovaginal candidiasis treatment guideline</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/18612052/" target="_blank" rel="noreferrer noopener">MetroNet study: antibiotics and vulvovaginal candidiasis</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/12825971/" target="_blank" rel="noreferrer noopener">Postmarketing study: vaginal candidiasis after antibiotics</a></li>
         </ul>
       </section>
     </main>
@@ -370,6 +405,34 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       };
       // You et al.: removing post-diagnosis psychosocial distress cuts HSV losses by about 40%.
       const HSV_PHYSICAL_ONLY_MULTIPLIER = 0.6;
+      const SEX_RELATED_BACTERIAL_STI_ANTIBIOTIC_COURSES_PER_CASE = {
+        Chlamydia: 1,
+        Gonorrhea: 1,
+        Trichomoniasis: 1,
+        "Mycoplasma genitalium": 1,
+        "Ureaplasma urealyticum high-load NGU": 1,
+        Syphilis: 1
+      };
+      const POST_SEX_UTI = {
+        name: "Post-sex UTIs*",
+        sexAttributableAnnualCases: {
+          default: { female: 0.06, male: 0.006 },
+          prone: { female: 1.2, male: 0.12 }
+        },
+        sexRelatedAntibioticCoursesPerCase: 1,
+        plainCondomMultiplier: 1,
+        qalyPerCase: symptomBurdenQaly(3, 0.1),
+        note: "Non-STI row. Counts only marginal post-sex UTI episodes during the modeled sex horizon, not all UTIs someone might get. AUA/AAFP cite recent intercourse and spermicide/diaphragm use as UTI risk factors; plain condoms are left neutral because spermicide, lube and friction are not separately modeled."
+      };
+      const ANTIBIOTIC_ASSOCIATED_YEAST = {
+        name: "Antibiotic-associated yeast infections*",
+        riskPerAntibioticCourse: {
+          default: { female: 0.06, male: 0 },
+          prone: { female: 0.22, male: 0 }
+        },
+        qalyPerCase: symptomBurdenQaly(3, 0.08),
+        note: "Non-STI row. Driven only by antibiotic courses from marginal post-sex UTIs and modeled bacterial STIs, not background antibiotic use. CDC lists current/recent antibiotics as a VVC risk factor; the prone setting matches the small MetroNet symptomatic VVC estimate after short-course antibiotics."
+      };
 
       const DISEASES = [
         {
@@ -560,6 +623,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const childRateNumber = document.querySelector("#child-rate-number");
       const hpvVaccineScenario = document.querySelector("#hpv-vaccine-scenario");
       const uncertaintyScenario = document.querySelector("#uncertainty-scenario");
+      const utiProne = document.querySelector("#uti-prone");
+      const yeastProne = document.querySelector("#yeast-prone");
       const diseaseBreakdown = document.querySelector("#disease-breakdown");
 
       const ids = {
@@ -647,6 +712,89 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return { perPartner, probability, expectedCases, qaly };
       }
 
+      function postSexUtiOutcome(context, withCondom) {
+        const scenario = context.utiProne ? "prone" : "default";
+        const sexAttributableAnnualCases = POST_SEX_UTI.sexAttributableAnnualCases[scenario][context.perspective] ?? 0;
+        const condomMultiplier = withCondom ? POST_SEX_UTI.plainCondomMultiplier : 1;
+        const expectedCases = sexAttributableAnnualCases * YEARS * condomMultiplier;
+        const probability = expectedCases <= 0 ? 0 : 1 - Math.exp(-expectedCases);
+        const qaly = expectedCases * POST_SEX_UTI.qalyPerCase;
+
+        return {
+          probability,
+          expectedCases,
+          sexRelatedAntibioticCourses: expectedCases * POST_SEX_UTI.sexRelatedAntibioticCoursesPerCase,
+          qaly
+        };
+      }
+
+      function antibioticYeastOutcome(context, sexRelatedAntibioticCourses) {
+        const scenario = context.yeastProne ? "prone" : "default";
+        const riskPerCourse = ANTIBIOTIC_ASSOCIATED_YEAST.riskPerAntibioticCourse[scenario][context.perspective] ?? 0;
+        const expectedCases = sexRelatedAntibioticCourses * riskPerCourse;
+        const probability = sexRelatedAntibioticCourses <= 0 || riskPerCourse <= 0
+          ? 0
+          : 1 - Math.pow(1 - riskPerCourse, sexRelatedAntibioticCourses);
+        const qaly = expectedCases * ANTIBIOTIC_ASSOCIATED_YEAST.qalyPerCase;
+
+        return { probability, expectedCases, qaly };
+      }
+
+      function sexRelatedBacterialStiAntibioticCourses(stiRows) {
+        return stiRows.reduce(
+          (totals, row) => {
+            const coursesPerCase = SEX_RELATED_BACTERIAL_STI_ANTIBIOTIC_COURSES_PER_CASE[row.name] ?? 0;
+            return {
+              noCondom: totals.noCondom + row.noCases * coursesPerCase,
+              condom: totals.condom + row.condomCases * coursesPerCase
+            };
+          },
+          { noCondom: 0, condom: 0 }
+        );
+      }
+
+      function calculateDownstreamBurdenRows(stiRows, context) {
+        const noCondomUti = postSexUtiOutcome(context, false);
+        const condomUti = postSexUtiOutcome(context, true);
+        const stiAntibioticCourses = sexRelatedBacterialStiAntibioticCourses(stiRows);
+        // Yeast only sees antibiotics caused by this sex model: post-sex UTIs plus acquired bacterial STIs.
+        const noCondomYeast = antibioticYeastOutcome(
+          context,
+          stiAntibioticCourses.noCondom + noCondomUti.sexRelatedAntibioticCourses
+        );
+        const condomYeast = antibioticYeastOutcome(
+          context,
+          stiAntibioticCourses.condom + condomUti.sexRelatedAntibioticCourses
+        );
+
+        return [
+          {
+            name: POST_SEX_UTI.name,
+            note: POST_SEX_UTI.note,
+            noRisk: noCondomUti.probability,
+            condomRisk: condomUti.probability,
+            noCases: noCondomUti.expectedCases,
+            condomCases: condomUti.expectedCases,
+            noCondom: noCondomUti.qaly,
+            condom: condomUti.qaly,
+            vaccineBenefit: 0,
+            benefit: noCondomUti.qaly - condomUti.qaly
+          },
+          {
+            name: ANTIBIOTIC_ASSOCIATED_YEAST.name,
+            note: ANTIBIOTIC_ASSOCIATED_YEAST.note,
+            noRisk: noCondomYeast.probability,
+            condomRisk: condomYeast.probability,
+            noCases: noCondomYeast.expectedCases,
+            condomCases: condomYeast.expectedCases,
+            noCondom: noCondomYeast.qaly,
+            condom: condomYeast.qaly,
+            vaccineBenefit: 0,
+            benefit: noCondomYeast.qaly - condomYeast.qaly
+          }
+        ];
+      }
+
       function pregnancyTrajectory(annualFailure, exposureYears, pauseYears) {
         const totalSlots = Math.max(1, Math.ceil(exposureYears * PREGNANCY_SLOTS_PER_YEAR));
         const slotYears = exposureYears / totalSlots;
@@ -706,6 +854,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return methodFailure * condomFailure;
       }
 
+      function symptomBurdenQaly(days, utilityLoss) {
+        return (days * utilityLoss) / DAYS_PER_QALY;
+      }
+
       function weeksText(qaly) {
         const weeks = qaly * WEEKS_PER_QALY;
         if (weeks === 0) return "0 weeks";
@@ -739,7 +891,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return value.toFixed(2);
       }
 
-      function calculateDiseaseTotals({ perspective, partners, onlyCollege, hpvVaccineEffectiveness, testRecency, uncertaintyScenario }) {
+      function calculateDiseaseTotals({ perspective, partners, onlyCollege, hpvVaccineEffectiveness, testRecency, uncertaintyScenario, utiProne, yeastProne }) {
         const context = {
           perspective,
           partners,
@@ -747,10 +899,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           tier: onlyCollege ? "college" : "broad",
           actsPerPartner: TOTAL_ACTS / partners,
           testRecency,
-          uncertaintyScenario
+          uncertaintyScenario,
+          utiProne,
+          yeastProne
         };
 
-        return DISEASES.map((disease) => {
+        const stiRows = DISEASES.map((disease) => {
           const noCondom = diseaseOutcome(disease, context, false);
           const condom = diseaseOutcome(disease, context, true);
 
@@ -767,6 +921,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             benefit: noCondom.qaly - condom.qaly
           };
         });
+
+        return [
+          ...stiRows,
+          ...calculateDownstreamBurdenRows(stiRows, context)
+        ];
       }
 
       function renderBreakdown(rows) {
@@ -802,6 +961,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const pregnancyPauseYears = DEFAULT_PREGNANCY_PAUSE_YEARS;
         const hpvVaccineEffectiveness = HPV_VACCINE_SCENARIOS[hpvVaccineScenario.value] ?? HPV_VACCINE_SCENARIOS.preExposure;
         const selectedUncertaintyScenario = uncertaintyScenario.value || "base";
+        const isUtiProne = Boolean(utiProne?.checked);
+        const isYeastProne = Boolean(yeastProne?.checked);
         const noCondomAnnualFailure = noCondomBirthControl.annualFailure[useMode];
         const condomAnnualFailure = annualFailureWithCondoms(
           birthControlKey,
@@ -820,7 +981,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           onlyCollege,
           hpvVaccineEffectiveness,
           testRecency,
-          uncertaintyScenario: selectedUncertaintyScenario
+          uncertaintyScenario: selectedUncertaintyScenario,
+          utiProne: isUtiProne,
+          yeastProne: isYeastProne
         });
         const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
         const condomSti = diseaseRows.reduce((total, row) => total + row.condom, 0);
@@ -849,8 +1012,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         setText(
           ids.benefitNote,
           benefit >= 0
-            ? `Using condoms saves ${weeksText(Math.abs(benefit))} in this STI morbidity model. Pregnancy is excluded from QALY totals.`
-            : `Condoms add no modeled STI/QALY benefit in this input set. Pregnancy is excluded from QALY totals.`
+            ? `Using condoms saves ${weeksText(Math.abs(benefit))} in this STI plus downstream-burden model. Pregnancy is excluded from QALY totals.`
+            : `Condoms add no modeled QALY benefit in this input set. Pregnancy is excluded from QALY totals.`
         );
 
         setText(ids.noTotal, weeksText(noCondomTotal));
@@ -1377,6 +1540,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
   .breakdown-list {
     display: grid;
     gap: 0.35rem;
+  }
+
+  .breakdown-note {
+    margin: 0.55rem 0 0;
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.35;
+    text-wrap: pretty;
   }
 
   :global(.breakdown-row) {
