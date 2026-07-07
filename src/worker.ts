@@ -1,6 +1,10 @@
 export interface Env {
-  ASSETS: Fetcher;
+  ASSETS: AssetFetcher;
   AI_COMPASS_DB?: D1Database;
+}
+
+interface AssetFetcher {
+  fetch(request: Request): Promise<Response>;
 }
 
 interface D1Database {
@@ -279,7 +283,7 @@ function isFiniteNumber(value: unknown): value is number {
 }
 
 function isIntegerInRange(value: unknown, min: number, max: number): value is number {
-  return Number.isInteger(value) && value >= min && value <= max;
+  return typeof value === "number" && Number.isInteger(value) && value >= min && value <= max;
 }
 
 function isPrivatePath(pathname: string): boolean {
