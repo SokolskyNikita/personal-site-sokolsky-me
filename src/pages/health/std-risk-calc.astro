@@ -39,7 +39,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <p class="eyebrow">Health decision model</p>
           <h1>STD risk QALY calculator</h1>
           <p class="summary">
-            The calculation assumes one is a cishet Caucasian person in the United States. The numbers will be different for other groups/countries. The calculations are for vaginal/oral sex only.
+            The calculation assumes one is a cishet Caucasian person in the United States. The numbers will be different for other groups/countries and ages. The calculations are for vaginal/oral sex only, with the base model closer to vaginal exposure than oral-heavy exposure.
           </p>
         </div>
       </header>
@@ -97,10 +97,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <label class="control select-control" for="condom-pregnancy-mode">
             <span>Pregnancy comparison when condoms are used</span>
             <select id="condom-pregnancy-mode" name="condom-pregnancy-mode">
-              <option value="condom-only" selected>Condoms alone</option>
-              <option value="stacked">Condoms + selected method</option>
+              <option value="condom-only" selected>Switch to condoms alone</option>
+              <option value="stacked">Add condoms to selected method</option>
             </select>
-            <small>Stacked use is a simple independent-failure approximation, not a measured combined-method failure rate.</small>
+            <small>Use "add condoms" for the marginal value of condoms on top of pill, implant or withdrawal. Stacked use is a simple independent-failure approximation.</small>
           </label>
 
           <div class="control control-child-rate">
@@ -147,7 +147,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
           <div class="comparison-grid">
             <div class="comparison-row">
-              <h3>Total STI healthy weeks lost</h3>
+              <h3>Modeled STI healthy weeks lost</h3>
               <div class="comparison-value without">
                 <span>Without condoms</span>
                 <strong id="no-total">-</strong>
@@ -201,7 +201,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <article class="panel">
           <div class="section-heading">
             <p class="eyebrow">STI breakdown</p>
-            <h2>Lifetime healthy weeks lost by disease</h2>
+            <h2>Modeled lifetime healthy weeks lost by disease</h2>
           </div>
           <div class="breakdown-head" aria-hidden="true">
             <span>Disease</span>
@@ -218,31 +218,23 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <h2>Assumptions</h2>
           </div>
           <ul>
-            <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
+            <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row is an order-of-magnitude approximation: it converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
             <li>Oral and vaginal sex are still collapsed into one exposure window. The base case is closer to vaginal exposure; oral-heavy sex can materially overstate HIV risk and misallocate oral HPV, HSV and gonorrhea burden.</li>
-            <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms, but it is only a coarse proxy. Recent testing, concurrency, geography, age, partner network and injection-drug history matter more for some infections.</li>
-            <li>Pregnancy uses first-year contraceptive failure rates spread over the 10-year horizon. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The condom comparison can be condoms alone or condoms stacked with the selected no-condom method.</li>
+            <li>Age is not modeled. HSV prevalence, HSV-1 oral/genital site mix, HPV vaccination benefit, pregnancy risk and oropharyngeal-cancer risk can move materially by age and cohort.</li>
+            <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms, but it is only a coarse proxy. Recent testing, concurrency, geography, age, partner network and injection-drug history matter more for some infections; partner risk is also clustered rather than independent in real social networks.</li>
+            <li>Pregnancy uses first-year contraceptive failure rates spread over the 10-year horizon. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The condom comparison can model either switching to condoms alone or adding condoms to the selected no-condom method.</li>
             <li>The pregnancy/fertility pause uses a fixed 1.25-year median scenario because lactational amenorrhea is a conditional six-month method, not a stable two-year infertile interval.</li>
             <li>Projected children uses expected pregnancies across the selected horizon and the user-selected share of unintended pregnancies resulting in a child.</li>
             <li>The HPV vaccine scenario applies only to HPV-attributable rows. The 90% setting is most appropriate for pre-exposure vaccination; the adult/prior-exposure setting is intentionally lower.</li>
-            <li>HSV rows use You et al.'s adult anchors, then subtract the roughly 40% post-diagnosis psychosocial share. Physical-only QALY/case is 0.03 for HSV-2 and 0.006 for genital HSV-1. Neonatal HSV, stigma, disclosure anxiety and HSV-attributable HIV are not counted.</li>
+            <li>HSV rows use You et al.'s adult anchors, then subtract the roughly 40% post-diagnosis psychosocial share. Physical-only QALY/case is 0.03 for HSV-2 and 0.006 for genital HSV-1. Neonatal HSV, stigma, disclosure anxiety and HSV-attributable HIV are not counted. HSV-2 condom protection is sex/direction-specific in the model.</li>
             <li>Pregnancy is shown separately and is excluded from QALY totals. Female perspective uses one fertility clock; male perspective gives each partner a separate clock over their share of the 10-year exposure window.</li>
+            <li>Bacterial STI surveillance caveats are real, but this page uses low-risk prevalence anchors rather than raw national reported case rates.</li>
             <li>M. genitalium uses NHANES sex/race prevalence scaled by exposed-partner infection rates. Its female QALY/case is scaled from Li et al.'s chlamydia estimate by the modeled PID-progression ratio for M. genitalium vs. chlamydia; male QALY/case is a urethritis-only proxy because CDC says male chronic-complication data are insufficient.</li>
             <li>The M. genitalium row does not separately model macrolide resistance, persistence or retreatment burden, so it is intentionally exposed to the sensitivity control.</li>
             <li>Ureaplasma models only possible high-load U. urealyticum nongonococcal urethritis in men, not common Ureaplasma carriage. Female per-partner risk and QALY/case are set to 0 because CDC and European STI guidance do not support a cervicitis/PID/infertility burden estimate.</li>
             <li>The sensitivity control scales the least certain STI inputs: HPV persistence/progression, HSV physical-only QALYs, bacterial STI QALYs, M. genitalium and high-load Ureaplasma. It is a scenario check, not a formal confidence interval.</li>
           </ul>
         </aside>
-      </section>
-
-      <section class="sources critique-notes" aria-labelledby="critique-notes-heading">
-        <h2 id="critique-notes-heading">Critique triage footnotes</h2>
-        <ul>
-          <li>Validated and changed: contraceptive failure is no longer applied as a full first-year hazard per partner; condom pregnancy comparison, child outcome share, HPV vaccine benefit and uncertain-input sensitivity are now user-selectable, while postpartum pause uses a fixed 1.25-year scenario.</li>
-          <li>Validated but left as caveats: oral-heavy sex, partner-risk clustering and the college-degree proxy need richer inputs than this compact calculator has.</li>
-          <li>Already addressed before this pass: HSV condom effectiveness is sex/direction-specific, HSV QALYs are explicitly physical-only, and female Ureaplasma burden is intentionally zero under CDC/European guidance.</li>
-          <li>Not adopted as a direct point-estimate change: reported bacterial STI surveillance caveats are real, but this page already uses low-risk prevalence anchors rather than raw national reported case rates.</li>
-        </ul>
       </section>
 
       <section class="sources" aria-labelledby="sources-heading">
@@ -303,7 +295,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HPV-attributable OPC",
           route: "lifetime",
           repeatable: false,
-          note: "Approximate lifetime oropharyngeal-cancer burden, calibrated to the default partner count. Condoms do not change this term; male OPC risk is much higher than female OPC risk.",
+          note: "Order-of-magnitude lifetime oropharyngeal-cancer burden, calibrated to the default partner count. Condoms do not change this term; male OPC risk is much higher than female OPC risk.",
           baselinePartners: BASELINE_PARTNERS,
           lifetimeRisk: {
             college: { female: 0.0035, male: 0.0095 },
@@ -349,7 +341,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HSV-1 genital",
           route: "perPartner",
           repeatable: false,
-          note: "Mostly oral-acquired genital HSV-1. Condoms do not change it when oral sex is unbarriered.",
+          note: "Proxy for oral-acquired genital HSV-1. HSV-1 serology does not identify infection site; condoms do not change this term when oral sex is unbarriered.",
           perPartner: {
             college: { female: 0.0009, male: 0.0007 },
             broad: { female: 0.0012, male: 0.001 }
@@ -761,7 +753,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         setText(
           ids.benefitNote,
           benefit >= 0
-            ? `Using condoms saves ${weeksText(Math.abs(benefit))} of STI-related healthy time. Pregnancy is excluded from QALY totals.`
+            ? `Using condoms saves ${weeksText(Math.abs(benefit))} in this STI morbidity model. Pregnancy is excluded from QALY totals.`
             : `Condoms add no modeled STI/QALY benefit in this input set. Pregnancy is excluded from QALY totals.`
         );
 
@@ -1244,7 +1236,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
   .detail-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.34fr) minmax(16rem, 0.66fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.9rem;
     margin-top: 0.9rem;
   }
