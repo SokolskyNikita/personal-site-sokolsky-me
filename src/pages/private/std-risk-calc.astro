@@ -49,8 +49,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <fieldset class="control control-perspective">
             <legend>Perspective</legend>
             <div class="segmented" role="radiogroup" aria-label="Perspective">
-              <label><input type="radio" name="perspective" value="female" /><span>Female</span></label>
               <label><input type="radio" name="perspective" value="male" checked /><span>Male</span></label>
+              <label><input type="radio" name="perspective" value="female" /><span>Female</span></label>
             </div>
           </fieldset>
 
@@ -76,8 +76,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <fieldset class="control control-use-mode">
             <legend>Pregnancy prevention use</legend>
             <div class="segmented" role="radiogroup" aria-label="Pregnancy prevention use">
-              <label><input type="radio" name="use-mode" value="typical" checked /><span>Typical use</span></label>
-              <label><input type="radio" name="use-mode" value="perfect" /><span>Perfect use</span></label>
+              <label><input type="radio" name="use-mode" value="perfect" checked /><span>Perfect use</span></label>
+              <label><input type="radio" name="use-mode" value="typical" /><span>Typical use</span></label>
             </div>
             <p class="hint">
               Applies to both the selected no-condom method and the condom comparison.
@@ -88,7 +88,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <span>Birth control when no condoms are used</span>
             <select id="birth-control" name="birth-control">
               <option value="none">None</option>
-              <option value="withdrawal" selected>Withdrawal</option>
+              <option value="withdrawal" selected>Pull out</option>
               <option value="pill">Birth control pill</option>
               <option value="implant">Contraceptive implant</option>
             </select>
@@ -184,7 +184,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <ul>
             <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
-            <li>Pregnancy uses first-year-equivalent failure rates per partner. Typical use: none 85%, withdrawal 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: withdrawal 4%, pill 0.3%, implant 0.1%, male condom 2%. The with-condoms case uses condoms alone, without withdrawal or other contraception stacked on top.</li>
+            <li>Pregnancy uses first-year-equivalent failure rates per partner. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
             <li>Pregnancy is shown separately and is excluded from QALY totals. Each pregnancy removes roughly 2 years from future pregnancy exposure while pregnant and breastfeeding; this is modeled as one shared fertility clock for female perspective and partner-specific clocks for male perspective.</li>
             <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
@@ -352,7 +352,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       const BIRTH_CONTROL = {
         none: { label: "None", annualFailure: { typical: 0.85, perfect: 0.85 } },
-        withdrawal: { label: "Withdrawal", annualFailure: { typical: 0.2, perfect: 0.04 } },
+        withdrawal: { label: "Pull out", annualFailure: { typical: 0.2, perfect: 0.04 } },
         pill: { label: "Birth control pill", annualFailure: { typical: 0.07, perfect: 0.003 } },
         implant: { label: "Contraceptive implant", annualFailure: { typical: 0.001, perfect: 0.001 } }
       };
@@ -507,7 +507,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       }
 
       function childrenText(value) {
-        if (value < 1) return value.toFixed(3);
         return value.toFixed(2);
       }
 

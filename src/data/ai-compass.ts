@@ -405,8 +405,9 @@ export const DECK = [
   },
 ];
 
-// 22 archetypes. Most are points in the five-dimensional space [T, V, S, I, P],
-// every coordinate in [-1, 1]. The last one is reserved for very low Certainty.
+// 23 archetypes. Most are points in the five-dimensional space [T, V, S, I, P],
+// every coordinate in [-1, 1]. The Open Question is reserved for very low
+// Certainty; The Zen Master is a special entry-screen opt-out result.
 export const ARCHETYPES = [
   {
     name: "The Short Seller",
@@ -561,6 +562,13 @@ export const ARCHETYPES = [
     habitat: "Habitat: the tab left open while everyone else is already posting.",
     seed: { T: 0.0, V: 0.0, S: 0.0, I: 0.0, P: 0.0 },
     desc: "You skipped enough questions that the honest result is a question mark with good posture. Maybe you are new to the discourse, maybe allergic to false precision, maybe simply unwilling to pretend you know what a civilization-scale technology is doing while it is still happening. Call it a refusal to outsource your uncertainty to the nearest loud person.",
+  },
+  {
+    name: "The Zen Master",
+    tag: "No takes. No discourse. No problem.",
+    habitat: "Habitat: doing literally anything else.",
+    seed: { T: 0.0, V: 0.0, S: 0.0, I: -1.0, P: 0.0 },
+    desc: "You saw an AI personality test and chose the only honest answer: no. Not because your worldview is subtle, but because this topic has failed to rent space in your head. While everyone else argues timelines, regulation and synthetic souls, you are free.",
   },
 ];
 

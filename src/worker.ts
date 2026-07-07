@@ -40,6 +40,7 @@ const AI_COMPASS_RESULT_PATH = "/api/ai-compass/result";
 const PRIVATE_PATH_PREFIX = "/private/";
 const LLMS_TXT_PATH = "/llms.txt";
 const AXIS_KEYS = ["T", "V", "S", "I", "P"] as const;
+const MAX_AI_COMPASS_ARCHETYPE_INDEX = 22;
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -190,7 +191,7 @@ function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
     parsedScores[key] = value;
   }
 
-  const runnerIndexes = readNumberArray(payload.runnerIndexes, 2, 0, 21);
+  const runnerIndexes = readNumberArray(payload.runnerIndexes, 2, 0, MAX_AI_COMPASS_ARCHETYPE_INDEX);
   const runnerNames = readStringArray(payload.runnerNames, 2, 80);
   const runnerFits = readNumberArray(payload.runnerFits, 2, 0, 100);
   if (!runnerIndexes || !runnerNames || !runnerFits) return null;
@@ -215,7 +216,7 @@ function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
     !payload.path.startsWith("/tests/ai-compass") ||
     payload.path.length > 128 ||
     payload.answeredCount !== answeredCount ||
-    !isIntegerInRange(payload.archetypeIndex, 0, 21) ||
+    !isIntegerInRange(payload.archetypeIndex, 0, MAX_AI_COMPASS_ARCHETYPE_INDEX) ||
     typeof payload.archetypeName !== "string" ||
     payload.archetypeName.length < 1 ||
     payload.archetypeName.length > 80 ||

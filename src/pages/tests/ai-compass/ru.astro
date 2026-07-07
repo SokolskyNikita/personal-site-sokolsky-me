@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "ИИ-компас";
 const pageDescription =
-  "30 вопросов по пяти осям отношения к ИИ, плюс оценка уверенности по числу пропусков. Узнайте, какой из 22 ИИ-архетипов ближе всего к вам.";
+  "30 вопросов по пяти осям отношения к ИИ, плюс оценка уверенности по числу пропусков. Узнайте, какой из 23 ИИ-архетипов ближе всего к вам.";
 const themeColorLight = "#fbfaf6";
 const themeColorDark = "#171410";
 const siteUrl =
@@ -90,6 +90,7 @@ const structuredData = {
         <section id="intro" aria-label="Начать тест">
           <div class="intro-card">
             <button type="button" class="btn btn-primary btn-lead" id="start-quiz">Пройти тест</button>
+            <button type="button" class="btn btn-ghost" id="skip-test">Я не хочу проходить тест</button>
             <p class="intro-link">
               <a href="/tests/ai-compass/ru/about">О тесте &rarr;</a>
             </p>
@@ -125,7 +126,7 @@ const structuredData = {
             <button type="button" class="btn btn-ghost" id="retake">Пройти заново</button>
           </div>
           <p class="results-links">
-            <a href="/tests/ai-compass/ru/about">Посмотреть все 22 архетипа и узнать, как работает подсчет &rarr;</a>
+            <a href="/tests/ai-compass/ru/about">Посмотреть все 23 архетипа и узнать, как работает подсчет &rarr;</a>
           </p>
         </section>
       </article>
@@ -152,7 +153,9 @@ const structuredData = {
         "В целом вы знали, где стоите, и оставили пустыми только несколько вопросов.",
         "Вы пришли с уже заряженными мнениями. Результат может быть неверным, но он не недоопределен.",
       ];
-      const LOW_CERTAINTY_ARCHETYPE_INDEX = ARCHETYPES.length - 1;
+      const LOW_CERTAINTY_ARCHETYPE_INDEX = ARCHETYPES.length - 2;
+      const ZEN_MASTER_ARCHETYPE_INDEX = ARCHETYPES.length - 1;
+      const ZEN_MASTER_HASH = "#zen-master";
       const LOW_CERTAINTY_MAX_SCORE = -0.55;
 
       const AXIS_READINGS = {
@@ -198,6 +201,7 @@ const structuredData = {
         idx: 0,
         finished: false,
         telemetrySent: false,
+        specialResultIndex: null,
         startedAt: Date.now(),
       };
 
@@ -222,6 +226,7 @@ const structuredData = {
               idx: state.idx,
               finished: state.finished,
               telemetrySent: state.telemetrySent,
+              specialResultIndex: state.specialResultIndex,
               startedAt: state.startedAt,
             })
           );
@@ -241,6 +246,8 @@ const structuredData = {
           state.finished = Boolean(data.finished);
           state.telemetrySent =
             data.telemetrySent === undefined && state.finished ? true : Boolean(data.telemetrySent);
+          state.specialResultIndex =
+            data.specialResultIndex === ZEN_MASTER_ARCHETYPE_INDEX ? ZEN_MASTER_ARCHETYPE_INDEX : null;
           state.startedAt = Number.isFinite(data.startedAt) ? data.startedAt : Date.now();
           return true;
         } catch (_) {
@@ -314,7 +321,9 @@ const structuredData = {
         if (scoredKeys.length === 0) return [];
         const ranked = ARCHETYPES
           .map((arch, index) => ({ arch, index }))
-          .filter(({ index }) => index !== LOW_CERTAINTY_ARCHETYPE_INDEX)
+          .filter(({ index }) =>
+            index !== LOW_CERTAINTY_ARCHETYPE_INDEX && index !== ZEN_MASTER_ARCHETYPE_INDEX
+          )
           .map(({ arch, index }) => {
             let sq = 0;
             scoredKeys.forEach((key) => {
@@ -456,6 +465,7 @@ const structuredData = {
         const previous = state.answers[state.idx];
         state.answers[state.idx] = answerValue;
         state.finished = false;
+        state.specialResultIndex = null;
         if (previous !== answerValue) state.telemetrySent = false;
         if (!Number.isFinite(state.startedAt)) state.startedAt = Date.now();
         saveLocal();
@@ -505,6 +515,9 @@ const structuredData = {
         const runners = ranked.slice(1, 3);
         const scoredKeys = AXIS_KEYS.filter((key) => scores[key] !== null);
         const certainty = certaintyScore();
+        const fitNote = !top.special && scoredKeys.length < AXIS_KEYS.length
+          ? `<span class="fit-note">учтено ${scoredKeys.length} из 5 осей</span>`
+          : "";
 
         let fpRows = "";
         AXIS_KEYS.forEach((key) => {
@@ -528,16 +541,22 @@ const structuredData = {
         const runnersHtml = runners
           .map((r) => `<a href="/tests/ai-compass/ru/about#arch-${r.index}">${r.arch.name}</a> <span class="fit-small">${r.fit}%</span>`)
           .join(" · ");
+        const legendHtml = scoredKeys.length > 0
+          ? `<p class="v-legend">Сплошная полоса: вы. Пустая метка: ${top.arch.name}.</p>`
+          : "";
+        const runnersLine = runners.length > 0
+          ? `<p class="v-runners">Рядом также: ${runnersHtml}</p>`
+          : "";
 
         verdictEl.innerHTML =
           `<p class="v-kicker">Ваш результат</p>` +
           `<h2 class="v-title">${top.arch.name}</h2>` +
           `<p class="v-tag">${top.arch.tag}</p>` +
-          `<p class="v-fit"><span class="fit-chip">совпадение ${top.fit}%</span>${scoredKeys.length < AXIS_KEYS.length ? `<span class="fit-note">учтено ${scoredKeys.length} из 5 осей</span>` : ""}</p>` +
+          `<p class="v-fit"><span class="fit-chip">совпадение ${top.fit}%</span>${fitNote}</p>` +
           `<p class="v-desc">${top.arch.desc}</p>` +
           `<div class="v-fingerprint">${fpRows}</div>` +
-          `<p class="v-legend">Сплошная полоса: вы. Пустая метка: ${top.arch.name}.</p>` +
-          `<p class="v-runners">Рядом также: ${runnersHtml}</p>`;
+          legendHtml +
+          runnersLine;
       }
 
       function renderAxesReport(scores) {
@@ -632,7 +651,7 @@ const structuredData = {
         return (
           `ИИ-компас: мой результат ${top.arch.name} (совпадение ${top.fit}%).\n` +
           parts.join(" · ") + "\n" +
-          location.origin + location.pathname + "#a=" + encodeAnswers()
+          location.href
         );
       }
 
@@ -644,7 +663,7 @@ const structuredData = {
         const durationMs = Number.isFinite(state.startedAt) ? Date.now() - state.startedAt : null;
         const scorePayload = {};
         AXIS_KEYS.forEach((key) => {
-          scorePayload[key] = Number(scores[key].toFixed(4));
+          scorePayload[key] = scores[key] === null ? 0 : Number(scores[key].toFixed(4));
         });
         scorePayload[CERTAINTY_AXIS.key] = Number(certaintyScore().toFixed(4));
 
@@ -667,6 +686,7 @@ const structuredData = {
             runnerNames: runners.map((r) => r.arch.name),
             runnerFits: runners.map((r) => r.fit),
             scores: scorePayload,
+            specialResult: top.special === true,
             durationMs,
           }),
         })
@@ -691,6 +711,7 @@ const structuredData = {
         if (ranked.length === 0) return;
 
         state.finished = true;
+        state.specialResultIndex = null;
         if (persist) saveLocal();
         history.replaceState(null, "", "#a=" + encodeAnswers());
 
@@ -699,6 +720,47 @@ const structuredData = {
         renderMinimap(scores, ranked);
         sendResultTelemetry(scores, ranked, persist);
 
+        quizShell.hidden = true;
+        resultsSection.hidden = false;
+        requestAnimationFrame(() => {
+          resultsSection.classList.add("in");
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        const copyLink = document.getElementById("copy-link");
+        const copyText = document.getElementById("copy-text");
+        copyLink.onclick = () => copyToClipboard(copyLink, location.href, "Скопировать ссылку");
+        copyText.onclick = () => copyToClipboard(copyText, buildSummaryText(scores, ranked), "Скопировать результат текстом");
+      }
+
+      function showSpecialResult(archetypeIndex, persist = true) {
+        if (advanceTimer) { clearTimeout(advanceTimer); advanceTimer = null; }
+        const scores = Object.fromEntries(AXIS_KEYS.map((key) => [key, null]));
+        const neutralScores = Object.fromEntries(AXIS_KEYS.map((key) => [key, 0]));
+        const ranked = [
+          {
+            arch: ARCHETYPES[archetypeIndex],
+            index: archetypeIndex,
+            dist: 0,
+            fit: 100,
+            special: true,
+          },
+          ...matchArchetypes(neutralScores).slice(0, 2),
+        ];
+
+        state.answers = new Array(DECK.length).fill(UNANSWERED);
+        state.idx = 0;
+        state.finished = true;
+        state.specialResultIndex = archetypeIndex;
+        if (persist) saveLocal();
+        history.replaceState(null, "", ZEN_MASTER_HASH);
+
+        renderVerdict(scores, ranked);
+        renderAxesReport(scores);
+        renderMinimap(scores, ranked);
+        sendResultTelemetry(scores, ranked, persist);
+
+        introSection.hidden = true;
         quizShell.hidden = true;
         resultsSection.hidden = false;
         requestAnimationFrame(() => {
@@ -736,12 +798,25 @@ const structuredData = {
         if (completedCount() === 0) {
           state.startedAt = Date.now();
           state.telemetrySent = false;
+          state.specialResultIndex = null;
           saveLocal();
         }
         showQuiz();
       });
 
+      document.getElementById("skip-test").addEventListener("click", () => {
+        state.startedAt = Date.now();
+        state.telemetrySent = false;
+        showSpecialResult(ZEN_MASTER_ARCHETYPE_INDEX);
+      });
+
       document.getElementById("review-answers").addEventListener("click", () => {
+        if (state.specialResultIndex !== null) {
+          state.finished = false;
+          state.specialResultIndex = null;
+          saveLocal();
+          history.replaceState(null, "", location.pathname);
+        }
         state.idx = 0;
         showQuiz();
         quizSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -752,6 +827,7 @@ const structuredData = {
         state.idx = 0;
         state.finished = false;
         state.telemetrySent = false;
+        state.specialResultIndex = null;
         state.startedAt = Date.now();
         try { localStorage.removeItem(STORE_KEY); } catch (_) { /* noop */ }
         history.replaceState(null, "", location.pathname);
@@ -780,7 +856,9 @@ const structuredData = {
 
       const hashMatch = location.hash.match(/^#a=([0-9]+)$/);
       const fromHash = hashMatch ? decodeAnswers(hashMatch[1]) : null;
-      if (fromHash && fromHash.some((v) => v !== UNANSWERED)) {
+      if (location.hash === ZEN_MASTER_HASH) {
+        showSpecialResult(ZEN_MASTER_ARCHETYPE_INDEX, false);
+      } else if (fromHash && fromHash.some((v) => v !== UNANSWERED)) {
         state.answers = fromHash;
         introSection.hidden = true;
         quizShell.hidden = false;
@@ -795,7 +873,9 @@ const structuredData = {
         }
       } else {
         loadLocal();
-        if (state.finished && allAnswered()) {
+        if (state.finished && state.specialResultIndex === ZEN_MASTER_ARCHETYPE_INDEX) {
+          showSpecialResult(ZEN_MASTER_ARCHETYPE_INDEX);
+        } else if (state.finished && allAnswered()) {
           introSection.hidden = true;
           quizShell.hidden = false;
           renderQuestion();

@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "How the AI Compass works";
 const pageDescription =
-  "Notes on the AI Compass: five opinion axes, the Certainty score, twenty-two archetypes and the scoring that connects them.";
+  "Notes on the AI Compass: five opinion axes, the Certainty score, twenty-three archetypes and the scoring that connects them.";
 const themeColorLight = "#fbfaf6";
 const themeColorDark = "#171410";
 const siteUrl =
@@ -82,7 +82,7 @@ const structuredData = {
           <p class="hero-kicker">Notes on the test</p>
           <h1>How the AI Compass works</h1>
           <p class="hero-description">
-            Five opinion axes, one Certainty score and twenty-two archetypes.
+            Five opinion axes, one Certainty score and twenty-three archetypes.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="/tests/ai-compass">Take the quiz</a>
@@ -118,9 +118,9 @@ const structuredData = {
         </section>
 
         <section id="archetypes" aria-labelledby="archetypes-heading">
-          <h2 id="archetypes-heading">The twenty-two archetypes</h2>
+          <h2 id="archetypes-heading">The twenty-three archetypes</h2>
           <p>
-            Twenty-one archetypes are fixed points in the five-axis opinion space. The bars show their coordinates: left of center toward the first pole, right of center toward the second. Your answers land somewhere in the same space and the nearest points win. The Open Question is the exception, reserved for the lowest Certainty results.
+            Twenty-one archetypes are fixed points in the five-axis opinion space. The bars show their coordinates: left of center toward the first pole, right of center toward the second. Your answers land somewhere in the same space and the nearest points win. The Open Question is reserved for the lowest Certainty results. The Zen Master is the special opt-out result for people who do not want to take the test at all.
           </p>
           <div class="archetype-grid">
             {ARCHETYPES.map((arch, index) => (
@@ -153,7 +153,7 @@ const structuredData = {
             Every question belongs to one opinion axis and every answer carries a score from &minus;2 to +2 on that axis. Your position on an axis is the mean of your answers there, converted to the interval from &minus;1 to +1. Six questions per axis, thirty in total. A skipped question counts as neutral on its opinion axis and lowers your Certainty score.
           </p>
           <p>
-            For regular results, archetype matching is nearest-neighbor: each archetype sits at a fixed point in the five-axis space, and your result is whichever point lies closest to yours, using root-mean-square distance over the axes you scored. The fit percentage maps that distance onto a 0&ndash;100 scale. A 100 means you sit exactly on the archetype; a 0 means you sit in the opposite corner of the space. If your Certainty lands in the lowest bucket, the test returns The Open Question instead.
+            For regular results, archetype matching is nearest-neighbor: each archetype sits at a fixed point in the five-axis space, and your result is whichever point lies closest to yours, using root-mean-square distance over the axes you scored. The fit percentage maps that distance onto a 0&ndash;100 scale. A 100 means you sit exactly on the archetype; a 0 means you sit in the opposite corner of the space. If your Certainty lands in the lowest bucket, the test returns The Open Question instead. The Zen Master is excluded from matching and only appears when you opt out on the entry screen.
           </p>
           <p>
             The questions are opinionated on purpose. Neutral wording produces neutral lies: nobody has ever held the position &ldquo;I somewhat agree that technology has implications.&rdquo; The options are written the way actual people talk, which is what makes picking one informative. The five axes follow what attitude research and the discourse itself keep finding: capability beliefs, harm&ndash;benefit judgments, governance preferences, personal adoption and mind attribution move independently. A person can believe AI is world-changing and terrible, use it every day and want it regulated into a licensed utility. One number cannot hold that person; two numbers barely manage.
