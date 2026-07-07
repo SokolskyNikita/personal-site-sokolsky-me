@@ -238,7 +238,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <span>Benefit</span>
           </div>
           <div class="breakdown-list" id="disease-breakdown"></div>
-          <p class="breakdown-note">*Not an STI/STD. Included because sex can trigger UTIs in some people, and antibiotics used for UTIs or bacterial STIs can trigger yeast infections in some people.</p>
+          <p class="breakdown-note">*Not an STI/STD. Included because sex can trigger UTIs or marginally increase symptomatic BV risk in some people, and antibiotics used for UTIs or bacterial STIs can trigger yeast infections in some people.</p>
         </article>
 
         <aside class="panel assumptions">
@@ -250,7 +250,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <h3>What the calculator is estimating</h3>
               <ul>
                 <li>Each STI row estimates: how likely a partner is to be infectious, how likely transmission is during the 10-year exposure window, and how much healthy time one infection is expected to cost.</li>
-                <li>The asterisked rows are not STI transmission rows. They are simple expected-value add-ons for marginal sex-attributable UTIs and yeast infections from sex-related antibiotic courses.</li>
+                <li>The asterisked rows are not STI transmission rows. They are simple expected-value add-ons for marginal sex-attributable UTIs/BV and yeast infections from sex-related antibiotic courses. Background BV, background UTIs and unrelated antibiotic use are excluded.</li>
                 <li>The totals are a rough expected-value model of direct physical health burden. They are not a clinical prediction for one specific person, and pregnancy is shown separately instead of being folded into QALYs.</li>
               </ul>
             </section>
@@ -315,11 +315,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </section>
 
             <section class="assumption-group">
-              <h3>UTIs and antibiotic-associated yeast</h3>
+              <h3>BV, UTIs and antibiotic-associated yeast</h3>
               <ul>
                 <li>Post-sex UTIs are modeled as a marginal sex-associated burden, not as partner prevalence times transmission probability and not as all UTIs someone might otherwise get. The default assumes few sex-triggered UTIs; the UTI-prone toggle uses a recurrent/postcoital-UTI style rate.</li>
                 <li>Ordinary condoms are treated as neutral for UTIs. Evidence supports sex itself as the main marginal trigger, and condom effects depend on product details, lubrication, friction and individual anatomy.</li>
                 <li>Yeast infections are driven only by modeled antibiotic courses from post-sex UTIs and bacterial STIs acquired in this calculator. Antibiotics for unrelated illnesses are excluded. The yeast-prone toggle uses the symptomatic VVC rate from a small prospective antibiotic study as a high-susceptibility setting.</li>
+                <li>BV is modeled as a separate vaginal-health row for the female perspective only. It counts only the incremental symptomatic BV burden attributed to the modeled sex exposure, not all BV in sexually active people and not BV that can occur without sex. Condoms reduce only that marginal row using the pooled BV condom-use estimate rather than the stronger perfect-use estimate.</li>
               </ul>
             </section>
 
@@ -337,7 +338,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements, Winer NEJM genital HPV condom data, AUA/AAFP postcoital UTI guidance, CDC candidiasis guidance and antibiotic-associated VVC studies.
+          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements, Winer NEJM genital HPV condom data, AUA/AAFP postcoital UTI guidance, CDC candidiasis guidance, antibiotic-associated VVC studies, CDC/NHANES BV prevalence, BV condom-use meta-analysis and VITA recurrent-BV quality-of-life data.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -370,12 +371,19 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
           <li><a href="https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti" target="_blank" rel="noreferrer noopener">AUA/CUA/SUFU recurrent uncomplicated UTI guideline</a></li>
           <li><a href="https://www.aafp.org/pubs/afp/issues/2011/1001/p771.html" target="_blank" rel="noreferrer noopener">AAFP acute uncomplicated cystitis diagnosis and treatment</a></li>
-          <li><a href="https://www.cdc.gov/contraception/hcp/usmec/barrier-methods.html" target="_blank" rel="noreferrer noopener">CDC barrier-method guidance: UTI note</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/9345662/" target="_blank" rel="noreferrer noopener">Condom use and first-time UTI study</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9891499/" target="_blank" rel="noreferrer noopener">Uncomplicated UTI HRQoL and activity impairment study</a></li>
           <li><a href="https://www.cdc.gov/candidiasis/risk-factors/index.html" target="_blank" rel="noreferrer noopener">CDC candidiasis risk factors</a></li>
           <li><a href="https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm" target="_blank" rel="noreferrer noopener">CDC vulvovaginal candidiasis treatment guideline</a></li>
           <li><a href="https://pubmed.ncbi.nlm.nih.gov/18612052/" target="_blank" rel="noreferrer noopener">MetroNet study: antibiotics and vulvovaginal candidiasis</a></li>
           <li><a href="https://pubmed.ncbi.nlm.nih.gov/12825971/" target="_blank" rel="noreferrer noopener">Postmarketing study: vaginal candidiasis after antibiotics</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/2167008/" target="_blank" rel="noreferrer noopener">Contraception, sexual activity and candidiasis/BV rates</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/14709186/" target="_blank" rel="noreferrer noopener">Candida recurrence and sexual-behavior study</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/17917605/" target="_blank" rel="noreferrer noopener">Condom use and bacterial vaginosis study</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/18947329/" target="_blank" rel="noreferrer noopener">Sexual risk factors and BV meta-analysis</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/17621244/" target="_blank" rel="noreferrer noopener">U.S. BV prevalence and symptom reporting</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/16652274/" target="_blank" rel="noreferrer noopener">BV recurrence after metronidazole treatment</a></li>
+          <li><a href="https://www.ncbi.nlm.nih.gov/books/NBK577306/table/table17/?report=objectonly" target="_blank" rel="noreferrer noopener">VITA recurrent-BV SF-6D/QALY table</a></li>
         </ul>
       </section>
     </main>
@@ -424,6 +432,18 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         qalyPerCase: symptomBurdenQaly(3, 0.1),
         note: "Non-STI row. Counts only marginal post-sex UTI episodes during the modeled sex horizon, not all UTIs someone might get. AUA/AAFP cite recent intercourse as a UTI risk factor; ordinary condoms are left neutral because product details, lubrication, friction and anatomy are not separately modeled."
       };
+      const BACTERIAL_VAGINOSIS = {
+        name: "Bacterial vaginosis*",
+        // Incremental symptomatic BV episodes allocated to the modeled sex exposure only.
+        // Do not replace with all-cause BV prevalence or recurrence.
+        marginalSexAttributableAnnualCases: {
+          college: { female: 0.16, male: 0 },
+          broad: { female: 0.24, male: 0 }
+        },
+        condomMultiplier: 0.8,
+        qalyPerCase: symptomBurdenQaly(14, 0.08),
+        note: "Non-STI row. Female-perspective only. Counts a conservative marginal symptomatic BV burden attributed to this sex model, not background BV, asymptomatic BV, BV that can occur without sex, or pregnancy/STI sequelae. CDC/NHANES find BV is common but often asymptomatic; VITA recurrent-BV data show lower SF-6D during symptomatic care. Condoms use the pooled BV sexual-risk meta-analysis estimate (RR 0.8), while Hutchinson 2007 found a stronger association for perfectly consistent use (aOR 0.55)."
+      };
       const ANTIBIOTIC_ASSOCIATED_YEAST = {
         name: "Antibiotic-associated yeast infections*",
         riskPerAntibioticCourse: {
@@ -431,7 +451,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           prone: { female: 0.22, male: 0 }
         },
         qalyPerCase: symptomBurdenQaly(3, 0.08),
-        note: "Non-STI row. Driven only by antibiotic courses from marginal post-sex UTIs and modeled bacterial STIs, not background antibiotic use. CDC lists current/recent antibiotics as a VVC risk factor; the prone setting matches the small MetroNet symptomatic VVC estimate after short-course antibiotics."
+        note: "Non-STI row. Driven only by antibiotic courses from marginal post-sex UTIs and modeled bacterial STIs, not background antibiotic use. No direct condom or BV effect is included. CDC lists current/recent antibiotics as a VVC risk factor; the prone setting matches the small MetroNet symptomatic VVC estimate after short-course antibiotics."
       };
 
       const DISEASES = [
@@ -728,6 +748,15 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         };
       }
 
+      function marginalBacterialVaginosisOutcome(context, withCondom) {
+        const marginalSexAttributableAnnualCases = BACTERIAL_VAGINOSIS.marginalSexAttributableAnnualCases[context.tier][context.perspective] ?? 0;
+        const expectedCases = marginalSexAttributableAnnualCases * YEARS * (withCondom ? BACTERIAL_VAGINOSIS.condomMultiplier : 1);
+        const probability = expectedCases <= 0 ? 0 : 1 - Math.exp(-expectedCases);
+        const qaly = expectedCases * BACTERIAL_VAGINOSIS.qalyPerCase;
+
+        return { probability, expectedCases, qaly };
+      }
+
       function antibioticYeastOutcome(context, sexRelatedAntibioticCourses) {
         const scenario = context.yeastProne ? "prone" : "default";
         const riskPerCourse = ANTIBIOTIC_ASSOCIATED_YEAST.riskPerAntibioticCourse[scenario][context.perspective] ?? 0;
@@ -756,6 +785,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       function calculateDownstreamBurdenRows(stiRows, context) {
         const noCondomUti = postSexUtiOutcome(context, false);
         const condomUti = postSexUtiOutcome(context, true);
+        const noCondomBv = marginalBacterialVaginosisOutcome(context, false);
+        const condomBv = marginalBacterialVaginosisOutcome(context, true);
         const stiAntibioticCourses = sexRelatedBacterialStiAntibioticCourses(stiRows);
         // Yeast only sees antibiotics caused by this sex model: post-sex UTIs plus acquired bacterial STIs.
         const noCondomYeast = antibioticYeastOutcome(
@@ -779,6 +810,18 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             condom: condomUti.qaly,
             vaccineBenefit: 0,
             benefit: noCondomUti.qaly - condomUti.qaly
+          },
+          {
+            name: BACTERIAL_VAGINOSIS.name,
+            note: BACTERIAL_VAGINOSIS.note,
+            noRisk: noCondomBv.probability,
+            condomRisk: condomBv.probability,
+            noCases: noCondomBv.expectedCases,
+            condomCases: condomBv.expectedCases,
+            noCondom: noCondomBv.qaly,
+            condom: condomBv.qaly,
+            vaccineBenefit: 0,
+            benefit: noCondomBv.qaly - condomBv.qaly
           },
           {
             name: ANTIBIOTIC_ASSOCIATED_YEAST.name,
