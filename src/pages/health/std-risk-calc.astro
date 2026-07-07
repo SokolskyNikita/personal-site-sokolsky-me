@@ -39,7 +39,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <p class="eyebrow">Health decision model</p>
           <h1>STD risk QALY calculator</h1>
           <p class="summary">
-            The calculation assumes one is a cishet Caucasian person in the United States. The numbers will be different for other groups/countries.
+            The calculation assumes one is a cishet Caucasian person in the United States. The numbers will be different for other groups/countries. The calculations are for vaginal/oral sex only.
           </p>
         </div>
       </header>
@@ -186,6 +186,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV, HSV, M. genitalium and high-load Ureaplasma move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
             <li>Pregnancy uses first-year-equivalent failure rates per partner. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
+            <li>HSV rows use You et al.'s adult anchors, then subtract the roughly 40% post-diagnosis psychosocial share. Physical-only QALY/case is 0.03 for HSV-2 and 0.006 for genital HSV-1. Neonatal HSV, stigma, disclosure anxiety and HSV-attributable HIV are not counted.</li>
             <li>Pregnancy is shown separately and is excluded from QALY totals. Each pregnancy removes roughly 2 years from future pregnancy exposure while pregnant and breastfeeding; this is modeled as one shared fertility clock for female perspective and partner-specific clocks for male perspective.</li>
             <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
             <li>M. genitalium uses NHANES sex/race prevalence scaled by exposed-partner infection rates. Its female QALY/case is scaled from Li et al.'s chlamydia estimate by the modeled PID-progression ratio for M. genitalium vs. chlamydia; male QALY/case is a urethritis-only proxy because CDC says male chronic-complication data are insufficient.</li>
@@ -198,7 +199,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements and Winer NEJM genital HPV condom data.
+          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements and Winer NEJM genital HPV condom data.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -211,6 +212,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db304.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HSV-1/HSV-2 prevalence data brief</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10112678/" target="_blank" rel="noreferrer noopener">QALYs lost from chlamydia, gonorrhea and trichomoniasis</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10025423/" target="_blank" rel="noreferrer noopener">QALYs lost from genital HSV-1 and HSV-2</a></li>
+          <li><a href="https://www.who.int/news-room/fact-sheets/detail/herpes-simplex-virus" target="_blank" rel="noreferrer noopener">WHO herpes simplex virus fact sheet</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/15923297/" target="_blank" rel="noreferrer noopener">Fisman genital herpes quality-of-life pilot</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8848826/" target="_blank" rel="noreferrer noopener">Genital herpes utility weights systematic review</a></li>
+          <li><a href="https://weekly.chinacdc.cn/fileCCDCW/journal/article/ccdcw/2024/40/PDF/CCDCW230408.pdf" target="_blank" rel="noreferrer noopener">GBD genital herpes disability weights</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/herpes.htm" target="_blank" rel="noreferrer noopener">CDC genital herpes treatment guidelines</a></li>
           <li><a href="https://www.cdc.gov/std/treatment-guidelines/mycoplasmagenitalium.htm" target="_blank" rel="noreferrer noopener">CDC Mycoplasma genitalium treatment guidelines</a></li>
           <li><a href="https://doi.org/10.1097/olq.0000000000001394" target="_blank" rel="noreferrer noopener">NHANES Mycoplasma genitalium prevalence, U.S. 2017-2018</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6678058/" target="_blank" rel="noreferrer noopener">Mycoplasma genitalium incidence, persistence and partner concordance</a></li>
@@ -235,6 +241,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const PREGNANCY_INFERTILE_YEARS = 2;
       const CHILD_PER_PREGNANCY = 0.5;
       const HPV_VACCINE_EFFECTIVENESS = 0.9;
+      // You et al.: removing post-diagnosis psychosocial distress cuts HSV losses by about 40%.
+      const HSV_PHYSICAL_ONLY_MULTIPLIER = 0.6;
 
       const DISEASES = [
         {
@@ -268,26 +276,32 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HSV-2",
           route: "perAct",
           repeatable: false,
-          note: "HSV-2 prevalence starts from NHANES white HSV-2 rates, then drops for the college-pool setting. QALY/case uses You et al.'s adult genital HSV-2 estimate.",
+          note: "HSV-2 prevalence starts from NHANES white HSV-2 rates, then drops for the college-pool setting. QALY/case uses You et al.'s adult estimate after removing its post-diagnosis psychosocial share; neonatal HSV is excluded.",
           prevalence: {
             college: { male: 0.055, female: 0.04 },
             broad: { male: 0.085, female: 0.065 }
           },
           perAct: { female: 0.0011, male: 0.00065 },
           condomEffectiveness: { female: 0.96, male: 0.65 },
-          qalyPerCase: { female: 0.05, male: 0.05 }
+          qalyPerCase: {
+            female: 0.05 * HSV_PHYSICAL_ONLY_MULTIPLIER,
+            male: 0.05 * HSV_PHYSICAL_ONLY_MULTIPLIER
+          }
         },
         {
           name: "HSV-1 genital",
           route: "perPartner",
           repeatable: false,
-          note: "Mostly oral-acquired genital HSV-1. Condoms do not change it when oral sex is unbarriered. QALY/case uses You et al.'s adult genital HSV-1 estimate.",
+          note: "Mostly oral-acquired genital HSV-1. Condoms do not change it when oral sex is unbarriered. QALY/case uses You et al.'s adult estimate after removing its post-diagnosis psychosocial share; neonatal HSV is excluded.",
           perPartner: {
             college: { female: 0.0009, male: 0.0007 },
             broad: { female: 0.0012, male: 0.001 }
           },
           condomEffectiveness: { female: 0, male: 0 },
-          qalyPerCase: { female: 0.01, male: 0.01 }
+          qalyPerCase: {
+            female: 0.01 * HSV_PHYSICAL_ONLY_MULTIPLIER,
+            male: 0.01 * HSV_PHYSICAL_ONLY_MULTIPLIER
+          }
         },
         {
           name: "Chlamydia",
@@ -322,7 +336,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           route: "perAct",
           repeatable: true,
           maxExposureActs: 20,
-          note: "White-pool prevalence is much lower than overall U.S. prevalence. QALY/case comes from Li et al.",
+          note: "White-pool prevalence is much lower than general U.S. prevalence. QALY/case comes from Li et al.",
           prevalence: {
             college: { male: 0.002, female: 0.004 },
             broad: { male: 0.005, female: 0.008 }
