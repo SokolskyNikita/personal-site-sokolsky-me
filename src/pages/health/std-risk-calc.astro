@@ -3,7 +3,7 @@ export const prerender = true;
 
 const pageTitle = "STD risk QALY calculator";
 const pageDescription =
-  "Calculator comparing STI and pregnancy risk with and without condoms in a low-risk heterosexual U.S. partner pool.";
+  "Compares STI, pregnancy and other physical sex risks with and without condoms in a low-risk heterosexual U.S. partner pool.";
 const themeColorLight = "#f7f2ea";
 const themeColorDark = "#171310";
 const siteUrl =
@@ -39,7 +39,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <p class="eyebrow">Health decision model</p>
           <h1>STD risk QALY calculator</h1>
           <p class="summary">
-            The calculation assumes one is a cishet Caucasian person in the United States. The numbers will be different for other groups/countries and ages. The calculations are for vaginal/oral sex only, with the base model closer to vaginal exposure than oral-heavy exposure.
+            Defaults are for a cishet white person in the United States. The math is closest to vaginal sex. Oral sex is folded into the same 10-year window. Different ages, countries or partner networks can change the answer a lot.
           </p>
         </div>
       </header>
@@ -61,7 +61,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </div>
             <input id="partners-range" name="partners-range" type="range" min="1" max="200" step="1" value="10" />
             <p class="hint">
-              STI exposure splits 3 acts/week across partners. Pregnancy uses 10-year contraceptive failure and fertility-pause assumptions, not a full first-year failure rate per partner.
+              The STI math spreads 3 sex acts/week across the partners you enter. Pregnancy uses a 10-year failure curve with fertility pauses, not a fresh first-year failure rate for every partner.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <input id="college-only" name="college-only" type="checkbox" checked />
             <span>
               <strong>Only partners with a college degree</strong>
-              <small>Unchecking raises HIV and bacterial STI background rates. HSV-2 moves a little too.</small>
+              <small>Unchecking uses higher HIV and bacterial STI background rates. HSV-2 rises a bit too.</small>
             </span>
           </label>
 
@@ -82,7 +82,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <option value="month3">3 months</option>
               <option value="month6">6 months</option>
             </select>
-            <small>Modeled as a recent routine panel: strongest for chlamydia/gonorrhea, moderate for HIV/syphilis, partial for trich, and little to none for HPV, HSV, M. genitalium or Ureaplasma.</small>
+            <small>Treats that as a recent routine panel: strongest for chlamydia/gonorrhea, middling for HIV/syphilis, partial for trich and little to none for HPV, HSV, M. genitalium or Ureaplasma.</small>
           </label>
 
           <fieldset class="control control-use-mode">
@@ -112,7 +112,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <option value="condom-only" selected>No other birth control method is used</option>
               <option value="stacked">The birth control method above (the no condom scenario) is used</option>
             </select>
-            <small>When the method above is also used, stacked use is a simple independent-failure approximation.</small>
+            <small>If you stack methods, failures are treated as independent.</small>
           </label>
 
           <div class="control control-child-rate">
@@ -125,7 +125,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </div>
 
           <label class="control select-control" for="hpv-vaccine-scenario">
-            <span>HPV vaccine benefit assumption</span>
+            <span>HPV vaccine benefit</span>
             <select id="hpv-vaccine-scenario" name="hpv-vaccine-scenario">
               <option value="preExposure" selected>Pre-exposure / catch-up: 90%</option>
               <option value="adultPriorExposure">Adult with likely prior exposure: 40%</option>
@@ -134,11 +134,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </label>
 
           <label class="control select-control" for="uncertainty-scenario">
-            <span>STI sensitivity scenario</span>
+            <span>STI uncertainty</span>
             <select id="uncertainty-scenario" name="uncertainty-scenario">
-              <option value="base" selected>Base point estimates</option>
-              <option value="low">Lower estimate for uncertain inputs</option>
-              <option value="high">Higher estimate for uncertain inputs</option>
+              <option value="base" selected>Base numbers</option>
+              <option value="low">Lower uncertain inputs</option>
+              <option value="high">Higher uncertain inputs</option>
             </select>
           </label>
 
@@ -146,7 +146,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <input id="uti-prone" name="uti-prone" type="checkbox" />
             <span>
               <strong>UTI-prone after sex</strong>
-              <small>Uses a recurrent/postcoital-UTI style rate for sex-attributable episodes only.</small>
+              <small>Uses a higher post-sex UTI rate. It still counts only UTIs caused by sex.</small>
             </span>
           </label>
 
@@ -154,7 +154,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <input id="yeast-prone" name="yeast-prone" type="checkbox" />
             <span>
               <strong>Yeast-prone after sex-related antibiotics</strong>
-              <small>Raises yeast risk per modeled UTI/STI antibiotic course. Background antibiotics are excluded.</small>
+              <small>Raises yeast risk for each UTI/STI antibiotic course in the model. Background antibiotics stay out.</small>
             </span>
           </label>
         </form>
@@ -175,7 +175,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
           <div class="comparison-grid">
             <div class="comparison-row">
-              <h3>Modeled healthy weeks lost</h3>
+              <h3>Estimated healthy weeks lost</h3>
               <div class="comparison-value without">
                 <span>Without condoms</span>
                 <strong id="no-total">-</strong>
@@ -193,9 +193,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               </div>
             </div>
             <div class="comparison-row benefit-row">
-              <h3>Selected HPV vaccine scenario reduces by</h3>
+              <h3>HPV vaccine removes</h3>
               <div class="comparison-value benefit">
-                <span>HPV-preventable burden</span>
+                <span>HPV healthy-time loss</span>
                 <strong id="vaccine-benefit">-</strong>
               </div>
             </div>
@@ -228,8 +228,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="detail-grid">
         <article class="panel">
           <div class="section-heading">
-            <p class="eyebrow">STI + downstream breakdown</p>
-            <h2>Modeled lifetime healthy weeks lost by condition</h2>
+            <p class="eyebrow">Breakdown</p>
+            <h2>Estimated healthy weeks lost by condition</h2>
           </div>
           <div class="breakdown-head" aria-hidden="true">
             <span>Condition</span>
@@ -238,7 +238,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <span>Benefit</span>
           </div>
           <div class="breakdown-list" id="disease-breakdown"></div>
-          <p class="breakdown-note">*Not an STI/STD. Included because sex can trigger UTIs or marginally increase symptomatic BV risk in some people, and antibiotics used for UTIs or bacterial STIs can trigger yeast infections in some people.</p>
+          <p class="breakdown-note">*Not an STI/STD. Included because sex can cause pain or injury, trigger UTIs, raise BV risk a bit or lead to yeast infections after antibiotics.</p>
         </article>
 
         <aside class="panel assumptions">
@@ -247,24 +247,24 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </div>
           <div class="assumption-groups">
             <section class="assumption-group">
-              <h3>What the calculator is estimating</h3>
+              <h3>What this estimates</h3>
               <ul>
-                <li>Each STI row estimates: how likely a partner is to be infectious, how likely transmission is during the 10-year exposure window, and how much healthy time one infection is expected to cost.</li>
-                <li>The asterisked rows are not STI transmission rows. They are simple expected-value add-ons for marginal sex-attributable UTIs/BV and yeast infections from sex-related antibiotic courses. Background BV, background UTIs and unrelated antibiotic use are excluded.</li>
-                <li>The totals are a rough expected-value model of direct physical health burden. They are not a clinical prediction for one specific person, and pregnancy is shown separately instead of being folded into QALYs.</li>
+                <li>Each STI row combines the chance a partner can pass it on, the chance it spreads over 10 years and the healthy time one infection is expected to cost.</li>
+                <li>Asterisked rows are extra physical harms caused by sex. Background BV, background UTIs, unrelated antibiotic use and pregnancy health harms stay out.</li>
+                <li>Totals are average expected healthy-time loss, not a prediction for one person. Pregnancy is shown separately instead of being folded into the healthy-week totals.</li>
               </ul>
             </section>
 
             <section class="assumption-group">
               <h3>Partners, testing, age and sex acts</h3>
               <ul>
-                <li>The college-degree checkbox is only a broad proxy for a lower-risk partner pool. Recent testing, number of recent partners, geography, age, partner network and injection-drug history can matter more.</li>
-                <li>The recent-test selector assumes every partner had a negative routine STI panel before sex. It helps most for chlamydia/gonorrhea NAAT testing, helps somewhat for HIV blood testing, and helps less for syphilis and trichomoniasis.</li>
-                <li>A recent negative test is not a guarantee. Tests have window periods, can miss infections at untested body sites, and say nothing about infections acquired after the test. Syphilis blood tests can miss early primary infection, and trichomoniasis NAAT is accurate when included but is not always part of routine asymptomatic screening.</li>
-                <li>The test selector does not reduce HPV, HSV, M. genitalium or Ureaplasma much in this model. HPV testing is not a general partner-status test, HSV screening is not recommended for most asymptomatic people, and M. genitalium/Ureaplasma are not routine screening tests.</li>
+                <li>The college-degree checkbox is a broad stand-in for a lower-risk partner pool. Recent testing, number of recent partners, geography, age, partner network and injection-drug history can matter more.</li>
+                <li>The recent-test selector assumes every partner had a negative routine STI panel before sex. It helps most for chlamydia/gonorrhea NAAT testing, somewhat for HIV blood testing and less for syphilis and trichomoniasis.</li>
+                <li>A recent negative test has limits. Tests have window periods, can miss infections at untested body sites and say nothing about infections acquired afterward. Syphilis blood tests can miss early primary infection. Trichomoniasis NAAT is accurate when included but is not always part of routine screening.</li>
+                <li>The test selector barely moves HPV, HSV, M. genitalium or Ureaplasma. HPV testing is not a general partner-status test, HSV screening is not recommended for most people with no symptoms and M. genitalium/Ureaplasma are not routine screening tests.</li>
                 <li>Partner risk is not truly independent. Ten partners from the same tested friend-of-friends network is different from ten unrelated partners from a broad national pool.</li>
-                <li>Age is not modeled. HSV rates, HPV vaccine benefit, pregnancy risk and oral-cancer risk can change a lot by age and birth cohort.</li>
-                <li>Oral and vaginal sex are combined into one exposure window. The base model is closer to vaginal sex, so oral-heavy sex can overstate HIV risk and misplace some oral HPV, HSV and gonorrhea risk.</li>
+                <li>Age is not included. HSV rates, HPV vaccine benefit, pregnancy risk and oral-cancer risk can change a lot by age and birth cohort.</li>
+                <li>Oral and vaginal sex share one 10-year period. The default math is closer to vaginal sex, so oral-heavy sex can overstate HIV risk and misplace some oral HPV, HSV and gonorrhea risk.</li>
               </ul>
             </section>
 
@@ -272,8 +272,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <h3>Pregnancy</h3>
               <ul>
                 <li>Pregnancy uses standard first-year contraceptive failure rates, spread across the 10-year horizon. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%.</li>
-                <li>The condom scenario can either mean switching to condoms alone or using condoms plus the selected no-condom method. When methods are stacked, the calculator multiplies failure rates as a simple approximation; in real life, people who miss pills may also use condoms inconsistently.</li>
-                <li>Each pregnancy creates a fixed 1.25-year pause in pregnancy exposure. This is a middle-ground spacing assumption, not a claim that breastfeeding makes someone infertile for 1.25 years.</li>
+                <li>The condom case can mean switching to condoms alone or using condoms plus the selected no-condom method. When methods are stacked, the calculator multiplies failure rates; in real life, people who miss pills may also use condoms inconsistently.</li>
+                <li>Each pregnancy creates a fixed 1.25-year pause in pregnancy risk. This is just a spacing assumption. It is not a claim that breastfeeding makes someone infertile for 1.25 years.</li>
                 <li>Projected children uses the expected number of pregnancies and the user-selected share of unintended pregnancies that result in a child.</li>
               </ul>
             </section>
@@ -281,25 +281,25 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <section class="assumption-group">
               <h3>HPV and vaccines</h3>
               <ul>
-                <li>The HPV vaccine setting only changes HPV-related rows. The 90% setting is meant for vaccination before exposure; the adult prior-exposure setting is an illustrative lower-benefit scenario, not a precise CDC number.</li>
-                <li>The HPV-attributable oropharyngeal-cancer row is only order-of-magnitude. It turns a lifetime cancer-risk estimate into a per-partner-equivalent estimate so the partner slider can move it, but real cancer risk depends on sex, age, smoking, oral-sex history, vaccination and HPV type.</li>
-                <li>Existing HPV status is not modeled. If someone is already vaccinated or already exposed to a vaccine-covered HPV type, the marginal benefit can differ from the default.</li>
+                <li>The HPV vaccine setting only changes HPV-related rows. The 90% setting means vaccination before exposure; the adult prior-exposure setting is a lower-benefit case, not a CDC number.</li>
+                <li>The HPV-related throat-cancer row starts from lifetime risk, then shrinks it so the partner slider can move it. Real cancer risk depends on sex, age, smoking, oral-sex history, vaccination and HPV type.</li>
+                <li>Existing HPV status is not tracked. If someone is already vaccinated or already exposed to a vaccine-covered HPV type, the benefit can differ from the default.</li>
               </ul>
             </section>
 
             <section class="assumption-group">
               <h3>HSV</h3>
               <ul>
-                <li>HSV rows use adult population anchors, then remove the roughly 40% post-diagnosis psychosocial share. The calculator is trying to count physical morbidity, not stigma, disclosure anxiety, neonatal HSV or HSV-attributable HIV.</li>
-                <li>HSV-2 condom protection is sex/direction-specific in the model.</li>
-                <li>Genital HSV-1 is a rough proxy for oral-acquired genital HSV-1. HSV-1 blood tests do not tell whether infection is oral or genital, and prior HSV-1 or HSV-2 infection is not modeled.</li>
+                <li>HSV rows use adult population rates, then remove the roughly 40% distress-after-diagnosis share. The calculator counts physical health loss, not stigma, disclosure anxiety, neonatal HSV or HIV risk caused by HSV.</li>
+                <li>HSV-2 condom protection depends on which partner has HSV and which partner is exposed.</li>
+                <li>Genital HSV-1 stands in for HSV-1 passed from oral sex to the genitals. HSV-1 blood tests do not tell whether infection is oral or genital, and prior HSV-1 or HSV-2 infection is not tracked.</li>
               </ul>
             </section>
 
             <section class="assumption-group">
               <h3>HIV</h3>
               <ul>
-                <li>The HIV row uses the chance that a partner has transmissible HIV, not just any HIV. Virally suppressed partners are treated as effectively non-transmitting for sex.</li>
+                <li>The HIV row uses the chance that a partner has HIV that can spread through sex. Partners with an undetectable viral load are treated as not transmitting HIV through sex.</li>
                 <li>The HIV transmission rates are CDC vaginal-sex estimates. Oral-heavy sex can make the HIV row too high.</li>
               </ul>
             </section>
@@ -307,28 +307,38 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <section class="assumption-group">
               <h3>Bacterial STIs, M. genitalium and Ureaplasma</h3>
               <ul>
-                <li>Chlamydia, gonorrhea, trichomoniasis and syphilis use low-risk prevalence anchors rather than raw national reported case rates, because reported cases depend heavily on who gets tested.</li>
-                <li>M. genitalium is one of the least certain rows. Female burden is scaled from chlamydia using a PID-progression proxy, and male burden is a urethritis-only proxy because long-term male complication data are weak.</li>
-                <li>M. genitalium resistance, repeat treatment, persistence and medication side effects are not separately modeled.</li>
-                <li>Ureaplasma only represents possible high-load U. urealyticum nongonococcal urethritis in men, not ordinary Ureaplasma carriage. Female burden is set to zero because guidelines do not support a cervicitis/PID/infertility estimate.</li>
+                <li>Chlamydia, gonorrhea, trichomoniasis and syphilis use low-risk background rates instead of raw national case counts, because case counts depend heavily on who gets tested.</li>
+                <li>M. genitalium is one of the shakier rows. Female healthy-time loss is scaled from chlamydia using PID risk. Male healthy-time loss counts urethritis only because long-term male complication data are weak.</li>
+                <li>M. genitalium drug resistance, repeat treatment, lingering infection and medication side effects are not counted separately.</li>
+                <li>Ureaplasma only counts possible high-load U. urealyticum urethritis in men, not ordinary Ureaplasma carriage. Female healthy-time loss is set to zero because guidelines do not support a cervicitis/PID/infertility estimate.</li>
               </ul>
             </section>
 
             <section class="assumption-group">
               <h3>BV, UTIs and antibiotic-associated yeast</h3>
               <ul>
-                <li>Post-sex UTIs are modeled as a marginal sex-associated burden, not as partner prevalence times transmission probability and not as all UTIs someone might otherwise get. The default assumes few sex-triggered UTIs; the UTI-prone toggle uses a recurrent/postcoital-UTI style rate.</li>
-                <li>Ordinary condoms are treated as neutral for UTIs. Evidence supports sex itself as the main marginal trigger, and condom effects depend on product details, lubrication, friction and individual anatomy.</li>
-                <li>Yeast infections are driven only by modeled antibiotic courses from post-sex UTIs and bacterial STIs acquired in this calculator. Antibiotics for unrelated illnesses are excluded. The yeast-prone toggle uses the symptomatic VVC rate from a small prospective antibiotic study as a high-susceptibility setting.</li>
-                <li>BV is modeled as a separate vaginal-health row for the female perspective only. It counts only the incremental symptomatic BV burden attributed to the modeled sex exposure, not all BV in sexually active people and not BV that can occur without sex. Condoms reduce only that marginal row using the pooled BV condom-use estimate rather than the stronger perfect-use estimate.</li>
+                <li>Post-sex UTIs are extra UTIs caused by sex. They are not partner rate times transmission chance and they are not all UTIs someone might otherwise get. The default assumes few sex-triggered UTIs; the UTI-prone toggle uses a higher after-sex UTI rate.</li>
+                <li>Ordinary condoms stay neutral for UTIs. Sex itself is the main trigger this calculator counts; product details, lubrication, friction and individual anatomy are not split out.</li>
+                <li>Yeast infections come only from antibiotic courses for post-sex UTIs and bacterial STIs acquired in this calculator. Antibiotics for unrelated illnesses stay out. The yeast-prone toggle uses the yeast-with-symptoms rate from a small antibiotic study.</li>
+                <li>BV is a separate vaginal-health row for the female side only. It counts only extra BV with symptoms tied to sex, not all BV in sexually active people and not BV that can happen without sex. Condoms reduce only that extra BV row using the pooled condom-use estimate, not the stronger perfect-use estimate.</li>
+              </ul>
+            </section>
+
+            <section class="assumption-group">
+              <h3>Other physical sex harms</h3>
+              <ul>
+                <li>Dyspareunia means pain during sex. PID not from gonorrhea/chlamydia means pelvic inflammatory disease with some other cause. Those and fissures get their own rows because the evidence is stronger and the healthy-time loss is not already covered by the STI rows.</li>
+                <li>These rows count only the extra harm from sex. They do not count pain, pelvic infection or vulvar disease that would have happened anyway.</li>
+                <li>Tiny base-case risks are left out: PHASA (sex headache), sex-triggered heart attack or cardiac arrest, orgasm-triggered brain bleed, heterosexual HCV, hepatitis A without oral-anal exposure, mpox outside a relevant outbreak, Zika without travel exposure, transient global amnesia, pregnancy-only air embolism and EBV/CMV.</li>
+                <li>Some risks are real but too data-poor or too person-specific for a default row: POIS, semen allergy, latex/lube irritation, molluscum, scabies, pubic lice, hepatitis B edge cases, penile fracture, frenulum tears, small muscle/joint flares and rare urethritis bugs. For the default user, these are near-zero healthy-time losses or need their own toggle to avoid fake precision.</li>
               </ul>
             </section>
 
             <section class="assumption-group">
               <h3>Uncertainty controls</h3>
               <ul>
-                <li>The sensitivity control scales the least certain STI inputs: HPV progression, HSV physical-only burden, bacterial STI burden, M. genitalium and high-load Ureaplasma.</li>
-                <li>These scenarios are not formal confidence intervals. They are a quick way to see whether the conclusion changes when the weakest assumptions are moved up or down.</li>
+                <li>The uncertainty control moves the weakest STI inputs: HPV progression, HSV physical-only healthy-time loss, bacterial STI healthy-time loss, M. genitalium and high-load Ureaplasma.</li>
+                <li>These are not real confidence intervals. They are a quick way to see whether the answer changes when the weakest assumptions move up or down.</li>
               </ul>
             </section>
           </div>
@@ -338,7 +348,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements, Winer NEJM genital HPV condom data, AUA/AAFP postcoital UTI guidance, CDC candidiasis guidance, antibiotic-associated VVC studies, CDC/NHANES BV prevalence, BV condom-use meta-analysis and VITA recurrent-BV quality-of-life data.
+          Sources include CDC and Guttmacher contraception tables, CDC HIV and HPV vaccine tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium rates, QALY papers for bacterial STIs and HSV, oral HPV/throat-cancer studies, condom studies, Ureaplasma guidance, UTI guidance, yeast studies, BV studies, AAFP dyspareunia guidance, CDC PID guidance and postcoital bleeding/fissure reviews.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -384,6 +394,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://pubmed.ncbi.nlm.nih.gov/17621244/" target="_blank" rel="noreferrer noopener">U.S. BV prevalence and symptom reporting</a></li>
           <li><a href="https://pubmed.ncbi.nlm.nih.gov/16652274/" target="_blank" rel="noreferrer noopener">BV recurrence after metronidazole treatment</a></li>
           <li><a href="https://www.ncbi.nlm.nih.gov/books/NBK577306/table/table17/?report=objectonly" target="_blank" rel="noreferrer noopener">VITA recurrent-BV SF-6D/QALY table</a></li>
+          <li><a href="https://www.aafp.org/pubs/afp/issues/2021/0515/p597.html" target="_blank" rel="noreferrer noopener">AAFP dyspareunia review</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/18331265/" target="_blank" rel="noreferrer noopener">Male pelvic and sexual-intercourse pain prevalence</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/pid.htm" target="_blank" rel="noreferrer noopener">CDC PID treatment guideline</a></li>
+          <li><a href="https://www.cdc.gov/mmwr/volumes/66/wr/mm6603a3.htm" target="_blank" rel="noreferrer noopener">CDC PID lifetime prevalence analysis</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4086375/" target="_blank" rel="noreferrer noopener">Postcoital bleeding review</a></li>
+          <li><a href="https://dermnetnz.org/topics/recurrent-fissuring-of-posterior-fourchette" target="_blank" rel="noreferrer noopener">Posterior fourchette fissuring</a></li>
         </ul>
       </section>
     </main>
@@ -430,19 +446,19 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         sexRelatedAntibioticCoursesPerCase: 1,
         condomUtiMultiplier: 1,
         qalyPerCase: symptomBurdenQaly(3, 0.1),
-        note: "Non-STI row. Counts only marginal post-sex UTI episodes during the modeled sex horizon, not all UTIs someone might get. AUA/AAFP cite recent intercourse as a UTI risk factor; ordinary condoms are left neutral because product details, lubrication, friction and anatomy are not separately modeled."
+        note: "Non-STI row. Counts only extra post-sex UTIs over the 10-year sex window, not someone's background UTI risk. AUA/AAFP cite recent intercourse as a UTI risk factor. Ordinary condoms stay neutral because the calculator does not split out lube, friction, product details or anatomy."
       };
       const BACTERIAL_VAGINOSIS = {
         name: "Bacterial vaginosis*",
-        // Incremental symptomatic BV episodes allocated to the modeled sex exposure only.
-        // Do not replace with all-cause BV prevalence or recurrence.
+        // Extra BV episodes with symptoms assigned to this sex window only.
+        // Do not replace with all BV prevalence or recurrence.
         marginalSexAttributableAnnualCases: {
           college: { female: 0.16, male: 0 },
           broad: { female: 0.24, male: 0 }
         },
         condomMultiplier: 0.8,
         qalyPerCase: symptomBurdenQaly(14, 0.08),
-        note: "Non-STI row. Female-perspective only. Counts a conservative marginal symptomatic BV burden attributed to this sex model, not background BV, asymptomatic BV, BV that can occur without sex, or pregnancy/STI sequelae. CDC/NHANES find BV is common but often asymptomatic; VITA recurrent-BV data show lower SF-6D during symptomatic care. Condoms use the pooled BV sexual-risk meta-analysis estimate (RR 0.8), while Hutchinson 2007 found a stronger association for perfectly consistent use (aOR 0.55)."
+        note: "Non-STI row. Female side only. Counts only extra BV with symptoms tied to sex. It leaves out background BV, symptom-free BV, BV that happens without sex and pregnancy/STI complications. CDC/NHANES show BV is common and often symptom-free. Condom impact uses the average-across-studies estimate (RR 0.8); Hutchinson 2007 found a stronger association for perfectly consistent use (aOR 0.55)."
       };
       const ANTIBIOTIC_ASSOCIATED_YEAST = {
         name: "Antibiotic-associated yeast infections*",
@@ -451,15 +467,32 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           prone: { female: 0.22, male: 0 }
         },
         qalyPerCase: symptomBurdenQaly(3, 0.08),
-        note: "Non-STI row. Driven only by antibiotic courses from marginal post-sex UTIs and modeled bacterial STIs, not background antibiotic use. No direct condom or BV effect is included. CDC lists current/recent antibiotics as a VVC risk factor; the prone setting matches the small MetroNet symptomatic VVC estimate after short-course antibiotics."
+        note: "Non-STI row. Counts yeast infections from antibiotics used for post-sex UTIs and bacterial STIs acquired here. Unrelated antibiotics stay out. Condoms affect this row only by changing UTI/STI antibiotic courses. CDC lists recent antibiotics as a VVC risk factor; the prone setting follows a small MetroNet antibiotic study."
       };
+      const DIRECT_PHYSICAL_SEX_HARMS = [
+        {
+          name: "Dyspareunia / recurrent sexual pain*",
+          mQaly: { female: { noCondom: 10, condom: 10 }, male: { noCondom: 3, condom: 3 } },
+          note: "Non-STI row. Counts recurring pain during sex, including dyspareunia and provoked vestibulodynia. It does not count pelvic pain that would have appeared without sex. AAFP cites dyspareunia in about 10-20% of U.S. women; male data are thinner, but one population study found intercourse-related pain around 5%."
+        },
+        {
+          name: "PID not from gonorrhea/chlamydia*",
+          mQaly: { female: { noCondom: 3, condom: 3 }, male: { noCondom: 0, condom: 0 } },
+          note: "Non-STI row. Female side only. Counts the part of PID risk not already covered by chlamydia, gonorrhea, M. genitalium, trichomoniasis or BV rows. CDC says about half of acute PID diagnoses test positive for gonorrhea or chlamydia, and vaginal bacteria can be involved. No condom benefit is applied because prevention data for this leftover part are weak."
+        },
+        {
+          name: "Fissures and small sex injuries*",
+          mQaly: { female: { noCondom: 3, condom: 3 }, male: { noCondom: 0, condom: 0 } },
+          note: "Non-STI row. Female side only. Covers small tears, post-sex bleeding and fissures near the vaginal opening. DermNet describes intercourse-triggered splitting in that area, and postcoital bleeding reviews report it in around 0.7-9% of menstruating women. Male abrasions and frenulum tears are left out because their default QALY impact is too small and data-poor."
+        }
+      ];
 
       const DISEASES = [
         {
-          name: "HPV-attributable OPC",
+          name: "HPV throat cancer",
           route: "lifetime",
           repeatable: false,
-          note: "Order-of-magnitude lifetime oropharyngeal-cancer burden, calibrated to the default partner count. Condoms do not change this term; male OPC risk is much higher than female OPC risk.",
+          note: "Rough lifetime throat-cancer health loss, scaled to the default partner count. Condoms do not change this term; male HPV-related throat-cancer risk is much higher than female risk.",
           baselinePartners: BASELINE_PARTNERS,
           lifetimeRisk: {
             college: { female: 0.0035, male: 0.0095 },
@@ -474,7 +507,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "Genital HPV",
           route: "perPartner",
           repeatable: false,
-          note: "Genital high-risk HPV plus wart/dysplasia burden. Condoms reduce skin-contact exposure but do not remove it.",
+          note: "Genital high-risk HPV plus warts/dysplasia. Condoms reduce skin contact but do not remove it.",
           perPartner: {
             college: { female: 0.02, male: 0.018 },
             broad: { female: 0.03, male: 0.027 }
@@ -488,7 +521,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HSV-2",
           route: "perAct",
           repeatable: false,
-          note: "HSV-2 prevalence starts from NHANES white HSV-2 rates, then drops for the college-pool setting.",
+          note: "HSV-2 starts from NHANES white HSV-2 rates, then drops for the college-pool setting.",
           prevalence: {
             college: { male: 0.055, female: 0.04 },
             broad: { male: 0.085, female: 0.065 }
@@ -505,7 +538,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HSV-1 genital",
           route: "perPartner",
           repeatable: false,
-          note: "Proxy for oral-acquired genital HSV-1. HSV-1 serology does not identify infection site; condoms do not change this term when oral sex is unbarriered.",
+          note: "Stand-in for genital HSV-1 acquired from oral sex. HSV-1 blood tests do not show infection site; condoms do not change this term when oral sex is unbarriered.",
           perPartner: {
             college: { female: 0.0009, male: 0.0007 },
             broad: { female: 0.0012, male: 0.001 }
@@ -522,7 +555,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           route: "perAct",
           repeatable: true,
           maxExposureActs: 20,
-          note: "Female QALY/case uses Li et al.'s PID, chronic pelvic pain, tubal-factor infertility and ectopic-pregnancy model.",
+          note: "Female health loss per case uses Li et al.'s PID, chronic pelvic pain, tubal-factor infertility and ectopic-pregnancy estimates.",
           prevalence: {
             college: { male: 0.004, female: 0.005 },
             broad: { male: 0.012, female: 0.014 }
@@ -538,7 +571,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           route: "perAct",
           repeatable: true,
           maxExposureActs: 12,
-          note: "Shorter infectious window than chlamydia. Female sequelae still drive most QALY loss.",
+          note: "Shorter infectious window than chlamydia. Female complications still drive most healthy-time loss.",
           prevalence: {
             college: { male: 0.0009, female: 0.0008 },
             broad: { male: 0.0035, female: 0.003 }
@@ -554,7 +587,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           route: "perAct",
           repeatable: true,
           maxExposureActs: 20,
-          note: "White-pool prevalence is much lower than general U.S. prevalence. QALY/case comes from Li et al.",
+          note: "White-pool rates are much lower than general U.S. rates. Health loss per case comes from Li et al.",
           prevalence: {
             college: { male: 0.002, female: 0.004 },
             broad: { male: 0.005, female: 0.008 }
@@ -569,7 +602,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "Mycoplasma genitalium",
           route: "perPartner",
           repeatable: true,
-          note: "Mgen is often missed by standard STI panels. Per-partner risk uses NHANES sex/race prevalence scaled by exposed-partner infection rates; female QALY/case is a chlamydia-scaled PID proxy.",
+          note: "Mgen is often missed by standard STI panels. Per-partner risk uses NHANES sex/race rates scaled by exposed-partner infection rates; female health loss per case scales from chlamydia PID loss.",
           perPartner: {
             college: { female: 0.00675, male: 0.00465 },
             broad: { female: 0.00868, male: 0.00527 }
@@ -582,7 +615,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "Ureaplasma urealyticum high-load NGU",
           route: "perPartner",
           repeatable: true,
-          note: "Ureaplasma is usually carriage, not disease. This row only approximates possible high-load U. urealyticum nongonococcal urethritis in men; routine testing is not recommended.",
+          note: "Ureaplasma is usually carriage, not disease. This row only approximates possible high-load U. urealyticum urethritis in men; routine testing is not recommended.",
           perPartner: {
             college: { female: 0, male: 0.0035 },
             broad: { female: 0, male: 0.007 }
@@ -596,7 +629,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           route: "perAct",
           repeatable: true,
           maxExposureActs: 10,
-          note: "Very low in this non-IDU heterosexual pool. QALY/case is high if acquired.",
+          note: "Very low in this heterosexual non-injection-drug-use pool. Health loss per case is high if acquired.",
           prevalence: {
             college: { male: 0.00012, female: 0.00006 },
             broad: { male: 0.0005, female: 0.00018 }
@@ -611,7 +644,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HIV",
           route: "perAct",
           repeatable: false,
-          note: "Uses CDC per-act vaginal risk with an infectious/unsuppressed-source prevalence term, filtered to a low-prevalence heterosexual white non-IDU pool.",
+          note: "Uses CDC per-act vaginal-sex risk with a low-rate pool for HIV that can spread through sex among heterosexual white non-injection-drug-use partners.",
           prevalence: {
             college: { male: 0.00004, female: 0.000025 },
             broad: { male: 0.00018, female: 0.0001 }
@@ -838,6 +871,26 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         ];
       }
 
+      function calculateDirectPhysicalSexHarmRows(context) {
+        return DIRECT_PHYSICAL_SEX_HARMS.map((harm) => {
+          const noCondom = harm.mQaly[context.perspective].noCondom / 1000;
+          const condom = harm.mQaly[context.perspective].condom / 1000;
+
+          return {
+            name: harm.name,
+            note: harm.note,
+            noRisk: 0,
+            condomRisk: 0,
+            noCases: 0,
+            condomCases: 0,
+            noCondom,
+            condom,
+            vaccineBenefit: 0,
+            benefit: noCondom - condom
+          };
+        });
+      }
+
       function pregnancyTrajectory(annualFailure, exposureYears, pauseYears) {
         const totalSlots = Math.max(1, Math.ceil(exposureYears * PREGNANCY_SLOTS_PER_YEAR));
         const slotYears = exposureYears / totalSlots;
@@ -927,7 +980,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const label = timeText(abs);
         if (value > 0) return `${label} saved`;
         if (value < 0) return `${label} worse`;
-        return "No modeled benefit";
+        return "No benefit in this model";
       }
 
       function childrenText(value) {
@@ -967,7 +1020,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         return [
           ...stiRows,
-          ...calculateDownstreamBurdenRows(stiRows, context)
+          ...calculateDownstreamBurdenRows(stiRows, context),
+          ...calculateDirectPhysicalSexHarmRows(context)
         ];
       }
 
@@ -1055,8 +1109,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         setText(
           ids.benefitNote,
           benefit >= 0
-            ? `Using condoms saves ${weeksText(Math.abs(benefit))} in this STI plus downstream-burden model. Pregnancy is excluded from QALY totals.`
-            : `Condoms add no modeled QALY benefit in this input set. Pregnancy is excluded from QALY totals.`
+            ? `Using condoms saves ${weeksText(Math.abs(benefit))} in this STI plus non-STI estimate. Pregnancy stays outside QALY totals.`
+            : `No QALY benefit from condoms for these inputs. Pregnancy stays outside QALY totals.`
         );
 
         setText(ids.noTotal, weeksText(noCondomTotal));
