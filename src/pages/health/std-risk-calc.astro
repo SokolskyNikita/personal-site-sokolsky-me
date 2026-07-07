@@ -127,7 +127,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <label class="control select-control" for="hpv-vaccine-scenario">
             <span>HPV vaccine benefit</span>
             <select id="hpv-vaccine-scenario" name="hpv-vaccine-scenario">
-              <option value="preExposure" selected>Pre-exposure / catch-up: 90%</option>
+              <option value="preExposure" selected>Pre-exposure / catch-up: 100%</option>
               <option value="adultPriorExposure">Adult with likely prior exposure: 40%</option>
               <option value="none">No HPV vaccine benefit</option>
             </select>
@@ -274,7 +274,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <section class="assumption-group">
               <h3>HPV and vaccines</h3>
               <ul>
-                <li>The HPV vaccine setting only changes HPV-related rows. The 90% setting means vaccination before exposure; the adult prior-exposure setting is a lower-benefit case, not a CDC number.</li>
+                <li>The HPV vaccine setting only changes HPV-related rows. The 100% setting means full protection for HPV types covered by the modeled HPV rows; the adult prior-exposure setting is a lower-benefit case, not a CDC number.</li>
                 <li>The HPV-related throat-cancer row starts from lifetime risk, then shrinks it so the partner slider can move it. Real cancer risk depends on sex, age, smoking, oral-sex history, vaccination and HPV type.</li>
                 <li>Existing HPV status is not tracked. If someone is already vaccinated or already exposed to a vaccine-covered HPV type, the benefit can differ from the default.</li>
               </ul>
@@ -458,7 +458,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const HPV_VACCINE_SCENARIOS = {
         none: 0,
         adultPriorExposure: 0.4,
-        preExposure: 0.9
+        preExposure: 1
       };
       const TEST_RECENCY_MULTIPLIERS = {
         none: { naat: 1, hiv: 1, syphilis: 1, trich: 1, none: 1 },
