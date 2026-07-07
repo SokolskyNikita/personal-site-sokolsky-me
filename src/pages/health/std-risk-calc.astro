@@ -61,7 +61,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </div>
             <input id="partners-range" name="partners-range" type="range" min="1" max="200" step="1" value="10" />
             <p class="hint">
-              STI exposure splits 3 acts/week across partners. Pregnancy projections use partner-level contraceptive failure with a post-pregnancy infertility window.
+              STI exposure splits 3 acts/week across partners. Pregnancy uses 10-year contraceptive failure and fertility-pause assumptions, not a full first-year failure rate per partner.
             </p>
           </div>
 
@@ -91,6 +91,42 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <option value="withdrawal" selected>Pull out</option>
               <option value="pill">Birth control pill</option>
               <option value="implant">Contraceptive implant</option>
+            </select>
+          </label>
+
+          <label class="control select-control" for="condom-pregnancy-mode">
+            <span>Pregnancy comparison when condoms are used</span>
+            <select id="condom-pregnancy-mode" name="condom-pregnancy-mode">
+              <option value="condom-only" selected>Condoms alone</option>
+              <option value="stacked">Condoms + selected method</option>
+            </select>
+            <small>Stacked use is a simple independent-failure approximation, not a measured combined-method failure rate.</small>
+          </label>
+
+          <div class="control control-child-rate">
+            <div class="label-row">
+              <label for="child-rate-range">Unintended pregnancies resulting in a child (%)</label>
+              <input id="child-rate-number" name="child-rate-number" type="number" min="0" max="100" step="5" value="50" inputmode="numeric" />
+            </div>
+            <input id="child-rate-range" name="child-rate-range" type="range" min="0" max="100" step="5" value="50" />
+            <p class="hint">This is personal and jurisdiction-dependent, so it is a scenario input rather than a biological constant.</p>
+          </div>
+
+          <label class="control select-control" for="hpv-vaccine-scenario">
+            <span>HPV vaccine benefit assumption</span>
+            <select id="hpv-vaccine-scenario" name="hpv-vaccine-scenario">
+              <option value="preExposure" selected>Pre-exposure / catch-up: 90%</option>
+              <option value="adultPriorExposure">Adult with likely prior exposure: 40%</option>
+              <option value="none">No HPV vaccine benefit</option>
+            </select>
+          </label>
+
+          <label class="control select-control" for="uncertainty-scenario">
+            <span>STI sensitivity scenario</span>
+            <select id="uncertainty-scenario" name="uncertainty-scenario">
+              <option value="base" selected>Base point estimates</option>
+              <option value="low">Lower estimate for uncertain inputs</option>
+              <option value="high">Higher estimate for uncertain inputs</option>
             </select>
           </label>
         </form>
@@ -129,7 +165,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               </div>
             </div>
             <div class="comparison-row benefit-row">
-              <h3>Vaccines can reduce QALY impact by</h3>
+              <h3>Selected HPV vaccine scenario reduces by</h3>
               <div class="comparison-value benefit">
                 <span>HPV-preventable burden</span>
                 <strong id="vaccine-benefit">-</strong>
@@ -183,17 +219,30 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </div>
           <ul>
             <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
-            <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV, HSV, M. genitalium and high-load Ureaplasma move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
-            <li>Pregnancy uses first-year-equivalent failure rates per partner. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
-            <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
+            <li>Oral and vaginal sex are still collapsed into one exposure window. The base case is closer to vaginal exposure; oral-heavy sex can materially overstate HIV risk and misallocate oral HPV, HSV and gonorrhea burden.</li>
+            <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms, but it is only a coarse proxy. Recent testing, concurrency, geography, age, partner network and injection-drug history matter more for some infections.</li>
+            <li>Pregnancy uses first-year contraceptive failure rates spread over the 10-year horizon. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The condom comparison can be condoms alone or condoms stacked with the selected no-condom method.</li>
+            <li>The pregnancy/fertility pause uses a fixed 1.25-year median scenario because lactational amenorrhea is a conditional six-month method, not a stable two-year infertile interval.</li>
+            <li>Projected children uses expected pregnancies across the selected horizon and the user-selected share of unintended pregnancies resulting in a child.</li>
+            <li>The HPV vaccine scenario applies only to HPV-attributable rows. The 90% setting is most appropriate for pre-exposure vaccination; the adult/prior-exposure setting is intentionally lower.</li>
             <li>HSV rows use You et al.'s adult anchors, then subtract the roughly 40% post-diagnosis psychosocial share. Physical-only QALY/case is 0.03 for HSV-2 and 0.006 for genital HSV-1. Neonatal HSV, stigma, disclosure anxiety and HSV-attributable HIV are not counted.</li>
-            <li>Pregnancy is shown separately and is excluded from QALY totals. Each pregnancy removes roughly 2 years from future pregnancy exposure while pregnant and breastfeeding; this is modeled as one shared fertility clock for female perspective and partner-specific clocks for male perspective.</li>
-            <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
+            <li>Pregnancy is shown separately and is excluded from QALY totals. Female perspective uses one fertility clock; male perspective gives each partner a separate clock over their share of the 10-year exposure window.</li>
             <li>M. genitalium uses NHANES sex/race prevalence scaled by exposed-partner infection rates. Its female QALY/case is scaled from Li et al.'s chlamydia estimate by the modeled PID-progression ratio for M. genitalium vs. chlamydia; male QALY/case is a urethritis-only proxy because CDC says male chronic-complication data are insufficient.</li>
+            <li>The M. genitalium row does not separately model macrolide resistance, persistence or retreatment burden, so it is intentionally exposed to the sensitivity control.</li>
             <li>Ureaplasma models only possible high-load U. urealyticum nongonococcal urethritis in men, not common Ureaplasma carriage. Female per-partner risk and QALY/case are set to 0 because CDC and European STI guidance do not support a cervicitis/PID/infertility burden estimate.</li>
-            <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity, M. genitalium and Ureaplasma condom effectiveness and pregnancy recurrence after birth/breastfeeding.</li>
+            <li>The sensitivity control scales the least certain STI inputs: HPV persistence/progression, HSV physical-only QALYs, bacterial STI QALYs, M. genitalium and high-load Ureaplasma. It is a scenario check, not a formal confidence interval.</li>
           </ul>
         </aside>
+      </section>
+
+      <section class="sources critique-notes" aria-labelledby="critique-notes-heading">
+        <h2 id="critique-notes-heading">Critique triage footnotes</h2>
+        <ul>
+          <li>Validated and changed: contraceptive failure is no longer applied as a full first-year hazard per partner; condom pregnancy comparison, child outcome share, HPV vaccine benefit and uncertain-input sensitivity are now user-selectable, while postpartum pause uses a fixed 1.25-year scenario.</li>
+          <li>Validated but left as caveats: oral-heavy sex, partner-risk clustering and the college-degree proxy need richer inputs than this compact calculator has.</li>
+          <li>Already addressed before this pass: HSV condom effectiveness is sex/direction-specific, HSV QALYs are explicitly physical-only, and female Ureaplasma burden is intentionally zero under CDC/European guidance.</li>
+          <li>Not adopted as a direct point-estimate change: reported bacterial STI surveillance caveats are real, but this page already uses low-risk prevalence anchors rather than raw national reported case rates.</li>
+        </ul>
       </section>
 
       <section class="sources" aria-labelledby="sources-heading">
@@ -238,9 +287,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const BASELINE_PARTNERS = 10;
       const DAYS_PER_QALY = 365.25;
       const WEEKS_PER_QALY = DAYS_PER_QALY / 7;
-      const PREGNANCY_INFERTILE_YEARS = 2;
-      const CHILD_PER_PREGNANCY = 0.5;
-      const HPV_VACCINE_EFFECTIVENESS = 0.9;
+      const PREGNANCY_SLOTS_PER_YEAR = 4;
+      const DEFAULT_PREGNANCY_PAUSE_YEARS = 1.25;
+      const DEFAULT_CHILD_PER_PREGNANCY = 0.5;
+      const HPV_VACCINE_SCENARIOS = {
+        none: 0,
+        adultPriorExposure: 0.4,
+        preExposure: 0.9
+      };
       // You et al.: removing post-diagnosis psychosocial distress cuts HSV losses by about 40%.
       const HSV_PHYSICAL_ONLY_MULTIPLIER = 0.6;
 
@@ -256,7 +310,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             broad: { female: 0.0045, male: 0.011 }
           },
           condomEffectiveness: { female: 0, male: 0 },
-          vaccineEffectiveness: HPV_VACCINE_EFFECTIVENESS,
+          vaccinePreventableShare: 1,
+          uncertainty: { low: 0.35, high: 3 },
           qalyPerCase: { female: 0.025, male: 0.041 }
         },
         {
@@ -269,7 +324,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             broad: { female: 0.03, male: 0.027 }
           },
           condomEffectiveness: { female: 0.55, male: 0.55 },
-          vaccineEffectiveness: HPV_VACCINE_EFFECTIVENESS,
+          vaccinePreventableShare: 1,
+          uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.012, male: 0.003 }
         },
         {
@@ -283,6 +339,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.0011, male: 0.00065 },
           condomEffectiveness: { female: 0.96, male: 0.65 },
+          uncertainty: { low: 0.6, high: 1.8 },
           qalyPerCase: {
             female: 0.05 * HSV_PHYSICAL_ONLY_MULTIPLIER,
             male: 0.05 * HSV_PHYSICAL_ONLY_MULTIPLIER
@@ -298,6 +355,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             broad: { female: 0.0012, male: 0.001 }
           },
           condomEffectiveness: { female: 0, male: 0 },
+          uncertainty: { low: 0.6, high: 1.8 },
           qalyPerCase: {
             female: 0.01 * HSV_PHYSICAL_ONLY_MULTIPLIER,
             male: 0.01 * HSV_PHYSICAL_ONLY_MULTIPLIER
@@ -315,6 +373,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.04, male: 0.032 },
           condomEffectiveness: { female: 0.6, male: 0.6 },
+          uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.04698, male: 0.00094 }
         },
         {
@@ -329,6 +388,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.09, male: 0.07 },
           condomEffectiveness: { female: 0.65, male: 0.65 },
+          uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.01422, male: 0.00143 }
         },
         {
@@ -343,6 +403,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.07, male: 0.055 },
           condomEffectiveness: { female: 0.6, male: 0.6 },
+          uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.00135, male: 0.00012 }
         },
         {
@@ -355,6 +416,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             broad: { female: 0.00868, male: 0.00527 }
           },
           condomEffectiveness: { female: 0.5, male: 0.5 },
+          uncertainty: { low: 0.3, high: 3 },
           qalyPerCase: { female: 0.016, male: 0.001 }
         },
         {
@@ -367,6 +429,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             broad: { female: 0, male: 0.007 }
           },
           condomEffectiveness: { female: 0.5, male: 0.5 },
+          uncertainty: { low: 0.25, high: 4 },
           qalyPerCase: { female: 0, male: 0.002 }
         },
         {
@@ -381,13 +444,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.02, male: 0.016 },
           condomEffectiveness: { female: 0.5, male: 0.5 },
+          uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.09, male: 0.09 }
         },
         {
           name: "HIV",
           route: "perAct",
           repeatable: false,
-          note: "Uses CDC per-act vaginal risk, filtered to a low-prevalence heterosexual white non-IDU pool.",
+          note: "Uses CDC per-act vaginal risk with an infectious/unsuppressed-source prevalence term, filtered to a low-prevalence heterosexual white non-IDU pool.",
           prevalence: {
             college: { male: 0.00004, female: 0.000025 },
             broad: { male: 0.00018, female: 0.0001 }
@@ -412,6 +476,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const partnersNumber = document.querySelector("#partners-number");
       const collegeOnly = document.querySelector("#college-only");
       const birthControl = document.querySelector("#birth-control");
+      const condomPregnancyMode = document.querySelector("#condom-pregnancy-mode");
+      const childRateRange = document.querySelector("#child-rate-range");
+      const childRateNumber = document.querySelector("#child-rate-number");
+      const hpvVaccineScenario = document.querySelector("#hpv-vaccine-scenario");
+      const uncertaintyScenario = document.querySelector("#uncertainty-scenario");
       const diseaseBreakdown = document.querySelector("#disease-breakdown");
 
       const ids = {
@@ -432,6 +501,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const parsed = Number.parseInt(value, 10);
         if (Number.isNaN(parsed)) return 10;
         return Math.min(200, Math.max(1, parsed));
+      }
+
+      function clampNumber(value, min, max, fallback) {
+        const parsed = Number.parseFloat(value);
+        if (Number.isNaN(parsed)) return fallback;
+        return Math.min(max, Math.max(min, parsed));
+      }
+
+      function failureProbabilityForYears(annualFailure, years) {
+        return 1 - Math.pow(1 - annualFailure, years);
       }
 
       function probabilityAcrossPartners(perPartnerRisk, partners) {
@@ -477,18 +556,22 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             : perPartnerRisk(disease, context.perspective, withCondom, context.tier);
         const probability = probabilityAcrossPartners(perPartner, context.partners);
         const expectedCases = disease.repeatable ? perPartner * context.partners : probability;
-        const qaly = expectedCases * disease.qalyPerCase[context.perspective];
+        const uncertaintyMultiplier = disease.uncertainty?.[context.uncertaintyScenario] ?? 1;
+        const qaly = expectedCases * disease.qalyPerCase[context.perspective] * uncertaintyMultiplier;
 
         return { perPartner, probability, expectedCases, qaly };
       }
 
-      function expectedPregnanciesWithSharedInfertility(annualFailure, partners) {
-        const cooldownSlots = Math.ceil((PREGNANCY_INFERTILE_YEARS / YEARS) * partners);
+      function pregnancyTrajectory(annualFailure, exposureYears, pauseYears) {
+        const totalSlots = Math.max(1, Math.ceil(exposureYears * PREGNANCY_SLOTS_PER_YEAR));
+        const slotYears = exposureYears / totalSlots;
+        const failurePerSlot = failureProbabilityForYears(annualFailure, slotYears);
+        const cooldownSlots = Math.max(0, Math.ceil(pauseYears / slotYears));
         let states = new Array(cooldownSlots + 1).fill(0);
         let expectedPregnancies = 0;
         states[0] = 1;
 
-        for (let partnerIndex = 0; partnerIndex < partners; partnerIndex += 1) {
+        for (let slotIndex = 0; slotIndex < totalSlots; slotIndex += 1) {
           const nextStates = new Array(cooldownSlots + 1).fill(0);
 
           states.forEach((probability, cooldown) => {
@@ -499,30 +582,43 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               return;
             }
 
-            const pregnancyProbability = probability * annualFailure;
+            const pregnancyProbability = probability * failurePerSlot;
             expectedPregnancies += pregnancyProbability;
             nextStates[cooldownSlots] += pregnancyProbability;
-            nextStates[0] += probability * (1 - annualFailure);
+            nextStates[0] += probability * (1 - failurePerSlot);
           });
 
           states = nextStates;
         }
 
-        return expectedPregnancies;
+        return {
+          probability: failureProbabilityForYears(annualFailure, exposureYears),
+          expected: expectedPregnancies
+        };
       }
 
-      function pregnancyFor(annualFailure, perspective, partners) {
+      function pregnancyFor(annualFailure, perspective, partners, pauseYears, childPerPregnancy) {
+        const singleClock = perspective === "female"
+          ? pregnancyTrajectory(annualFailure, YEARS, pauseYears)
+          : pregnancyTrajectory(annualFailure, YEARS / partners, pauseYears);
         const expectedPregnancies = perspective === "female"
-          ? expectedPregnanciesWithSharedInfertility(annualFailure, partners)
-          : annualFailure * partners;
-        const atLeastOne = probabilityAcrossPartners(annualFailure, partners);
-        const projectedChildren = expectedPregnancies * CHILD_PER_PREGNANCY;
+          ? singleClock.expected
+          : singleClock.expected * partners;
+        const atLeastOne = perspective === "female"
+          ? singleClock.probability
+          : probabilityAcrossPartners(singleClock.probability, partners);
+        const projectedChildren = expectedPregnancies * childPerPregnancy;
 
         return {
           probability: atLeastOne,
           expected: expectedPregnancies,
           projectedChildren
         };
+      }
+
+      function annualFailureWithCondoms(methodKey, methodFailure, condomFailure, condomMode) {
+        if (condomMode === "condom-only" || methodKey === "none") return condomFailure;
+        return methodFailure * condomFailure;
       }
 
       function weeksText(qaly) {
@@ -558,13 +654,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return value.toFixed(2);
       }
 
-      function calculateDiseaseTotals({ perspective, partners, onlyCollege }) {
+      function calculateDiseaseTotals({ perspective, partners, onlyCollege, hpvVaccineEffectiveness, uncertaintyScenario }) {
         const context = {
           perspective,
           partners,
           partnerSex: perspective === "female" ? "male" : "female",
           tier: onlyCollege ? "college" : "broad",
-          actsPerPartner: TOTAL_ACTS / partners
+          actsPerPartner: TOTAL_ACTS / partners,
+          uncertaintyScenario
         };
 
         return DISEASES.map((disease) => {
@@ -580,7 +677,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             condomCases: condom.expectedCases,
             noCondom: noCondom.qaly,
             condom: condom.qaly,
-            vaccineBenefit: noCondom.qaly * (disease.vaccineEffectiveness ?? 0),
+            vaccineBenefit: noCondom.qaly * (disease.vaccinePreventableShare ?? 0) * hpvVaccineEffectiveness,
             benefit: noCondom.qaly - condom.qaly
           };
         });
@@ -613,16 +710,47 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const birthControlKey = birthControl.value;
         const useMode = new FormData(form).get("use-mode") || "perfect";
         const noCondomBirthControl = BIRTH_CONTROL[birthControlKey] || BIRTH_CONTROL.withdrawal;
+        const condomMode = condomPregnancyMode.value;
+        const childRatePercent = clampNumber(childRateRange.value, 0, 100, DEFAULT_CHILD_PER_PREGNANCY * 100);
+        const pregnancyPauseYears = DEFAULT_PREGNANCY_PAUSE_YEARS;
+        const hpvVaccineEffectiveness = HPV_VACCINE_SCENARIOS[hpvVaccineScenario.value] ?? HPV_VACCINE_SCENARIOS.preExposure;
+        const selectedUncertaintyScenario = uncertaintyScenario.value || "base";
+        const noCondomAnnualFailure = noCondomBirthControl.annualFailure[useMode];
+        const condomAnnualFailure = annualFailureWithCondoms(
+          birthControlKey,
+          noCondomAnnualFailure,
+          CONDOM_ANNUAL_FAILURE[useMode],
+          condomMode
+        );
 
         partnersRange.value = String(partners);
         partnersNumber.value = String(partners);
-
-        const diseaseRows = calculateDiseaseTotals({ perspective, partners, onlyCollege });
+        childRateRange.value = String(childRatePercent);
+        childRateNumber.value = String(childRatePercent);
+        const diseaseRows = calculateDiseaseTotals({
+          perspective,
+          partners,
+          onlyCollege,
+          hpvVaccineEffectiveness,
+          uncertaintyScenario: selectedUncertaintyScenario
+        });
         const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
         const condomSti = diseaseRows.reduce((total, row) => total + row.condom, 0);
         const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
-        const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure[useMode], perspective, partners);
-        const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE[useMode], perspective, partners);
+        const noCondomPregnancy = pregnancyFor(
+          noCondomAnnualFailure,
+          perspective,
+          partners,
+          pregnancyPauseYears,
+          childRatePercent / 100
+        );
+        const condomPregnancy = pregnancyFor(
+          condomAnnualFailure,
+          perspective,
+          partners,
+          pregnancyPauseYears,
+          childRatePercent / 100
+        );
         const noCondomTotal = noCondomSti;
         const condomTotal = condomSti;
         const benefit = noCondomTotal - condomTotal;
@@ -658,6 +786,17 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       partnersNumber.addEventListener("input", () => {
         const value = clampPartners(partnersNumber.value);
         partnersRange.value = String(value);
+        update();
+      });
+
+      childRateRange.addEventListener("input", () => {
+        childRateNumber.value = childRateRange.value;
+        update();
+      });
+
+      childRateNumber.addEventListener("input", () => {
+        const value = clampNumber(childRateNumber.value, 0, 100, DEFAULT_CHILD_PER_PREGNANCY * 100);
+        childRateRange.value = String(value);
         update();
       });
 
