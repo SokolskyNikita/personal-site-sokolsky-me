@@ -95,12 +95,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </label>
 
           <label class="control select-control" for="condom-pregnancy-mode">
-            <span>Pregnancy comparison when condoms are used</span>
+            <span>When a condom is used, assume...</span>
             <select id="condom-pregnancy-mode" name="condom-pregnancy-mode">
-              <option value="condom-only" selected>Switch to condoms alone</option>
-              <option value="stacked">Add condoms to selected method</option>
+              <option value="condom-only" selected>No other birth control method is used</option>
+              <option value="stacked">The birth control method above (the no condom scenario) is used</option>
             </select>
-            <small>Use "add condoms" for the marginal value of condoms on top of pill, implant or withdrawal. Stacked use is a simple independent-failure approximation.</small>
+            <small>When the method above is also used, stacked use is a simple independent-failure approximation.</small>
           </label>
 
           <div class="control control-child-rate">
@@ -116,7 +116,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <span>HPV vaccine benefit assumption</span>
             <select id="hpv-vaccine-scenario" name="hpv-vaccine-scenario">
               <option value="preExposure" selected>Pre-exposure / catch-up: 90%</option>
-              <option value="adultPriorExposure">Adult with likely prior exposure: 40%</option>
+              <option value="adultPriorExposure">Adult prior-exposure scenario: 40%</option>
               <option value="none">No HPV vaccine benefit</option>
             </select>
           </label>
@@ -214,20 +214,21 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         <aside class="panel assumptions">
           <div class="section-heading">
-            <p class="eyebrow">Model notes</p>
-            <h2>Assumptions</h2>
+            <p class="eyebrow">Assumptions</p>
           </div>
           <ul>
             <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row is an order-of-magnitude approximation: it converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
             <li>Oral and vaginal sex are still collapsed into one exposure window. The base case is closer to vaginal exposure; oral-heavy sex can materially overstate HIV risk and misallocate oral HPV, HSV and gonorrhea burden.</li>
             <li>Age is not modeled. HSV prevalence, HSV-1 oral/genital site mix, HPV vaccination benefit, pregnancy risk and oropharyngeal-cancer risk can move materially by age and cohort.</li>
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms, but it is only a coarse proxy. Recent testing, concurrency, geography, age, partner network and injection-drug history matter more for some infections; partner risk is also clustered rather than independent in real social networks.</li>
-            <li>Pregnancy uses first-year contraceptive failure rates spread over the 10-year horizon. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The condom comparison can model either switching to condoms alone or adding condoms to the selected no-condom method.</li>
+            <li>Pregnancy uses first-year contraceptive failure rates spread over the 10-year horizon. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The condom comparison can model either switching to condoms alone or adding condoms to the selected no-condom method. Added-method pregnancy risk multiplies method failures as a toy approximation; typical-use errors may be correlated in real life.</li>
             <li>The pregnancy/fertility pause uses a fixed 1.25-year median scenario because lactational amenorrhea is a conditional six-month method, not a stable two-year infertile interval.</li>
             <li>Projected children uses expected pregnancies across the selected horizon and the user-selected share of unintended pregnancies resulting in a child.</li>
-            <li>The HPV vaccine scenario applies only to HPV-attributable rows. The 90% setting is most appropriate for pre-exposure vaccination; the adult/prior-exposure setting is intentionally lower.</li>
+            <li>The HPV vaccine scenario applies only to HPV-attributable rows. The 90% setting is most appropriate for pre-exposure vaccination; the adult/prior-exposure setting is an illustrative lower-benefit scenario, not a clean CDC-anchored point estimate.</li>
             <li>HSV rows use You et al.'s adult anchors, then subtract the roughly 40% post-diagnosis psychosocial share. Physical-only QALY/case is 0.03 for HSV-2 and 0.006 for genital HSV-1. Neonatal HSV, stigma, disclosure anxiety and HSV-attributable HIV are not counted. HSV-2 condom protection is sex/direction-specific in the model.</li>
+            <li>Existing HSV-1, HSV-2 and HPV status is not modeled. Prior infection or vaccination changes the marginal acquisition risk and expected benefit for those rows.</li>
             <li>Pregnancy is shown separately and is excluded from QALY totals. Female perspective uses one fertility clock; male perspective gives each partner a separate clock over their share of the 10-year exposure window.</li>
+            <li>The HIV row uses an infectious/unsuppressed-source prevalence term, not overall HIV prevalence; virally suppressed partners are treated as effectively non-transmitting for sexual exposure.</li>
             <li>Bacterial STI surveillance caveats are real, but this page uses low-risk prevalence anchors rather than raw national reported case rates.</li>
             <li>M. genitalium uses NHANES sex/race prevalence scaled by exposed-partner infection rates. Its female QALY/case is scaled from Li et al.'s chlamydia estimate by the modeled PID-progression ratio for M. genitalium vs. chlamydia; male QALY/case is a urethritis-only proxy because CDC says male chronic-complication data are insufficient.</li>
             <li>The M. genitalium row does not separately model macrolide resistance, persistence or retreatment burden, so it is intentionally exposed to the sensitivity control.</li>
@@ -1320,7 +1321,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     padding-left: 1.05rem;
   }
 
-  .assumptions li,
+  .assumptions li {
+    margin: 0.35rem 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+  }
+
   .sources li {
     margin: 0.35rem 0;
     color: var(--muted);
