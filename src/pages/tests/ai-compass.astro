@@ -216,6 +216,7 @@ const structuredData = {
       const verdictEl = document.getElementById("verdict");
       const axesReportEl = document.getElementById("axes-report");
       const minimapEl = document.getElementById("minimap");
+      const minimapWrapEl = document.querySelector(".minimap-wrap");
 
       let advanceTimer = null;
 
@@ -552,7 +553,8 @@ const structuredData = {
         const legendHtml = scoredKeys.length > 0
           ? `<p class="v-legend">Solid bar: you. Hollow tick: ${top.arch.name}.</p>`
           : "";
-        const runnersLine = runners.length > 0
+        const fingerprintHtml = top.special ? "" : `<div class="v-fingerprint">${fpRows}</div>`;
+        const runnersLine = !top.special && runners.length > 0
           ? `<p class="v-runners">Also close: ${runnersHtml}</p>`
           : "";
 
@@ -562,7 +564,7 @@ const structuredData = {
           `<p class="v-tag">${top.arch.tag}</p>` +
           `<p class="v-fit"><span class="fit-chip">${top.fit}% fit</span>${fitNote}</p>` +
           `<p class="v-desc">${top.arch.desc}</p>` +
-          `<div class="v-fingerprint">${fpRows}</div>` +
+          fingerprintHtml +
           legendHtml +
           runnersLine;
       }
@@ -723,6 +725,8 @@ const structuredData = {
         if (persist) saveLocal();
         history.replaceState(null, "", "#a=" + encodeAnswers());
 
+        axesReportEl.hidden = false;
+        if (minimapWrapEl) minimapWrapEl.hidden = false;
         renderVerdict(scores, ranked);
         renderAxesReport(scores);
         renderMinimap(scores, ranked);
@@ -744,7 +748,6 @@ const structuredData = {
       function showSpecialResult(archetypeIndex, persist = true) {
         if (advanceTimer) { clearTimeout(advanceTimer); advanceTimer = null; }
         const scores = Object.fromEntries(AXIS_KEYS.map((key) => [key, null]));
-        const neutralScores = Object.fromEntries(AXIS_KEYS.map((key) => [key, 0]));
         const ranked = [
           {
             arch: ARCHETYPES[archetypeIndex],
@@ -753,7 +756,6 @@ const structuredData = {
             fit: 100,
             special: true,
           },
-          ...matchArchetypes(neutralScores).slice(0, 2),
         ];
 
         state.answers = new Array(DECK.length).fill(UNANSWERED);
@@ -763,9 +765,9 @@ const structuredData = {
         if (persist) saveLocal();
         history.replaceState(null, "", ZEN_MASTER_HASH);
 
+        axesReportEl.hidden = true;
+        if (minimapWrapEl) minimapWrapEl.hidden = true;
         renderVerdict(scores, ranked);
-        renderAxesReport(scores);
-        renderMinimap(scores, ranked);
         sendResultTelemetry(scores, ranked, persist);
 
         introSection.hidden = true;
