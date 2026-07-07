@@ -73,11 +73,22 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </span>
           </label>
 
+          <fieldset class="control control-use-mode">
+            <legend>Pregnancy prevention use</legend>
+            <div class="segmented" role="radiogroup" aria-label="Pregnancy prevention use">
+              <label><input type="radio" name="use-mode" value="typical" checked /><span>Typical use</span></label>
+              <label><input type="radio" name="use-mode" value="perfect" /><span>Perfect use</span></label>
+            </div>
+            <p class="hint">
+              Applies to both the selected no-condom method and the condom comparison.
+            </p>
+          </fieldset>
+
           <label class="control select-control" for="birth-control">
             <span>Birth control when no condoms are used</span>
             <select id="birth-control" name="birth-control">
               <option value="none">None</option>
-              <option value="pullout" selected>Perfect pull out</option>
+              <option value="withdrawal" selected>Withdrawal</option>
               <option value="pill">Birth control pill</option>
               <option value="implant">Contraceptive implant</option>
             </select>
@@ -171,9 +182,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <h2>Assumptions</h2>
           </div>
           <ul>
-            <li>Each STI uses partner prevalence, transmission over the exposure window and sex-specific QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
+            <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
             <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
-            <li>Pregnancy uses first-year-equivalent failure rates per partner: none 85%, perfect withdrawal 4%, pill 9%, implant 0.05%, perfect-use male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
+            <li>Pregnancy uses first-year-equivalent failure rates per partner. Typical use: none 85%, withdrawal 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: withdrawal 4%, pill 0.3%, implant 0.1%, male condom 2%. The with-condoms case uses condoms alone, without withdrawal or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
             <li>Pregnancy is shown separately and is excluded from QALY totals. Each pregnancy removes roughly 2 years from future pregnancy exposure while pregnant and breastfeeding; this is modeled as one shared fertility clock for female perspective and partner-specific clocks for male perspective.</li>
             <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
@@ -185,10 +196,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC contraception, HIV and HPV vaccination tables, NHANES HPV/HSV prevalence, Li et al. STI QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies and Winer NEJM genital HPV condom data.
+          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, NHANES HPV/HSV prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies and Winer NEJM genital HPV condom data.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
+          <li><a href="https://www.guttmacher.org/fact-sheet/contraceptive-effectiveness-united-states" target="_blank" rel="noreferrer noopener">Guttmacher typical-use and perfect-use contraceptive failure rates</a></li>
           <li><a href="https://www.cdc.gov/hivpartners/php/riskandprevention/index.html" target="_blank" rel="noreferrer noopener">CDC HIV risk and prevention estimates</a></li>
           <li><a href="https://www.cdc.gov/sti/about/about-sti-risk-and-oral-sex.html" target="_blank" rel="noreferrer noopener">CDC STI risk and oral sex</a></li>
           <li><a href="https://www.cdc.gov/sti-statistics/annual/index.html" target="_blank" rel="noreferrer noopener">CDC 2024 STI surveillance</a></li>
@@ -196,6 +208,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://www.cdc.gov/hpv/vaccines/index.html" target="_blank" rel="noreferrer noopener">CDC HPV vaccine prevention summary</a></li>
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db304.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HSV-1/HSV-2 prevalence data brief</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10112678/" target="_blank" rel="noreferrer noopener">QALYs lost from chlamydia, gonorrhea and trichomoniasis</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10025423/" target="_blank" rel="noreferrer noopener">QALYs lost from genital HSV-1 and HSV-2</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
         </ul>
       </section>
@@ -245,26 +258,26 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           name: "HSV-2",
           route: "perAct",
           repeatable: false,
-          note: "HSV-2 prevalence starts from NHANES white HSV-2 rates, then drops for the college-pool setting.",
+          note: "HSV-2 prevalence starts from NHANES white HSV-2 rates, then drops for the college-pool setting. QALY/case uses You et al.'s adult genital HSV-2 estimate.",
           prevalence: {
             college: { male: 0.055, female: 0.04 },
             broad: { male: 0.085, female: 0.065 }
           },
           perAct: { female: 0.0011, male: 0.00065 },
           condomEffectiveness: { female: 0.96, male: 0.65 },
-          qalyPerCase: { female: 0.035, male: 0.02 }
+          qalyPerCase: { female: 0.05, male: 0.05 }
         },
         {
           name: "HSV-1 genital",
           route: "perPartner",
           repeatable: false,
-          note: "Mostly oral-acquired genital HSV-1. Condoms do not change it when oral sex is unbarriered.",
+          note: "Mostly oral-acquired genital HSV-1. Condoms do not change it when oral sex is unbarriered. QALY/case uses You et al.'s adult genital HSV-1 estimate.",
           perPartner: {
             college: { female: 0.0009, male: 0.0007 },
             broad: { female: 0.0012, male: 0.001 }
           },
           condomEffectiveness: { female: 0, male: 0 },
-          qalyPerCase: { female: 0.01, male: 0.008 }
+          qalyPerCase: { female: 0.01, male: 0.01 }
         },
         {
           name: "Chlamydia",
@@ -338,13 +351,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       ];
 
       const BIRTH_CONTROL = {
-        none: { label: "None", annualFailure: 0.85 },
-        pullout: { label: "Perfect pull out", annualFailure: 0.04 },
-        pill: { label: "Birth control pill", annualFailure: 0.09 },
-        implant: { label: "Contraceptive implant", annualFailure: 0.0005 }
+        none: { label: "None", annualFailure: { typical: 0.85, perfect: 0.85 } },
+        withdrawal: { label: "Withdrawal", annualFailure: { typical: 0.2, perfect: 0.04 } },
+        pill: { label: "Birth control pill", annualFailure: { typical: 0.07, perfect: 0.003 } },
+        implant: { label: "Contraceptive implant", annualFailure: { typical: 0.001, perfect: 0.001 } }
       };
 
-      const CONDOM_ANNUAL_FAILURE = 0.02;
+      const CONDOM_ANNUAL_FAILURE = { typical: 0.13, perfect: 0.02 };
 
       const form = document.querySelector("#risk-controls");
       const partnersRange = document.querySelector("#partners-range");
@@ -494,7 +507,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       }
 
       function childrenText(value) {
-        return value.toFixed(1);
+        if (value < 1) return value.toFixed(3);
+        return value.toFixed(2);
       }
 
       function calculateDiseaseTotals({ perspective, partners, onlyCollege }) {
@@ -550,7 +564,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const perspective = new FormData(form).get("perspective") || "female";
         const onlyCollege = collegeOnly.checked;
         const birthControlKey = birthControl.value;
-        const noCondomBirthControl = BIRTH_CONTROL[birthControlKey] || BIRTH_CONTROL.pullout;
+        const useMode = new FormData(form).get("use-mode") || "typical";
+        const noCondomBirthControl = BIRTH_CONTROL[birthControlKey] || BIRTH_CONTROL.withdrawal;
 
         partnersRange.value = String(partners);
         partnersNumber.value = String(partners);
@@ -559,8 +574,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
         const condomSti = diseaseRows.reduce((total, row) => total + row.condom, 0);
         const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
-        const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure, perspective, partners);
-        const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE, perspective, partners);
+        const noCondomPregnancy = pregnancyFor(noCondomBirthControl.annualFailure[useMode], perspective, partners);
+        const condomPregnancy = pregnancyFor(CONDOM_ANNUAL_FAILURE[useMode], perspective, partners);
         const noCondomTotal = noCondomSti;
         const condomTotal = condomSti;
         const benefit = noCondomTotal - condomTotal;
