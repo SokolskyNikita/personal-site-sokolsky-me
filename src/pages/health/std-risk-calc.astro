@@ -318,7 +318,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <h3>UTIs and antibiotic-associated yeast</h3>
               <ul>
                 <li>Post-sex UTIs are modeled as a marginal sex-associated burden, not as partner prevalence times transmission probability and not as all UTIs someone might otherwise get. The default assumes few sex-triggered UTIs; the UTI-prone toggle uses a recurrent/postcoital-UTI style rate.</li>
-                <li>Plain condoms are treated as neutral for UTIs because spermicide, lube, friction and individual anatomy can push risk in different directions. Spermicide and diaphragms are the better-supported modifiable UTI triggers.</li>
+                <li>Ordinary condoms are treated as neutral for UTIs. Evidence supports sex itself as the main marginal trigger, and condom effects depend on product details, lubrication, friction and individual anatomy.</li>
                 <li>Yeast infections are driven only by modeled antibiotic courses from post-sex UTIs and bacterial STIs acquired in this calculator. Antibiotics for unrelated illnesses are excluded. The yeast-prone toggle uses the symptomatic VVC rate from a small prospective antibiotic study as a high-susceptibility setting.</li>
               </ul>
             </section>
@@ -370,7 +370,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
           <li><a href="https://www.auanet.org/guidelines-and-quality/guidelines/recurrent-uti" target="_blank" rel="noreferrer noopener">AUA/CUA/SUFU recurrent uncomplicated UTI guideline</a></li>
           <li><a href="https://www.aafp.org/pubs/afp/issues/2011/1001/p771.html" target="_blank" rel="noreferrer noopener">AAFP acute uncomplicated cystitis diagnosis and treatment</a></li>
-          <li><a href="https://www.cdc.gov/contraception/hcp/usmec/barrier-methods.html" target="_blank" rel="noreferrer noopener">CDC barrier-method guidance: spermicide/diaphragm UTI note</a></li>
+          <li><a href="https://www.cdc.gov/contraception/hcp/usmec/barrier-methods.html" target="_blank" rel="noreferrer noopener">CDC barrier-method guidance: UTI note</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9891499/" target="_blank" rel="noreferrer noopener">Uncomplicated UTI HRQoL and activity impairment study</a></li>
           <li><a href="https://www.cdc.gov/candidiasis/risk-factors/index.html" target="_blank" rel="noreferrer noopener">CDC candidiasis risk factors</a></li>
           <li><a href="https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm" target="_blank" rel="noreferrer noopener">CDC vulvovaginal candidiasis treatment guideline</a></li>
@@ -420,9 +420,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           prone: { female: 1.2, male: 0.12 }
         },
         sexRelatedAntibioticCoursesPerCase: 1,
-        plainCondomMultiplier: 1,
+        condomUtiMultiplier: 1,
         qalyPerCase: symptomBurdenQaly(3, 0.1),
-        note: "Non-STI row. Counts only marginal post-sex UTI episodes during the modeled sex horizon, not all UTIs someone might get. AUA/AAFP cite recent intercourse and spermicide/diaphragm use as UTI risk factors; plain condoms are left neutral because spermicide, lube and friction are not separately modeled."
+        note: "Non-STI row. Counts only marginal post-sex UTI episodes during the modeled sex horizon, not all UTIs someone might get. AUA/AAFP cite recent intercourse as a UTI risk factor; ordinary condoms are left neutral because product details, lubrication, friction and anatomy are not separately modeled."
       };
       const ANTIBIOTIC_ASSOCIATED_YEAST = {
         name: "Antibiotic-associated yeast infections*",
@@ -715,7 +715,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       function postSexUtiOutcome(context, withCondom) {
         const scenario = context.utiProne ? "prone" : "default";
         const sexAttributableAnnualCases = POST_SEX_UTI.sexAttributableAnnualCases[scenario][context.perspective] ?? 0;
-        const condomMultiplier = withCondom ? POST_SEX_UTI.plainCondomMultiplier : 1;
+        const condomMultiplier = withCondom ? POST_SEX_UTI.condomUtiMultiplier : 1;
         const expectedCases = sexAttributableAnnualCases * YEARS * condomMultiplier;
         const probability = expectedCases <= 0 ? 0 : 1 - Math.exp(-expectedCases);
         const qaly = expectedCases * POST_SEX_UTI.qalyPerCase;
