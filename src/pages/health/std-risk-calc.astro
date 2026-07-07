@@ -183,12 +183,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </div>
           <ul>
             <li>Each STI uses partner prevalence, transmission over the exposure window and a sourced QALY loss per infection. The HPV-attributable oropharyngeal-cancer row converts its lifetime-risk anchor into a per-partner-equivalent term calibrated at 10 partners, so the partner slider changes its displayed burden too.</li>
-            <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV and HSV move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
+            <li>The college-degree checkbox lowers the demographic-sensitive prevalence terms. HPV, HSV, M. genitalium and high-load Ureaplasma move less than chlamydia, gonorrhea, syphilis, trichomoniasis and HIV.</li>
             <li>Pregnancy uses first-year-equivalent failure rates per partner. Typical use: none 85%, pull out 20%, pill 7%, implant 0.1%, male condom 13%. Perfect use: pull out 4%, pill 0.3%, implant 0.1%, male condom 2%. The with-condoms case uses condoms alone, without pull out or other contraception stacked on top.</li>
             <li>The vaccine estimate applies a 90% HPV-vaccine reduction to HPV-attributable rows only; it does not change HSV, bacterial STI, HIV or pregnancy terms.</li>
             <li>Pregnancy is shown separately and is excluded from QALY totals. Each pregnancy removes roughly 2 years from future pregnancy exposure while pregnant and breastfeeding; this is modeled as one shared fertility clock for female perspective and partner-specific clocks for male perspective.</li>
             <li>Projected children uses expected pregnancies across the selected partner count and assumes 50% of unintended pregnancies result in a child.</li>
-            <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity and pregnancy recurrence after birth/breastfeeding.</li>
+            <li>M. genitalium uses NHANES sex/race prevalence scaled by exposed-partner infection rates. Its female QALY/case is scaled from Li et al.'s chlamydia estimate by the modeled PID-progression ratio for M. genitalium vs. chlamydia; male QALY/case is a urethritis-only proxy because CDC says male chronic-complication data are insufficient.</li>
+            <li>Ureaplasma models only possible high-load U. urealyticum nongonococcal urethritis in men, not common Ureaplasma carriage. Female per-partner risk and QALY/case are set to 0 because CDC and European STI guidance do not support a cervicitis/PID/infertility burden estimate.</li>
+            <li>The shakiest inputs are HPV persistence/progression, HSV transmission heterogeneity, M. genitalium and Ureaplasma condom effectiveness and pregnancy recurrence after birth/breastfeeding.</li>
           </ul>
         </aside>
       </section>
@@ -196,7 +198,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, NHANES HPV/HSV prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies and Winer NEJM genital HPV condom data.
+          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements and Winer NEJM genital HPV condom data.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
@@ -209,6 +211,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db304.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HSV-1/HSV-2 prevalence data brief</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10112678/" target="_blank" rel="noreferrer noopener">QALYs lost from chlamydia, gonorrhea and trichomoniasis</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10025423/" target="_blank" rel="noreferrer noopener">QALYs lost from genital HSV-1 and HSV-2</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/mycoplasmagenitalium.htm" target="_blank" rel="noreferrer noopener">CDC Mycoplasma genitalium treatment guidelines</a></li>
+          <li><a href="https://doi.org/10.1097/olq.0000000000001394" target="_blank" rel="noreferrer noopener">NHANES Mycoplasma genitalium prevalence, U.S. 2017-2018</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6678058/" target="_blank" rel="noreferrer noopener">Mycoplasma genitalium incidence, persistence and partner concordance</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7744984/" target="_blank" rel="noreferrer noopener">Mycoplasma genitalium PID progression evidence synthesis</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/urethritis-and-cervicitis.htm" target="_blank" rel="noreferrer noopener">CDC urethritis and cervicitis guidance for Ureaplasma</a></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/29924422/" target="_blank" rel="noreferrer noopener">European STI Guidelines position statement on Ureaplasma testing</a></li>
+          <li><a href="https://journals.asm.org/doi/10.1128/cmr.00137-18" target="_blank" rel="noreferrer noopener">Clinical Microbiology Reviews: Ureaplasma and male NGU</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5834136/" target="_blank" rel="noreferrer noopener">Oral HPV prevalence and OPC lifetime risk</a></li>
         </ul>
       </section>
@@ -320,6 +329,30 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           perAct: { female: 0.07, male: 0.055 },
           condomEffectiveness: { female: 0.6, male: 0.6 },
           qalyPerCase: { female: 0.00135, male: 0.00012 }
+        },
+        {
+          name: "Mycoplasma genitalium",
+          route: "perPartner",
+          repeatable: true,
+          note: "Mgen is often missed by standard STI panels. Per-partner risk uses NHANES sex/race prevalence scaled by exposed-partner infection rates; female QALY/case is a chlamydia-scaled PID proxy.",
+          perPartner: {
+            college: { female: 0.00675, male: 0.00465 },
+            broad: { female: 0.00868, male: 0.00527 }
+          },
+          condomEffectiveness: { female: 0.5, male: 0.5 },
+          qalyPerCase: { female: 0.016, male: 0.001 }
+        },
+        {
+          name: "Ureaplasma urealyticum high-load NGU",
+          route: "perPartner",
+          repeatable: true,
+          note: "Ureaplasma is usually carriage, not disease. This row only approximates possible high-load U. urealyticum nongonococcal urethritis in men; routine testing is not recommended.",
+          perPartner: {
+            college: { female: 0, male: 0.0035 },
+            broad: { female: 0, male: 0.007 }
+          },
+          condomEffectiveness: { female: 0.5, male: 0.5 },
+          qalyPerCase: { female: 0, male: 0.002 }
         },
         {
           name: "Syphilis",
