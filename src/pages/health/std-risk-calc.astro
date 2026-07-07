@@ -73,6 +73,18 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </span>
           </label>
 
+          <label class="control select-control" for="partner-test-recency">
+            <span>All partners have a negative STD test from the past...</span>
+            <select id="partner-test-recency" name="partner-test-recency">
+              <option value="none" selected>No test available</option>
+              <option value="month1">1 month</option>
+              <option value="month3">3 months</option>
+              <option value="month6">6 months</option>
+              <option value="month12">12 months</option>
+            </select>
+            <small>Modeled as a recent routine panel: strongest for chlamydia/gonorrhea, moderate for HIV/syphilis, partial for trich, and little to none for HPV, HSV, M. genitalium or Ureaplasma.</small>
+          </label>
+
           <fieldset class="control control-use-mode">
             <legend>Pregnancy prevention use</legend>
             <div class="segmented" role="radiogroup" aria-label="Pregnancy prevention use">
@@ -226,9 +238,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </section>
 
             <section class="assumption-group">
-              <h3>Partners, age and sex acts</h3>
+              <h3>Partners, testing, age and sex acts</h3>
               <ul>
                 <li>The college-degree checkbox is only a broad proxy for a lower-risk partner pool. Recent testing, number of recent partners, geography, age, partner network and injection-drug history can matter more.</li>
+                <li>The recent-test selector assumes every partner had a negative routine STI panel before sex. It helps most for chlamydia/gonorrhea NAAT testing, helps somewhat for HIV and syphilis blood testing, and helps only partly for trichomoniasis because it is not always included in routine asymptomatic screening.</li>
+                <li>A recent negative test is not a guarantee. Tests have window periods, can miss infections at untested body sites, and say nothing about infections acquired after the test.</li>
+                <li>The test selector does not reduce HPV, HSV, M. genitalium or Ureaplasma much in this model. HPV testing is not a general partner-status test, HSV screening is not recommended for most asymptomatic people, and M. genitalium/Ureaplasma are not routine screening tests.</li>
                 <li>Partner risk is not truly independent. Ten partners from the same tested friend-of-friends network is different from ten unrelated partners from a broad national pool.</li>
                 <li>Age is not modeled. HSV rates, HPV vaccine benefit, pregnancy risk and oral-cancer risk can change a lot by age and birth cohort.</li>
                 <li>Oral and vaginal sex are combined into one exposure window. The base model is closer to vaginal sex, so oral-heavy sex can overstate HIV risk and misplace some oral HPV, HSV and gonorrhea risk.</li>
@@ -295,12 +310,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <section class="sources" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources and anchors</h2>
         <p>
-          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements and Winer NEJM genital HPV condom data.
+          This is a calculator, not a clinical forecast. It uses CDC and Guttmacher contraception tables, CDC HIV and HPV vaccination tables, CDC STI testing guidance, NHANES HPV/HSV/M. genitalium prevalence, Li et al. bacterial STI QALY estimates, You et al. genital HSV QALY estimates, Fisman genital-herpes utility data, GBD genital-herpes disability weights, D'Souza et al. oral HPV/OPC risk, Martin/Magaret HSV condom studies, Ureaplasma position statements and Winer NEJM genital HPV condom data.
         </p>
         <ul>
           <li><a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noreferrer noopener">CDC contraceptive effectiveness table</a></li>
           <li><a href="https://www.guttmacher.org/fact-sheet/contraceptive-effectiveness-united-states" target="_blank" rel="noreferrer noopener">Guttmacher typical-use and perfect-use contraceptive failure rates</a></li>
           <li><a href="https://www.cdc.gov/hivpartners/php/riskandprevention/index.html" target="_blank" rel="noreferrer noopener">CDC HIV risk and prevention estimates</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/gonorrhea-adults.htm" target="_blank" rel="noreferrer noopener">CDC gonorrhea NAAT testing guidance</a></li>
+          <li><a href="https://www.cdc.gov/std/treatment-guidelines/Trichomoniasis.htm" target="_blank" rel="noreferrer noopener">CDC trichomoniasis testing guidance</a></li>
           <li><a href="https://www.cdc.gov/sti/about/about-sti-risk-and-oral-sex.html" target="_blank" rel="noreferrer noopener">CDC STI risk and oral sex</a></li>
           <li><a href="https://www.cdc.gov/sti-statistics/annual/index.html" target="_blank" rel="noreferrer noopener">CDC 2024 STI surveillance</a></li>
           <li><a href="https://www.cdc.gov/nchs/products/databriefs/db280.htm" target="_blank" rel="noreferrer noopener">CDC NCHS HPV prevalence data brief</a></li>
@@ -341,6 +358,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         none: 0,
         adultPriorExposure: 0.4,
         preExposure: 0.9
+      };
+      const TEST_RECENCY_MULTIPLIERS = {
+        none: { naat: 1, hiv: 1, syphilis: 1, trich: 1, none: 1 },
+        month1: { naat: 0.15, hiv: 0.35, syphilis: 0.35, trich: 0.55, none: 1 },
+        month3: { naat: 0.3, hiv: 0.4, syphilis: 0.45, trich: 0.65, none: 1 },
+        month6: { naat: 0.55, hiv: 0.6, syphilis: 0.65, trich: 0.8, none: 1 },
+        month12: { naat: 0.8, hiv: 0.8, syphilis: 0.85, trich: 0.9, none: 1 }
       };
       // You et al.: removing post-diagnosis psychosocial distress cuts HSV losses by about 40%.
       const HSV_PHYSICAL_ONLY_MULTIPLIER = 0.6;
@@ -420,6 +444,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.04, male: 0.032 },
           condomEffectiveness: { female: 0.6, male: 0.6 },
+          testGroup: "naat",
           uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.04698, male: 0.00094 }
         },
@@ -435,6 +460,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.09, male: 0.07 },
           condomEffectiveness: { female: 0.65, male: 0.65 },
+          testGroup: "naat",
           uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.01422, male: 0.00143 }
         },
@@ -450,6 +476,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.07, male: 0.055 },
           condomEffectiveness: { female: 0.6, male: 0.6 },
+          testGroup: "trich",
           uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.00135, male: 0.00012 }
         },
@@ -491,6 +518,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.02, male: 0.016 },
           condomEffectiveness: { female: 0.5, male: 0.5 },
+          testGroup: "syphilis",
           uncertainty: { low: 0.5, high: 2 },
           qalyPerCase: { female: 0.09, male: 0.09 }
         },
@@ -505,6 +533,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           },
           perAct: { female: 0.0008, male: 0.0004 },
           condomEffectiveness: { female: 0.8, male: 0.8 },
+          testGroup: "hiv",
           qalyPerCase: { female: 6, male: 6 }
         }
       ];
@@ -522,6 +551,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const partnersRange = document.querySelector("#partners-range");
       const partnersNumber = document.querySelector("#partners-number");
       const collegeOnly = document.querySelector("#college-only");
+      const partnerTestRecency = document.querySelector("#partner-test-recency");
       const birthControl = document.querySelector("#birth-control");
       const condomPregnancyMode = document.querySelector("#condom-pregnancy-mode");
       const childRateRange = document.querySelector("#child-rate-range");
@@ -588,8 +618,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return perPartnerEquivalent * condomMultiplier;
       }
 
+      function testRecencyMultiplier(disease, testRecency) {
+        const testGroup = disease.testGroup ?? "none";
+        return TEST_RECENCY_MULTIPLIERS[testRecency]?.[testGroup] ?? 1;
+      }
+
       function diseaseOutcome(disease, context, withCondom) {
-        const perPartner = disease.route === "perAct"
+        const basePerPartner = disease.route === "perAct"
           ? perActPartnerRisk(
               disease,
               context.perspective,
@@ -601,6 +636,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           : disease.route === "lifetime"
             ? lifetimeRisk(disease, context.perspective, withCondom, context.tier)
             : perPartnerRisk(disease, context.perspective, withCondom, context.tier);
+        const perPartner = basePerPartner * testRecencyMultiplier(disease, context.testRecency);
         const probability = probabilityAcrossPartners(perPartner, context.partners);
         const expectedCases = disease.repeatable ? perPartner * context.partners : probability;
         const uncertaintyMultiplier = disease.uncertainty?.[context.uncertaintyScenario] ?? 1;
@@ -701,13 +737,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return value.toFixed(2);
       }
 
-      function calculateDiseaseTotals({ perspective, partners, onlyCollege, hpvVaccineEffectiveness, uncertaintyScenario }) {
+      function calculateDiseaseTotals({ perspective, partners, onlyCollege, hpvVaccineEffectiveness, testRecency, uncertaintyScenario }) {
         const context = {
           perspective,
           partners,
           partnerSex: perspective === "female" ? "male" : "female",
           tier: onlyCollege ? "college" : "broad",
           actsPerPartner: TOTAL_ACTS / partners,
+          testRecency,
           uncertaintyScenario
         };
 
@@ -754,6 +791,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const partners = clampPartners(partnersRange.value);
         const perspective = new FormData(form).get("perspective") || "male";
         const onlyCollege = collegeOnly.checked;
+        const testRecency = partnerTestRecency.value || "none";
         const birthControlKey = birthControl.value;
         const useMode = new FormData(form).get("use-mode") || "perfect";
         const noCondomBirthControl = BIRTH_CONTROL[birthControlKey] || BIRTH_CONTROL.withdrawal;
@@ -779,6 +817,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           partners,
           onlyCollege,
           hpvVaccineEffectiveness,
+          testRecency,
           uncertaintyScenario: selectedUncertaintyScenario
         });
         const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
