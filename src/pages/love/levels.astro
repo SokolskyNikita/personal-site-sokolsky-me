@@ -40,6 +40,17 @@ const locales = [
   czechRepublic,
 ];
 const defaultLocale = locales.find((l) => l.default) ?? locales[0];
+const allLocaleId = "all";
+const maxLevel = Math.max(
+  ...locales.map((locale) => locale.levels[locale.levels.length - 1].level),
+);
+const levelMapRows = Array.from({ length: maxLevel + 1 }, (_, level) => ({
+  level,
+  terms: locales.map((locale) => ({
+    locale,
+    item: locale.levels.find((item) => item.level === level),
+  })),
+}));
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -92,6 +103,18 @@ const structuredData = {
       </p>
 
       <div class="locale-bar" role="tablist" aria-label="Country / language">
+        <button
+          type="button"
+          class="locale-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls={`panel-${allLocaleId}`}
+          id={`tab-${allLocaleId}`}
+          data-locale={allLocaleId}
+        >
+          <span class="locale-short">All</span>
+          <span class="locale-full">All countries</span>
+        </button>
         {
           locales.map((locale) => (
             <button
@@ -109,6 +132,46 @@ const structuredData = {
           ))
         }
       </div>
+
+      <section
+        class="locale-panel"
+        id={`panel-${allLocaleId}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${allLocaleId}`}
+        hidden
+        data-locale={allLocaleId}
+      >
+        <p class="meta">
+          <span class="lang">All countries</span>
+          <span class="sep">·</span>
+          <span class="count">0–{maxLevel}</span>
+        </p>
+        <p class="note">
+          Approximate level mapping across countries. Cells show the local term at the same rough rung; blanks mean that country has no separate entry there.
+        </p>
+        <div class="table-wrap">
+          <table class="mapping-table">
+            <thead>
+              <tr>
+                <th scope="col">Level</th>
+                {locales.map((locale) => <th scope="col">{locale.shortLabel}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {
+                levelMapRows.map((row) => (
+                  <tr>
+                    <th scope="row">{row.level}</th>
+                    {row.terms.map(({ item }) => (
+                      <td>{item ? item.term : "—"}</td>
+                    ))}
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {
         locales.map((locale) => (
@@ -364,6 +427,57 @@ const structuredData = {
     font-size: 0.78rem;
     color: var(--muted);
     line-height: 1.3;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 0.35rem;
+  }
+
+  .mapping-table {
+    width: 100%;
+    min-width: 58rem;
+    border-collapse: collapse;
+    font-size: 0.7rem;
+    line-height: 1.25;
+  }
+
+  .mapping-table th,
+  .mapping-table td {
+    border-bottom: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    padding: 0.32rem 0.38rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .mapping-table th:last-child,
+  .mapping-table td:last-child {
+    border-right: 0;
+  }
+
+  .mapping-table tbody tr:last-child th,
+  .mapping-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .mapping-table thead th {
+    background: var(--chip);
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .mapping-table tbody th {
+    color: var(--lvl);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    width: 2.5rem;
+    white-space: nowrap;
+  }
+
+  .mapping-table td {
+    min-width: 6.5rem;
   }
 
   .footnote {
