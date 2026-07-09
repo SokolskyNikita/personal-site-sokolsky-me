@@ -1,4 +1,10 @@
 ---
+import { Picture } from "astro:assets";
+import basilicaImage from "../../assets/misc/kavanagh/basilica-pasaje-corina-kavanagh.jpg";
+import kavanaghPlazaImage from "../../assets/misc/kavanagh/kavanagh-plaza-san-martin.jpg";
+import kavanaghTowerImage from "../../assets/misc/kavanagh/kavanagh-tower.jpg";
+import palacioSanMartinImage from "../../assets/misc/kavanagh/palacio-san-martin.jpg";
+
 export const prerender = true;
 
 const pageTitle = "Kavanagh building: much more than you wanted to know";
@@ -111,6 +117,21 @@ const structuredData = {
           <p>
             Construction was led by engineer Rodolfo Cervini's firm. The reinforced-concrete structure went to Empresa Argentina de Cemento Armado (E.A.C.A.). Buenos Aires tourism itself presents the revenge story as legend, not confirmed fact (<a href="https://turismo.buenosaires.gob.ar/es/otros-establecimientos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Turismo BA</a>).
           </p>
+          <figure class="article-figure">
+            <Picture
+              src={kavanaghPlazaImage}
+              formats={["avif", "webp"]}
+              widths={[640, 960, 1280, 1600, 2200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="The Kavanagh building seen across Plaza San Martín in Buenos Aires."
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <figcaption>
+              The Kavanagh from Plaza San Martín. Marcos Prack, CC BY 2.0, via <a href="https://commons.wikimedia.org/wiki/File:Kavanagh_building.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="cora-kavanagh" aria-labelledby="cora-kavanagh-heading">
@@ -156,6 +177,20 @@ const structuredData = {
           <p>
             Stylistically it is usually labeled Rationalist / Modernist / Art Deco, though it is not doctrinaire modernism. Argentina's heritage office reads it as a hybrid of New York vertical Art Deco, French nautical metaphor and local Beaux-Arts tradition (<a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a>).
           </p>
+          <figure class="article-figure article-figure--portrait">
+            <Picture
+              src={kavanaghTowerImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 960, 1280, 1600]}
+              sizes="(min-width: 48rem) 30rem, calc(100vw - 2rem)"
+              alt="Tall stepped facade of the Kavanagh building rising against a clear sky."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              The stepped tower profile that made the Kavanagh a 1930s landmark. Liam Quinn, CC BY-SA 2.0, via <a href="https://commons.wikimedia.org/wiki/File:Edificio_Kavanagh,_Buenos_Aires_(5423728098).jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="spite-legend" aria-labelledby="spite-legend-heading">
@@ -173,6 +208,20 @@ const structuredData = {
           <p>
             Some versions cast Mercedes as Corina's rival, others as her friend. That looks less like preserved memory than a motive reverse-engineered from the building's obvious geometry. The view-blocking effect is real; the revenge motive is unproven and probably mythologized. The legend endures because the urban geometry fits it perfectly: the basilica's front is now famously best seen from the narrow Pasaje Corina Kavanagh (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación</a>).
           </p>
+          <figure class="article-figure article-figure--portrait">
+            <Picture
+              src={basilicaImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 960, 1280, 1800]}
+              sizes="(min-width: 48rem) 30rem, calc(100vw - 2rem)"
+              alt="Facade of the Basílica del Santísimo Sacramento seen from Pasaje Corina Kavanagh."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              The basilica facade from Pasaje Corina Kavanagh, the view the legend is built around. Banfield, CC BY-SA 2.5 AR, via <a href="https://commons.wikimedia.org/wiki/File:Bas%C3%ADlica_del_Sant%C3%ADsimo_Sacramento_-_Retiro,_Buenos_Aires.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="anchorena-side" aria-labelledby="anchorena-side-heading">
@@ -180,6 +229,20 @@ const structuredData = {
           <p>
             The "spited" building is today Palacio San Martín (formerly Palacio Anchorena), built in the early 1900s for Mercedes Castellanos de Anchorena. The Argentine state acquired it in 1936 for the Foreign Ministry (<a href="https://cancilleria.gob.ar/en/institutional/heritage/san-martin-palace" target="_blank" rel="noreferrer noopener">Cancillería Argentina</a>). Mercedes funded the Basílica del Santísimo Sacramento and is buried in its crypt. The supposed love interest, Aarón de Anchorena, was a celebrated bachelor-adventurer who married Zelmira Paz in 1933, with no record of any tie to Corina.
           </p>
+          <figure class="article-figure">
+            <Picture
+              src={palacioSanMartinImage}
+              formats={["avif", "webp"]}
+              widths={[640, 960, 1280, 1600, 2200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Facade of Palacio San Martín, formerly Palacio Anchorena, in Buenos Aires."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              Palacio San Martín, the former Anchorena palace. Liam Quinn, CC BY-SA 2.0, via <a href="https://commons.wikimedia.org/wiki/File:Palacio_San_Mart%C3%ADn_in_Buenos_Aires_(5423140269).jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="after-completion" aria-labelledby="after-completion-heading">
@@ -293,6 +356,21 @@ const structuredData = {
           <p>
             La obra fue dirigida por la empresa del ingeniero Rodolfo Cervini. La estructura de hormigón armado quedó a cargo de la Empresa Argentina de Cemento Armado (E.A.C.A.). El propio turismo porteño presenta la historia de la venganza como leyenda, no como hecho confirmado (<a href="https://turismo.buenosaires.gob.ar/es/otros-establecimientos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Turismo BA</a>).
           </p>
+          <figure class="article-figure">
+            <Picture
+              src={kavanaghPlazaImage}
+              formats={["avif", "webp"]}
+              widths={[640, 960, 1280, 1600, 2200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="El Edificio Kavanagh visto desde la Plaza San Martín en Buenos Aires."
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <figcaption>
+              El Kavanagh desde Plaza San Martín. Marcos Prack, CC BY 2.0, vía <a href="https://commons.wikimedia.org/wiki/File:Kavanagh_building.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="cora-kavanagh-es" aria-labelledby="cora-kavanagh-es-heading">
@@ -338,6 +416,20 @@ const structuredData = {
           <p>
             Estilísticamente se lo suele llamar racionalista / moderno / art déco, pero no es modernismo doctrinario. La oficina patrimonial argentina lo lee como un híbrido entre art déco vertical neoyorquino, metáfora náutica francesa y tradición beaux-arts local (<a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/edificio-kavanagh" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a>).
           </p>
+          <figure class="article-figure article-figure--portrait">
+            <Picture
+              src={kavanaghTowerImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 960, 1280, 1600]}
+              sizes="(min-width: 48rem) 30rem, calc(100vw - 2rem)"
+              alt="Fachada escalonada del Edificio Kavanagh contra un cielo despejado."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              El perfil escalonado que convirtió al Kavanagh en un hito de los años treinta. Liam Quinn, CC BY-SA 2.0, vía <a href="https://commons.wikimedia.org/wiki/File:Edificio_Kavanagh,_Buenos_Aires_(5423728098).jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="leyenda" aria-labelledby="leyenda-heading">
@@ -355,6 +447,20 @@ const structuredData = {
           <p>
             Algunas versiones presentan a Mercedes como rival de Corina; otras, como amiga. Eso se parece menos a un recuerdo conservado que a un motivo inventado a partir de la geometría obvia del edificio. El bloqueo visual existe; la venganza no está probada y probablemente fue mitificada. La leyenda perdura porque la geometría urbana le queda perfecta: hoy la vista más famosa de la fachada de la basílica es la que se tiene desde el angosto Pasaje Corina Kavanagh (<a href="https://www.lanacion.com.ar/sociedad/la-majestuosa-basilica-retiro-quisieron-ocultar-amor-nid2190151/" target="_blank" rel="noreferrer noopener">La Nación</a>).
           </p>
+          <figure class="article-figure article-figure--portrait">
+            <Picture
+              src={basilicaImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 960, 1280, 1800]}
+              sizes="(min-width: 48rem) 30rem, calc(100vw - 2rem)"
+              alt="Fachada de la Basílica del Santísimo Sacramento vista desde el Pasaje Corina Kavanagh."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              La fachada de la basílica desde el Pasaje Corina Kavanagh, la vista alrededor de la cual gira la leyenda. Banfield, CC BY-SA 2.5 AR, vía <a href="https://commons.wikimedia.org/wiki/File:Bas%C3%ADlica_del_Sant%C3%ADsimo_Sacramento_-_Retiro,_Buenos_Aires.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="anchorena" aria-labelledby="anchorena-heading">
@@ -362,6 +468,20 @@ const structuredData = {
           <p>
             El edificio supuestamente "agredido" es hoy el Palacio San Martín (ex Palacio Anchorena), construido a principios del siglo XX para Mercedes Castellanos de Anchorena. El Estado argentino lo adquirió en 1936 para la Cancillería (<a href="https://cancilleria.gob.ar/en/institutional/heritage/san-martin-palace" target="_blank" rel="noreferrer noopener">Cancillería Argentina</a>). Mercedes financió la Basílica del Santísimo Sacramento y descansa en su cripta. El supuesto interés amoroso, Aarón de Anchorena, fue un célebre soltero aventurero que se casó con Zelmira Paz en 1933, sin registro de ningún vínculo con Corina.
           </p>
+          <figure class="article-figure">
+            <Picture
+              src={palacioSanMartinImage}
+              formats={["avif", "webp"]}
+              widths={[640, 960, 1280, 1600, 2200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Fachada del Palacio San Martín, ex Palacio Anchorena, en Buenos Aires."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              Palacio San Martín, el antiguo palacio Anchorena. Liam Quinn, CC BY-SA 2.0, vía <a href="https://commons.wikimedia.org/wiki/File:Palacio_San_Mart%C3%ADn_in_Buenos_Aires_(5423140269).jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="despues" aria-labelledby="despues-heading">
@@ -749,6 +869,7 @@ const structuredData = {
   p + p,
   p + ul,
   ul + p,
+  p + .article-figure,
   .table-wrap {
     margin-top: 0.85rem;
   }
@@ -778,6 +899,46 @@ const structuredData = {
   a:hover {
     color: var(--text);
     text-decoration-color: currentColor;
+  }
+
+  .article-figure {
+    min-width: 0;
+    margin-inline: 0;
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 84%, transparent);
+    padding: clamp(0.45rem, 1.5vw, 0.65rem);
+  }
+
+  .article-figure + h3 {
+    margin-top: 1.85rem;
+  }
+
+  .article-figure picture {
+    display: block;
+  }
+
+  .article-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper);
+  }
+
+  .article-figure--portrait {
+    max-width: min(100%, 30rem);
+    margin-inline: auto;
+  }
+
+  .article-figure--portrait img {
+    max-height: min(46rem, 84vh);
+  }
+
+  figcaption {
+    margin-top: 0.55rem;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.45;
   }
 
   blockquote {
