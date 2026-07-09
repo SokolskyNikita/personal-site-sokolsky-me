@@ -5,7 +5,7 @@ export const prerender = true;
 
 const pageTitle = "Car rental options in Buenos Aires";
 const pageDescription =
-  "Buenos Aires car rental desks open Sundays per Google Maps, with online booking, hours, addresses, and a map. Main list requires 150+ reviews; Avis/Budget/Alamo airport desks from 15+.";
+  "Buenos Aires car rental desks open Sundays per Google Maps, with online booking, approximate all-in smallest-SUV day rates in USD, hours, addresses, and a map.";
 const themeColorLight = "#eef3f7";
 const themeColorDark = "#0d1419";
 const siteUrl =
@@ -26,10 +26,19 @@ const updatedDate = new Intl.DateTimeFormat("en-US", {
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
+const exchangeRateLabel = `1 USD ≈ ARS ${formatter.format(
+  pageData.currency.arsPerUsd,
+)}`;
 const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
+const suvPriceSortValue = (rental: Rental) => {
+  if (rental.suvDayRate?.status === "quoted" && rental.suvDayRate.usd != null) {
+    return rental.suvDayRate.usd;
+  }
+  return Number.MAX_SAFE_INTEGER;
+};
 const neighborhoodCounts = rentals.reduce((counts, rental: Rental) => {
   counts.set(rental.neighborhood, (counts.get(rental.neighborhood) ?? 0) + 1);
   return counts;
@@ -78,17 +87,40 @@ const popularityRanks = sortRank(
     b.rating - a.rating ||
     collator.compare(a.name, b.name),
 );
-const rentalsWithSort = rentals.map((rental: Rental) => ({
-  ...rental,
-  reviewCountLabel: formatter.format(rental.reviewCount),
-  officialLabel: "Book",
-  areaLabel: rental.area === "airport" ? "Airport" : "City",
-  sortOrderStyle: [
-    `--sort-name: ${nameRanks.get(rental.id)}`,
-    `--sort-rating: ${ratingRanks.get(rental.id)}`,
-    `--sort-popularity: ${popularityRanks.get(rental.id)}`,
-  ].join("; "),
-}));
+const priceRanks = sortRank(
+  rentals,
+  (a: Rental, b: Rental) =>
+    suvPriceSortValue(a) - suvPriceSortValue(b) ||
+    b.reviewCount - a.reviewCount ||
+    collator.compare(a.name, b.name),
+);
+const rentalsWithSort = rentals.map((rental: Rental) => {
+  const rate = rental.suvDayRate;
+  const priceTitle =
+    rate?.status === "quoted"
+      ? `${rate.usdLabel}/day · ${rate.arsLabel}/day · ${rate.exampleVehicle ?? "smallest SUV"} · ${rate.note}`
+      : (rate?.note ?? "No public all-in SUV day rate found");
+  return {
+    ...rental,
+    reviewCountLabel: formatter.format(rental.reviewCount),
+    officialLabel: "Book",
+    areaLabel: rental.area === "airport" ? "Airport" : "City",
+    priceLabel: rate?.usdLabel ?? "—",
+    priceSubLabel:
+      rate?.status === "quoted"
+        ? "SUV / day"
+        : rate?.status === "no-suv"
+          ? "no SUV listed"
+          : "quote needed",
+    priceTitle,
+    sortOrderStyle: [
+      `--sort-popularity: ${popularityRanks.get(rental.id)}`,
+      `--sort-rating: ${ratingRanks.get(rental.id)}`,
+      `--sort-price: ${priceRanks.get(rental.id)}`,
+      `--sort-name: ${nameRanks.get(rental.id)}`,
+    ].join("; "),
+  };
+});
 const googleMapsApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
@@ -206,10 +238,12 @@ const structuredData = {
         <div class="toolbar" aria-label="Car rental controls">
           <fieldset class="sort-toggle">
             <legend>Sort by</legend>
-            <input id="sort-rating" type="radio" name="sort" autocomplete="off" checked />
-            <label for="sort-rating">GMaps rating</label>
-            <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
-            <label for="sort-popularity">Popularity</label>
+            <input id="sort-popularity" type="radio" name="sort" autocomplete="off" checked />
+            <label for="sort-popularity">GMaps reviews count</label>
+            <input id="sort-rating" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-rating">GMaps reviews score</label>
+            <input id="sort-price" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-price">SUV day price</label>
             <input id="sort-name" type="radio" name="sort" autocomplete="off" />
             <label for="sort-name">Name</label>
           </fieldset>
@@ -239,7 +273,7 @@ const structuredData = {
             </select>
           </label>
           <p class="meta">
-            Updated {updatedDate}. Verified with Google Places API, BrightData search/scrapes, and official booking sites. Every listing is open Sunday and supports online reservation.
+            Updated {updatedDate}. {exchangeRateLabel}. SUV prices are approximate 1-day all-in quotes for each brand’s smallest SUV class; deposits/franchise usually extra.
           </p>
         </div>
       </header>
@@ -251,6 +285,7 @@ const structuredData = {
           <span>Address</span>
           <span>Booking</span>
           <span>Hours</span>
+          <span>SUV / day</span>
           <span>GMaps rating</span>
           <span>Notes</span>
         </div>
@@ -292,6 +327,10 @@ const structuredData = {
               </a>
             </p>
             <p class="hours">{rental.hours}</p>
+            <p class="price" title={rental.priceTitle}>
+              <span class="price-amount">{rental.priceLabel}</span>
+              <span class="price-sub">{rental.priceSubLabel}</span>
+            </p>
             <p
               class="rating"
               aria-label={`${rental.rating.toFixed(1)} Google Maps rating from ${rental.reviewCountLabel} reviews`}
@@ -309,6 +348,9 @@ const structuredData = {
         <h2 id="method-heading">How entries made the list</h2>
         <p>
           Each desk had to be listed as {pageData.validation.includedStatus.toLowerCase()} in Google Maps, open on Sunday, and offer online booking on its own website or app. The main bar is {pageData.validation.minReviewCount}+ Google reviews. Avis, Budget, Alamo, Enterprise, and National airport desks are also included from {airportExceptionMinReviews}+ reviews when they are open Sundays. Phone/WhatsApp-only quote brokers and Sunday-closed city desks were excluded.
+        </p>
+        <p>
+          SUV / day is an approximate all-in 1-day rate for the smallest SUV class each brand publishes ({pageData.pricing.metric.toLowerCase()}). Most quotes come from Rentcars Buenos Aires brand pages; World Car and Rentennials use their own listings. Converted at {exchangeRateLabel}. Credit-card holds, deductibles, and add-ons are usually extra. Brands without a public day rate show “—”; Autobonn has no SUV on its public fleet.
         </p>
       </section>
 
@@ -378,7 +420,7 @@ const structuredData = {
   const brandFilter = document.querySelector("#brand-filter");
   const airportFilter = document.querySelector("#filter-airport");
   const cityFilter = document.querySelector("#filter-city");
-  const defaultSort = document.querySelector("#sort-rating");
+  const defaultSort = document.querySelector("#sort-popularity");
   const rentalRows = [...document.querySelectorAll(".rental-row:not(.rental-head)")];
   const mapElement = document.querySelector("#rental-map");
   const mapStatus = document.querySelector("#rental-map-status");
@@ -795,8 +837,9 @@ const structuredData = {
     opacity: 0.75;
   }
 
-  #sort-rating:checked ~ label[for="sort-rating"],
   #sort-popularity:checked ~ label[for="sort-popularity"],
+  #sort-rating:checked ~ label[for="sort-rating"],
+  #sort-price:checked ~ label[for="sort-price"],
   #sort-name:checked ~ label[for="sort-name"],
   #filter-airport:checked ~ label[for="filter-airport"],
   #filter-city:checked ~ label[for="filter-city"] {
@@ -804,8 +847,9 @@ const structuredData = {
     color: var(--bg);
   }
 
-  #sort-rating:checked ~ label[for="sort-rating"]::before,
   #sort-popularity:checked ~ label[for="sort-popularity"]::before,
+  #sort-rating:checked ~ label[for="sort-rating"]::before,
+  #sort-price:checked ~ label[for="sort-price"]::before,
   #sort-name:checked ~ label[for="sort-name"]::before,
   #filter-airport:checked ~ label[for="filter-airport"]::before,
   #filter-city:checked ~ label[for="filter-city"]::before {
@@ -878,8 +922,9 @@ const structuredData = {
       minmax(6.5rem, 0.72fr)
       minmax(7.5rem, 0.95fr)
       minmax(7rem, 0.9fr)
+      minmax(4.75rem, 0.55fr)
       minmax(5.5rem, 0.58fr)
-      minmax(10rem, 1.4fr);
+      minmax(9rem, 1.3fr);
     gap: 0;
     align-items: stretch;
     border-top: 1px solid var(--border);
@@ -955,6 +1000,7 @@ const structuredData = {
   .address,
   .service-proof,
   .hours,
+  .price,
   .description {
     color: var(--text-muted);
     font-size: 0.82rem;
@@ -962,6 +1008,7 @@ const structuredData = {
   }
 
   .service-proof,
+  .price,
   .rating {
     display: grid;
     gap: 0.08rem;
@@ -969,9 +1016,24 @@ const structuredData = {
   }
 
   .proof-label,
+  .price-amount,
   .rating-score {
     color: var(--text);
     font-weight: 750;
+  }
+
+  .price {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .price-amount {
+    font-size: 0.9rem;
+  }
+
+  .price-sub {
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 650;
   }
 
   .service-proof a {
@@ -998,12 +1060,16 @@ const structuredData = {
     white-space: normal;
   }
 
+  body:has(#sort-popularity:checked) .rental-row:not(.rental-head) {
+    order: var(--sort-popularity);
+  }
+
   body:has(#sort-rating:checked) .rental-row:not(.rental-head) {
     order: var(--sort-rating);
   }
 
-  body:has(#sort-popularity:checked) .rental-row:not(.rental-head) {
-    order: var(--sort-popularity);
+  body:has(#sort-price:checked) .rental-row:not(.rental-head) {
+    order: var(--sort-price);
   }
 
   body:has(#sort-name:checked) .rental-row:not(.rental-head) {
@@ -1065,8 +1131,9 @@ const structuredData = {
         minmax(6rem, 0.75fr)
         minmax(7rem, 0.95fr)
         minmax(6.5rem, 0.85fr)
+        minmax(4.5rem, 0.55fr)
         minmax(5.25rem, 0.6fr)
-        minmax(9rem, 1.2fr);
+        minmax(8rem, 1.15fr);
     }
   }
 
@@ -1129,7 +1196,8 @@ const structuredData = {
       grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas:
         "name map"
-        "booking rating"
+        "booking price"
+        "rating rating"
         "desc desc";
       gap: 0.2rem 0.55rem;
       align-items: start;
@@ -1181,12 +1249,19 @@ const structuredData = {
       text-align: left;
     }
 
+    .price {
+      grid-area: price;
+      justify-items: end;
+      text-align: right;
+      font-size: 0.84rem;
+    }
+
     .rating {
       grid-area: rating;
-      justify-items: end;
+      justify-items: start;
       color: var(--text-muted);
       font-size: 0.84rem;
-      text-align: right;
+      text-align: left;
     }
 
     .review-count {
@@ -1224,10 +1299,12 @@ const structuredData = {
       grid-template-areas:
         "name map"
         "booking booking"
+        "price price"
         "rating rating"
         "desc desc";
     }
 
+    .price,
     .rating {
       justify-items: start;
       text-align: left;
