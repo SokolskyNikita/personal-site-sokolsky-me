@@ -38,7 +38,9 @@ const kindCounts = sellers.reduce((counts, seller: Seller) => {
 const kindLabels: Record<string, string> = {
   "official-online": "Official online",
   wholesale: "Wholesale",
+  retailer: "Retailer",
   supermarket: "Supermarket",
+  promo: "Promo / exchange",
   "toy-store": "Toy store",
   "loose-stickers": "Loose stickers",
   kiosk: "Kiosks",
@@ -274,12 +276,20 @@ const structuredData = {
         <h2 id="bulk-heading">Bulk options right now</h2>
         <ul>
           <li>
-            <strong>Sealed sticker bulk:</strong> WOWCO caja ×1000 (listed); ZonaKids Box/Pack ×50 —
-            sold out, set alerts; Activa (Santa Fe) volume tiers from 1,000 packs.
+            <strong>Sealed sticker bulk:</strong> WOWCO caja ×1000 (listed); Activa (Santa Fe)
+            volume tiers from 1,000 packs; Figu Shop pack ×25 when available.
           </li>
           <li>
             <strong>CABA wholesale pickup:</strong> Golmarymar Caballito & Mataderos (site promotes WC
             2026); Megafigus (San Cristóbal) — call first.
+          </li>
+          <li>
+            <strong>CABA retail bundle:</strong> Cover Cell Devoto lists pack ×25 in stock; pricey vs
+            MSRP, but a verified local pickup/delivery option.
+          </li>
+          <li>
+            <strong>Promo stickers:</strong> Coca-Cola × Panini canje points trade marked caps + ARS
+            1,000 for special 3-sticker envelopes.
           </li>
           <li>
             <strong>Official sealed in stock:</strong> ZonaKids Adrenalyn XL display ×24 (cards, not
@@ -305,7 +315,7 @@ const structuredData = {
           <span>Where</span>
           <span>Bulk</span>
           <span>Stock</span>
-          <span>Price</span>
+          <span>Min pack price</span>
           <span>Notes</span>
         </div>
 
@@ -356,7 +366,6 @@ const structuredData = {
             </p>
             <p class="price">
               <span class="price-label">{seller.priceNote}</span>
-              <span class="price-service">{seller.products}</span>
             </p>
             <p class="mobile-meta" aria-hidden="true">
               <span class={`stock stock-${seller.stockStatus}`}>{seller.stockLabel}</span>
@@ -396,7 +405,8 @@ const structuredData = {
           <a href="https://zonakids.com/productos/colecciones-2026/fifa-world-cup-2026" target="_blank" rel="noreferrer noopener">ZonaKids</a>,{" "}
           <a href="https://wowco.com.ar/carpeta-ver.php?idcarpeta=125" target="_blank" rel="noreferrer noopener">WOWCO</a>,{" "}
           <a href="https://golmarymar.com.ar/" target="_blank" rel="noreferrer noopener">Golmarymar</a>,{" "}
-          <a href="https://cromy-club.com.ar/" target="_blank" rel="noreferrer noopener">Cromy Club</a>,{" "}
+          <a href="https://www.covercell.com.ar/productos/figuritas-mundial-fifa-2026-pack-x-25-sobres-panini-1ldhe/" target="_blank" rel="noreferrer noopener">Cover Cell</a>,{" "}
+          <a href="https://www.coca-cola.com/content/dam/onexp/ar/es/offerings/copa-mundial-de-la-fifa-2026/panini/centro-de-canje-femsa.pdf" target="_blank" rel="noreferrer noopener">Coca-Cola canje</a>,{" "}
           <a href="https://activadistribuidora.com.ar/producto/figuritas-panini-copa-mundial-fifa-2026/" target="_blank" rel="noreferrer noopener">Activa</a>,{" "}
           <a href="https://figusdelmundial.com/" target="_blank" rel="noreferrer noopener">Figus del Mundial</a>,{" "}
           and press (A24, Infobae, La Nación). Stock moves daily — call or check before you go.
@@ -1122,11 +1132,6 @@ const structuredData = {
     font-weight: 750;
   }
 
-  .price-service {
-    font-size: 0.72rem;
-    font-weight: 650;
-  }
-
   .stock {
     font-size: 0.82rem;
     font-weight: 750;
@@ -1374,10 +1379,6 @@ const structuredData = {
       display: grid;
       font-size: 0.78rem;
       text-align: left;
-    }
-
-    .price-service {
-      display: none;
     }
 
     .description {
