@@ -106,12 +106,7 @@ const rentalsWithSort = rentals.map((rental: Rental) => {
     officialLabel: "Book",
     areaLabel: rental.area === "airport" ? "Airport" : "City",
     priceLabel: rate?.usdLabel ?? "—",
-    priceSubLabel:
-      rate?.status === "quoted"
-        ? "SUV / day"
-        : rate?.status === "no-suv"
-          ? "no SUV listed"
-          : "quote needed",
+    priceSubLabel: "SUV / day",
     priceTitle,
     sortOrderStyle: [
       `--sort-popularity: ${popularityRanks.get(rental.id)}`,
@@ -350,7 +345,7 @@ const structuredData = {
           Each desk had to be listed as {pageData.validation.includedStatus.toLowerCase()} in Google Maps, open on Sunday, and offer online booking on its own website or app. The main bar is {pageData.validation.minReviewCount}+ Google reviews. Avis, Budget, Alamo, Enterprise, and National airport desks are also included from {airportExceptionMinReviews}+ reviews when they are open Sundays. Phone/WhatsApp-only quote brokers and Sunday-closed city desks were excluded.
         </p>
         <p>
-          SUV / day is an approximate all-in 1-day rate for the smallest SUV class each brand publishes ({pageData.pricing.metric.toLowerCase()}). Most quotes come from Rentcars Buenos Aires brand pages; World Car and Rentennials use their own listings. Converted at {exchangeRateLabel}. Credit-card holds, deductibles, and add-ons are usually extra. Brands without a public day rate show “—”; Autobonn has no SUV on its public fleet.
+          SUV / day is an approximate all-in 1-day rate for the smallest SUV class each brand publishes ({pageData.pricing.metric.toLowerCase()}). Most quotes come from Rentcars Buenos Aires brand pages; World Car and Rentennials use their own listings. Converted at {exchangeRateLabel}. Credit-card holds, deductibles, and add-ons are usually extra. Desks without a public SUV day rate or without an SUV in the published fleet were excluded.
         </p>
       </section>
 
