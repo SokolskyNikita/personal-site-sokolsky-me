@@ -61,11 +61,30 @@ const parseMinPackPrice = (priceNote: string) => {
   const value = Number(match[1].replace(/,/g, ""));
   return Number.isFinite(value) ? value : null;
 };
+type DeliveryService = { name: string; url: string };
+type SellerDelivery = {
+  available: boolean;
+  services: DeliveryService[];
+};
+const sellerDelivery = (seller: Seller): SellerDelivery | null => {
+  if (!("delivery" in seller) || !seller.delivery || typeof seller.delivery !== "object") {
+    return null;
+  }
+  const delivery = seller.delivery as Partial<SellerDelivery>;
+  if (!delivery.available || !Array.isArray(delivery.services) || delivery.services.length === 0) {
+    return null;
+  }
+  return delivery as SellerDelivery;
+};
+const hasDelivery = (seller: Seller) => Boolean(sellerDelivery(seller));
+const deliveryServicesFor = (seller: Seller) => sellerDelivery(seller)?.services ?? [];
 const sellersWithSort = sellers
   .map((seller: Seller) => ({
     ...seller,
     kindLabel: kindLabels[seller.kind] ?? seller.kind,
     minPackPrice: parseMinPackPrice(seller.priceNote),
+    doesDelivery: hasDelivery(seller),
+    deliveryServices: deliveryServicesFor(seller),
   }))
   .toSorted(
     (a, b) =>
@@ -106,6 +125,13 @@ const sellerMapData = mappableSellers.map((seller: Seller) => ({
   position: seller.location,
 }));
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const deliveryIconSvgs: Record<string, string> = {
+  Rappi: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12" fill="#FF441F"/><path fill="#fff" d="M8.2 16.2V7.8h2.6c1.8 0 2.9.9 2.9 2.3 0 .9-.5 1.6-1.3 2l1.8 2.4h-1.9l-1.6-2.2H10V16.2H8.2zm1.6-3.8h1c.8 0 1.2-.3 1.2-.9s-.4-.9-1.2-.9h-1v1.8z"/></svg>`,
+  PedidosYa: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="7" fill="#FA0050"/><path fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" d="M9 7v10M9 7a2.2 2.2 0 014.4 0v3.2A2.2 2.2 0 019 12.4V7zm5.6 0v10"/></svg>`,
+};
+const deliveryIconFor = (serviceName: string) =>
+  deliveryIconSvgs[serviceName] ??
+  `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12" fill="#6f675c"/><path fill="#fff" d="M8 7h8v2H8V7zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>`;
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -263,6 +289,22 @@ const structuredData = {
               </a>
               {seller.bulkHighlight && <span class="badge badge-bulk">Bulk pick</span>}
               <span class="kind-chip">{seller.kindLabel}</span>
+              {seller.doesDelivery && (
+                <span class="delivery-icons delivery-icons-desktop">
+                  {seller.deliveryServices.map((service) => (
+                    <a
+                      class="delivery-link"
+                      href={service.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={`Order from ${seller.name} on ${service.name}`}
+                      title={`Order on ${service.name}`}
+                    >
+                      <span class="delivery-icon" set:html={deliveryIconFor(service.name)} />
+                    </a>
+                  ))}
+                </span>
+              )}
             </h2>
             <div class="map-actions">
               {seller.googleMapsUrl ? (
@@ -278,6 +320,22 @@ const structuredData = {
                 </a>
               ) : (
                 <span class="maps-empty" aria-hidden="true">—</span>
+              )}
+              {seller.doesDelivery && (
+                <span class="delivery-icons delivery-icons-mobile">
+                  {seller.deliveryServices.map((service) => (
+                    <a
+                      class="delivery-link"
+                      href={service.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={`Order from ${seller.name} on ${service.name}`}
+                      title={`Order on ${service.name}`}
+                    >
+                      <span class="delivery-icon" set:html={deliveryIconFor(service.name)} />
+                    </a>
+                  ))}
+                </span>
               )}
             </div>
             <p class="address">
@@ -333,6 +391,8 @@ const structuredData = {
           <a href="https://golmarymar.com.ar/" target="_blank" rel="noreferrer noopener">Golmarymar</a>,{" "}
           <a href="https://www.covercell.com.ar/productos/figuritas-mundial-fifa-2026-pack-x-25-sobres-panini-1ldhe/" target="_blank" rel="noreferrer noopener">Cover Cell</a>,{" "}
           <a href="https://www.coca-cola.com/content/dam/onexp/ar/es/offerings/copa-mundial-de-la-fifa-2026/panini/centro-de-canje-femsa.pdf" target="_blank" rel="noreferrer noopener">Coca-Cola canje</a>,{" "}
+          <a href="https://www.instagram.com/cotillon_homero/" target="_blank" rel="noreferrer noopener">Cotillón Homero</a>,{" "}
+          <a href="https://www.instagram.com/casafacai.peluchemayorista/" target="_blank" rel="noreferrer noopener">Casa Facai</a>,{" "}
           <a href="https://activadistribuidora.com.ar/producto/figuritas-panini-copa-mundial-fifa-2026/" target="_blank" rel="noreferrer noopener">Activa</a>,{" "}
           <a href="https://figusdelmundial.com/" target="_blank" rel="noreferrer noopener">Figus del Mundial</a>,{" "}
           and press (A24, Infobae, La Nación). Stock moves daily — call or check before you go.
@@ -905,6 +965,47 @@ const structuredData = {
     text-decoration-thickness: 1px;
   }
 
+  .seller-name:has(.delivery-icons-desktop) {
+    padding-right: 2.1rem;
+  }
+
+  .delivery-icons {
+    display: flex;
+    gap: 0.28rem;
+    align-items: center;
+  }
+
+  .delivery-icons-desktop {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+  }
+
+  .delivery-icons-mobile {
+    display: none;
+  }
+
+  .delivery-link {
+    display: flex;
+    line-height: 0;
+    text-decoration: none;
+  }
+
+  .delivery-link:hover .delivery-icon :global(svg) {
+    transform: scale(1.08);
+  }
+
+  .delivery-icon {
+    display: flex;
+  }
+
+  .delivery-icon :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 0.28rem;
+    transition: transform 0.15s ease;
+  }
+
   .badge,
   .kind-chip {
     width: fit-content;
@@ -1177,12 +1278,25 @@ const structuredData = {
       display: flex;
       align-items: flex-start;
       justify-content: flex-end;
+      gap: 0.28rem;
     }
 
     .maps-link,
     .maps-empty {
       width: 1.75rem;
       height: 1.75rem;
+    }
+
+    .seller-name:has(.delivery-icons-desktop) {
+      padding-right: 0;
+    }
+
+    .delivery-icons-desktop {
+      display: none;
+    }
+
+    .delivery-icons-mobile {
+      display: flex;
     }
 
     .address,

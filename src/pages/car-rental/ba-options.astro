@@ -1,0 +1,1176 @@
+---
+import pageData from "../../data/car-rental-ba-options.json";
+
+export const prerender = true;
+
+const pageTitle = "Car rental options in Buenos Aires";
+const pageDescription =
+  "Buenos Aires car rental desks open Sundays per Google Maps, with 150+ reviews, online booking, hours, addresses, and a map.";
+const themeColorLight = "#eef3f7";
+const themeColorDark = "#0d1419";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type Rental = (typeof pageData.rentals)[number];
+const rentals = pageData.rentals;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+});
+const collator = new Intl.Collator("en", {
+  sensitivity: "base",
+  numeric: true,
+});
+const neighborhoodCounts = rentals.reduce((counts, rental: Rental) => {
+  counts.set(rental.neighborhood, (counts.get(rental.neighborhood) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const neighborhoodOptions = [...neighborhoodCounts.entries()]
+  .sort(
+    ([nameA, countA], [nameB, countB]) =>
+      countB - countA || collator.compare(nameA, nameB),
+  )
+  .map(([name, count]) => ({ name, count }));
+const brandCounts = rentals.reduce((counts, rental: Rental) => {
+  counts.set(rental.brand, (counts.get(rental.brand) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>());
+const brandOptions = [...brandCounts.entries()]
+  .sort(
+    ([nameA, countA], [nameB, countB]) =>
+      countB - countA || collator.compare(nameA, nameB),
+  )
+  .map(([name, count]) => ({ name, count }));
+const airportCount = rentals.filter((rental: Rental) => rental.area === "airport").length;
+const cityCount = rentals.filter((rental: Rental) => rental.area === "city").length;
+const sortRank = (
+  items: Rental[],
+  compare: (a: Rental, b: Rental) => number,
+) =>
+  new Map<string, number>(
+    items
+      .toSorted(compare)
+      .map((rental: Rental, index: number) => [rental.id, index + 1]),
+  );
+const nameRanks = sortRank(rentals, (a: Rental, b: Rental) =>
+  collator.compare(a.name, b.name),
+);
+const ratingRanks = sortRank(
+  rentals,
+  (a: Rental, b: Rental) =>
+    b.rating - a.rating ||
+    b.reviewCount - a.reviewCount ||
+    collator.compare(a.name, b.name),
+);
+const popularityRanks = sortRank(
+  rentals,
+  (a: Rental, b: Rental) =>
+    b.reviewCount - a.reviewCount ||
+    b.rating - a.rating ||
+    collator.compare(a.name, b.name),
+);
+const rentalsWithSort = rentals.map((rental: Rental) => ({
+  ...rental,
+  reviewCountLabel: formatter.format(rental.reviewCount),
+  officialLabel: "Book",
+  areaLabel: rental.area === "airport" ? "Airport" : "City",
+  sortOrderStyle: [
+    `--sort-name: ${nameRanks.get(rental.id)}`,
+    `--sort-rating: ${ratingRanks.get(rental.id)}`,
+    `--sort-popularity: ${popularityRanks.get(rental.id)}`,
+  ].join("; "),
+}));
+const googleMapsApiKey =
+  import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
+  "";
+const rentalMapData = rentals.map((rental: Rental) => ({
+  id: rental.id,
+  name: rental.name,
+  googleMapsUrl: rental.googleMapsUrl,
+  neighborhood: rental.neighborhood,
+  brand: rental.brand,
+  area: rental.area,
+  position: rental.location,
+}));
+const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: rentals.length,
+  itemListElement: rentals.map((rental, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "AutoRental",
+      name: rental.name,
+      url: rental.officialUrl,
+      sameAs: rental.googleMapsUrl,
+      address: rental.fullAddress,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: rental.location.lat,
+        longitude: rental.location.lng,
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: rental.rating.toFixed(1),
+        ratingCount: rental.reviewCount,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Car rental options in Buenos Aires" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="Buenos Aires car rental, alquiler de autos Buenos Aires, rent a car Buenos Aires, Hertz Ezeiza, Aeroparque car rental, open Sunday car hire BA"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            {rentals.length} desks open on Sundays in Google Maps, with at least {pageData.validation.minReviewCount} reviews and confirmed online booking.
+          </p>
+        </div>
+        <div class="toolbar" aria-label="Car rental controls">
+          <fieldset class="sort-toggle">
+            <legend>Sort by</legend>
+            <input id="sort-rating" type="radio" name="sort" autocomplete="off" checked />
+            <label for="sort-rating">GMaps rating</label>
+            <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-popularity">Popularity</label>
+            <input id="sort-name" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-name">Name</label>
+          </fieldset>
+          <fieldset class="extras-toggle">
+            <legend>Filter</legend>
+            <input id="filter-airport" type="checkbox" autocomplete="off" />
+            <label for="filter-airport">Airport ({airportCount})</label>
+            <input id="filter-city" type="checkbox" autocomplete="off" />
+            <label for="filter-city">City ({cityCount})</label>
+          </fieldset>
+          <label class="filter-dropdown" for="neighborhood-filter">
+            <span>Neighborhood</span>
+            <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
+              <option value="">All ({rentals.length})</option>
+              {neighborhoodOptions.map((option) => (
+                <option value={option.name}>{option.name} ({option.count})</option>
+              ))}
+            </select>
+          </label>
+          <label class="filter-dropdown" for="brand-filter">
+            <span>Brand</span>
+            <select id="brand-filter" name="brand" autocomplete="off">
+              <option value="">All ({rentals.length})</option>
+              {brandOptions.map((option) => (
+                <option value={option.name}>{option.name} ({option.count})</option>
+              ))}
+            </select>
+          </label>
+          <p class="meta">
+            Updated {updatedDate}. Verified with Google Places API, BrightData search/scrapes, and official booking sites. Every listing is open Sunday, has 150+ Maps reviews, and supports online reservation.
+          </p>
+        </div>
+      </header>
+
+      <section class="rental-list" aria-label="Buenos Aires car rental options">
+        <div class="rental-row rental-head" aria-hidden="true">
+          <span>Rental desk</span>
+          <span>Map</span>
+          <span>Address</span>
+          <span>Booking</span>
+          <span>Hours</span>
+          <span>GMaps rating</span>
+          <span>Notes</span>
+        </div>
+
+        {rentalsWithSort.map((rental) => (
+          <article
+            class="rental-row"
+            style={rental.sortOrderStyle}
+            data-neighborhood={rental.neighborhood}
+            data-brand={rental.brand}
+            data-area={rental.area}
+          >
+            <h2 class="rental-name">
+              <a href={rental.officialUrl} target="_blank" rel="noreferrer noopener">
+                {rental.name}
+              </a>
+              <span>{rental.areaLabel} · {rental.officialLabel}</span>
+            </h2>
+            <div class="map-actions">
+              <a
+                class="maps-link"
+                href={rental.googleMapsUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`Open ${rental.name} on Google Maps`}
+                title={`Open ${rental.name} on Google Maps`}
+              >
+                <span class="maps-icon" set:html={mapsIcon} />
+              </a>
+            </div>
+            <p class="address">{rental.address}</p>
+            <p class="service-proof" title={rental.onlineBooking.quote}>
+              <span class="proof-label">{rental.onlineBooking.label}</span>
+              <a href={rental.onlineBooking.sourceUrl} target="_blank" rel="noreferrer noopener">
+                {rental.onlineBooking.source}
+              </a>
+            </p>
+            <p class="hours">{rental.hours}</p>
+            <p
+              class="rating"
+              aria-label={`${rental.rating.toFixed(1)} Google Maps rating from ${rental.reviewCountLabel} reviews`}
+            >
+              <span class="rating-score">{rental.rating.toFixed(1)}</span>
+              <span class="review-count">{rental.reviewCountLabel} reviews</span>
+            </p>
+            <p class="description">{rental.description}</p>
+          </article>
+        ))}
+      </section>
+
+      <section class="method-card" aria-labelledby="method-heading">
+        <p class="eyebrow">Method</p>
+        <h2 id="method-heading">How entries made the list</h2>
+        <p>
+          Each desk had to be listed as {pageData.validation.includedStatus.toLowerCase()} in Google Maps, open on Sunday, have at least {pageData.validation.minReviewCount} Google reviews, and offer online booking on its own website or app. Phone/WhatsApp-only quote brokers and Sunday-closed city desks were excluded.
+        </p>
+      </section>
+
+      <section class="rental-map-section" aria-labelledby="rental-map-heading">
+        <div class="map-copy">
+          <p class="eyebrow">Map</p>
+          <h2 id="rental-map-heading">Buenos Aires car rental map</h2>
+          <p id="rental-map-status" class="map-status">
+            Showing all {rentals.length} rental desks.
+          </p>
+        </div>
+        {googleMapsApiKey ? (
+          <div
+            id="rental-map"
+            class="rental-map"
+            aria-label="Google Map with pins for Buenos Aires car rental desks"
+          ></div>
+        ) : (
+          <p class="map-unavailable">
+            Map unavailable because the Google Maps public key is not configured.
+          </p>
+        )}
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline define:vars={{ googleMapsApiKey, rentalMapData }}>
+  if (googleMapsApiKey) {
+    ((g) => {
+      let h;
+      let a;
+      let k;
+      const p = "The Google Maps JavaScript API";
+      const c = "google";
+      const l = "importLibrary";
+      const q = "__ib__";
+      const m = document;
+      let b = window;
+      b = b[c] || (b[c] = {});
+      const d = b.maps || (b.maps = {});
+      const r = new Set();
+      const e = new URLSearchParams();
+      const u = () =>
+        h ||
+        (h = new Promise(async (resolve, reject) => {
+          await (a = m.createElement("script"));
+          e.set("libraries", [...r] + "");
+          for (k in g) {
+            e.set(k.replace(/[A-Z]/g, (t) => `_${t[0].toLowerCase()}`), g[k]);
+          }
+          e.set("callback", `${c}.maps.${q}`);
+          a.src = `https://maps.${c}apis.com/maps/api/js?${e}`;
+          d[q] = resolve;
+          a.onerror = () => (h = reject(Error(`${p} could not load.`)));
+          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+          m.head.append(a);
+        }));
+      d[l] ? console.warn(`${p} only loads once. Ignoring:`, g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+    })({
+      key: googleMapsApiKey,
+      v: "weekly",
+    });
+  }
+
+  const neighborhoodFilter = document.querySelector("#neighborhood-filter");
+  const brandFilter = document.querySelector("#brand-filter");
+  const airportFilter = document.querySelector("#filter-airport");
+  const cityFilter = document.querySelector("#filter-city");
+  const defaultSort = document.querySelector("#sort-rating");
+  const rentalRows = [...document.querySelectorAll(".rental-row:not(.rental-head)")];
+  const mapElement = document.querySelector("#rental-map");
+  const mapStatus = document.querySelector("#rental-map-status");
+  const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
+  const filterUrlParams = ["neighborhood", "brand", "airport", "city"];
+  const markerRecords = [];
+  let rentalMap;
+  let infoWindow;
+
+  const escapeHtml = (value) =>
+    String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+
+  const getVisibleRentals = (selectedNeighborhood, selectedBrand, airportOnly, cityOnly) =>
+    rentalMapData.filter(
+      (rental) =>
+        (!selectedNeighborhood || rental.neighborhood === selectedNeighborhood) &&
+        (!selectedBrand || rental.brand === selectedBrand) &&
+        (!airportOnly || rental.area === "airport") &&
+        (!cityOnly || rental.area === "city"),
+    );
+
+  const updateMapStatus = (selectedNeighborhood, selectedBrand, airportOnly, cityOnly) => {
+    if (!mapStatus) return;
+
+    const visibleCount = getVisibleRentals(
+      selectedNeighborhood,
+      selectedBrand,
+      airportOnly,
+      cityOnly,
+    ).length;
+    const rentalLabel = visibleCount === 1 ? "rental desk" : "rental desks";
+    const suffixParts = [
+      airportOnly ? "at airports" : "",
+      cityOnly ? "in the city" : "",
+      selectedBrand ? `from ${selectedBrand}` : "",
+    ].filter(Boolean);
+    const suffix = suffixParts.length ? ` ${suffixParts.join(" · ")}` : "";
+    mapStatus.textContent = selectedNeighborhood
+      ? `Showing ${visibleCount} ${selectedNeighborhood} ${rentalLabel}${suffix}.`
+      : `Showing ${airportOnly || cityOnly || selectedBrand ? "" : "all "}${visibleCount} ${rentalLabel}${suffix}.`;
+  };
+
+  const fitMapToMarkers = (visibleRecords) => {
+    if (!rentalMap || !window.google?.maps || visibleRecords.length === 0) return;
+
+    if (visibleRecords.length === 1) {
+      rentalMap.setCenter(visibleRecords[0].rental.position);
+      rentalMap.setZoom(14);
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+
+    for (const { rental } of visibleRecords) {
+      bounds.extend(rental.position);
+    }
+
+    rentalMap.fitBounds(bounds, 44);
+  };
+
+  const syncMapMarkers = (selectedNeighborhood, selectedBrand, airportOnly, cityOnly) => {
+    updateMapStatus(selectedNeighborhood, selectedBrand, airportOnly, cityOnly);
+
+    if (!rentalMap) return;
+
+    const visibleIds = new Set(
+      getVisibleRentals(selectedNeighborhood, selectedBrand, airportOnly, cityOnly).map(
+        (rental) => rental.id,
+      ),
+    );
+    const visibleRecords = [];
+
+    for (const record of markerRecords) {
+      const isVisible = visibleIds.has(record.rental.id);
+      record.marker.setMap(isVisible ? rentalMap : null);
+      if (isVisible) visibleRecords.push(record);
+    }
+
+    if (mapElement) mapElement.dataset.visiblePins = String(visibleRecords.length);
+
+    fitMapToMarkers(visibleRecords);
+  };
+
+  const updateFilterUrl = (selectedNeighborhood, selectedBrand, airportOnly, cityOnly) => {
+    const url = new URL(window.location.href);
+
+    for (const paramName of filterUrlParams) {
+      url.searchParams.delete(paramName);
+    }
+
+    if (selectedNeighborhood) url.searchParams.set("neighborhood", selectedNeighborhood);
+    if (selectedBrand) url.searchParams.set("brand", selectedBrand);
+    if (airportOnly) url.searchParams.set("airport", "1");
+    if (cityOnly) url.searchParams.set("city", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
+  const initRentalMap = async () => {
+    if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
+
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    await google.maps.importLibrary("marker");
+
+    rentalMap = new Map(mapElement, {
+      center: buenosAiresCenter,
+      clickableIcons: false,
+      fullscreenControl: true,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoom: 11,
+    });
+    infoWindow = new InfoWindow();
+
+    for (const rental of rentalMapData) {
+      const marker = new google.maps.Marker({
+        map: rentalMap,
+        position: rental.position,
+        title: rental.name,
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(
+          `<strong>${escapeHtml(rental.name)}</strong><br><a href="${escapeHtml(rental.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+        );
+        infoWindow.open(rentalMap, marker);
+      });
+
+      markerRecords.push({ rental, marker });
+    }
+
+    syncMapMarkers(
+      neighborhoodFilter?.value ?? "",
+      brandFilter?.value ?? "",
+      airportFilter?.checked ?? false,
+      cityFilter?.checked ?? false,
+    );
+  };
+
+  const applyFilters = ({ syncUrl = true } = {}) => {
+    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+    const selectedBrand = brandFilter?.value ?? "";
+    const airportOnly = airportFilter?.checked ?? false;
+    const cityOnly = cityFilter?.checked ?? false;
+
+    if (syncUrl) {
+      updateFilterUrl(selectedNeighborhood, selectedBrand, airportOnly, cityOnly);
+    }
+
+    for (const row of rentalRows) {
+      const neighborhoodMismatch =
+        Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
+      const brandMismatch = Boolean(selectedBrand) && row.dataset.brand !== selectedBrand;
+      const airportMismatch = airportOnly && row.dataset.area !== "airport";
+      const cityMismatch = cityOnly && row.dataset.area !== "city";
+      row.hidden = neighborhoodMismatch || brandMismatch || airportMismatch || cityMismatch;
+    }
+
+    syncMapMarkers(selectedNeighborhood, selectedBrand, airportOnly, cityOnly);
+  };
+
+  const resetControls = () => {
+    if (defaultSort) defaultSort.checked = true;
+    if (neighborhoodFilter) neighborhoodFilter.value = "";
+    if (brandFilter) brandFilter.value = "";
+    if (airportFilter) airportFilter.checked = false;
+    if (cityFilter) cityFilter.checked = false;
+  };
+
+  const setSelectFromUrl = (selectElement, value) => {
+    if (!selectElement || !value) return;
+
+    const hasOption = [...selectElement.options].some((option) => option.value === value);
+    if (hasOption) selectElement.value = value;
+  };
+
+  const hasEnabledUrlParam = (params, paramName) => {
+    const value = params.get(paramName);
+    if (value === null) return false;
+
+    return !["0", "false", "no", "off"].includes(value.toLowerCase());
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    resetControls();
+    setSelectFromUrl(neighborhoodFilter, params.get("neighborhood"));
+    setSelectFromUrl(brandFilter, params.get("brand"));
+    if (airportFilter) airportFilter.checked = hasEnabledUrlParam(params, "airport");
+    if (cityFilter) cityFilter.checked = hasEnabledUrlParam(params, "city");
+
+    applyFilters({ syncUrl: false });
+  };
+
+  neighborhoodFilter?.addEventListener("change", applyFilters);
+  brandFilter?.addEventListener("change", applyFilters);
+  airportFilter?.addEventListener("change", applyFilters);
+  cityFilter?.addEventListener("change", applyFilters);
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
+  initRentalMap().catch((error) => {
+    console.error("Unable to initialize car rental map", error);
+    if (mapStatus) mapStatus.textContent = "Map unavailable. Rental list still works.";
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #eef3f7;
+    --surface: #f7fbff;
+    --surface-soft: #d9e4ee;
+    --text: #101820;
+    --text-muted: #5c6d7a;
+    --border: #c5d3df;
+    --border-strong: #a7b9c9;
+    --accent: #1a3f5c;
+    --accent-soft: #d0e2f0;
+    --link: #12324a;
+    --shadow: 0 20px 60px rgba(12, 28, 46, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1419;
+      --surface: #121a22;
+      --surface-soft: #182430;
+      --text: #edf3f8;
+      --text-muted: #9aadb8;
+      --border: #2a3a48;
+      --border-strong: #3a5163;
+      --accent: #d0e2f0;
+      --accent-soft: #1a2d3d;
+      --link: #f0f6fb;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-soft), transparent 35%), transparent 32rem),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .page {
+    width: min(100%, 88rem);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: start;
+    padding: clamp(1.25rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
+  }
+
+  .home-link {
+    grid-column: 1 / -1;
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.65rem;
+    max-width: 52rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 13ch;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.1rem, 5.1vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 46rem;
+    color: var(--text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.18rem);
+  }
+
+  .toolbar {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+  }
+
+  .sort-toggle,
+  .extras-toggle {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+  }
+
+  .sort-toggle {
+    border-radius: 1.2rem;
+  }
+
+  .sort-toggle legend,
+  .extras-toggle legend {
+    margin: 0 0.3rem 0 0.2rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 2.25rem;
+    text-transform: uppercase;
+  }
+
+  .sort-toggle input,
+  .extras-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sort-toggle label,
+  .extras-toggle label {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.45rem;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 700;
+    padding: 0 0.85rem;
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .sort-toggle label::before,
+  .extras-toggle label::before {
+    content: "";
+    width: 0.58rem;
+    height: 0.58rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.75;
+  }
+
+  #sort-rating:checked ~ label[for="sort-rating"],
+  #sort-popularity:checked ~ label[for="sort-popularity"],
+  #sort-name:checked ~ label[for="sort-name"],
+  #filter-airport:checked ~ label[for="filter-airport"],
+  #filter-city:checked ~ label[for="filter-city"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  #sort-rating:checked ~ label[for="sort-rating"]::before,
+  #sort-popularity:checked ~ label[for="sort-popularity"]::before,
+  #sort-name:checked ~ label[for="sort-name"]::before,
+  #filter-airport:checked ~ label[for="filter-airport"]::before,
+  #filter-city:checked ~ label[for="filter-city"]::before {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--accent);
+    opacity: 1;
+  }
+
+  .filter-dropdown {
+    display: grid;
+    width: min(100%, 24rem);
+    gap: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-dropdown select {
+    width: 100%;
+    min-height: 2.7rem;
+    padding: 0 2.5rem 0 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) right 0.7rem center / 0.42rem 0.42rem no-repeat,
+      color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .filter-dropdown select:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .meta {
+    margin: 0;
+    max-width: 28rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-align: left;
+  }
+
+  .rental-list {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .rental-row {
+    display: grid;
+    grid-template-columns:
+      minmax(8rem, 1.05fr)
+      3.25rem
+      minmax(7rem, 0.72fr)
+      minmax(9.5rem, 1fr)
+      minmax(8rem, 0.9fr)
+      minmax(6.5rem, 0.62fr)
+      minmax(14rem, 1.7fr);
+    gap: 0;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+  }
+
+  .rental-row[hidden] {
+    display: none;
+  }
+
+  .rental-head {
+    order: -1;
+    border-top: 0;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .rental-row > * {
+    min-width: 0;
+    margin: 0;
+    padding: 0.86rem clamp(0.65rem, 1vw, 0.8rem);
+    border-left: 1px solid var(--border);
+    overflow-wrap: anywhere;
+  }
+
+  .rental-row > *:first-child {
+    border-left: 0;
+  }
+
+  .rental-name {
+    display: grid;
+    gap: 0.28rem;
+    align-content: start;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.22;
+  }
+
+  .rental-name span {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .map-actions {
+    display: contents;
+  }
+
+  .maps-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .maps-icon {
+    display: flex;
+  }
+
+  .maps-icon :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+    filter: saturate(0.95);
+  }
+
+  .address,
+  .service-proof,
+  .hours,
+  .description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .service-proof,
+  .rating {
+    display: grid;
+    gap: 0.12rem;
+    line-height: 1.35;
+  }
+
+  .proof-label,
+  .rating-score {
+    color: var(--text);
+    font-weight: 750;
+  }
+
+  .service-proof a {
+    font-size: 0.76rem;
+    font-weight: 650;
+  }
+
+  .rating {
+    font-size: 0.95rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rating-score::before {
+    content: "★ ";
+    color: #b8872d;
+  }
+
+  .review-count {
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 650;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  body:has(#sort-rating:checked) .rental-row:not(.rental-head) {
+    order: var(--sort-rating);
+  }
+
+  body:has(#sort-popularity:checked) .rental-row:not(.rental-head) {
+    order: var(--sort-popularity);
+  }
+
+  body:has(#sort-name:checked) .rental-row:not(.rental-head) {
+    order: var(--sort-name);
+  }
+
+  .method-card,
+  .rental-map-section {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.4vw, 1.4rem);
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .method-card {
+    gap: 0.45rem;
+  }
+
+  .method-card h2,
+  .map-copy h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3.2vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .method-card p:not(.eyebrow),
+  .map-status,
+  .map-unavailable {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .map-copy {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .rental-map {
+    min-height: clamp(22rem, 55vw, 34rem);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface-soft);
+  }
+
+  @media (max-width: 1060px) {
+    .meta {
+      max-width: none;
+    }
+
+    .rental-row {
+      grid-template-columns:
+        minmax(8rem, 1.15fr)
+        3rem
+        minmax(6.25rem, 0.8fr)
+        minmax(8.5rem, 1fr)
+        minmax(7.5rem, 0.9fr)
+        minmax(6.4rem, 0.72fr)
+        minmax(12rem, 1.4fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding: 0.8rem;
+    }
+
+    .page-header {
+      padding-top: 1rem;
+      gap: 1.2rem;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2rem, 11vw, 3.3rem);
+    }
+
+    .sort-toggle {
+      border-radius: 1rem;
+    }
+
+    .rental-list {
+      border-radius: 1.2rem;
+      background: transparent;
+      border-color: var(--border-strong);
+    }
+
+    .rental-head {
+      display: none;
+    }
+
+    .rental-row {
+      position: relative;
+      min-height: 6rem;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "name"
+        "desc";
+      gap: 0.2rem 0.6rem;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.78rem 11.4rem 0.78rem 0.88rem;
+    }
+
+    .rental-row:first-of-type {
+      border-top: 0;
+    }
+
+    .rental-row > * {
+      padding: 0;
+      border-left: 0;
+    }
+
+    .rental-name {
+      grid-area: name;
+      font-size: 1rem;
+      line-height: 1.18;
+    }
+
+    .map-actions {
+      position: absolute;
+      top: 0.78rem;
+      right: 0.88rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.32rem;
+    }
+
+    .maps-link {
+      position: static;
+      width: 1.9rem;
+      height: 1.9rem;
+    }
+
+    .address,
+    .hours {
+      display: none;
+    }
+
+    .service-proof {
+      position: absolute;
+      top: 0.8rem;
+      right: 3.25rem;
+      width: 7.25rem;
+      font-size: 0.78rem;
+      text-align: right;
+    }
+
+    .rating {
+      position: absolute;
+      top: 3.15rem;
+      right: 3.25rem;
+      width: 7.25rem;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      text-align: right;
+    }
+
+    .review-count {
+      font-size: 0.72rem;
+    }
+
+    .description {
+      grid-area: desc;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .method-card,
+    .rental-map-section {
+      border-radius: 1.2rem;
+      padding: 0.8rem;
+    }
+  }
+</style>
