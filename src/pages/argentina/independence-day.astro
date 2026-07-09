@@ -1,4 +1,11 @@
 ---
+import { Picture } from "astro:assets";
+import actaImage from "../../assets/argentina/independence-day/acta-independencia-argentina.jpg";
+import casaHistoricaImage from "../../assets/argentina/independence-day/casa-historica-tucuman.jpg";
+import congresoTucumanImage from "../../assets/argentina/independence-day/congreso-tucuman-fortuny.jpg";
+import provinciasUnidasImage from "../../assets/argentina/independence-day/provincias-unidas-1816.png";
+import viceroyaltyImage from "../../assets/argentina/independence-day/viceroyalty-rio-de-la-plata-1795.png";
+
 export const prerender = true;
 
 const pageTitle = "Argentina's Independence Day: much more than you wanted to know";
@@ -101,13 +108,23 @@ const structuredData = {
             Official commemorations usually center on Tucumán and the <a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/museo-casa-historica-de-la-independencia" target="_blank" rel="noreferrer noopener">Casa Histórica</a>: Te Deum, flag raising, civic-military parade, presidential attendance in most years. Across the country people eat winter dishes, especially <strong>locro</strong>, and schools run pageants and flag ceremonies. Argentina also keeps <strong>25 May</strong> (the May Revolution of 1810) as a major patriotic holiday; the two dates are often mentioned together and sometimes mixed up (<a href="https://www.lanacion.com.ar/lifestyle/por-que-recordamos-mas-revolucion-mayo-nid2265816/" target="_blank" rel="noreferrer noopener">La Nación</a>). Historian <a href="https://www.lanacion.com.ar/cultura/25-de-mayo-preguntas-y-respuestas-para-entender-los-sucesos-de-una-semana-historica-nid19052021/" target="_blank" rel="noreferrer noopener">Daniel Balmaceda</a> puts the difference as <strong>autonomy</strong> in 1810 versus <strong>independence and sovereignty</strong> in 1816.
           </p>
           <p>
-            The rest of this page covers how the declaration came about, who was in the room (and who was not), what happened to the holiday afterward, and notes on common mix-ups and contested figures. Later governments reused 9 July for their own projects (<a href="https://en.wikipedia.org/wiki/Bernardino_Rivadavia" target="_blank" rel="noreferrer noopener">Rivadavia</a> 1826, <a href="https://en.wikipedia.org/wiki/Juan_Manuel_de_Rosas" target="_blank" rel="noreferrer noopener">Rosas</a> 1835, <a href="https://en.wikipedia.org/wiki/Juan_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Perón</a> 1947, Operativo Independencia 1975, recent administrations). The Casa Histórica itself was mostly demolished in 1903–04 and reconstructed in 1943.
+            The rest of this page covers how the declaration came about, who was included and excluded, how the holiday changed afterward, and common mix-ups. Later governments reused 9 July for their own projects (<a href="https://en.wikipedia.org/wiki/Bernardino_Rivadavia" target="_blank" rel="noreferrer noopener">Rivadavia</a> 1826, <a href="https://en.wikipedia.org/wiki/Juan_Manuel_de_Rosas" target="_blank" rel="noreferrer noopener">Rosas</a> 1835, <a href="https://en.wikipedia.org/wiki/Juan_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Perón</a> 1947, Operativo Independencia 1975, recent administrations). The Casa Histórica itself was mostly demolished in 1903–04 and reconstructed in 1943.
           </p>
-          <blockquote>
-            <p>
-              <em>Sources: the Acta text; Educ.ar's independence overview; argentina.gob.ar heritage pages; <a href="https://es.wikipedia.org/wiki/Marcela_Ternavasio" target="_blank" rel="noreferrer noopener">Marcela Ternavasio</a>, <cite>Historia de la Argentina, 1806–1852</cite> (Siglo XXI), for territorial sovereignty and May/July holiday hierarchy; plus Balmaceda, <a href="https://en.wikipedia.org/wiki/Felipe_Pigna" target="_blank" rel="noreferrer noopener">Pigna</a>, Páez de la Torre (h) and del Carril. Contested numbers are ranges. Inline links point to sources used.</em>
-            </p>
-          </blockquote>
+          <figure class="article-figure">
+            <Picture
+              src={congresoTucumanImage}
+              formats={["avif", "webp"]}
+              widths={[640, 828, 1024]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Francisco Fortuny's painting of deputies celebrating inside the Congreso de Tucumán."
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <figcaption>
+              Francisco Fortuny's 1910 depiction of the Congreso de Tucumán. Public domain, via <a href="https://commons.wikimedia.org/wiki/File:El-Congreso-de-Tucum%C3%A1n-1816-Francisco-Fortuny.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="part-i" aria-labelledby="part-i-heading">
@@ -120,22 +137,32 @@ const structuredData = {
           <p>
             The <a href="https://en.wikipedia.org/wiki/British_invasions_of_the_River_Plate" target="_blank" rel="noreferrer noopener">British invasions of 1806–1807</a> matter because they exposed the weakness of Spanish authority and militarized Buenos Aires society. The city defended itself, gained political confidence and grew used to acting on its own before the formal May Revolution. Ternavasio also notes that Buenos Aires still behaved more like the center of a local governorship than the real capital of a huge integrated viceroyalty, until May 1810 forced it to try to command that space.
           </p>
+          <figure class="article-figure article-figure--map">
+            <Picture
+              src={viceroyaltyImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 960, 1200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Map showing the Viceroyalty of the Río de la Plata in 1795 across southern South America."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              The Viceroyalty of the Río de la Plata in 1795, the imperial frame that 1810–1816 broke apart. Rasterized from TRAJAN 117, GFDL, via <a href="https://commons.wikimedia.org/wiki/File:Viceroyalty_of_the_R%C3%ADo_de_la_Plata_(1795).svg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="may-revolution">1810: autonomy, not independence</h3>
           <p>
             The chain of events began not in Buenos Aires but in Europe. In 1808 <a href="https://en.wikipedia.org/wiki/Napoleon" target="_blank" rel="noreferrer noopener">Napoleon Bonaparte</a> invaded Spain, forced the abdications of Carlos IV and Fernando VII and installed his brother <a href="https://en.wikipedia.org/wiki/Joseph_Bonaparte" target="_blank" rel="noreferrer noopener">Joseph Bonaparte</a> on the Spanish throne. Spanish resistance juntas governed in Fernando's name; as they collapsed one by one, the legitimacy of colonial authorities in America collapsed with them. When news reached Buenos Aires in May 1810 that the Junta of Seville (the last major seat of Spanish resistance) had fallen, the criollos of Buenos Aires forced the issue.
           </p>
           <p>
-            During the <strong>Semana de Mayo</strong> (18–25 May 1810), a <em>cabildo abierto</em> (open town council) on 22 May voted to depose Viceroy Baltasar Hidalgo de Cisneros and on 25 May the <strong>Primera Junta</strong> was installed, presided over by <a href="https://en.wikipedia.org/wiki/Cornelio_Saavedra" target="_blank" rel="noreferrer noopener">Cornelio Saavedra</a>, with <a href="https://en.wikipedia.org/wiki/Mariano_Moreno" target="_blank" rel="noreferrer noopener">Mariano Moreno</a> and <a href="https://en.wikipedia.org/wiki/Juan_Jos%C3%A9_Paso" target="_blank" rel="noreferrer noopener">Juan José Paso</a> as secretaries and <a href="https://en.wikipedia.org/wiki/Manuel_Belgrano" target="_blank" rel="noreferrer noopener">Manuel Belgrano</a>, <a href="https://en.wikipedia.org/wiki/Juan_Jos%C3%A9_Castelli" target="_blank" rel="noreferrer noopener">Juan José Castelli</a>, <a href="https://en.wikipedia.org/wiki/Miguel_de_Azcu%C3%A9naga" target="_blank" rel="noreferrer noopener">Miguel de Azcuénaga</a>, <a href="https://en.wikipedia.org/wiki/Domingo_Matheu" target="_blank" rel="noreferrer noopener">Domingo Matheu</a>, <a href="https://en.wikipedia.org/wiki/Juan_Larrea_(politician)" target="_blank" rel="noreferrer noopener">Juan Larrea</a> and <a href="https://en.wikipedia.org/wiki/Manuel_Alberti" target="_blank" rel="noreferrer noopener">Manuel Alberti</a> as members.
+            During the <strong>Semana de Mayo</strong> (18–25 May 1810), Buenos Aires removed Viceroy Baltasar Hidalgo de Cisneros and installed the <strong>Primera Junta</strong>, presided over by <a href="https://en.wikipedia.org/wiki/Cornelio_Saavedra" target="_blank" rel="noreferrer noopener">Cornelio Saavedra</a>. <a href="https://en.wikipedia.org/wiki/Mariano_Moreno" target="_blank" rel="noreferrer noopener">Mariano Moreno</a>, <a href="https://en.wikipedia.org/wiki/Juan_Jos%C3%A9_Paso" target="_blank" rel="noreferrer noopener">Juan José Paso</a> and <a href="https://en.wikipedia.org/wiki/Manuel_Belgrano" target="_blank" rel="noreferrer noopener">Manuel Belgrano</a> were among the main figures.
           </p>
           <p>
             The Junta declared it governed "in the name of Sr. D. Fernando VII" (the famous <strong>"máscara de Fernando VII"</strong> / "mask of <a href="https://en.wikipedia.org/wiki/Ferdinand_VII" target="_blank" rel="noreferrer noopener">Ferdinand VII</a>"). The legal theory often invoked was <a href="https://en.wikipedia.org/wiki/Retroversion_of_sovereignty_to_the_people" target="_blank" rel="noreferrer noopener">retroversión de la soberanía</a>: with the king captive and the imperial order collapsing, sovereignty reverted to the <em>pueblos</em>. Ternavasio notes that "pueblo"/"pueblos" did not mean "the Argentine people" as a single nation; they could mean cities, provinces or local corporate communities claiming their own rights (<a href="https://www.conicet.gov.ar/repensar-la-independencia/" target="_blank" rel="noreferrer noopener">CONICET / Ternavasio interview</a>). Early 1810 looks less like "Argentina vs Spain" and more like a fight over who had the right to govern the ruins of the old viceroyalty. Either way, <strong>no independence was declared in 1810</strong>. Educ.ar frames 9 July as the first explicit will of emancipation after the political process begun in May (<a href="https://www.educ.ar/recursos/132481/9-de-julio-dia-de-la-declaracion-de-la-independencia" target="_blank" rel="noreferrer noopener">Educ.ar</a>).
           </p>
-          <p>
-            Later historiography (including <a href="https://en.wikipedia.org/wiki/Bartolom%C3%A9_Mitre" target="_blank" rel="noreferrer noopener">Mitre</a>'s) often read 1810 as already independentist; the Congress's own 1817 <em>Manifiesto a las Naciones</em> described the 1810 Junta as provisional and in Fernando's name (<a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Wikipedia summary of the Manifiesto</a>).
-          </p>
 
-          
           <h3 id="buenos-aires-claim">Buenos Aires tries to inherit the viceroyalty</h3>
           <p>
             After May 1810, Ternavasio argues, Buenos Aires tried to make the old viceroyalty obey the revolutionary government seated in Buenos Aires, and only then discovered what its capital claim actually required (support from jurisdictions it had not previously needed to command in the same way). That is why Paraguay, the <a href="https://en.wikipedia.org/wiki/Banda_Oriental" target="_blank" rel="noreferrer noopener">Banda Oriental</a> (roughly modern Uruguay), <a href="https://en.wikipedia.org/wiki/Upper_Peru" target="_blank" rel="noreferrer noopener">Upper Peru</a> (modern Bolivia) and the <a href="https://en.wikipedia.org/wiki/Argentine_Littoral" target="_blank" rel="noreferrer noopener">Litoral</a> (the river provinces of northeastern Argentina) sit outside a single Argentine national story: Paraguay's autonomy became a point of no return; the Banda Oriental and Litoral tied themselves to the federal/confederal alternative of <a href="https://en.wikipedia.org/wiki/Jos%C3%A9_Gervasio_Artigas" target="_blank" rel="noreferrer noopener">Artigas</a>; Upper Peru remained militarily unstable.
@@ -146,127 +173,81 @@ const structuredData = {
 
           <h3 id="six-years">Six years of war and quarrel (1810–1816)</h3>
           <p>
-            The years between are not a story of a country patiently waiting to declare something it had already decided. They were years of military campaigning and internal conflict between centralist (Buenos Aires) and confederationist tendencies across the former Viceroyalty of the Río de la Plata:
-          </p>
-          <ul>
-            <li>
-              <strong>Military campaigns</strong>: Belgrano's Paraguay and Banda Oriental campaigns; the creation of the flag (1812); Belgrano's victories at Tucumán (1812) and Salta (1813); but then catastrophic defeats in the Alto Perú (Vilcapugio and Ayohuma, 1813), which ended hopes of holding what is today Bolivia.
-            </li>
-            <li>
-              <strong>The Asamblea del Año XIII</strong> (1813) came close to independence and then stopped short: abolished the oath of fidelity to Fernando VII, decreed freedom of the press, "freedom of wombs" (freeing children of slaves), abolished the <em>mita</em>, <em>yanaconazgo</em> and Indian tribute and suppressed noble titles, but it did <strong>not</strong> declare independence or write a constitution. Ternavasio reads it as exposing unresolved problems left by the monarchical crisis: Ferdinand's restoration, American war fronts and conflict with Artigas kept the revolutionary order unstable. So 9 July 1816 was not random; ambiguity had become untenable.
-            </li>
-            <li>
-              <strong>1814</strong>: Fernando VII was restored to the Spanish throne, immediately repudiated the liberal Cádiz Constitution of 1812 and set about reconquering the American colonies by force. A large expeditionary force under General <a href="https://en.wikipedia.org/wiki/Pablo_Morillo" target="_blank" rel="noreferrer noopener">Pablo Morillo</a> ("El Pacificador") was assembled, originally aimed in part at the Río de la Plata. Across Spanish America, 1815 was a year of patriot defeats.
-            </li>
-            <li>
-              <strong>The internal rupture</strong>: the Litoral provinces and the Banda Oriental, under José Gervasio Artigas and his <strong>Liga de los Pueblos Libres</strong> (League of Free Peoples), broke with Buenos Aires' centralism. Buenos Aires forces sacked Santa Fe and Rosario in 1815; the Portuguese invaded the Banda Oriental in 1816. This split is why those provinces would boycott the Congress of Tucumán.
-            </li>
-          </ul>
-          <p>
-            By early 1816 the revolution faced realist pressure from the north and west, Portuguese pressure from the east and civil conflict with the Litoral. That military and political context is part of why the Congress moved to a formal declaration (<a href="https://en.wikipedia.org/wiki/Congress_of_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Congreso de Tucumán</a>).
+            The years between were not a quiet wait for a decision already made. Belgrano fought in Paraguay, the Banda Oriental and the north; Spanish loyalists pushed back hard in Upper Peru; Fernando VII returned to the throne and tried to restore imperial control; and Artigas's Liga Federal broke with Buenos Aires. By early 1816 the revolution faced royalist pressure, Portuguese pressure and civil conflict, which made formal independence harder to postpone.
           </p>
 
           <h3 id="why-tucuman">Why Tucumán, and not Buenos Aires</h3>
           <p>
-            After the April 1815 revolution that overthrew Director Supremo <a href="https://en.wikipedia.org/wiki/Carlos_Mar%C3%ADa_de_Alvear" target="_blank" rel="noreferrer noopener">Carlos María de Alvear</a>, the provinces demanded a General Constituent Congress. The 1815 <em>Estatuto Provisional</em> set the rules and deliberately set the venue in the interior.
-          </p>
-          <p>The reasons, per historian <a href="https://es.wikipedia.org/wiki/Carlos_P%C3%A1ez_de_la_Torre" target="_blank" rel="noreferrer noopener">Carlos Páez de la Torre</a> (h) and others:</p>
-          <ul>
-            <li><strong>Geography</strong>: San Miguel de Tucumán sat roughly at the center of the territory of the United Provinces (which then extended deep into the Alto Perú).</li>
-            <li><strong>Military protection</strong>: it was the headquarters of the Ejército del Norte (Army of the North), and Belgrano's 1812 victory there had secured it.</li>
-            <li><strong>Distance from Artigas</strong>: it was far from the influence of the federalist Litoral.</li>
-            <li>
-              <strong>Anti-porteño symbolism</strong>: the interior provinces distrusted Buenos Aires' concentration of power. The Asamblea del Año XIII, held in Buenos Aires, had disappointed them by failing to declare independence. Choosing Tucumán signaled that independence would be a decision of the <em>provinces</em>, not an imposition of the port city. Buenos Aires itself did not push to host, so as not to antagonize the federalist military that had just overthrown Alvear.
-            </li>
-          </ul>
-          <p>
-            On 25 September 1816, the Congress voted to move to Buenos Aires (where it sat from 1817 until dissolution in 1820), issuing a "Manifesto of Transfer" that said the seat changed without changing intention (<a href="https://en.wikipedia.org/wiki/Congress_of_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
-          </p>
-
-          <h3 id="deputies">The deputies (<em>congresales</em>): where they came from</h3>
-          <p>
-            The Congress opened its sessions on <strong>24 March 1816</strong>, from a political map unlike today's Argentina.
+            The provinces wanted a Congress outside Buenos Aires. Tucumán was inland, militarily safer and less identified with the port city's centralism. Choosing it signaled that independence would be a provincial decision, not just another order from Buenos Aires.
           </p>
           <p>
-            The composition was strikingly clerical and legal: many deputies were priests or lawyers; a handful were military men.
+            The Congress still did not represent every territory Buenos Aires hoped to inherit. It included interior and Alto Perú deputies, while the Litoral under Artigas, the Banda Oriental and Paraguay stayed out.
           </p>
-          <p>
-            <strong>Provinces represented</strong>: Buenos Aires, Catamarca, Córdoba, Jujuy, La Rioja, Mendoza, Salta, San Juan, San Luis, Santiago del Estero, Tucumán, plus districts in Alto Perú (modern Bolivia): Charcas (around today's Sucre/Chuquisaca), Chichas (southern Potosí region) and Mizque (Cochabamba region), with Tarija represented by a substitute.
-          </p>
-          <p>
-            <strong>Provinces absent (the boycott)</strong>: The Liga Federal provinces under Artigas (the Banda Oriental, Corrientes, Entre Ríos, Misiones and Santa Fe) did <strong>not</strong> send deputies, because they were effectively at civil war with the Buenos Aires central government. (Córdoba, though sympathetic to the League, did send deputies.) Several Alto Perú cities (La Paz, Cochabamba, Potosí, Santa Cruz) could not send representatives because they had been reconquered by the realists. <strong>Paraguay</strong>, already governing itself autonomously under <a href="https://en.wikipedia.org/wiki/Jos%C3%A9_Gaspar_Rodr%C3%ADguez_de_Francia" target="_blank" rel="noreferrer noopener">Dr. Francia</a>, declined the invitation as "insulting."
-          </p>
-          <p>Other people who mattered, beyond the deputies:</p>
-          <ul>
-            <li><strong><a href="https://en.wikipedia.org/wiki/Francisco_Narciso_de_Laprida" target="_blank" rel="noreferrer noopener">Francisco Narciso de Laprida</a></strong> (deputy for San Juan): held the rotating presidency in July, and so was the man who put the independence question to the vote. (He was killed in 1829 in Mendoza's civil wars, the subject of a famous Borges poem.)</li>
-            <li><strong><a href="https://en.wikipedia.org/wiki/Mariano_Boedo" target="_blank" rel="noreferrer noopener">Mariano Boedo</a></strong> (Salta): vice-president.</li>
-            <li><strong>Manuel Belgrano</strong>: not a deputy, but arrived from Europe and addressed the Congress in a secret session on 6 July.</li>
-            <li><strong><a href="https://en.wikipedia.org/wiki/Jos%C3%A9_de_San_Mart%C3%ADn" target="_blank" rel="noreferrer noopener">José de San Martín</a></strong>: not present; governor of <a href="https://en.wikipedia.org/wiki/Cuyo_(Argentina)" target="_blank" rel="noreferrer noopener">Cuyo</a> (western Argentina), he lobbied relentlessly by letter from Mendoza.</li>
-            <li><strong>Juan Martín de Pueyrredón</strong>: elected Director Supremo, pushed the deputies to declare and then left for Buenos Aires.</li>
-            <li><strong><a href="https://en.wikipedia.org/wiki/Cayetano_Jos%C3%A9_Rodr%C3%ADguez" target="_blank" rel="noreferrer noopener">Fray Cayetano Rodríguez</a></strong>: Franciscan, deputy for Buenos Aires, editor of the <em>Redactor</em>.</li>
-            <li><strong><a href="https://en.wikipedia.org/wiki/Justo_de_Santa_Mar%C3%ADa_de_Oro" target="_blank" rel="noreferrer noopener">Fray Justo Santa María de Oro</a></strong>: deputy for San Juan, who insisted the form of government be submitted to the people, threatening to resign otherwise.</li>
-          </ul>
+          <figure class="article-figure article-figure--map article-figure--portrait">
+            <Picture
+              src={provinciasUnidasImage}
+              formats={["avif", "webp"]}
+              widths={[360, 540, 764]}
+              sizes="(min-width: 48rem) 30rem, calc(100vw - 2rem)"
+              alt="Approximate 1816 map of the United Provinces in South America, including areas beyond modern Argentina."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              Approximate 1816 map of the United Provinces, useful mainly for showing how much the claim exceeded modern Argentina. Adapted from Misteruploader, CC BY-SA 4.0, via <a href="https://commons.wikimedia.org/wiki/File:Provincias_Unidas.png" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="san-martin">San Martín's pressure and the "juridical" argument for independence</h3>
           <p>
-            From Mendoza, where he was organizing the Army of the Andes, San Martín argued that the army needed to fight as the force of a declared sovereign state rather than as rebels still nominally subject to the king. His 12 April 1816 letter to deputy <a href="https://en.wikipedia.org/wiki/Tom%C3%A1s_Godoy_Cruz" target="_blank" rel="noreferrer noopener">Tomás Godoy Cruz</a> states:
-          </p>
-          <blockquote>
-            <p>
-              "How long are we going to wait to declare our independence! Doesn't it seem to you a ridiculous thing to mint coins, have a national flag and cockade, and finally to wage war on the sovereign on whom we believe we still depend? … The enemies (and with much reason) treat us as insurgents, since we declare ourselves vassals." (<a href="https://www.educ.ar/recursos/128506/carta-de-jose-de-san-martin-a-tomas-godoy-cruz" target="_blank" rel="noreferrer noopener">educ.ar transcription</a>; Mendoza, 12 April 1816)
-            </p>
-          </blockquote>
-          <p>
-            Historians often treat the declaration as a political act taken under military pressure, not as the end of a process already complete.
+            From Mendoza, where he was organizing the Army of the Andes, San Martín pressed the Congress to stop fighting as nominal vassals of the king. In an April 1816 letter to <a href="https://en.wikipedia.org/wiki/Tom%C3%A1s_Godoy_Cruz" target="_blank" rel="noreferrer noopener">Tomás Godoy Cruz</a>, he mocked the contradiction: "How long are we going to wait to declare our independence!" The declaration was a military necessity as much as a legal act.
           </p>
 
           <h3 id="session-9-july">The session of 9 July 1816</h3>
           <p>
-            On Tuesday 9 July 1816, around 2 p.m., the deputies met in the adapted salon of the house of <strong><a href="https://es.wikipedia.org/wiki/Francisca_Baz%C3%A1n_de_Laguna" target="_blank" rel="noreferrer noopener">Francisca Bazán de Laguna</a></strong> on the calle del Rey (today calle Congreso 141). <a href="https://en.wikipedia.org/wiki/Teodoro_S%C3%A1nchez_de_Bustamante" target="_blank" rel="noreferrer noopener">Teodoro Sánchez de Bustamante</a> (Jujuy) moved to take up independence; after debate, President Laprida put the question (<a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://www.argentina.gob.ar/noticias/9-de-julio-de-1816-declaracion-de-la-independencia-de-la-argentina" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>):
+            On 9 July 1816, the deputies met in the house of <strong><a href="https://es.wikipedia.org/wiki/Francisca_Baz%C3%A1n_de_Laguna" target="_blank" rel="noreferrer noopener">Francisca Bazán de Laguna</a></strong>. President <a href="https://en.wikipedia.org/wiki/Francisco_Narciso_de_Laprida" target="_blank" rel="noreferrer noopener">Francisco Narciso de Laprida</a> put the independence question to the room, and the deputies answered yes. The <a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Acta de la Independencia</a> declared the provinces' will to break ties with the kings of Spain and become a free nation independent of Ferdinand VII, his successors and metropolis.
           </p>
-          <blockquote>
-            <p>
-              "Whether they wished the provinces of the Union to be a free and independent nation of the kings of Spain and their metropolis."
-            </p>
-          </blockquote>
-          <p>
-            The deputies answered affirmatively. The <a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Acta de la Independencia</a> declared the "unanimous and indubitable will" of the provinces to break ties with the kings of Spain and to become a free nation independent of King Ferdinand VII, his successors and metropolis. The declaring body is named the <strong>Congreso de las Provincias Unidas en Sud América</strong>.
-          </p>
+          <figure class="article-figure article-figure--document">
+            <Picture
+              src={actaImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 900, 1181]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Printed Acta de la Independencia with the declaration text and signatures."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              A printed Acta of the declaration. Public domain, via <a href="https://commons.wikimedia.org/wiki/File:Acta_de_la_independencia_de_los_pueblos_confederados_de_la_Rep%C3%BAblica_Argentina.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="foreign-domination">"…and of all other foreign domination": the 19 July addition</h3>
           <p>
             The 9 July text broke with Spain but said nothing about <em>other</em> powers. In the following days, rumors circulated that the Director Pueyrredón, General Belgrano and even some deputies were entertaining schemes to hand the country to Portugal (or, earlier, to Britain; Alvear had floated a British protectorate in 1815). Belgrano's own monarchy proposal fed these fears.
           </p>
           <p>
-            On <strong>19 July 1816</strong>, in secret session, Buenos Aires deputy <strong><a href="https://en.wikipedia.org/wiki/Pedro_Medrano" target="_blank" rel="noreferrer noopener">Pedro Medrano</a></strong> moved to amend the oath/Act: after independence from Ferdinand VII, his successors and metropolis, add <strong>"y de toda otra dominación extranjera"</strong>. The recorded purpose was to counter rumors of delivery to Portugal (<a href="https://elhistoriador.com.ar/9-de-julio-de-1816-declaracion-de-la-independencia/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
+            A few days later, the Congress added <strong>"y de toda otra dominación extranjera"</strong>, closing the door on rumors that the new state might be handed to Portugal or another power.
           </p>
 
           <h3 id="inca-monarchy">The monarchy-vs-republic debate and Belgrano's Inca prince</h3>
           <p>
-            The <em>form of government</em> was left undecided. Contemporary accounts describe broad support at Tucumán for constitutional <strong>monarchy</strong> rather than a republic, then the dominant European form after Napoleon's fall. Some accounts name Tomás Godoy Cruz as a republican holdout (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">Pigna</a>).
-          </p>
-          <p>
-            On <strong>6 July 1816</strong>, in secret session, Belgrano (back from a European mission) argued that a "tempered" (constitutional) monarchy was likelier to win European recognition, and proposed crowning <strong>a descendant of the Incas</strong> with the capital at Cuzco. San Martín and <a href="https://en.wikipedia.org/wiki/Mart%C3%ADn_Miguel_de_G%C3%BCemes" target="_blank" rel="noreferrer noopener">Güemes</a> supported the idea; Alto Perú deputies were also favorable (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://www.educ.ar/recursos/130847/belgrano-y-el-proyecto-de-monarquia-incaica/" target="_blank" rel="noreferrer noopener">educ.ar</a>).
-          </p>
-          <p>
-            It failed amid porteño elite opposition, no agreed dynastic candidate (a brother of Túpac Amaru was an elderly prisoner in Cádiz) and racist objections recorded by contemporaries, including porteño deputy <strong><a href="https://en.wikipedia.org/wiki/Tom%C3%A1s_de_Anchorena" target="_blank" rel="noreferrer noopener">Tomás Manuel de Anchorena</a></strong>'s private remark about being governed "by a member of the caste of the chocolates," and porteño press mockery of a "dirty-footed king." Mitre later dismissed the plan in <cite>Historia de Belgrano</cite>. The Congress postponed the question; a durable republican constitution came in <strong>1853</strong> (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>).
+            Independence did not settle the form of government. Constitutional monarchy still looked normal in post-Napoleonic Europe, and Belgrano even proposed crowning a descendant of the Incas with the capital at Cuzco. San Martín, Güemes and Alto Perú deputies were sympathetic, but the plan collapsed under porteño elite opposition, no agreed candidate and racist objections. A durable republican constitution came only in <strong>1853</strong>.
           </p>
 
           <h3 id="translations">The Acta in Spanish, Quechua and Aymara</h3>
           <p>
-            The Congress ordered the Acta printed in <strong>Quechua and Aymara</strong> as well as Spanish. On 29 July 1816 it asked the Directorio for 3,000 copies: 1,500 Spanish, 1,000 Quechua, 500 Aymara. The Gandarillas press in Buenos Aires printed them in August 1816 in bilingual double-column format; they appeared in the <em>Gazeta de Buenos Aires</em> (17 August 1816) and <em>El Redactor</em>. Preparation of the Quechua version is attributed to Charcas deputy <strong>José Mariano Serrano</strong>, though that does not prove he personally translated it (<a href="https://www.argentina.gob.ar/interior/archivo-general-de-la-nacion/traducciones-de-la-independencia" target="_blank" rel="noreferrer noopener">AGN</a>; <a href="https://www.infobae.com/sociedad/2021/07/09/la-declaracion-de-la-independencia-traducida-al-quechua-y-al-aymara-que-fracaso-y-termino-con-una-leccion-de-san-martin/" target="_blank" rel="noreferrer noopener">Infobae</a>).
-          </p>
-          <p>
-            A <strong>guaraní</strong> version was proposed but not distributed while the Litoral was at war with Buenos Aires and unrepresented. Few indigenous-language copies survive (reports cite two or three Quechua and one Aymara); an Aymara copy was later exhibited at the Casa Histórica (<a href="https://www.argentina.gob.ar/interior/archivo-general-de-la-nacion/traducciones-de-la-independencia" target="_blank" rel="noreferrer noopener">AGN</a>).
+            The Congress ordered the Acta printed in <strong>Quechua and Aymara</strong> as well as Spanish, because the United Provinces still claimed Alto Perú and wanted the declaration to circulate beyond Spanish-speaking elites. A Guaraní version was proposed but not distributed while the Litoral was at war with Buenos Aires.
           </p>
 
           <h3 id="after-declaration">After the declaration: the wider Spanish-American context</h3>
           <p>
-            In January 1817 San Martín launched the <a href="https://en.wikipedia.org/wiki/Crossing_of_the_Andes" target="_blank" rel="noreferrer noopener">Cruce de los Andes</a>. Common figures are ~4,000 regulars and 1,200 militia; Gerónimo Espejo's 1882 <cite>El paso de los Andes</cite> gives a full muster around 5,423 (3,778 troops and 1,392 auxiliaries), plus horses and mules. The campaign ended in victory at <strong>Chacabuco (12 February 1817)</strong>. Miriam Victoria Gomes (Biblioteca del Congreso) estimates that of about 2,500 Black soldiers who began the crossing, 143 returned alive (an estimate, not a census). The army could now claim to fight for a declared sovereign state, as San Martín had argued.
+            In 1817 San Martín crossed the Andes and defeated royalist forces at Chacabuco. The army could now claim to fight for a declared sovereign state, not for rebels still pretending loyalty to the king.
           </p>
           <p>
-            The Congress went on to sanction Argentina's first constitution in <strong>1819</strong> (unitary and never applied) before dissolving in 1820 after the Battle of Cepeda. The name and territory of "las Provincias Unidas en Sud América" bore little resemblance to today's Argentina: it included the Alto Perú (Bolivia), whose deputy Serrano would later preside over the assembly that declared Bolivia's independence in 1825. Uruguay's independence, by contrast, is dated to 1828.
+            The Congress later approved a unitary constitution that failed, then dissolved after civil war. The declared "Provincias Unidas en Sud América" still bore little resemblance to today's Argentina: Alto Perú became Bolivia, while Uruguay's path to independence followed its own course.
           </p>
+
           <h3 id="naming">The name "Argentina" comes later</h3>
           <p>
             In 1816 the relevant name was <strong>Provincias Unidas en Sud América</strong>. Ternavasio notes that "Sudamérica" itself expressed uncertainty about which provinces would actually fall under the new legal condition, especially since the Banda Oriental and Litoral did not sit in the Congress. The failed centralist constitution of <strong>1826</strong> used the label <strong>República Argentina</strong> and declared a representative republican form, but provincial rejection prevented a stable modern state (<a href="https://en.wikipedia.org/wiki/United_Provinces_of_the_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://repositorio.uca.edu.ar/bitstream/123456789/10002/1/sobre-denominaciones-republica-argentina.pdf" target="_blank" rel="noreferrer noopener">UCA on denominations</a>). For Ternavasio, the history of the Argentine Republic begins <em>stricto sensu</em> only after Buenos Aires accepted the 1853 Constitution (after 1860).
@@ -276,49 +257,36 @@ const structuredData = {
         <section id="part-ii" aria-labelledby="part-ii-heading">
           <h2 id="part-ii-heading">Part II — How the holiday evolved</h2>
 
-          <h3 id="first-celebrations">The first celebrations (1816) and the 19th-century see-saw</h3>
+          <h3 id="first-celebrations">The first celebrations and the 19th-century see-saw</h3>
           <p>
-            The first celebrations began immediately. After the 9 July session ran late, people gathered around the house shouting "Viva la Patria"; formal festivities followed the next day. <a href="https://www.argentina.gob.ar/noticias/9-de-julio-dia-de-la-independencia-2" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a> records an elite celebration on 10 July with Mass at San Francisco (and a ball at the Bazán de Laguna house / Governor Aráoz's home) and a popular celebration on 21 July at Campo de Carreras (site of the Battle of Tucumán) with a reported 5,000-plus people and speeches by Belgrano and Aráoz.
+            Celebrations began immediately in Tucumán, but for much of the 19th century <strong>25 May</strong> kept the stronger place in patriotic culture. Rivadavia even folded 9 July into the May festivities; Rosas later restored it to full rank and used both holidays for federal political theater.
           </p>
-          <p>
-            Ternavasio adds a holiday-history note: the <strong>Fiestas Mayas</strong> began in 1811 and were never cancelled; after 1816 the <strong>Fiestas Julias</strong> were added to commemorate independence, but 25 May almost always kept the privileged place in the Río de la Plata festive calendar, especially in Buenos Aires (<a href="https://www.educ.ar/recursos/130924/un-pais-con-dos-fechas-patrias" target="_blank" rel="noreferrer noopener">Educ.ar / Ternavasio</a>). Contemporaries often gave May the stronger emotional priority because it marked the revolutionary rupture they had lived through; July later became the formal Independence Day.
-          </p>
-          <p>Through the 19th century, the holiday's fortunes rose and fell with politics:</p>
-          <ul>
-            <li>
-              <strong>1826</strong>: Bernardino Rivadavia effectively demoted it: a decree of 6 July 1826 ordered that 9 July be commemorated jointly with 25 May, arguing that "the repetition of these festivities causes considerable harm to commerce and industry." In practice the "Fiestas Mayas" (25 May) were the main patriotic festival of the 1820s.
-            </li>
-            <li>
-              <strong>1835</strong>: Juan Manuel de Rosas reversed this. His decree of 11 June 1835 declared that 9 July "should be no less celebrated than 25 May," restoring it to full festive rank (<a href="https://www.argentina.gob.ar/noticias/9-de-julio-dia-de-la-independencia-2" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>). Under Rosas the "Fiestas Julianas" gained importance; celebrations acquired a heavier religious component and federal red alongside celeste-y-blanco. Ternavasio notes that the May and July festivities of 1834 already incorporated homage to Rosas's 1833 desert expedition, bending civic holidays toward leader-cult politics.
-            </li>
-            <li>
-              <strong>1866</strong>: the 50th anniversary passed without major celebration; the country was fighting the War of the Triple Alliance.
-            </li>
-          </ul>
 
           <h3 id="casa-historica">The Casa Histórica: demolition, the Templete and the 1943 reconstruction</h3>
           <p>
-            The building's later history is often misstated in tourist guides.
+            The famous "Casita" was not originally a tiny cottage but a substantial colonial <em>casona</em>. The state later demolished almost all of it, preserving the oath room inside a decorative pavilion called the <strong>Templete</strong>. That pavilion helped create the popular image of a little adobe house.
           </p>
           <p>
-            The house was built around 1760 by the Bazán-Laguna family, one of Tucumán's leading families; it was a substantial colonial <em>casona</em> of three parallel wings around patios, with a baroque portal flanked by twisted (salomonic) columns, <strong>not</strong> the tiny cottage that its affectionate nickname "Casita de Tucumán" implies. During the Congress, two rooms parallel to the façade were merged (by demolishing a dividing wall) to form the session hall, about 15 m by 5 m.
+            The current Casa Histórica is a 1940s reconstruction based on old photographs and plans. Even its familiar schoolbook colors changed: later research restored white walls and blue openings rather than the yellow-and-green scheme many Argentines learned in school.
           </p>
-          <p>
-            After 1816 the house deteriorated in Tucumán's humid climate. By 1869 it was in ruins when the photographer <strong>Ángel Paganelli</strong> took the only known photographs of the original house, images that would later prove essential. An 1869 law (under <a href="https://en.wikipedia.org/wiki/Domingo_Faustino_Sarmiento" target="_blank" rel="noreferrer noopener">Sarmiento</a>) authorized nationalizing the house; the state bought it (1874), remodeled the façade and installed post-office and judicial offices.
-          </p>
-          <p>
-            The decisive damage came under President <strong><a href="https://en.wikipedia.org/wiki/Julio_Argentino_Roca" target="_blank" rel="noreferrer noopener">Julio A. Roca</a></strong>: in <strong>1903 demolition began</strong> and in September <strong>1904</strong> everything was torn down <em>except</em> the "Salón de la Jura" (the room where independence was sworn), which was enclosed inside an ornate French-style pavilion called <strong>"El Templete"</strong>, with stained glass, bronze plaques and two bronze reliefs by the Tucumán sculptor <a href="https://en.wikipedia.org/wiki/Lola_Mora" target="_blank" rel="noreferrer noopener">Lola Mora</a> commemorating 25 May 1810 and 9 July 1816. Isolating the salon inside that pavilion made it look like a tiny adobe house (one origin of the "casita" nickname) (<a href="https://www.lagaceta.com.ar/nota/691339/sociedad/historia-casa-tucuman-entro-historia.html" target="_blank" rel="noreferrer noopener">La Gaceta</a>; <a href="https://billiken.lat/interesante/como-fue-la-reconstruccion-de-la-casa-historica-de-tucuman-en-1943/" target="_blank" rel="noreferrer noopener">Billiken</a>).
-          </p>
-          <p>
-            In <strong>1941</strong> the house was declared a National Historic Monument (12 August). A commission (<a href="https://en.wikipedia.org/wiki/Ricardo_Levene" target="_blank" rel="noreferrer noopener">Ricardo Levene</a> and architects Martín Noel, <a href="https://es.wikipedia.org/wiki/Mario_Jos%C3%A9_Buschiazzo" target="_blank" rel="noreferrer noopener">Mario J. Buschiazzo</a> and Alejandro Figueroa) proposed a full reconstruction. The Templete was demolished; architect <strong>Mario Buschiazzo</strong> directed the rebuild, using Paganelli's 1869 photographs and the 1870s survey plans and locating the original foundations underground. Period tiles, doors and grilles were bought from the (contemporaneous) Piedrabuena bishop's residence, then being demolished. The reconstructed house was inaugurated as a museum on <strong>24 September 1943</strong> (anniversary of the Battle of Tucumán), under the de facto government of General <a href="https://en.wikipedia.org/wiki/Pedro_Pablo_Ram%C3%ADrez" target="_blank" rel="noreferrer noopener">Pedro Pablo Ramírez</a>.
-          </p>
-          <p>
-            For decades the reconstruction was shown with yellow walls and green openings from a late-19th-century Genaro Pérez painting. A 1996 study by architect Juan Carlos Marinsalda of door paint layers concluded the 1816 openings were <strong>Prussian blue</strong> on white walls; that scheme has since been restored. The site is now the <a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/museo-casa-historica-de-la-independencia" target="_blank" rel="noreferrer noopener">Museo Nacional de la Independencia</a>.
-          </p>
+          <figure class="article-figure">
+            <Picture
+              src={casaHistoricaImage}
+              formats={["avif", "webp"]}
+              widths={[640, 960, 1280, 1600, 2200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="The reconstructed Casa Histórica de la Independencia in San Miguel de Tucumán."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              The present Casa Histórica in Tucumán, photographed in 2025 and resized from the original. Horacio Cambeiro, CC BY-SA 4.0, via <a href="https://commons.wikimedia.org/wiki/File:Casa_Hist%C3%B3rica_de_la_Independencia_%E2%80%A2_Casa_de_Tucum%C3%A1n_(31147).jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="centenario">The Centenario (1916): a subdued centennial</h3>
           <p>
-            The 100th anniversary in 1916 was, by design or circumstance, muted. World War I had "closed the Atlantic," so no international guests came (a sharp contrast with the lavish, cosmopolitan 1910 centenary of the <em>May Revolution</em>). President <a href="https://en.wikipedia.org/wiki/Victorino_de_la_Plaza" target="_blank" rel="noreferrer noopener">Victorino de la Plaza</a> did not even travel to Tucumán, sending a delegate. In Buenos Aires, after a Te Deum, the 9 July military parade was marred by a frustrated assassination attempt against the president by an anarchist. The moment was politically charged: <a href="https://en.wikipedia.org/wiki/Hip%C3%B3lito_Yrigoyen" target="_blank" rel="noreferrer noopener">Hipólito Yrigoyen</a> had just been elected under the new Sáenz Peña secret-ballot law and the Radical era was beginning.
+            The 100th anniversary in 1916 was muted. World War I kept foreign guests away, President Victorino de la Plaza skipped Tucumán and the moment sat in the shadow of the more lavish 1910 May centenary.
           </p>
           <p>
             Balmaceda and others note an asymmetry that stuck: 25 May is remembered more vividly than 9 July in popular culture, partly because May 1810 has better-known protagonists in schoolbooks (<a href="https://www.lanacion.com.ar/lifestyle/por-que-recordamos-mas-revolucion-mayo-nid2265816/" target="_blank" rel="noreferrer noopener">La Nación</a>).
@@ -326,15 +294,15 @@ const structuredData = {
 
           <h3 id="peron-1947">Perón and the "Economic Independence" of 1947</h3>
           <p>
-            On <strong>9 July 1947</strong>, President Juan Domingo Perón held an act of <strong>Independencia Económica</strong> at the Casa Histórica. With Chilean president <a href="https://en.wikipedia.org/wiki/Gabriel_Gonz%C3%A1lez_Videla" target="_blank" rel="noreferrer noopener">Gabriel González Videla</a> present, Interior Minister <a href="https://en.wikipedia.org/wiki/%C3%81ngel_Borlenghi" target="_blank" rel="noreferrer noopener">Ángel Borlenghi</a> read an "Acta de la Independencia Económica" pledging economic emancipation from "foreign capitalist powers," dated in San Miguel de Tucumán and framed as echoing 1816. The ceremony accompanied nationalizations and the First Five-Year Plan (<a href="https://www.infobae.com/sociedad/2023/07/09/el-otro-congreso-de-tucuman-el-dia-que-peron-declaro-la-independencia-economica-y-auguro-60-anos-sin-crisis/" target="_blank" rel="noreferrer noopener">Infobae</a>).
+            On <strong>9 July 1947</strong>, President Juan Domingo Perón staged an act of <strong>Independencia Económica</strong> at the Casa Histórica. It cast Peronist nationalizations and economic policy as a second emancipation, deliberately echoing 1816 (<a href="https://www.infobae.com/sociedad/2023/07/09/el-otro-congreso-de-tucuman-el-dia-que-peron-declaro-la-independencia-economica-y-auguro-60-anos-sin-crisis/" target="_blank" rel="noreferrer noopener">Infobae</a>).
           </p>
 
           <h3 id="sesquicentenario">The Sesquicentenario (1966) and the dictatorships</h3>
           <p>
-            The 150th anniversary in 1966 was overshadowed: President <a href="https://en.wikipedia.org/wiki/Arturo_Umberto_Illia" target="_blank" rel="noreferrer noopener">Arturo Illia</a> had been preparing a major celebration when, on 28 June 1966, General <a href="https://en.wikipedia.org/wiki/Juan_Carlos_Ongan%C3%ADa" target="_blank" rel="noreferrer noopener">Juan Carlos Onganía</a>'s coup overthrew him. No foreign guests came; the commemoration was reduced to a military parade on Avenida del Libertador.
+            The 150th anniversary in 1966 was swallowed by politics: <a href="https://en.wikipedia.org/wiki/Arturo_Umberto_Illia" target="_blank" rel="noreferrer noopener">Arturo Illia</a> was overthrown days before the commemoration, and the dictatorship reduced the anniversary to a military parade.
           </p>
           <p>
-            On <strong>5 February 1975</strong>, President <a href="https://en.wikipedia.org/wiki/Isabel_Per%C3%B3n" target="_blank" rel="noreferrer noopener">María Estela Martínez de Perón</a> (Isabel) signed Decree 261/75 authorizing <a href="https://en.wikipedia.org/wiki/Operation_Independence" target="_blank" rel="noreferrer noopener">Operativo Independencia</a>, a military campaign in Tucumán against the ERP. From 9 February 1975 troops occupied the province. The <strong>"Escuelita de Famaillá"</strong> operated as a clandestine detention center; CONADEP and later official memory sites identify it as among the first of that type in the country (<a href="https://www.argentina.gob.ar/noticias/47-anos-del-operativo-independencia-espacio-para-la-memoria-ex-ccdtye-la-escuelita-de" target="_blank" rel="noreferrer noopener">argentina.gob.ar / Espacio Famaillá</a>). Estimates of people held there vary (Wikipedia cites ~1,507 for Famaillá; other provincial memory sources give ranges around 1,500–2,500). The operation's name and location remain contested in Argentine memory politics.
+            In 1975, the Peronist government launched <a href="https://en.wikipedia.org/wiki/Operation_Independence" target="_blank" rel="noreferrer noopener">Operativo Independencia</a>, a military campaign in Tucumán against the ERP. Its name and location still tie the holiday to Argentina's later memory politics.
           </p>
 
           <h3 id="modern-ritual">Modern commemoration: the standard ritual</h3>
@@ -350,39 +318,28 @@ const structuredData = {
             <li>Nationwide <strong>Te Deums, school pageants and flag displays</strong>. Under <a href="https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835/texto" target="_blank" rel="noreferrer noopener">Ley 27.399</a> (2017), 9 July is listed among Argentina's <strong>feriados nacionales inamovibles</strong> (immovable national holidays).</li>
           </ul>
           <p>
-            9 July falls in the depth of the southern winter, so the traditional dishes are winter food: especially <strong>locro</strong>, plus empanadas, pastelitos, humita, tamales, carbonada and tortas fritas. Locro is a slow-cooked stew of white maize, beans, squash and various meats (its name is from Quechua <em>ruqru</em>/<em>luqru</em>), of pre-Hispanic Andean origin, later enriched with the pork, beef and sausage brought by the Spanish. It is eaten on both national dates, 25 May and 9 July.
+            9 July falls in the depth of the southern winter, so the traditional food is warm and heavy: especially <strong>locro</strong>, plus empanadas, pastelitos, humita and tortas fritas. Locro is a slow-cooked Andean stew of maize, beans, squash and meat, now eaten on both national dates, 25 May and 9 July.
           </p>
           <p>
-            CONICET researcher Carina Perticone argues the "locro patrio" custom in Buenos Aires is largely 20th-century: there is little evidence it was eaten there around independence, and it only became the dominant patriotic dish around 1960, displacing rivals such as carbonada ("a construction, but not an arbitrary one") (<a href="https://www.iprofesional.com/actualidad/339869-por-que-comemos-locro-el-25-de-mayo-te-dejamos-una-super-receta" target="_blank" rel="noreferrer noopener">iProfesional interview</a>).
+            The patriotic link is newer than the holiday itself: food historian Carina Perticone argues that locro became the dominant patriotic dish in Buenos Aires only in the 20th century (<a href="https://www.iprofesional.com/actualidad/339869-por-que-comemos-locro-el-25-de-mayo-te-dejamos-una-super-receta" target="_blank" rel="noreferrer noopener">iProfesional interview</a>).
           </p>
 
           <h3 id="bicentenario">The Bicentenario (2016)</h3>
           <p>
-            On <strong>9 July 2016</strong>, President <a href="https://en.wikipedia.org/wiki/Mauricio_Macri" target="_blank" rel="noreferrer noopener">Mauricio Macri</a> attended the Tucumán ceremonies, signed an agreement with governors at the Casa Histórica and hosted Spain's emeritus king <a href="https://en.wikipedia.org/wiki/Juan_Carlos_I" target="_blank" rel="noreferrer noopener">Juan Carlos I</a>. Official estimates reported by the press put the Mate de Luna parade crowd above 400,000; a second parade was held in Buenos Aires (<a href="https://es.wikipedia.org/wiki/Bicentenario_de_la_Independencia_de_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia: Bicentenario</a>; <a href="https://www.lanacion.com.ar/politica/el-saludo-de-mauricio-macri-al-rey-emerito-juan-carlos-de-espana-durante-los-festejos-por-el-bicentenario-nid1916943/" target="_blank" rel="noreferrer noopener">La Nación</a>). Coverage noted protests over economic policy, debate over costs and objections to some parade participants linked to Operativo Independencia. Macri's speech framed independence around Tucumán without mentioning May 1810 (an example of the 1810/1816 conflation).
+            On <strong>9 July 2016</strong>, President <a href="https://en.wikipedia.org/wiki/Mauricio_Macri" target="_blank" rel="noreferrer noopener">Mauricio Macri</a> led the Bicentenario ceremonies in Tucumán, hosted Spain's emeritus king <a href="https://en.wikipedia.org/wiki/Juan_Carlos_I" target="_blank" rel="noreferrer noopener">Juan Carlos I</a> and framed independence around Tucumán without mentioning May 1810, another example of the 1810/1816 conflation.
           </p>
 
-          <h3 id="milei-years">The Milei years (2024–2026): attendance, absence and museum dispute</h3>
+          <h3 id="milei-years">The Milei years (2024–2026): politics returns to Tucumán</h3>
           <p>
-            Under President <a href="https://en.wikipedia.org/wiki/Javier_Milei" target="_blank" rel="noreferrer noopener">Javier Milei</a> (in office since December 2023), 9 July events have again been used for national political messaging.
+            Under President <a href="https://en.wikipedia.org/wiki/Javier_Milei" target="_blank" rel="noreferrer noopener">Javier Milei</a>, 9 July again became a stage for national politics. In 2024 he used the Casa Histórica to sign the <strong>"Pacto de Mayo"</strong> with governors. In 2025 he cancelled the Tucumán trip and held an event in Buenos Aires. In 2026 he returned to Tucumán and spoke of a "second independence" and an "economic crossing of the Andes."
           </p>
           <p>
-            <strong>2024</strong>: Milei attended and signed the <strong>"Pacto de Mayo,"</strong> a 10-point governing accord, at the Casa Histórica with 18 of 24 governors/city heads; six did not sign (Kicillof, Insfrán, Ziliotto, Quintela, Melella, Vidal). Ex-presidents Macri and Rodríguez Saá attended. Milei's speech framed the pact as patriotic and criticized absentees (<a href="https://chequeado.com/el-explicador/a-un-ano-de-la-firma-del-pacto-de-mayo-el-chequeo-a-los-10-compromisos-del-acuerdo-que-hizo-javier-milei-con-los-gobernadores/" target="_blank" rel="noreferrer noopener">Chequeado summary</a>; <a href="https://www.casarosada.gob.ar/informacion/discursos/50568-palabras-del-presidente-javier-milei-en-la-firma-del-pacto-de-mayo" target="_blank" rel="noreferrer noopener">Casa Rosada speech</a>).
-          </p>
-          <p>
-            <strong>2025</strong>: On the afternoon of 8 July, Milei cancelled the Tucumán trip, citing fog/weather; spokesman Manuel Adorni said Casa Militar and Air Force reports ruled out flights (<a href="https://tn.com.ar/politica/2025/07/08/debido-a-la-niebla-javier-milei-no-viajara-a-tucuman-por-el-9-de-julio/" target="_blank" rel="noreferrer noopener">TN</a>). Press coverage also noted few governors had confirmed attendance and treated the weather explanation skeptically. Milei held an event in Buenos Aires instead. VP Victoria Villarruel was in Tucumán on a separate provincial invitation.
-          </p>
-          <p>
-            <strong>2026</strong>: For the <strong>210th anniversary</strong>, Milei returned for the midnight Vigilia at the Casa Histórica (received by Governor Osvaldo Jaldo; accompanied by Karina Milei, Chief of Staff Diego Santilli and Economy Minister Luis Caputo), signed protocolary acts, and gave a cadena nacional speech comparing his program to an "economic crossing of the Andes" and calling for a "second independence." Press tallies of attending governors vary (about 11–13). He then led the Tedeum in Buenos Aires. VP Villarruel again attended separately in Tucumán. The daytime provincial program followed the usual schedule (chocolate patrio, flag raising, Tedeum, parade).
-          </p>
-          <p>
-            <strong>Museum staffing dispute</strong>: In May 2024 the national government removed competitively appointed director Cecilia Guerra Orozco and installed interim director José María Posse, who criticized the prior "ideological orientation." A Tucumán outlet (Enterate Noticias), citing Secretaría de Cultura figures, reported a ~54% real budget cut for the museum between 2023 and 2025 (a single-source figure). Historians' association AsAIH issued a July 2025 statement opposing director removals at the Casa Histórica and other national museums. Posse disputed dismissal/budget claims and resigned in April 2026. Critic Camila Perochena accused the government of turning museums into partisan spaces; the government said it was removing ideological bias. Treat these as contested claims from opposing camps.
+            The period also brought a dispute over the Casa Histórica's museum leadership and budget, with historians accusing the government of politicizing national museums and the government saying it was removing ideological bias.
           </p>
         </section>
 
         <section id="notes" aria-labelledby="notes-heading">
-          <h2 id="notes-heading">Notes and caveats</h2>
-
-          <h3 id="mix-ups">Common mix-ups</h3>
+          <h2 id="notes-heading">Common mix-ups</h2>
           <ul>
             <li>
               <strong>9 July 1816 ≠ the modern Argentine Republic.</strong> The Act declared the independence of the <strong>Provincias Unidas en Sud América</strong>, a larger entity that then included the Alto Perú. The name "Argentina" and today's territory consolidated later, especially after 1853–1860 (Ternavasio; <a href="https://en.wikipedia.org/wiki/United_Provinces_of_the_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
@@ -403,134 +360,12 @@ const structuredData = {
               <strong>Independence did not settle republicanism.</strong> Constitutional monarchy, including Belgrano's Inca proposal, was seriously debated; it failed for political and social reasons, not because it was a joke (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>).
             </li>
             <li>
+              <strong>The Hawaiʻi recognition story is half-true.</strong> A great trivia version says the <a href="https://en.wikipedia.org/wiki/Hawaiian_Kingdom" target="_blank" rel="noreferrer noopener">Kingdom of Hawaiʻi</a> was the first state to recognize Argentine independence. The real episode is stranger: in 1818 the Argentine privateer <a href="https://en.wikipedia.org/wiki/Hippolyte_Bouchard" target="_blank" rel="noreferrer noopener">Hipólito Bouchard</a> reached Hawaiʻi, found a mutinied Argentine ship that had been sold to <a href="https://en.wikipedia.org/wiki/Kamehameha_I" target="_blank" rel="noreferrer noopener">Kamehameha I</a>, and negotiated its return. Some later accounts treat the agreement as recognition of the United Provinces; other historians see that as stretching a ship-and-flag deal into formal diplomacy. So: funny, not entirely invented, but not the same as normal state recognition (<a href="https://imagesofoldhawaii.com/provincias-unidas-del-rio-de-la-plata-united-provinces-of-the-river-plate/" target="_blank" rel="noreferrer noopener">Images of Old Hawaiʻi</a>; <a href="https://www.nuestromar.org/el-cap-bouchard-y-como-se-reconocio-por-primera-vez-la-independencia-argentina/" target="_blank" rel="noreferrer noopener">Nuestro Mar</a>).
+            </li>
+            <li>
               <strong>"Casita" and yellow-green walls.</strong> The house was a large colonial <em>casona</em>; the tiny-cottage image comes mainly from the 1904 Templete. Today's museum building is a <strong>1943 reconstruction</strong>. School yellow-and-green colors come from a 19th-century painting; a 1996 study found white walls with Prussian-blue openings for 1816.
             </li>
-            <li>
-              <strong>The original signed Act is lost.</strong> Contemporary printed copies (AGN) and Serrano's copy survive; authenticity does not rest on the missing manuscript. The courier Cayetano Grimau y Gálvez was intercepted in Córdoba by an Artiguista party while carrying the Act toward Buenos Aires.
-            </li>
-            <li>
-              <strong>"Hawaiʻi recognized Argentina first."</strong> A romantic claim tied to Hipólito Bouchard and Kamehameha I; treat as popular legend, not established diplomatic fact.
-            </li>
-            <li>
-              <strong>Montoneros graffiti photos.</strong> <a href="https://chequeado.com/el-explicador/son-falsas-las-fotos-que-circulan-de-la-casa-de-tucuman-con-inscripciones-de-montoneros-se-trata-de-un-montaje/" target="_blank" rel="noreferrer noopener">Chequeado</a> identified circulating photos as montages (tied to a 2021 art-work controversy), not fresh vandalism of the Salón walls.
-            </li>
           </ul>
-
-          <h3 id="contested-figures">Contested figures</h3>
-          <ul>
-            <li><strong>Army of the Andes</strong>: ~4,000 regulars + 1,200 militia for the crossing; Espejo (1882) gives a full muster ~5,423. The 143 Black soldiers repatriated alive figure (Biblioteca del Congreso / Miriam V. Gomes) is an estimate.</li>
-            <li><strong>Casa Histórica dates</strong>: demolition 1903–1904; Monument 12 August 1941; rebuild works 1942; museum reopening 24 September 1943. The Templete stood 1904–1942.</li>
-            <li><strong>2026 governor attendance</strong>: reported 11–13, likely mixing physical presence and vice-governor stand-ins.</li>
-            <li><strong>~54% museum budget cut (2023→2025)</strong>: one Tucumán outlet citing official data; directionally consistent with broader culture cuts, but treat the exact percentage as single-source.</li>
-          </ul>
-
-          <h3 id="source-limits">Source limits</h3>
-          <ul>
-            <li>Built from Argentine online sources (heritage pages, newspapers, academic PDFs); not checked against physical AGN / <em>Redactor</em> / Buschiazzo files. Quoted wordings are transcribed from secondary sources.</li>
-            <li>Outlets on Operativo Independencia and recent museum politics often have clear political slants; contested claims are attributed to named sources.</li>
-            <li>2025–2026 political details rest on news reporting; the ~54% museum budget figure and 2026 governor tallies are the least-corroborated numbers here.</li>
-          </ul>
-        </section>
-
-        <section id="sources" aria-labelledby="sources-heading">
-          <h2 id="sources-heading">Sources by topic</h2>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Topic</th>
-                  <th scope="col">Sources</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">Anti-teleology / May–July hierarchy</th>
-                  <td>Marcela Ternavasio, <cite>Historia de la Argentina, 1806–1852</cite> (Siglo XXI); <a href="https://www.educ.ar/recursos/130924/un-pais-con-dos-fechas-patrias" target="_blank" rel="noreferrer noopener">Educ.ar: Un país con dos fechas patrias</a>; <a href="https://www.conicet.gov.ar/repensar-la-independencia/" target="_blank" rel="noreferrer noopener">CONICET interview</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">1816 context; Congress composition; Acta language</th>
-                  <td><a href="https://www.educ.ar/recursos/132481/9-de-julio-dia-de-la-declaracion-de-la-independencia" target="_blank" rel="noreferrer noopener">Educ.ar: 9 de julio</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Retroversión / pueblos</th>
-                  <td><a href="https://en.wikipedia.org/wiki/Retroversion_of_sovereignty_to_the_people" target="_blank" rel="noreferrer noopener">Wikipedia: retroversión</a>; Ternavasio; <a href="https://www.conicet.gov.ar/repensar-la-independencia/" target="_blank" rel="noreferrer noopener">CONICET</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Viceroyalty / British invasions</th>
-                  <td><a href="https://en.wikipedia.org/wiki/Viceroyalty_of_the_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia: Virreinato</a>; <a href="https://en.wikipedia.org/wiki/British_invasions_of_the_River_Plate" target="_blank" rel="noreferrer noopener">Wikipedia: Invasiones inglesas</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Naming chronology</th>
-                  <td><a href="https://en.wikipedia.org/wiki/United_Provinces_of_the_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia: Provincias Unidas</a>; <a href="https://repositorio.uca.edu.ar/bitstream/123456789/10002/1/sobre-denominaciones-republica-argentina.pdf" target="_blank" rel="noreferrer noopener">UCA on denominations</a>; Ternavasio</td>
-                </tr>
-                <tr>
-                  <th scope="row">Current holiday law</th>
-                  <td><a href="https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835/texto" target="_blank" rel="noreferrer noopener">Ley 27.399</a></td>
-                </tr>
-
-                <tr>
-                  <th scope="row">Text of the Acta</th>
-                  <td><a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Wikipedia: Declaración</a>; <a href="https://www.argentina.gob.ar/noticias/9-de-julio-de-1816-declaracion-de-la-independencia-de-la-argentina" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">May Revolution vs. 9 July</th>
-                  <td><a href="https://www.lanacion.com.ar/lifestyle/por-que-recordamos-mas-revolucion-mayo-nid2265816/" target="_blank" rel="noreferrer noopener">La Nación (Balmaceda)</a>; <a href="https://www.lanacion.com.ar/cultura/25-de-mayo-preguntas-y-respuestas-para-entender-los-sucesos-de-una-semana-historica-nid19052021/" target="_blank" rel="noreferrer noopener">La Nación Q&A</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Why Tucumán; the Congress</th>
-                  <td><a href="https://en.wikipedia.org/wiki/Congress_of_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Wikipedia: Congreso de Tucumán</a>; <a href="https://elhistoriador.com.ar/9-de-julio-de-1816-declaracion-de-la-independencia/" target="_blank" rel="noreferrer noopener">El Historiador / Pigna</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">"Toda otra dominación extranjera"</th>
-                  <td><a href="https://en.wikipedia.org/wiki/Argentine_Declaration_of_Independence" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://elhistoriador.com.ar/9-de-julio-de-1816-declaracion-de-la-independencia/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://perio.unlp.edu.ar/2021/07/08/9-de-julio-1816-y-de-toda-otra-dominacion-extranjera/" target="_blank" rel="noreferrer noopener">UNLP Periodismo</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Monarchy / Inca debate</th>
-                  <td><a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://www.educ.ar/recursos/130847/belgrano-y-el-proyecto-de-monarquia-incaica/" target="_blank" rel="noreferrer noopener">educ.ar</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">San Martín letter / Andes crossing</th>
-                  <td><a href="https://www.educ.ar/recursos/128506/carta-de-jose-de-san-martin-a-tomas-godoy-cruz" target="_blank" rel="noreferrer noopener">educ.ar letter</a>; <a href="https://en.wikipedia.org/wiki/Crossing_of_the_Andes" target="_blank" rel="noreferrer noopener">Wikipedia: Cruce de los Andes</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Quechua/Aymara translations</th>
-                  <td><a href="https://www.argentina.gob.ar/interior/archivo-general-de-la-nacion/traducciones-de-la-independencia" target="_blank" rel="noreferrer noopener">AGN</a>; <a href="https://www.infobae.com/sociedad/2021/07/09/la-declaracion-de-la-independencia-traducida-al-quechua-y-al-aymara-que-fracaso-y-termino-con-una-leccion-de-san-martin/" target="_blank" rel="noreferrer noopener">Infobae</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Casa Histórica reconstruction</th>
-                  <td><a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/museo-casa-historica-de-la-independencia" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>; <a href="https://en.wikipedia.org/wiki/Casa_de_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://billiken.lat/interesante/como-fue-la-reconstruccion-de-la-casa-historica-de-tucuman-en-1943/" target="_blank" rel="noreferrer noopener">Billiken</a>; <a href="https://www.lagaceta.com.ar/nota/691339/sociedad/historia-casa-tucuman-entro-historia.html" target="_blank" rel="noreferrer noopener">La Gaceta</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">19th-c. commemorations</th>
-                  <td><a href="https://www.argentina.gob.ar/noticias/9-de-julio-dia-de-la-independencia-2" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>; <a href="https://www.scielo.org.ar/scielo.php?script=sci_arttext&pid=S1851-95042013000100003" target="_blank" rel="noreferrer noopener">SciELO: Fiestas Mayas</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Perón 1947 economic independence</th>
-                  <td><a href="https://www.infobae.com/sociedad/2023/07/09/el-otro-congreso-de-tucuman-el-dia-que-peron-declaro-la-independencia-economica-y-auguro-60-anos-sin-crisis/" target="_blank" rel="noreferrer noopener">Infobae</a>; <a href="https://www.archivorta.com.ar/asset/cadena-nacional-peron-declara-la-independencia-economica-en-tucuman-09-07-1947/" target="_blank" rel="noreferrer noopener">Archivo RTA</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Operativo Independencia (1975)</th>
-                  <td><a href="https://en.wikipedia.org/wiki/Operation_Independence" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://www.argentina.gob.ar/noticias/47-anos-del-operativo-independencia-espacio-para-la-memoria-ex-ccdtye-la-escuelita-de" target="_blank" rel="noreferrer noopener">Espacio Famaillá</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Locro / patriotic food</th>
-                  <td><a href="https://www.iprofesional.com/actualidad/339869-por-que-comemos-locro-el-25-de-mayo-te-dejamos-una-super-receta" target="_blank" rel="noreferrer noopener">Perticone / iProfesional</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Bicentenario 2016</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Bicentenario_de_la_Independencia_de_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://www.lanacion.com.ar/politica/el-saludo-de-mauricio-macri-al-rey-emerito-juan-carlos-de-espana-durante-los-festejos-por-el-bicentenario-nid1916943/" target="_blank" rel="noreferrer noopener">La Nación</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Milei era 2024–2026</th>
-                  <td><a href="https://chequeado.com/el-explicador/a-un-ano-de-la-firma-del-pacto-de-mayo-el-chequeo-a-los-10-compromisos-del-acuerdo-que-hizo-javier-milei-con-los-gobernadores/" target="_blank" rel="noreferrer noopener">Chequeado: Pacto de Mayo</a>; <a href="https://www.casarosada.gob.ar/informacion/discursos/50568-palabras-del-presidente-javier-milei-en-la-firma-del-pacto-de-mayo" target="_blank" rel="noreferrer noopener">Casa Rosada</a>; <a href="https://tn.com.ar/politica/2025/07/08/debido-a-la-niebla-javier-milei-no-viajara-a-tucuman-por-el-9-de-julio/" target="_blank" rel="noreferrer noopener">TN 2025 cancellation</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Myth checks</th>
-                  <td><a href="https://chequeado.com/el-explicador/son-falsas-las-fotos-que-circulan-de-la-casa-de-tucuman-con-inscripciones-de-montoneros-se-trata-de-un-montaje/" target="_blank" rel="noreferrer noopener">Chequeado: Montoneros montage</a>; <a href="https://www.lagaceta.com.ar/nota/691339/sociedad/historia-casa-tucuman-entro-historia.html" target="_blank" rel="noreferrer noopener">La Gaceta / Casa</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </section>
       </article>
 
@@ -544,13 +379,23 @@ const structuredData = {
             Las conmemoraciones oficiales suelen centrarse en Tucumán y la <a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/museo-casa-historica-de-la-independencia" target="_blank" rel="noreferrer noopener">Casa Histórica</a>: Te Deum, izamiento de la bandera, desfile cívico-militar, presencia presidencial en la mayoría de los años. En todo el país se comen platos de invierno, sobre todo <strong>locro</strong>, y las escuelas hacen actos y banderas. La Argentina también conserva el <strong>25 de mayo</strong> (Revolución de Mayo de 1810) como gran fecha patria; las dos se mencionan juntas y a veces se confunden (<a href="https://www.lanacion.com.ar/lifestyle/por-que-recordamos-mas-revolucion-mayo-nid2265816/" target="_blank" rel="noreferrer noopener">La Nación</a>). El historiador <a href="https://www.lanacion.com.ar/cultura/25-de-mayo-preguntas-y-respuestas-para-entender-los-sucesos-de-una-semana-historica-nid19052021/" target="_blank" rel="noreferrer noopener">Daniel Balmaceda</a> resume la diferencia como <strong>autonomía</strong> en 1810 versus <strong>independencia y soberanía</strong> en 1816.
           </p>
           <p>
-            El resto de esta página cuenta cómo se llegó a la declaración, quiénes estaban en la sala (y quiénes no), qué le pasó después a la fiesta y notas sobre confusiones habituales y cifras en disputa. Gobiernos posteriores reutilizaron el 9 de julio (<a href="https://es.wikipedia.org/wiki/Bernardino_Rivadavia" target="_blank" rel="noreferrer noopener">Rivadavia</a> 1826, <a href="https://es.wikipedia.org/wiki/Juan_Manuel_de_Rosas" target="_blank" rel="noreferrer noopener">Rosas</a> 1835, <a href="https://es.wikipedia.org/wiki/Juan_Domingo_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Perón</a> 1947, Operativo Independencia 1975, administraciones recientes). La propia Casa Histórica fue demolida en gran parte en 1903–04 y reconstruida en 1943.
+            El resto de esta página cuenta cómo se llegó a la declaración, quiénes quedaron adentro y afuera, cómo cambió después la fiesta y las confusiones habituales. Gobiernos posteriores reutilizaron el 9 de julio (<a href="https://es.wikipedia.org/wiki/Bernardino_Rivadavia" target="_blank" rel="noreferrer noopener">Rivadavia</a> 1826, <a href="https://es.wikipedia.org/wiki/Juan_Manuel_de_Rosas" target="_blank" rel="noreferrer noopener">Rosas</a> 1835, <a href="https://es.wikipedia.org/wiki/Juan_Domingo_Per%C3%B3n" target="_blank" rel="noreferrer noopener">Perón</a> 1947, Operativo Independencia 1975, administraciones recientes). La propia Casa Histórica fue demolida en gran parte en 1903–04 y reconstruida en 1943.
           </p>
-          <blockquote>
-            <p>
-              <em>Fuentes: el texto del Acta; el panorama de Educ.ar; páginas patrimoniales de argentina.gob.ar; <a href="https://es.wikipedia.org/wiki/Marcela_Ternavasio" target="_blank" rel="noreferrer noopener">Marcela Ternavasio</a>, <cite>Historia de la Argentina, 1806–1852</cite> (Siglo XXI), para la soberanía territorial y la jerarquía Mayas/Julias; más Balmaceda, <a href="https://es.wikipedia.org/wiki/Felipe_Pigna" target="_blank" rel="noreferrer noopener">Pigna</a>, Páez de la Torre (h) y del Carril. Los números en disputa se dan como rangos. Los enlaces apuntan a las fuentes usadas.</em>
-            </p>
-          </blockquote>
+          <figure class="article-figure">
+            <Picture
+              src={congresoTucumanImage}
+              formats={["avif", "webp"]}
+              widths={[640, 828, 1024]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Pintura de Francisco Fortuny con diputados celebrando dentro del Congreso de Tucumán."
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <figcaption>
+              Representación del Congreso de Tucumán pintada por Francisco Fortuny en 1910. Dominio público, vía <a href="https://commons.wikimedia.org/wiki/File:El-Congreso-de-Tucum%C3%A1n-1816-Francisco-Fortuny.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="parte-i" aria-labelledby="parte-i-heading">
@@ -563,22 +408,32 @@ const structuredData = {
           <p>
             Las <a href="https://es.wikipedia.org/wiki/Invasiones_inglesas" target="_blank" rel="noreferrer noopener">invasiones inglesas de 1806–1807</a> importan porque expusieron la debilidad de la autoridad española y militarizaron la sociedad porteña. La ciudad se defendió, ganó confianza política y se acostumbró a actuar por su cuenta antes de la Revolución de Mayo formal. Ternavasio también señala que Buenos Aires todavía se comportaba más como centro de una gobernación local que como capital real de un virreinato enorme e integrado, hasta que mayo de 1810 la obligó a intentar comandar ese espacio.
           </p>
+          <figure class="article-figure article-figure--map">
+            <Picture
+              src={viceroyaltyImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 960, 1200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Mapa del Virreinato del Río de la Plata en 1795 sobre el sur de América del Sur."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              El Virreinato del Río de la Plata en 1795, el marco imperial que el ciclo 1810–1816 empezó a romper. Rasterizado desde TRAJAN 117, GFDL, vía <a href="https://commons.wikimedia.org/wiki/File:Viceroyalty_of_the_R%C3%ADo_de_la_Plata_(1795).svg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="revolucion-mayo">1810: autonomía, no independencia</h3>
           <p>
             La cadena de hechos no empezó en Buenos Aires sino en Europa. En 1808 <a href="https://es.wikipedia.org/wiki/Napole%C3%B3n_Bonaparte" target="_blank" rel="noreferrer noopener">Napoleón Bonaparte</a> invadió España, forzó las abdicaciones de Carlos IV y <a href="https://es.wikipedia.org/wiki/Fernando_VII_de_Espa%C3%B1a" target="_blank" rel="noreferrer noopener">Fernando VII</a> e instaló a su hermano <a href="https://es.wikipedia.org/wiki/Jos%C3%A9_Bonaparte" target="_blank" rel="noreferrer noopener">José</a> en el trono español. Las juntas de resistencia españolas gobernaban en nombre de Fernando; a medida que caían una a una, se derrumbaba con ellas la legitimidad de las autoridades coloniales en América. Cuando en mayo de 1810 llegó a Buenos Aires la noticia de que la Junta de Sevilla (el último gran asiento de la resistencia española) había caído, los criollos porteños forzaron la cuestión.
           </p>
           <p>
-            Durante la <strong>Semana de Mayo</strong> (18–25 de mayo de 1810), un <em>cabildo abierto</em> el 22 de mayo votó deponer al virrey Baltasar Hidalgo de Cisneros, y el 25 de mayo se instaló la <strong>Primera Junta</strong>, presidida por <a href="https://es.wikipedia.org/wiki/Cornelio_Saavedra" target="_blank" rel="noreferrer noopener">Cornelio Saavedra</a>, con <a href="https://es.wikipedia.org/wiki/Mariano_Moreno" target="_blank" rel="noreferrer noopener">Mariano Moreno</a> y <a href="https://es.wikipedia.org/wiki/Juan_Jos%C3%A9_Paso" target="_blank" rel="noreferrer noopener">Juan José Paso</a> como secretarios y <a href="https://es.wikipedia.org/wiki/Manuel_Belgrano" target="_blank" rel="noreferrer noopener">Manuel Belgrano</a>, <a href="https://es.wikipedia.org/wiki/Juan_Jos%C3%A9_Castelli" target="_blank" rel="noreferrer noopener">Juan José Castelli</a>, <a href="https://es.wikipedia.org/wiki/Miguel_de_Azcu%C3%A9naga" target="_blank" rel="noreferrer noopener">Miguel de Azcuénaga</a>, <a href="https://es.wikipedia.org/wiki/Domingo_Matheu" target="_blank" rel="noreferrer noopener">Domingo Matheu</a>, <a href="https://es.wikipedia.org/wiki/Juan_Larrea_(pol%C3%ADtico)" target="_blank" rel="noreferrer noopener">Juan Larrea</a> y <a href="https://es.wikipedia.org/wiki/Manuel_Alberti" target="_blank" rel="noreferrer noopener">Manuel Alberti</a> como vocales.
+            Durante la <strong>Semana de Mayo</strong> (18–25 de mayo de 1810), Buenos Aires desplazó al virrey Baltasar Hidalgo de Cisneros e instaló la <strong>Primera Junta</strong>, presidida por <a href="https://es.wikipedia.org/wiki/Cornelio_Saavedra" target="_blank" rel="noreferrer noopener">Cornelio Saavedra</a>. <a href="https://es.wikipedia.org/wiki/Mariano_Moreno" target="_blank" rel="noreferrer noopener">Mariano Moreno</a>, <a href="https://es.wikipedia.org/wiki/Juan_Jos%C3%A9_Paso" target="_blank" rel="noreferrer noopener">Juan José Paso</a> y <a href="https://es.wikipedia.org/wiki/Manuel_Belgrano" target="_blank" rel="noreferrer noopener">Manuel Belgrano</a> estuvieron entre las figuras principales.
           </p>
           <p>
             La Junta declaró gobernar "en nombre del Sr. D. Fernando VII" (la famosa <strong>"máscara de Fernando VII"</strong>). La teoría jurídica a menudo invocada fue la <a href="https://es.wikipedia.org/wiki/Retroversi%C3%B3n_de_la_soberan%C3%ADa_de_los_pueblos" target="_blank" rel="noreferrer noopener">retroversión de la soberanía</a>: con el rey cautivo y el orden imperial en colapso, la soberanía revertía a los <em>pueblos</em>. Ternavasio señala que "pueblo"/"pueblos" no significaba "el pueblo argentino" como nación única; podía significar ciudades, provincias o comunidades corporativas locales que reclamaban derechos propios (<a href="https://www.conicet.gov.ar/repensar-la-independencia/" target="_blank" rel="noreferrer noopener">CONICET / Ternavasio</a>). 1810 se parece menos a "Argentina vs. España" y más a una pelea por quién tenía derecho a gobernar las ruinas del viejo virreinato. En cualquier caso, <strong>en 1810 no se declaró la independencia</strong>. Educ.ar enmarca el 9 de julio como la primera voluntad explícita de emancipación tras el proceso político iniciado en mayo (<a href="https://www.educ.ar/recursos/132481/9-de-julio-dia-de-la-declaracion-de-la-independencia" target="_blank" rel="noreferrer noopener">Educ.ar</a>).
           </p>
-          <p>
-            La historiografía posterior (incluida la de <a href="https://es.wikipedia.org/wiki/Bartolom%C3%A9_Mitre" target="_blank" rel="noreferrer noopener">Mitre</a>) a menudo leyó 1810 como ya independentista; el propio <em>Manifiesto a las Naciones</em> de 1817 del Congreso describió la Junta de 1810 como provisional y en nombre de Fernando (<a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
-          </p>
 
-          
           <h3 id="reclamo-porteño">Buenos Aires intenta heredar el virreinato</h3>
           <p>
             Después de mayo de 1810, según Ternavasio, Buenos Aires intentó que el viejo virreinato obedeciera al gobierno revolucionario asentado en Buenos Aires, y recién entonces descubrió qué exigía de verdad su reclamo de capital: apoyo de jurisdicciones que antes no necesitaba comandar del mismo modo. Por eso Paraguay, la <a href="https://es.wikipedia.org/wiki/Banda_Oriental" target="_blank" rel="noreferrer noopener">Banda Oriental</a> (a grandes rasgos, el Uruguay actual), el <a href="https://es.wikipedia.org/wiki/Alto_Per%C3%BA" target="_blank" rel="noreferrer noopener">Alto Perú</a> (Bolivia actual) y el <a href="https://es.wikipedia.org/wiki/Litoral_argentino" target="_blank" rel="noreferrer noopener">Litoral</a> (provincias fluviales del nordeste argentino) quedan fuera de un solo relato nacional argentino: la autonomía paraguaya se volvió un punto de no retorno; la Banda Oriental y el Litoral se ataron a la alternativa federal/confederal de <a href="https://es.wikipedia.org/wiki/Jos%C3%A9_Gervasio_Artigas" target="_blank" rel="noreferrer noopener">Artigas</a>; el Alto Perú siguió militarmente inestable.
@@ -589,127 +444,81 @@ const structuredData = {
 
           <h3 id="seis-anos">Seis años de guerra y pelea (1810–1816)</h3>
           <p>
-            Los años intermedios no son la historia de un país que espera pacientemente declarar algo ya decidido. Fueron años de campañas militares y conflicto interno entre tendencias centralistas (Buenos Aires) y confederacionistas a lo largo del ex Virreinato del Río de la Plata:
-          </p>
-          <ul>
-            <li>
-              <strong>Campañas militares</strong>: las de Belgrano al Paraguay y a la Banda Oriental; la creación de la bandera (1812); las victorias de Belgrano en Tucumán (1812) y Salta (1813); y luego las derrotas catastróficas en el Alto Perú (Vilcapugio y Ayohuma, 1813), que acabaron con la esperanza de retener lo que hoy es Bolivia.
-            </li>
-            <li>
-              <strong>La Asamblea del Año XIII</strong> (1813) estuvo cerca de la independencia y se detuvo a mitad de camino: abolió el juramento de fidelidad a Fernando VII, decretó libertad de imprenta, "libertad de vientres", abolió la <em>mita</em>, el <em>yanaconazgo</em> y el tributo indígena, y suprimió títulos nobiliarios, pero <strong>no</strong> declaró la independencia ni escribió una constitución. Ternavasio la lee como exposición de problemas no resueltos de la crisis monárquica: la restauración de Fernando, los frentes de guerra americanos y el conflicto con Artigas mantuvieron inestable el orden revolucionario. Así, el 9 de julio de 1816 no fue azaroso; la ambigüedad se había vuelto insostenible.
-            </li>
-            <li>
-              <strong>El giro de 1814</strong>: Fernando VII volvió al trono español, repudió de inmediato la Constitución liberal de Cádiz de 1812 y se lanzó a reconquistar las colonias americanas por la fuerza. Se armó una gran fuerza expedicionaria bajo el general <a href="https://es.wikipedia.org/wiki/Pablo_Morillo" target="_blank" rel="noreferrer noopener">Pablo Morillo</a> ("El Pacificador"), apuntada en parte al Río de la Plata. En toda la América española, 1815 fue un año de derrotas patriotas.
-            </li>
-            <li>
-              <strong>La ruptura interna</strong>: las provincias del Litoral y la Banda Oriental, bajo José Gervasio Artigas y su <strong>Liga de los Pueblos Libres</strong>, rompieron con el centralismo porteño. Fuerzas de Buenos Aires saquearon Santa Fe y Rosario en 1815; los portugueses invadieron la Banda Oriental en 1816. Esa fractura explica el boicot de esas provincias al Congreso de Tucumán.
-            </li>
-          </ul>
-          <p>
-            A principios de 1816 la revolución enfrentaba presión realista desde el norte y el oeste, presión portuguesa desde el este y conflicto civil con el Litoral. Ese contexto militar y político forma parte de por qué el Congreso pasó a una declaración formal (<a href="https://es.wikipedia.org/wiki/Congreso_de_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Congreso de Tucumán</a>).
+            Los años intermedios no fueron una espera tranquila de una decisión ya tomada. Belgrano peleó en Paraguay, la Banda Oriental y el norte; los realistas empujaron fuerte en el Alto Perú; Fernando VII volvió al trono y quiso restaurar el control imperial; y la Liga Federal de Artigas rompió con Buenos Aires. Para comienzos de 1816 la revolución enfrentaba presión realista, presión portuguesa y conflicto civil, así que la independencia formal era cada vez más difícil de postergar.
           </p>
 
           <h3 id="por-que-tucuman">Por qué Tucumán, y no Buenos Aires</h3>
           <p>
-            Tras la revolución de abril de 1815 que derrocó al Director Supremo <a href="https://es.wikipedia.org/wiki/Carlos_Mar%C3%ADa_de_Alvear" target="_blank" rel="noreferrer noopener">Carlos María de Alvear</a>, las provincias exigieron un Congreso General Constituyente. El <em>Estatuto Provisional</em> de 1815 fijó las reglas y a propósito ubicó la sede en el interior.
-          </p>
-          <p>Las razones, según el historiador <a href="https://es.wikipedia.org/wiki/Carlos_P%C3%A1ez_de_la_Torre" target="_blank" rel="noreferrer noopener">Carlos Páez de la Torre</a> (h) y otros:</p>
-          <ul>
-            <li><strong>Geografía</strong>: San Miguel de Tucumán quedaba más o menos en el centro del territorio de las Provincias Unidas (que entonces se extendían profundamente en el Alto Perú).</li>
-            <li><strong>Protección militar</strong>: era cuartel general del Ejército del Norte, y la victoria de Belgrano allí en 1812 lo había asegurado.</li>
-            <li><strong>Distancia de Artigas</strong>: quedaba lejos de la influencia del Litoral federalista.</li>
-            <li>
-              <strong>Simbolismo antiporteño</strong>: las provincias del interior desconfiaban de la concentración de poder en Buenos Aires. La Asamblea del Año XIII, reunida en Buenos Aires, las había defraudado al no declarar la independencia. Elegir Tucumán señalaba que la independencia sería decisión de las <em>provincias</em>, no imposición de la ciudad puerto. Buenos Aires misma no empujó a ser sede, para no antagonizar a la milicia federalista que acababa de derrocar a Alvear.
-            </li>
-          </ul>
-          <p>
-            El 25 de septiembre de 1816, el Congreso votó mudarse a Buenos Aires (donde sesionó de 1817 hasta su disolución en 1820), emitiendo un "Manifiesto de Traslación" que decía que mudaba de asiento sin mudar de intención (<a href="https://es.wikipedia.org/wiki/Congreso_de_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
-          </p>
-
-          <h3 id="congresales">Los diputados (<em>congresales</em>): de dónde venían</h3>
-          <p>
-            El Congreso abrió sesiones el <strong>24 de marzo de 1816</strong>, desde un mapa político distinto al de la Argentina de hoy.
+            Las provincias querían un Congreso fuera de Buenos Aires. Tucumán quedaba en el interior, era más segura militarmente y estaba menos identificada con el centralismo porteño. Elegirla señalaba que la independencia sería una decisión provincial, no otra orden de Buenos Aires.
           </p>
           <p>
-            La composición era llamativamente clerical y jurídica: muchos diputados eran sacerdotes o abogados; un puñado, militares.
+            Aun así, el Congreso no representaba todos los territorios que Buenos Aires esperaba heredar. Incluía diputados del interior y del Alto Perú, mientras el Litoral artiguista, la Banda Oriental y Paraguay quedaban afuera.
           </p>
-          <p>
-            <strong>Provincias representadas</strong>: Buenos Aires, Catamarca, Córdoba, Jujuy, La Rioja, Mendoza, Salta, San Juan, San Luis, Santiago del Estero, Tucumán, más distritos del Alto Perú (Bolivia actual): Charcas (entorno de Sucre/Chuquisaca), Chichas (sur de Potosí) y Mizque (zona de Cochabamba), con Tarija representada por un suplente.
-          </p>
-          <p>
-            <strong>Provincias ausentes (el boicot)</strong>: las de la Liga Federal bajo Artigas (Banda Oriental, Corrientes, Entre Ríos, Misiones y Santa Fe) <strong>no</strong> enviaron diputados, porque estaban de hecho en guerra civil con el gobierno central porteño. (Córdoba, aunque simpática a la Liga, sí envió.) Varias ciudades del Alto Perú (La Paz, Cochabamba, Potosí, Santa Cruz) no pudieron enviar representantes porque habían sido reconquistadas por los realistas. <strong>Paraguay</strong>, que ya se gobernaba autónomamente bajo el <a href="https://es.wikipedia.org/wiki/Jos%C3%A9_Gaspar_Rodr%C3%ADguez_de_Francia" target="_blank" rel="noreferrer noopener">Dr. Francia</a>, rechazó la invitación como "insultante."
-          </p>
-          <p>Otras figuras, más allá de los diputados:</p>
-          <ul>
-            <li><strong><a href="https://es.wikipedia.org/wiki/Francisco_Narciso_de_Laprida" target="_blank" rel="noreferrer noopener">Francisco Narciso de Laprida</a></strong> (diputado por San Juan): tuvo la presidencia rotativa en julio, y por eso fue quien puso a votación la cuestión de la independencia. (Murió en 1829 en las guerras civiles de Mendoza, tema de un famoso poema de Borges.)</li>
-            <li><strong><a href="https://es.wikipedia.org/wiki/Mariano_Boedo" target="_blank" rel="noreferrer noopener">Mariano Boedo</a></strong> (Salta): vicepresidente.</li>
-            <li><strong>Manuel Belgrano</strong>: no era diputado, pero llegó de Europa y habló al Congreso en sesión secreta el 6 de julio.</li>
-            <li><strong><a href="https://es.wikipedia.org/wiki/Jos%C3%A9_de_San_Mart%C3%ADn" target="_blank" rel="noreferrer noopener">José de San Martín</a></strong>: no estuvo presente; gobernador de <a href="https://es.wikipedia.org/wiki/Cuyo" target="_blank" rel="noreferrer noopener">Cuyo</a> (oeste argentino), cabildeó sin pausa por carta desde Mendoza.</li>
-            <li><strong>Juan Martín de Pueyrredón</strong>: electo Director Supremo, empujó a los diputados a declarar y luego partió a Buenos Aires.</li>
-            <li><strong><a href="https://es.wikipedia.org/wiki/Cayetano_Jos%C3%A9_Rodr%C3%ADguez" target="_blank" rel="noreferrer noopener">Fray Cayetano Rodríguez</a></strong>: franciscano, diputado por Buenos Aires, editor del <em>Redactor</em>.</li>
-            <li><strong><a href="https://es.wikipedia.org/wiki/Justo_Santa_Mar%C3%ADa_de_Oro" target="_blank" rel="noreferrer noopener">Fray Justo Santa María de Oro</a></strong>: diputado por San Juan, que insistió en que la forma de gobierno se sometiera al pueblo, amenazando renunciar si no.</li>
-          </ul>
+          <figure class="article-figure article-figure--map article-figure--portrait">
+            <Picture
+              src={provinciasUnidasImage}
+              formats={["avif", "webp"]}
+              widths={[360, 540, 764]}
+              sizes="(min-width: 48rem) 30rem, calc(100vw - 2rem)"
+              alt="Mapa aproximado de 1816 de las Provincias Unidas en Sud América, con áreas más allá de la Argentina actual."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              Mapa aproximado de 1816 de las Provincias Unidas, útil sobre todo para ver cuánto excedía el reclamo a la Argentina actual. Adaptado desde Misteruploader, CC BY-SA 4.0, vía <a href="https://commons.wikimedia.org/wiki/File:Provincias_Unidas.png" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="san-martin-es">La presión de San Martín y el argumento "jurídico" de la independencia</h3>
           <p>
-            Desde Mendoza, donde organizaba el Ejército de los Andes, San Martín argumentó que el ejército debía pelear como fuerza de un Estado soberano declarado y no como rebeldes aún nominalmente sujetos al rey. Su carta del 12 de abril de 1816 al diputado <a href="https://es.wikipedia.org/wiki/Tom%C3%A1s_Godoy_Cruz" target="_blank" rel="noreferrer noopener">Tomás Godoy Cruz</a> dice:
-          </p>
-          <blockquote>
-            <p>
-              "¡Hasta cuándo esperamos declarar nuestra independencia! ¿No le parece a Ud. una cosa ridícula acuñar moneda, tener pabellón y escarapela nacional y por último hacer la guerra al soberano de quien se cree dependemos? … Los enemigos (y con mucha razón) nos tratan de insurgentes, pues nos declaramos vasallos." (<a href="https://www.educ.ar/recursos/128506/carta-de-jose-de-san-martin-a-tomas-godoy-cruz" target="_blank" rel="noreferrer noopener">transcripción educ.ar</a>; Mendoza, 12 de abril de 1816)
-            </p>
-          </blockquote>
-          <p>
-            Los historiadores suelen tratar la declaración como un acto político bajo presión militar, no como el cierre de un proceso ya completo.
+            Desde Mendoza, donde organizaba el Ejército de los Andes, San Martín presionó al Congreso para dejar de pelear como vasallos nominales del rey. En una carta de abril de 1816 a <a href="https://es.wikipedia.org/wiki/Tom%C3%A1s_Godoy_Cruz" target="_blank" rel="noreferrer noopener">Tomás Godoy Cruz</a>, se burló de la contradicción: "¡Hasta cuándo esperamos declarar nuestra independencia!" La declaración era una necesidad militar tanto como un acto jurídico.
           </p>
 
           <h3 id="sesion-9-julio">La sesión del 9 de julio de 1816</h3>
           <p>
-            El martes 9 de julio de 1816, hacia las 14 hs., los diputados se reunieron en el salón adaptado de la casa de <strong><a href="https://es.wikipedia.org/wiki/Francisca_Baz%C3%A1n_de_Laguna" target="_blank" rel="noreferrer noopener">Francisca Bazán de Laguna</a></strong> en la calle del Rey (hoy calle Congreso 141). <a href="https://es.wikipedia.org/wiki/Teodoro_S%C3%A1nchez_de_Bustamante" target="_blank" rel="noreferrer noopener">Teodoro Sánchez de Bustamante</a> (Jujuy) propuso tratar la independencia; tras el debate, el presidente Laprida puso la pregunta (<a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://www.argentina.gob.ar/noticias/9-de-julio-de-1816-declaracion-de-la-independencia-de-la-argentina" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>):
+            El 9 de julio de 1816, los diputados se reunieron en la casa de <strong><a href="https://es.wikipedia.org/wiki/Francisca_Baz%C3%A1n_de_Laguna" target="_blank" rel="noreferrer noopener">Francisca Bazán de Laguna</a></strong>. El presidente <a href="https://es.wikipedia.org/wiki/Francisco_Narciso_de_Laprida" target="_blank" rel="noreferrer noopener">Francisco Narciso de Laprida</a> puso la pregunta de la independencia, y los diputados respondieron que sí. El <a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Acta de la Independencia</a> declaró la voluntad de romper los vínculos con los reyes de España y constituirse en nación libre e independiente de Fernando VII, sus sucesores y metrópoli.
           </p>
-          <blockquote>
-            <p>
-              "Si querían que las provincias de la Unión fuesen una nación libre e independiente de los reyes de España y su metrópoli."
-            </p>
-          </blockquote>
-          <p>
-            Los diputados respondieron afirmativamente. El <a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Acta de la Independencia</a> declaró la "unánime e indubitable voluntad" de las provincias de romper los vínculos con los reyes de España y constituirse en nación libre e independiente del Rey Fernando Séptimo, sus sucesores y metrópoli. El cuerpo declarante se nombra <strong>Congreso de las Provincias Unidas en Sud América</strong>.
-          </p>
+          <figure class="article-figure article-figure--document">
+            <Picture
+              src={actaImage}
+              formats={["avif", "webp"]}
+              widths={[480, 720, 900, 1181]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="Acta impresa de la Independencia, con el texto de la declaración y las firmas."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              Un impreso del Acta de la declaración. Dominio público, vía <a href="https://commons.wikimedia.org/wiki/File:Acta_de_la_independencia_de_los_pueblos_confederados_de_la_Rep%C3%BAblica_Argentina.jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="dominacion-extranjera">"…y de toda otra dominación extranjera": el agregado del 19 de julio</h3>
           <p>
             El texto del 9 de julio rompía con España pero no decía nada sobre <em>otras</em> potencias. En los días siguientes circularon rumores de que el Director Pueyrredón, el general Belgrano e incluso algunos diputados barajaban esquemas para entregar el país a Portugal (o, antes, a Gran Bretaña: Alvear había flotado un protectorado británico en 1815). La propia propuesta monárquica de Belgrano alimentó esos temores.
           </p>
           <p>
-            El <strong>19 de julio de 1816</strong>, en sesión secreta, el diputado porteño <strong><a href="https://es.wikipedia.org/wiki/Pedro_Medrano" target="_blank" rel="noreferrer noopener">Pedro Medrano</a></strong> mocionó enmendar el juramento/Acta: después de la independencia de Fernando VII, sus sucesores y metrópoli, agregar <strong>"y de toda otra dominación extranjera"</strong>. El propósito registrado fue contrarrestar rumores de entrega a Portugal (<a href="https://elhistoriador.com.ar/9-de-julio-de-1816-declaracion-de-la-independencia/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
+            Días después, el Congreso agregó <strong>"y de toda otra dominación extranjera"</strong>, cerrando la puerta a rumores de entrega a Portugal u otra potencia.
           </p>
 
           <h3 id="monarquia-inca">El debate monarquía-república y el príncipe inca de Belgrano</h3>
           <p>
-            La <em>forma de gobierno</em> quedó sin decidir. Relatos contemporáneos describen amplio apoyo en Tucumán a la <strong>monarquía</strong> constitucional más que a la república, entonces la forma europea dominante tras la caída de Napoleón. Algunas cuentas nombran a Tomás Godoy Cruz como republicano (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">Pigna</a>).
-          </p>
-          <p>
-            El <strong>6 de julio de 1816</strong>, en sesión secreta, Belgrano (de vuelta de una misión europea) argumentó que una monarquía "temperada" (constitucional) tenía más chances de reconocimiento europeo, y propuso coronar a <strong>un descendiente de los Incas</strong> con capital en Cuzco. San Martín y <a href="https://es.wikipedia.org/wiki/Mart%C3%ADn_Miguel_de_G%C3%BCemes" target="_blank" rel="noreferrer noopener">Güemes</a> apoyaron la idea; los diputados altoperuanos también fueron favorables (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://www.educ.ar/recursos/130847/belgrano-y-el-proyecto-de-monarquia-incaica/" target="_blank" rel="noreferrer noopener">educ.ar</a>).
-          </p>
-          <p>
-            Fracasó ante la oposición de la elite porteña, la falta de un candidato dinástico acordado (un hermano de Túpac Amaru era un anciano preso en Cádiz) y objeciones racistas registradas por contemporáneos, incluido el comentario privado del diputado porteño <strong><a href="https://es.wikipedia.org/wiki/Tom%C3%A1s_de_Anchorena" target="_blank" rel="noreferrer noopener">Tomás Manuel de Anchorena</a></strong> sobre ser gobernado "por un individuo de la casta de los chocolates," y burlas de la prensa porteña sobre un "rey de pies sucios." Mitre más tarde descartó el plan en <cite>Historia de Belgrano</cite>. El Congreso aplazó la cuestión; una constitución republicana durable llegó en <strong>1853</strong> (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>).
+            La independencia no resolvió la forma de gobierno. La monarquía constitucional todavía parecía normal en la Europa posnapoleónica, y Belgrano llegó a proponer coronar a un descendiente de los Incas con capital en Cuzco. San Martín, Güemes y diputados altoperuanos simpatizaron con la idea, pero el plan cayó por oposición de la elite porteña, falta de candidato acordado y objeciones racistas. Una constitución republicana durable llegó recién en <strong>1853</strong>.
           </p>
 
           <h3 id="traducciones">El Acta en español, quechua y aymara</h3>
           <p>
-            El Congreso ordenó imprimir el Acta en <strong>quechua y aymara</strong> además de español. El 29 de julio de 1816 pidió al Directorio 3.000 ejemplares: 1.500 en español, 1.000 en quechua, 500 en aymara. La imprenta Gandarillas de Buenos Aires los imprimió en agosto de 1816 en formato bilingüe a doble columna; aparecieron en la <em>Gazeta de Buenos Aires</em> (17 de agosto de 1816) y en el <em>Redactor</em>. La preparación de la versión quechua se atribuye al diputado por Charcas <strong>José Mariano Serrano</strong>, aunque eso no prueba que la haya traducido personalmente (<a href="https://www.argentina.gob.ar/interior/archivo-general-de-la-nacion/traducciones-de-la-independencia" target="_blank" rel="noreferrer noopener">AGN</a>; <a href="https://www.infobae.com/sociedad/2021/07/09/la-declaracion-de-la-independencia-traducida-al-quechua-y-al-aymara-que-fracaso-y-termino-con-una-leccion-de-san-martin/" target="_blank" rel="noreferrer noopener">Infobae</a>).
-          </p>
-          <p>
-            Se propuso una versión en <strong>guaraní</strong> pero no se distribuyó mientras el Litoral estaba en guerra con Buenos Aires y sin representación. Sobreviven pocos ejemplares en lenguas indígenas (se citan dos o tres en quechua y uno en aymara); un ejemplar aymara se exhibió después en la Casa Histórica (<a href="https://www.argentina.gob.ar/interior/archivo-general-de-la-nacion/traducciones-de-la-independencia" target="_blank" rel="noreferrer noopener">AGN</a>).
+            El Congreso ordenó imprimir el Acta en <strong>quechua y aymara</strong> además de español, porque las Provincias Unidas todavía reclamaban el Alto Perú y querían que la declaración circulara más allá de las elites hispanohablantes. Se propuso una versión en guaraní, pero no se distribuyó mientras el Litoral estaba en guerra con Buenos Aires.
           </p>
 
           <h3 id="despues-declaracion">Después de la declaración: el contexto hispanoamericano más amplio</h3>
           <p>
-            En enero de 1817 San Martín lanzó el <a href="https://es.wikipedia.org/wiki/Cruce_de_los_Andes" target="_blank" rel="noreferrer noopener">Cruce de los Andes</a>. Cifras habituales: ~4.000 regulares y 1.200 milicianos; Gerónimo Espejo (1882) da un alistamiento completo de unos 5.423 (3.778 tropas y 1.392 auxiliares), más caballos y mulas. La campaña culminó en <strong>Chacabuco (12 de febrero de 1817)</strong>. Miriam Victoria Gomes (Biblioteca del Congreso) estima que de unos 2.500 soldados negros que iniciaron el cruce, 143 volvieron con vida (una estimación, no un censo). El ejército podía reclamar pelear por un Estado soberano declarado, como había argumentado San Martín.
+            En 1817 San Martín cruzó los Andes y derrotó a los realistas en Chacabuco. El ejército podía presentarse como fuerza de un Estado soberano declarado, no como rebeldes que todavía fingían lealtad al rey.
           </p>
           <p>
-            El Congreso siguió sancionando la primera constitución argentina en <strong>1819</strong> (unitaria y nunca aplicada) antes de disolverse en 1820 tras la batalla de Cepeda. El nombre y el territorio de "las Provincias Unidas en Sud América" poco se parecían a la Argentina de hoy: incluían el Alto Perú (Bolivia), cuyo diputado Serrano presidió más tarde la asamblea que declaró la independencia boliviana en 1825. La independencia del Uruguay, en cambio, se data en 1828.
+            El Congreso aprobó después una constitución unitaria que fracasó, y luego se disolvió tras la guerra civil. Las "Provincias Unidas en Sud América" todavía se parecían poco a la Argentina actual: el Alto Perú terminó como Bolivia, mientras Uruguay siguió su propio camino de independencia.
           </p>
+
           <h3 id="nombre">El nombre "Argentina" llega después</h3>
           <p>
             En 1816 el nombre relevante fue <strong>Provincias Unidas en Sud América</strong>. Ternavasio señala que "Sudamérica" expresaba incertidumbre sobre qué provincias caerían realmente bajo la nueva condición legal, sobre todo porque la Banda Oriental y el Litoral no se sentaron en el Congreso. La fallida constitución centralista de <strong>1826</strong> usó la etiqueta <strong>República Argentina</strong> y declaró una forma representativa republicana, pero el rechazo provincial impidió un Estado moderno estable (<a href="https://es.wikipedia.org/wiki/Provincias_Unidas_del_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://repositorio.uca.edu.ar/bitstream/123456789/10002/1/sobre-denominaciones-republica-argentina.pdf" target="_blank" rel="noreferrer noopener">UCA</a>). Para Ternavasio, la historia de la República Argentina empieza <em>stricto sensu</em> recién después de que Buenos Aires aceptara la Constitución de 1853 (después de 1860).
@@ -717,53 +526,39 @@ const structuredData = {
 
         </section>
 
-        
         <section id="parte-ii" aria-labelledby="parte-ii-heading">
           <h2 id="parte-ii-heading">Parte II — Cómo evolucionó la fiesta</h2>
 
-          <h3 id="primeras-celebraciones">Las primeras celebraciones (1816) y el vaivén del siglo XIX</h3>
+          <h3 id="primeras-celebraciones">Las primeras celebraciones y el vaivén del siglo XIX</h3>
           <p>
-            Las primeras celebraciones empezaron de inmediato. Tras la sesión del 9 de julio, que se alargó, la gente se reunió alrededor de la casa gritando "Viva la Patria"; los festejos formales siguieron al día siguiente. <a href="https://www.argentina.gob.ar/noticias/9-de-julio-dia-de-la-independencia-2" target="_blank" rel="noreferrer noopener">Argentina.gob.ar</a> registra una celebración de elite el 10 de julio con misa en San Francisco (y baile en la casa Bazán de Laguna / del gobernador Aráoz) y una fiesta popular el 21 de julio en el Campo de Carreras (sitio de la batalla de Tucumán) con más de 5.000 personas reportadas y discursos de Belgrano y Aráoz.
+            Los festejos empezaron de inmediato en Tucumán, pero durante buena parte del siglo XIX el <strong>25 de mayo</strong> conservó más peso en la cultura patriótica. Rivadavia incluso plegó el 9 de julio a las fiestas de mayo; Rosas lo restauró después a rango pleno y usó ambas fechas para teatro político federal.
           </p>
-          <p>
-            Ternavasio agrega un dato de historia de la fiesta: las <strong>Fiestas Mayas</strong> empezaron en 1811 y nunca se cancelaron; después de 1816 se agregaron las <strong>Fiestas Julias</strong> para conmemorar la independencia, pero el 25 de mayo casi siempre conservó el lugar privilegiado en el calendario festivo rioplatense, sobre todo en Buenos Aires (<a href="https://www.educ.ar/recursos/130924/un-pais-con-dos-fechas-patrias" target="_blank" rel="noreferrer noopener">Educ.ar / Ternavasio</a>). Los contemporáneos a menudo dieron a mayo mayor prioridad emocional porque marcaba la ruptura revolucionaria que habían vivido; julio se volvió después el Día de la Independencia formal.
-          </p>
-          <p>A lo largo del siglo XIX, la suerte de la fiesta subió y bajó con la política:</p>
-          <ul>
-            <li>
-              <strong>1826</strong>: Bernardino Rivadavia la rebajó de hecho: un decreto del 6 de julio de 1826 ordenó conmemorar el 9 de julio junto con el 25 de mayo, argumentando que "la repetición de estas festividades causa considerable perjuicio al comercio y a la industria." En la práctica las "Fiestas Mayas" (25 de mayo) fueron la fiesta patriótica central de los años veinte.
-            </li>
-            <li>
-              <strong>1835</strong>: Juan Manuel de Rosas lo revirtió. Su decreto del 11 de junio de 1835 declaró que el 9 de julio "debe celebrarse no menos que el 25 de mayo," restaurándolo a rango festivo pleno (<a href="https://www.argentina.gob.ar/noticias/9-de-julio-dia-de-la-independencia-2" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>). Bajo Rosas ganaron peso las "Fiestas Julianas"; las celebraciones adquirieron un componente religioso más fuerte y el rojo federal junto al celeste y blanco. Ternavasio señala que las fiestas de mayo y julio de 1834 ya incorporaban homenaje a la expedición al desierto de Rosas de 1833, doblando las fiestas cívicas hacia la política de culto al líder.
-            </li>
-            <li>
-              <strong>1866</strong>: el 50º aniversario pasó sin gran celebración; el país estaba en la Guerra de la Triple Alianza.
-            </li>
-          </ul>
 
           <h3 id="casa-historica-es">La Casa Histórica: demolición, el Templete y la reconstrucción de 1943</h3>
           <p>
-            La historia posterior del edificio a menudo se cuenta mal en guías turísticas.
+            La famosa "Casita" no fue originalmente una choza diminuta sino una <em>casona</em> colonial grande. El Estado demolió después casi todo y conservó el salón de la jura dentro de un pabellón decorativo llamado <strong>Templete</strong>. Ese pabellón ayudó a crear la imagen popular de una casita de adobe.
           </p>
           <p>
-            La casa la construyó hacia 1760 la familia Bazán-Laguna, una de las principales de Tucumán; era una <em>casona</em> colonial sustancial de tres crujías paralelas en torno a patios, con portal barroco flanqueado por columnas salomónicas, <strong>no</strong> la casita diminuta que sugiere el apodo afectuoso "Casita de Tucumán." Durante el Congreso se unieron dos salas paralelas a la fachada (demoliendo un muro divisorio) para formar el salón de sesiones, de unos 15 m por 5 m.
+            La Casa Histórica actual es una reconstrucción de los años cuarenta basada en fotos y planos antiguos. Incluso sus colores escolares cambiaron: investigaciones posteriores restauraron paredes blancas y aberturas azules, no el esquema amarillo y verde que aprendieron muchos argentinos.
           </p>
-          <p>
-            Después de 1816 la casa se deterioró en el clima húmedo de Tucumán. En 1869 ya estaba en ruinas cuando el fotógrafo <strong>Ángel Paganelli</strong> tomó las únicas fotografías conocidas de la casa original, imágenes que después serían esenciales. Una ley de 1869 (bajo <a href="https://es.wikipedia.org/wiki/Domingo_Faustino_Sarmiento" target="_blank" rel="noreferrer noopener">Sarmiento</a>) autorizó nacionalizarla; el Estado la compró (1874), remodeló la fachada e instaló oficinas de correo y de justicia.
-          </p>
-          <p>
-            El daño decisivo llegó bajo el presidente <strong><a href="https://es.wikipedia.org/wiki/Julio_Argentino_Roca" target="_blank" rel="noreferrer noopener">Julio A. Roca</a></strong>: en <strong>1903 empezó la demolición</strong>, y en septiembre de <strong>1904</strong> se derribó todo <em>excepto</em> el "Salón de la Jura" (la sala donde se juró la independencia), encerrado dentro de un pabellón afrancesado llamado <strong>"El Templete"</strong>, con vitraux, placas de bronce y dos relieves de bronce de la escultora tucumana <a href="https://es.wikipedia.org/wiki/Lola_Mora" target="_blank" rel="noreferrer noopener">Lola Mora</a> que conmemoraban el 25 de mayo de 1810 y el 9 de julio de 1816. Aislar el salón dentro de ese pabellón lo hizo parecer una casita de adobe diminuta (un origen del apodo "casita") (<a href="https://www.lagaceta.com.ar/nota/691339/sociedad/historia-casa-tucuman-entro-historia.html" target="_blank" rel="noreferrer noopener">La Gaceta</a>; <a href="https://billiken.lat/interesante/como-fue-la-reconstruccion-de-la-casa-historica-de-tucuman-en-1943/" target="_blank" rel="noreferrer noopener">Billiken</a>).
-          </p>
-          <p>
-            En <strong>1941</strong> la casa fue declarada Monumento Histórico Nacional (12 de agosto). Una comisión (<a href="https://es.wikipedia.org/wiki/Ricardo_Levene" target="_blank" rel="noreferrer noopener">Ricardo Levene</a>, y los arquitectos Martín Noel, <a href="https://es.wikipedia.org/wiki/Mario_Jos%C3%A9_Buschiazzo" target="_blank" rel="noreferrer noopener">Mario J. Buschiazzo</a> y Alejandro Figueroa) propuso una reconstrucción completa. Se demolió el Templete; el arquitecto <strong>Mario Buschiazzo</strong> dirigió la obra, usando las fotografías de Paganelli de 1869 y los planos de relevamiento de los años 1870, y localizando los cimientos originales bajo tierra. Se compraron azulejos, puertas y rejas de época de la residencia episcopal de Piedrabuena (contemporánea), entonces en demolición. La casa reconstruida se inauguró como museo el <strong>24 de septiembre de 1943</strong> (aniversario de la batalla de Tucumán), bajo el gobierno de facto del general <a href="https://es.wikipedia.org/wiki/Pedro_Pablo_Ram%C3%ADrez" target="_blank" rel="noreferrer noopener">Pedro Pablo Ramírez</a>.
-          </p>
-          <p>
-            Durante décadas la reconstrucción se mostró con paredes amarillas y aberturas verdes tomadas de un óleo de Genaro Pérez de fines del siglo XIX. Un estudio de 1996 del arquitecto Juan Carlos Marinsalda sobre capas de pintura concluyó que las aberturas de 1816 eran de <strong>azul de Prusia</strong> sobre paredes blancas; ese esquema se restauró después. El sitio es hoy el <a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/museo-casa-historica-de-la-independencia" target="_blank" rel="noreferrer noopener">Museo Nacional de la Independencia</a>.
-          </p>
+          <figure class="article-figure">
+            <Picture
+              src={casaHistoricaImage}
+              formats={["avif", "webp"]}
+              widths={[640, 960, 1280, 1600, 2200]}
+              sizes="(min-width: 72rem) 67ch, calc(100vw - 2rem)"
+              alt="La Casa Histórica de la Independencia reconstruida, en San Miguel de Tucumán."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              La Casa Histórica actual en Tucumán, fotografiada en 2025 y redimensionada desde el original. Horacio Cambeiro, CC BY-SA 4.0, vía <a href="https://commons.wikimedia.org/wiki/File:Casa_Hist%C3%B3rica_de_la_Independencia_%E2%80%A2_Casa_de_Tucum%C3%A1n_(31147).jpg" target="_blank" rel="noreferrer noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
 
           <h3 id="centenario-es">El Centenario (1916): un centenario sobrio</h3>
           <p>
-            El 100º aniversario en 1916 fue, por diseño o por circunstancia, apagado. La Primera Guerra Mundial había "cerrado el Atlántico," así que no vinieron invitados internacionales (un contraste fuerte con el centenario cosmopolita y fastuoso de 1910 de la <em>Revolución de Mayo</em>). El presidente <a href="https://es.wikipedia.org/wiki/Victorino_de_la_Plaza" target="_blank" rel="noreferrer noopener">Victorino de la Plaza</a> ni siquiera viajó a Tucumán; envió un delegado. En Buenos Aires, tras un Te Deum, el desfile militar del 9 de julio se vio empañado por un atentado frustrado contra el presidente por un anarquista. El momento era políticamente cargado: <a href="https://es.wikipedia.org/wiki/Hip%C3%B3lito_Yrigoyen" target="_blank" rel="noreferrer noopener">Hipólito Yrigoyen</a> acababa de ser electo bajo la nueva ley Sáenz Peña de voto secreto, y empezaba la era radical.
+            El centenario de 1916 fue apagado. La Primera Guerra Mundial mantuvo lejos a los invitados extranjeros, Victorino de la Plaza no viajó a Tucumán y la fecha quedó a la sombra del centenario de Mayo de 1910, mucho más fastuoso.
           </p>
           <p>
             Balmaceda y otros señalan una asimetría que se instaló: el 25 de mayo se recuerda más vívidamente que el 9 de julio en la cultura popular, en parte porque mayo de 1810 tiene protagonistas más conocidos en el relato escolar (<a href="https://www.lanacion.com.ar/lifestyle/por-que-recordamos-mas-revolucion-mayo-nid2265816/" target="_blank" rel="noreferrer noopener">La Nación</a>).
@@ -771,15 +566,15 @@ const structuredData = {
 
           <h3 id="peron-1947-es">Perón y la "Independencia Económica" de 1947</h3>
           <p>
-            El <strong>9 de julio de 1947</strong>, el presidente Juan Domingo Perón realizó un acto de <strong>Independencia Económica</strong> en la Casa Histórica. Con el presidente chileno <a href="https://es.wikipedia.org/wiki/Gabriel_Gonz%C3%A1lez_Videla" target="_blank" rel="noreferrer noopener">Gabriel González Videla</a> presente, el ministro del Interior <a href="https://es.wikipedia.org/wiki/%C3%81ngel_Borlenghi" target="_blank" rel="noreferrer noopener">Ángel Borlenghi</a> leyó un "Acta de la Independencia Económica" que prometía emancipación económica de los "poderes capitalistas extranjeros," fechada en San Miguel de Tucumán y enmarcada como eco de 1816. La ceremonia acompañó nacionalizaciones y el Primer Plan Quinquenal (<a href="https://www.infobae.com/sociedad/2023/07/09/el-otro-congreso-de-tucuman-el-dia-que-peron-declaro-la-independencia-economica-y-auguro-60-anos-sin-crisis/" target="_blank" rel="noreferrer noopener">Infobae</a>).
+            El <strong>9 de julio de 1947</strong>, Juan Domingo Perón montó un acto de <strong>Independencia Económica</strong> en la Casa Histórica. Presentó nacionalizaciones y política económica peronista como una segunda emancipación, en eco deliberado de 1816 (<a href="https://www.infobae.com/sociedad/2023/07/09/el-otro-congreso-de-tucuman-el-dia-que-peron-declaro-la-independencia-economica-y-auguro-60-anos-sin-crisis/" target="_blank" rel="noreferrer noopener">Infobae</a>).
           </p>
 
           <h3 id="sesquicentenario-es">El Sesquicentenario (1966) y las dictaduras</h3>
           <p>
-            El 150º aniversario en 1966 quedó ensombrecido: el presidente <a href="https://es.wikipedia.org/wiki/Arturo_Umberto_Illia" target="_blank" rel="noreferrer noopener">Arturo Illia</a> preparaba una gran celebración cuando, el 28 de junio de 1966, el golpe del general <a href="https://es.wikipedia.org/wiki/Juan_Carlos_Ongan%C3%ADa" target="_blank" rel="noreferrer noopener">Juan Carlos Onganía</a> lo derrocó. No vinieron invitados extranjeros; la conmemoración se redujo a un desfile militar en la Avenida del Libertador.
+            El 150º aniversario en 1966 quedó tragado por la política: <a href="https://es.wikipedia.org/wiki/Arturo_Umberto_Illia" target="_blank" rel="noreferrer noopener">Arturo Illia</a> fue derrocado días antes de la conmemoración, y la dictadura redujo el aniversario a un desfile militar.
           </p>
           <p>
-            El <strong>5 de febrero de 1975</strong>, la presidenta <a href="https://es.wikipedia.org/wiki/Mar%C3%ADa_Estela_Mart%C3%ADnez_de_Per%C3%B3n" target="_blank" rel="noreferrer noopener">María Estela Martínez de Perón</a> (Isabel) firmó el decreto 261/75 que autorizó el <a href="https://es.wikipedia.org/wiki/Operativo_Independencia" target="_blank" rel="noreferrer noopener">Operativo Independencia</a>, una campaña militar en Tucumán contra el ERP. Desde el 9 de febrero de 1975 tropas ocuparon la provincia. La <strong>"Escuelita de Famaillá"</strong> funcionó como centro clandestino de detención; la CONADEP y sitios de memoria posteriores la identifican entre los primeros de ese tipo en el país (<a href="https://www.argentina.gob.ar/noticias/47-anos-del-operativo-independencia-espacio-para-la-memoria-ex-ccdtye-la-escuelita-de" target="_blank" rel="noreferrer noopener">argentina.gob.ar / Espacio Famaillá</a>). Las estimaciones de personas detenidas allí varían (Wikipedia cita ~1.507 para Famaillá; otras fuentes provinciales dan rangos de ~1.500–2.500). El nombre y el lugar de la operación siguen siendo materia de disputa en la memoria política argentina.
+            En 1975, el gobierno peronista lanzó el <a href="https://es.wikipedia.org/wiki/Operativo_Independencia" target="_blank" rel="noreferrer noopener">Operativo Independencia</a>, una campaña militar en Tucumán contra el ERP. Su nombre y su ubicación todavía atan la fecha a la política argentina de la memoria.
           </p>
 
           <h3 id="ritual-moderno">La conmemoración moderna: el ritual estándar</h3>
@@ -795,38 +590,28 @@ const structuredData = {
             <li><strong>Te Deums, actos escolares y despliegues de banderas</strong> en todo el país. Bajo la <a href="https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835/texto" target="_blank" rel="noreferrer noopener">Ley 27.399</a> (2017), el 9 de julio figura entre los <strong>feriados nacionales inamovibles</strong>.</li>
           </ul>
           <p>
-            Como el 9 de julio cae en lo más duro del invierno austral, los platos tradicionales son contundentes: el <strong>locro</strong> primero, más empanadas, pastelitos, humita, tamales, carbonada y tortas fritas. El locro es un guiso de maíz blanco, porotos, zapallo y varias carnes (su nombre viene del quechua <em>ruqru</em>/<em>luqru</em>), de origen andino prehispánico, enriquecido después con el cerdo, la carne vacuna y el chorizo traídos por los españoles. Se come en ambas fechas patrias, el 25 de mayo y el 9 de julio.
+            Como el 9 de julio cae en lo más duro del invierno austral, la comida tradicional es caliente y pesada: el <strong>locro</strong> primero, más empanadas, pastelitos, humita y tortas fritas. El locro es un guiso andino de maíz, porotos, zapallo y carne, y hoy se come en ambas fechas patrias, el 25 de mayo y el 9 de julio.
           </p>
           <p>
-            La investigadora del CONICET Carina Perticone sostiene que la costumbre del "locro patrio" en Buenos Aires es en gran medida del siglo XX: hay poca evidencia de que se comiera allí alrededor de la independencia, y recién hacia 1960 se impuso como plato patriótico dominante, desplazando rivales como la carbonada ("una construcción, pero no arbitraria") (<a href="https://www.iprofesional.com/actualidad/339869-por-que-comemos-locro-el-25-de-mayo-te-dejamos-una-super-receta" target="_blank" rel="noreferrer noopener">entrevista iProfesional</a>).
+            El vínculo patriótico es más nuevo que la fiesta: la historiadora de la comida Carina Perticone sostiene que el locro se volvió plato patrio dominante en Buenos Aires recién en el siglo XX (<a href="https://www.iprofesional.com/actualidad/339869-por-que-comemos-locro-el-25-de-mayo-te-dejamos-una-super-receta" target="_blank" rel="noreferrer noopener">entrevista iProfesional</a>).
           </p>
 
           <h3 id="bicentenario-es">El Bicentenario (2016)</h3>
           <p>
-            El <strong>9 de julio de 2016</strong>, el presidente <a href="https://es.wikipedia.org/wiki/Mauricio_Macri" target="_blank" rel="noreferrer noopener">Mauricio Macri</a> asistió a los actos en Tucumán, firmó un acuerdo con gobernadores en la Casa Histórica y recibió al rey emérito de España <a href="https://es.wikipedia.org/wiki/Juan_Carlos_I_de_Espa%C3%B1a" target="_blank" rel="noreferrer noopener">Juan Carlos I</a>. Estimaciones oficiales reportadas por la prensa ubicaron la multitud del desfile de Mate de Luna por encima de 400.000; hubo un segundo desfile en Buenos Aires (<a href="https://es.wikipedia.org/wiki/Bicentenario_de_la_Independencia_de_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia: Bicentenario</a>). La cobertura registró protestas por política económica, debate sobre costos y objeciones a algunos participantes del desfile vinculados al Operativo Independencia. El discurso de Macri enmarcó la independencia en torno a Tucumán sin mencionar mayo de 1810 (un ejemplo de la confusión 1810/1816).
+            El <strong>9 de julio de 2016</strong>, el presidente <a href="https://es.wikipedia.org/wiki/Mauricio_Macri" target="_blank" rel="noreferrer noopener">Mauricio Macri</a> encabezó el Bicentenario en Tucumán, recibió al rey emérito español <a href="https://es.wikipedia.org/wiki/Juan_Carlos_I_de_Espa%C3%B1a" target="_blank" rel="noreferrer noopener">Juan Carlos I</a> y enmarcó la independencia alrededor de Tucumán sin mencionar mayo de 1810, otro ejemplo de la confusión 1810/1816.
           </p>
 
-          <h3 id="anos-milei">Los años Milei (2024–2026): presencia, ausencia y disputa museística</h3>
+          <h3 id="anos-milei">Los años Milei (2024–2026): la política vuelve a Tucumán</h3>
           <p>
-            Bajo el presidente <a href="https://es.wikipedia.org/wiki/Javier_Milei" target="_blank" rel="noreferrer noopener">Javier Milei</a> (en el cargo desde diciembre de 2023), los actos del 9 de julio volvieron a usarse para mensajes políticos nacionales.
+            Bajo el presidente <a href="https://es.wikipedia.org/wiki/Javier_Milei" target="_blank" rel="noreferrer noopener">Javier Milei</a>, el 9 de julio volvió a ser escenario de política nacional. En 2024 usó la Casa Histórica para firmar el <strong>"Pacto de Mayo"</strong> con gobernadores. En 2025 canceló el viaje a Tucumán e hizo un acto en Buenos Aires. En 2026 volvió a Tucumán y habló de una "segunda independencia" y de un "cruce económico de los Andes".
           </p>
           <p>
-            <strong>2024</strong>: Milei asistió y firmó el <strong>"Pacto de Mayo,"</strong> un acuerdo de gobierno de 10 puntos, en la Casa Histórica con 18 de 24 gobernadores/jefes de ciudad; seis no firmaron (Kicillof, Insfrán, Ziliotto, Quintela, Melella, Vidal). Asistieron los expresidentes Macri y Rodríguez Saá. El discurso de Milei enmarcó el pacto como patriótico y criticó a los ausentes (<a href="https://chequeado.com/el-explicador/a-un-ano-de-la-firma-del-pacto-de-mayo-el-chequeo-a-los-10-compromisos-del-acuerdo-que-hizo-javier-milei-con-los-gobernadores/" target="_blank" rel="noreferrer noopener">resumen Chequeado</a>; <a href="https://www.casarosada.gob.ar/informacion/discursos/50568-palabras-del-presidente-javier-milei-en-la-firma-del-pacto-de-mayo" target="_blank" rel="noreferrer noopener">discurso Casa Rosada</a>).
+            El período también trajo una disputa por la dirección y el presupuesto del museo de la Casa Histórica, con historiadores acusando al gobierno de politizar museos nacionales y el gobierno diciendo que quitaba sesgo ideológico.
           </p>
-          <p>
-            <strong>2025</strong>: La tarde del 8 de julio, Milei canceló el viaje a Tucumán, citando niebla/clima; el vocero Manuel Adorni dijo que informes de Casa Militar y de la Fuerza Aérea descartaban los vuelos (<a href="https://tn.com.ar/politica/2025/07/08/debido-a-la-niebla-javier-milei-no-viajara-a-tucuman-por-el-9-de-julio/" target="_blank" rel="noreferrer noopener">TN</a>). La prensa también notó que pocos gobernadores habían confirmado asistencia y trató con escepticismo la explicación climática. Milei hizo un acto en Buenos Aires. La vicepresidenta Victoria Villarruel estuvo en Tucumán por invitación provincial separada.
-          </p>
-          <p>
-            <strong>2026</strong>: Para el <strong>210º aniversario</strong>, Milei volvió a la Vigilia de medianoche en la Casa Histórica (recibido por el gobernador Osvaldo Jaldo; acompañado por Karina Milei, el jefe de Gabinete Diego Santilli y el ministro de Economía Luis Caputo), firmó actos protocolares y dio un discurso en cadena nacional comparando su programa con un "cruce económico de los Andes" y llamando a una "segunda independencia." Los conteos de gobernadores presentes varían (unos 11–13). Luego encabezó el Tedeum en Buenos Aires. La VP Villarruel asistió otra vez por separado en Tucumán. El programa diurno provincial siguió el cronograma habitual (chocolate patrio, izamiento, Tedeum, desfile).
-          </p>
-          <p>
-            <strong>Disputa por la dirección del museo</strong>: en mayo de 2024 el gobierno nacional removió a la directora designada por concurso Cecilia Guerra Orozco e instaló como director interino a José María Posse, que criticó la "orientación ideológica" previa. Un medio tucumano (Enterate Noticias), citando cifras de la Secretaría de Cultura, reportó un recorte real de ~54% del presupuesto del museo entre 2023 y 2025 (cifra de una sola fuente). La asociación de historiadores AsAIH emitió en julio de 2025 una declaración oponiéndose a remociones de directores en la Casa Histórica y otros museos nacionales. Posse disputó las denuncias de despidos/presupuesto y renunció en abril de 2026. La crítica Camila Perochena acusó al gobierno de convertir museos en espacios partidarios; el gobierno dijo que quitaba sesgo ideológico. Tratar estas afirmaciones como reclamos en disputa de bandos opuestos.</p>
         </section>
 
         <section id="notas" aria-labelledby="notas-heading">
-          <h2 id="notas-heading">Notas y advertencias</h2>
-
-          <h3 id="confusiones">Confusiones habituales</h3>
+          <h2 id="notas-heading">Confusiones habituales</h2>
           <ul>
             <li>
               <strong>El 9 de julio de 1816 ≠ la República Argentina moderna.</strong> El Acta declaró la independencia de las <strong>Provincias Unidas en Sud América</strong>, una entidad más amplia que entonces incluía el Alto Perú. El nombre "Argentina" y el territorio de hoy se consolidaron después, sobre todo tras 1853–1860 (Ternavasio; <a href="https://es.wikipedia.org/wiki/Provincias_Unidas_del_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia</a>).
@@ -847,134 +632,12 @@ const structuredData = {
               <strong>La independencia no resolvió el republicanismo.</strong> La monarquía constitucional, incluida la propuesta inca de Belgrano, se debatía en serio; fracasó por razones políticas y sociales, no porque fuera una broma (<a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>).
             </li>
             <li>
+              <strong>La historia de Hawái es medio cierta.</strong> La versión de trivia dice que el <a href="https://es.wikipedia.org/wiki/Reino_de_Haw%C3%A1i" target="_blank" rel="noreferrer noopener">Reino de Hawái</a> fue el primer Estado que reconoció la independencia argentina. El episodio real es más raro: en 1818 el corsario argentino <a href="https://es.wikipedia.org/wiki/Hip%C3%B3lito_Bouchard" target="_blank" rel="noreferrer noopener">Hipólito Bouchard</a> llegó a Hawái, encontró un barco argentino amotinado que había sido vendido a <a href="https://es.wikipedia.org/wiki/Kamehameha_I" target="_blank" rel="noreferrer noopener">Kamehameha I</a> y negoció su devolución. Algunos relatos posteriores tratan ese acuerdo como reconocimiento de las Provincias Unidas; otros historiadores ven ahí una exageración que convierte un asunto de barco y bandera en diplomacia formal. O sea: gracioso, no inventado de la nada, pero no igual a un reconocimiento estatal normal (<a href="https://imagesofoldhawaii.com/provincias-unidas-del-rio-de-la-plata-united-provinces-of-the-river-plate/" target="_blank" rel="noreferrer noopener">Images of Old Hawaiʻi</a>; <a href="https://www.nuestromar.org/el-cap-bouchard-y-como-se-reconocio-por-primera-vez-la-independencia-argentina/" target="_blank" rel="noreferrer noopener">Nuestro Mar</a>).
+            </li>
+            <li>
               <strong>"Casita" y paredes amarillo-verde.</strong> La casa era una <em>casona</em> colonial grande; la imagen de choza viene sobre todo del Templete de 1904. El edificio del museo hoy es una <strong>reconstrucción de 1943</strong>. El amarillo y verde escolares vienen de un cuadro del siglo XIX; un estudio de 1996 halló paredes blancas con aberturas de azul de Prusia para 1816.
             </li>
-            <li>
-              <strong>El Acta firmada original está perdida.</strong> Sobreviven copias impresas contemporáneas (AGN) y la de Serrano; la autenticidad no depende del manuscrito faltante. El correo Cayetano Grimau y Gálvez fue interceptado en Córdoba por una partida artiguista mientras llevaba el Acta hacia Buenos Aires.
-            </li>
-            <li>
-              <strong>"Hawái reconoció primero a la Argentina."</strong> Un relato romántico ligado a Hipólito Bouchard y Kamehameha I; trátese como leyenda popular, no como hecho diplomático asentado.
-            </li>
-            <li>
-              <strong>Fotos de graffiti de Montoneros.</strong> <a href="https://chequeado.com/el-explicador/son-falsas-las-fotos-que-circulan-de-la-casa-de-tucuman-con-inscripciones-de-montoneros-se-trata-de-un-montaje/" target="_blank" rel="noreferrer noopener">Chequeado</a> identificó las fotos que circulan como montajes (ligados a una polémica artística de 2021), no vandalismo fresco de las paredes del Salón.
-            </li>
           </ul>
-
-          <h3 id="cifras-en-disputa">Cifras en disputa</h3>
-          <ul>
-            <li><strong>Ejército de los Andes</strong>: ~4.000 regulares + 1.200 milicianos en el cruce; Espejo (1882) da un alistamiento completo de ~5.423. La cifra de 143 soldados negros repatriados con vida (Biblioteca del Congreso / Miriam V. Gomes) es una estimación.</li>
-            <li><strong>Fechas de la Casa Histórica</strong>: demolición 1903–1904; Monumento el 12 de agosto de 1941; obras de reconstrucción 1942; reapertura del museo el 24 de septiembre de 1943. El Templete estuvo de 1904 a 1942.</li>
-            <li><strong>Asistencia de gobernadores en 2026</strong>: reportada entre 11 y 13, probablemente mezclando presencia física y reemplazos por vicegobernadores.</li>
-            <li><strong>Recorte de ~54% del presupuesto del museo (2023→2025)</strong>: un medio tucumano citando datos oficiales; coherente en dirección con recortes más amplios de cultura, pero el porcentaje exacto debe tomarse como cifra de una sola fuente.</li>
-          </ul>
-
-          <h3 id="limites-de-fuentes">Límites de las fuentes</h3>
-          <ul>
-            <li>Armado a partir de fuentes argentinas en línea (páginas patrimoniales, diarios, PDFs académicos); no contrastado con archivos físicos del AGN / <em>Redactor</em> / Buschiazzo. Las redacciones citadas están transcritas de fuentes secundarias.</li>
-            <li>Los medios sobre Operativo Independencia y la política museística reciente suelen tener sesgos políticos claros; los reclamos en disputa se atribuyen a fuentes nombradas.</li>
-            <li>Los detalles políticos de 2025–2026 descansan en el periodismo; la cifra de ~54% de presupuesto del museo y los conteos de gobernadores de 2026 son los números menos corroborados aquí.</li>
-          </ul>
-        </section>
-
-        <section id="fuentes" aria-labelledby="fuentes-heading">
-          <h2 id="fuentes-heading">Fuentes por tema</h2>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Tema</th>
-                  <th scope="col">Fuentes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">Anti-teleología / jerarquía mayo–julio</th>
-                  <td>Marcela Ternavasio, <cite>Historia de la Argentina, 1806–1852</cite> (Siglo XXI); <a href="https://www.educ.ar/recursos/130924/un-pais-con-dos-fechas-patrias" target="_blank" rel="noreferrer noopener">Educ.ar: Un país con dos fechas patrias</a>; <a href="https://www.conicet.gov.ar/repensar-la-independencia/" target="_blank" rel="noreferrer noopener">entrevista CONICET</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Contexto 1816; composición del Congreso; Acta</th>
-                  <td><a href="https://www.educ.ar/recursos/132481/9-de-julio-dia-de-la-declaracion-de-la-independencia" target="_blank" rel="noreferrer noopener">Educ.ar: 9 de julio</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Retroversión / pueblos</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Retroversi%C3%B3n_de_la_soberan%C3%ADa_de_los_pueblos" target="_blank" rel="noreferrer noopener">Wikipedia: retroversión</a>; Ternavasio; <a href="https://www.conicet.gov.ar/repensar-la-independencia/" target="_blank" rel="noreferrer noopener">CONICET</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Virreinato / invasiones inglesas</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Virreinato_del_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia: Virreinato</a>; <a href="https://es.wikipedia.org/wiki/Invasiones_inglesas" target="_blank" rel="noreferrer noopener">Wikipedia: Invasiones inglesas</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Cronología del nombre</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Provincias_Unidas_del_R%C3%ADo_de_la_Plata" target="_blank" rel="noreferrer noopener">Wikipedia: Provincias Unidas</a>; <a href="https://repositorio.uca.edu.ar/bitstream/123456789/10002/1/sobre-denominaciones-republica-argentina.pdf" target="_blank" rel="noreferrer noopener">UCA sobre denominaciones</a>; Ternavasio</td>
-                </tr>
-                <tr>
-                  <th scope="row">Ley vigente del feriado</th>
-                  <td><a href="https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835/texto" target="_blank" rel="noreferrer noopener">Ley 27.399</a></td>
-                </tr>
-
-                <tr>
-                  <th scope="row">Texto del Acta</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia: Declaración</a>; <a href="https://www.argentina.gob.ar/noticias/9-de-julio-de-1816-declaracion-de-la-independencia-de-la-argentina" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Revolución de Mayo vs. 9 de julio</th>
-                  <td><a href="https://www.lanacion.com.ar/lifestyle/por-que-recordamos-mas-revolucion-mayo-nid2265816/" target="_blank" rel="noreferrer noopener">La Nación (Balmaceda)</a>; <a href="https://www.lanacion.com.ar/cultura/25-de-mayo-preguntas-y-respuestas-para-entender-los-sucesos-de-una-semana-historica-nid19052021/" target="_blank" rel="noreferrer noopener">La Nación Q&A</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Por qué Tucumán; el Congreso</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Congreso_de_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Wikipedia: Congreso de Tucumán</a>; <a href="https://elhistoriador.com.ar/9-de-julio-de-1816-declaracion-de-la-independencia/" target="_blank" rel="noreferrer noopener">El Historiador / Pigna</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">"Toda otra dominación extranjera"</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_independencia_de_la_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://elhistoriador.com.ar/9-de-julio-de-1816-declaracion-de-la-independencia/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://perio.unlp.edu.ar/2021/07/08/9-de-julio-1816-y-de-toda-otra-dominacion-extranjera/" target="_blank" rel="noreferrer noopener">UNLP Periodismo</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Debate monarquía / Inca</th>
-                  <td><a href="https://elhistoriador.com.ar/el-congreso-de-tucuman-y-la-declaracion-de-la-independencia-por-felipe-pigna/" target="_blank" rel="noreferrer noopener">El Historiador</a>; <a href="https://www.educ.ar/recursos/130847/belgrano-y-el-proyecto-de-monarquia-incaica/" target="_blank" rel="noreferrer noopener">educ.ar</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Carta de San Martín / Cruce</th>
-                  <td><a href="https://www.educ.ar/recursos/128506/carta-de-jose-de-san-martin-a-tomas-godoy-cruz" target="_blank" rel="noreferrer noopener">carta educ.ar</a>; <a href="https://es.wikipedia.org/wiki/Cruce_de_los_Andes" target="_blank" rel="noreferrer noopener">Wikipedia: Cruce</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Traducciones quechua/aymara</th>
-                  <td><a href="https://www.argentina.gob.ar/interior/archivo-general-de-la-nacion/traducciones-de-la-independencia" target="_blank" rel="noreferrer noopener">AGN</a>; <a href="https://www.infobae.com/sociedad/2021/07/09/la-declaracion-de-la-independencia-traducida-al-quechua-y-al-aymara-que-fracaso-y-termino-con-una-leccion-de-san-martin/" target="_blank" rel="noreferrer noopener">Infobae</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Reconstrucción de la Casa Histórica</th>
-                  <td><a href="https://www.argentina.gob.ar/capital-humano/cultura/monumentos/museo-casa-historica-de-la-independencia" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>; <a href="https://es.wikipedia.org/wiki/Casa_de_Tucum%C3%A1n" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://billiken.lat/interesante/como-fue-la-reconstruccion-de-la-casa-historica-de-tucuman-en-1943/" target="_blank" rel="noreferrer noopener">Billiken</a>; <a href="https://www.lagaceta.com.ar/nota/691339/sociedad/historia-casa-tucuman-entro-historia.html" target="_blank" rel="noreferrer noopener">La Gaceta</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Conmemoraciones siglo XIX</th>
-                  <td><a href="https://www.argentina.gob.ar/noticias/9-de-julio-dia-de-la-independencia-2" target="_blank" rel="noreferrer noopener">argentina.gob.ar</a>; <a href="https://www.scielo.org.ar/scielo.php?script=sci_arttext&pid=S1851-95042013000100003" target="_blank" rel="noreferrer noopener">SciELO: Fiestas Mayas</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Independencia económica de Perón 1947</th>
-                  <td><a href="https://www.infobae.com/sociedad/2023/07/09/el-otro-congreso-de-tucuman-el-dia-que-peron-declaro-la-independencia-economica-y-auguro-60-anos-sin-crisis/" target="_blank" rel="noreferrer noopener">Infobae</a>; <a href="https://www.archivorta.com.ar/asset/cadena-nacional-peron-declara-la-independencia-economica-en-tucuman-09-07-1947/" target="_blank" rel="noreferrer noopener">Archivo RTA</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Operativo Independencia (1975)</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Operativo_Independencia" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://www.argentina.gob.ar/noticias/47-anos-del-operativo-independencia-espacio-para-la-memoria-ex-ccdtye-la-escuelita-de" target="_blank" rel="noreferrer noopener">Espacio Famaillá</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Locro / comida patriótica</th>
-                  <td><a href="https://www.iprofesional.com/actualidad/339869-por-que-comemos-locro-el-25-de-mayo-te-dejamos-una-super-receta" target="_blank" rel="noreferrer noopener">Perticone / iProfesional</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Bicentenario 2016</th>
-                  <td><a href="https://es.wikipedia.org/wiki/Bicentenario_de_la_Independencia_de_Argentina" target="_blank" rel="noreferrer noopener">Wikipedia</a>; <a href="https://www.lanacion.com.ar/politica/el-saludo-de-mauricio-macri-al-rey-emerito-juan-carlos-de-espana-durante-los-festejos-por-el-bicentenario-nid1916943/" target="_blank" rel="noreferrer noopener">La Nación</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Era Milei 2024–2026</th>
-                  <td><a href="https://chequeado.com/el-explicador/a-un-ano-de-la-firma-del-pacto-de-mayo-el-chequeo-a-los-10-compromisos-del-acuerdo-que-hizo-javier-milei-con-los-gobernadores/" target="_blank" rel="noreferrer noopener">Chequeado: Pacto de Mayo</a>; <a href="https://www.casarosada.gob.ar/informacion/discursos/50568-palabras-del-presidente-javier-milei-en-la-firma-del-pacto-de-mayo" target="_blank" rel="noreferrer noopener">Casa Rosada</a>; <a href="https://tn.com.ar/politica/2025/07/08/debido-a-la-niebla-javier-milei-no-viajara-a-tucuman-por-el-9-de-julio/" target="_blank" rel="noreferrer noopener">TN cancelación 2025</a></td>
-                </tr>
-                <tr>
-                  <th scope="row">Chequeos de mitos</th>
-                  <td><a href="https://chequeado.com/el-explicador/son-falsas-las-fotos-que-circulan-de-la-casa-de-tucuman-con-inscripciones-de-montoneros-se-trata-de-un-montaje/" target="_blank" rel="noreferrer noopener">Chequeado: montaje montonero</a>; <a href="https://www.lagaceta.com.ar/nota/691339/sociedad/historia-casa-tucuman-entro-historia.html" target="_blank" rel="noreferrer noopener">La Gaceta / Casa</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </section>
 
       </article>
@@ -1274,6 +937,7 @@ const structuredData = {
   p + ol,
   ul + p,
   ol + p,
+  p + .article-figure,
   .table-wrap {
     margin-top: 0.85rem;
   }
@@ -1303,6 +967,61 @@ const structuredData = {
   a:hover {
     color: var(--text);
     text-decoration-color: currentColor;
+  }
+
+  .article-figure {
+    min-width: 0;
+    margin-inline: 0;
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 84%, transparent);
+    padding: clamp(0.45rem, 1.5vw, 0.65rem);
+  }
+
+  .article-figure + h3 {
+    margin-top: 1.85rem;
+  }
+
+  .article-figure picture {
+    display: block;
+  }
+
+  .article-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper);
+  }
+
+  .article-figure--map img,
+  .article-figure--document img {
+    object-fit: contain;
+    background: #f4f0e8;
+  }
+
+  .article-figure--map img {
+    padding: clamp(0.35rem, 1.6vw, 0.75rem);
+  }
+
+  .article-figure--portrait {
+    max-width: min(100%, 30rem);
+    margin-inline: auto;
+  }
+
+  .article-figure--portrait img,
+  .article-figure--document img {
+    max-height: min(46rem, 84vh);
+  }
+
+  figcaption {
+    margin-top: 0.55rem;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  figcaption a {
+    color: inherit;
   }
 
   blockquote {
