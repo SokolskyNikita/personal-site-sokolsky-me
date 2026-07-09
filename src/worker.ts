@@ -66,6 +66,14 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    if (
+      url.pathname === "/misc/kavanagh" ||
+      url.pathname === "/misc/kavanagh/"
+    ) {
+      url.pathname = "/argentina/kavanagh/";
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (url.pathname === AI_COMPASS_RESULT_PATH) {
       return handleAiCompassResult(request, env, url);
     }
