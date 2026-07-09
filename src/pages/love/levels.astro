@@ -17,12 +17,13 @@ export const prerender = true;
 
 const pageTitle = "Relationship levels by country";
 const pageDescription =
-  "Informal dating and relationship ladders by country — USA, China, Germany, Japan, UK, India, France, Italy, Brazil, Canada, Argentina, Czech Republic, and Russia.";
+  "Informal dating and relationship ladders by country — USA, China, Germany, Japan, UK, India, France, Italy, Russia, Brazil, Canada, Argentina, and Czech Republic.";
 const themeColorLight = "#ffffff";
 const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+// Order: IMF WEO Apr 2026 nominal GDP (current prices, not PPP)
 const locales = [
   usa,
   china,
@@ -32,11 +33,11 @@ const locales = [
   india,
   france,
   italy,
+  russia,
   brazil,
   canada,
   argentina,
   czechRepublic,
-  russia,
 ];
 const defaultLocale = locales.find((l) => l.default) ?? locales[0];
 const structuredData = {

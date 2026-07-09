@@ -173,18 +173,76 @@ const structuredData = {
       </div>
 
       <section class="place-section" aria-label="Trip stop ideas">
-        <div class="place-list">
-          <div class="place-row place-head" aria-hidden="true">
-            <span>Place</span>
-            <span>Map</span>
-            <span>Where</span>
-            <span>Hours</span>
-            <span>Rating</span>
-            <span>Notes</span>
+        <div class="place-list" role="table" aria-label="Trip stop ideas">
+          <div class="place-row place-head" role="row">
+            <span role="columnheader" aria-sort="none">
+              <button
+                class="sort-button"
+                type="button"
+                data-sort-key="name"
+                data-sort-default="asc"
+              >
+                Place
+              </button>
+            </span>
+            <span role="columnheader" aria-sort="none">
+              <span class="sort-static">Map</span>
+            </span>
+            <span role="columnheader" aria-sort="none">
+              <button
+                class="sort-button"
+                type="button"
+                data-sort-key="town"
+                data-sort-default="asc"
+              >
+                Where
+              </button>
+            </span>
+            <span role="columnheader" aria-sort="none">
+              <button
+                class="sort-button"
+                type="button"
+                data-sort-key="hours"
+                data-sort-default="asc"
+              >
+                Hours
+              </button>
+            </span>
+            <span role="columnheader" aria-sort="descending">
+              <button
+                class="sort-button"
+                type="button"
+                data-sort-key="ratings"
+                data-sort-default="desc"
+                data-sort-direction="desc"
+              >
+                Rating
+              </button>
+            </span>
+            <span role="columnheader" aria-sort="none">
+              <button
+                class="sort-button"
+                type="button"
+                data-sort-key="note"
+                data-sort-default="asc"
+              >
+                Notes
+              </button>
+            </span>
           </div>
           {
             places.map((place: Place) => (
-              <article class="place-row" data-kind={place.kind}>
+              <article
+                class="place-row"
+                role="row"
+                data-kind={place.kind}
+                data-name={place.name}
+                data-town={place.town}
+                data-hours={place.sundayHours}
+                data-rating={place.rating ?? ""}
+                data-ratings={place.ratings ?? ""}
+                data-note={place.note}
+              >
                 <h2 class="place-name">
                   {place.name}
                   <span class={`kind-chip kind-${place.kind}`}>
@@ -299,15 +357,20 @@ const structuredData = {
   }
 
   const kindInputs = [...document.querySelectorAll('input[name="kind"]')];
+  const placeList = document.querySelector(".place-list");
+  const placeHead = document.querySelector(".place-head");
   const placeRows = [
     ...document.querySelectorAll(".place-row:not(.place-head)"),
   ];
+  const sortButtons = [...document.querySelectorAll(".sort-button")];
   const mapElement = document.querySelector("#place-map");
   const mapStatus = document.querySelector("#place-map-status");
   const mapCenter = { lat: -34.65, lng: -60.5 };
   const markerRecords = [];
+  const collator = new Intl.Collator("en", { sensitivity: "base" });
   let placeMap;
   let infoWindow;
+  let currentSort = { key: "ratings", direction: "desc" };
 
   const kindColors = {
     "pit-stop": "#1f4f73",
@@ -389,6 +452,63 @@ const structuredData = {
     fitMapToMarkers(visibleRecords);
   };
 
+  const getSortValue = (row, key) => {
+    if (key === "ratings" || key === "rating") {
+      return Number(row.dataset[key] || 0);
+    }
+    return row.dataset[key] ?? "";
+  };
+
+  const compareRows = (firstRow, secondRow) => {
+    const firstValue = getSortValue(firstRow, currentSort.key);
+    const secondValue = getSortValue(secondRow, currentSort.key);
+    const multiplier = currentSort.direction === "asc" ? 1 : -1;
+
+    if (currentSort.key === "ratings" || currentSort.key === "rating") {
+      const numericDifference = Number(firstValue) - Number(secondValue);
+      if (numericDifference !== 0) return multiplier * numericDifference;
+      return collator.compare(
+        firstRow.dataset.name ?? "",
+        secondRow.dataset.name ?? "",
+      );
+    }
+
+    const textCompare = collator.compare(
+      String(firstValue),
+      String(secondValue),
+    );
+    if (textCompare !== 0) return multiplier * textCompare;
+    return collator.compare(
+      firstRow.dataset.name ?? "",
+      secondRow.dataset.name ?? "",
+    );
+  };
+
+  const updateSortState = () => {
+    for (const button of sortButtons) {
+      const isActive = button.dataset.sortKey === currentSort.key;
+      button.dataset.sortDirection = isActive ? currentSort.direction : "";
+      button.closest("[role='columnheader']")?.setAttribute(
+        "aria-sort",
+        isActive
+          ? currentSort.direction === "asc"
+            ? "ascending"
+            : "descending"
+          : "none",
+      );
+    }
+  };
+
+  const sortRows = () => {
+    if (!placeList) return;
+    const sortedRows = [...placeRows].sort(compareRows);
+    for (const row of sortedRows) {
+      placeList.append(row);
+    }
+    if (placeHead) placeList.prepend(placeHead);
+    updateSortState();
+  };
+
   const applyFilters = () => {
     const kind = selectedKind();
 
@@ -448,6 +568,28 @@ const structuredData = {
   for (const input of kindInputs) {
     input.addEventListener("change", applyFilters);
   }
+  for (const button of sortButtons) {
+    button.addEventListener("click", () => {
+      const sortKey = button.dataset.sortKey;
+      if (!sortKey) return;
+
+      const defaultDirection = button.dataset.sortDefault ?? "asc";
+      currentSort =
+        currentSort.key === sortKey
+          ? {
+              key: sortKey,
+              direction: currentSort.direction === "asc" ? "desc" : "asc",
+            }
+          : {
+              key: sortKey,
+              direction: defaultDirection,
+            };
+
+      sortRows();
+      applyFilters();
+    });
+  }
+  updateSortState();
   applyFilters();
   initPlaceMap().catch((error) => {
     console.error("Unable to initialize trip map", error);
@@ -720,6 +862,57 @@ const structuredData = {
     text-transform: uppercase;
   }
 
+  .place-head > * {
+    display: flex;
+    align-items: stretch;
+    padding: 0;
+  }
+
+  .sort-button,
+  .sort-static {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0.55rem 0.6rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    text-transform: inherit;
+  }
+
+  .sort-button {
+    cursor: pointer;
+    gap: 0.25rem;
+  }
+
+  .sort-button:hover,
+  .sort-button:focus-visible {
+    color: var(--text);
+    background: color-mix(in srgb, var(--surface) 55%, transparent);
+    outline: none;
+  }
+
+  .sort-button::after {
+    content: "↕";
+    opacity: 0.35;
+    font-size: 0.75em;
+  }
+
+  .sort-button[data-sort-direction="asc"]::after {
+    content: "↑";
+    opacity: 0.9;
+  }
+
+  .sort-button[data-sort-direction="desc"]::after {
+    content: "↓";
+    opacity: 0.9;
+  }
+
   .place-row:not(.place-head):first-of-type,
   .place-head + .place-row {
     border-top: 0;
@@ -928,23 +1121,56 @@ const structuredData = {
 
   @media (max-width: 920px) {
     .place-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      padding: 0.4rem 0.45rem;
+      border-bottom: 1px solid var(--border);
+      grid-template-columns: none;
+    }
+
+    .place-head > * {
+      border-left: 0;
+      width: auto;
+      flex: 0 0 auto;
+    }
+
+    .place-head > *:nth-child(2) {
       display: none;
     }
 
-    .place-row {
+    .sort-button,
+    .sort-static {
+      width: auto;
+      min-height: 1.8rem;
+      padding: 0.25rem 0.45rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+    }
+
+    .sort-button[data-sort-direction="asc"],
+    .sort-button[data-sort-direction="desc"] {
+      border-color: var(--accent);
+      color: var(--text);
+      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    }
+
+    .place-row:not(.place-head) {
       position: relative;
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
         "name"
         "meta"
         "hours"
+        "rating"
         "note";
       gap: 0.12rem;
       padding: 0.55rem 2.8rem 0.55rem 0.65rem;
       align-items: start;
     }
 
-    .place-row > * {
+    .place-row:not(.place-head) > * {
       padding: 0;
       border-left: 0;
     }
@@ -971,7 +1197,8 @@ const structuredData = {
     }
 
     .rating {
-      display: none;
+      grid-area: rating;
+      font-size: 0.76rem;
     }
 
     .note {
