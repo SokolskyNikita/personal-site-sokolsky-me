@@ -14,24 +14,15 @@ const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
 );
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Place = (typeof pageData.places)[number];
-const places = pageData.places;
-const updatedDate = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-}).format(new Date(pageData.generatedAt));
-const segmentOrder = ["en-route", "lincoln", "optional"] as const;
-const segmentLabels: Record<(typeof segmentOrder)[number], string> = {
-  "en-route": "On the way (RN7 corridor)",
-  lincoln: "In Lincoln",
-  optional: "Optional detours",
-};
-const segmentShort: Record<(typeof segmentOrder)[number], string> = {
-  "en-route": "En route",
-  lincoln: "Lincoln",
-  optional: "Detours",
-};
-const kindLabels: Record<string, string> = {
+const kindOrder = [
+  "pit-stop",
+  "plaza",
+  "church",
+  "food",
+  "museum",
+  "park",
+] as const;
+const kindLabels: Record<(typeof kindOrder)[number], string> = {
   "pit-stop": "Pit stop",
   plaza: "Plaza",
   church: "Church",
@@ -39,18 +30,16 @@ const kindLabels: Record<string, string> = {
   museum: "Museum",
   park: "Park",
 };
-const sundayLabels: Record<string, string> = {
-  true: "Sunday OK",
-  maybe: "Check first",
-  false: "Closed Sunday",
-};
-const placesBySegment = segmentOrder.map((segment) => ({
-  segment,
-  label: segmentLabels[segment],
-  places: places
-    .filter((place: Place) => place.segment === segment)
-    .toSorted((a: Place, b: Place) => a.priority - b.priority),
-}));
+const places = pageData.places.toSorted(
+  (a: Place, b: Place) => a.priority - b.priority,
+);
+const kindOptions = kindOrder
+  .map((kind) => ({
+    kind,
+    label: kindLabels[kind],
+    count: places.filter((place: Place) => place.kind === kind).length,
+  }))
+  .filter((option) => option.count > 0);
 const googleMapsApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
@@ -59,9 +48,7 @@ const placeMapData = places.map((place: Place) => ({
   id: place.id,
   name: place.name,
   town: place.town,
-  segment: place.segment,
   kind: place.kind,
-  sundayOk: place.sundayOk,
   googleMapsUrl: place.googleMapsUrl,
   position: place.location,
 }));
@@ -154,141 +141,85 @@ const structuredData = {
             Not a fixed itinerary — pick stops that fit the clock.
           </p>
         </div>
-        <aside class="route-box" aria-label="Route snapshot">
-          <p>
-            <strong>Route:</strong>
-            {pageData.route.summary}
-          </p>
-          <p>
-            <strong>Leave BA:</strong>
-            {pageData.route.leaveBy} ·
-            <strong>Leave Lincoln:</strong>
-            by {pageData.route.leaveLincolnBy}
-          </p>
-          <p>
-            Check{" "}
-            <a
-              href={pageData.route.roadStatusUrl}
-              target="_blank"
-              rel="noreferrer noopener">national road status</a
-            >
-            before you go. Updated {updatedDate}.
-          </p>
-        </aside>
       </header>
 
-      <section class="schedule" aria-labelledby="schedule-heading">
-        <h2 id="schedule-heading">Rough day shape</h2>
-        <ol class="schedule-list">
-          {
-            pageData.scheduleHint.map((row) => (
-              <li>
-                <span class="time">{row.time}</span>
-                <span class="plan">{row.plan}</span>
-              </li>
-            ))
-          }
-        </ol>
-      </section>
-
       <div class="toolbar" aria-label="Place filters">
-        <fieldset class="segment-toggle">
+        <fieldset class="kind-toggle">
           <legend>Show</legend>
           <input
-            id="seg-all"
+            id="kind-all"
             type="radio"
-            name="segment"
+            name="kind"
             value=""
             autocomplete="off"
             checked
           />
-          <label for="seg-all">All ({places.length})</label>
+          <label for="kind-all">All ({places.length})</label>
           {
-            placesBySegment.flatMap(({ segment, places: group }) => [
+            kindOptions.flatMap(({ kind, label, count }) => [
               <input
-                id={`seg-${segment}`}
+                id={`kind-${kind}`}
                 type="radio"
-                name="segment"
-                value={segment}
+                name="kind"
+                value={kind}
                 autocomplete="off"
               />,
-              <label for={`seg-${segment}`}>
-                {segmentShort[segment]} ({group.length})
+              <label for={`kind-${kind}`} class={`kind-filter kind-${kind}`}>
+                {label} ({count})
               </label>,
             ])
           }
         </fieldset>
-        <fieldset class="extras-toggle">
-          <legend>Filter</legend>
-          <input id="filter-sunday" type="checkbox" autocomplete="off" checked />
-          <label for="filter-sunday">Sunday-solid only</label>
-        </fieldset>
       </div>
 
-      {
-        placesBySegment.map(({ segment, label, places: group }) => (
-          <section
-            class="place-section"
-            data-segment={segment}
-            aria-labelledby={`heading-${segment}`}
-          >
-            <div class="section-head">
-              <h2 id={`heading-${segment}`}>{label}</h2>
-              <p class="section-count" data-section-count={segment}>
-                {group.length} places
-              </p>
-            </div>
-            <div class="place-list">
-              {group.map((place: Place) => (
-                <article
-                  class="place-row"
-                  data-segment={place.segment}
-                  data-sunday={String(place.sundayOk)}
-                  data-kind={place.kind}
-                >
-                  <h3 class="place-name">
-                    {place.name}
-                    <span class="kind-chip">
-                      {kindLabels[place.kind] ?? place.kind}
-                    </span>
-                    <span
-                      class:list={[
-                        "sunday-chip",
-                        `sunday-${place.sundayOk === true ? "ok" : place.sundayOk}`,
-                      ]}
-                    >
-                      {sundayLabels[String(place.sundayOk)] ?? "Sunday?"}
-                    </span>
-                  </h3>
-                  <div class="map-actions">
-                    <a
-                      class="maps-link"
-                      href={place.googleMapsUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Open ${place.name} on Google Maps`}
-                      title={`Open ${place.name} on Google Maps`}
-                    >
-                      <span class="maps-icon" set:html={mapsIcon} />
-                    </a>
-                  </div>
-                  <p class="meta-line">
-                    <span class="town">{place.town}</span>
-                    <span class="address">{place.address}</span>
-                  </p>
-                  <p class="hours">{place.sundayHours}</p>
-                  <p class="rating">
-                    {place.rating != null
-                      ? `${place.rating}★ (${place.ratings})`
-                      : "—"}
-                  </p>
-                  <p class="note">{place.note}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))
-      }
+      <section class="place-section" aria-label="Trip stop ideas">
+        <div class="place-list">
+          <div class="place-row place-head" aria-hidden="true">
+            <span>Place</span>
+            <span>Map</span>
+            <span>Where</span>
+            <span>Hours</span>
+            <span>Rating</span>
+            <span>Notes</span>
+          </div>
+          {
+            places.map((place: Place) => (
+              <article class="place-row" data-kind={place.kind}>
+                <h2 class="place-name">
+                  {place.name}
+                  <span class={`kind-chip kind-${place.kind}`}>
+                    {kindLabels[place.kind as keyof typeof kindLabels] ??
+                      place.kind}
+                  </span>
+                </h2>
+                <div class="map-actions">
+                  <a
+                    class="maps-link"
+                    href={place.googleMapsUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`Open ${place.name} on Google Maps`}
+                    title={`Open ${place.name} on Google Maps`}
+                  >
+                    <span class="maps-icon" set:html={mapsIcon} />
+                  </a>
+                </div>
+                <p class="meta-line">
+                  <span class="town">{place.town}</span>
+                  <span class="address">{place.address}</span>
+                </p>
+                <p class="hours">{place.sundayHours}</p>
+                <p class="rating">
+                  {place.rating != null
+                    ? `${place.rating}★ (${place.ratings})`
+                    : "—"}
+                </p>
+                <p class="note">{place.note}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
 
       <section class="place-map-section" aria-labelledby="place-map-heading">
         <div class="map-copy">
@@ -367,10 +298,10 @@ const structuredData = {
     });
   }
 
-  const segmentInputs = [...document.querySelectorAll('input[name="segment"]')];
-  const sundayFilter = document.querySelector("#filter-sunday");
-  const placeRows = [...document.querySelectorAll(".place-row")];
-  const placeSections = [...document.querySelectorAll(".place-section")];
+  const kindInputs = [...document.querySelectorAll('input[name="kind"]')];
+  const placeRows = [
+    ...document.querySelectorAll(".place-row:not(.place-head)"),
+  ];
   const mapElement = document.querySelector("#place-map");
   const mapStatus = document.querySelector("#place-map-status");
   const mapCenter = { lat: -34.65, lng: -60.5 };
@@ -378,10 +309,22 @@ const structuredData = {
   let placeMap;
   let infoWindow;
 
-  const segmentColors = {
-    "en-route": "#2f6f5e",
-    lincoln: "#8b3a2b",
-    optional: "#5a6470",
+  const kindColors = {
+    "pit-stop": "#1f4f73",
+    plaza: "#2a5a38",
+    church: "#5a3d6e",
+    food: "#8a3f1f",
+    museum: "#5a4a2e",
+    park: "#1f5c4a",
+  };
+
+  const kindLabels = {
+    "pit-stop": "Pit stop",
+    plaza: "Plaza",
+    church: "Church",
+    food: "Food",
+    museum: "Museum",
+    park: "Park",
   };
 
   const escapeHtml = (value) =>
@@ -397,33 +340,24 @@ const structuredData = {
         })[character],
     );
 
-  const selectedSegment = () =>
-    segmentInputs.find((input) => input.checked)?.value ?? "";
+  const selectedKind = () =>
+    kindInputs.find((input) => input.checked)?.value ?? "";
 
-  const sundaySolidOnly = () => Boolean(sundayFilter?.checked);
-
-  const placePasses = (place, segment, sundayOnly) => {
-    if (segment && place.segment !== segment) return false;
-    if (sundayOnly && place.sundayOk !== true) return false;
+  const placePasses = (place, kind) => {
+    if (kind && place.kind !== kind) return false;
     return true;
   };
 
   const visiblePlaces = () => {
-    const segment = selectedSegment();
-    const sundayOnly = sundaySolidOnly();
-    return placeMapData.filter((place) =>
-      placePasses(place, segment, sundayOnly),
-    );
+    const kind = selectedKind();
+    return placeMapData.filter((place) => placePasses(place, kind));
   };
 
   const updateMapStatus = () => {
     if (!mapStatus) return;
     const visible = visiblePlaces();
-    const bits = [];
-    const segment = selectedSegment();
-    if (segment) bits.push(segment);
-    if (sundaySolidOnly()) bits.push("Sunday-solid");
-    const suffix = bits.length ? ` · ${bits.join(" · ")}` : "";
+    const kind = selectedKind();
+    const suffix = kind ? ` · ${kindLabels[kind] ?? kind}` : "";
     mapStatus.textContent = `Showing ${visible.length} place${visible.length === 1 ? "" : "s"}${suffix}.`;
   };
 
@@ -456,26 +390,11 @@ const structuredData = {
   };
 
   const applyFilters = () => {
-    const segment = selectedSegment();
-    const sundayOnly = sundaySolidOnly();
+    const kind = selectedKind();
 
     for (const row of placeRows) {
-      const rowSegment = row.dataset.segment ?? "";
-      const rowSunday = row.dataset.sunday ?? "";
-      const sundayOk = rowSunday === "true";
-      const show =
-        (!segment || rowSegment === segment) && (!sundayOnly || sundayOk);
-      row.hidden = !show;
-    }
-
-    for (const section of placeSections) {
-      const rows = [...section.querySelectorAll(".place-row")];
-      const visibleCount = rows.filter((row) => !row.hidden).length;
-      section.hidden = visibleCount === 0;
-      const countEl = section.querySelector("[data-section-count]");
-      if (countEl) {
-        countEl.textContent = `${visibleCount} place${visibleCount === 1 ? "" : "s"}`;
-      }
+      const rowKind = row.dataset.kind ?? "";
+      row.hidden = Boolean(kind) && rowKind !== kind;
     }
 
     syncMapMarkers();
@@ -506,7 +425,7 @@ const structuredData = {
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 8,
-          fillColor: segmentColors[place.segment] ?? "#444",
+          fillColor: kindColors[place.kind] ?? "#444",
           fillOpacity: 0.95,
           strokeColor: "#ffffff",
           strokeWeight: 1.5,
@@ -515,7 +434,7 @@ const structuredData = {
 
       marker.addListener("click", () => {
         infoWindow.setContent(
-          `<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.town)} · ${escapeHtml(place.kind)}<br><a href="${escapeHtml(place.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
+          `<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.town)} · ${escapeHtml(kindLabels[place.kind] ?? place.kind)}<br><a href="${escapeHtml(place.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
         );
         infoWindow.open(placeMap, marker);
       });
@@ -526,10 +445,9 @@ const structuredData = {
     applyFilters();
   };
 
-  for (const input of segmentInputs) {
+  for (const input of kindInputs) {
     input.addEventListener("change", applyFilters);
   }
-  sundayFilter?.addEventListener("change", applyFilters);
   applyFilters();
   initPlaceMap().catch((error) => {
     console.error("Unable to initialize trip map", error);
@@ -669,40 +587,6 @@ const structuredData = {
     font-size: 0.92rem;
   }
 
-  .route-box {
-    margin: 0;
-    padding: 0.65rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 0.7rem;
-    background: color-mix(in srgb, var(--surface), transparent 8%);
-    box-shadow: var(--shadow);
-  }
-
-  .route-box p {
-    margin: 0 0 0.3rem;
-    color: var(--text-muted);
-    font-size: 0.82rem;
-  }
-
-  .route-box p:last-child {
-    margin-bottom: 0;
-  }
-
-  .route-box strong {
-    color: var(--text);
-    font-weight: 700;
-  }
-
-  .schedule {
-    margin: 0.55rem 0 0.7rem;
-    padding: 0.65rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 0.7rem;
-    background: var(--surface);
-  }
-
-  .schedule h2,
-  .section-head h2,
   .map-copy h2 {
     margin: 0;
     font-size: 1.05rem;
@@ -712,8 +596,6 @@ const structuredData = {
   }
 
   .intro,
-  .route-box,
-  .schedule-list,
   .toolbar,
   .meta-line,
   .hours,
@@ -722,42 +604,14 @@ const structuredData = {
   .map-status,
   .page-footer,
   .kind-chip,
-  .sunday-chip,
-  .segment-toggle label,
-  .extras-toggle label,
-  .section-count {
+  .kind-toggle label,
+  .place-head {
     font-family:
       "Segoe UI",
       "Helvetica Neue",
       Helvetica,
       Arial,
       sans-serif;
-  }
-
-  .schedule-list {
-    margin: 0.45rem 0 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: 0.28rem;
-  }
-
-  .schedule-list li {
-    display: grid;
-    grid-template-columns: minmax(7.5rem, 9.5rem) 1fr;
-    gap: 0.45rem;
-    align-items: baseline;
-    font-size: 0.84rem;
-  }
-
-  .time {
-    color: var(--accent);
-    font-weight: 750;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .plan {
-    color: var(--text-muted);
   }
 
   .toolbar {
@@ -767,8 +621,7 @@ const structuredData = {
     margin: 0 0 0.65rem;
   }
 
-  .segment-toggle,
-  .extras-toggle {
+  .kind-toggle {
     display: flex;
     width: fit-content;
     align-items: center;
@@ -781,8 +634,7 @@ const structuredData = {
     background: color-mix(in srgb, var(--surface), transparent 6%);
   }
 
-  .segment-toggle legend,
-  .extras-toggle legend {
+  .kind-toggle legend {
     margin: 0 0.25rem 0 0.15rem;
     padding: 0;
     color: var(--text-muted);
@@ -793,15 +645,13 @@ const structuredData = {
     text-transform: uppercase;
   }
 
-  .segment-toggle input,
-  .extras-toggle input {
+  .kind-toggle input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
   }
 
-  .segment-toggle label,
-  .extras-toggle label {
+  .kind-toggle label {
     display: inline-flex;
     min-height: 1.9rem;
     align-items: center;
@@ -813,38 +663,27 @@ const structuredData = {
     padding: 0 0.65rem;
   }
 
-  #seg-all:checked ~ label[for="seg-all"],
-  #seg-en-route:checked ~ label[for="seg-en-route"],
-  #seg-lincoln:checked ~ label[for="seg-lincoln"],
-  #seg-optional:checked ~ label[for="seg-optional"],
-  #filter-sunday:checked ~ label[for="filter-sunday"] {
+  .kind-toggle label.kind-filter {
+    opacity: 0.72;
+  }
+
+  #kind-all:checked ~ label[for="kind-all"] {
     background: var(--accent);
     color: var(--bg);
   }
 
+  #kind-pit-stop:checked ~ label[for="kind-pit-stop"],
+  #kind-plaza:checked ~ label[for="kind-plaza"],
+  #kind-church:checked ~ label[for="kind-church"],
+  #kind-food:checked ~ label[for="kind-food"],
+  #kind-museum:checked ~ label[for="kind-museum"],
+  #kind-park:checked ~ label[for="kind-park"] {
+    opacity: 1;
+    box-shadow: inset 0 0 0 1.5px currentColor;
+  }
+
   .place-section {
     margin: 0 0 0.7rem;
-  }
-
-  .place-section[hidden] {
-    display: none;
-  }
-
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin: 0 0 0.35rem;
-  }
-
-  .section-count {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
 
   .place-list {
@@ -870,7 +709,19 @@ const structuredData = {
     border-top: 1px solid var(--border);
   }
 
-  .place-row:first-child {
+  .place-head {
+    order: -1;
+    border-top: 0;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .place-row:not(.place-head):first-of-type,
+  .place-head + .place-row {
     border-top: 0;
   }
 
@@ -895,6 +746,7 @@ const structuredData = {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.3rem 0.4rem;
+    margin: 0;
     font-family:
       "Segoe UI",
       "Helvetica Neue",
@@ -906,37 +758,79 @@ const structuredData = {
     line-height: 1.2;
   }
 
-  .kind-chip,
-  .sunday-chip {
+  .kind-chip {
     display: inline-flex;
     align-items: center;
     min-height: 1.2rem;
     padding: 0 0.4rem;
     border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--text-muted);
     font-size: 0.62rem;
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  .kind-chip {
-    background: var(--surface-soft);
-    color: var(--text-muted);
+  .kind-pit-stop {
+    background: #dce8f2;
+    color: #1f4f73;
   }
 
-  .sunday-ok {
-    background: var(--accent-soft);
-    color: var(--accent);
+  .kind-plaza {
+    background: #dde9df;
+    color: #2a5a38;
   }
 
-  .sunday-maybe {
-    background: color-mix(in srgb, #c9a227, transparent 82%);
-    color: #8a6a10;
+  .kind-church {
+    background: #ebe3f0;
+    color: #5a3d6e;
+  }
+
+  .kind-food {
+    background: #f3e0d4;
+    color: #8a3f1f;
+  }
+
+  .kind-museum {
+    background: #e4e0d6;
+    color: #5a4a2e;
+  }
+
+  .kind-park {
+    background: #d7ebe4;
+    color: #1f5c4a;
   }
 
   @media (prefers-color-scheme: dark) {
-    .sunday-maybe {
-      color: #e0c48a;
+    .kind-pit-stop {
+      background: #1c3344;
+      color: #9ec5e0;
+    }
+
+    .kind-plaza {
+      background: #24362a;
+      color: #a8d0b4;
+    }
+
+    .kind-church {
+      background: #34283c;
+      color: #c9b0d8;
+    }
+
+    .kind-food {
+      background: #3a281e;
+      color: #e0b090;
+    }
+
+    .kind-museum {
+      background: #322c22;
+      color: #d0c4a4;
+    }
+
+    .kind-park {
+      background: #1e342e;
+      color: #9fd0c0;
     }
   }
 
@@ -1033,9 +927,8 @@ const structuredData = {
   }
 
   @media (max-width: 920px) {
-    .schedule-list li {
-      grid-template-columns: 1fr;
-      gap: 0.05rem;
+    .place-head {
+      display: none;
     }
 
     .place-row {
@@ -1096,8 +989,7 @@ const structuredData = {
       font-size: clamp(1.4rem, 8vw, 1.85rem);
     }
 
-    .segment-toggle,
-    .extras-toggle {
+    .kind-toggle {
       border-radius: 0.85rem;
     }
 

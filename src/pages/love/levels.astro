@@ -1,0 +1,356 @@
+---
+import usa from "../../data/love-levels/usa.json";
+import uk from "../../data/love-levels/uk.json";
+import argentina from "../../data/love-levels/argentina.json";
+import czechRepublic from "../../data/love-levels/czech-republic.json";
+import russia from "../../data/love-levels/russia.json";
+
+export const prerender = true;
+
+const pageTitle = "Relationship levels by country";
+const pageDescription =
+  "Informal dating and relationship ladders for USA, UK, Argentina, Czech Republic, and Russia — from nothing to married with kids.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const locales = [usa, uk, argentina, czechRepublic, russia];
+const defaultLocale = locales.find((l) => l.default) ?? locales[0];
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main>
+      <p class="crumb"><a href="/">sokolsky.me</a></p>
+      <h1>{pageTitle}</h1>
+      <p class="lede">
+        Informal ladders locals actually use — not official scales. Order is approximate; people skip and overlap.
+      </p>
+
+      <div class="locale-bar" role="tablist" aria-label="Country / language">
+        {
+          locales.map((locale) => (
+            <button
+              type="button"
+              class:list={["locale-btn", { active: locale.id === defaultLocale.id }]}
+              role="tab"
+              aria-selected={locale.id === defaultLocale.id ? "true" : "false"}
+              aria-controls={`panel-${locale.id}`}
+              id={`tab-${locale.id}`}
+              data-locale={locale.id}
+            >
+              <span class="locale-short">{locale.shortLabel}</span>
+              <span class="locale-full">{locale.label}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        locales.map((locale) => (
+          <section
+            class:list={["locale-panel", { active: locale.id === defaultLocale.id }]}
+            id={`panel-${locale.id}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${locale.id}`}
+            hidden={locale.id !== defaultLocale.id}
+            data-locale={locale.id}
+          >
+            <p class="meta">
+              <span class="lang">{locale.language}</span>
+              <span class="sep">·</span>
+              <span class="count">0–{locale.levels[locale.levels.length - 1].level}</span>
+            </p>
+            <p class="note">{locale.ladderNote}</p>
+            <ol class="ladder">
+              {locale.levels.map((item) => (
+                <li>
+                  <span class="lvl" aria-hidden="true">
+                    {item.level}
+                  </span>
+                  <div class="body">
+                    <p class="term">{item.term}</p>
+                    <p class="meaning">{item.meaning}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
+      }
+
+      <p class="footnote">
+        Verified against local-facing sources only (local media, local forums). Dropped tourist/expat glosses and US calques without local evidence. Order is approximate.
+      </p>
+    </main>
+
+    <script>
+      const buttons = document.querySelectorAll<HTMLButtonElement>(".locale-btn");
+      const panels = document.querySelectorAll<HTMLElement>(".locale-panel");
+
+      function selectLocale(id: string) {
+        buttons.forEach((btn) => {
+          const on = btn.dataset.locale === id;
+          btn.classList.toggle("active", on);
+          btn.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        panels.forEach((panel) => {
+          const on = panel.dataset.locale === id;
+          panel.classList.toggle("active", on);
+          panel.hidden = !on;
+        });
+        try {
+          history.replaceState(null, "", `#${id}`);
+        } catch {
+          /* ignore */
+        }
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const locale = btn.dataset.locale;
+          if (locale) selectLocale(locale);
+        });
+      });
+
+      const hash = location.hash.replace(/^#/, "");
+      if (hash && document.querySelector(`[data-locale="${hash}"]`)) {
+        selectLocale(hash);
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111111;
+    --muted: #555555;
+    --line: #e4e4e4;
+    --chip: #f3f3f3;
+    --chip-on: #111111;
+    --chip-on-text: #ffffff;
+    --lvl: #888888;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --text: #eeeeee;
+      --muted: #aaaaaa;
+      --line: #2a2a2a;
+      --chip: #1c1c1c;
+      --chip-on: #eeeeee;
+      --chip-on-text: #111111;
+      --lvl: #888888;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+      sans-serif;
+    line-height: 1.4;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0.75rem 0.85rem 1.5rem;
+  }
+
+  main {
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+
+  .crumb {
+    margin: 0 0 0.35rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .crumb a {
+    color: var(--muted);
+  }
+
+  h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    margin: 0 0 0.65rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .locale-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0 0 0.7rem;
+  }
+
+  .locale-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--chip);
+    color: var(--text);
+    border-radius: 0.35rem;
+    padding: 0.35rem 0.55rem;
+    font: inherit;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    cursor: pointer;
+    min-height: 2rem;
+  }
+
+  .locale-btn .locale-full {
+    display: none;
+  }
+
+  .locale-btn.active {
+    background: var(--chip-on);
+    color: var(--chip-on-text);
+    border-color: var(--chip-on);
+  }
+
+  @media (min-width: 420px) {
+    .locale-btn .locale-short {
+      display: none;
+    }
+    .locale-btn .locale-full {
+      display: inline;
+    }
+  }
+
+  .locale-panel {
+    display: none;
+  }
+
+  .locale-panel.active {
+    display: block;
+  }
+
+  .meta {
+    margin: 0 0 0.2rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .sep {
+    margin: 0 0.25rem;
+  }
+
+  .note {
+    margin: 0 0 0.55rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .ladder {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .ladder li {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    gap: 0.45rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+
+  .lvl {
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--lvl);
+    padding-top: 0.12rem;
+    text-align: right;
+  }
+
+  .body {
+    min-width: 0;
+  }
+
+  .term {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .meaning {
+    margin: 0.1rem 0 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+
+  .footnote {
+    margin: 0.75rem 0 0;
+    font-size: 0.7rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  a {
+    color: inherit;
+  }
+</style>
