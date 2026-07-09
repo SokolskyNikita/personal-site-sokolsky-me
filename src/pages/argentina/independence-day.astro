@@ -88,14 +88,6 @@ const structuredData = {
         </div>
         <p class="eyebrow">9 de Julio · 1816</p>
         <h1 data-language-title data-en={pageTitle} data-es={spanishPageTitle}>{pageTitle}</h1>
-        <p
-          class="dek"
-          data-language-dek
-          data-en="What 9 July commemorates, how Argentines mark it and the longer story behind the date."
-          data-es="Qué conmemora el 9 de julio, cómo se celebra y la historia más larga detrás de la fecha."
-        >
-          What 9 July commemorates, how Argentines mark it and the longer story behind the date.
-        </p>
       </header>
 
       <article class="article language-panel" lang="en" data-language-panel="en">
@@ -703,7 +695,6 @@ const structuredData = {
       const panels = document.querySelectorAll("[data-language-panel]");
       const toggles = document.querySelectorAll("[data-language-toggle]");
       const title = document.querySelector("[data-language-title]");
-      const dek = document.querySelector("[data-language-dek]");
       const description = document.querySelector('meta[name="description"]');
       const homeLink = document.querySelector(".home-link");
       const switcher = document.querySelector(".language-switch");
@@ -715,7 +706,6 @@ const structuredData = {
         document.documentElement.lang = copy.documentLang;
         document.title = copy.title;
         title.textContent = title.dataset[nextLanguage];
-        dek.textContent = dek.dataset[nextLanguage];
         description?.setAttribute("content", description.dataset[nextLanguage] ?? copy.description);
         homeLink?.setAttribute("aria-label", copy.homeLabel);
         switcher?.setAttribute("aria-label", copy.navLabel);
@@ -908,16 +898,6 @@ const structuredData = {
     font-weight: 650;
     line-height: 1.05;
     letter-spacing: -0.04em;
-    overflow-wrap: break-word;
-  }
-
-  .dek {
-    max-width: 44rem;
-    margin: 0.2rem 0 0;
-    color: var(--text-soft);
-    font-size: clamp(1.02rem, 1.6vw, 1.2rem);
-    line-height: 1.45;
-    letter-spacing: -0.01em;
     overflow-wrap: break-word;
   }
 
@@ -1151,11 +1131,6 @@ const structuredData = {
       max-width: 18ch;
       font-size: clamp(1.7rem, 7.5vw, 2.15rem);
       letter-spacing: -0.035em;
-    }
-
-    .dek {
-      font-size: 1.02rem;
-      line-height: 1.48;
     }
 
     .article {
