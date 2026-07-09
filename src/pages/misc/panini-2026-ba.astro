@@ -55,50 +55,25 @@ const kindOptions = [...kindCounts.entries()]
     label: kindLabels[name] ?? name,
     count,
   }));
-const stockRank = (status: Seller["stockStatus"]) =>
-  ({ in: 0, variable: 1, scarce: 2, out: 3 })[status] ?? 9;
-const sortRank = (
-  items: Seller[],
-  compare: (a: Seller, b: Seller) => number,
-) =>
-  new Map<string, number>(
-    items
-      .toSorted(compare)
-      .map((seller: Seller, index: number) => [seller.id, index + 1]),
+const parseMinPackPrice = (priceNote: string) => {
+  const match = priceNote.match(/^ARS\s*([\d,]+)\/pack\b/i);
+  if (!match) return null;
+  const value = Number(match[1].replace(/,/g, ""));
+  return Number.isFinite(value) ? value : null;
+};
+const sellersWithSort = sellers
+  .map((seller: Seller) => ({
+    ...seller,
+    kindLabel: kindLabels[seller.kind] ?? seller.kind,
+    minPackPrice: parseMinPackPrice(seller.priceNote),
+  }))
+  .toSorted(
+    (a, b) =>
+      Number(a.minPackPrice === null) - Number(b.minPackPrice === null) ||
+      (a.minPackPrice ?? Number.POSITIVE_INFINITY) -
+        (b.minPackPrice ?? Number.POSITIVE_INFINITY) ||
+      collator.compare(a.name, b.name),
   );
-const priorityRanks = sortRank(
-  sellers,
-  (a: Seller, b: Seller) =>
-    a.priority - b.priority || collator.compare(a.name, b.name),
-);
-const bulkRanks = sortRank(
-  sellers,
-  (a: Seller, b: Seller) =>
-    Number(b.bulkHighlight) - Number(a.bulkHighlight) ||
-    Number(b.bulk) - Number(a.bulk) ||
-    stockRank(a.stockStatus) - stockRank(b.stockStatus) ||
-    a.priority - b.priority,
-);
-const stockRanks = sortRank(
-  sellers,
-  (a: Seller, b: Seller) =>
-    stockRank(a.stockStatus) - stockRank(b.stockStatus) ||
-    Number(b.bulk) - Number(a.bulk) ||
-    a.priority - b.priority,
-);
-const nameRanks = sortRank(sellers, (a: Seller, b: Seller) =>
-  collator.compare(a.name, b.name),
-);
-const sellersWithSort = sellers.map((seller: Seller) => ({
-  ...seller,
-  kindLabel: kindLabels[seller.kind] ?? seller.kind,
-  sortOrderStyle: [
-    `--sort-priority: ${priorityRanks.get(seller.id)}`,
-    `--sort-bulk: ${bulkRanks.get(seller.id)}`,
-    `--sort-stock: ${stockRanks.get(seller.id)}`,
-    `--sort-name: ${nameRanks.get(seller.id)}`,
-  ].join("; "),
-}));
 const buenosAiresBounds = {
   latMin: -34.72,
   latMax: -34.48,
@@ -232,17 +207,6 @@ const structuredData = {
           </p>
         </div>
         <div class="toolbar" aria-label="Seller controls">
-          <fieldset class="sort-toggle">
-            <legend>Sort by</legend>
-            <input id="sort-bulk" type="radio" name="sort" autocomplete="off" checked />
-            <label for="sort-bulk">Bulk first</label>
-            <input id="sort-stock" type="radio" name="sort" autocomplete="off" />
-            <label for="sort-stock">Stock</label>
-            <input id="sort-priority" type="radio" name="sort" autocomplete="off" />
-            <label for="sort-priority">Guide order</label>
-            <input id="sort-name" type="radio" name="sort" autocomplete="off" />
-            <label for="sort-name">Name</label>
-          </fieldset>
           <fieldset class="extras-toggle">
             <legend>Filter</legend>
             <input id="filter-bulk" type="checkbox" autocomplete="off" />
@@ -271,43 +235,6 @@ const structuredData = {
         </div>
       </header>
 
-      <aside class="callout callout-bulk" aria-labelledby="bulk-heading">
-        <p class="eyebrow">Bulk pick</p>
-        <h2 id="bulk-heading">Bulk options right now</h2>
-        <ul>
-          <li>
-            <strong>Sealed sticker bulk:</strong> WOWCO caja ×1000 (listed); Activa (Santa Fe)
-            volume tiers from 1,000 packs; Figu Shop pack ×25 when available.
-          </li>
-          <li>
-            <strong>CABA wholesale pickup:</strong> Golmarymar Caballito & Mataderos (site promotes WC
-            2026); Megafigus (San Cristóbal) — call first.
-          </li>
-          <li>
-            <strong>CABA retail bundle:</strong> Cover Cell Devoto lists pack ×25 in stock; pricey vs
-            MSRP, but a verified local pickup/delivery option.
-          </li>
-          <li>
-            <strong>Promo stickers:</strong> Coca-Cola × Panini canje points trade marked caps + ARS
-            1,000 for special 3-sticker envelopes.
-          </li>
-          <li>
-            <strong>Official sealed in stock:</strong> ZonaKids Adrenalyn XL display ×24 (cards, not
-            stickers).
-          </li>
-          <li>
-            <strong>Best BA shelf multi-pack:</strong> Carrefour Salguero, Jumbo Bullrich, Coto Santa
-            Fe, Disco, Vea — buy stacks at MSRP when restocked.
-          </li>
-        </ul>
-      </aside>
-
-      <aside class="callout callout-warn" aria-labelledby="scam-heading">
-        <p class="eyebrow">Scam watch</p>
-        <h2 id="scam-heading">Official channels only</h2>
-        <p>{pageData.scamWarning}</p>
-      </aside>
-
       <section class="seller-list" aria-label="Panini sellers">
         <div class="seller-row seller-head" aria-hidden="true">
           <span>Seller</span>
@@ -325,7 +252,6 @@ const structuredData = {
               "seller-row",
               { "seller-bulk-highlight": seller.bulkHighlight },
             ]}
-            style={seller.sortOrderStyle}
             data-kind={seller.kind}
             data-bulk={String(seller.bulk)}
             data-stock={seller.stockStatus}
@@ -457,7 +383,6 @@ const structuredData = {
   const kindFilter = document.querySelector("#kind-filter");
   const bulkFilter = document.querySelector("#filter-bulk");
   const inStockFilter = document.querySelector("#filter-in-stock");
-  const defaultSort = document.querySelector("#sort-bulk");
   const sellerRows = [...document.querySelectorAll(".seller-row:not(.seller-head)")];
   const mapElement = document.querySelector("#seller-map");
   const mapStatus = document.querySelector("#seller-map-status");
@@ -615,7 +540,6 @@ const structuredData = {
   };
 
   const resetControls = () => {
-    if (defaultSort) defaultSort.checked = true;
     if (kindFilter) kindFilter.value = "";
     if (bulkFilter) bulkFilter.checked = false;
     if (inStockFilter) inStockFilter.checked = false;
@@ -795,7 +719,6 @@ const structuredData = {
     justify-items: stretch;
   }
 
-  .sort-toggle,
   .extras-toggle {
     display: flex;
     width: 100%;
@@ -847,7 +770,6 @@ const structuredData = {
     outline-offset: 2px;
   }
 
-  .sort-toggle legend,
   .extras-toggle legend {
     margin: 0 0.2rem 0 0.15rem;
     padding: 0;
@@ -859,14 +781,12 @@ const structuredData = {
     text-transform: uppercase;
   }
 
-  .sort-toggle input,
   .extras-toggle input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
   }
 
-  .sort-toggle label,
   .extras-toggle label {
     display: inline-flex;
     min-height: 1.9rem;
@@ -884,7 +804,6 @@ const structuredData = {
       color 0.18s ease;
   }
 
-  .sort-toggle label::before,
   .extras-toggle label::before {
     content: "";
     width: 0.5rem;
@@ -894,20 +813,12 @@ const structuredData = {
     opacity: 0.75;
   }
 
-  #sort-bulk:checked ~ label[for="sort-bulk"],
-  #sort-stock:checked ~ label[for="sort-stock"],
-  #sort-priority:checked ~ label[for="sort-priority"],
-  #sort-name:checked ~ label[for="sort-name"],
   #filter-bulk:checked ~ label[for="filter-bulk"],
   #filter-in-stock:checked ~ label[for="filter-in-stock"] {
     background: var(--accent);
     color: var(--bg);
   }
 
-  #sort-bulk:checked ~ label[for="sort-bulk"]::before,
-  #sort-stock:checked ~ label[for="sort-stock"]::before,
-  #sort-priority:checked ~ label[for="sort-priority"]::before,
-  #sort-name:checked ~ label[for="sort-name"]::before,
   #filter-bulk:checked ~ label[for="filter-bulk"]::before,
   #filter-in-stock:checked ~ label[for="filter-in-stock"]::before {
     background: currentColor;
@@ -920,51 +831,6 @@ const structuredData = {
     color: var(--text-muted);
     font-size: 0.76rem;
     text-align: left;
-  }
-
-  .callout {
-    margin: 0 0 0.55rem;
-    padding: 0.7rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 0.85rem;
-    background: var(--surface);
-    box-shadow: var(--shadow);
-  }
-
-  .callout h2 {
-    margin: 0.1rem 0 0.35rem;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.05rem;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
-
-  .callout p,
-  .callout li {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.84rem;
-  }
-
-  .callout ul {
-    margin: 0;
-    padding-left: 1.05rem;
-    display: grid;
-    gap: 0.28rem;
-  }
-
-  .callout-bulk {
-    border-color: color-mix(in srgb, var(--bulk), transparent 55%);
-    background:
-      linear-gradient(135deg, color-mix(in srgb, var(--bulk-soft), transparent 20%), transparent 70%),
-      var(--surface);
-  }
-
-  .callout-warn {
-    border-color: color-mix(in srgb, var(--accent), transparent 55%);
-    background:
-      linear-gradient(135deg, color-mix(in srgb, var(--accent-soft), transparent 25%), transparent 70%),
-      var(--surface);
   }
 
   .seller-list {
@@ -1159,22 +1025,6 @@ const structuredData = {
     display: none;
   }
 
-  body:has(#sort-bulk:checked) .seller-row:not(.seller-head) {
-    order: var(--sort-bulk);
-  }
-
-  body:has(#sort-stock:checked) .seller-row:not(.seller-head) {
-    order: var(--sort-stock);
-  }
-
-  body:has(#sort-priority:checked) .seller-row:not(.seller-head) {
-    order: var(--sort-priority);
-  }
-
-  body:has(#sort-name:checked) .seller-row:not(.seller-head) {
-    order: var(--sort-name);
-  }
-
   .seller-map-section {
     display: grid;
     gap: 0.55rem;
@@ -1262,30 +1112,14 @@ const structuredData = {
       font-size: 0.88rem;
     }
 
-    .sort-toggle,
     .extras-toggle {
       width: 100%;
       border-radius: 0.75rem;
     }
 
-    .sort-toggle label,
     .extras-toggle label {
       font-size: 0.74rem;
       padding: 0 0.55rem;
-    }
-
-    .callout {
-      padding: 0.6rem 0.7rem;
-      margin-bottom: 0.45rem;
-    }
-
-    .callout h2 {
-      font-size: 0.98rem;
-    }
-
-    .callout p,
-    .callout li {
-      font-size: 0.8rem;
     }
 
     .seller-list {
