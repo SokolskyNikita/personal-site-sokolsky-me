@@ -1,6 +1,14 @@
 ---
 import usa from "../../data/love-levels/usa.json";
+import china from "../../data/love-levels/china.json";
+import germany from "../../data/love-levels/germany.json";
+import japan from "../../data/love-levels/japan.json";
 import uk from "../../data/love-levels/uk.json";
+import india from "../../data/love-levels/india.json";
+import france from "../../data/love-levels/france.json";
+import italy from "../../data/love-levels/italy.json";
+import brazil from "../../data/love-levels/brazil.json";
+import canada from "../../data/love-levels/canada.json";
 import argentina from "../../data/love-levels/argentina.json";
 import czechRepublic from "../../data/love-levels/czech-republic.json";
 import russia from "../../data/love-levels/russia.json";
@@ -9,13 +17,27 @@ export const prerender = true;
 
 const pageTitle = "Relationship levels by country";
 const pageDescription =
-  "Informal dating and relationship ladders for USA, UK, Argentina, Czech Republic, and Russia — from nothing to married with kids.";
+  "Informal dating and relationship ladders by country — USA, China, Germany, Japan, UK, India, France, Italy, Brazil, Canada, Argentina, Czech Republic, and Russia.";
 const themeColorLight = "#ffffff";
 const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-const locales = [usa, uk, argentina, czechRepublic, russia];
+const locales = [
+  usa,
+  china,
+  germany,
+  japan,
+  uk,
+  india,
+  france,
+  italy,
+  brazil,
+  canada,
+  argentina,
+  czechRepublic,
+  russia,
+];
 const defaultLocale = locales.find((l) => l.default) ?? locales[0];
 const structuredData = {
   "@context": "https://schema.org",
