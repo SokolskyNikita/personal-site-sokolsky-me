@@ -93,7 +93,6 @@ const hotelsWithSort = hotels.map((hotel: Hotel) => ({
       ? `Source: ${hotel.price.source}. ${hotel.price.note ?? ""}`.trim()
       : `Source: ${hotel.price.source}. ${hotel.price.note ?? ""}`.trim(),
   driveLabel: `~${hotel.driveMinutes} min`,
-  romanceTitle: hotel.romance.why,
   sortOrderStyle: [
     `--sort-romance: ${romanceRanks.get(hotel.id)}`,
     `--sort-price: ${priceRanks.get(hotel.id)}`,
@@ -250,7 +249,6 @@ const structuredData = {
           <span>Area</span>
           <span>From</span>
           <span>Drive (min)</span>
-          <span>Romance</span>
           <span>GMaps rating</span>
           <span>Notes</span>
         </div>
@@ -294,13 +292,6 @@ const structuredData = {
                 )}
               </p>
               <p class="drive">{hotel.driveLabel}</p>
-              <p
-                class="romance"
-                title={hotel.romanceTitle}
-                aria-label={`Romance rank ${hotel.romance.rank}`}
-              >
-                <span class="romance-rank">#{hotel.romance.rank}</span>
-              </p>
               <p
                 class="rating"
                 aria-label={`${hotel.rating.toFixed(1)} Google Maps rating from ${hotel.reviewCountLabel} ratings`}
@@ -813,7 +804,6 @@ const structuredData = {
       minmax(6.8rem, 0.78fr)
       minmax(5.4rem, 0.52fr)
       minmax(4rem, 0.38fr)
-      minmax(4.4rem, 0.42fr)
       minmax(5.4rem, 0.5fr)
       minmax(12rem, 1.85fr);
     gap: 0;
@@ -898,7 +888,6 @@ const structuredData = {
   .area,
   .price,
   .drive,
-  .romance,
   .description {
     color: var(--text-muted);
     font-size: 0.84rem;
@@ -947,19 +936,6 @@ const structuredData = {
     font-variant-numeric: tabular-nums;
     font-weight: 700;
     color: var(--text);
-  }
-
-  .romance {
-    display: grid;
-    gap: 0.1rem;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.3;
-  }
-
-  .romance-rank {
-    color: var(--text);
-    font-size: 0.7rem;
-    font-weight: 750;
   }
 
   .rating {
@@ -1064,7 +1040,6 @@ const structuredData = {
         minmax(6rem, 0.78fr)
         minmax(5.1rem, 0.55fr)
         minmax(3.8rem, 0.4fr)
-        minmax(4rem, 0.42fr)
         minmax(5.1rem, 0.55fr)
         minmax(10rem, 1.4fr);
     }
@@ -1191,7 +1166,6 @@ const structuredData = {
     }
 
     .price,
-    .romance,
     .drive,
     .rating {
       position: static;
@@ -1209,10 +1183,6 @@ const structuredData = {
 
     .price-label {
       white-space: normal;
-    }
-
-    .romance {
-      display: none;
     }
 
     .drive {
