@@ -40,8 +40,6 @@ const areaOptions = [...areaCounts.entries()]
       countB - countA || collator.compare(nameA, nameB),
   )
   .map(([name, count]) => ({ name, count }));
-const adultsOnlyCount = hotels.filter((hotel: Hotel) => hotel.adultsOnly).length;
-const pricedCount = hotels.filter((hotel: Hotel) => hotel.price.status === "published").length;
 const priceValue = (hotel: Hotel) =>
   typeof hotel.price.usd === "number" ? hotel.price.usd : Number.MAX_SAFE_INTEGER;
 const sortRank = (
@@ -113,7 +111,6 @@ const hotelMapData = hotels.map((hotel: Hotel) => ({
   name: hotel.name,
   googleMapsUrl: hotel.googleMapsUrl,
   area: hotel.area,
-  adultsOnly: hotel.adultsOnly,
   position: hotel.location,
 }));
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
@@ -171,7 +168,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="romantic hotels Buenos Aires province, estancia near Buenos Aires, La Bamba de Areco, Villa Maria, Pampas de Areco, Tigre delta lodge, polo hotel Argentina"
+      content="romantic hotels Buenos Aires province, estancia near Buenos Aires, La Bamba de Areco, La Madrugada, Hotel del Casco San Isidro, La Candelaria Lobos, Villa Maria, Tigre delta lodge, polo hotel Argentina"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -216,9 +213,6 @@ const structuredData = {
         <div class="headline">
           <p class="eyebrow">Buenos Aires province</p>
           <h1>{pageTitle}</h1>
-          <p class="intro">
-            {hotels.length} hotels outside CABA that clear an upper-class EU/US bar for "romantic": Relais &amp; Châteaux, historic estancias, polo clubs, adults spa resorts and small town boutiques. Mass-market spa hotels, tourist-show estancias and anything at 3.9 or lower on Google Maps are out. Default order is a romance score (pedigree, intimacy, setting, couple fit), not Google popularity. {pricedCount} have a published from-rate in USD.
-          </p>
         </div>
         <div class="toolbar" aria-label="Hotel controls">
           <fieldset class="sort-toggle">
@@ -233,11 +227,6 @@ const structuredData = {
             <label for="sort-rating">GMaps rating</label>
             <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
             <label for="sort-popularity">Popularity</label>
-          </fieldset>
-          <fieldset class="extras-toggle">
-            <legend>Filter</legend>
-            <input id="filter-adults-only" type="checkbox" autocomplete="off" />
-            <label for="filter-adults-only">Adults-leaning ({adultsOnlyCount})</label>
           </fieldset>
           <label class="filter-dropdown" for="area-filter">
             <span>Area</span>
@@ -271,7 +260,6 @@ const structuredData = {
             class="hotel-row"
             style={hotel.sortOrderStyle}
             data-area={hotel.area}
-            data-adults-only={String(hotel.adultsOnly)}
           >
             <h2 class="hotel-name">
               <a href={hotel.officialUrl} target="_blank" rel="noreferrer noopener">
@@ -295,31 +283,33 @@ const structuredData = {
               <span class="area-name">{hotel.area}</span>
               <span class="area-address">{hotel.address}</span>
             </p>
-            <p
-              class={`price ${hotel.price.status === "published" ? "" : "price-unpublished"}`}
-              title={hotel.priceTitle}
-            >
-              <span class="price-label">{hotel.displayPriceLabel}</span>
-              {hotel.price.basis && (
-                <span class="price-service">{hotel.price.basis}</span>
-              )}
-            </p>
-            <p class="drive">{hotel.driveLabel}</p>
-            <p
-              class="romance"
-              title={hotel.romanceTitle}
-              aria-label={`Romance score ${hotel.romance.score} out of 100, rank ${hotel.romance.rank}`}
-            >
-              <span class="romance-score">{hotel.romance.score}</span>
-              <span class="romance-rank">#{hotel.romance.rank}</span>
-            </p>
-            <p
-              class="rating"
-              aria-label={`${hotel.rating.toFixed(1)} Google Maps rating from ${hotel.reviewCountLabel} ratings`}
-            >
-              <span class="rating-score">{hotel.rating.toFixed(1)}</span>
-              <span class="review-count">{hotel.reviewCountLabel} ratings</span>
-            </p>
+            <div class="hotel-stats">
+              <p
+                class={`price ${hotel.price.status === "published" ? "" : "price-unpublished"}`}
+                title={hotel.priceTitle}
+              >
+                <span class="price-label">{hotel.displayPriceLabel}</span>
+                {hotel.price.basis && (
+                  <span class="price-service">{hotel.price.basis}</span>
+                )}
+              </p>
+              <p class="drive">{hotel.driveLabel}</p>
+              <p
+                class="romance"
+                title={hotel.romanceTitle}
+                aria-label={`Romance score ${hotel.romance.score} out of 100, rank ${hotel.romance.rank}`}
+              >
+                <span class="romance-score">{hotel.romance.score}</span>
+                <span class="romance-rank">#{hotel.romance.rank}</span>
+              </p>
+              <p
+                class="rating"
+                aria-label={`${hotel.rating.toFixed(1)} Google Maps rating from ${hotel.reviewCountLabel} ratings`}
+              >
+                <span class="rating-score">{hotel.rating.toFixed(1)}</span>
+                <span class="review-count">{hotel.reviewCountLabel} ratings</span>
+              </p>
+            </div>
             <p class="description">{hotel.description}</p>
           </article>
         ))}
@@ -388,13 +378,12 @@ const structuredData = {
   }
 
   const areaFilter = document.querySelector("#area-filter");
-  const adultsOnlyFilter = document.querySelector("#filter-adults-only");
   const defaultSort = document.querySelector("#sort-romance");
   const hotelRows = [...document.querySelectorAll(".hotel-row:not(.hotel-head)")];
   const mapElement = document.querySelector("#hotel-map");
   const mapStatus = document.querySelector("#hotel-map-status");
   const provinceCenter = { lat: -34.45, lng: -58.95 };
-  const filterUrlParams = ["area", "adultsOnly"];
+  const filterUrlParams = ["area"];
   const markerRecords = [];
   let hotelMap;
   let infoWindow;
@@ -408,22 +397,17 @@ const structuredData = {
       "'": "&#39;",
     })[character]);
 
-  const getVisibleHotels = (selectedArea, adultsOnly) =>
-    hotelMapData.filter(
-      (hotel) =>
-        (!selectedArea || hotel.area === selectedArea) &&
-        (!adultsOnly || hotel.adultsOnly),
-    );
+  const getVisibleHotels = (selectedArea) =>
+    hotelMapData.filter((hotel) => !selectedArea || hotel.area === selectedArea);
 
-  const updateMapStatus = (selectedArea, adultsOnly) => {
+  const updateMapStatus = (selectedArea) => {
     if (!mapStatus) return;
 
-    const visibleCount = getVisibleHotels(selectedArea, adultsOnly).length;
+    const visibleCount = getVisibleHotels(selectedArea).length;
     const hotelLabel = visibleCount === 1 ? "hotel" : "hotels";
-    const adultsSuffix = adultsOnly ? " with an adults-leaning policy" : "";
     mapStatus.textContent = selectedArea
-      ? `Showing ${visibleCount} ${selectedArea} ${hotelLabel}${adultsSuffix}.`
-      : `Showing ${adultsOnly ? "" : "all "}${visibleCount} ${hotelLabel}${adultsSuffix}.`;
+      ? `Showing ${visibleCount} ${selectedArea} ${hotelLabel}.`
+      : `Showing all ${visibleCount} ${hotelLabel}.`;
   };
 
   const fitMapToMarkers = (visibleRecords) => {
@@ -444,13 +428,13 @@ const structuredData = {
     hotelMap.fitBounds(bounds, 48);
   };
 
-  const syncMapMarkers = (selectedArea, adultsOnly) => {
-    updateMapStatus(selectedArea, adultsOnly);
+  const syncMapMarkers = (selectedArea) => {
+    updateMapStatus(selectedArea);
 
     if (!hotelMap) return;
 
     const visibleIds = new Set(
-      getVisibleHotels(selectedArea, adultsOnly).map((hotel) => hotel.id),
+      getVisibleHotels(selectedArea).map((hotel) => hotel.id),
     );
     const visibleRecords = [];
 
@@ -465,7 +449,7 @@ const structuredData = {
     fitMapToMarkers(visibleRecords);
   };
 
-  const updateFilterUrl = (selectedArea, adultsOnly) => {
+  const updateFilterUrl = (selectedArea) => {
     const url = new URL(window.location.href);
 
     for (const paramName of filterUrlParams) {
@@ -473,7 +457,6 @@ const structuredData = {
     }
 
     if (selectedArea) url.searchParams.set("area", selectedArea);
-    if (adultsOnly) url.searchParams.set("adultsOnly", "1");
 
     const nextUrl = `${url.pathname}${url.search}${url.hash}`;
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -516,34 +499,28 @@ const structuredData = {
       markerRecords.push({ hotel, marker });
     }
 
-    syncMapMarkers(
-      areaFilter?.value ?? "",
-      adultsOnlyFilter?.checked ?? false,
-    );
+    syncMapMarkers(areaFilter?.value ?? "");
   };
 
   const applyFilters = ({ syncUrl = true } = {}) => {
     const selectedArea = areaFilter?.value ?? "";
-    const adultsOnly = adultsOnlyFilter?.checked ?? false;
 
     if (syncUrl) {
-      updateFilterUrl(selectedArea, adultsOnly);
+      updateFilterUrl(selectedArea);
     }
 
     for (const row of hotelRows) {
       const areaMismatch =
         Boolean(selectedArea) && row.dataset.area !== selectedArea;
-      const adultsMismatch = adultsOnly && row.dataset.adultsOnly !== "true";
-      row.hidden = areaMismatch || adultsMismatch;
+      row.hidden = areaMismatch;
     }
 
-    syncMapMarkers(selectedArea, adultsOnly);
+    syncMapMarkers(selectedArea);
   };
 
   const resetControls = () => {
     if (defaultSort) defaultSort.checked = true;
     if (areaFilter) areaFilter.value = "";
-    if (adultsOnlyFilter) adultsOnlyFilter.checked = false;
   };
 
   const setSelectFromUrl = (selectElement, value) => {
@@ -553,25 +530,16 @@ const structuredData = {
     if (hasOption) selectElement.value = value;
   };
 
-  const hasEnabledUrlParam = (params, paramName) => {
-    const value = params.get(paramName);
-    if (value === null) return false;
-
-    return !["0", "false", "no", "off"].includes(value.toLowerCase());
-  };
-
   const applyFiltersFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
 
     resetControls();
     setSelectFromUrl(areaFilter, params.get("area"));
-    if (adultsOnlyFilter) adultsOnlyFilter.checked = hasEnabledUrlParam(params, "adultsOnly");
 
     applyFilters({ syncUrl: false });
   };
 
   areaFilter?.addEventListener("change", applyFilters);
-  adultsOnlyFilter?.addEventListener("change", applyFilters);
   applyFiltersFromUrl();
   window.addEventListener("pageshow", applyFiltersFromUrl);
   window.addEventListener("popstate", applyFiltersFromUrl);
@@ -696,13 +664,6 @@ const structuredData = {
     line-height: 1.08;
   }
 
-  .intro {
-    margin: 0;
-    max-width: 54rem;
-    color: var(--text-muted);
-    font-size: clamp(0.88rem, 1.05vw, 0.95rem);
-  }
-
   .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -710,8 +671,7 @@ const structuredData = {
     gap: 0.4rem 0.55rem;
   }
 
-  .sort-toggle,
-  .extras-toggle {
+  .sort-toggle {
     display: flex;
     width: fit-content;
     align-items: center;
@@ -766,8 +726,7 @@ const structuredData = {
     border-radius: 1rem;
   }
 
-  .sort-toggle legend,
-  .extras-toggle legend {
+  .sort-toggle legend {
     margin: 0 0.25rem 0 0.15rem;
     padding: 0;
     color: var(--text-muted);
@@ -778,15 +737,13 @@ const structuredData = {
     text-transform: uppercase;
   }
 
-  .sort-toggle input,
-  .extras-toggle input {
+  .sort-toggle input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
   }
 
-  .sort-toggle label,
-  .extras-toggle label {
+  .sort-toggle label {
     display: inline-flex;
     min-height: 1.85rem;
     align-items: center;
@@ -803,8 +760,7 @@ const structuredData = {
       color 0.18s ease;
   }
 
-  .sort-toggle label::before,
-  .extras-toggle label::before {
+  .sort-toggle label::before {
     content: "";
     width: 0.52rem;
     height: 0.52rem;
@@ -817,8 +773,7 @@ const structuredData = {
   #sort-price:checked ~ label[for="sort-price"],
   #sort-name:checked ~ label[for="sort-name"],
   #sort-rating:checked ~ label[for="sort-rating"],
-  #sort-popularity:checked ~ label[for="sort-popularity"],
-  #filter-adults-only:checked ~ label[for="filter-adults-only"] {
+  #sort-popularity:checked ~ label[for="sort-popularity"] {
     background: var(--accent);
     color: var(--bg);
   }
@@ -827,8 +782,7 @@ const structuredData = {
   #sort-price:checked ~ label[for="sort-price"]::before,
   #sort-name:checked ~ label[for="sort-name"]::before,
   #sort-rating:checked ~ label[for="sort-rating"]::before,
-  #sort-popularity:checked ~ label[for="sort-popularity"]::before,
-  #filter-adults-only:checked ~ label[for="filter-adults-only"]::before {
+  #sort-popularity:checked ~ label[for="sort-popularity"]::before {
     background: currentColor;
     box-shadow: inset 0 0 0 3px var(--accent);
     opacity: 1;
@@ -883,7 +837,8 @@ const structuredData = {
     text-transform: uppercase;
   }
 
-  .hotel-row > * {
+  .hotel-row > *,
+  .hotel-stats > * {
     min-width: 0;
     margin: 0;
     padding: 0.52rem clamp(0.48rem, 0.8vw, 0.62rem);
@@ -916,6 +871,10 @@ const structuredData = {
   }
 
   .map-actions {
+    display: contents;
+  }
+
+  .hotel-stats {
     display: contents;
   }
 
@@ -1132,17 +1091,11 @@ const structuredData = {
       line-height: 1.05;
     }
 
-    .intro {
-      font-size: 0.88rem;
-      line-height: 1.38;
-    }
-
     .toolbar {
       gap: 0.4rem;
     }
 
     .sort-toggle,
-    .extras-toggle,
     .filter-dropdown {
       max-width: 100%;
     }
@@ -1168,24 +1121,26 @@ const structuredData = {
 
     .hotel-row {
       position: relative;
-      min-height: 7.2rem;
-      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+      grid-template-columns: minmax(0, 1fr) 6.5rem 1.8rem;
       grid-template-areas:
-        "name"
-        "area"
-        "desc";
-      gap: 0.12rem 0.5rem;
+        "name stats map"
+        "area stats map"
+        "desc stats .";
+      column-gap: 0.45rem;
+      row-gap: 0.12rem;
       align-items: start;
       border-top: 1px solid var(--border);
       background: var(--surface);
-      padding: 0.58rem 9.6rem 0.7rem 0.7rem;
+      padding: 0.58rem 0.55rem 0.7rem 0.7rem;
     }
 
     .hotel-row:first-of-type {
       border-top: 0;
     }
 
-    .hotel-row > * {
+    .hotel-row > *,
+    .hotel-stats > * {
       padding: 0;
       border-left: 0;
     }
@@ -1194,18 +1149,17 @@ const structuredData = {
       grid-area: name;
       font-size: 0.94rem;
       line-height: 1.15;
-      padding-right: 0.2rem;
+      padding-right: 0.1rem;
     }
 
     .map-actions {
-      position: absolute;
-      top: 0.58rem;
-      right: 0.55rem;
+      grid-area: map;
+      position: static;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.28rem;
-      z-index: 1;
+      z-index: 2;
     }
 
     .maps-link {
@@ -1229,14 +1183,33 @@ const structuredData = {
       display: none;
     }
 
-    .price {
-      position: absolute;
-      top: 0.58rem;
-      right: 2.55rem;
-      width: 6.5rem;
-      font-size: 0.78rem;
+    .hotel-stats {
+      grid-area: stats;
+      position: static;
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.32rem;
       text-align: right;
       z-index: 1;
+    }
+
+    .price,
+    .romance,
+    .drive,
+    .rating {
+      position: static;
+      top: auto;
+      right: auto;
+      width: auto;
+      margin: 0;
+      text-align: right;
+    }
+
+    .price {
+      font-size: 0.78rem;
+      order: 1;
     }
 
     .price-label {
@@ -1244,38 +1217,24 @@ const structuredData = {
     }
 
     .romance {
-      position: absolute;
-      top: 2.2rem;
-      right: 2.55rem;
-      width: 6.5rem;
       display: grid;
+      justify-items: end;
       font-size: 0.74rem;
-      text-align: right;
-      z-index: 1;
+      order: 2;
     }
 
     .drive {
-      position: absolute;
-      top: 3.55rem;
-      right: 2.55rem;
-      width: 6.5rem;
       display: block;
       color: var(--text-muted);
       font-size: 0.72rem;
       font-weight: 700;
-      text-align: right;
-      z-index: 1;
+      order: 3;
     }
 
     .rating {
-      position: absolute;
-      top: 4.7rem;
-      right: 2.55rem;
-      width: 6.5rem;
       color: var(--text-muted);
       font-size: 0.76rem;
-      text-align: right;
-      z-index: 1;
+      order: 4;
     }
 
     .review-count {
@@ -1301,19 +1260,11 @@ const structuredData = {
 
   @media (max-width: 420px) {
     .hotel-row {
-      padding-right: 8.7rem;
+      grid-template-columns: minmax(0, 1fr) 5.9rem 1.7rem;
+      column-gap: 0.35rem;
     }
 
-    .price,
-    .romance,
-    .drive,
-    .rating {
-      right: 2.35rem;
-      width: 5.9rem;
-    }
-
-    .sort-toggle label,
-    .extras-toggle label {
+    .sort-toggle label {
       font-size: 0.72rem;
       padding: 0 0.5rem;
     }
