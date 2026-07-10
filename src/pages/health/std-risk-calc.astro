@@ -74,7 +74,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </label>
 
           <label class="control select-control" for="partner-test-recency">
-            <span>All partners have a negative STD test from the past...</span>
+            <span>All partners have a negative broad insured STI panel from the past...</span>
             <select id="partner-test-recency" name="partner-test-recency">
               <option value="none" selected>No test available</option>
               <option value="week2">2 weeks</option>
@@ -82,7 +82,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <option value="month3">3 months</option>
               <option value="month6">6 months</option>
             </select>
-            <small>Treats that as a recent routine panel: strongest for chlamydia/gonorrhea, middling for HIV/syphilis, partial for trich and little to none for HPV, HSV, M. genitalium or Ureaplasma.</small>
+            <small>Treats that as the widest realistic doctor-ordered panel likely to be >=90% covered by U.S. insurance: HIV, syphilis, chlamydia/gonorrhea NAAT at exposed sites and genital trich NAAT. It does not move HPV, HSV, M. genitalium, Ureaplasma or hepatitis rows.</small>
           </label>
 
           <fieldset class="control control-use-mode">
@@ -192,6 +192,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 <strong id="vaccine-benefit">-</strong>
               </div>
             </div>
+            <div class="comparison-row benefit-row" id="test-benefit-row" hidden>
+              <h3>Recent testing reduces negative QALYs by</h3>
+              <div class="comparison-value benefit">
+                <span>Test-covered STI loss</span>
+                <strong id="test-benefit">-</strong>
+              </div>
+            </div>
             <div class="comparison-row">
               <h3>Odds of at least 1 pregnancy</h3>
               <div class="comparison-value without">
@@ -252,9 +259,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <h3>Partners, testing, age and sex acts</h3>
               <ul>
                 <li>The college-degree checkbox is a broad stand-in for a lower-risk partner pool. Recent testing, number of recent partners, geography, age, partner network and injection-drug history can matter more.</li>
-                <li>The recent-test selector assumes every partner had a negative routine STI panel before sex. It helps most for chlamydia/gonorrhea NAAT testing, somewhat for HIV blood testing and less for syphilis and trichomoniasis.</li>
-                <li>A recent negative test has limits. Tests have window periods, can miss infections at untested body sites and say nothing about infections acquired afterward. Syphilis blood tests can miss early primary infection. Trichomoniasis NAAT is accurate when included but is not always part of routine screening.</li>
-                <li>The test selector barely moves HPV, HSV, M. genitalium or Ureaplasma. HPV testing is not a general partner-status test, HSV screening is not recommended for most people with no symptoms and M. genitalium/Ureaplasma are not routine screening tests.</li>
+                <li>The recent-test selector assumes every partner had the widest realistic STI panel a U.S. clinician would plausibly order and a typical insured patient could expect to have at least about 90% covered: HIV blood testing, syphilis serology, chlamydia/gonorrhea NAAT at all exposed sites and genital trichomoniasis NAAT. Hepatitis B/C screens can also be covered or recommended for adults, but hepatitis rows are not part of this calculator. Insurance, coding and clinician willingness vary, so this is a broad insured-panel assumption rather than a guaranteed no-cost preventive screen.</li>
+                <li>A recent negative test helps most for chlamydia/gonorrhea and trichomoniasis NAAT testing, somewhat for HIV blood testing and less for syphilis because of early-window misses. It says nothing about infections acquired after the sample was collected. Trich benefit applies only to genital testing; CDC does not recommend rectal or oral trich testing.</li>
+                <li>The test selector does not move HPV, HSV, M. genitalium or Ureaplasma. HPV testing is cervical-cancer screening, not a general partner-status test; HSV-2 screening is not recommended for the general population and HSV-1 blood tests do not locate infection; asymptomatic M. genitalium screening is not recommended; and Ureaplasma testing is not recommended in routine cervicitis/urethritis workups.</li>
                 <li>Partner risk is not truly independent. Ten partners from the same tested friend-of-friends network is different from ten unrelated partners from a broad national pool.</li>
                 <li>Age is not included. HSV rates, HPV vaccine benefit, pregnancy risk and oral-cancer risk can change a lot by age and birth cohort.</li>
                 <li>Oral and vaginal sex share one 10-year period. The default math is closer to vaginal sex, so oral-heavy sex can overstate HIV risk and misplace some oral HPV, HSV and gonorrhea risk.</li>
@@ -355,6 +362,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <section class="assumption-group">
             <h3>Testing, oral sex and surveillance</h3>
             <ul>
+              <li><a href="https://www.cdc.gov/high-quality-care/hcp/resources/std-preventive-service-coverage.html" target="_blank" rel="noreferrer noopener">CDC STD preventive service coverage tables</a></li>
+              <li><a href="https://www.healthcare.gov/preventive-care-adults/" target="_blank" rel="noreferrer noopener">HealthCare.gov adult preventive care benefits</a></li>
               <li><a href="https://stacks.cdc.gov/view/cdc/23447" target="_blank" rel="noreferrer noopener">CDC HIV laboratory testing recommendations</a></li>
               <li><a href="https://www.cdc.gov/std/treatment-guidelines/gonorrhea-adults.htm" target="_blank" rel="noreferrer noopener">CDC gonorrhea NAAT testing guidance</a></li>
               <li><a href="https://www.cdc.gov/std/treatment-guidelines/Trichomoniasis.htm" target="_blank" rel="noreferrer noopener">CDC trichomoniasis testing guidance</a></li>
@@ -729,6 +738,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         noProjectedChildren: document.querySelector("#no-projected-children"),
         condomTotal: document.querySelector("#condom-total"),
         vaccineBenefit: document.querySelector("#vaccine-benefit"),
+        testBenefit: document.querySelector("#test-benefit"),
+        testBenefitRow: document.querySelector("#test-benefit-row"),
         condomPregRisk: document.querySelector("#condom-preg-risk"),
         condomProjectedChildren: document.querySelector("#condom-projected-children")
       };
@@ -1084,6 +1095,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         if (node) node.textContent = text;
       }
 
+      function qalyTotal(rows, key) {
+        return rows.reduce((total, row) => total + row[key], 0);
+      }
+
       function update() {
         const partners = clampPartners(partnersRange.value);
         const perspective = new FormData(form).get("perspective") || "male";
@@ -1121,9 +1136,23 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           utiProne: isUtiProne,
           yeastProne: isYeastProne
         });
-        const noCondomSti = diseaseRows.reduce((total, row) => total + row.noCondom, 0);
-        const condomSti = diseaseRows.reduce((total, row) => total + row.condom, 0);
+        const noTestDiseaseRows = testRecency === "none"
+          ? diseaseRows
+          : calculateDiseaseTotals({
+              perspective,
+              partners,
+              onlyCollege,
+              hpvVaccineEffectiveness,
+              testRecency: "none",
+              uncertaintyScenario: selectedUncertaintyScenario,
+              utiProne: isUtiProne,
+              yeastProne: isYeastProne
+            });
+        const noCondomSti = qalyTotal(diseaseRows, "noCondom");
+        const condomSti = qalyTotal(diseaseRows, "condom");
+        const noTestNoCondomSti = qalyTotal(noTestDiseaseRows, "noCondom");
         const vaccineBenefit = diseaseRows.reduce((total, row) => total + row.vaccineBenefit, 0);
+        const testBenefit = testRecency === "none" ? 0 : Math.max(0, noTestNoCondomSti - noCondomSti);
         const noCondomPregnancy = pregnancyFor(
           noCondomAnnualFailure,
           perspective,
@@ -1158,6 +1187,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         setText(ids.condomTotal, weeksText(condomTotal));
         setText(ids.vaccineBenefit, weeksText(vaccineBenefit));
+        if (ids.testBenefitRow) ids.testBenefitRow.hidden = testRecency === "none";
+        setText(ids.testBenefit, weeksText(testBenefit));
         setText(ids.condomPregRisk, percentText(condomPregnancy.probability));
         setText(ids.condomProjectedChildren, childrenText(condomPregnancy.projectedChildren));
 

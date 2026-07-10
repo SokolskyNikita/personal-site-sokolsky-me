@@ -3,16 +3,28 @@ import pageData from "../../data/barbers-buenos-aires.json";
 
 export const prerender = true;
 
-const pageTitle = "Best barbershops in Buenos Aires";
+const pageTitle = "Best barbershops in Buenos Aires with online booking";
 const pageDescription =
-  "Buenos Aires barbershops checked against Google Maps, with ratings, hours, addresses, prices shown in USD and official links.";
+  "Buenos Aires barbershops with verified non-WhatsApp online booking, checked against Google Maps with ratings, hours, addresses, prices in USD and official links.";
 const themeColorLight = "#f7f2ea";
 const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Barber = (typeof pageData.barbers)[number];
-const barbers = pageData.barbers;
+const barbersWithoutOnlineBooking = new Set<string>([
+  "la-cueva",
+  "barberin",
+  "hacha-brava-nunez",
+  "hacha-brava-san-telmo",
+  "jf-barbershop",
+  "le-place",
+  "the-respect",
+  "la-mint",
+]);
+const barbers = pageData.barbers.filter(
+  (barber: Barber) => !barbersWithoutOnlineBooking.has(barber.id),
+);
 const updatedDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
@@ -148,7 +160,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Best barbershops in Buenos Aires" />
+    <meta name="subject" content="Best barbershops in Buenos Aires with online booking" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -160,7 +172,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="Buenos Aires barbershops, best barbershops Buenos Aires, barbería Buenos Aires, barber Palermo, barber Recoleta"
+      content="Buenos Aires barbershops, best barbershops Buenos Aires, barbería Buenos Aires, online booking barber Buenos Aires, barber Palermo, barber Recoleta"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -206,7 +218,7 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {barbers.length} barbershops listed as open in Google Maps with at least 25 reviews and a published standalone men's haircut price.
+            {barbers.length} barbershops listed as open in Google Maps with at least 25 reviews, a published standalone men's haircut price, and verified online booking. WhatsApp-only booking does not count.
           </p>
         </div>
         <div class="toolbar" aria-label="Barbershop controls">
@@ -236,7 +248,7 @@ const structuredData = {
             </select>
           </label>
           <p class="meta">
-            Updated {updatedDate}. Verified against Google Maps. Prices are shown in USD for a standard men's cut, unless a promo or cash price is labeled.
+            Updated {updatedDate}. Only shops with non-WhatsApp online booking are listed. Prices are shown in USD for a standard men's cut, unless a promo or cash price is labeled.
           </p>
         </div>
       </header>
