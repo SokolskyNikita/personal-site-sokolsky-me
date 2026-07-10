@@ -12,7 +12,7 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Hotel = (typeof pageData.hotels)[number];
-const hotels = pageData.hotels;
+const hotels = pageData.hotels.filter((hotel: Hotel) => hotel.rating > 3.9);
 const updatedDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
@@ -77,10 +77,10 @@ const popularityRanks = sortRank(
     b.rating - a.rating ||
     collator.compare(a.name, b.name),
 );
-const driveRanks = sortRank(
+const romanceRanks = sortRank(
   hotels,
   (a: Hotel, b: Hotel) =>
-    a.driveMinutes - b.driveMinutes ||
+    b.romance.score - a.romance.score ||
     collator.compare(a.name, b.name),
 );
 const hotelsWithSort = hotels.map((hotel: Hotel) => ({
@@ -95,12 +95,13 @@ const hotelsWithSort = hotels.map((hotel: Hotel) => ({
       ? `Source: ${hotel.price.source}. ${hotel.price.note ?? ""}`.trim()
       : `Source: ${hotel.price.source}. ${hotel.price.note ?? ""}`.trim(),
   driveLabel: `~${hotel.driveMinutes} min`,
+  romanceTitle: hotel.romance.why,
   sortOrderStyle: [
+    `--sort-romance: ${romanceRanks.get(hotel.id)}`,
     `--sort-price: ${priceRanks.get(hotel.id)}`,
     `--sort-name: ${nameRanks.get(hotel.id)}`,
     `--sort-rating: ${ratingRanks.get(hotel.id)}`,
     `--sort-popularity: ${popularityRanks.get(hotel.id)}`,
-    `--sort-drive: ${driveRanks.get(hotel.id)}`,
   ].join("; "),
 }));
 const googleMapsApiKey =
@@ -216,14 +217,14 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires province</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {hotels.length} hotels outside CABA that clear an upper-class EU/US bar for "romantic": Relais &amp; Châteaux, historic estancias, polo clubs, adults spa resorts and small town boutiques. Mass-market spa hotels and tourist-show estancias are out. {pricedCount} have a published from-rate in USD.
+            {hotels.length} hotels outside CABA that clear an upper-class EU/US bar for "romantic": Relais &amp; Châteaux, historic estancias, polo clubs, adults spa resorts and small town boutiques. Mass-market spa hotels, tourist-show estancias and anything at 3.9 or lower on Google Maps are out. Default order is a romance score (pedigree, intimacy, setting, couple fit), not Google popularity. {pricedCount} have a published from-rate in USD.
           </p>
         </div>
         <div class="toolbar" aria-label="Hotel controls">
           <fieldset class="sort-toggle">
             <legend>Sort by</legend>
-            <input id="sort-drive" type="radio" name="sort" autocomplete="off" checked />
-            <label for="sort-drive">Drive time</label>
+            <input id="sort-romance" type="radio" name="sort" autocomplete="off" checked />
+            <label for="sort-romance">Romance</label>
             <input id="sort-price" type="radio" name="sort" autocomplete="off" />
             <label for="sort-price">Price</label>
             <input id="sort-name" type="radio" name="sort" autocomplete="off" />
@@ -248,7 +249,7 @@ const structuredData = {
             </select>
           </label>
           <p class="meta">
-            Updated {updatedDate}. Drive times are rough car minutes from central Buenos Aires (delta lodge includes boat). Prices are from-rates in USD where a public source existed; ARS quotes used 1 USD ≈ ARS {formatter.format(pageData.currency.arsPerUsd)}.
+            Updated {updatedDate}. Romance score weights pedigree (Relais / palace / press), intimacy (room count), setting (campo, delta, town, spa) and couple fit (adults-only / quiet vs sports resort). Drive times are rough car minutes from central Buenos Aires (delta lodge includes boat). Prices are from-rates in USD where a public source existed; ARS quotes used 1 USD ≈ ARS {formatter.format(pageData.currency.arsPerUsd)}.
           </p>
         </div>
       </header>
@@ -259,7 +260,8 @@ const structuredData = {
           <span>Map</span>
           <span>Area</span>
           <span>From</span>
-          <span>Drive</span>
+          <span>Drive (min)</span>
+          <span>Romance</span>
           <span>GMaps rating</span>
           <span>Notes</span>
         </div>
@@ -303,6 +305,14 @@ const structuredData = {
               )}
             </p>
             <p class="drive">{hotel.driveLabel}</p>
+            <p
+              class="romance"
+              title={hotel.romanceTitle}
+              aria-label={`Romance score ${hotel.romance.score} out of 100, rank ${hotel.romance.rank}`}
+            >
+              <span class="romance-score">{hotel.romance.score}</span>
+              <span class="romance-rank">#{hotel.romance.rank}</span>
+            </p>
             <p
               class="rating"
               aria-label={`${hotel.rating.toFixed(1)} Google Maps rating from ${hotel.reviewCountLabel} ratings`}
@@ -379,7 +389,7 @@ const structuredData = {
 
   const areaFilter = document.querySelector("#area-filter");
   const adultsOnlyFilter = document.querySelector("#filter-adults-only");
-  const defaultSort = document.querySelector("#sort-drive");
+  const defaultSort = document.querySelector("#sort-romance");
   const hotelRows = [...document.querySelectorAll(".hotel-row:not(.hotel-head)")];
   const mapElement = document.querySelector("#hotel-map");
   const mapStatus = document.querySelector("#hotel-map-status");
@@ -803,7 +813,7 @@ const structuredData = {
     opacity: 0.75;
   }
 
-  #sort-drive:checked ~ label[for="sort-drive"],
+  #sort-romance:checked ~ label[for="sort-romance"],
   #sort-price:checked ~ label[for="sort-price"],
   #sort-name:checked ~ label[for="sort-name"],
   #sort-rating:checked ~ label[for="sort-rating"],
@@ -813,7 +823,7 @@ const structuredData = {
     color: var(--bg);
   }
 
-  #sort-drive:checked ~ label[for="sort-drive"]::before,
+  #sort-romance:checked ~ label[for="sort-romance"]::before,
   #sort-price:checked ~ label[for="sort-price"]::before,
   #sort-name:checked ~ label[for="sort-name"]::before,
   #sort-rating:checked ~ label[for="sort-rating"]::before,
@@ -845,13 +855,14 @@ const structuredData = {
   .hotel-row {
     display: grid;
     grid-template-columns:
-      minmax(9rem, 1.15fr)
-      2.9rem
-      minmax(7.5rem, 0.85fr)
-      minmax(5.8rem, 0.58fr)
+      minmax(8.5rem, 1.1fr)
+      2.7rem
+      minmax(6.8rem, 0.78fr)
+      minmax(5.4rem, 0.52fr)
+      minmax(4rem, 0.38fr)
       minmax(4.4rem, 0.42fr)
-      minmax(5.8rem, 0.55fr)
-      minmax(14rem, 2fr);
+      minmax(5.4rem, 0.5fr)
+      minmax(12rem, 1.85fr);
     gap: 0;
     align-items: stretch;
     border-top: 1px solid var(--border);
@@ -929,6 +940,7 @@ const structuredData = {
   .area,
   .price,
   .drive,
+  .romance,
   .description {
     color: var(--text-muted);
     font-size: 0.84rem;
@@ -979,6 +991,23 @@ const structuredData = {
     color: var(--text);
   }
 
+  .romance {
+    display: grid;
+    gap: 0.1rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+  }
+
+  .romance-score {
+    color: var(--text);
+    font-weight: 750;
+  }
+
+  .romance-rank {
+    font-size: 0.7rem;
+    font-weight: 650;
+  }
+
   .rating {
     display: grid;
     gap: 0.1rem;
@@ -986,6 +1015,10 @@ const structuredData = {
     font-weight: 750;
     font-variant-numeric: tabular-nums;
     line-height: 1.3;
+  }
+
+  body:has(#sort-romance:checked) .hotel-row:not(.hotel-head) {
+    order: var(--sort-romance);
   }
 
   body:has(#sort-price:checked) .hotel-row:not(.hotel-head) {
@@ -1002,10 +1035,6 @@ const structuredData = {
 
   body:has(#sort-popularity:checked) .hotel-row:not(.hotel-head) {
     order: var(--sort-popularity);
-  }
-
-  body:has(#sort-drive:checked) .hotel-row:not(.hotel-head) {
-    order: var(--sort-drive);
   }
 
   .rating-score {
@@ -1076,13 +1105,14 @@ const structuredData = {
 
     .hotel-row {
       grid-template-columns:
-        minmax(8rem, 1.15fr)
-        2.7rem
-        minmax(6.5rem, 0.85fr)
-        minmax(5.5rem, 0.62fr)
-        minmax(4.2rem, 0.45fr)
-        minmax(5.5rem, 0.6fr)
-        minmax(11rem, 1.5fr);
+        minmax(7.5rem, 1.05fr)
+        2.5rem
+        minmax(6rem, 0.78fr)
+        minmax(5.1rem, 0.55fr)
+        minmax(3.8rem, 0.4fr)
+        minmax(4rem, 0.42fr)
+        minmax(5.1rem, 0.55fr)
+        minmax(10rem, 1.4fr);
     }
   }
 
@@ -1138,7 +1168,7 @@ const structuredData = {
 
     .hotel-row {
       position: relative;
-      min-height: 6.4rem;
+      min-height: 7.2rem;
       grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
         "name"
@@ -1213,14 +1243,25 @@ const structuredData = {
       white-space: normal;
     }
 
+    .romance {
+      position: absolute;
+      top: 2.2rem;
+      right: 2.55rem;
+      width: 6.5rem;
+      display: grid;
+      font-size: 0.74rem;
+      text-align: right;
+      z-index: 1;
+    }
+
     .drive {
       position: absolute;
-      top: 2.35rem;
+      top: 3.55rem;
       right: 2.55rem;
       width: 6.5rem;
       display: block;
       color: var(--text-muted);
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-align: right;
       z-index: 1;
@@ -1228,11 +1269,11 @@ const structuredData = {
 
     .rating {
       position: absolute;
-      top: 3.55rem;
+      top: 4.7rem;
       right: 2.55rem;
       width: 6.5rem;
       color: var(--text-muted);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       text-align: right;
       z-index: 1;
     }
@@ -1264,6 +1305,7 @@ const structuredData = {
     }
 
     .price,
+    .romance,
     .drive,
     .rating {
       right: 2.35rem;

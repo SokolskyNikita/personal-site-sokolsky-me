@@ -1,7 +1,7 @@
 {
   "title": "Romantic hotels in Buenos Aires province",
   "scope": "Buenos Aires Province outside CABA",
-  "generatedAt": "2026-07-10T20:08:15.213Z",
+  "generatedAt": "2026-07-10T20:21:40.947Z",
   "currency": {
     "arsPerUsd": 1525,
     "note": "Conversion rate used for ARS-quoted tariffs"
@@ -12,7 +12,8 @@
     "criteria": [
       "Outside Ciudad Autónoma de Buenos Aires",
       "Upper-class / non-mass-market romantic by EU–US taste: Relais & Châteaux, historic estancias, polo clubs, adults spa resorts, small town boutiques",
-      "Verified OPERATIONAL on Google Maps"
+      "Verified OPERATIONAL on Google Maps",
+      "Google Maps rating above 3.9 (3.9 and below excluded)"
     ],
     "excluded": [
       {
@@ -35,7 +36,18 @@
         "name": "City hotels in CABA (Faena, Four Seasons, etc.)",
         "reason": "Outside province scope"
       }
-    ]
+    ],
+    "romanceRubric": {
+      "perspective": "Upper-class EU/US romantic weekend taste",
+      "maxScore": 100,
+      "factors": {
+        "pedigree": "0–30: Relais & Châteaux, historic palace, luxury-press shortlist, owner boutique, spa resort",
+        "intimacy": "0–25: fewer rooms score higher (≤5, 6–11, 12–20, 21+)",
+        "setting": "0–25: private campo/palace/delta water > polo lawns > historic town > spa grounds",
+        "coupleFit": "0–20: adults-only / couple design > quiet min-age > family tourist estancia / sports resort"
+      },
+      "note": "Scores are editorial, not Google ratings. Default page sort uses romance.score descending."
+    }
   },
   "hotels": [
     {
@@ -79,7 +91,18 @@
         "Friday: Open 24 hours",
         "Saturday: Open 24 hours",
         "Sunday: Open 24 hours"
-      ]
+      ],
+      "romance": {
+        "score": 94,
+        "why": "Relais & Châteaux country house with 11 rooms. Closest thing on this list to a European château weekend.",
+        "factors": {
+          "pedigree": 30,
+          "intimacy": 20,
+          "setting": 25,
+          "coupleFit": 19
+        },
+        "rank": 1
+      }
     },
     {
       "id": "villa-maria",
@@ -115,147 +138,111 @@
         "sourceUrl": "https://estanciavillamaria.com/es/hotel.tarifas-habitaciones",
         "note": "Converted from ARS 360,000 + IVA per person, base double. Suites run higher."
       },
-      "weekdayHours": null
+      "weekdayHours": null,
+      "romance": {
+        "score": 86,
+        "why": "Tudor-Norman palace in parkland; the classic BA romantic campo overnight, even if the room count is higher than a Relais.",
+        "factors": {
+          "pedigree": 27,
+          "intimacy": 14,
+          "setting": 25,
+          "coupleFit": 20
+        },
+        "rank": 2
+      }
     },
     {
-      "id": "la-bandada",
-      "name": "Estancia La Bandada",
-      "sourceName": "Estancia La Bandada",
-      "officialUrl": "http://www.labandada.com.ar/",
+      "id": "la-becasina",
+      "name": "La Becasina Delta Lodge",
+      "sourceName": "La Becasina Delta Lodge",
+      "officialUrl": "https://labecasina.com/es/",
       "officialUrlType": "website",
-      "googleMapsUrl": "https://maps.google.com/?cid=5317757231127419789&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJ0TEIuSNdvZURjVsd6wZ4zEk",
+      "googleMapsUrl": "https://maps.google.com/?cid=11555854051679978311&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJddQFqmtau5URR8Ok0gikXqA",
       "businessStatus": "OPERATIONAL",
-      "address": "RP41 Km 120",
-      "fullAddress": "35°28'46.9\"S 58°41'56, RP41 km 120, 7220 San Miguel del Monte, Provincia de Buenos Aires, Argentina",
-      "area": "San Miguel del Monte",
-      "style": "Working-farm estancia",
-      "driveMinutes": 95,
-      "adultsOnly": false,
-      "minAge": null,
-      "phone": "02226 15-51-2771",
-      "rating": 4.8,
-      "reviewCount": 194,
-      "description": "Former Candelaria del Monte, now La Bandada: a 200-acre working farm about 90 minutes from Buenos Aires. The South America Specialists and The Telegraph still list it for a quiet Pampas night without Relais pricing.",
+      "address": "Arroyo Las Cañas, Delta",
+      "fullAddress": "Arroyo Las Canas, Delta, Provincia de Buenos Aires, Argentina",
+      "area": "Tigre Delta",
+      "style": "Adults-leaning delta lodge",
+      "driveMinutes": 90,
+      "adultsOnly": true,
+      "minAge": 14,
+      "phone": "011 3621-5810",
+      "rating": 4.6,
+      "reviewCount": 233,
+      "description": "Fifteen river cabins on Arroyo Las Cañas, boat-access only from the San Fernando / Tigre side. Guests must be 14 or older. Private decks on the water, not a city boutique with a delta hashtag.",
       "location": {
-        "lat": -35.4835226,
-        "lng": -58.7122198
+        "lat": -34.210358899999996,
+        "lng": -58.57418080000001
       },
       "price": {
-        "status": "unpublished",
-        "source": "Ask hotel",
-        "note": "No stable public from-rate found at build time."
+        "status": "published",
+        "usd": 330,
+        "basis": "2 days / 1 night double",
+        "includes": "All-inclusive with boat transfers (published package)",
+        "source": "Luxury Latin America published rate",
+        "sourceUrl": "https://www.luxurylatinamerica.com/argentina/becasina_delta_lodge.html",
+        "note": "Package price for double occupancy; confirm current season on labecasina.com."
       },
-      "weekdayHours": null
+      "weekdayHours": null,
+      "romance": {
+        "score": 77,
+        "why": "Private river cabins, boat-only, 14+. Water seclusion reads as romantic in EU/US taste the way a lake lodge does.",
+        "factors": {
+          "pedigree": 18,
+          "intimacy": 14,
+          "setting": 25,
+          "coupleFit": 20
+        },
+        "rank": 3
+      }
     },
     {
-      "id": "puesto-viejo",
-      "name": "Puesto Viejo Estancia & Polo Club",
-      "sourceName": "Puesto Viejo Estancia",
-      "officialUrl": "https://puestoviejo.com/en/",
-      "officialUrlType": "website",
-      "googleMapsUrl": "https://maps.google.com/?cid=15900209112117903503&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJa2RXzY8jvZURj4A3zvHjqNw",
+      "id": "casa-bora",
+      "name": "Casa Bora Hotel",
+      "sourceName": "Casa Bora Hotel",
+      "officialUrl": "https://www.instagram.com/casaborahotel/",
+      "officialUrlType": "instagram",
+      "googleMapsUrl": "https://maps.google.com/?cid=5114135603206251113&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJoQp4QgCVu5URaWJJOjwP-UY",
       "businessStatus": "OPERATIONAL",
-      "address": "RP6 Km 82",
-      "fullAddress": "RP6 Km. 82, B1814 Cañuelas, Provincia de Buenos Aires, Argentina",
-      "area": "Cañuelas",
-      "style": "Polo club estancia",
-      "driveMinutes": 60,
-      "adultsOnly": false,
-      "minAge": null,
-      "phone": "011 3221-7503",
-      "rating": 4.4,
-      "reviewCount": 1505,
-      "description": "Ten-room polo estancia on Ruta 6, roughly an hour from town and half an hour from Ezeiza. Covered by Condé Nast Traveler; the draw is polo fields plus a small hotel, not a mega-resort.",
-      "location": {
-        "lat": -35.0788417,
-        "lng": -58.656512899999996
-      },
-      "price": {
-        "status": "unpublished",
-        "source": "Ask hotel",
-        "note": "Packages vary; day-use and overnight sold separately."
-      },
-      "weekdayHours": [
-        "Monday: 8:00 AM – 5:00 PM",
-        "Tuesday: 8:00 AM – 5:00 PM",
-        "Wednesday: 8:00 AM – 5:00 PM",
-        "Thursday: 8:00 AM – 5:00 PM",
-        "Friday: 8:00 AM – 5:00 PM",
-        "Saturday: 10:00 AM – 2:00 PM",
-        "Sunday: 10:00 AM – 2:00 PM"
-      ]
-    },
-    {
-      "id": "el-rosario",
-      "name": "Estancia El Rosario de Areco",
-      "sourceName": "Estancia El Rosario de Areco",
-      "officialUrl": "https://rosariodeareco.com.ar/",
-      "officialUrlType": "website",
-      "googleMapsUrl": "https://maps.google.com/?cid=5514792776190702626&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJq8zuyTyVu5URIrS8ss96iEw",
-      "businessStatus": "OPERATIONAL",
-      "address": "RP41, San Antonio de Areco",
-      "fullAddress": "RP41, B2760 San Antonio de Areco, Provincia de Buenos Aires, Argentina",
+      "address": "Domingo Faustino Sarmiento 175",
+      "fullAddress": "Domingo Faustino Sarmiento 175, B2760 San Antonio de Areco, Provincia de Buenos Aires, Argentina",
       "area": "San Antonio de Areco",
-      "style": "Polo estancia",
-      "driveMinutes": 110,
-      "adultsOnly": false,
+      "style": "Four-suite town boutique",
+      "driveMinutes": 100,
+      "adultsOnly": true,
       "minAge": null,
-      "phone": "02326 40-1374",
-      "rating": 4.8,
-      "reviewCount": 110,
-      "description": "Low-key polo estancia outside Areco with rooms converted from old stables and a pool under the trees. Feels more private house than hotel, which is the point.",
+      "phone": "02326 41-4907",
+      "rating": 5,
+      "reviewCount": 101,
+      "description": "Four-suite boutique in Areco's historic center, opened by a couple who left Villa Crespo after years of hotel-hopping abroad. Two rooms have private mini-pools; La Nación clocked weekend doubles from ARS 175,000 in early 2025.",
       "location": {
-        "lat": -34.3069267,
-        "lng": -59.4878311
+        "lat": -34.2434036,
+        "lng": -59.467554
       },
       "price": {
-        "status": "unpublished",
-        "source": "Ask hotel",
-        "note": "Book by email; no public rate card scraped."
+        "status": "published",
+        "usd": 115,
+        "ars": 175000,
+        "basis": "weekend double",
+        "includes": "Breakfast",
+        "source": "La Nación Revista Lugares (Feb 2025)",
+        "sourceUrl": "https://www.lanacion.com.ar/revista-lugares/el-nuevo-hotel-boutique-en-san-antonio-de-areco-que-construyo-una-joven-pareja-inspirada-en-sus-nid25022025/",
+        "note": "Converted from ARS 175,000 weekend double quoted in La Nación."
       },
-      "weekdayHours": null
-    },
-    {
-      "id": "el-ombu",
-      "name": "Estancia El Ombú de Areco",
-      "sourceName": "Estancia El Ombú de Areco",
-      "officialUrl": "http://www.estanciaelombu.com/",
-      "officialUrlType": "website",
-      "googleMapsUrl": "https://maps.google.com/?cid=4629931435795698737&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJvUI5H6Dqu5URMVQERRzSQEA",
-      "businessStatus": "OPERATIONAL",
-      "address": "Ruta 31, Cuartel VI, Villa Lía",
-      "fullAddress": "Ruta 31 Cuartel VI, Villa Lía, San Antorio de Areco, Provincia de Buenos Aires, Argentina",
-      "area": "San Antonio de Areco",
-      "style": "1880s ranch hotel",
-      "driveMinutes": 115,
-      "adultsOnly": false,
-      "minAge": null,
-      "phone": "02326 49-2080",
-      "rating": 4.7,
-      "reviewCount": 1007,
-      "description": "1880 mansion on a working ranch near Areco. Meals are included; the look is rustic-chic rather than Relais polish, and it still reads as a proper campo stay rather than a highway motel with a gaucho mural.",
-      "location": {
-        "lat": -34.1966507,
-        "lng": -59.3888592
-      },
-      "price": {
-        "status": "unpublished",
-        "source": "Ask hotel",
-        "note": "Full-board packages; confirm current USD/ARS."
-      },
-      "weekdayHours": [
-        "Monday: Open 24 hours",
-        "Tuesday: Open 24 hours",
-        "Wednesday: Open 24 hours",
-        "Thursday: Open 24 hours",
-        "Friday: Open 24 hours",
-        "Saturday: Open 24 hours",
-        "Sunday: Open 24 hours"
-      ]
+      "weekdayHours": null,
+      "romance": {
+        "score": 75,
+        "why": "Four suites, couple-built, two with private mini-pools. Town, not campo, but the scale and intent are right.",
+        "factors": {
+          "pedigree": 16,
+          "intimacy": 25,
+          "setting": 14,
+          "coupleFit": 20
+        },
+        "rank": 4
+      }
     },
     {
       "id": "la-sofia",
@@ -298,42 +285,306 @@
         "Friday: 8:30 AM – 9:00 PM",
         "Saturday: 8:30 AM – 9:00 PM",
         "Sunday: 8:30 AM – 9:30 PM"
-      ]
+      ],
+      "romance": {
+        "score": 74,
+        "why": "Six-suite owner polo ranch. Small enough to feel private; polo is optional, not the whole pitch.",
+        "factors": {
+          "pedigree": 16,
+          "intimacy": 25,
+          "setting": 18,
+          "coupleFit": 15
+        },
+        "rank": 5
+      }
     },
     {
-      "id": "la-becasina",
-      "name": "La Becasina Delta Lodge",
-      "sourceName": "La Becasina Delta Lodge",
-      "officialUrl": "https://labecasina.com/es/",
-      "officialUrlType": "website",
-      "googleMapsUrl": "https://maps.google.com/?cid=11555854051679978311&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJddQFqmtau5URR8Ok0gikXqA",
+      "id": "mestizo-lincoln",
+      "name": "Mestizo Hotel",
+      "sourceName": "Mestizo Hotel",
+      "officialUrl": "https://www.instagram.com/mestizohotel/",
+      "officialUrlType": "instagram",
+      "googleMapsUrl": "https://maps.google.com/?cid=10241145910164778173&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "googlePlaceId": "ChIJ62vRZL1dx5URvexQBPLbH44",
       "businessStatus": "OPERATIONAL",
-      "address": "Arroyo Las Cañas, Delta",
-      "fullAddress": "Arroyo Las Canas, Delta, Provincia de Buenos Aires, Argentina",
-      "area": "Tigre Delta",
-      "style": "Adults-leaning delta lodge",
-      "driveMinutes": 90,
-      "adultsOnly": true,
-      "minAge": 14,
-      "phone": "011 3621-5810",
-      "rating": 4.6,
-      "reviewCount": 233,
-      "description": "Fifteen river cabins on Arroyo Las Cañas, boat-access only from the San Fernando / Tigre side. Guests must be 14 or older. Private decks on the water, not a city boutique with a delta hashtag.",
+      "address": "Provincia de Santa Cruz 1505",
+      "fullAddress": "Provincia de Santa Cruz 1505, B6070 Lincoln, Provincia de Buenos Aires, Argentina",
+      "area": "Lincoln",
+      "style": "Six-room country boutique",
+      "driveMinutes": 270,
+      "adultsOnly": false,
+      "minAge": null,
+      "phone": "02355 15-54-0000",
+      "rating": 4.8,
+      "reviewCount": 593,
+      "description": "Six-room 4-star boutique on the edge of Lincoln with a garden, seasonal pool, restaurant/teahouse and spa baths in some rooms. Farther than Areco (~4.5 hours), but the scale is couple-weekend sized.",
       "location": {
-        "lat": -34.210358899999996,
-        "lng": -58.57418080000001
+        "lat": -34.8526467,
+        "lng": -61.508277099999994
       },
       "price": {
         "status": "published",
-        "usd": 330,
-        "basis": "2 days / 1 night double",
-        "includes": "All-inclusive with boat transfers (published package)",
-        "source": "Luxury Latin America published rate",
-        "sourceUrl": "https://www.luxurylatinamerica.com/argentina/becasina_delta_lodge.html",
-        "note": "Package price for double occupancy; confirm current season on labecasina.com."
+        "usd": 110,
+        "basis": "double night",
+        "includes": "OTA average for a standard room",
+        "source": "Tripadvisor listed average rates",
+        "sourceUrl": "https://www.tripadvisor.com/Hotel_Review-g1028501-d17814814-Reviews-Mestizo_Hotel-Lincoln_Province_of_Buenos_Aires_Central_Argentina.html",
+        "note": "Tripadvisor showed roughly $109–$157 for a standard room; confirm live rates."
       },
-      "weekdayHours": null
+      "weekdayHours": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+      ],
+      "romance": {
+        "score": 73,
+        "why": "Six rooms, garden quiet and spa baths — intimate boutique register. Loses points for distance from BA and no Relais/palace pedigree.",
+        "factors": {
+          "pedigree": 15,
+          "intimacy": 25,
+          "setting": 17,
+          "coupleFit": 16
+        },
+        "rank": 6
+      }
+    },
+    {
+      "id": "la-bandada",
+      "name": "Estancia La Bandada",
+      "sourceName": "Estancia La Bandada",
+      "officialUrl": "http://www.labandada.com.ar/",
+      "officialUrlType": "website",
+      "googleMapsUrl": "https://maps.google.com/?cid=5317757231127419789&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJ0TEIuSNdvZURjVsd6wZ4zEk",
+      "businessStatus": "OPERATIONAL",
+      "address": "RP41 Km 120",
+      "fullAddress": "35°28'46.9\"S 58°41'56, RP41 km 120, 7220 San Miguel del Monte, Provincia de Buenos Aires, Argentina",
+      "area": "San Miguel del Monte",
+      "style": "Working-farm estancia",
+      "driveMinutes": 95,
+      "adultsOnly": false,
+      "minAge": null,
+      "phone": "02226 15-51-2771",
+      "rating": 4.8,
+      "reviewCount": 194,
+      "description": "Former Candelaria del Monte, now La Bandada: a 200-acre working farm about 90 minutes from Buenos Aires. The South America Specialists and The Telegraph still list it for a quiet Pampas night without Relais pricing.",
+      "location": {
+        "lat": -35.4835226,
+        "lng": -58.7122198
+      },
+      "price": {
+        "status": "unpublished",
+        "source": "Ask hotel",
+        "note": "No stable public from-rate found at build time."
+      },
+      "weekdayHours": null,
+      "romance": {
+        "score": 72,
+        "why": "Quiet working farm on UK shortlists (Telegraph / South America Specialists). Low key, not a spa machine.",
+        "factors": {
+          "pedigree": 20,
+          "intimacy": 18,
+          "setting": 22,
+          "coupleFit": 12
+        },
+        "rank": 7
+      }
+    },
+    {
+      "id": "el-rosario",
+      "name": "Estancia El Rosario de Areco",
+      "sourceName": "Estancia El Rosario de Areco",
+      "officialUrl": "https://rosariodeareco.com.ar/",
+      "officialUrlType": "website",
+      "googleMapsUrl": "https://maps.google.com/?cid=5514792776190702626&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJq8zuyTyVu5URIrS8ss96iEw",
+      "businessStatus": "OPERATIONAL",
+      "address": "RP41, San Antonio de Areco",
+      "fullAddress": "RP41, B2760 San Antonio de Areco, Provincia de Buenos Aires, Argentina",
+      "area": "San Antonio de Areco",
+      "style": "Polo estancia",
+      "driveMinutes": 110,
+      "adultsOnly": false,
+      "minAge": null,
+      "phone": "02326 40-1374",
+      "rating": 4.8,
+      "reviewCount": 110,
+      "description": "Low-key polo estancia outside Areco with rooms converted from old stables and a pool under the trees. Feels more private house than hotel, which is the point.",
+      "location": {
+        "lat": -34.3069267,
+        "lng": -59.4878311
+      },
+      "price": {
+        "status": "unpublished",
+        "source": "Ask hotel",
+        "note": "Book by email; no public rate card scraped."
+      },
+      "weekdayHours": null,
+      "romance": {
+        "score": 68,
+        "why": "Stable rooms and a private-house feel outside Areco. More hideaway than hotel lobby.",
+        "factors": {
+          "pedigree": 14,
+          "intimacy": 20,
+          "setting": 20,
+          "coupleFit": 14
+        },
+        "rank": 8
+      }
+    },
+    {
+      "id": "posada-de-la-plaza",
+      "name": "Posada de la Plaza",
+      "sourceName": "Posada de la Plaza",
+      "officialUrl": "https://www.posadadelaplaza.com/",
+      "officialUrlType": "website",
+      "googleMapsUrl": "https://maps.google.com/?cid=1134560476671788471&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJofTvcFOVu5URt0U4DL7Evg8",
+      "businessStatus": "OPERATIONAL",
+      "address": "Alvear 480",
+      "fullAddress": "Alvear 480, B2760 San Antonio de Areco, Provincia de Buenos Aires, Argentina",
+      "area": "San Antonio de Areco",
+      "style": "Historic town posada",
+      "driveMinutes": 100,
+      "adultsOnly": false,
+      "minAge": null,
+      "phone": "02326 51-1271",
+      "rating": 4.6,
+      "reviewCount": 410,
+      "description": "Late-19th-century house on Plaza Gómez with a handful of rooms and breakfast included. Walk-to-everything Areco stay if you want town streets at night instead of a dark campo driveway.",
+      "location": {
+        "lat": -34.2477908,
+        "lng": -59.469708100000005
+      },
+      "price": {
+        "status": "unpublished",
+        "source": "posadadelaplaza.com",
+        "note": "Book on site; breakfast included, no public USD card."
+      },
+      "weekdayHours": [
+        "Monday: 8:00 AM – 9:00 PM",
+        "Tuesday: 8:00 AM – 9:00 PM",
+        "Wednesday: 8:00 AM – 9:00 PM",
+        "Thursday: 8:00 AM – 9:00 PM",
+        "Friday: 8:00 AM – 9:00 PM",
+        "Saturday: 8:00 AM – 9:00 PM",
+        "Sunday: 8:00 AM – 9:00 PM"
+      ],
+      "romance": {
+        "score": 64,
+        "why": "Late-19th-century house on the plaza. Romantic if you want Areco streets at night; less so if you want silence and horses.",
+        "factors": {
+          "pedigree": 14,
+          "intimacy": 20,
+          "setting": 14,
+          "coupleFit": 16
+        },
+        "rank": 9
+      }
+    },
+    {
+      "id": "el-ombu",
+      "name": "Estancia El Ombú de Areco",
+      "sourceName": "Estancia El Ombú de Areco",
+      "officialUrl": "http://www.estanciaelombu.com/",
+      "officialUrlType": "website",
+      "googleMapsUrl": "https://maps.google.com/?cid=4629931435795698737&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJvUI5H6Dqu5URMVQERRzSQEA",
+      "businessStatus": "OPERATIONAL",
+      "address": "Ruta 31, Cuartel VI, Villa Lía",
+      "fullAddress": "Ruta 31 Cuartel VI, Villa Lía, San Antorio de Areco, Provincia de Buenos Aires, Argentina",
+      "area": "San Antonio de Areco",
+      "style": "1880s ranch hotel",
+      "driveMinutes": 115,
+      "adultsOnly": false,
+      "minAge": null,
+      "phone": "02326 49-2080",
+      "rating": 4.7,
+      "reviewCount": 1007,
+      "description": "1880 mansion on a working ranch near Areco. Meals are included; the look is rustic-chic rather than Relais polish, and it still reads as a proper campo stay rather than a highway motel with a gaucho mural.",
+      "location": {
+        "lat": -34.1966507,
+        "lng": -59.3888592
+      },
+      "price": {
+        "status": "unpublished",
+        "source": "Ask hotel",
+        "note": "Full-board packages; confirm current USD/ARS."
+      },
+      "weekdayHours": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+      ],
+      "romance": {
+        "score": 58,
+        "why": "Real 1880 ranch stay with meals included. Solid campo, a bit more tourist-estancia than private house.",
+        "factors": {
+          "pedigree": 14,
+          "intimacy": 12,
+          "setting": 20,
+          "coupleFit": 12
+        },
+        "rank": 10
+      }
+    },
+    {
+      "id": "puesto-viejo",
+      "name": "Puesto Viejo Estancia & Polo Club",
+      "sourceName": "Puesto Viejo Estancia",
+      "officialUrl": "https://puestoviejo.com/en/",
+      "officialUrlType": "website",
+      "googleMapsUrl": "https://maps.google.com/?cid=15900209112117903503&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
+      "googlePlaceId": "ChIJa2RXzY8jvZURj4A3zvHjqNw",
+      "businessStatus": "OPERATIONAL",
+      "address": "RP6 Km 82",
+      "fullAddress": "RP6 Km. 82, B1814 Cañuelas, Provincia de Buenos Aires, Argentina",
+      "area": "Cañuelas",
+      "style": "Polo club estancia",
+      "driveMinutes": 60,
+      "adultsOnly": false,
+      "minAge": null,
+      "phone": "011 3221-7503",
+      "rating": 4.4,
+      "reviewCount": 1505,
+      "description": "Ten-room polo estancia on Ruta 6, roughly an hour from town and half an hour from Ezeiza. Covered by Condé Nast Traveler; the draw is polo fields plus a small hotel, not a mega-resort.",
+      "location": {
+        "lat": -35.0788417,
+        "lng": -58.656512899999996
+      },
+      "price": {
+        "status": "unpublished",
+        "source": "Ask hotel",
+        "note": "Packages vary; day-use and overnight sold separately."
+      },
+      "weekdayHours": [
+        "Monday: 8:00 AM – 5:00 PM",
+        "Tuesday: 8:00 AM – 5:00 PM",
+        "Wednesday: 8:00 AM – 5:00 PM",
+        "Thursday: 8:00 AM – 5:00 PM",
+        "Friday: 8:00 AM – 5:00 PM",
+        "Saturday: 10:00 AM – 2:00 PM",
+        "Sunday: 10:00 AM – 2:00 PM"
+      ],
+      "romance": {
+        "score": 54,
+        "why": "CN Traveler polo club with 10 rooms. Chic if you like polo; the sport energy undercuts pure couple quiet.",
+        "factors": {
+          "pedigree": 16,
+          "intimacy": 18,
+          "setting": 18,
+          "coupleFit": 2
+        },
+        "rank": 11
+      }
     },
     {
       "id": "pampas-de-areco",
@@ -376,82 +627,18 @@
         "Friday: Open 24 hours",
         "Saturday: Open 24 hours",
         "Sunday: Open 24 hours"
-      ]
-    },
-    {
-      "id": "posada-de-la-plaza",
-      "name": "Posada de la Plaza",
-      "sourceName": "Posada de la Plaza",
-      "officialUrl": "https://www.posadadelaplaza.com/",
-      "officialUrlType": "website",
-      "googleMapsUrl": "https://maps.google.com/?cid=1134560476671788471&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJofTvcFOVu5URt0U4DL7Evg8",
-      "businessStatus": "OPERATIONAL",
-      "address": "Alvear 480",
-      "fullAddress": "Alvear 480, B2760 San Antonio de Areco, Provincia de Buenos Aires, Argentina",
-      "area": "San Antonio de Areco",
-      "style": "Historic town posada",
-      "driveMinutes": 100,
-      "adultsOnly": false,
-      "minAge": null,
-      "phone": "02326 51-1271",
-      "rating": 4.6,
-      "reviewCount": 410,
-      "description": "Late-19th-century house on Plaza Gómez with a handful of rooms and breakfast included. Walk-to-everything Areco stay if you want town streets at night instead of a dark campo driveway.",
-      "location": {
-        "lat": -34.2477908,
-        "lng": -59.469708100000005
-      },
-      "price": {
-        "status": "unpublished",
-        "source": "posadadelaplaza.com",
-        "note": "Book on site; breakfast included, no public USD card."
-      },
-      "weekdayHours": [
-        "Monday: 8:00 AM – 9:00 PM",
-        "Tuesday: 8:00 AM – 9:00 PM",
-        "Wednesday: 8:00 AM – 9:00 PM",
-        "Thursday: 8:00 AM – 9:00 PM",
-        "Friday: 8:00 AM – 9:00 PM",
-        "Saturday: 8:00 AM – 9:00 PM",
-        "Sunday: 8:00 AM – 9:00 PM"
-      ]
-    },
-    {
-      "id": "casa-bora",
-      "name": "Casa Bora Hotel",
-      "sourceName": "Casa Bora Hotel",
-      "officialUrl": "https://www.instagram.com/casaborahotel/",
-      "officialUrlType": "instagram",
-      "googleMapsUrl": "https://maps.google.com/?cid=5114135603206251113&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-      "googlePlaceId": "ChIJoQp4QgCVu5URaWJJOjwP-UY",
-      "businessStatus": "OPERATIONAL",
-      "address": "Domingo Faustino Sarmiento 175",
-      "fullAddress": "Domingo Faustino Sarmiento 175, B2760 San Antonio de Areco, Provincia de Buenos Aires, Argentina",
-      "area": "San Antonio de Areco",
-      "style": "Four-suite town boutique",
-      "driveMinutes": 100,
-      "adultsOnly": true,
-      "minAge": null,
-      "phone": "02326 41-4907",
-      "rating": 5,
-      "reviewCount": 101,
-      "description": "Four-suite boutique in Areco's historic center, opened by a couple who left Villa Crespo after years of hotel-hopping abroad. Two rooms have private mini-pools; La Nación clocked weekend doubles from ARS 175,000 in early 2025.",
-      "location": {
-        "lat": -34.2434036,
-        "lng": -59.467554
-      },
-      "price": {
-        "status": "published",
-        "usd": 115,
-        "ars": 175000,
-        "basis": "weekend double",
-        "includes": "Breakfast",
-        "source": "La Nación Revista Lugares (Feb 2025)",
-        "sourceUrl": "https://www.lanacion.com.ar/revista-lugares/el-nuevo-hotel-boutique-en-san-antonio-de-areco-que-construyo-una-joven-pareja-inspirada-en-sus-nid25022025/",
-        "note": "Converted from ARS 175,000 weekend double quoted in La Nación."
-      },
-      "weekdayHours": null
+      ],
+      "romance": {
+        "score": 47,
+        "why": "Adults-only spa with couple packages. Polished weekend hotel, not a country house.",
+        "factors": {
+          "pedigree": 10,
+          "intimacy": 5,
+          "setting": 12,
+          "coupleFit": 20
+        },
+        "rank": 12
+      }
     },
     {
       "id": "el-metejon",
@@ -490,7 +677,18 @@
         "Friday: 9:00 AM – 7:00 PM",
         "Saturday: 9:00 AM – 7:00 PM",
         "Sunday: 9:00 AM – 7:00 PM"
-      ]
+      ],
+      "romance": {
+        "score": 42,
+        "why": "Polo lessons resort near Ezeiza. Fine for a shared hobby trip; weak as a pure romantic default.",
+        "factors": {
+          "pedigree": 12,
+          "intimacy": 10,
+          "setting": 16,
+          "coupleFit": 4
+        },
+        "rank": 13
+      }
     },
     {
       "id": "un-alto",
@@ -522,7 +720,18 @@
         "sourceUrl": "https://hotels.cloudbeds.com/es/reservation/ST5DAV?currency=ars",
         "note": "Live rates on Cloudbeds; no fixed from-rate published."
       },
-      "weekdayHours": null
+      "weekdayHours": null,
+      "romance": {
+        "score": 36,
+        "why": "Wellness spa on the edge of Areco. Quiet and clean, but the register is detox, not dinner-and-fireplace.",
+        "factors": {
+          "pedigree": 8,
+          "intimacy": 8,
+          "setting": 10,
+          "coupleFit": 10
+        },
+        "rank": 14
+      }
     }
   ]
 }
