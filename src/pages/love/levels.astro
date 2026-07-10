@@ -63,7 +63,7 @@ const semanticStageRows: StageRow[] = [
   { label: "Talking / texting", levels: { default: 3, "ar-es": null } },
   {
     label: "Getting to know",
-    levels: { default: 4, "cn-zh": 7, "ar-es": 3, "nl-nl": 3, "ph-fil": [4, 5, 6] },
+    levels: { default: 4, "cn-zh": 7, "ar-es": 3, "nl-nl": null, "ph-fil": [4, 5, 6] },
   },
   {
     label: "Kiss / make out",
@@ -73,6 +73,7 @@ const semanticStageRows: StageRow[] = [
       "cn-zh": null,
       "in-en": null,
       "ca-en": null,
+      "ar-es": null,
       "nl-nl": null,
       "ph-fil": 8,
     },
@@ -192,7 +193,7 @@ const semanticStageRows: StageRow[] = [
       "jp-ja": 10,
       "uk-en": 13,
       "in-en": 11,
-      "fr-fr": 11,
+      "fr-fr": null,
       "it-it": 12,
       "ru-ru": 13,
       "br-pt": 12,
@@ -250,13 +251,13 @@ const semanticStageRows: StageRow[] = [
       "cn-zh": null,
       "de-de": null,
       "jp-ja": null,
-      "uk-en": 16,
+      "uk-en": null,
       "in-en": null,
-      "fr-fr": 14,
+      "fr-fr": null,
       "it-it": null,
       "ru-ru": null,
-      "br-pt": 13,
-      "ca-en": 12,
+      "br-pt": null,
+      "ca-en": null,
       "ar-es": 16,
       "nl-nl": 17,
       "ph-fil": null,
@@ -333,15 +334,23 @@ const getStageValue = (row: StageRow, locale: Locale) =>
   Object.prototype.hasOwnProperty.call(row.levels, locale.id)
     ? row.levels[locale.id]
     : row.levels.default;
+const seenTermsByLocale = new Map(locales.map((locale) => [locale.id, new Set<string>()]));
 const levelMapRows = semanticStageRows.map((row) => ({
   label: row.label,
-  terms: locales.map((locale) => ({
-    locale,
-    term: toLevelList(getStageValue(row, locale))
+  terms: locales.map((locale) => {
+    const term = toLevelList(getStageValue(row, locale))
       .map((level) => locale.levels.find((item) => item.level === level)?.term)
       .filter(Boolean)
-      .join(" / "),
-  })),
+      .join(" / ");
+    const seenTerms = seenTermsByLocale.get(locale.id);
+
+    if (!term || seenTerms?.has(term)) {
+      return { locale, term: "" };
+    }
+
+    seenTerms?.add(term);
+    return { locale, term };
+  }),
 }));
 const structuredData = {
   "@context": "https://schema.org",
@@ -464,6 +473,7 @@ const structuredData = {
           <table class="mapping-table">
             <thead>
               <tr>
+                <th scope="col" class="stage-number">#</th>
                 <th scope="col">Stage</th>
                 {
                   locales.map((locale) => (
@@ -480,8 +490,9 @@ const structuredData = {
             </thead>
             <tbody>
               {
-                levelMapRows.map((row) => (
+                levelMapRows.map((row, index) => (
                   <tr>
+                    <td class="stage-number">{index + 1}</td>
                     <th scope="row">{row.label}</th>
                     {row.terms.map(({ locale, term }) => (
                       <td
@@ -871,15 +882,19 @@ const structuredData = {
     white-space: nowrap;
   }
 
-  .mapping-table thead th:first-child {
-    min-width: 8rem;
-  }
-
   .mapping-table tbody th {
     color: var(--lvl);
     font-weight: 600;
     min-width: 8rem;
     white-space: normal;
+  }
+
+  .mapping-table .stage-number {
+    min-width: 2.25rem;
+    width: 2.25rem;
+    color: var(--lvl);
+    text-align: right;
+    white-space: nowrap;
   }
 
   .mapping-table td {
