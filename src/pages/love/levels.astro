@@ -12,12 +12,13 @@ import canada from "../../data/love-levels/canada.json";
 import argentina from "../../data/love-levels/argentina.json";
 import czechRepublic from "../../data/love-levels/czech-republic.json";
 import russia from "../../data/love-levels/russia.json";
+import netherlands from "../../data/love-levels/netherlands.json";
 
 export const prerender = true;
 
 const pageTitle = "Relationship levels by country";
 const pageDescription =
-  "Informal dating and relationship ladders by country — USA, China, Germany, Japan, UK, India, France, Italy, Russia, Brazil, Canada, Argentina, and Czech Republic.";
+  "Informal dating and relationship ladders by country — USA, China, Germany, Japan, UK, India, France, Italy, Russia, Brazil, Canada, Argentina, Czech Republic, and the Netherlands.";
 const themeColorLight = "#ffffff";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -37,18 +38,292 @@ const locales = [
   brazil,
   canada,
   argentina,
+  netherlands,
   czechRepublic,
 ];
 const defaultLocale = locales.find((l) => l.default) ?? locales[0];
 const allLocaleId = "all";
-const maxLevel = Math.max(
-  ...locales.map((locale) => locale.levels[locale.levels.length - 1].level),
-);
-const levelMapRows = Array.from({ length: maxLevel + 1 }, (_, level) => ({
-  level,
+type Locale = (typeof locales)[number];
+type LevelMapValue = number | number[] | null;
+type StageRow = {
+  label: string;
+  levels: {
+    default?: LevelMapValue;
+    [localeId: string]: LevelMapValue | undefined;
+  };
+};
+
+const semanticStageRows: StageRow[] = [
+  { label: "None / single", levels: { default: 0 } },
+  { label: "Attraction", levels: { default: 1 } },
+  { label: "Flirting", levels: { default: 2 } },
+  { label: "Talking / texting", levels: { default: 3, "ar-es": null } },
+  {
+    label: "Getting to know",
+    levels: { default: 4, "cn-zh": 7, "ar-es": 3, "nl-nl": 3 },
+  },
+  {
+    label: "Kiss / make out",
+    levels: {
+      default: 5,
+      "us-en": null,
+      "cn-zh": null,
+      "in-en": null,
+      "ca-en": null,
+      "nl-nl": null,
+    },
+  },
+  {
+    label: "One-off sex",
+    levels: {
+      default: 6,
+      "us-en": 5,
+      "cn-zh": 5,
+      "jp-ja": null,
+      "in-en": 5,
+      "br-pt": null,
+      "ca-en": 5,
+      "ar-es": 5,
+      "nl-nl": 4,
+    },
+  },
+  {
+    label: "FWB / regular hookup",
+    levels: {
+      default: 7,
+      "us-en": 6,
+      "cn-zh": 6,
+      "jp-ja": 6,
+      "in-en": 6,
+      "ca-en": 6,
+      "ar-es": [6, 7, 8],
+      "nl-nl": 5,
+    },
+  },
+  {
+    label: "Casual dating",
+    levels: {
+      default: 8,
+      "us-en": 7,
+      "cn-zh": null,
+      "jp-ja": null,
+      "uk-en": [8, 9],
+      "in-en": 7,
+      "ru-ru": [8, 9],
+      "ca-en": 7,
+      "ar-es": [9, 10],
+      "nl-nl": [6, 7, 8],
+      "cz-cs": [8, 9],
+    },
+  },
+  {
+    label: "Undefined gray zone",
+    levels: {
+      "us-en": 8,
+      "cn-zh": [4, 8],
+      "de-de": 9,
+      "jp-ja": 7,
+      "uk-en": 10,
+      "in-en": 8,
+      "fr-fr": 9,
+      "it-it": 9,
+      "ru-ru": 10,
+      "br-pt": 9,
+      "ca-en": 8,
+      "ar-es": 11,
+      "nl-nl": [9, 10],
+      "cz-cs": 10,
+    },
+  },
+  {
+    label: "Exclusive / DTR",
+    levels: {
+      "us-en": 9,
+      "cn-zh": 9,
+      "de-de": 10,
+      "jp-ja": 8,
+      "uk-en": 11,
+      "in-en": 9,
+      "fr-fr": 10,
+      "it-it": 10,
+      "ru-ru": null,
+      "br-pt": 10,
+      "ca-en": 9,
+      "ar-es": 12,
+      "nl-nl": [11, 12],
+      "cz-cs": null,
+    },
+  },
+  {
+    label: "Official relationship",
+    levels: {
+      "us-en": 10,
+      "cn-zh": 10,
+      "de-de": 11,
+      "jp-ja": [9, 10],
+      "uk-en": 12,
+      "in-en": 10,
+      "fr-fr": 11,
+      "it-it": 11,
+      "ru-ru": [11, 12],
+      "br-pt": 11,
+      "ca-en": 10,
+      "ar-es": 13,
+      "nl-nl": 13,
+      "cz-cs": 11,
+    },
+  },
+  {
+    label: "Partner / couple",
+    levels: {
+      "us-en": 11,
+      "cn-zh": 11,
+      "de-de": 12,
+      "jp-ja": 11,
+      "uk-en": 13,
+      "in-en": 11,
+      "fr-fr": 11,
+      "it-it": 12,
+      "ru-ru": 13,
+      "br-pt": 12,
+      "ca-en": 11,
+      "ar-es": 14,
+      "nl-nl": 14,
+      "cz-cs": [12, 13],
+    },
+  },
+  {
+    label: "Living apart",
+    levels: {
+      "us-en": null,
+      "cn-zh": null,
+      "de-de": null,
+      "jp-ja": null,
+      "uk-en": null,
+      "in-en": null,
+      "fr-fr": null,
+      "it-it": null,
+      "ru-ru": null,
+      "br-pt": null,
+      "ca-en": null,
+      "ar-es": null,
+      "nl-nl": 15,
+      "cz-cs": null,
+    },
+  },
+  {
+    label: "Living together",
+    levels: {
+      "us-en": 12,
+      "cn-zh": 12,
+      "de-de": 13,
+      "jp-ja": 12,
+      "uk-en": 14,
+      "in-en": 12,
+      "fr-fr": 12,
+      "it-it": 13,
+      "ru-ru": 14,
+      "br-pt": 13,
+      "ca-en": 12,
+      "ar-es": 15,
+      "nl-nl": 16,
+      "cz-cs": 14,
+    },
+  },
+  {
+    label: "Legal partnership",
+    levels: {
+      "us-en": null,
+      "cn-zh": null,
+      "de-de": null,
+      "jp-ja": null,
+      "uk-en": 16,
+      "in-en": null,
+      "fr-fr": 14,
+      "it-it": null,
+      "ru-ru": null,
+      "br-pt": 13,
+      "ca-en": 12,
+      "ar-es": 16,
+      "nl-nl": 17,
+      "cz-cs": null,
+    },
+  },
+  {
+    label: "Engaged",
+    levels: {
+      "us-en": 13,
+      "cn-zh": 13,
+      "de-de": 14,
+      "jp-ja": 13,
+      "uk-en": 15,
+      "in-en": 13,
+      "fr-fr": 13,
+      "it-it": 14,
+      "ru-ru": 15,
+      "br-pt": 14,
+      "ca-en": 13,
+      "ar-es": 17,
+      "nl-nl": 18,
+      "cz-cs": 15,
+    },
+  },
+  {
+    label: "Married",
+    levels: {
+      "us-en": 14,
+      "cn-zh": 14,
+      "de-de": 15,
+      "jp-ja": 14,
+      "uk-en": 16,
+      "in-en": 14,
+      "fr-fr": 14,
+      "it-it": 15,
+      "ru-ru": 16,
+      "br-pt": 15,
+      "ca-en": 14,
+      "ar-es": 18,
+      "nl-nl": 19,
+      "cz-cs": 16,
+    },
+  },
+  {
+    label: "Married + kids",
+    levels: {
+      "us-en": 15,
+      "cn-zh": 15,
+      "de-de": 16,
+      "jp-ja": 15,
+      "uk-en": 17,
+      "in-en": 15,
+      "fr-fr": 15,
+      "it-it": 16,
+      "ru-ru": 17,
+      "br-pt": 16,
+      "ca-en": 15,
+      "ar-es": 19,
+      "nl-nl": 20,
+      "cz-cs": 17,
+    },
+  },
+];
+
+const toLevelList = (value: LevelMapValue | undefined) => {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+};
+const getStageValue = (row: StageRow, locale: Locale) =>
+  Object.prototype.hasOwnProperty.call(row.levels, locale.id)
+    ? row.levels[locale.id]
+    : row.levels.default;
+const levelMapRows = semanticStageRows.map((row) => ({
+  label: row.label,
   terms: locales.map((locale) => ({
     locale,
-    item: locale.levels.find((item) => item.level === level),
+    term: toLevelList(getStageValue(row, locale))
+      .map((level) => locale.levels.find((item) => item.level === level)?.term)
+      .filter(Boolean)
+      .join(" / "),
   })),
 }));
 const structuredData = {
@@ -141,19 +416,21 @@ const structuredData = {
         hidden
         data-locale={allLocaleId}
       >
-        <p class="meta">
-          <span class="lang">All countries</span>
-          <span class="sep">·</span>
-          <span class="count">0–{maxLevel}</span>
-        </p>
-        <p class="note">
-          Approximate level mapping across countries. Cells show the local term at the same rough rung; blanks mean that country has no separate entry there.
-        </p>
+        <div class="panel-head">
+          <p class="meta">
+            <span class="lang">All countries</span>
+            <span class="sep">·</span>
+            <span class="count">{levelMapRows.length} mapped stages</span>
+          </p>
+          <p class="note">
+            Semantic mapping across countries. Rows are broad relationship stages; cells show the closest local term or grouped terms, not matching numeric levels.
+          </p>
+        </div>
         <div class="table-wrap">
           <table class="mapping-table">
             <thead>
               <tr>
-                <th scope="col">Level</th>
+                <th scope="col">Stage</th>
                 {locales.map((locale) => <th scope="col">{locale.shortLabel}</th>)}
               </tr>
             </thead>
@@ -161,9 +438,9 @@ const structuredData = {
               {
                 levelMapRows.map((row) => (
                   <tr>
-                    <th scope="row">{row.level}</th>
-                    {row.terms.map(({ item }) => (
-                      <td>{item ? item.term : "—"}</td>
+                    <th scope="row">{row.label}</th>
+                    {row.terms.map(({ term }) => (
+                      <td>{term || "—"}</td>
                     ))}
                   </tr>
                 ))
@@ -183,12 +460,14 @@ const structuredData = {
             hidden={locale.id !== defaultLocale.id}
             data-locale={locale.id}
           >
-            <p class="meta">
-              <span class="lang">{locale.language}</span>
-              <span class="sep">·</span>
-              <span class="count">0–{locale.levels[locale.levels.length - 1].level}</span>
-            </p>
-            <p class="note">{locale.ladderNote}</p>
+            <div class="panel-head">
+              <p class="meta">
+                <span class="lang">{locale.language}</span>
+                <span class="sep">·</span>
+                <span class="count">0–{locale.levels[locale.levels.length - 1].level}</span>
+              </p>
+              <p class="note">{locale.ladderNote}</p>
+            </div>
             <ol class="ladder">
               {locale.levels.map((item) => (
                 <li>
@@ -370,6 +649,12 @@ const structuredData = {
     display: block;
   }
 
+  .panel-head {
+    height: 3.7rem;
+    margin: 0 0 0.55rem;
+    overflow-y: auto;
+  }
+
   .meta {
     margin: 0 0 0.2rem;
     font-size: 0.75rem;
@@ -381,10 +666,16 @@ const structuredData = {
   }
 
   .note {
-    margin: 0 0 0.55rem;
+    margin: 0;
     font-size: 0.75rem;
     color: var(--muted);
     line-height: 1.35;
+  }
+
+  @media (max-width: 420px) {
+    .panel-head {
+      height: 4.75rem;
+    }
   }
 
   .ladder {
@@ -468,12 +759,15 @@ const structuredData = {
     white-space: nowrap;
   }
 
+  .mapping-table thead th:first-child {
+    min-width: 8rem;
+  }
+
   .mapping-table tbody th {
     color: var(--lvl);
-    font-variant-numeric: tabular-nums;
     font-weight: 600;
-    width: 2.5rem;
-    white-space: nowrap;
+    min-width: 8rem;
+    white-space: normal;
   }
 
   .mapping-table td {
