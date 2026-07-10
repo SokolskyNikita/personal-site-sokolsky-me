@@ -1,11 +1,11 @@
 ---
-import pageData from "../../data/hotels-ba-province-romantic.json";
+import pageData from "../../data/hotels-ba-romantic.json";
 
 export const prerender = true;
 
-const pageTitle = "Romantic hotels in Buenos Aires province";
+const pageTitle = "Romantic hotels in Buenos Aires";
 const pageDescription =
-  "Upper-class romantic hotels and estancias in Buenos Aires Province outside the city: Relais & Châteaux, polo clubs, spa resorts and small boutiques, with Google Maps ratings, drive times and a map.";
+  "Upper-class romantic hotels in Buenos Aires city and province: palace hotels, design hotels, estancias, polo clubs, spa resorts and small boutiques, with Google Maps ratings, drive times and a map.";
 const themeColorLight = "#f4efe6";
 const themeColorDark = "#12110f";
 const siteUrl =
@@ -81,6 +81,10 @@ const romanceRanks = sortRank(
     b.romance.score - a.romance.score ||
     collator.compare(a.name, b.name),
 );
+const faviconUrl = (url: string) => {
+  const hostname = new URL(url).hostname;
+  return `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+};
 const hotelsWithSort = hotels.map((hotel: Hotel) => ({
   ...hotel,
   reviewCountLabel: formatter.format(hotel.reviewCount),
@@ -92,6 +96,8 @@ const hotelsWithSort = hotels.map((hotel: Hotel) => ({
     hotel.price.status === "published"
       ? `Source: ${hotel.price.source}. ${hotel.price.note ?? ""}`.trim()
       : `Source: ${hotel.price.source}. ${hotel.price.note ?? ""}`.trim(),
+  bookingTitle: `Book ${hotel.name} on ${hotel.bookingSource}`,
+  bookingIconUrl: faviconUrl(hotel.bookingUrl),
   driveLabel: `~${hotel.driveMinutes} min`,
   sortOrderStyle: [
     `--sort-romance: ${romanceRanks.get(hotel.id)}`,
@@ -155,7 +161,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Romantic hotels in Buenos Aires province" />
+    <meta name="subject" content="Romantic hotels in Buenos Aires" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -167,7 +173,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="romantic hotels Buenos Aires province, estancia near Buenos Aires, La Bamba de Areco, La Madrugada, Hotel del Casco San Isidro, La Candelaria Lobos, Villa Maria, Tigre delta lodge, polo hotel Argentina"
+      content="romantic hotels Buenos Aires, luxury hotels Buenos Aires, palace hotels Buenos Aires, estancias near Buenos Aires, La Bamba de Areco, Palacio Duhau, Alvear Palace, Faena Buenos Aires, Four Seasons Buenos Aires"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -210,7 +216,7 @@ const structuredData = {
       <header class="page-header">
         <a class="home-link" href="/">Nikita Sokolsky</a>
         <div class="headline">
-          <p class="eyebrow">Buenos Aires province</p>
+          <p class="eyebrow">Buenos Aires</p>
           <h1>{pageTitle}</h1>
         </div>
         <div class="toolbar" aria-label="Hotel controls">
@@ -237,15 +243,15 @@ const structuredData = {
             </select>
           </label>
           <p class="meta">
-            Updated {updatedDate}. Romance order weights pedigree (Relais / palace / press), intimacy (room count), setting (campo, delta, town, spa) and couple fit (adults-only / quiet vs sports resort). Drive times are rough car minutes from central Buenos Aires (delta lodge includes boat). Prices are from-rates in USD where a public source existed; ARS quotes used 1 USD ≈ ARS {formatter.format(pageData.currency.arsPerUsd)}.
+            Updated {updatedDate}. Romance order weights pedigree (Relais / palace / press), intimacy (room count), setting (city, campo, delta, town, spa) and couple fit (adults-only / quiet vs sports resort). Drive times are rough car minutes from central Buenos Aires (delta lodge includes boat). Prices are from-rates in USD where a public source existed; ARS quotes used 1 USD ≈ ARS {formatter.format(pageData.currency.arsPerUsd)}.
           </p>
         </div>
       </header>
 
-      <section class="hotel-list" aria-label="Romantic hotels in Buenos Aires province">
+      <section class="hotel-list" aria-label="Romantic hotels in Buenos Aires">
         <div class="hotel-row hotel-head" aria-hidden="true">
           <span>Hotel</span>
-          <span>Map</span>
+          <span>Links</span>
           <span>Area</span>
           <span>From</span>
           <span>Drive (min)</span>
@@ -267,7 +273,24 @@ const structuredData = {
             </h2>
             <div class="map-actions">
               <a
-                class="maps-link"
+                class="action-link booking-link"
+                href={hotel.bookingUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={hotel.bookingTitle}
+                title={hotel.bookingTitle}
+              >
+                <img
+                  class="booking-icon"
+                  src={hotel.bookingIconUrl}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  aria-hidden="true"
+                />
+              </a>
+              <a
+                class="action-link maps-link"
                 href={hotel.googleMapsUrl}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -308,7 +331,7 @@ const structuredData = {
       <section class="hotel-map-section" aria-labelledby="hotel-map-heading">
         <div class="map-copy">
           <p class="eyebrow">Map</p>
-          <h2 id="hotel-map-heading">Province hotel map</h2>
+          <h2 id="hotel-map-heading">Hotel map</h2>
           <p id="hotel-map-status" class="map-status">
             Showing all {hotels.length} hotels.
           </p>
@@ -317,7 +340,7 @@ const structuredData = {
           <div
             id="hotel-map"
             class="hotel-map"
-            aria-label="Google Map with pins for romantic hotels in Buenos Aires province"
+            aria-label="Google Map with pins for romantic hotels in Buenos Aires"
           ></div>
         ) : (
           <p class="map-unavailable">
@@ -372,7 +395,7 @@ const structuredData = {
   const hotelRows = [...document.querySelectorAll(".hotel-row:not(.hotel-head)")];
   const mapElement = document.querySelector("#hotel-map");
   const mapStatus = document.querySelector("#hotel-map-status");
-  const provinceCenter = { lat: -34.45, lng: -58.95 };
+  const buenosAiresCenter = { lat: -34.5, lng: -58.85 };
   const filterUrlParams = ["area"];
   const markerRecords = [];
   let hotelMap;
@@ -463,7 +486,7 @@ const structuredData = {
     await google.maps.importLibrary("marker");
 
     hotelMap = new Map(mapElement, {
-      center: provinceCenter,
+      center: buenosAiresCenter,
       clickableIcons: false,
       fullscreenControl: true,
       mapTypeControl: false,
@@ -800,7 +823,7 @@ const structuredData = {
     display: grid;
     grid-template-columns:
       minmax(8.5rem, 1.1fr)
-      2.7rem
+      3.9rem
       minmax(6.8rem, 0.78fr)
       minmax(5.4rem, 0.52fr)
       minmax(4rem, 0.38fr)
@@ -860,19 +883,40 @@ const structuredData = {
   }
 
   .map-actions {
-    display: contents;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.18rem;
   }
 
   .hotel-stats {
     display: contents;
   }
 
-  .maps-link {
+  .action-link {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 1.52rem;
+    height: 1.52rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
     color: var(--text);
     text-decoration: none;
+  }
+
+  .action-link:hover,
+  .action-link:focus-visible {
+    border-color: var(--border-strong);
+    background: var(--surface-soft);
+  }
+
+  .booking-icon {
+    display: block;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 0.25rem;
+    object-fit: contain;
   }
 
   .maps-icon {
@@ -1036,7 +1080,7 @@ const structuredData = {
     .hotel-row {
       grid-template-columns:
         minmax(7.5rem, 1.05fr)
-        2.5rem
+        3.6rem
         minmax(6rem, 0.78fr)
         minmax(5.1rem, 0.55fr)
         minmax(3.8rem, 0.4fr)
@@ -1132,6 +1176,7 @@ const structuredData = {
       z-index: 2;
     }
 
+    .booking-link,
     .maps-link {
       position: static;
       width: 1.8rem;
