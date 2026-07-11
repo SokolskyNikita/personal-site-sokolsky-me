@@ -322,16 +322,18 @@ const structuredData = {
     </main>
 
     <script>
-      const intros = {
+      type Format = "movies" | "tv";
+
+      const intros: Record<Format, string> = {
         movies: "Films selected from patterns in my ratings, kept in their original recommendation order.",
         tv: "Shows selected from patterns in my ratings, kept in their original recommendation order.",
       };
 
-      const toggles = document.querySelectorAll("[data-format-toggle]");
-      const panels = document.querySelectorAll("[data-format-panel]");
-      const intro = document.querySelector("[data-format-intro]");
+      const toggles = document.querySelectorAll<HTMLButtonElement>("[data-format-toggle]");
+      const panels = document.querySelectorAll<HTMLElement>("[data-format-panel]");
+      const intro = document.querySelector<HTMLElement>("[data-format-intro]");
 
-      const setFormat = (format) => {
+      const setFormat = (format: Format) => {
         toggles.forEach((toggle) => {
           const isCurrent = toggle.dataset.formatToggle === format;
           toggle.setAttribute("aria-pressed", String(isCurrent));
@@ -342,13 +344,16 @@ const structuredData = {
         });
 
         if (intro) {
-          intro.textContent = intros[format] ?? intros.movies;
+          intro.textContent = intros[format];
         }
       };
 
       toggles.forEach((toggle) => {
         toggle.addEventListener("click", () => {
-          setFormat(toggle.dataset.formatToggle);
+          const format = toggle.dataset.formatToggle;
+          if (format === "movies" || format === "tv") {
+            setFormat(format);
+          }
         });
       });
     </script>
