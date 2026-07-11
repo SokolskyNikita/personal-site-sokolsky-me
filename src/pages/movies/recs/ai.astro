@@ -1,0 +1,466 @@
+---
+export const prerender = true;
+
+const pageTitle = "AI recs for me";
+const pageDescription =
+  "A ranked list of 50 movie recommendations selected from patterns in my ratings.";
+const themeColorLight = "#f3f4f1";
+const themeColorDark = "#151814";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+const recommendations = [
+  { title: "Zodiac", year: 2007, url: "https://en.wikipedia.org/wiki/Zodiac_(film)", note: "Fincher’s obsessive, methodical crime procedural." },
+  { title: "The Invisible Guest", year: 2016, url: "https://en.wikipedia.org/wiki/The_Invisible_Guest", note: "Tightly engineered Spanish mystery with constant reversals." },
+  { title: "Wild Tales", year: 2014, url: "https://en.wikipedia.org/wiki/Wild_Tales_(film)", note: "Argentine revenge anthology combining escalation and black comedy." },
+  { title: "The Big Short", year: 2015, url: "https://en.wikipedia.org/wiki/The_Big_Short_(film)", note: "Cynical systems analysis presented as propulsive comedy." },
+  { title: "Parasite", year: 2019, url: "https://en.wikipedia.org/wiki/Parasite_(2019_film)", note: "Exceptionally precise class thriller that repeatedly changes genre." },
+  { title: "Nine Queens", year: 2000, url: "https://en.wikipedia.org/wiki/Nine_Queens", note: "Fast Buenos Aires con game built around distrust and manipulation." },
+  { title: "Icarus", year: 2017, url: "https://en.wikipedia.org/wiki/Icarus_(2017_film)", note: "Documentary that unexpectedly becomes a geopolitical conspiracy thriller." },
+  { title: "Paths of Glory", year: 1957, url: "https://en.wikipedia.org/wiki/Paths_of_Glory", note: "Kubrick, warfare, institutional injustice and courtroom conflict." },
+  { title: "Andhadhun", year: 2018, url: "https://en.wikipedia.org/wiki/Andhadhun", note: "Unpredictable Indian crime comedy about a pianist entangled in a murder." },
+  { title: "Being John Malkovich", year: 1999, url: "https://en.wikipedia.org/wiki/Being_John_Malkovich", note: "The clearest unseen companion to Adaptation and Eternal Sunshine." },
+  { title: "The Secret in Their Eyes", year: 2009, url: "https://en.wikipedia.org/wiki/The_Secret_in_Their_Eyes", note: "Argentine crime mystery with an outstanding long-term payoff." },
+  { title: "Witness for the Prosecution", year: 1957, url: "https://en.wikipedia.org/wiki/Witness_for_the_Prosecution_(1957_film)", note: "Compact courtroom mystery designed around reversals." },
+  { title: "Nightcrawler", year: 2014, url: "https://en.wikipedia.org/wiki/Nightcrawler_(film)", note: "Sociopathic entrepreneurship, media satire and Fincher-like control." },
+  { title: "Drishyam", year: 2013, detail: "Malayalam original", url: "https://en.wikipedia.org/wiki/Drishyam_(2013_film)", note: "Elaborate battle of inference between a family and the police." },
+  { title: "Memories of Murder", year: 2003, url: "https://en.wikipedia.org/wiki/Memories_of_Murder", note: "Darkly funny serial-killer procedural and natural companion to Zodiac." },
+  { title: "Oldboy", year: 2003, url: "https://en.wikipedia.org/wiki/Oldboy_(2003_film)", note: "Revenge mystery organized around an enormous central revelation." },
+  { title: "The Lives of Others", year: 2006, url: "https://en.wikipedia.org/wiki/The_Lives_of_Others", note: "Gripping surveillance drama with institutional and moral conflict." },
+  { title: "The Handmaiden", year: 2016, url: "https://en.wikipedia.org/wiki/The_Handmaiden", note: "Elaborate deception narrative repeatedly reinterpreted from new perspectives." },
+  { title: "Margin Call", year: 2011, url: "https://en.wikipedia.org/wiki/Margin_Call", note: "Intelligent people negotiating an institutional catastrophe through dialogue." },
+  { title: "Whiplash", year: 2014, url: "https://en.wikipedia.org/wiki/Whiplash_(2014_film)", note: "Escalation and psychological combat delivered with thriller intensity." },
+  { title: "The Imposter", year: 2012, url: "https://en.wikipedia.org/wiki/The_Imposter_(2012_film)", note: "Documentary mystery so strange that it resembles a scripted thriller." },
+  { title: "Elite Squad", year: 2007, url: "https://en.wikipedia.org/wiki/Elite_Squad", note: "Propulsive Brazilian police drama and the clearest follow-up to City of God." },
+  { title: "Headhunters", year: 2011, url: "https://en.wikipedia.org/wiki/Headhunters_(film)", note: "Norwegian con story that escalates rapidly into a survival thriller." },
+  { title: "Children of Men", year: 2006, url: "https://en.wikipedia.org/wiki/Children_of_Men", note: "Unusually propulsive dystopian science fiction with concrete stakes." },
+  { title: "The Rescue", year: 2021, url: "https://en.wikipedia.org/wiki/The_Rescue_(2021_film)", note: "Meticulously structured Thai cave-rescue documentary." },
+  { title: "Inside Man", year: 2006, url: "https://en.wikipedia.org/wiki/Inside_Man", note: "Clever bank-heist puzzle directed by Spike Lee." },
+  { title: "Three Identical Strangers", year: 2018, url: "https://en.wikipedia.org/wiki/Three_Identical_Strangers", note: "Documentary mystery that expands into a disturbing human experiment." },
+  { title: "Beyond the Infinite Two Minutes", year: 2020, url: "https://en.wikipedia.org/wiki/Beyond_the_Infinite_Two_Minutes", note: "Ingenious 70-minute time-loop comedy that rigorously exploits its premise." },
+  { title: "Network", year: 1976, url: "https://en.wikipedia.org/wiki/Network_(1976_film)", note: "Furious media satire in the Dr. Strangelove and Thank You for Smoking lineage." },
+  { title: "Dog Day Afternoon", year: 1975, url: "https://en.wikipedia.org/wiki/Dog_Day_Afternoon", note: "Sidney Lumet’s escalating real-time bank-robbery pressure cooker." },
+  { title: "Ex Machina", year: 2014, url: "https://en.wikipedia.org/wiki/Ex_Machina_(film)", note: "Controlled high-concept science fiction rather than atmosphere-first sci-fi." },
+  { title: "The Body", year: 2012, detail: "Spanish", url: "https://en.wikipedia.org/wiki/The_Body_(2012_film)", note: "Missing-corpse mystery from the director of The Invisible Guest." },
+  { title: "A Few Good Men", year: 1992, url: "https://en.wikipedia.org/wiki/A_Few_Good_Men", note: "Highly accessible courtroom drama powered by argument and institutional conflict." },
+  { title: "Spotlight", year: 2015, url: "https://en.wikipedia.org/wiki/Spotlight_(film)", note: "Disciplined investigative procedural about assembling a systemic case." },
+  { title: "The Call", year: 2020, detail: "Korean", url: "https://en.wikipedia.org/wiki/The_Call_(2020_South_Korean_film)", note: "Time-communication thriller that continually develops its causal mechanics." },
+  { title: "Infernal Affairs", year: 2002, url: "https://en.wikipedia.org/wiki/Infernal_Affairs", note: "Compact undercover crime thriller that inspired The Departed." },
+  { title: "The Fog of War", year: 2003, url: "https://en.wikipedia.org/wiki/The_Fog_of_War", note: "War, biography and political analysis in documentary form." },
+  { title: "Come and See", year: 1985, url: "https://en.wikipedia.org/wiki/Come_and_See", note: "Devastating Soviet war film; exceptional but deliberately punishing." },
+  { title: "Downfall", year: 2004, url: "https://en.wikipedia.org/wiki/Downfall_(2004_film)", note: "Claustrophobic historical drama about institutional collapse inside Hitler’s bunker." },
+  { title: "The Outfit", year: 2022, url: "https://en.wikipedia.org/wiki/The_Outfit_(2022_film)", note: "Contained crime puzzle driven by bluffing and concealed allegiances." },
+  { title: "In the Loop", year: 2009, url: "https://en.wikipedia.org/wiki/In_the_Loop_(film)", note: "Densely written bureaucratic farce from Armando Iannucci." },
+  { title: "Miller’s Crossing", year: 1990, url: "https://en.wikipedia.org/wiki/Miller%27s_Crossing", note: "Intricate organized-crime plotting with Coen dialogue." },
+  { title: "Four Lions", year: 2010, url: "https://en.wikipedia.org/wiki/Four_Lions", note: "Exceptionally dark ideological satire from Chris Morris." },
+  { title: "Gattaca", year: 1997, url: "https://en.wikipedia.org/wiki/Gattaca", note: "Clean, rules-based science-fiction premise with institutional conflict." },
+  { title: "Yojimbo", year: 1961, url: "https://en.wikipedia.org/wiki/Yojimbo", note: "Cynical strategic comedy about manipulating rival criminal factions." },
+  { title: "The Great Escape", year: 1963, url: "https://en.wikipedia.org/wiki/The_Great_Escape_(film)", note: "Accessible war adventure structured around planning and execution." },
+  { title: "The Guilty", year: 2018, detail: "Danish original", url: "https://en.wikipedia.org/wiki/The_Guilty_(2018_film)", note: "Information-driven thriller constructed almost entirely through calls." },
+  { title: "Black Bag", year: 2025, url: "https://en.wikipedia.org/wiki/Black_Bag", note: "Cerebral espionage chamber drama built around suspicion and competing explanations." },
+  { title: "The Raid: Redemption", year: 2011, url: "https://en.wikipedia.org/wiki/The_Raid_(2011_film)", note: "Outstanding pure action, though less aligned with my strongest preferences." },
+  { title: "Rope", year: 1948, url: "https://en.wikipedia.org/wiki/Rope_(film)", note: "Compact Hitchcock thriller about concealment, arrogance and mounting suspicion." },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: recommendations.length,
+  itemListElement: recommendations.map((movie, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: movie.title,
+    url: movie.url,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">
+          <span aria-hidden="true">←</span>
+          Nikita Sokolsky
+        </a>
+        <div class="header-grid">
+          <div class="headline">
+            <p class="eyebrow">Watchlist</p>
+            <h1>{pageTitle}</h1>
+            <p class="intro">
+              Films selected from patterns in my ratings, kept in their original recommendation order.
+            </p>
+          </div>
+          <dl class="summary" aria-label="Recommendation summary">
+            <div>
+              <dt>Titles</dt>
+              <dd>{recommendations.length}</dd>
+            </div>
+            <div>
+              <dt>Order</dt>
+              <dd>Ranked</dd>
+            </div>
+          </dl>
+        </div>
+      </header>
+
+      <ol class="recommendations" aria-label="Ranked movie recommendations">
+        {recommendations.map((movie, index) => (
+          <li>
+            <span class="rank" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div class="movie">
+              <div class="movie-heading">
+                <a href={movie.url} target="_blank" rel="noreferrer noopener">
+                  {movie.title}
+                </a>
+                <span class="year">{movie.year}</span>
+                {movie.detail && <span class="detail">{movie.detail}</span>}
+              </div>
+              <p>{movie.note}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f3f4f1;
+    --surface: #fafaf7;
+    --surface-hover: #f0f2ed;
+    --text: #20251f;
+    --muted: #687064;
+    --line: #d8dcd3;
+    --line-strong: #b9c0b5;
+    --accent: #315f49;
+    --focus: #2c7151;
+    --shadow: 0 14px 36px rgb(42 52 43 / 7%);
+    --space-xs: 0.375rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.25rem;
+    --space-lg: 2rem;
+    --space-xl: 3.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151814;
+      --surface: #1c211c;
+      --surface-hover: #232a23;
+      --text: #edf0e9;
+      --muted: #a4ada0;
+      --line: #343c33;
+      --line-strong: #505b4e;
+      --accent: #9bc8aa;
+      --focus: #a8dbb8;
+      --shadow: 0 18px 42px rgb(0 0 0 / 28%);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.15em;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .page {
+    width: min(56rem, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: var(--space-md) 0 var(--space-xl);
+  }
+
+  .page-header {
+    display: grid;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: max-content;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.035em;
+    text-decoration: none;
+  }
+
+  .home-link span {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-link:hover span {
+    transform: translateX(-3px);
+  }
+
+  .header-grid {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .headline {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.15rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Newsreader", Georgia, serif;
+    font-size: clamp(2.25rem, 10vw, 3rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+
+  .intro {
+    max-width: 35rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .summary {
+    display: flex;
+    gap: var(--space-lg);
+    margin: 0;
+    padding: var(--space-sm) 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .summary div {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .summary dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .summary dd {
+    margin: 0;
+    font-size: 0.86rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  .recommendations {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    list-style: none;
+  }
+
+  .recommendations li {
+    display: grid;
+    grid-template-columns: 2.1rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding: 0.9rem;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 140ms ease-out;
+  }
+
+  .recommendations li:last-child {
+    border-bottom: 0;
+  }
+
+  .rank {
+    padding-top: 0.12rem;
+    color: var(--accent);
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .movie {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .movie-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.55rem;
+  }
+
+  .movie-heading a {
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+
+  .movie-heading a:hover {
+    text-decoration: underline;
+  }
+
+  .year {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .detail {
+    color: var(--muted);
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+
+  .movie p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  @media (hover: hover) {
+    .recommendations li:hover {
+      background: var(--surface-hover);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .page {
+      padding-top: clamp(2rem, 5vw, 4.5rem);
+    }
+
+    .page-header {
+      gap: clamp(2.25rem, 5vw, 4rem);
+      margin-bottom: var(--space-lg);
+    }
+
+    .header-grid {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: var(--space-xl);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: var(--space-lg);
+      padding: 0 0 0.2rem;
+      border-top: 0;
+    }
+
+    .recommendations li {
+      grid-template-columns: 2.6rem minmax(0, 1fr);
+      gap: var(--space-md);
+      padding: 1rem 1.15rem;
+    }
+
+    .rank {
+      font-size: 1rem;
+    }
+
+    .movie-heading a {
+      font-size: 0.95rem;
+    }
+
+    .movie p {
+      font-size: 0.84rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-link span,
+    .recommendations li {
+      transition: none;
+    }
+  }
+</style>

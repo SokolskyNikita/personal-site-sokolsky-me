@@ -70,7 +70,7 @@ const formatImdb = (value: number | null) =>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap"
       rel="stylesheet"
     />
 
@@ -92,13 +92,28 @@ const formatImdb = (value: number | null) =>
   <body>
     <main class="page">
       <header class="page-header">
-        <a class="home-link" href="/">Nikita Sokolsky</a>
-        <div class="headline">
-          <h1>{pageTitle}</h1>
-          <p class="intro">
-            {ratings.length} titles · updated {updatedDate} · default sort: year
-            (newest), then name
-          </p>
+        <a class="home-link" href="/">
+          <span aria-hidden="true">←</span>
+          Nikita Sokolsky
+        </a>
+        <div class="header-grid">
+          <div class="headline">
+            <p class="eyebrow">Watch log</p>
+            <h1>{pageTitle}</h1>
+            <p class="intro">
+              Films and series I’ve rated, from newest releases to oldest.
+            </p>
+          </div>
+          <dl class="summary" aria-label="Ratings summary">
+            <div>
+              <dt>Titles</dt>
+              <dd>{ratings.length}</dd>
+            </div>
+            <div>
+              <dt>Updated</dt>
+              <dd>{updatedDate}</dd>
+            </div>
+          </dl>
         </div>
 
         <label class="mobile-sort" for="mobile-sort">
@@ -309,28 +324,39 @@ const formatImdb = (value: number | null) =>
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #eef1f4;
-    --bg-accent: #d9e2ec;
-    --surface: #f8fafc;
-    --text: #15202b;
-    --muted: #5b6b7c;
-    --line: #c9d3de;
-    --accent: #1f6feb;
-    --mine: #0f766e;
-    --shadow: 0 18px 48px rgb(21 32 43 / 8%);
+    --bg: #f3f4f1;
+    --surface: #fafaf7;
+    --surface-hover: #f0f2ed;
+    --text: #20251f;
+    --muted: #687064;
+    --line: #d8dcd3;
+    --line-strong: #b9c0b5;
+    --accent: #315f49;
+    --accent-soft: #dfe9e1;
+    --mine: #226847;
+    --focus: #2c7151;
+    --shadow: 0 14px 36px rgb(42 52 43 / 7%);
+    --space-xs: 0.375rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.25rem;
+    --space-lg: 2rem;
+    --space-xl: 3.5rem;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #10141a;
-      --bg-accent: #1a2430;
-      --surface: #171d26;
-      --text: #e8eef5;
-      --muted: #9aabbc;
-      --line: #2c3745;
-      --accent: #6ea8fe;
-      --mine: #5eead4;
-      --shadow: 0 18px 48px rgb(0 0 0 / 35%);
+      --bg: #151814;
+      --surface: #1c211c;
+      --surface-hover: #232a23;
+      --text: #edf0e9;
+      --muted: #a4ada0;
+      --line: #343c33;
+      --line-strong: #505b4e;
+      --accent: #9bc8aa;
+      --accent-soft: #26382c;
+      --mine: #8ed3a5;
+      --focus: #a8dbb8;
+      --shadow: 0 18px 42px rgb(0 0 0 / 28%);
     }
   }
 
@@ -339,12 +365,10 @@ const formatImdb = (value: number | null) =>
   }
 
   html {
-    background:
-      radial-gradient(ellipse 80% 50% at 10% -10%, var(--bg-accent), transparent),
-      linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 92%, var(--surface)));
+    background: var(--bg);
     color: var(--text);
     font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-    line-height: 1.35;
+    line-height: 1.45;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -364,75 +388,135 @@ const formatImdb = (value: number | null) =>
     color: var(--accent);
   }
 
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
   .page {
-    width: min(720px, calc(100% - 24px));
+    width: min(56rem, calc(100% - 2rem));
     margin: 0 auto;
-    padding: 16px 0 40px;
+    padding: var(--space-md) 0 var(--space-xl);
   }
 
   .page-header {
     display: grid;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
   }
 
   .home-link {
-    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: max-content;
     color: var(--muted);
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.035em;
     text-decoration: none;
-    text-transform: uppercase;
+  }
+
+  .home-link span {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-link:hover span {
+    transform: translateX(-3px);
+  }
+
+  .header-grid {
+    display: grid;
+    gap: var(--space-md);
   }
 
   .headline {
     display: grid;
-    gap: 4px;
+    gap: var(--space-xs);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.15rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
   h1 {
     margin: 0;
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    font-family: "Newsreader", Georgia, serif;
+    font-size: clamp(2.25rem, 10vw, 3rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
   }
 
   .intro {
     margin: 0;
+    max-width: 31rem;
     color: var(--muted);
-    font-size: 0.78rem;
+    font-size: 0.9rem;
+  }
+
+  .summary {
+    display: flex;
+    gap: var(--space-lg);
+    margin: 0;
+    padding: var(--space-sm) 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .summary div {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .summary dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .summary dd {
+    margin: 0;
+    font-size: 0.86rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
   }
 
   .mobile-sort {
     display: grid;
-    gap: 4px;
+    gap: var(--space-xs);
     color: var(--muted);
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     font-weight: 600;
   }
 
   .mobile-sort select {
     appearance: none;
     width: 100%;
-    padding: 8px 10px;
+    min-height: 44px;
+    padding: 0.7rem 2.5rem 0.7rem 0.85rem;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 0.6rem;
     background:
       linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 16px) / 5px 5px no-repeat,
       linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 11px) / 5px 5px no-repeat,
       var(--surface);
     color: var(--text);
     font: inherit;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 500;
   }
 
   .table-wrap {
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 0.85rem;
     background: var(--surface);
     box-shadow: var(--shadow);
   }
@@ -440,7 +524,7 @@ const formatImdb = (value: number | null) =>
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.84rem;
+    font-size: 0.875rem;
   }
 
   thead {
@@ -463,12 +547,18 @@ const formatImdb = (value: number | null) =>
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    column-gap: 8px;
-    row-gap: 2px;
-    padding: 8px 10px;
+    column-gap: 0.7rem;
+    row-gap: 0.2rem;
+    padding: 0.8rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 140ms ease-out;
   }
 
-  tbody tr td {
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  tbody td {
     padding: 0;
     border: 0;
   }
@@ -478,10 +568,10 @@ const formatImdb = (value: number | null) =>
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 6px;
+    gap: var(--space-xs);
     min-width: 0;
     font-weight: 500;
-    line-height: 1.25;
+    line-height: 1.35;
   }
 
   .title-cell a {
@@ -494,9 +584,9 @@ const formatImdb = (value: number | null) =>
 
   .type-tag {
     color: var(--muted);
-    font-size: 0.68rem;
+    font-size: 0.67rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.045em;
     text-transform: uppercase;
   }
 
@@ -530,23 +620,29 @@ const formatImdb = (value: number | null) =>
   .sort-button {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    margin: 0;
-    padding: 0;
+    justify-content: inherit;
+    gap: 0.3rem;
+    min-height: 32px;
+    margin: -0.35rem 0;
+    padding: 0.35rem 0;
     border: 0;
     background: transparent;
     color: inherit;
     font: inherit;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.055em;
     text-transform: uppercase;
     cursor: pointer;
   }
 
+  .sort-button:hover {
+    color: var(--text);
+  }
+
   .sort-button::after {
     content: "↕";
-    opacity: 0.35;
-    font-size: 0.75em;
+    opacity: 0.32;
+    font-size: 0.8em;
   }
 
   .sort-button[data-sort-direction="asc"]::after {
@@ -559,18 +655,34 @@ const formatImdb = (value: number | null) =>
     opacity: 1;
   }
 
+  @media (hover: hover) {
+    tbody tr:hover {
+      background: var(--surface-hover);
+    }
+  }
+
   @media (min-width: 640px) {
     .page {
-      width: min(780px, calc(100% - 32px));
-      padding-top: 22px;
+      padding-top: clamp(2rem, 5vw, 4.5rem);
     }
 
     .page-header {
-      margin-bottom: 14px;
+      gap: clamp(2.25rem, 5vw, 4rem);
+      margin-bottom: var(--space-lg);
     }
 
-    h1 {
-      font-size: 1.28rem;
+    .header-grid {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: var(--space-xl);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: var(--space-lg);
+      padding: 0 0 0.2rem;
+      border-top: 0;
     }
 
     .mobile-sort {
@@ -585,35 +697,43 @@ const formatImdb = (value: number | null) =>
       position: sticky;
       top: 0;
       z-index: 1;
-      padding: 8px 12px;
-      background: color-mix(in srgb, var(--surface) 92%, var(--bg-accent));
+      height: 2.75rem;
+      padding: 0.45rem 1rem;
+      background: color-mix(in srgb, var(--surface) 88%, var(--accent-soft));
       color: var(--muted);
-      font-size: 0.68rem;
-      border-bottom: 1px solid var(--line);
+      font-size: 0.67rem;
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    thead th:not(:first-child) .sort-button {
+      width: 100%;
+      justify-content: flex-end;
     }
 
     tbody tr {
       display: table-row;
       padding: 0;
+      border-bottom: 0;
     }
 
     tbody td {
-      padding: 5px 12px;
+      padding: 0.5rem 1rem;
       border-bottom: 1px solid var(--line);
     }
 
     .title-cell {
+      display: table-cell;
       flex: initial;
     }
 
     .num-cell {
-      width: 4.5rem;
+      width: 5.75rem;
       text-align: right;
       font-variant-numeric: tabular-nums;
     }
 
     .year-cell {
-      width: 4rem;
+      width: 5.25rem;
       color: var(--text);
     }
 
@@ -629,6 +749,13 @@ const formatImdb = (value: number | null) =>
     .imdb-cell {
       color: var(--text);
       font-weight: 500;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-link span,
+    tbody tr {
+      transition: none;
     }
   }
 </style>
