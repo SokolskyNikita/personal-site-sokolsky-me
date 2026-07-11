@@ -1,0 +1,634 @@
+---
+import pageData from "../../data/imdb-scores.json";
+
+export const prerender = true;
+
+const pageTitle = "IMDb ratings";
+const pageDescription =
+  "Personal IMDb ratings for movies and TV, sorted by year of release.";
+const themeColorLight = "#f3f5f7";
+const themeColorDark = "#12151a";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const ratings = pageData.ratings;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+};
+
+const formatImdb = (value: number | null) =>
+  value == null
+    ? "—"
+    : new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }).format(value);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            {ratings.length} titles · updated {updatedDate} · default sort: year
+            (newest), then name
+          </p>
+        </div>
+
+        <label class="mobile-sort" for="mobile-sort">
+          <span>Sort by</span>
+          <select id="mobile-sort" name="sort" autocomplete="off">
+            <option value="year:desc" selected>Year · newest</option>
+            <option value="year:asc">Year · oldest</option>
+            <option value="title:asc">Title · A–Z</option>
+            <option value="title:desc">Title · Z–A</option>
+            <option value="myRating:desc">My rating · high</option>
+            <option value="myRating:asc">My rating · low</option>
+            <option value="imdbRating:desc">IMDb · high</option>
+            <option value="imdbRating:asc">IMDb · low</option>
+          </select>
+        </label>
+      </header>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="title"
+                  data-sort-default="asc"
+                >
+                  Title
+                </button>
+              </th>
+              <th scope="col" aria-sort="descending">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="year"
+                  data-sort-default="desc"
+                >
+                  Year
+                </button>
+              </th>
+              <th scope="col" aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="myRating"
+                  data-sort-default="desc"
+                >
+                  Mine
+                </button>
+              </th>
+              <th scope="col" aria-sort="none">
+                <button
+                  class="sort-button"
+                  type="button"
+                  data-sort-key="imdbRating"
+                  data-sort-default="desc"
+                >
+                  IMDb
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ratings.map((rating) => (
+                <tr
+                  data-title={rating.title}
+                  data-year={rating.year}
+                  data-my-rating={rating.myRating ?? ""}
+                  data-imdb-rating={rating.imdbRating ?? ""}
+                >
+                  <td class="title-cell">
+                    <a
+                      href={rating.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      {rating.title}
+                    </a>
+                    {rating.titleType !== "Movie" && (
+                      <span class="type-tag">{rating.titleType}</span>
+                    )}
+                  </td>
+                  <td class="num-cell year-cell">{rating.year}</td>
+                  <td class="num-cell mine-cell">{rating.myRating ?? "—"}</td>
+                  <td class="num-cell imdb-cell">
+                    {formatImdb(rating.imdbRating)}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>
+
+<script is:inline>
+  const tableBody = document.querySelector("tbody");
+  const rows = [...document.querySelectorAll("tbody tr")];
+  const sortButtons = [...document.querySelectorAll(".sort-button")];
+  const mobileSort = document.querySelector("#mobile-sort");
+  const collator = new Intl.Collator("en", {
+    sensitivity: "base",
+    numeric: true,
+  });
+
+  let currentSort = {
+    key: "year",
+    direction: "desc",
+  };
+
+  const getSortValue = (row, key) => {
+    if (key === "title") return row.dataset.title ?? "";
+    if (key === "year") return Number(row.dataset.year ?? 0);
+    if (key === "myRating") {
+      const value = row.dataset.myRating;
+      return value === "" ? Number.NEGATIVE_INFINITY : Number(value);
+    }
+    const value = row.dataset.imdbRating;
+    return value === "" ? Number.NEGATIVE_INFINITY : Number(value);
+  };
+
+  const compareRows = (firstRow, secondRow) => {
+    const firstValue = getSortValue(firstRow, currentSort.key);
+    const secondValue = getSortValue(secondRow, currentSort.key);
+    const multiplier = currentSort.direction === "asc" ? 1 : -1;
+
+    if (currentSort.key === "title") {
+      const byTitle =
+        multiplier *
+        collator.compare(String(firstValue), String(secondValue));
+      if (byTitle !== 0) return byTitle;
+      return Number(secondRow.dataset.year ?? 0) - Number(firstRow.dataset.year ?? 0);
+    }
+
+    const numericDifference = Number(firstValue) - Number(secondValue);
+    if (numericDifference !== 0) return multiplier * numericDifference;
+
+    return collator.compare(
+      firstRow.dataset.title ?? "",
+      secondRow.dataset.title ?? "",
+    );
+  };
+
+  const syncMobileSelect = () => {
+    if (!mobileSort) return;
+    mobileSort.value = `${currentSort.key}:${currentSort.direction}`;
+  };
+
+  const updateSortState = () => {
+    for (const button of sortButtons) {
+      const isActive = button.dataset.sortKey === currentSort.key;
+      button.dataset.sortDirection = isActive ? currentSort.direction : "";
+      button.closest("th")?.setAttribute(
+        "aria-sort",
+        isActive
+          ? currentSort.direction === "asc"
+            ? "ascending"
+            : "descending"
+          : "none",
+      );
+    }
+    syncMobileSelect();
+  };
+
+  const sortRows = () => {
+    if (!tableBody) return;
+    const sortedRows = [...rows].sort(compareRows);
+    for (const row of sortedRows) {
+      tableBody.append(row);
+    }
+    updateSortState();
+  };
+
+  for (const button of sortButtons) {
+    button.addEventListener("click", () => {
+      const sortKey = button.dataset.sortKey;
+      if (!sortKey) return;
+
+      const defaultDirection = button.dataset.sortDefault ?? "desc";
+      currentSort =
+        currentSort.key === sortKey
+          ? {
+              key: sortKey,
+              direction: currentSort.direction === "asc" ? "desc" : "asc",
+            }
+          : {
+              key: sortKey,
+              direction: defaultDirection,
+            };
+
+      sortRows();
+    });
+  }
+
+  mobileSort?.addEventListener("change", () => {
+    const [key, direction] = (mobileSort.value || "year:desc").split(":");
+    currentSort = { key, direction };
+    sortRows();
+  });
+
+  updateSortState();
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #eef1f4;
+    --bg-accent: #d9e2ec;
+    --surface: #f8fafc;
+    --text: #15202b;
+    --muted: #5b6b7c;
+    --line: #c9d3de;
+    --accent: #1f6feb;
+    --mine: #0f766e;
+    --shadow: 0 18px 48px rgb(21 32 43 / 8%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10141a;
+      --bg-accent: #1a2430;
+      --surface: #171d26;
+      --text: #e8eef5;
+      --muted: #9aabbc;
+      --line: #2c3745;
+      --accent: #6ea8fe;
+      --mine: #5eead4;
+      --shadow: 0 18px 48px rgb(0 0 0 / 35%);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, var(--bg-accent), transparent),
+      linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 92%, var(--surface)));
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.35;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.14em;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  .page {
+    width: min(720px, calc(100% - 24px));
+    margin: 0 auto;
+    padding: 16px 0 40px;
+  }
+
+  .page-header {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .headline {
+    display: grid;
+    gap: 4px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .intro {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .mobile-sort {
+    display: grid;
+    gap: 4px;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .mobile-sort select {
+    appearance: none;
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 16px) / 5px 5px no-repeat,
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 11px) / 5px 5px no-repeat,
+      var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .table-wrap {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+  }
+
+  thead {
+    display: none;
+  }
+
+  th,
+  td {
+    padding: 7px 10px;
+    text-align: left;
+    vertical-align: baseline;
+    border-bottom: 1px solid var(--line);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 8px;
+    row-gap: 2px;
+    padding: 8px 10px;
+  }
+
+  tbody tr td {
+    padding: 0;
+    border: 0;
+  }
+
+  .title-cell {
+    flex: 1 1 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .title-cell a {
+    text-decoration: none;
+  }
+
+  .title-cell a:hover {
+    text-decoration: underline;
+  }
+
+  .type-tag {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .year-cell {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mine-cell,
+  .imdb-cell {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mine-cell::before {
+    content: "mine ";
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .imdb-cell::before {
+    content: "imdb ";
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .mine-cell {
+    color: var(--mine);
+    font-weight: 600;
+  }
+
+  .sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .sort-button::after {
+    content: "↕";
+    opacity: 0.35;
+    font-size: 0.75em;
+  }
+
+  .sort-button[data-sort-direction="asc"]::after {
+    content: "↑";
+    opacity: 1;
+  }
+
+  .sort-button[data-sort-direction="desc"]::after {
+    content: "↓";
+    opacity: 1;
+  }
+
+  @media (min-width: 640px) {
+    .page {
+      width: min(780px, calc(100% - 32px));
+      padding-top: 22px;
+    }
+
+    .page-header {
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 1.28rem;
+    }
+
+    .mobile-sort {
+      display: none;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 8px 12px;
+      background: color-mix(in srgb, var(--surface) 92%, var(--bg-accent));
+      color: var(--muted);
+      font-size: 0.68rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    tbody tr {
+      display: table-row;
+      padding: 0;
+    }
+
+    tbody td {
+      padding: 5px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .title-cell {
+      flex: initial;
+    }
+
+    .num-cell {
+      width: 4.5rem;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .year-cell {
+      width: 4rem;
+      color: var(--text);
+    }
+
+    .mine-cell::before,
+    .imdb-cell::before {
+      content: none;
+    }
+
+    .mine-cell {
+      color: var(--mine);
+    }
+
+    .imdb-cell {
+      color: var(--text);
+      font-weight: 500;
+    }
+  }
+</style>
