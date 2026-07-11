@@ -115,6 +115,7 @@ async function handleAiCompassStats(
       env.AI_COMPASS_DB.prepare(
         `SELECT
           SUM(CASE WHEN answered_count > 0 THEN 1 ELSE 0 END) AS completions,
+          SUM(CASE WHEN answered_count = 0 THEN 1 ELSE 0 END) AS zen_opt_outs,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_t END), 3) AS avg_t,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_v END), 3) AS avg_v,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_s END), 3) AS avg_s,
@@ -125,6 +126,7 @@ async function handleAiCompassStats(
         FROM ai_compass_results`,
       ).first<{
         completions: number | null;
+        zen_opt_outs: number | null;
         avg_t: number | null;
         avg_v: number | null;
         avg_s: number | null;
@@ -152,6 +154,7 @@ async function handleAiCompassStats(
         generatedAt: new Date().toISOString(),
         summary: {
           completions: Number(summary.completions) || 0,
+          zenOptOuts: Number(summary.zen_opt_outs) || 0,
           avgScores: {
             T: summary.avg_t,
             V: summary.avg_v,

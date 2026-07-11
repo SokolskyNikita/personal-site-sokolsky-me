@@ -99,6 +99,7 @@ const structuredData = {
         <section id="archetypes" class="stats-section" hidden>
           <h2>Archetypes</h2>
           <ol class="stats-bars" id="stats-archetypes"></ol>
+          <p id="stats-zen" class="stats-zen" hidden></p>
         </section>
 
         <section id="axes" class="stats-section" hidden>
@@ -168,6 +169,8 @@ const structuredData = {
         );
       }
 
+      const ZEN_MASTER_INDEX = ARCHETYPES.length - 1;
+
       function renderCount(completions) {
         const n = formatNumber(completions);
         countEl.innerHTML =
@@ -201,6 +204,21 @@ const structuredData = {
         archetypesEl.hidden = false;
       }
 
+      function renderZenOptOuts(count) {
+        const zenEl = document.getElementById("stats-zen");
+        if (!count) {
+          zenEl.hidden = true;
+          zenEl.textContent = "";
+          return;
+        }
+        const n = formatNumber(count);
+        const label = count === 1 ? "opt-out" : "opt-outs";
+        zenEl.innerHTML =
+          `Also <a href="/tests/ai-compass/about#arch-${ZEN_MASTER_INDEX}">The Zen Master</a>: ` +
+          `<span class="stats-zen-n">${escapeHtml(n)}</span> ${label}`;
+        zenEl.hidden = false;
+      }
+
       function renderAxes(avgScores) {
         document.getElementById("stats-axes").innerHTML = AXES.map((axis) =>
           axisBarHtml(axis.key, avgScores[axis.key]),
@@ -219,6 +237,7 @@ const structuredData = {
           const completions = data.summary.completions || 0;
           renderCount(completions);
           renderArchetypes(data.archetypes || [], completions);
+          renderZenOptOuts(data.summary.zenOptOuts || 0);
           renderAxes(data.summary.avgScores || {});
         })
         .catch(() => {
