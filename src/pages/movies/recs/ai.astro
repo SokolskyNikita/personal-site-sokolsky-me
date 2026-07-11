@@ -3,14 +3,14 @@ export const prerender = true;
 
 const pageTitle = "AI recs for me";
 const pageDescription =
-  "A ranked list of 50 movie recommendations selected from patterns in my ratings.";
+  "Ranked movie and TV recommendations selected from patterns in my ratings.";
 const themeColorLight = "#f3f4f1";
 const themeColorDark = "#151814";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
-const recommendations = [
+const movieRecommendations = [
   { title: "Zodiac", year: 2007, url: "https://en.wikipedia.org/wiki/Zodiac_(film)", note: "Fincher’s obsessive, methodical crime procedural." },
   { title: "The Invisible Guest", year: 2016, url: "https://en.wikipedia.org/wiki/The_Invisible_Guest", note: "Tightly engineered Spanish mystery with constant reversals." },
   { title: "Wild Tales", year: 2014, url: "https://en.wikipedia.org/wiki/Wild_Tales_(film)", note: "Argentine revenge anthology combining escalation and black comedy." },
@@ -63,14 +63,149 @@ const recommendations = [
   { title: "Rope", year: 1948, url: "https://en.wikipedia.org/wiki/Rope_(film)", note: "Compact Hitchcock thriller about concealment, arrogance and mounting suspicion." },
 ];
 
+const tvRecommendations = [
+  {
+    title: "Dark",
+    year: 2017,
+    url: "https://en.wikipedia.org/wiki/Dark_(TV_series)",
+    note: "The strongest overall bet: Lost 10 plus your unusually strong preference for rigorous time-travel mechanics.",
+  },
+  {
+    title: "Chernobyl",
+    year: 2019,
+    url: "https://en.wikipedia.org/wiki/Chernobyl_(miniseries)",
+    note: "Probably your safest non-sci-fi 9–10 prediction: institutions, catastrophe, Soviet history, procedural detail.",
+  },
+  {
+    title: "Mindhunter",
+    year: 2017,
+    url: "https://en.wikipedia.org/wiki/Mindhunter_(TV_series)",
+    note: "Fincher doing a long-form serial-killer procedural; your Fincher and dark-crime ratings make this an exceptionally obvious fit.",
+  },
+  {
+    title: "Silo",
+    year: 2023,
+    url: "https://en.wikipedia.org/wiki/Silo_(TV_series)",
+    note: "Your Severance 10 materially strengthens this recommendation: controlled society, institutional mystery, hidden rules, gradual revelation. It is also still actively expanding its central mystery in its current third season.",
+  },
+  {
+    title: "The Sopranos",
+    year: 1999,
+    url: "https://en.wikipedia.org/wiki/The_Sopranos",
+    note: "The biggest canonical gap given The Wire 10, Breaking Bad 10 and Better Call Saul 9. Less plot-mechanical than the top four, but extremely likely to work.",
+  },
+  {
+    title: "12 Monkeys",
+    year: "2015–2018",
+    url: "https://en.wikipedia.org/wiki/12_Monkeys_(TV_series)",
+    note: "Probably the best pure “complex machinery” recommendation after Dark: long-form causal loops and mystery-box plotting.",
+  },
+  {
+    title: "Succession",
+    year: 2018,
+    url: "https://en.wikipedia.org/wiki/Succession_(TV_series)",
+    note: "House of Cards 9-style power games with much better dialogue and characterization.",
+  },
+  {
+    title: "Pluribus",
+    year: 2025,
+    url: "https://en.wikipedia.org/wiki/Pluribus_(TV_series)",
+    note: "Vince Gilligan + Rhea Seehorn + a genuine high-concept SF premise make this a strong bet, although I would no longer put it above the established near-locks. Season 1 is complete and a second season has been ordered.",
+  },
+  {
+    title: "Counterpart",
+    year: 2017,
+    url: "https://en.wikipedia.org/wiki/Counterpart_(TV_series)",
+    note: "Perhaps the most directly Severance-adjacent show here: parallel worlds embedded inside an opaque bureaucracy, structured as an espionage thriller.",
+  },
+  {
+    title: "The Night Of",
+    year: 2016,
+    url: "https://en.wikipedia.org/wiki/The_Night_Of",
+    note: "Your True Detective 9 pushes this upward: dark, grounded crime mystery with strong procedural and institutional elements.",
+  },
+  {
+    title: "Barry",
+    year: 2018,
+    url: "https://en.wikipedia.org/wiki/Barry_(TV_series)",
+    note: "In Bruges 9 translated into serialized television: black comedy, crime and increasingly dark consequences.",
+  },
+  {
+    title: "The Americans",
+    year: 2013,
+    url: "https://en.wikipedia.org/wiki/The_Americans",
+    note: "Deep strategic deception and competing loyalties; likely excellent for you, though somewhat slower than your absolute favorites.",
+  },
+  {
+    title: "Band of Brothers",
+    year: 2001,
+    url: "https://en.wikipedia.org/wiki/Band_of_Brothers",
+    note: "The safest recommendation based on your strong war-film ratings; essentially prestige war cinema in miniseries form.",
+  },
+  {
+    title: "Andor",
+    year: 2022,
+    url: "https://en.wikipedia.org/wiki/Andor_(TV_series)",
+    note: "Political institutions, rebellion, espionage and unusually serious long-form plotting. I would recommend it even if your interest in Star Wars itself is modest.",
+  },
+  {
+    title: "The Expanse",
+    year: 2015,
+    url: "https://en.wikipedia.org/wiki/The_Expanse_(TV_series)",
+    note: "The best match for the Firefly 10 + Game of Thrones 10 intersection: factions, politics, conspiracies and large-scale science fiction.",
+  },
+  {
+    title: "The Jinx",
+    year: 2015,
+    url: "https://en.wikipedia.org/wiki/The_Jinx",
+    note: "Your documentary ratings are extremely strong, and this is structured much more like an unfolding crime thriller than a conventional documentary.",
+  },
+  {
+    title: "Pantheon",
+    year: 2022,
+    url: "https://en.wikipedia.org/wiki/Pantheon_(TV_series)",
+    note: "Potential sleeper hit for you: AI, uploaded intelligence and high-concept science fiction with considerably more actual mechanics than most “AI shows.”",
+  },
+  {
+    title: "Black Mirror",
+    year: 2011,
+    url: "https://en.wikipedia.org/wiki/Black_Mirror",
+    note: "Some episodes should be extremely well matched to you; the anthology format and substantial episode-to-episode variance keep it below the serialized near-locks.",
+  },
+  {
+    title: "Battlestar Galactica",
+    year: 2004,
+    url: "https://en.wikipedia.org/wiki/Battlestar_Galactica_(2004_TV_series)",
+    note: "Strong match for the Lost / Firefly / Game of Thrones side of your taste, but more uneven and less tightly controlled than the shows above.",
+  },
+  {
+    title: "Generation Kill",
+    year: 2008,
+    url: "https://en.wikipedia.org/wiki/Generation_Kill_(miniseries)",
+    note: "The Wire creators applying their institutional realism to the Iraq War. Likely intellectually appealing, but deliberately observational rather than plot-driven.",
+  },
+  {
+    title: "Person of Interest",
+    year: 2011,
+    url: "https://en.wikipedia.org/wiki/Person_of_Interest_(TV_series)",
+    note: "Eventually becomes highly relevant to your AI/surveillance interests, but the early case-of-the-week structure is a meaningful cost for your tastes.",
+  },
+  {
+    title: "Veep",
+    year: 2012,
+    url: "https://en.wikipedia.org/wiki/Veep",
+    note: "You may love the dialogue and cynicism, but pure sitcom-style comedy is a weaker demonstrated signal than crime, mystery, war, institutions and high-concept SF.",
+  },
+];
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: pageTitle,
   description: pageDescription,
   url: canonicalUrl,
-  numberOfItems: recommendations.length,
-  itemListElement: recommendations.map((movie, index) => ({
+  numberOfItems: movieRecommendations.length,
+  itemListElement: movieRecommendations.map((movie, index) => ({
     "@type": "ListItem",
     position: index + 1,
     name: movie.title,
@@ -127,14 +262,22 @@ const structuredData = {
         <div class="headline">
           <p class="eyebrow">Watchlist</p>
           <h1>{pageTitle}</h1>
-          <p class="intro">
+          <p class="intro" data-format-intro>
             Films selected from patterns in my ratings, kept in their original recommendation order.
           </p>
         </div>
+        <div class="format-switch" role="group" aria-label="Recommendation format">
+          <button type="button" data-format-toggle="movies" aria-pressed="true">Movies</button>
+          <button type="button" data-format-toggle="tv" aria-pressed="false">TV Shows</button>
+        </div>
       </header>
 
-      <ol class="recommendations" aria-label="Ranked movie recommendations">
-        {recommendations.map((movie, index) => (
+      <ol
+        class="recommendations"
+        data-format-panel="movies"
+        aria-label="Ranked movie recommendations"
+      >
+        {movieRecommendations.map((movie, index) => (
           <li>
             <span class="rank" aria-hidden="true">
               {String(index + 1).padStart(2, "0")}
@@ -152,7 +295,63 @@ const structuredData = {
           </li>
         ))}
       </ol>
+
+      <ol
+        class="recommendations"
+        data-format-panel="tv"
+        aria-label="Ranked TV recommendations"
+        hidden
+      >
+        {tvRecommendations.map((show, index) => (
+          <li>
+            <span class="rank" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div class="movie">
+              <div class="movie-heading">
+                <a href={show.url} target="_blank" rel="noreferrer noopener">
+                  {show.title}
+                </a>
+                <span class="year">{show.year}</span>
+              </div>
+              <p>{show.note}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </main>
+
+    <script>
+      const intros = {
+        movies: "Films selected from patterns in my ratings, kept in their original recommendation order.",
+        tv: "Shows selected from patterns in my ratings, kept in their original recommendation order.",
+      };
+
+      const toggles = document.querySelectorAll("[data-format-toggle]");
+      const panels = document.querySelectorAll("[data-format-panel]");
+      const intro = document.querySelector("[data-format-intro]");
+
+      const setFormat = (format) => {
+        toggles.forEach((toggle) => {
+          const isCurrent = toggle.dataset.formatToggle === format;
+          toggle.setAttribute("aria-pressed", String(isCurrent));
+        });
+
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.formatPanel !== format;
+        });
+
+        if (intro) {
+          intro.textContent = intros[format] ?? intros.movies;
+        }
+      };
+
+      toggles.forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          setFormat(toggle.dataset.formatToggle);
+        });
+      });
+    </script>
   </body>
 </html>
 
@@ -285,6 +484,44 @@ const structuredData = {
     color: var(--muted);
     font-size: 0.9rem;
     text-wrap: pretty;
+  }
+
+  .format-switch {
+    display: inline-flex;
+    width: max-content;
+    gap: 0.15rem;
+    padding: 0.22rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  .format-switch button {
+    appearance: none;
+    min-height: 2.25rem;
+    padding: 0.4rem 0.9rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .format-switch button[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .format-switch button:hover {
+    color: var(--accent);
+  }
+
+  .format-switch button[aria-pressed="true"]:hover {
+    color: var(--bg);
   }
 
   .recommendations {
