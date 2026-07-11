@@ -134,8 +134,8 @@ const structuredData = {
       }
 
       function formatPercent(count, total) {
-        if (!total) return "0%";
-        return `${Math.round((count / total) * 1000) / 10}%`;
+        if (!total) return "0.0%";
+        return `${((count / total) * 100).toFixed(1)}%`;
       }
 
       function fmtScore(value) {
@@ -187,7 +187,11 @@ const structuredData = {
               `<li class="stats-bar-row">` +
               `<div class="stats-bar-meta">` +
               `<a class="stats-bar-name" href="/tests/ai-compass/about#arch-${row.index}">${escapeHtml(name)}</a>` +
-              `<span class="stats-bar-count">${formatNumber(row.count)} · ${formatPercent(row.count, total)}</span>` +
+              `<span class="stats-bar-count">` +
+              `<span class="stats-bar-n">${formatNumber(row.count)}</span>` +
+              `<span class="stats-bar-sep" aria-hidden="true">·</span>` +
+              `<span class="stats-bar-pct">${formatPercent(row.count, total)}</span>` +
+              `</span>` +
               `</div>` +
               `<span class="stats-bar-track" aria-hidden="true"><span class="stats-bar-fill" style="width:${width}%"></span></span>` +
               `</li>`
