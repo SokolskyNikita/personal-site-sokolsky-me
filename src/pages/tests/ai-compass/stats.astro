@@ -1,0 +1,252 @@
+---
+import { AXES, ARCHETYPES } from "../../../data/ai-compass";
+import "../../../styles/ai-compass.css";
+
+export const prerender = true;
+
+const pageTitle = "AI Compass results so far";
+const pageDescription =
+  "Live anonymous tallies from the AI Compass: which archetypes people land on and how the five axes lean.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const quizUrl = `${siteUrl}/tests/ai-compass`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  isPartOf: {
+    "@type": "WebApplication",
+    name: "The AI Compass",
+    url: quizUrl,
+  },
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Anonymous aggregate results from the AI Compass quiz." />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page page-stats">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        </div>
+        <div class="hero-copy">
+          <p class="hero-kicker">Live tallies</p>
+          <h1>AI Compass results so far</h1>
+          <p class="hero-description">
+            Anonymous aggregates from people who finished the quiz.
+          </p>
+          <div class="hero-actions hero-actions-row">
+            <a class="btn btn-primary" href="/tests/ai-compass">Take the quiz</a>
+            <a class="btn" href="/tests/ai-compass/about">How it works</a>
+          </div>
+        </div>
+      </header>
+
+      <article class="article article-stats">
+        <p id="stats-status" class="stats-status" aria-live="polite">Loading live tallies…</p>
+
+        <section id="overview" class="stats-section" hidden>
+          <div class="stats-kpis" id="stats-kpis"></div>
+          <p class="stats-note" id="stats-range"></p>
+        </section>
+
+        <section id="archetypes" class="stats-section" hidden>
+          <h2>Archetypes</h2>
+          <ol class="stats-bars" id="stats-archetypes"></ol>
+        </section>
+
+        <section id="axes" class="stats-section" hidden>
+          <h2>Average axis lean</h2>
+          <div class="stats-axes" id="stats-axes"></div>
+        </section>
+
+        <p class="results-links">
+          <a href="/tests/ai-compass">Take the quiz &rarr;</a>
+          <span aria-hidden="true"> · </span>
+          <a href="/tests/ai-compass/about">Read the method &rarr;</a>
+        </p>
+      </article>
+    </main>
+
+    <script is:inline define:vars={{ AXES, ARCHETYPES }}>
+      const STATS_ENDPOINT = "/api/ai-compass/stats";
+      const statusEl = document.getElementById("stats-status");
+      const overviewEl = document.getElementById("overview");
+      const archetypesEl = document.getElementById("archetypes");
+      const axesEl = document.getElementById("axes");
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function formatNumber(value) {
+        return new Intl.NumberFormat("en-US").format(value);
+      }
+
+      function formatPercent(count, total) {
+        if (!total) return "0%";
+        return `${Math.round((count / total) * 1000) / 10}%`;
+      }
+
+      function formatDate(iso) {
+        if (!iso) return "—";
+        const date = new Date(iso);
+        if (Number.isNaN(date.getTime())) return "—";
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }).format(date);
+      }
+
+      function fmtScore(value) {
+        if (value == null || !Number.isFinite(value)) return "—";
+        const sign = value > 0 ? "+" : value < 0 ? "−" : "";
+        return sign + Math.abs(value).toFixed(2);
+      }
+
+      function axisBarHtml(key, value) {
+        const axis = AXES.find((item) => item.key === key);
+        if (!axis) return "";
+        const clamped = Math.max(-1, Math.min(1, value ?? 0));
+        const left = clamped >= 0 ? 50 : 50 + clamped * 50;
+        const width = Math.abs(clamped) * 50;
+        return (
+          `<div class="stats-axis-row" data-axis="${escapeHtml(key)}">` +
+          `<div class="stats-axis-label">` +
+          `<span class="stats-axis-name">${escapeHtml(axis.name)}</span>` +
+          `<span class="stats-axis-score">${fmtScore(value)}</span>` +
+          `</div>` +
+          `<div class="stats-axis-poles">` +
+          `<span>${escapeHtml(axis.neg)}</span>` +
+          `<span>${escapeHtml(axis.pos)}</span>` +
+          `</div>` +
+          `<span class="bar-track">` +
+          `<span class="bar-center"></span>` +
+          `<span class="bar-fill" style="left:${left}%;width:${width}%"></span>` +
+          `</span>` +
+          `</div>`
+        );
+      }
+
+      function renderOverview(summary) {
+        const kpis = [
+          { label: "Results", value: formatNumber(summary.total) },
+          { label: "Quiz answers", value: formatNumber(summary.quizResults) },
+          { label: "Full decks", value: formatNumber(summary.fullCompletions) },
+        ];
+        document.getElementById("stats-kpis").innerHTML = kpis
+          .map(
+            (kpi) =>
+              `<div class="stats-kpi">` +
+              `<span class="stats-kpi-value">${escapeHtml(kpi.value)}</span>` +
+              `<span class="stats-kpi-label">${escapeHtml(kpi.label)}</span>` +
+              `</div>`,
+          )
+          .join("");
+        document.getElementById("stats-range").textContent =
+          `${formatDate(summary.firstAt)} – ${formatDate(summary.lastAt)}`;
+        overviewEl.hidden = false;
+      }
+
+      function renderArchetypes(rows, total) {
+        const max = Math.max(...rows.map((row) => row.count), 1);
+        document.getElementById("stats-archetypes").innerHTML = rows
+          .map((row) => {
+            const arch = ARCHETYPES[row.index];
+            const name = arch ? arch.name : `Archetype ${row.index}`;
+            const width = Math.max(4, Math.round((row.count / max) * 100));
+            return (
+              `<li class="stats-bar-row">` +
+              `<div class="stats-bar-meta">` +
+              `<a class="stats-bar-name" href="/tests/ai-compass/about#arch-${row.index}">${escapeHtml(name)}</a>` +
+              `<span class="stats-bar-count">${formatNumber(row.count)} · ${formatPercent(row.count, total)}</span>` +
+              `</div>` +
+              `<span class="stats-bar-track" aria-hidden="true"><span class="stats-bar-fill" style="width:${width}%"></span></span>` +
+              `</li>`
+            );
+          })
+          .join("");
+        archetypesEl.hidden = false;
+      }
+
+      function renderAxes(avgScores) {
+        document.getElementById("stats-axes").innerHTML = AXES.map((axis) =>
+          axisBarHtml(axis.key, avgScores[axis.key]),
+        ).join("");
+        axesEl.hidden = false;
+      }
+
+      fetch(STATS_ENDPOINT, { headers: { Accept: "application/json" } })
+        .then((response) => {
+          if (!response.ok) throw new Error("bad_response");
+          return response.json();
+        })
+        .then((data) => {
+          if (!data || !data.ok || !data.summary) throw new Error("bad_payload");
+          statusEl.hidden = true;
+          renderOverview(data.summary);
+          renderArchetypes(data.archetypes || [], data.summary.total);
+          renderAxes(data.summary.avgScores || {});
+        })
+        .catch(() => {
+          statusEl.textContent =
+            "Couldn’t load live tallies right now. Try refreshing in a moment.";
+          statusEl.classList.add("stats-status-error");
+        });
+    </script>
+  </body>
+</html>

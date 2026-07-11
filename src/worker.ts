@@ -14,6 +14,8 @@ interface D1Database {
 interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement;
   run(): Promise<unknown>;
+  all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
+  first<T = Record<string, unknown>>(columnName?: string): Promise<T | null>;
 }
 
 interface AiCompassPayload {
@@ -41,10 +43,12 @@ interface CfProperties {
 }
 
 const AI_COMPASS_RESULT_PATH = "/api/ai-compass/result";
+const AI_COMPASS_STATS_PATH = "/api/ai-compass/stats";
 const PRIVATE_PATH_PREFIX = "/private/";
 const LLMS_TXT_PATH = "/llms.txt";
 const AXIS_KEYS = ["T", "V", "S", "I", "P"] as const;
 const MAX_AI_COMPASS_ARCHETYPE_INDEX = 22;
+const STATS_CACHE_SECONDS = 60;
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -78,6 +82,10 @@ export default {
       return handleAiCompassResult(request, env, url);
     }
 
+    if (url.pathname === AI_COMPASS_STATS_PATH) {
+      return handleAiCompassStats(request, env);
+    }
+
     if (isPrivatePath(url.pathname)) {
       return withNoIndexHeaders(await env.ASSETS.fetch(request));
     }
@@ -89,6 +97,90 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
+
+async function handleAiCompassStats(
+  request: Request,
+  env: Env,
+): Promise<Response> {
+  if (request.method !== "GET") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+
+  if (!env.AI_COMPASS_DB) {
+    return json({ ok: false, error: "db_unavailable" }, 503);
+  }
+
+  try {
+    const [summary, archetypes] = await Promise.all([
+      env.AI_COMPASS_DB.prepare(
+        `SELECT
+          COUNT(*) AS total,
+          SUM(CASE WHEN answered_count > 0 THEN 1 ELSE 0 END) AS quiz_results,
+          SUM(CASE WHEN answered_count = 30 THEN 1 ELSE 0 END) AS full_completions,
+          ROUND(AVG(CASE WHEN answered_count > 0 THEN score_t END), 3) AS avg_t,
+          ROUND(AVG(CASE WHEN answered_count > 0 THEN score_v END), 3) AS avg_v,
+          ROUND(AVG(CASE WHEN answered_count > 0 THEN score_s END), 3) AS avg_s,
+          ROUND(AVG(CASE WHEN answered_count > 0 THEN score_i END), 3) AS avg_i,
+          ROUND(AVG(CASE WHEN answered_count > 0 THEN score_p END), 3) AS avg_p,
+          MIN(created_at) AS first_at,
+          MAX(created_at) AS last_at
+        FROM ai_compass_results`,
+      ).first<{
+        total: number;
+        quiz_results: number;
+        full_completions: number;
+        avg_t: number | null;
+        avg_v: number | null;
+        avg_s: number | null;
+        avg_i: number | null;
+        avg_p: number | null;
+        first_at: string | null;
+        last_at: string | null;
+      }>(),
+      env.AI_COMPASS_DB.prepare(
+        `SELECT archetype_index AS archetypeIndex, COUNT(*) AS count
+         FROM ai_compass_results
+         GROUP BY archetype_index
+         ORDER BY count DESC, archetype_index ASC`,
+      ).all<{ archetypeIndex: number; count: number }>(),
+    ]);
+
+    if (!summary) {
+      return json({ ok: false, error: "stats_unavailable" }, 500);
+    }
+
+    return json(
+      {
+        ok: true,
+        generatedAt: new Date().toISOString(),
+        summary: {
+          total: Number(summary.total) || 0,
+          quizResults: Number(summary.quiz_results) || 0,
+          fullCompletions: Number(summary.full_completions) || 0,
+          avgScores: {
+            T: summary.avg_t,
+            V: summary.avg_v,
+            S: summary.avg_s,
+            I: summary.avg_i,
+            P: summary.avg_p,
+          },
+          firstAt: summary.first_at,
+          lastAt: summary.last_at,
+        },
+        archetypes: archetypes.results.map((row) => ({
+          index: Number(row.archetypeIndex),
+          count: Number(row.count),
+        })),
+      },
+      200,
+      {
+        "Cache-Control": `public, max-age=${STATS_CACHE_SECONDS}`,
+      },
+    );
+  } catch {
+    return json({ ok: false, error: "stats_failed" }, 500);
+  }
+}
 
 async function handleAiCompassResult(
   request: Request,
@@ -328,11 +420,16 @@ function deviceCategory(userAgent: string): string {
   return "desktop";
 }
 
-function json(body: unknown, status = 200): Response {
+function json(
+  body: unknown,
+  status = 200,
+  extraHeaders?: Record<string, string>,
+): Response {
   return Response.json(body, {
     status,
     headers: {
       "Cache-Control": "no-store",
+      ...extraHeaders,
     },
   });
 }

@@ -1081,6 +1081,10 @@ a:hover {
 
 .results-links {
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.15rem;
+  align-items: center;
   font-family: var(--sans);
   font-size: 0.88rem;
 }
@@ -1103,7 +1107,227 @@ a.btn-primary:hover {
   justify-content: center;
 }
 
+.hero-actions-row {
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .about-cta {
   display: flex;
   justify-content: center;
+}
+
+/* ---- stats page ---- */
+
+.page-stats {
+  padding-top: clamp(0.65rem, 1.6vw, 1.1rem);
+  padding-bottom: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.page-stats .hero {
+  gap: 0.55rem;
+  padding-bottom: clamp(0.75rem, 2vw, 1.15rem);
+}
+
+.page-stats .home-link {
+  font-size: 0.78rem;
+}
+
+.page-stats .hero-kicker {
+  margin-bottom: 0.25rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.13em;
+}
+
+.page-stats h1 {
+  font-size: clamp(1.45rem, 3.2vw, 1.95rem);
+  letter-spacing: -0.03em;
+}
+
+.page-stats .hero-description {
+  max-width: 28rem;
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.page-stats .hero-actions {
+  margin-top: 0.85rem;
+}
+
+.page-stats .hero-actions-row {
+  gap: 0.5rem;
+}
+
+.page-stats .article-stats {
+  max-width: 40rem;
+  gap: clamp(1.35rem, 3vw, 2rem);
+  padding: clamp(0.9rem, 2vw, 1.25rem) 0 clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.page-stats h2 {
+  max-width: none;
+  margin: 0 0 0.55rem;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  letter-spacing: -0.02em;
+}
+
+.stats-status {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+
+.stats-status-error {
+  color: var(--ax-s);
+}
+
+.stats-section {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.stats-note {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.stats-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (min-width: 40rem) {
+  .stats-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stats-kpi {
+  display: grid;
+  gap: 0.1rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 0.55rem 0.7rem;
+}
+
+.stats-kpi-value {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.stats-kpi-label {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stats-bars {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stats-bar-row {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.stats-bar-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.stats-bar-name {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.stats-bar-name:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.stats-bar-count {
+  flex: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+
+.stats-bar-track {
+  display: block;
+  height: 0.32rem;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--rule) 70%, transparent);
+}
+
+.stats-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.stats-axes {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.stats-axis-row {
+  display: grid;
+  gap: 0.22rem;
+}
+
+.stats-axis-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.stats-axis-name {
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ax);
+}
+
+.stats-axis-score {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.stats-axis-poles {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.page-stats .results-links {
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
 }
