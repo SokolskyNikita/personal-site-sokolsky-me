@@ -342,16 +342,6 @@ const panGroup: Group = {
   ],
 };
 
-const movieCount = movieGroups.reduce(
-  (total, group) => total + group.entries.length,
-  0,
-);
-const tvCount = tvGroups.reduce(
-  (total, group) => total + group.entries.length,
-  0,
-);
-const panCount = panGroup.entries.length;
-
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -415,13 +405,6 @@ const structuredData = {
             </p>
           </div>
         </div>
-
-        <nav class="jump-links" aria-label="Jump to section">
-          <a href="#movies">Movies <span>{movieCount}</span></a>
-          <a href="#tv">TV <span>{tvCount}</span></a>
-          <a href="#pans">Don’t watch <span>{panCount}</span></a>
-          <a href="#notes">Notes</a>
-        </nav>
       </header>
 
       <section class="catalog-section" id="movies" aria-labelledby="movies-heading">
@@ -430,7 +413,7 @@ const structuredData = {
           <div>
             <h2 id="movies-heading">Movies</h2>
             <p>
-              Letterboxd ratings of 3.5★ and above, followed by earlier explicit recommendations.
+              Letterboxd ratings of 3.5★ and above, followed by Movies/shows not ranked on Letterboxd.
             </p>
           </div>
         </div>
@@ -531,9 +514,6 @@ const structuredData = {
             <strong>Rating scale:</strong> 3.5★ means worthwhile; 4★ means “if interested, see it”; 4.5★ means “probably see it”; and 5★ means “see this film.” For TV, Tier 1 is Must Watch, Tier 2 is Worth It, Tier 3 is Good, Tier 4 is merely watchable and Tier 5 is avoid.
           </p>
           <ul>
-            <li>
-              Movie tiers come from <a href="https://letterboxd.com/thezvi/" target="_blank" rel="noreferrer noopener">Zvi’s public Letterboxd</a>, supplemented by older explicit recommendations.
-            </li>
             <li>
               Letterboxd treats concert films, documentaries and stand-up specials as films, so they appear in the movie tiers.
             </li>
@@ -704,42 +684,6 @@ const structuredData = {
     text-wrap: pretty;
   }
 
-  .jump-links {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding: 0.1rem 0 0.4rem;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: inline proximity;
-    scrollbar-width: none;
-  }
-
-  .jump-links::-webkit-scrollbar {
-    display: none;
-  }
-
-  .jump-links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    flex: 0 0 auto;
-    min-height: 44px;
-    padding: 0.55rem 0.8rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--surface);
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-decoration: none;
-    scroll-snap-align: start;
-  }
-
-  .jump-links a span {
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-    font-weight: 400;
-  }
-
   .catalog-section,
   .notes-section {
     scroll-margin-top: var(--space-md);
@@ -897,13 +841,6 @@ const structuredData = {
     font-weight: 600;
   }
 
-  @media (hover: hover) {
-    .jump-links a:hover {
-      border-color: var(--line-strong);
-      background: var(--surface-hover);
-    }
-  }
-
   @media (min-width: 700px) {
     .page {
       padding-top: clamp(1.75rem, 4vw, 3.25rem);
@@ -916,10 +853,6 @@ const structuredData = {
 
     .header-grid {
       grid-template-columns: minmax(0, 1fr);
-    }
-
-    .jump-links {
-      padding-bottom: 0;
     }
 
     .catalog-section,

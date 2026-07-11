@@ -346,8 +346,6 @@ const structuredData = {
           <a href="#tier-1">Strong <span>{getGroupCount("tier-1")}</span></a>
           <a href="#tier-2">Qualified <span>{getGroupCount("tier-2")}</span></a>
           <a href="#analysis-only">Analysis only <span>{getGroupCount("analysis-only")}</span></a>
-          <a href="#discrepancies">Discrepancies</a>
-          <a href="#caveats">Caveats</a>
         </nav>
       </header>
 
@@ -435,73 +433,6 @@ const structuredData = {
             </ol>
           </section>
         ))}
-      </section>
-
-      <section class="notes-section" id="discrepancies" aria-labelledby="discrepancies-heading">
-        <div class="section-heading">
-          <p class="section-number">03</p>
-          <div>
-            <h2 id="discrepancies-heading">Reconciliation notes</h2>
-            <p>Where the two research passes differed or required interpretation.</p>
-          </div>
-        </div>
-        <ol class="numbered-notes">
-          <li>
-            <span>01</span>
-            <div>
-              <h3>Two “favorite ever” claims</h3>
-              <p>
-                <em>The Wire</em> was “my favorite TV show ever” in 2008; <em>The Profit</em> later became “my very favorite TV show ever.” Both quotations are genuine. They span different years and genres, so they should not be treated as one stable ranking.
-              </p>
-            </div>
-          </li>
-          <li>
-            <span>02</span>
-            <div>
-              <h3>A.I. appeared in only one pass</h3>
-              <p>
-                The Claude pass alone surfaced <em>A.I. Artificial Intelligence</em>. Its endorsement as realistic AI cinema is strong and verifiable, so it remains in Tier 1.
-              </p>
-            </div>
-          </li>
-          <li>
-            <span>03</span>
-            <div>
-              <h3>Scenes and Her required categorization</h3>
-              <p>
-                <em>Scenes from a Marriage</em> stays in Tier 1 with its painful-to-watch caveat. <em>Her</em> moves to Tier 2: good craft and reflection, paired with emphatic criticism of its AI realism.
-              </p>
-            </div>
-          </li>
-        </ol>
-      </section>
-
-      <section class="notes-section" id="caveats" aria-labelledby="caveats-heading">
-        <div class="section-heading">
-          <p class="section-number">04</p>
-          <div>
-            <h2 id="caveats-heading">Research caveats</h2>
-          </div>
-        </div>
-        <div class="notes-copy">
-          <p>
-            <strong>This is a merged inventory, not an exhaustive canon.</strong> Hanson’s rare positive endorsements stand out against his baseline view that most science fiction is unrealistic and useful mainly as entertainment.
-          </p>
-          <ul>
-            <li>
-              Roughly 3,300 Overcoming Bias posts, years of tweets, comment threads and untranscribed podcasts leave room for missed endorsements.
-            </li>
-            <li>
-              X/Twitter items—<em>The Brutalist</em> and <em>Wolf Hall</em>—rest on single posts that are harder to verify automatically.
-            </li>
-            <li>
-              Some citations surface repeated claims in adjacent posts rather than the dedicated review, as with <em>The Wire</em>.
-            </li>
-            <li>
-              <em>Project Hail Mary</em> is a novel, not a screen work; it remains only to preserve the supplied research inventory.
-            </li>
-          </ul>
-        </div>
       </section>
     </main>
   </body>
@@ -694,8 +625,7 @@ const structuredData = {
     font-weight: 400;
   }
 
-  .catalog-section,
-  .notes-section {
+  .catalog-section {
     scroll-margin-top: var(--space-md);
     margin-top: 3.75rem;
   }
@@ -894,66 +824,6 @@ const structuredData = {
     color: var(--context);
   }
 
-  .numbered-notes {
-    margin: 0;
-    padding: var(--space-sm) 0 0;
-    border-top: 1px solid var(--line-strong);
-    list-style: none;
-  }
-
-  .numbered-notes li {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr);
-    gap: var(--space-sm);
-    padding: var(--space-md) 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .numbered-notes li > span {
-    color: var(--accent);
-    font-family: "Newsreader", Georgia, serif;
-    font-size: 0.82rem;
-  }
-
-  .numbered-notes h3 {
-    margin: 0 0 0.25rem;
-    font-size: 0.94rem;
-    font-weight: 600;
-  }
-
-  .numbered-notes p {
-    max-width: 48rem;
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.55;
-    text-wrap: pretty;
-  }
-
-  .notes-copy {
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--line-strong);
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-
-  .notes-copy > p {
-    margin: 0 0 var(--space-md);
-  }
-
-  .notes-copy ul {
-    display: grid;
-    gap: var(--space-sm);
-    margin: 0;
-    padding-left: 1.2rem;
-  }
-
-  .notes-copy strong {
-    color: var(--text);
-    font-weight: 600;
-  }
-
   @media (hover: hover) {
     .jump-links a:hover {
       border-color: var(--line-strong);
@@ -987,8 +857,7 @@ const structuredData = {
       padding-bottom: 0;
     }
 
-    .catalog-section,
-    .notes-section {
+    .catalog-section {
       margin-top: 5rem;
     }
 
@@ -1010,22 +879,6 @@ const structuredData = {
     .entries li {
       padding-right: var(--space-md);
       padding-left: 2.25rem;
-    }
-
-    .numbered-notes li {
-      grid-template-columns: 3.25rem minmax(0, 1fr);
-      gap: var(--space-md);
-      padding: var(--space-lg) 0;
-    }
-
-    .notes-copy {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: var(--space-xl);
-    }
-
-    .notes-copy > p {
-      margin: 0;
     }
   }
 
