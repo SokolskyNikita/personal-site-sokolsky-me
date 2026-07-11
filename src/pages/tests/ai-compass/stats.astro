@@ -92,12 +92,9 @@ const structuredData = {
       </header>
 
       <article class="article article-stats">
-        <p id="stats-status" class="stats-status" aria-live="polite">Loading live tallies…</p>
+        <p id="stats-status" class="stats-status" aria-live="polite">Loading…</p>
 
-        <section id="overview" class="stats-section" hidden>
-          <div class="stats-kpis" id="stats-kpis"></div>
-          <p class="stats-note" id="stats-range"></p>
-        </section>
+        <p id="stats-count" class="stats-count" hidden></p>
 
         <section id="archetypes" class="stats-section" hidden>
           <h2>Archetypes</h2>
@@ -120,7 +117,7 @@ const structuredData = {
     <script is:inline define:vars={{ AXES, ARCHETYPES }}>
       const STATS_ENDPOINT = "/api/ai-compass/stats";
       const statusEl = document.getElementById("stats-status");
-      const overviewEl = document.getElementById("overview");
+      const countEl = document.getElementById("stats-count");
       const archetypesEl = document.getElementById("archetypes");
       const axesEl = document.getElementById("axes");
 
@@ -139,17 +136,6 @@ const structuredData = {
       function formatPercent(count, total) {
         if (!total) return "0%";
         return `${Math.round((count / total) * 1000) / 10}%`;
-      }
-
-      function formatDate(iso) {
-        if (!iso) return "—";
-        const date = new Date(iso);
-        if (Number.isNaN(date.getTime())) return "—";
-        return new Intl.DateTimeFormat("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }).format(date);
       }
 
       function fmtScore(value) {
@@ -182,24 +168,12 @@ const structuredData = {
         );
       }
 
-      function renderOverview(summary) {
-        const kpis = [
-          { label: "Results", value: formatNumber(summary.total) },
-          { label: "Quiz answers", value: formatNumber(summary.quizResults) },
-          { label: "Full decks", value: formatNumber(summary.fullCompletions) },
-        ];
-        document.getElementById("stats-kpis").innerHTML = kpis
-          .map(
-            (kpi) =>
-              `<div class="stats-kpi">` +
-              `<span class="stats-kpi-value">${escapeHtml(kpi.value)}</span>` +
-              `<span class="stats-kpi-label">${escapeHtml(kpi.label)}</span>` +
-              `</div>`,
-          )
-          .join("");
-        document.getElementById("stats-range").textContent =
-          `${formatDate(summary.firstAt)} – ${formatDate(summary.lastAt)}`;
-        overviewEl.hidden = false;
+      function renderCount(completions) {
+        const n = formatNumber(completions);
+        countEl.innerHTML =
+          `<span class="stats-count-number">${escapeHtml(n)}</span>` +
+          ` ${completions === 1 ? "completion" : "completions"}`;
+        countEl.hidden = false;
       }
 
       function renderArchetypes(rows, total) {
@@ -238,8 +212,9 @@ const structuredData = {
         .then((data) => {
           if (!data || !data.ok || !data.summary) throw new Error("bad_payload");
           statusEl.hidden = true;
-          renderOverview(data.summary);
-          renderArchetypes(data.archetypes || [], data.summary.total);
+          const completions = data.summary.completions || 0;
+          renderCount(completions);
+          renderArchetypes(data.archetypes || [], completions);
           renderAxes(data.summary.avgScores || {});
         })
         .catch(() => {

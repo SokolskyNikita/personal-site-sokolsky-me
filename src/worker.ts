@@ -114,21 +114,17 @@ async function handleAiCompassStats(
     const [summary, archetypes] = await Promise.all([
       env.AI_COMPASS_DB.prepare(
         `SELECT
-          COUNT(*) AS total,
-          SUM(CASE WHEN answered_count > 0 THEN 1 ELSE 0 END) AS quiz_results,
-          SUM(CASE WHEN answered_count = 30 THEN 1 ELSE 0 END) AS full_completions,
+          SUM(CASE WHEN answered_count > 0 THEN 1 ELSE 0 END) AS completions,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_t END), 3) AS avg_t,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_v END), 3) AS avg_v,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_s END), 3) AS avg_s,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_i END), 3) AS avg_i,
           ROUND(AVG(CASE WHEN answered_count > 0 THEN score_p END), 3) AS avg_p,
-          MIN(created_at) AS first_at,
-          MAX(created_at) AS last_at
+          MIN(CASE WHEN answered_count > 0 THEN created_at END) AS first_at,
+          MAX(CASE WHEN answered_count > 0 THEN created_at END) AS last_at
         FROM ai_compass_results`,
       ).first<{
-        total: number;
-        quiz_results: number;
-        full_completions: number;
+        completions: number | null;
         avg_t: number | null;
         avg_v: number | null;
         avg_s: number | null;
@@ -140,6 +136,7 @@ async function handleAiCompassStats(
       env.AI_COMPASS_DB.prepare(
         `SELECT archetype_index AS archetypeIndex, COUNT(*) AS count
          FROM ai_compass_results
+         WHERE answered_count > 0
          GROUP BY archetype_index
          ORDER BY count DESC, archetype_index ASC`,
       ).all<{ archetypeIndex: number; count: number }>(),
@@ -154,9 +151,7 @@ async function handleAiCompassStats(
         ok: true,
         generatedAt: new Date().toISOString(),
         summary: {
-          total: Number(summary.total) || 0,
-          quizResults: Number(summary.quiz_results) || 0,
-          fullCompletions: Number(summary.full_completions) || 0,
+          completions: Number(summary.completions) || 0,
           avgScores: {
             T: summary.avg_t,
             V: summary.avg_v,
