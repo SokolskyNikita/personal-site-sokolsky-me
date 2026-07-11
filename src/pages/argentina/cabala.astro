@@ -4,6 +4,9 @@ export const prerender = true;
 const pageTitle = "Argentina's cábalas: much more than you wanted to know";
 const pageDescription =
   "What a cábala is, how Kabbalah became a luck ritual, Bilardo's World Cup superstitions, anulo mufa, Kiricocho and the Argentine repertoire.";
+const spanishPageTitle = "Las cábalas argentinas: mucho más de lo que querías saber";
+const spanishPageDescription =
+  "Qué es una cábala, cómo la Cábala terminó convertida en un ritual para atraer la suerte, las supersticiones mundialistas de Bilardo, anulo mufa, Kiricocho y el repertorio argentino.";
 const themeColorLight = "#fbfaf6";
 const themeColorDark = "#171410";
 const siteUrl =
@@ -19,7 +22,7 @@ const structuredData = {
     "@type": "Person",
     name: "Nikita Sokolsky"
   },
-  inLanguage: ["en"]
+  inLanguage: ["en", "es-AR"]
 };
 ---
 
@@ -30,7 +33,7 @@ const structuredData = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
-    <meta name="description" content={pageDescription} />
+    <meta name="description" content={pageDescription} data-en={pageDescription} data-es={spanishPageDescription} />
     <meta
       name="subject"
       content="Argentine cábalas: etymology, Bilardo, Qatar 2022 rituals, mufa, yeta and the national repertoire."
@@ -77,12 +80,16 @@ const structuredData = {
       <header class="hero">
         <div class="site-tools">
           <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+          <nav class="language-switch" aria-label="Language">
+            <button type="button" data-language-toggle="en" aria-pressed="true">English</button>
+            <button type="button" data-language-toggle="es" lang="es-AR" aria-pressed="false">Español</button>
+          </nav>
         </div>
         <p class="eyebrow">Cábala · Argentina</p>
-        <h1>{pageTitle}</h1>
+        <h1 data-language-title data-en={pageTitle} data-es={spanishPageTitle}>{pageTitle}</h1>
       </header>
 
-      <article class="article">
+      <article class="article language-panel" lang="en" data-language-panel="en">
         <section id="overview" aria-labelledby="overview-heading">
           <h2 id="overview-heading">Overview</h2>
           <p>
@@ -179,12 +186,15 @@ const structuredData = {
           <ul>
             <li>
               <strong>Yeta</strong> comes from the Neapolitan <em>jettatura</em>: the evil eye, the harmful influence emitted by an unlucky person, sometimes without their intention (<a href="https://www.asale.org/damer/yeta" target="_blank" rel="noreferrer noopener">ASALE, <em>yeta</em></a>). The concept was so thoroughly naturalized that Gregorio de Laferrère's 1904 Buenos Aires comedy <cite>¡Jettatore!</cite>, about a social circle convinced one man causes every misfortune around him, was a smash hit. The play's mechanism is the whole phenomenon in miniature: once the group labels someone unlucky, every broken glass confirms the diagnosis and the accused cannot disprove it.
+              <span class="usage-example"><strong>In Buenos Aires:</strong> <em>“No lo invites a ver el partido, es yeta”</em> (“Don't invite him to watch the match, he's bad luck”).</span>
             </li>
             <li>
               <strong>Mufa</strong> comes from the Italian <em>muffa</em>, literally "mould." In Argentina it split into two senses that coexist: a bad mood and a person or force that brings bad luck, a jinx you can catch like damp (<a href="https://www.asale.org/damer/mufa" target="_blank" rel="noreferrer noopener">ASALE, <em>mufa</em></a>).
+              <span class="usage-example"><strong>In Buenos Aires:</strong> <em>“No lo nombres, es mufa”</em> (“Don't mention him, he's a jinx”) or <em>“Hoy estoy medio mufa, dejame tranquilo”</em> (“I'm in a bit of a bad mood today, leave me alone”).</span>
             </li>
             <li>
               The Neapolitan <strong>Smorfia</strong>, the traditional dream-interpretation table that assigns numbers to everything you might dream about, crossed the Atlantic and attached itself to the <strong>quiniela</strong>, the wildly popular Argentine numbers lottery (<a href="https://editorial.blog.unq.edu.ar/2014/08/08/la-smorfia-napolitana-y-el-origen-de-la-quiniela/" target="_blank" rel="noreferrer noopener">UNQ</a>). Dreamed of a dead relative? That's a number. Play it. This mattered because it made systematic number-magic <em>ordinary</em>: the same person could attend Mass, look up last night's dream, bet the corresponding two digits and see no contradiction anywhere.
+              <span class="usage-example"><strong>In Buenos Aires:</strong> people rarely say <em>Smorfia</em> in everyday conversation; the living usage is the quiniela logic behind a line like <em>“Anoche soñé con mi viejo; hoy le juego a la edad que tenía”</em> (“I dreamed about my dad last night; today I'm betting on the age he was”).</span>
             </li>
           </ul>
           <p>
@@ -490,7 +500,355 @@ const structuredData = {
           </ul>
         </section>
       </article>
+
+      <article class="article language-panel" lang="es-AR" data-language-panel="es" hidden>
+        <section id="panorama" aria-labelledby="panorama-heading">
+          <h2 id="panorama-heading">Panorama</h2>
+          <p>
+            En el español cotidiano de la Argentina, una <strong>cábala</strong> es un objeto que se usa o una acción o un ritual que se repite porque se cree, o se cree a medias, que trae buena suerte. El que no quiere cambiarse de asiento mientras gana la Selección, usa la misma camiseta sin lavar durante todo un torneo, come lo mismo antes de cada partido o exige que el partido se mire siempre con exactamente la misma gente está siendo <strong>cabulero</strong>.
+          </p>
+          <p>
+            La palabra recorrió una distancia extraordinaria. Empezó como el hebreo <em>qabbālāh</em>, «tradición recibida»; pasó a nombrar en español el misticismo judío; derivó hacia «cálculo esotérico» y después «conjetura»; y finalmente adquirió un sentido bien sudamericano: un ritual o amuleto de buena suerte. De la misma raíz salió el inglés <em>cabal</em>. Lingüísticamente hablando, los místicos provenzales medievales y un porteño que no lava la camiseta de Messi son primos.
+          </p>
+          <p>
+            La Argentina no inventó la superstición, los rituales deportivos ni el miedo a tentar al destino. Lo particular del caso argentino es el vocabulario inusualmente rico que los rodea (<em>cábala, mufa, yeta, anulo mufa, Kiricocho</em>) y el grado en que el fútbol convierte hábitos privados en obligaciones colectivas. Durante un Mundial, la distribución de los asientos de una familia adquiere rango de norma constitucional.
+          </p>
+          <p>
+            Tres títulos mundiales (1978, 1986, 2022) sostienen la mitología. La campaña de 1986 convirtió a Carlos Bilardo en el santo patrono de la superstición deportiva. La de 2022 sumó contrahechizos de la era de internet (<em>anulo mufa</em>), talismanes humanos virales (la Abuela Lalala) y una búsqueda nacional de coincidencias cósmicas con 1986. El teatro es inconfundiblemente argentino.
+          </p>
+        </section>
+
+        <section id="parte-i-es" aria-labelledby="parte-i-es-heading">
+          <h2 id="parte-i-es-heading">Parte I: qué es, en concreto, una cábala</h2>
+
+          <h3 id="supersticion-concreta">La superstición hecha cosa</h3>
+          <p>
+            Una <em>superstición</em> es la creencia general de que acciones o señales sin relación pueden influir en los hechos. Una <em>cábala</em> suele ser la puesta en práctica de esa creencia: la camiseta, el asiento, el recorrido, la frase, la persona o la comida específica que hay que conservar.
+          </p>
+          <p>Una cábala típica tiene cuatro rasgos:</p>
+          <ol>
+            <li><strong>Empieza de casualidad.</strong> Alguien ve una victoria desde un sillón determinado.</li>
+            <li><strong>Se repite a propósito.</strong> Para el partido siguiente reclama el mismo sillón.</li>
+            <li><strong>Aparece una explicación causal.</strong> Ahora el sillón es parte del motivo por el que gana el equipo.</li>
+            <li><strong>Obliga al resto.</strong> Nadie más puede sentarse ahí y levantarse en pleno partido se vuelve socialmente peligroso.</li>
+          </ol>
+          <p>
+            No hace falta creer de verdad. La mayoría de las cábalas argentinas vive en el espacio entre la convicción, la ironía y el juego: ¿para qué arriesgarse a cambiar?
+          </p>
+
+          <h3 id="no-es-rutina">Una cábala no es una rutina</h3>
+          <p>
+            Una secuencia fija de calentamiento puede ayudar a un jugador a concentrarse y aislarse de las distracciones. Eso es una <strong>rutina</strong>. Usar un calzoncillo determinado porque supuestamente hace errar al delantero rival es una <strong>cábala</strong>: la misma repetición, otra explicación de para qué sirve.
+          </p>
+          <p>
+            Carlos Bilardo, el hombre más supersticioso de la historia del fútbol argentino, rechazaba célebremente la etiqueta con una fórmula digna del manual del cabulero:
+          </p>
+          <blockquote>
+            <p><strong>«No hay cábalas, son costumbres».</strong></p>
+          </blockquote>
+          <p>
+            Así se entiende siempre el cabulero. Los supersticiosos son los demás; sus propias repeticiones son precauciones sensatas.
+          </p>
+
+          <h3 id="como-se-dice">Cómo se habla de esto</h3>
+          <ul>
+            <li><strong>Tengo una cábala</strong>: hay un ritual que hago para tener suerte.</li>
+            <li><strong>Es mi cábala</strong>: es eso que me trae suerte.</li>
+            <li><strong>Por cábala</strong>: hago esto para mantener la suerte.</li>
+            <li><strong>Soy cabulero/cabulera</strong>: con estas cosas soy supersticioso.</li>
+            <li><strong>No rompamos la cábala</strong>: no cambiemos el ritual.</li>
+            <li><strong>Desde que hacemos esto, Argentina gana</strong>: toda la teoría causal, en una oración.</li>
+          </ul>
+          <p>
+            En otras partes del mundo hispanohablante, <em>hacer cábalas</em> suele significar especular o conjeturar, como en <em>hacer cábalas sobre quién va a ganar</em>. El diccionario de la Real Academia Española todavía apila todos los sentidos: tradición mística judía, doctrina esotérica, cálculo supersticioso y conjetura (<a href="https://dle.rae.es/c%C3%A1bala" target="_blank" rel="noreferrer noopener">RAE, <em>cábala</em></a>). América sumó el sentido de ritual de suerte, hoy registrado formalmente en el <em>Diccionario de americanismos</em> para la Argentina, Uruguay, Paraguay, Chile, Bolivia, Perú y Ecuador (<a href="https://www.asale.org/damer/c%C3%A1bala" target="_blank" rel="noreferrer noopener">ASALE</a>).
+          </p>
+        </section>
+
+        <section id="parte-ii-es" aria-labelledby="parte-ii-es-heading">
+          <h2 id="parte-ii-es-heading">Parte II: de la Cábala al sillón del que nadie se puede levantar</h2>
+          <p>
+            La palabra hebrea que está detrás de todo esto significa, a grandes rasgos, <strong>tradición recibida</strong>: conocimiento transmitido de maestro a discípulo. Lo que los historiadores llaman Cábala tomó una forma reconocible en los siglos XII y XIII entre las comunidades judías de Provenza y el norte de España. Era un sistema místico interesado en la estructura oculta de la creación, los atributos de Dios y —el detalle que importa para esta historia— los valores numéricos y simbólicos secretos de las letras. Una doctrina <em>secreta</em>, transmitida solo a <em>iniciados</em> y obsesionada con <em>descifrar significados ocultos en los números</em> era materia prima ideal para posteriores desplazamientos de sentido.
+          </p>
+          <p>
+            El español tomó la palabra hacia 1325 (el primer uso documentado es del noble y escritor Don Juan Manuel) y, desde el comienzo, bajo plumas cristianas, cargó con el tufillo sospechoso del saber oculto del otro religioso. De «sistema misterioso de interpretación» pasó a «cálculo oculto», después a «cualquier intento de adivinar el futuro», luego a «conjetura» y finalmente, en el Río de la Plata, a «el ritual que hacés para que el futuro salga bien».
+          </p>
+          <p>
+            El inglés llevó la misma palabra por una bifurcación más oscura. Tomada en la década de 1520 con el sentido de interpretación mística de la Biblia, para la de 1660 <em>cabal</em> ya significaba camarilla conspiradora. El sentido quedó sellado por una coincidencia deliciosa: cinco ministros de Carlos II (Clifford, Arlington, Buckingham, Ashley y Lauderdale) tenían iniciales que formaban CABAL. La historia del acrónimo es una etimología popular, porque la palabra es anterior al ministerio, pero la coincidencia quedó; una linda demostración, en sí misma, de cómo funciona la cabeza.
+          </p>
+          <p>
+            Así, el inglés llevó <em>Kabbalah</em> hacia «conspiración» y el español argentino hacia «buena suerte». Ambas ramas conservan los ingredientes originales: algo oculto, recibido y un poco mágico.
+          </p>
+          <p>
+            Lo que la etimología <strong>no</strong> implica es que una cábala futbolera sea Cábala judía encubierta. No hay un conducto teológico entre el Zóhar y una camiseta sin lavar. La relación es puramente lingüística: una palabra vieja, desprendida de su sistema original y aplicada a una familia cada vez más amplia de amuletos y rituales. Tampoco hay respaldo lingüístico para la hipótesis tentadora de que la numerosa comunidad judía argentina explique por qué acá sobrevivió con el sentido de «suerte». Los motores documentados son más modestos: el juego y el fútbol.
+          </p>
+        </section>
+
+        <section id="parte-iii-es" aria-labelledby="parte-iii-es-heading">
+          <h2 id="parte-iii-es-heading">Parte III: el terreno donde creció</h2>
+          <p>
+            El sentido moderno de la palabra cayó en tierra fértil. Mucho antes del fútbol organizado, las sociedades que se convertirían en la Argentina convivían con promesas y peregrinaciones católicas, curanderismo, objetos protectores, presagios y adivinación: un mundo donde las explicaciones religiosas y mágicas se superponían sin problema. La <em>promesa</em> —caminar hasta un santuario o hacer algo si se concede un pedido— sigue viva y, como veremos, tiene su propio papel en la historia del fútbol.
+          </p>
+          <p>
+            La influencia posterior decisiva vino de Italia, sobre todo del sur. La inmigración masiva alrededor de 1900 produjo el <strong>lunfardo</strong>, la jerga porteña forjada en los conventillos, y con él buena parte del vocabulario supersticioso argentino:
+          </p>
+          <ul>
+            <li>
+              <strong>Yeta</strong> viene del napolitano <em>jettatura</em>: el mal de ojo, la influencia dañina que emite una persona de mala suerte, a veces sin querer (<a href="https://www.asale.org/damer/yeta" target="_blank" rel="noreferrer noopener">ASALE, <em>yeta</em></a>). El concepto se naturalizó tanto que la comedia porteña de Gregorio de Laferrère <cite>¡Jettatore!</cite>, de 1904, sobre un círculo social convencido de que un hombre causa todas las desgracias a su alrededor, fue un éxito enorme. El mecanismo de la obra contiene todo el fenómeno en miniatura: una vez que el grupo declara yeta a alguien, cada vaso roto confirma el diagnóstico y el acusado no puede demostrar lo contrario.
+              <span class="usage-example"><strong>En Buenos Aires:</strong> <em>«No lo invites a ver el partido, es yeta».</em></span>
+            </li>
+            <li>
+              <strong>Mufa</strong> viene del italiano <em>muffa</em>, literalmente «moho». En la Argentina se dividió en dos sentidos que conviven: mal humor y persona o fuerza que trae mala suerte, una yeta que se contagia como la humedad (<a href="https://www.asale.org/damer/mufa" target="_blank" rel="noreferrer noopener">ASALE, <em>mufa</em></a>).
+              <span class="usage-example"><strong>En Buenos Aires:</strong> <em>«No lo nombres, es mufa»</em> o <em>«Hoy estoy medio mufa, dejame tranquilo».</em></span>
+            </li>
+            <li>
+              La <strong>Smorfia</strong> napolitana, la tabla tradicional de interpretación de sueños que le asigna números a todo lo soñable, cruzó el Atlántico y se pegó a la <strong>quiniela</strong>, la popularísima lotería numérica argentina (<a href="https://editorial.blog.unq.edu.ar/2014/08/08/la-smorfia-napolitana-y-el-origen-de-la-quiniela/" target="_blank" rel="noreferrer noopener">UNQ</a>). ¿Soñaste con un muerto? Es un número. Jugalo. Esto volvió <em>normal</em> la magia numérica sistemática: una misma persona podía ir a misa, buscar el sueño de anoche, apostar las dos cifras correspondientes y no ver contradicción alguna.
+              <span class="usage-example"><strong>En Buenos Aires:</strong> casi nadie dice <em>Smorfia</em> en una conversación cotidiana; lo que sigue vivo es la lógica de la quiniela detrás de frases como <em>«Anoche soñé con mi viejo; hoy le juego a la edad que tenía».</em></span>
+            </li>
+          </ul>
+          <p>
+            A comienzos del siglo XX, la Argentina ya había armado el equipo completo: <em>cábala</em> (el acto que atrae la suerte), <em>yeta</em> y <em>mufa</em> (la mala suerte y quienes la llevan), el <em>amuleto</em>, la <em>promesa</em> y una industria de adivinación que convertía sueños en números. El fútbol iba a fusionarlo todo.
+          </p>
+        </section>
+
+        <section id="parte-iv-es" aria-labelledby="parte-iv-es-heading">
+          <h2 id="parte-iv-es-heading">Parte IV: Bilardo, santo patrono de la cábala</h2>
+          <p>
+            Si las cábalas tienen un santo patrono, es <strong>Carlos Salvador Bilardo</strong>: médico, mediocampista y técnico campeón del mundo en 1986, que vivió el torneo como una secuencia donde cada detalle coincidente con una victoria debía conservarse para siempre (<a href="https://inside.fifa.com/news/talking-superstitions-and-myth-busting-with-carlos-bilardo-2804067" target="_blank" rel="noreferrer noopener">FIFA</a>; <a href="https://www.infobae.com/deportes-2/mundial-2018/2018/06/04/las-cabalas-argentinas-en-los-mundiales-desde-la-secta-de-bilardo-hasta-el-ayuno-de-sampaoli/" target="_blank" rel="noreferrer noopener">Infobae</a>). Jorge Valdano describió después al plantel como una secta con Bilardo de gurú y admitió que, visto en retrospectiva, parecía increíble que profesionales adultos hicieran todo eso convencidos de que así se ganaban partidos.
+          </p>
+          <p>El catálogo de 1986, armado a partir de décadas de testimonios de jugadores y periodismo deportivo:</p>
+          <ul>
+            <li>El micro tenía que tardar lo mismo en llegar al estadio en cada partido, escoltado por los mismos dos policías motociclistas, Tobías y Jesús. Cuando para la final sumaron más policías, Bilardo exigió que los nuevos fueran atrás.</li>
+            <li>Los jugadores ocupaban siempre los mismos asientos del micro.</li>
+            <li>Durante el viaje tenían que sonar completas tres canciones: «Total Eclipse of the Heart», de Bonnie Tyler; «Eye of the Tiger», de Survivor; y «Gigante chiquito», de Sergio Denis. La última debía terminar justo cuando frenaba el micro. A los choferes les pedían que fueran más despacio para que alcanzara la lista.</li>
+            <li>Ricardo Giusti dejaba un caramelo en el centro de la cancha antes de cada partido.</li>
+            <li>El equipo salía en orden fijo: Maradona primero, Burruchaga último.</li>
+            <li>Después de ganar una vez tras comer hamburguesas en un local de Ciudad de México, la comida se volvió obligatoria. Y como aquel día tres mujeres desconocidas habían compartido la mesa, había que invitar a tres desconocidas cada vez. Antes de la final aparecieron las <em>esposas</em> de los jugadores; Bilardo las hizo irse para respetar la cábala.</li>
+            <li>Bilardo le pedía pasta dental todos los días al Tata Brown, la necesitara o no, y llamaba a su propia esposa exactamente a las cinco de la tarde.</li>
+            <li>Según se cuenta, Maradona acomodaba la ropa en el piso con forma de persona antes de los partidos.</li>
+          </ul>
+          <p>
+            Los detalles cambian según quién lo cuente y Bilardo discutió partes de la mitología (ver: «son costumbres»). Así funcionan las cábalas exitosas: todos tienen incentivos para agregar una coincidencia significativa más a la leyenda. Lo indiscutible es que Maradona jugó el mejor torneo de la historia, la Argentina le ganó 3-2 a Alemania Federal en la final y, desde la perspectiva cabulera, los rituales habían superado la prueba más exigente disponible.
+          </p>
+
+          <h3 id="kiricocho-es">Kiricocho: la exportación cultural argentina más exitosa después de Messi</h3>
+          <p>Bilardo también creó una palabra que hoy se grita en estadios de tres continentes: <strong>Kiricocho</strong>.</p>
+          <p>
+            La historia canónica: mientras dirigía a Estudiantes de La Plata alrededor de 1982, Bilardo notó que un hincha devoto apodado Kiricocho aparecía en los entrenamientos justo antes de que se lesionaran jugadores. En vez de prohibirle la entrada, lo convirtió en arma: lo mandaba a saludar efusivamente a los equipos <em>rivales</em> para dirigirles la mufa. Estudiantes salió campeón. El nombre se volvió una maldición verbal para el momento decisivo: gritá «¡Kiricocho!» cuando el rival va a patear un penal (<a href="https://www.lanacion.com.ar/deportes/el-kiricocho-de-haaland-ante-sevilla-el-insolito-cruce-por-un-maleficio-que-creo-bilardo-nid10032021/" target="_blank" rel="noreferrer noopener">La Nación</a>).
+          </p>
+          <p>
+            La palabra salió por completo de la Argentina —llevada a España por Maradona y Diego Simeone— y se hizo global. Las cámaras captaron a Giorgio Chiellini usándola durante la definición por penales de la final de la Euro 2020, que ganó Italia (<a href="https://www.lanacion.com.ar/deportes/futbol/la-cabala-bilardista-que-chiellini-uso-en-wembley-en-la-victoria-italiana-en-la-final-de-la-eurocopa-nid13072021/" target="_blank" rel="noreferrer noopener">La Nación</a>). Un contraamuleto inventado en una práctica en La Plata ya forma parte del vocabulario internacional del fútbol.
+          </p>
+          <p>
+            Una aclaración sobre la evidencia: la mayoría de las versiones del origen apareció cuando la palabra ya era famosa y los detalles varían. Conviene tratarla como folclore futbolero construido alrededor de un hombre real y un campeonato real, no como biografía documentada.
+          </p>
+        </section>
+
+        <section id="parte-v-es" aria-labelledby="parte-v-es-heading">
+          <h2 id="parte-v-es-heading">Parte V: el gemelo oscuro, las maldiciones</h2>
+          <p>La misma cultura que construye una cábala para conservar el éxito construye una <strong>maldición</strong> para explicar su ausencia.</p>
+          <p>
+            La más famosa es la <strong>maldición de Tilcara</strong>. Antes de México 1986, el plantel entrenó en Tilcara, Jujuy, donde, según la leyenda posterior, integrantes de la delegación le prometieron a la Virgen local que volverían a agradecer si salían campeones. Ganaron. No volvieron todos juntos. El supuesto precio: las finales perdidas de 1990 y 2014, más varios casi, una sequía que —en el relato popular— recién cortó el título de 2022. La historia está mal documentada y los protagonistas la discuten, pero fijate en su <em>forma</em>: la memoria del fútbol argentino explica treinta y seis años sin estrellas mediante una <em>promesa</em> incumplida, el viejo voto católico reciclado como relato deportivo.
+          </p>
+          <p>
+            Los clubes tienen sus clásicos, ninguno mejor que la <strong>maldición de los siete gatos</strong> de Racing: siete gatos negros supuestamente enterrados por hinchas rivales bajo el estadio en los años sesenta, culpables de 35 años sin campeonatos. El club excavó. Encontró seis. El séptimo siguió prófugo. Racing por fin salió campeón en 2001 y si alguna vez apareció el último gato depende de quién cuente la historia, exactamente como debe ser.
+          </p>
+          <p>
+            Y en 1990 Bilardo, todavía técnico, internacionalizó el programa de conservación. Como la Selección había visitado Israel antes de la campaña victoriosa de 1986, volvió antes de Italia '90 y los jugadores fueron al Muro de los Lamentos. La Argentina llegó otra vez a la final (perdió 1-0), cosa que un cabulero puede leer de cualquiera de las dos maneras: el ritual casi funcionó o alguien rompió algo.
+          </p>
+        </section>
+
+        <section id="parte-vi-es" aria-labelledby="parte-vi-es-heading">
+          <h2 id="parte-vi-es-heading">Parte VI: Qatar 2022, la cábala en la era de internet</h2>
+          <p>
+            La Argentina debutó en el Mundial 2022 perdiendo con Arabia Saudita, uno de los grandes batacazos de la historia del torneo. La derrota no apagó las cábalas: las potenció. Ahora el país sabía que existía una configuración equivocada y se puso a reconstruir la correcta. Todo lo que acompañó las seis victorias consecutivas posteriores quedó intocable.
+          </p>
+          <p>Del lado del equipo:</p>
+          <ul>
+            <li>Antonela Roccuzzo, la esposa de Messi, había usado la camiseta titular en la derrota con Arabia. Desde entonces, ella y los tres hijos de la pareja fueron a todos los partidos con la suplente violeta; según se contó, repitieron hasta los zapatos y la cartera. Antonela recuperó el conjunto para la Copa América 2024. La Argentina también la ganó.</li>
+            <li>Para los cuartos contra Países Bajos, el equipo usó deliberadamente la combinación de pantalón y medias blancas de la final de la Copa América 2021 que le había ganado a Brasil. La posición oficial del plantel, en la mejor tradición bilardista: no hay cábalas, son costumbres.</li>
+            <li>Rodrigo De Paul y Leandro Paredes comían una cantidad fija de caramelos mientras recorrían el círculo central antes de cada partido, hábito iniciado en la Copa América 2021 y sostenido en la Finalissima, el Mundial y la Copa América 2024. Tres trofeos después, los caramelos siguen.</li>
+            <li>Enzo Fernández, con una dieta profesional pesada al gramo, conservó una excepción autorizada: sorrentinos de jamón y queso antes de cada convocatoria. Su pareja miraba un partido desde la casa «equivocada» cuando la Argentina hizo un gol y la mandaron, en pleno partido, a terminar de verlo a lo de su madre, <em>por cábala</em>.</li>
+          </ul>
+          <p>Del lado de los hinchas, las redes sociales convirtieron rituales privados en coordinación nacional:</p>
+          <ul>
+            <li>Los nombres de jugadores rivales terminaron en freezers de todo el país, escritos en papel y a veces sumergidos en agua. Magia simpática en su forma doméstica más pura.</li>
+            <li>Una encuesta durante el torneo encontró que cerca de un cuarto de los hinchas argentinos no pensaba lavar la camiseta de la Selección hasta que terminara el Mundial —contra alrededor de uno de cada diez brasileños— y que el 45 % se declaraba abiertamente cabulero (<a href="https://buenosairesherald.com/argentina-101/what-do-argentines-do-to-bring-luck-at-the-world-cup" target="_blank" rel="noreferrer noopener">Buenos Aires Herald</a>).</li>
+            <li>Un hincha documentado llevó a los partidos el cráneo de su padre muerto. La mayoría de las cábalas es más acogedora.</li>
+          </ul>
+          <p>Dos innovaciones puras de la era de internet merecen entrada propia.</p>
+          <p>
+            <strong>Anulo mufa.</strong> En la metafísica argentina, el peligro suele crearse al <em>hablar</em>. Alguien dice «este Mundial lo ganamos seguro» y la afirmación misma tienta al destino. El otro responde «anulo mufa», un contrahechizo verbal que neutraliza la contaminación (<a href="https://tn.com.ar/deportes/mundial/2022/12/15/anulo-mufa-cual-es-el-significado-de-la-frase-que-se-convirtio-en-una-cabala-para-el-mundial-de-qatar/" target="_blank" rel="noreferrer noopener">TN</a>). Durante Qatar 2022 se volvió una respuesta refleja, semiautomática, en las redes argentinas. Su genialidad es que sirve para cualquier nivel de creencia: el convencido la usa como protección, el irónico como chiste y el prudente porque escribir dos palabras no cuesta nada.
+          </p>
+          <p>
+            <strong>#ElijoCreer.</strong> Una búsqueda colectiva nacional de coincidencias que demostraran que el título <em>ya estaba escrito</em>: horarios de partidos iguales a los de 1986, secuencias paralelas, detalles proféticos en programas viejos de televisión. La propia FIFA terminó catalogándolos. Es la cábala expandida desde una acción hasta una teoría de la historia; con suficientes acontecimientos y suficiente flexibilidad, siempre aparece algún paralelo con 1986. Como método para manejar la ansiedad entre partidos, fue magnífico.
+          </p>
+          <p>
+            Y después estuvo la <strong>Abuela Lalala</strong>. Tras la victoria ante Polonia, unos jóvenes de Liniers encontraron a una mujer mayor, Cristina Mariscotti, festejando en la calle y le cantaron «Abuela, la-la-la-la» con la melodía de «Go West». El video se hizo viral. La Argentina siguió ganando, así que Cristina tuvo que reaparecer después de cada partido, y lo hizo: una ciudadana particular convertida por repetición en talismán nacional (<a href="https://www.goal.com/es-ar/noticias/quien-es-la-abuela-lalala-la-la-senora-que-se-hizo-cabala-y-viral-en-argentina-por-el-mundial-de-qatar/blt8557bf938bb45912" target="_blank" rel="noreferrer noopener">Goal</a>). El detalle recursivo es perfecto: según contó, la propia Cristina no miraba los partidos, <em>por cábala</em>. Una mujer que practicaba su superstición privada se volvió la superstición pública de millones.
+          </p>
+          <p>
+            Cristina murió en marzo de 2026, a los 79 años. Las necrológicas no la recordaron como meme sino como uno de los símbolos perdurables del mes más feliz de la historia argentina reciente (<a href="https://www.infobae.com/sociedad/2026/03/23/murio-la-abuela-lalala-la-mujer-que-fue-furor-por-el-mundial-2022/" target="_blank" rel="noreferrer noopener">Infobae</a>).
+          </p>
+          <p>
+            El sociólogo Pablo Alabarces, estudioso serio de la cultura futbolera, resumió la condición nacional mejor que nadie. Bromeó con que la Argentina perdió con Arabia Saudita porque él se había ido a dar una clase, y después concedió la verdad más profunda: nada de eso le impide ser cabulero durante los noventa minutos del partido.
+          </p>
+        </section>
+
+        <section id="parte-vii-es" aria-labelledby="parte-vii-es-heading">
+          <h2 id="parte-vii-es-heading">Parte VII: guía de campo del repertorio moderno</h2>
+          <p><strong>El freezer.</strong> Escribí el nombre del rival en un papel y congelalo. No requiere especialistas, queda bien en Instagram y escala: antes de cada partido solo hay que agregar al próximo rival.</p>
+          <p><strong>La ropa.</strong> La camiseta ganadora vuelve para todos los partidos; la versión extrema prohíbe lavarla porque el lavado se lleva la suerte acumulada. La regla puede adherirse a <em>cualquier</em> prenda que haya coincidido con una victoria. Un pulóver negro cualquiera tiene prioridad sobre la camiseta oficial si llegó primero.</p>
+          <p><strong>Asientos y movimiento.</strong> La misma gente, en los mismos lugares. Después de un gol, nadie se mueve. Al que salió de la habitación justo antes de que la Argentina marcara pueden prohibirle volver. Es el caso más claro de una coincidencia privada endurecida como ley grupal. La propia web oficial de turismo argentina incluye la inmovilidad posterior al gol entre los rituales mundialistas nacionales sobre los que advierte a visitantes (<a href="https://www.argentina.travel/en/news/football-world-cup-10-good-luck-rituals-you-should-know-before-coming-to-argentina" target="_blank" rel="noreferrer noopener">Visit Argentina</a>).</p>
+          <p><strong>Comida y bebida.</strong> El menú de la victoria se reproduce al detalle: la misma pizzería, el mismo pedido de empanadas, la misma persona cebando mate. Las cábalas gastronómicas son las más duraderas porque, incluso cuando se apaga la magia, la tradición mejora la juntada.</p>
+          <p><strong>La ausencia.</strong> Algunos hinchas creen que el equipo juega mejor cuando <em>no</em> lo miran y pasan las finales en otra habitación, siguiendo el partido por los gritos de los vecinos. Es la forma más dolorosa del cabulerismo: sacrificar la experiencia para proteger el resultado. Tu ausencia es tu aporte.</p>
+          <p><strong>Talismanes humanos y animales.</strong> Un bebé, una abuela, un vecino o un perro presente durante una victoria puede ser convocado para todos los partidos siguientes, consentimiento opcional. El reverso es más duro. Alguien que estuvo en varias derrotas es declarado <strong>mufa</strong> y deja de ser invitado, en silencio o a los gritos. La trama de <cite>¡Jettatore!</cite>, de 1904, sigue funcionando sin cambios en 2026: el grupo elige a un portador de desgracias y cada percance posterior confirma la etiqueta.</p>
+        </section>
+
+        <section id="parte-viii-es" aria-labelledby="parte-viii-es-heading">
+          <h2 id="parte-viii-es-heading">Parte VIII: más allá del fútbol</h2>
+          <p>La cábala forma parte de un ecosistema argentino de supersticiones más amplio.</p>
+          <p><strong>Martes 13.</strong> Una forma infalible de detectar a un anglosajón convencido de que sus supersticiones son universales: le teme al viernes 13. En la Argentina, como en España y buena parte del mundo hispano, el día de mala suerte es el <strong>martes 13</strong>. El refrán dice: <em>martes 13, ni te cases ni te embarques</em>. La lógica apila a Marte, dios de la guerra, sobre los trece comensales de la Última Cena. Italia, para completar la colección, teme al viernes 17. Cada cultura está segura de que su propia fecha fatal es la evidente.</p>
+          <p><strong>La bombacha de Año Nuevo.</strong> En toda la Argentina, usar ropa interior rosa en Nochevieja atrae el amor para el año que viene, con una regla crucial: tiene que ser un <em>regalo</em>, porque la buena fortuna debe venir de otra persona. Convive tranquilamente con la misa de medianoche, según el patrón argentino general: lo religioso y lo mágico comparten mesa sin ponerse colorados.</p>
+        </section>
+
+        <section id="parte-ix-es" aria-labelledby="parte-ix-es-heading">
+          <h2 id="parte-ix-es-heading">Parte IX: ¿por qué especialmente en la Argentina?</h2>
+          <p>Las cábalas son universales. Entonces, ¿por qué acá el fenómeno se siente tan intensamente nacional? Hay tres explicaciones convergentes, más el deporte que las aloja.</p>
+          <p>El fútbol es un terreno especialmente favorable. Tiene pocos goles y mucha variación: un equipo puede dominar noventa minutos y perder por un rebote, un fallo arbitral o un centímetro en el palo. Como hay pocos hechos decisivos, cada coincidencia carga un peso narrativo enorme. Y el hincha combina la máxima inversión emocional con casi ninguna posibilidad de intervenir. No puede marcar al nueve ni patear el penal. Pero sí puede quedarse en el mismo sillón.</p>
+          <p><strong>El crisol inmigratorio.</strong> El vocabulario supersticioso argentino es literalmente un recibo de su inmigración: <em>cábala</em> (hebreo, vía España), <em>yeta</em> (napolitano), <em>mufa</em> (italiano), la quiniela (Smorfia napolitana). El país no inventó estas creencias: juntó las del Mediterráneo y las mezcló.</p>
+          <p><strong>El fútbol como religión civil y el giro colectivo.</strong> Lo distintivo no es la superstición argentina sino su carácter <em>masivo</em>. En otros lugares, los rituales deportivos son manías privadas. En la Argentina se vuelven obligaciones colectivas, una manera de pertenecer y aportar desde el sillón a un proyecto nacional compartido. En un país cuya autoestima colectiva lleva décadas de golpes económicos, la Selección es un activo confiablemente de nivel mundial y todos quieren una parte.</p>
+          <p><strong>La incertidumbre y el hambre de control.</strong> En una economía de inflación e inestabilidad recurrentes, donde planificar el futuro es genuinamente difícil, resulta obvio el atractivo de un ritual que te da algo para <em>hacer</em> mientras esperás un resultado incontrolable. Un país que no puede controlar el dólar por lo menos puede controlar si el nombre del rival está en el freezer.</p>
+        </section>
+
+        <section id="glosario-es" aria-labelledby="glosario-es-heading">
+          <h2 id="glosario-es-heading">Glosario para sobrevivir un Mundial argentino</h2>
+          <ul>
+            <li><strong>Cábala</strong>: ritual, objeto, disposición o persona que trae suerte. <em>Ver el partido acá es nuestra cábala.</em></li>
+            <li><strong>Cabulero / cabulera</strong>: persona devota de las cábalas. <em>Bilardo era muy cabulero.</em></li>
+            <li><strong>Mufa</strong>: mala suerte; algo o alguien que supuestamente la trae. <em>No digas que ya ganamos, es mufa.</em></li>
+            <li><strong>Mufar</strong>: provocar mala suerte. <em>Nos mufaste.</em></li>
+            <li><strong>Anulo mufa</strong>: respuesta obligatoria ante un exceso prematuro de confianza.</li>
+            <li><strong>Yeta</strong>: mala suerte o quien la porta de manera estable; viene del napolitano <em>jettatura</em>.</li>
+            <li><strong>Enyetado</strong>: afectado por la mala suerte.</li>
+            <li><strong>Salar / salado</strong>: mufar; estar mufado.</li>
+            <li><strong>Quemar</strong>: arruinar algo por anunciarlo antes de tiempo. <em>No lo quemes.</em></li>
+            <li><strong>Kiricocho</strong>: maldición que se grita cuando un rival va a patear una pelota decisiva.</li>
+            <li><strong>Elijo creer</strong>: aceptar una coincidencia favorable como destino.</li>
+            <li><strong>Promesa</strong>: compromiso con un santo o una virgen que se paga cuando llega el resultado. Incumplila bajo tu propio riesgo (ver: Tilcara).</li>
+          </ul>
+        </section>
+
+        <section id="para-que-sirven" aria-labelledby="para-que-sirven-heading">
+          <h2 id="para-que-sirven-heading">Lo que las cábalas consiguen de verdad</h2>
+          <ol>
+            <li><strong>Regulan la ansiedad.</strong> Un Mundial exige horas de espera impotente. El ritual convierte la espera en tarea.</li>
+            <li><strong>Le dan un trabajo a cada uno.</strong> Cuidá el sillón, protegé la camiseta, anulá la mufa: durante el partido, cada uno tiene algo que hacer.</li>
+            <li><strong>Unen a los grupos.</strong> Una cábala responde de antemano cada pregunta logística —dónde, quiénes, qué comida, qué pasa después de un gol— y convierte una juntada para mirar el partido en una institución.</li>
+            <li><strong>Conservan la memoria.</strong> La camiseta de 2022 es un archivo. La lista de Bilardo importa porque transporta México '86. La cábala vuelve representable la historia.</li>
+            <li><strong>Redistribuyen la responsabilidad.</strong> En la victoria, todos aportaron. En la derrota, el grupo puede culpar a un ritual roto, algo más gracioso, más cálido y a veces cruel, sobre todo para quien queda etiquetado como mufa.</li>
+          </ol>
+        </section>
+
+        <section id="confusiones-es" aria-labelledby="confusiones-es-heading">
+          <h2 id="confusiones-es-heading">Confusiones habituales</h2>
+          <ul>
+            <li><strong>«Una cábala es la Cábala».</strong> Solo etimológicamente. No sobrevive misticismo alguno en el viaje. Una cábala futbolera no es judaísmo encubierto y nadie que congela un papel con «Mbappé» está haciendo gematría.</li>
+            <li><strong>«Todo comportamiento repetido es una cábala».</strong> No. Una rutina apunta a la atención y la preparación; una cábala, a la suerte. Los cuatro pasos de Cristiano antes de un tiro libre son una rutina. El sillón de tu tío es una cábala.</li>
+            <li><strong>«Los argentinos somos los únicos supersticiosos».</strong> La superstición deportiva existe en todo el mundo. Lo particular es el vocabulario, la visibilidad y la colectivización: la Argentina convirtió una manía privada en liturgia nacional.</li>
+            <li><strong>«O la gente cree o está haciendo un chiste».</strong> Por lo general, ninguna de las dos, y ese es el punto. La posición argentina estándar es una superposición: cambiarlo igual sería una imprudencia.</li>
+            <li><strong>«Bilardo inventó las cábalas argentinas».</strong> Heredó un siglo de promesas, presagios, yeta y numerología de quiniela. Lo que hizo fue darle a la tradición su puesta en escena definitiva y después ganar el Mundial mientras la ejecutaba, con lo que cerró la discusión para una generación.</li>
+          </ul>
+        </section>
+
+        <section id="conclusion-es" aria-labelledby="conclusion-es-heading">
+          <h2 id="conclusion-es-heading">Conclusión</h2>
+          <p>La cábala argentina se entiende mejor como una tecnología popular para manejar la incertidumbre. Su nombre conserva un fósil del misticismo medieval. Su vocabulario es una declaración de aduana de la gran inmigración italiana. Su escenario es el fútbol, un deporte diseñado —pocos goles, mucha variación, absoluta indiferencia hacia el espectador— para que a todos les importe y nadie sienta que tiene el control.</p>
+          <p>Sobrevive porque funciona sobre la gente: la calma, le da una tarea, la reúne y archiva sus tardes más felices en una camiseta sin lavar.</p>
+          <p>De ahí sale la única regla que cualquiera debe incorporar antes del arranque en un living argentino: <strong>lo que funciona no se toca.</strong></p>
+        </section>
+
+        <section id="fuentes" aria-labelledby="fuentes-heading">
+          <h2 id="fuentes-heading">Fuentes</h2>
+          <ul>
+            <li><a href="https://dle.rae.es/c%C3%A1bala" target="_blank" rel="noreferrer noopener">RAE, <em>cábala</em></a> y <a href="https://www.asale.org/damer/c%C3%A1bala" target="_blank" rel="noreferrer noopener">ASALE, <em>Diccionario de americanismos</em>, <em>cábala</em></a>, <a href="https://www.asale.org/damer/mufa" target="_blank" rel="noreferrer noopener"><em>mufa</em></a>, <a href="https://www.asale.org/damer/yeta" target="_blank" rel="noreferrer noopener"><em>yeta</em></a></li>
+            <li><a href="https://inside.fifa.com/news/talking-superstitions-and-myth-busting-with-carlos-bilardo-2804067" target="_blank" rel="noreferrer noopener">FIFA: conversación con Carlos Bilardo sobre supersticiones</a></li>
+            <li><a href="https://www.infobae.com/deportes-2/mundial-2018/2018/06/04/las-cabalas-argentinas-en-los-mundiales-desde-la-secta-de-bilardo-hasta-el-ayuno-de-sampaoli/" target="_blank" rel="noreferrer noopener">Infobae: las cábalas argentinas en los Mundiales, desde la «secta» de Bilardo</a></li>
+            <li><a href="https://www.lanacion.com.ar/deportes/el-kiricocho-de-haaland-ante-sevilla-el-insolito-cruce-por-un-maleficio-que-creo-bilardo-nid10032021/" target="_blank" rel="noreferrer noopener">La Nación: el «Kiricocho» y el maleficio que creó Bilardo</a> y <a href="https://www.lanacion.com.ar/deportes/futbol/la-cabala-bilardista-que-chiellini-uso-en-wembley-en-la-victoria-italiana-en-la-final-de-la-eurocopa-nid13072021/" target="_blank" rel="noreferrer noopener">el Kiricocho de Chiellini en Wembley</a></li>
+            <li><a href="https://www.elterritorio.com.ar/noticias/2026/07/03/897064-kiricocho-papelitos-en-el-freezer-y-la-ciencia-detras-de-la-cabala-mas-argentina" target="_blank" rel="noreferrer noopener">El Territorio: Kiricocho, papelitos en el freezer y la ciencia detrás de la cábala</a></li>
+            <li><a href="https://tn.com.ar/deportes/mundial/2022/12/15/anulo-mufa-cual-es-el-significado-de-la-frase-que-se-convirtio-en-una-cabala-para-el-mundial-de-qatar/" target="_blank" rel="noreferrer noopener">TN: anulo mufa, la frase que se convirtió en cábala</a></li>
+            <li><a href="https://www.goal.com/es-ar/noticias/quien-es-la-abuela-lalala-la-la-senora-que-se-hizo-cabala-y-viral-en-argentina-por-el-mundial-de-qatar/blt8557bf938bb45912" target="_blank" rel="noreferrer noopener">Goal: quién es la Abuela Lalala</a> y <a href="https://www.infobae.com/sociedad/2026/03/23/murio-la-abuela-lalala-la-mujer-que-fue-furor-por-el-mundial-2022/" target="_blank" rel="noreferrer noopener">Infobae: murió la Abuela Lalala</a></li>
+            <li><a href="https://buenosairesherald.com/argentina-101/what-do-argentines-do-to-bring-luck-at-the-world-cup" target="_blank" rel="noreferrer noopener">Buenos Aires Herald: qué hacen los argentinos para tener suerte en el Mundial</a></li>
+            <li><a href="https://www.argentina.travel/en/news/football-world-cup-10-good-luck-rituals-you-should-know-before-coming-to-argentina" target="_blank" rel="noreferrer noopener">Visit Argentina: diez rituales de buena suerte</a></li>
+            <li><a href="https://editorial.blog.unq.edu.ar/2014/08/08/la-smorfia-napolitana-y-el-origen-de-la-quiniela/" target="_blank" rel="noreferrer noopener">UNQ: la Smorfia napolitana y el origen de la quiniela</a></li>
+          </ul>
+        </section>
+      </article>
     </main>
+    <script is:inline>
+      const languageCopy = {
+        en: {
+          documentLang: "en",
+          title: "Argentina's cábalas: much more than you wanted to know",
+          description:
+            "What a cábala is, how Kabbalah became a luck ritual, Bilardo's World Cup superstitions, anulo mufa, Kiricocho and the Argentine repertoire.",
+          homeLabel: "Back to home",
+          navLabel: "Language"
+        },
+        es: {
+          documentLang: "es-AR",
+          title: "Las cábalas argentinas: mucho más de lo que querías saber",
+          description:
+            "Qué es una cábala, cómo la Cábala terminó convertida en un ritual para atraer la suerte, las supersticiones mundialistas de Bilardo, anulo mufa, Kiricocho y el repertorio argentino.",
+          homeLabel: "Volver al inicio",
+          navLabel: "Idioma"
+        }
+      };
+
+      const panels = document.querySelectorAll("[data-language-panel]");
+      const toggles = document.querySelectorAll("[data-language-toggle]");
+      const title = document.querySelector("[data-language-title]");
+      const description = document.querySelector('meta[name="description"]');
+      const homeLink = document.querySelector(".home-link");
+      const switcher = document.querySelector(".language-switch");
+
+      function setLanguage(language, updateUrl = true) {
+        const nextLanguage = language === "es" ? "es" : "en";
+        const copy = languageCopy[nextLanguage];
+
+        document.documentElement.lang = copy.documentLang;
+        document.title = copy.title;
+        title.textContent = title.dataset[nextLanguage];
+        description?.setAttribute("content", description.dataset[nextLanguage] ?? copy.description);
+        homeLink?.setAttribute("aria-label", copy.homeLabel);
+        switcher?.setAttribute("aria-label", copy.navLabel);
+
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.languagePanel !== nextLanguage;
+        });
+
+        toggles.forEach((toggle) => {
+          const isCurrent = toggle.dataset.languageToggle === nextLanguage;
+          toggle.setAttribute("aria-pressed", String(isCurrent));
+        });
+
+        localStorage.setItem("cabala-language", nextLanguage);
+
+        if (updateUrl) {
+          const nextHash = nextLanguage === "es" ? "#es" : location.pathname + location.search;
+          history.replaceState(null, "", nextHash);
+        }
+      }
+
+      toggles.forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          setLanguage(toggle.dataset.languageToggle);
+        });
+      });
+
+      const initialLanguage =
+        location.hash === "#es" ? "es" : localStorage.getItem("cabala-language") === "es" ? "es" : "en";
+
+      setLanguage(initialLanguage, false);
+    </script>
 
 <style>
   :root {
@@ -524,6 +882,10 @@ const structuredData = {
 
   * {
     box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
   }
 
   ::selection {
@@ -569,6 +931,7 @@ const structuredData = {
   }
 
   .home-link,
+  .language-switch,
   .eyebrow {
     font-family: var(--sans);
   }
@@ -591,9 +954,42 @@ const structuredData = {
     text-underline-offset: 0.28em;
   }
 
-  .home-link:hover {
+  .language-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    padding: 0.22rem;
+  }
+
+  .language-switch button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.32rem 0.52rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .language-switch button[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .home-link:hover,
+  .language-switch button:hover {
     color: var(--accent);
     text-decoration: underline;
+  }
+
+  .language-switch button[aria-pressed="true"]:hover {
+    color: var(--bg);
+    text-decoration: none;
   }
 
   .eyebrow {
@@ -724,6 +1120,12 @@ const structuredData = {
 
   li + li {
     margin-top: 0.55rem;
+  }
+
+  .usage-example {
+    display: block;
+    margin-top: 0.45rem;
+    color: var(--muted);
   }
 
   @media (max-width: 720px) {
