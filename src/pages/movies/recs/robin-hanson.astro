@@ -1,0 +1,1040 @@
+---
+export const prerender = true;
+
+const pageTitle = "Robin Hanson’s screen recs";
+const pageDescription =
+  "A source-backed inventory of movies and TV shows recommended or analyzed by Robin Hanson.";
+const themeColorLight = "#f3f4f1";
+const themeColorDark = "#151814";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Source = {
+  label: string;
+  url: string;
+};
+
+type Entry = {
+  title: string;
+  format: string;
+  assessment: string;
+  sources: Source[];
+};
+
+type Group = {
+  id: string;
+  marker: string;
+  title: string;
+  description: string;
+  tone: "strong" | "qualified" | "context";
+  entries: Entry[];
+};
+
+const ob = (label: string, slug: string): Source => ({
+  label,
+  url: `https://www.overcomingbias.com/p/${slug}`,
+});
+
+const groups: Group[] = [
+  {
+    id: "tier-1",
+    marker: "Tier 1",
+    title: "Clear recommendations",
+    description: "Direct recommendations, favorites and strong endorsements.",
+    tone: "strong",
+    entries: [
+      {
+        title: "The Wire",
+        format: "TV series",
+        assessment:
+          "“My favorite TV show ever.” Praised as a vivid, believable and internally consistent social world, with a largely libertarian moral.",
+        sources: [ob("The Wire", "the-wirehtml")],
+      },
+      {
+        title: "The Profit",
+        format: "Reality TV",
+        assessment:
+          "Called it his “very favorite TV show ever.” It concretely shows why businesses fail, how they are repaired and how capitalism pushes owners toward useful reforms.",
+        sources: [ob("The Profit Socialism Challenge", "the-profit-socialism-challengehtml")],
+      },
+      {
+        title: "Nobody Knows",
+        format: "Film · 2004",
+        assessment:
+          "One of two works introduced with “I have two movies to recommend.” Terribly touching; defeats story-mode distance so events are felt in near mode.",
+        sources: [ob("Two Movies", "two-movieshtml")],
+      },
+      {
+        title: "The Third & the Seventh",
+        format: "Short film · 2009",
+        assessment:
+          "A ten-minute all-CG short he watched daily for two weeks—a spectacular photorealistic-CG demonstration relevant to VR and The Age of Em. His post mistitles it “The Third & The Seven.”",
+        sources: [ob("Two Movies", "two-movieshtml")],
+      },
+      {
+        title: "Once",
+        format: "Film · 2007",
+        assessment:
+          "He “fell in love” with its sincere depiction of people who love music more than money, fame or sex.",
+        sources: [ob("Endearing Sincerity", "sincerity-i-likhtml")],
+      },
+      {
+        title: "Werckmeister Harmonies",
+        format: "Film · 2000",
+        assessment: "Deeply moving and “beautiful beyond my words.”",
+        sources: [ob("Beautiful", "beautifulhtml")],
+      },
+      {
+        title: "Unforgiven",
+        format: "Film · 1992",
+        assessment: "Directly described as “my fav Unforgiven.”",
+        sources: [ob("Choke To Submit?", "choke-to-submithtml")],
+      },
+      {
+        title: "Three Billboards Outside Ebbing, Missouri",
+        format: "Film · 2017",
+        assessment:
+          "Said it deserved Best Picture, praising its refusal to divide characters cleanly into good and bad.",
+        sources: [
+          {
+            label: "Conversations with Tyler",
+            url: "https://conversationswithtyler.com/episodes/robin-hanson/",
+          },
+        ],
+      },
+      {
+        title: "A.I. Artificial Intelligence",
+        format: "Film · 2001",
+        assessment:
+          "His most realistic film about AI’s economic effects: AIs are valuable, displace jobs, improve gradually and have alien minds humans do not empathize with. The best cinematic companion to The Age of Em.",
+        sources: [ob("Her Isn’t Realistic", "her-isnt-realistichtml")],
+      },
+      {
+        title: "Star Wars",
+        format: "Film · 1977",
+        assessment:
+          "The original made a large impression on him as a teenager: “I loved it.” He later became critical of its politics.",
+        sources: [ob("What Culture Can You Trust?", "what-culture-can-you-trust")],
+      },
+      {
+        title: "Billions",
+        format: "TV series · early seasons",
+        assessment:
+          "Enjoyed it as “competence porn” and liked its even-handed treatment of prosecutor and billionaire. The endorsement excludes the final season’s political turn.",
+        sources: [ob("Prince For President", "prince-for-president")],
+      },
+      {
+        title: "Scenes from a Marriage",
+        format: "Film / miniseries · 1973",
+        assessment:
+          "Highly realistic and instructive interpersonal detail, though painful to watch. He found the first two episodes most realistic.",
+        sources: [
+          ob("Painfully Honest", "painfully-honeshtml"),
+          ob("You Don’t Want To Know Your Limit", "you-dont-want-to-know-your-limithtml"),
+        ],
+      },
+    ],
+  },
+  {
+    id: "tier-2",
+    marker: "Tier 2",
+    title: "Qualified recommendations",
+    description: "Praised, but with meaningful reservations.",
+    tone: "qualified",
+    entries: [
+      {
+        title: "Her",
+        format: "Film · 2013",
+        assessment:
+          "Engaging, well-crafted and well-acted; useful for reflection on the human condition. Vehemently not a realistic account of human-level AI’s effects.",
+        sources: [ob("Her Isn’t Realistic", "her-isnt-realistichtml")],
+      },
+      {
+        title: "The Brutalist",
+        format: "Film · 2024",
+        assessment:
+          "Ranked above twelve other 2024 releases and called engaging and well-made, but “not satisfying or inspiring.”",
+        sources: [
+          {
+            label: "X · Jan 2025",
+            url: "https://x.com/robinhanson/status/1878239038240375079",
+          },
+        ],
+      },
+      {
+        title: "Joker",
+        format: "Film · 2019",
+        assessment:
+          "Its basic formula is “quite well-executed,” with a remarkable performance from Joaquin Phoenix.",
+        sources: [ob("Joker is Creepy", "joker-is-creepyhtml")],
+      },
+      {
+        title: "Battlestar Galactica",
+        format: "TV series · 2004",
+        assessment:
+          "Acting, characters and interactions of “unprecedented quality,” but a setting, plot and finale that made little sense.",
+        sources: [ob("BSG is Detached Detail", "bsg-is-detached-detailhtml")],
+      },
+      {
+        title: "Star Trek",
+        format: "Film · 2009",
+        assessment:
+          "He “enjoyed it,” while adding that he did not especially respect himself for doing so.",
+        sources: [ob("Near Far In Science Fiction", "near-far-in-science-fictionhtml")],
+      },
+      {
+        title: "Still Alice",
+        format: "Film · 2014",
+        assessment:
+          "Mild praise for work-oriented protagonists portrayed as human and sympathetic.",
+        sources: [ob("Meaning Via Work Or Play?", "meaning-via-work-or-playhtml")],
+      },
+      {
+        title: "The Wind Rises",
+        format: "Film · 2013",
+        assessment:
+          "Mild praise for work-oriented protagonists portrayed as human and sympathetic.",
+        sources: [ob("Meaning Via Work Or Play?", "meaning-via-work-or-playhtml")],
+      },
+      {
+        title: "Andor",
+        format: "TV series · 2022",
+        assessment:
+          "Briefly praised for supplying the political and moral justification omitted by the original Star Wars.",
+        sources: [ob("What Culture Can You Trust?", "what-culture-can-you-trust")],
+      },
+      {
+        title: "Wolf Hall",
+        format: "TV series",
+        assessment:
+          "An implied endorsement: used as the benchmark against which another production disappointed.",
+        sources: [
+          {
+            label: "X · Jun 2025",
+            url: "https://x.com/robinhanson/status/1939863917074788424",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "analysis-only",
+    marker: "Context",
+    title: "Analysis—not recommendations",
+    description:
+      "Works discussed to dissect unrealism; included so they are not mistaken for endorsements.",
+    tone: "context",
+    entries: [
+      {
+        title: "In Time",
+        format: "Film · 2011",
+        assessment:
+          "Its economics are incoherent; Hanson argues the actual villain is a regressive tax system.",
+        sources: [ob("In Time Economics", "in-time-economicshtml")],
+      },
+      {
+        title: "Tenet",
+        format: "Film · 2020",
+        assessment:
+          "He engaged with the physics but did not care about the characters, and found the social premises “quite crazy.”",
+        sources: [ob("Time Reversal In Tenet", "time-reversal-in-tenethtml")],
+      },
+      {
+        title: "Black Mirror",
+        format: "TV series",
+        assessment:
+          "Criticized its unrealistic treatment of brain emulations, which appear in roughly a third of episodes; named no favorite.",
+        sources: [
+          {
+            label: "The Jim Rutt Show transcript",
+            url: "https://jimruttshow.blubrry.net/the-jim-rutt-show-transcripts/transcript-of-episode-2-robin-hanson/",
+          },
+        ],
+      },
+      {
+        title: "Project Hail Mary",
+        format: "Novel · not screen",
+        assessment:
+          "Included only for completeness: critiqued for an unrealistic rare event and an implausibly close, human-like alien.",
+        sources: [ob("Project Hail Mary", "project-hail-mary")],
+      },
+    ],
+  },
+];
+
+const recommendedCount = groups
+  .filter((group) => group.tone !== "context")
+  .reduce((total, group) => total + group.entries.length, 0);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: recommendedCount,
+  itemListElement: groups
+    .filter((group) => group.tone !== "context")
+    .flatMap((group) => group.entries)
+    .map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.title,
+    })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">
+          <span aria-hidden="true">←</span>
+          Nikita Sokolsky
+        </a>
+        <div class="header-grid">
+          <div class="headline">
+            <p class="eyebrow">Source-backed watchlist</p>
+            <h1>{pageTitle}</h1>
+            <p class="intro">
+              Two research passes merged into one inventory, ranked by endorsement strength and linked to the underlying evidence.
+            </p>
+          </div>
+        </div>
+
+        <nav class="jump-links" aria-label="Jump to section">
+          <a href="#tier-1">Strong <span>12</span></a>
+          <a href="#tier-2">Qualified <span>9</span></a>
+          <a href="#analysis-only">Analysis only <span>4</span></a>
+          <a href="#discrepancies">Discrepancies</a>
+          <a href="#caveats">Caveats</a>
+        </nav>
+      </header>
+
+      <section class="catalog-section" id="watchlist" aria-labelledby="watchlist-heading">
+        <div class="section-heading">
+          <p class="section-number">01</p>
+          <div>
+            <h2 id="watchlist-heading">What to see</h2>
+            <p>
+              Clear and qualified recommendations, in descending endorsement strength.
+            </p>
+          </div>
+        </div>
+
+        <div class="groups">
+          {groups.filter((group) => group.tone !== "context").map((group) => (
+            <section class:list={["group", `tone-${group.tone}`]} id={group.id}>
+              <header class="group-heading">
+                <p class="marker">{group.marker}</p>
+                <h3>{group.title}</h3>
+                <p>{group.description}</p>
+                <span>{group.entries.length} titles</span>
+              </header>
+              <ol class="entries">
+                {group.entries.map((item) => (
+                  <li>
+                    <div class="entry-heading">
+                      <h4>{item.title}</h4>
+                      <span>{item.format}</span>
+                    </div>
+                    <p>{item.assessment}</p>
+                    <div class="sources" aria-label={`Sources for ${item.title}`}>
+                      {item.sources.map((source) => (
+                        <a href={source.url} target="_blank" rel="noreferrer noopener">
+                          {source.label}
+                          <span aria-hidden="true">↗</span>
+                        </a>
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="catalog-section context-section" aria-labelledby="context-heading">
+        <div class="section-heading">
+          <p class="section-number">02</p>
+          <div>
+            <h2 id="context-heading">What isn’t a rec</h2>
+            <p>
+              Frequently discussed titles that should not be read as endorsements.
+            </p>
+          </div>
+        </div>
+
+        {groups.filter((group) => group.tone === "context").map((group) => (
+          <section class="group tone-context" id={group.id}>
+            <header class="group-heading">
+              <p class="marker">{group.marker}</p>
+              <h3>{group.title}</h3>
+              <p>{group.description}</p>
+              <span>{group.entries.length} titles</span>
+            </header>
+            <ol class="entries">
+              {group.entries.map((item) => (
+                <li>
+                  <div class="entry-heading">
+                    <h4>{item.title}</h4>
+                    <span>{item.format}</span>
+                  </div>
+                  <p>{item.assessment}</p>
+                  <div class="sources" aria-label={`Sources for ${item.title}`}>
+                    {item.sources.map((source) => (
+                      <a href={source.url} target="_blank" rel="noreferrer noopener">
+                        {source.label}
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </section>
+
+      <section class="notes-section" id="discrepancies" aria-labelledby="discrepancies-heading">
+        <div class="section-heading">
+          <p class="section-number">03</p>
+          <div>
+            <h2 id="discrepancies-heading">Reconciliation notes</h2>
+            <p>Where the two research passes differed or required interpretation.</p>
+          </div>
+        </div>
+        <ol class="numbered-notes">
+          <li>
+            <span>01</span>
+            <div>
+              <h3>Two “favorite ever” claims</h3>
+              <p>
+                <em>The Wire</em> was “my favorite TV show ever” in 2008; <em>The Profit</em> later became “my very favorite TV show ever.” Both quotations are genuine. They span different years and genres, so they should not be treated as one stable ranking.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>A.I. appeared in only one pass</h3>
+              <p>
+                The Claude pass alone surfaced <em>A.I. Artificial Intelligence</em>. Its endorsement as realistic AI cinema is strong and verifiable, so it remains in Tier 1.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>Scenes and Her required categorization</h3>
+              <p>
+                <em>Scenes from a Marriage</em> stays in Tier 1 with its painful-to-watch caveat. <em>Her</em> moves to Tier 2: good craft and reflection, paired with emphatic criticism of its AI realism.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="notes-section" id="caveats" aria-labelledby="caveats-heading">
+        <div class="section-heading">
+          <p class="section-number">04</p>
+          <div>
+            <h2 id="caveats-heading">Research caveats</h2>
+          </div>
+        </div>
+        <div class="notes-copy">
+          <p>
+            <strong>This is a merged inventory, not an exhaustive canon.</strong> Hanson’s rare positive endorsements stand out against his baseline view that most science fiction is unrealistic and useful mainly as entertainment.
+          </p>
+          <ul>
+            <li>
+              Roughly 3,300 Overcoming Bias posts, years of tweets, comment threads and untranscribed podcasts leave room for missed endorsements.
+            </li>
+            <li>
+              X/Twitter items—<em>The Brutalist</em> and <em>Wolf Hall</em>—rest on single posts that are harder to verify automatically.
+            </li>
+            <li>
+              Some citations surface repeated claims in adjacent posts rather than the dedicated review, as with <em>The Wire</em>.
+            </li>
+            <li>
+              <em>Project Hail Mary</em> is a novel, not a screen work; it remains only to preserve the supplied research inventory.
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f3f4f1;
+    --surface: #fafaf7;
+    --surface-hover: #f0f2ed;
+    --text: #20251f;
+    --muted: #687064;
+    --line: #d8dcd3;
+    --line-strong: #b9c0b5;
+    --accent: #315f49;
+    --accent-soft: #e5ede6;
+    --qualified: #8a6125;
+    --qualified-soft: #f1e9d7;
+    --context: #657080;
+    --context-soft: #e7eaf0;
+    --focus: #2c7151;
+    --space-xs: 0.375rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.25rem;
+    --space-lg: 2rem;
+    --space-xl: 3.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151814;
+      --surface: #1c211c;
+      --surface-hover: #232a23;
+      --text: #edf0e9;
+      --muted: #a4ada0;
+      --line: #343c33;
+      --line-strong: #505b4e;
+      --accent: #9bc8aa;
+      --accent-soft: #26382c;
+      --qualified: #e1bd7d;
+      --qualified-soft: #3a3223;
+      --context: #b3bece;
+      --context-soft: #29313d;
+      --focus: #a8dbb8;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.15em;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .page {
+    width: min(66rem, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1rem 0 clamp(3rem, 7vw, 5rem);
+  }
+
+  .page-header {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: max-content;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.035em;
+    text-decoration: none;
+  }
+
+  .home-link span {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-link:hover span {
+    transform: translateX(-3px);
+  }
+
+  .header-grid {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .headline {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.15rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+  }
+
+  h1 {
+    max-width: 43rem;
+    font-size: clamp(2.25rem, 9vw, 3.4rem);
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  .intro {
+    max-width: 40rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-wrap: pretty;
+  }
+
+  .jump-links {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.1rem 0 0.4rem;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline proximity;
+    scrollbar-width: none;
+  }
+
+  .jump-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .jump-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    scroll-snap-align: start;
+  }
+
+  .jump-links a span {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+  }
+
+  .catalog-section,
+  .notes-section {
+    scroll-margin-top: var(--space-md);
+    margin-top: 3.75rem;
+  }
+
+  .page-header + .catalog-section {
+    margin-top: 0;
+  }
+
+  .section-heading {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    align-items: start;
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-number {
+    margin: 0.2rem 0 0;
+    color: var(--accent);
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 0.92rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .section-heading div > p {
+    max-width: 39rem;
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-wrap: pretty;
+  }
+
+  .groups {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .group {
+    display: grid;
+    gap: var(--space-md);
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .groups .group {
+    border-top: 0;
+  }
+
+  .group-heading {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+  }
+
+  .marker {
+    width: max-content;
+    margin: 0 0 0.25rem;
+    padding: 0.2rem 0.48rem;
+    border-radius: 0.3rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .tone-qualified .marker {
+    background: var(--qualified-soft);
+    color: var(--qualified);
+  }
+
+  .tone-context .marker {
+    background: var(--context-soft);
+    color: var(--context);
+  }
+
+  .group-heading h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .group-heading > p:not(.marker) {
+    max-width: 18rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .group-heading > span {
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .entries {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: entry;
+  }
+
+  .entries li {
+    position: relative;
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.9rem 0 0.95rem 2rem;
+    border-top: 1px solid var(--line);
+    counter-increment: entry;
+  }
+
+  .entries li::before {
+    content: counter(entry, decimal-leading-zero);
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    color: var(--accent);
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tone-qualified .entries li::before {
+    color: var(--qualified);
+  }
+
+  .tone-context .entries li::before {
+    color: var(--context);
+  }
+
+  .entry-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.6rem;
+  }
+
+  .entry-heading h4 {
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .entry-heading > span {
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+  }
+
+  .entries li > p {
+    max-width: 44rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+  }
+
+  .sources a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .sources a:hover {
+    text-decoration: underline;
+  }
+
+  .sources a span {
+    margin-left: 0.15rem;
+  }
+
+  .context-section .section-number {
+    color: var(--context);
+  }
+
+  .numbered-notes {
+    margin: 0;
+    padding: var(--space-sm) 0 0;
+    border-top: 1px solid var(--line-strong);
+    list-style: none;
+  }
+
+  .numbered-notes li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .numbered-notes li > span {
+    color: var(--accent);
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 0.82rem;
+  }
+
+  .numbered-notes h3 {
+    margin: 0 0 0.25rem;
+    font-size: 0.94rem;
+    font-weight: 600;
+  }
+
+  .numbered-notes p {
+    max-width: 48rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .notes-copy {
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .notes-copy > p {
+    margin: 0 0 var(--space-md);
+  }
+
+  .notes-copy ul {
+    display: grid;
+    gap: var(--space-sm);
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .notes-copy strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (hover: hover) {
+    .jump-links a:hover {
+      border-color: var(--line-strong);
+      background: var(--surface-hover);
+    }
+
+    .entries li {
+      transition: background-color 140ms ease-out;
+    }
+
+    .entries li:hover {
+      background: var(--surface-hover);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .page {
+      padding-top: clamp(1.75rem, 4vw, 3.25rem);
+    }
+
+    .page-header {
+      gap: clamp(1.75rem, 3vw, 2.5rem);
+      margin-bottom: 3rem;
+    }
+
+    .header-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jump-links {
+      padding-bottom: 0;
+    }
+
+    .catalog-section,
+    .notes-section {
+      margin-top: 5rem;
+    }
+
+    .page-header + .catalog-section {
+      margin-top: 0;
+    }
+
+    .section-heading {
+      grid-template-columns: 3.25rem minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .group {
+      grid-template-columns: 12.5rem minmax(0, 1fr);
+      gap: clamp(2rem, 5vw, 4rem);
+      padding: 1.75rem 0;
+    }
+
+    .entries li {
+      padding-right: var(--space-md);
+      padding-left: 2.25rem;
+    }
+
+    .numbered-notes li {
+      grid-template-columns: 3.25rem minmax(0, 1fr);
+      gap: var(--space-md);
+      padding: var(--space-lg) 0;
+    }
+
+    .notes-copy {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: var(--space-xl);
+    }
+
+    .notes-copy > p {
+      margin: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .home-link span,
+    .entries li {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,983 @@
+---
+export const prerender = true;
+
+const pageTitle = "Zvi’s movie & TV recs";
+const pageDescription =
+  "A merged all-time list of movies and TV shows recommended—and not recommended—by Zvi Mowshowitz.";
+const themeColorLight = "#f3f4f1";
+const themeColorDark = "#151814";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Entry = {
+  title: string;
+  note?: string;
+};
+
+type Group = {
+  id: string;
+  label: string;
+  marker: string;
+  description: string;
+  entries: Entry[];
+  tone?: "best" | "good" | "qualified" | "avoid";
+};
+
+const entry = (title: string, note?: string): Entry => ({ title, note });
+const entries = (...titles: string[]): Entry[] =>
+  titles.map((title) => entry(title));
+
+const movieGroups: Group[] = [
+  {
+    id: "movies-5",
+    label: "Masterpieces",
+    marker: "5★",
+    description: "See this film.",
+    tone: "best",
+    entries: [
+      ...entries(
+        "The Invite",
+        "The Devil Wears Prada",
+        "The Truman Show",
+        "The Lord of the Rings: The Fellowship of the Ring",
+      ),
+      entry("Resurrection", "His best movie of 2025"),
+      ...entries(
+        "Let’s Play – Uno: The Movie",
+        "Memento",
+      ),
+      entry("Kill Bill: The Whole Bloody Affair", "His single favorite film"),
+      ...entries(
+        "The Departed",
+        "The Naked Gun (2025)",
+        "Groundhog Day",
+        "Back to the Future Part II",
+        "Back to the Future",
+        "The Matrix",
+        "L.A. Confidential",
+        "The Fall Guy",
+      ),
+    ],
+  },
+  {
+    id: "movies-45",
+    label: "Excellent",
+    marker: "4.5★",
+    description: "Probably see this film.",
+    tone: "best",
+    entries: entries(
+      "Long Day’s Journey Into Night",
+      "Billie Eilish — Hit Me Hard and Soft: The Tour (Live in 3D)",
+      "Whiplash",
+      "Pulp Fiction",
+      "Inside Out 2",
+      "Looper",
+      "Companion",
+      "Barbie",
+      "The Martian",
+      "Bugonia",
+      "A Big Bold Beautiful Journey",
+      "Thunderbolts*",
+      "Predestination",
+      "Anora",
+      "Megalopolis",
+      "Deadpool & Wolverine",
+      "Singin’ in the Rain",
+      "Weird: The Al Yankovic Story",
+      "Harakiri",
+      "Challengers",
+      "Poor Things",
+      "You Hurt My Feelings",
+      "May December",
+    ),
+  },
+  {
+    id: "movies-4",
+    label: "Great",
+    marker: "4★",
+    description: "Recommended when the premise appeals.",
+    tone: "good",
+    entries: entries(
+      "Obsession",
+      "Blue Moon",
+      "The Devil Wears Prada 2",
+      "The AI Doc: Or How I Became an Apocaloptimist",
+      "John Wick",
+      "Taylor Tomlinson: Prodigal Daughter",
+      "Bottoms",
+      "Three Colours: Blue",
+      "The King of Kong: A Fistful of Quarters",
+      "Liz Miele: Space Camp",
+      "Marty Supreme",
+      "A Different Man",
+      "Liar Liar",
+      "Hamnet",
+      "Oh, Hi!",
+      "10 Things I Hate About You",
+      "Sorry, Baby",
+      "Relay",
+      "Mulholland Drive",
+      "Novocaine",
+      "Inception",
+      "A Complete Unknown",
+      "Daddio",
+      "Conclave",
+      "The Godfather",
+      "Deadpool",
+      "Asteroid City",
+      "Sicario",
+      "The Matrix Reloaded",
+      "The Quick and the Dead",
+      "Moneyball",
+      "12 Angry Men",
+      "Queenpins",
+      "Dune: Part Two",
+      "American Fiction",
+      "In Time",
+      "Godzilla Minus One",
+    ),
+  },
+  {
+    id: "movies-35",
+    label: "Very good",
+    marker: "3.5★",
+    description: "A worthwhile use of time.",
+    tone: "good",
+    entries: [
+      ...entries(
+        "Wild Things",
+        "Runaway Bride",
+        "Disclosure Day",
+        "Pete Holmes: Silly Silly Fun Boy",
+        "To Die For",
+        "Ready or Not 2: Here I Come",
+        "Marcello Hernández: American Boy",
+        "Wuthering Heights",
+        "Three Colours: White",
+        "The Housemaid",
+        "Babylon",
+        "Is This Thing On?",
+        "No Other Choice",
+        "Knocked Up",
+        "Airplane!",
+        "Table 19",
+        "Sentimental Value",
+      ),
+      entry("A House of Dynamite", "“The world would be better if everyone saw” it"),
+      ...entries(
+        "The Running Man (2025)",
+        "Die My Love",
+        "Wick Is Pain",
+        "Ballerina",
+        "The Layover",
+        "Splitsville",
+        "Honey Don’t!",
+        "The Intern",
+        "Materialists",
+        "Better Man",
+        "Bad Words",
+        "Shiva Baby",
+        "Babygirl",
+      ),
+      entry("Subservience", "Recommended for its AI-alignment realism"),
+      ...entries(
+        "Wicked",
+        "Joker: Folie à Deux",
+        "The Substance",
+        "The Edge of Seventeen",
+        "Edge of Tomorrow",
+        "Little Black Book",
+        "Seven Samurai",
+        "Unfrosted",
+        "Hit Man",
+        "The Holdovers",
+        "Pain Hustlers",
+        "Anyone But You",
+        "Anatomy of a Fall",
+        "Long Shot",
+      ),
+    ],
+  },
+  {
+    id: "movies-older",
+    label: "Older explicit recs",
+    marker: "Earlier",
+    description: "Recommendations from before systematic logging.",
+    tone: "good",
+    entries: [
+      entry("Spider-Man: Across the Spider-Verse", "Best movie he’d seen in years"),
+      entry("Spider-Man: Into the Spider-Verse", "Watch this one first"),
+      entry("Oppenheimer", "Explicitly: see it"),
+      entry("Mission: Impossible – Dead Reckoning Part One", "See it if you enjoy extended action"),
+      entry("M3GAN", "Entertainment and a useful AI reference point"),
+      entry("Knives Out", "Cited as a recent great comedy"),
+      entry("Free Guy", "Cited as a recent great comedy"),
+      entry("The Death of Stalin", "Cited as a recent great comedy"),
+      entry("John Wick: Chapter 4", "“Excellent”"),
+    ],
+  },
+];
+
+const tvGroups: Group[] = [
+  {
+    id: "tv-1",
+    label: "Must watch",
+    marker: "Tier 1",
+    description: "Stated favorites and strongest endorsements.",
+    tone: "best",
+    entries: [
+      entry("Community", "His #1 comedy of all time"),
+      entry("The Good Place", "His #2 comedy of all time"),
+      entry("Coupling (UK)", "His #3 comedy of all time"),
+      entry("UnREAL", "About his fifth-favorite show ever"),
+      entry("Severance", "“Masterpiece”; an emerging Tier 1 show"),
+      entry("Watchmen", "The best miniseries he knows"),
+      entry("Shōgun (2024)", "“Excellent”"),
+      entry("The Diplomat", "Repeatedly called excellent"),
+      entry("The Pitt", "His kind of “competence porn”"),
+      entry("Pantheon", "“You should watch Pantheon, obv.”"),
+    ],
+  },
+  {
+    id: "tv-2",
+    label: "Worth it",
+    marker: "Tier 2",
+    description: "Strong recommendations.",
+    tone: "best",
+    entries: [
+      entry("Euphoria", "“Might be the show that goes the hardest of all time”"),
+      entry("Slow Horses"),
+      entry("The White Lotus", "Expected Tier 2 placement"),
+      entry("Nobody Wants This", "“You’ll want this”"),
+      entry("Supernatural", "Seasons 1–5 only"),
+      entry("The Simpsons", "Seasons 1–10 only"),
+    ],
+  },
+  {
+    id: "tv-praised",
+    label: "Strongly praised",
+    marker: "Unranked",
+    description: "No final public tier.",
+    tone: "good",
+    entries: [entry("Bluey", "“A fantastic show all around”")],
+  },
+  {
+    id: "tv-3",
+    label: "Good",
+    marker: "Tier 3",
+    description: "Positive, with qualifications.",
+    tone: "good",
+    entries: [
+      entry("Umbrella Academy", "Moved down from Tier 2; “only finished okay”"),
+      entry("The Bachelor", "Revised up from Tier 5; useful alongside UnREAL"),
+    ],
+  },
+  {
+    id: "tv-reality",
+    label: "Reality TV",
+    marker: "Qualified",
+    description: "Followed for its strategic game.",
+    tone: "qualified",
+    entries: [
+      entry("Love Island USA", "Start with Season 6"),
+    ],
+  },
+  {
+    id: "tv-canon",
+    label: "TV canon",
+    marker: "Defended",
+    description: "Shows he’d defend as objectively deserving inclusion.",
+    tone: "good",
+    entries: entries(
+      "Ally McBeal",
+      "Angel",
+      "Buffy the Vampire Slayer",
+      "Gilmore Girls",
+      "Roseanne",
+      "Star Trek: Deep Space Nine",
+      "How I Met Your Mother",
+    ),
+  },
+  {
+    id: "tv-lower",
+    label: "Lower tiers",
+    marker: "Tier 4",
+    description: "Merely watchable—not real endorsements.",
+    tone: "qualified",
+    entries: [
+      entry("Killing Eve"),
+      entry("Supernatural", "Seasons 6–15"),
+      entry("The Bachelorette"),
+    ],
+  },
+];
+
+const panGroup: Group = {
+  id: "pans",
+  label: "Do not watch",
+  marker: "Pans",
+  description: "Explicitly avoided, disliked or rated below recommendation level.",
+  tone: "avoid",
+  entries: [
+    entry("Civil War", "Avoided"),
+    entry("The Creator", "“Truly atrocious”"),
+    entry("The Zone of Interest"),
+    entry("Madame Web"),
+    entry("Gladiator 2"),
+    entry("Monkey Man"),
+    entry("Dream Scenario"),
+    entry("One Battle After Another", "3★ · high quality, but he didn’t enjoy it"),
+    entry("Sinners", "3★"),
+    entry("Black Bag", "3★"),
+    entry("Train Dreams", "3★"),
+    entry("Weapons", "2.5★"),
+    entry("Frankenstein", "2.5★"),
+    entry("Superman (2025)", "2.5★"),
+    entry("F1", "2★"),
+    entry("Mission: Impossible – The Final Reckoning", "2.5★"),
+    entry("Wicked: For Good", "1.5★"),
+    entry("The Smashing Machine", "2.5★"),
+    entry("Fantastic Four: First Steps", "2★"),
+  ],
+};
+
+const movieCount = movieGroups.reduce(
+  (total, group) => total + group.entries.length,
+  0,
+);
+const tvCount = tvGroups.reduce(
+  (total, group) => total + group.entries.length,
+  0,
+);
+const panCount = panGroup.entries.length;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">
+          <span aria-hidden="true">←</span>
+          Nikita Sokolsky
+        </a>
+        <div class="header-grid">
+          <div class="headline">
+            <p class="eyebrow">Viewing guide</p>
+            <h1>{pageTitle}</h1>
+            <p class="intro">
+              Every movie and TV recommendation found across two research passes, plus the titles he explicitly says to skip.
+            </p>
+          </div>
+        </div>
+
+        <nav class="jump-links" aria-label="Jump to section">
+          <a href="#movies">Movies <span>{movieCount}</span></a>
+          <a href="#tv">TV <span>{tvCount}</span></a>
+          <a href="#pans">Don’t watch <span>{panCount}</span></a>
+          <a href="#notes">Notes</a>
+        </nav>
+      </header>
+
+      <section class="catalog-section" id="movies" aria-labelledby="movies-heading">
+        <div class="section-heading">
+          <p class="section-number">01</p>
+          <div>
+            <h2 id="movies-heading">Movies</h2>
+            <p>
+              Letterboxd ratings of 3.5★ and above, followed by earlier explicit recommendations.
+            </p>
+          </div>
+        </div>
+
+        <div class="groups">
+          {movieGroups.map((group) => (
+            <section class:list={["group", `tone-${group.tone ?? "good"}`]} id={group.id}>
+              <header class="group-heading">
+                <p class="marker">{group.marker}</p>
+                <h3>{group.label}</h3>
+                <p>{group.description}</p>
+                <span>{group.entries.length} titles</span>
+              </header>
+              <ul class="entries">
+                {group.entries.map((item) => (
+                  <li>
+                    <span class="title">{item.title}</span>
+                    {item.note && <span class="note">{item.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="catalog-section" id="tv" aria-labelledby="tv-heading">
+        <div class="section-heading">
+          <p class="section-number">02</p>
+          <div>
+            <h2 id="tv-heading">TV shows</h2>
+            <p>
+              A consolidated tier list reconstructed from monthly roundups and scattered commentary.
+            </p>
+          </div>
+        </div>
+
+        <div class="groups">
+          {tvGroups.map((group) => (
+            <section class:list={["group", `tone-${group.tone ?? "good"}`]} id={group.id}>
+              <header class="group-heading">
+                <p class="marker">{group.marker}</p>
+                <h3>{group.label}</h3>
+                <p>{group.description}</p>
+                <span>{group.entries.length} titles</span>
+              </header>
+              <ul class="entries">
+                {group.entries.map((item) => (
+                  <li>
+                    <span class="title">{item.title}</span>
+                    {item.note && <span class="note">{item.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="catalog-section pans-section" id="pans" aria-labelledby="pans-heading">
+        <div class="section-heading">
+          <p class="section-number">03</p>
+          <div>
+            <h2 id="pans-heading">What not to watch</h2>
+            <p>
+              Explicit pans and films rated below his recommendation threshold.
+            </p>
+          </div>
+        </div>
+
+        <section class="group tone-avoid">
+          <header class="group-heading">
+            <p class="marker">{panGroup.marker}</p>
+            <h3>{panGroup.label}</h3>
+            <p>{panGroup.description}</p>
+            <span>{panGroup.entries.length} titles</span>
+          </header>
+          <ul class="entries">
+            {panGroup.entries.map((item) => (
+              <li>
+                <span class="title">{item.title}</span>
+                {item.note && <span class="note">{item.note}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      </section>
+
+      <section class="notes-section" id="notes" aria-labelledby="notes-heading">
+        <div class="section-heading">
+          <p class="section-number">04</p>
+          <div>
+            <h2 id="notes-heading">Method & caveats</h2>
+          </div>
+        </div>
+        <div class="notes-copy">
+          <p>
+            <strong>Rating scale:</strong> 3.5★ means worthwhile; 4★ means “if interested, see it”; 4.5★ means “probably see it”; and 5★ means “see this film.” For TV, Tier 1 is Must Watch, Tier 2 is Worth It, Tier 3 is Good, Tier 4 is merely watchable and Tier 5 is avoid.
+          </p>
+          <ul>
+            <li>
+              Movie tiers come from <a href="https://letterboxd.com/thezvi/" target="_blank" rel="noreferrer noopener">Zvi’s public Letterboxd</a>, supplemented by older explicit recommendations.
+            </li>
+            <li>
+              Letterboxd treats concert films, documentaries and stand-up specials as films, so they appear in the movie tiers.
+            </li>
+            <li>
+              Movie coverage is near-complete. TV coverage is inherently partial because no public master list exists.
+            </li>
+            <li>
+              TV tiers were reconstructed from Monthly Roundups #13–#43 and scattered posts or tweets. A future full list should supersede this one.
+            </li>
+            <li>
+              Ratings can change on rewatch. These figures reflect the December 2025 movie retrospective.
+            </li>
+            <li>
+              The 2025 Yorgos Lanthimos film is correctly spelled <em>Bugonia</em>.
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f3f4f1;
+    --surface: #fafaf7;
+    --surface-hover: #f0f2ed;
+    --text: #20251f;
+    --muted: #687064;
+    --line: #d8dcd3;
+    --line-strong: #b9c0b5;
+    --accent: #315f49;
+    --accent-soft: #e5ede6;
+    --avoid: #9a473d;
+    --avoid-soft: #f2e4e0;
+    --focus: #2c7151;
+    --space-xs: 0.375rem;
+    --space-sm: 0.75rem;
+    --space-md: 1.25rem;
+    --space-lg: 2rem;
+    --space-xl: 3.5rem;
+    --space-2xl: 5.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151814;
+      --surface: #1c211c;
+      --surface-hover: #232a23;
+      --text: #edf0e9;
+      --muted: #a4ada0;
+      --line: #343c33;
+      --line-strong: #505b4e;
+      --accent: #9bc8aa;
+      --accent-soft: #26382c;
+      --avoid: #ef9f92;
+      --avoid-soft: #3b2825;
+      --focus: #a8dbb8;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.15em;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .page {
+    width: min(66rem, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1rem 0 clamp(3rem, 7vw, 5rem);
+  }
+
+  .page-header {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: max-content;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.035em;
+    text-decoration: none;
+  }
+
+  .home-link span {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-link:hover span {
+    transform: translateX(-3px);
+  }
+
+  .header-grid {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .headline {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.15rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+  }
+
+  h1 {
+    max-width: 40rem;
+    font-size: clamp(2.25rem, 9vw, 3.4rem);
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  .intro {
+    max-width: 39rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-wrap: pretty;
+  }
+
+  .jump-links {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.1rem 0 0.4rem;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline proximity;
+    scrollbar-width: none;
+  }
+
+  .jump-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .jump-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    scroll-snap-align: start;
+  }
+
+  .jump-links a span {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+  }
+
+  .catalog-section,
+  .notes-section {
+    scroll-margin-top: var(--space-md);
+    margin-top: 3.75rem;
+  }
+
+  .page-header + .catalog-section {
+    margin-top: 0;
+  }
+
+  .section-heading {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    align-items: start;
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-number {
+    margin: 0.2rem 0 0;
+    color: var(--accent);
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 0.92rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .section-heading div > p {
+    max-width: 37rem;
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-wrap: pretty;
+  }
+
+  .groups {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .group {
+    display: grid;
+    gap: var(--space-md);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .group-heading {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+  }
+
+  .marker {
+    width: max-content;
+    margin: 0 0 0.25rem;
+    padding: 0.2rem 0.48rem;
+    border-radius: 0.3rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .group-heading h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .group-heading > p:not(.marker) {
+    max-width: 18rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .group-heading > span {
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .entries {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .entries li {
+    display: grid;
+    gap: 0.12rem;
+    padding: 0.62rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .title {
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .note {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .pans-section .section-number,
+  .pans-section h2,
+  .tone-avoid .marker {
+    color: var(--avoid);
+  }
+
+  .tone-avoid .marker {
+    background: var(--avoid-soft);
+  }
+
+  .tone-avoid .entries li {
+    border-color: color-mix(in srgb, var(--avoid) 20%, var(--line));
+  }
+
+  .notes-copy {
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .notes-copy > p {
+    margin: 0 0 var(--space-md);
+  }
+
+  .notes-copy ul {
+    display: grid;
+    gap: var(--space-sm);
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .notes-copy strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (hover: hover) {
+    .jump-links a:hover {
+      border-color: var(--line-strong);
+      background: var(--surface-hover);
+    }
+
+    .entries li {
+      transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .entries li:hover {
+      transform: translateX(3px);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .page {
+      padding-top: clamp(1.75rem, 4vw, 3.25rem);
+    }
+
+    .page-header {
+      gap: clamp(1.75rem, 3vw, 2.5rem);
+      margin-bottom: 3rem;
+    }
+
+    .header-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jump-links {
+      padding-bottom: 0;
+    }
+
+    .catalog-section,
+    .notes-section {
+      margin-top: 5rem;
+    }
+
+    .page-header + .catalog-section {
+      margin-top: 0;
+    }
+
+    .section-heading {
+      grid-template-columns: 3.25rem minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .group {
+      grid-template-columns: 12.5rem minmax(0, 1fr);
+      gap: clamp(2rem, 5vw, 4rem);
+      padding: 1.75rem 0;
+    }
+
+    .entries {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-lg);
+    }
+
+    .entries li {
+      min-height: 2.9rem;
+    }
+
+    .notes-copy {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: var(--space-xl);
+    }
+
+    .notes-copy > p {
+      margin: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .home-link span,
+    .entries li {
+      transition: none;
+    }
+  }
+</style>

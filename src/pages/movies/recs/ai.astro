@@ -124,24 +124,12 @@ const structuredData = {
           <span aria-hidden="true">←</span>
           Nikita Sokolsky
         </a>
-        <div class="header-grid">
-          <div class="headline">
-            <p class="eyebrow">Watchlist</p>
-            <h1>{pageTitle}</h1>
-            <p class="intro">
-              Films selected from patterns in my ratings, kept in their original recommendation order.
-            </p>
-          </div>
-          <dl class="summary" aria-label="Recommendation summary">
-            <div>
-              <dt>Titles</dt>
-              <dd>{recommendations.length}</dd>
-            </div>
-            <div>
-              <dt>Order</dt>
-              <dd>Ranked</dd>
-            </div>
-          </dl>
+        <div class="headline">
+          <p class="eyebrow">Watchlist</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            Films selected from patterns in my ratings, kept in their original recommendation order.
+          </p>
         </div>
       </header>
 
@@ -239,13 +227,13 @@ const structuredData = {
   .page {
     width: min(56rem, calc(100% - 2rem));
     margin: 0 auto;
-    padding: var(--space-md) 0 var(--space-xl);
+    padding: 1rem 0 clamp(3rem, 7vw, 5rem);
   }
 
   .page-header {
     display: grid;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-lg);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .home-link {
@@ -266,11 +254,6 @@ const structuredData = {
 
   .home-link:hover span {
     transform: translateX(-3px);
-  }
-
-  .header-grid {
-    display: grid;
-    gap: var(--space-md);
   }
 
   .headline {
@@ -297,42 +280,15 @@ const structuredData = {
   }
 
   .intro {
-    max-width: 35rem;
+    max-width: 42rem;
     margin: 0;
     color: var(--muted);
     font-size: 0.9rem;
-  }
-
-  .summary {
-    display: flex;
-    gap: var(--space-lg);
-    margin: 0;
-    padding: var(--space-sm) 0 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .summary div {
-    display: grid;
-    gap: 0.1rem;
-  }
-
-  .summary dt {
-    color: var(--muted);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .summary dd {
-    margin: 0;
-    font-size: 0.86rem;
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
+    text-wrap: pretty;
   }
 
   .recommendations {
-    overflow: hidden;
+    overflow: clip;
     margin: 0;
     padding: 0;
     border: 1px solid var(--line);
@@ -381,6 +337,7 @@ const structuredData = {
     font-weight: 600;
     line-height: 1.3;
     text-decoration: none;
+    overflow-wrap: anywhere;
   }
 
   .movie-heading a:hover {
@@ -404,8 +361,9 @@ const structuredData = {
   .movie p {
     margin: 0;
     color: var(--muted);
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     line-height: 1.45;
+    text-wrap: pretty;
   }
 
   @media (hover: hover) {
@@ -416,32 +374,18 @@ const structuredData = {
 
   @media (min-width: 640px) {
     .page {
-      padding-top: clamp(2rem, 5vw, 4.5rem);
+      padding-top: clamp(1.75rem, 4vw, 3.25rem);
     }
 
     .page-header {
-      gap: clamp(2.25rem, 5vw, 4rem);
-      margin-bottom: var(--space-lg);
-    }
-
-    .header-grid {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: var(--space-xl);
-    }
-
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(2, auto);
-      gap: var(--space-lg);
-      padding: 0 0 0.2rem;
-      border-top: 0;
+      gap: clamp(1.75rem, 3vw, 2.5rem);
+      margin-bottom: 1.5rem;
     }
 
     .recommendations li {
       grid-template-columns: 2.6rem minmax(0, 1fr);
       gap: var(--space-md);
-      padding: 1rem 1.15rem;
+      padding: 0.9rem 1.15rem;
     }
 
     .rank {
