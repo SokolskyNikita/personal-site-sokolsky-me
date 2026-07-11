@@ -266,6 +266,8 @@ const groups: Group[] = [
 const recommendedCount = groups
   .filter((group) => group.tone !== "context")
   .reduce((total, group) => total + group.entries.length, 0);
+const getGroupCount = (id: string) =>
+  groups.find((group) => group.id === id)?.entries.length ?? 0;
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -341,9 +343,9 @@ const structuredData = {
         </div>
 
         <nav class="jump-links" aria-label="Jump to section">
-          <a href="#tier-1">Strong <span>12</span></a>
-          <a href="#tier-2">Qualified <span>9</span></a>
-          <a href="#analysis-only">Analysis only <span>4</span></a>
+          <a href="#tier-1">Strong <span>{getGroupCount("tier-1")}</span></a>
+          <a href="#tier-2">Qualified <span>{getGroupCount("tier-2")}</span></a>
+          <a href="#analysis-only">Analysis only <span>{getGroupCount("analysis-only")}</span></a>
           <a href="#discrepancies">Discrepancies</a>
           <a href="#caveats">Caveats</a>
         </nav>
