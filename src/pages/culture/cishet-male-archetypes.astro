@@ -494,7 +494,7 @@ const structuredData = {
 
   .page {
     width: 100%;
-    max-width: 52rem;
+    max-width: 72rem;
     margin: 0 auto;
     padding: var(--page-pad-y) var(--page-pad-x) clamp(2.5rem, 8vw, 4rem);
   }
@@ -537,7 +537,7 @@ const structuredData = {
 
   .lede {
     margin: 0;
-    max-width: 40rem;
+    max-width: 52rem;
     color: var(--muted);
     font-size: clamp(0.92rem, 2.2vw, 1rem);
     line-height: 1.55;
@@ -683,8 +683,8 @@ const structuredData = {
 
   .entry {
     display: grid;
-    grid-template-columns: minmax(8rem, 34%) minmax(0, 1fr);
-    column-gap: 0.9rem;
+    grid-template-columns: minmax(14rem, 31%) minmax(0, 1fr);
+    column-gap: clamp(1rem, 2.5vw, 2rem);
     align-items: baseline;
     margin: 0 -0.35rem;
     padding: 0.42rem 0.35rem;
@@ -784,8 +784,36 @@ const structuredData = {
   }
 
   @media (min-width: 641px) {
+    .filters {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      column-gap: 0.8rem;
+    }
+
     .entry:hover {
       background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(16rem, 0.7fr) minmax(28rem, 1.3fr);
+      column-gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+
+    h1 {
+      grid-row: 1 / span 2;
+      margin-bottom: 0;
+    }
+
+    .lede {
+      grid-column: 2;
+    }
+
+    .meta {
+      grid-column: 2;
     }
   }
 
