@@ -7,7 +7,6 @@ const pageTitle = "Where to watch the 2026 World Cup semis & final in Buenos Air
 const pageDescription =
   "Buenos Aires spots with confirmed World Cup semi/final screening at 16:00 BA time: Plaza Seeber Fan Fest, Locos x el Fútbol, BetWarrior, Cantina Recoleta and other verified rooms.";
 const themeColorLight = "#f7f2e7";
-const themeColorDark = "#17130d";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
@@ -92,12 +91,13 @@ const publicVenues: Venue[] = [
     neighborhood: "Palermo",
     status: "Confirmed Jul 14 / 15 / 18 / 19",
     detail:
-      "Official City listing: opens 12:00 on the semifinal days, third-place day and final. Free, giant screen, food court, performances. Nearest subte: Plaza Italia (Line D), ~5 blocks; Line D hours extend on Argentina match days. Reserve via Boti (WhatsApp 11-5050-0147, message \"Mundial\") / Entradas BA if live. Arrive 12:30–13:00 for a semifinal; use the 12:00 opening for the final.",
+      "Free City Fan Fest opens 12:00 for Jul 14/15/18/19. Giant screen; reserve via Boti WhatsApp “Mundial”. Arrive 12:30–13:00.",
     mapsQuery: "Plaza Seeber Av. del Libertador Av. Sarmiento Palermo Buenos Aires",
     source: "linda.buenosaires.gob.ar",
     highlight: true,
     acceptsReservations: true,
     reservationUrl: "https://wa.me/5491150500147?text=Mundial",
+    instagramUrl: "https://www.instagram.com/lindaenvivo/",
   },
 ];
 
@@ -108,7 +108,7 @@ const indoorBars: Venue[] = [
     neighborhood: "Recoleta",
     status: "All matches · opens 10:00",
     detail:
-      "Time Out lists every World Cup match on the giant screen and wall TVs; opens Tuesday–Sunday from 10:00, so the 16:00 kickoffs fit. On Argentina days the street often closes and police attend — reserve.",
+      "Every WC match from 10:00 on giant screen + TVs — covers 16:00 semis/final. Reserve; street often closes on Argentina days.",
     mapsQuery: "Locos x el Futbol Av. Las Heras 2101 Recoleta Buenos Aires",
     source: "Time Out BA · El Destape",
     highlight: true,
@@ -122,10 +122,11 @@ const indoorBars: Venue[] = [
     neighborhood: "Palermo",
     status: "Biggest indoor room",
     detail:
-      "Hipódromo promoted World Cup viewing here; one of the largest sports bars in the city with multiple enormous screens. Daytime hours start by early afternoon.",
+      "BA’s largest indoor sports bar; Hipódromo screens WC on huge displays. Open by early afternoon for 16:00 kickoffs.",
     mapsQuery: "BetWarrior Sport Bar Hipódromo de Palermo Buenos Aires",
     source: "Hipódromo Palermo · Baires Secreta",
     highlight: true,
+    instagramUrl: "https://www.instagram.com/betwarrior_arg/",
   },
   {
     name: "Cantina Recoleta",
@@ -133,7 +134,7 @@ const indoorBars: Venue[] = [
     neighborhood: "Recoleta",
     status: "All matches · 09:00–01:00",
     detail:
-      "Ámbito: three giant screens and live transmission of every tournament match for the whole World Cup, with extended all-day hours and table reservations. Strong seated option with a real meal.",
+      "Every WC match on three giant screens, 09:00–01:00 with table reservations. Seated meal option for 16:00 games.",
     mapsQuery: "Cantina Recoleta Av. Santa Fe 1430 Buenos Aires",
     source: "Ámbito",
     highlight: true,
@@ -147,7 +148,7 @@ const indoorBars: Venue[] = [
     neighborhood: "Microcentro",
     status: "Near Obelisco · opens early",
     detail:
-      "El Destape listed it for Argentina knockout viewing: multiple large screens a short walk from the Obelisco. Watch indoors, then walk over only after a confirmed win.",
+      "Argentina knockout screens near Obelisco; multiple large TVs, opens early for 16:00. Watch indoors, walk over after a win.",
     mapsQuery: "Triumph Sports Bar Bernardo de Irigoyen 19 Buenos Aires",
     source: "El Destape · Baires Secreta",
     acceptsReservations: true,
@@ -160,7 +161,7 @@ const indoorBars: Venue[] = [
     neighborhood: "Palermo Soho",
     status: "Opens from 09:00",
     detail:
-      "Publishing Argentina match days through the tournament; multi-floor Irish sports pub with 8+ screens, rooftop and mixed local/international crowd.",
+      "Argentina match days through the tournament; 8+ screens, opens 09:00 — covers 16:00 semis/final. Multi-floor Irish pub.",
     mapsQuery: "Sullivan's Irish Pub Jorge Luis Borges 1702 Palermo Buenos Aires",
     source: "Sullivan's IG · Baires Secreta",
     acceptsReservations: true,
@@ -173,7 +174,7 @@ const indoorBars: Venue[] = [
     neighborhood: "San Telmo",
     status: "All matches · from noon",
     detail:
-      "Time Out: transmitting every World Cup match; opens from noon (well before 16:00). Hidden red-door bar with big screen, pool table and backpacker-and-locals crowd.",
+      "Every WC match from noon (before 16:00). Big screen in a San Telmo red-door bar; backpacker-and-locals mix.",
     mapsQuery: "La Puerta Roja Chacabuco 733 San Telmo Buenos Aires",
     source: "Time Out BA",
     acceptsReservations: true,
@@ -189,7 +190,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Belgrano",
     status: "All matches · from early morning",
     detail:
-      "Time Out: transmitting every World Cup match from the early afternoon, with daily hours from early morning until midnight — covers the Tuesday/Wednesday semis and Sunday final at 16:00. Classic milanesas/pizza chain; Amenábar is the Belgrano flagship listed by Time Out.",
+      "Every WC match from early afternoon; open morning–midnight so 16:00 semis/final fit. Amenábar Belgrano flagship.",
     mapsQuery: "La Farola Amenábar 1602 Belgrano Buenos Aires",
     source: "Time Out BA",
     highlight: true,
@@ -203,7 +204,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Palermo",
     status: "Argentina · semis + final",
     detail:
-      "3copas / Hell’s: live projector screening for every Argentina World Cup match including the semis and final, with salón service from about noon. Confirmed for Argentina’s remaining 16:00 games — not claimed for France–Spain.",
+      "Projector for every Argentina WC match including semis & final; salón from ~noon. Confirmed for Argentina’s 16:00 games only.",
     mapsQuery: "Hell's Pizza Humboldt 1654 Palermo Buenos Aires",
     source: "3copas · Hell’s IG",
     highlight: true,
@@ -217,7 +218,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Abasto",
     status: "All matches",
     detail:
-      "Time Out: transmitting every World Cup match with tournament promos (Quilmes 2x1, pizza deals). Classic porteño bar/pizzeria open from midday.",
+      "Every WC match from midday with tournament promos. Classic Abasto bar/pizzeria that covers 16:00 kickoffs.",
     mapsQuery: "Roma del Abasto Anchorena 806 Buenos Aires",
     source: "Time Out BA",
     acceptsReservations: true,
@@ -230,7 +231,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Villa Devoto",
     status: "All matches · 20+ screens · from 08:00",
     detail:
-      "Time Out: every World Cup match in a football-themed room with 20+ screens. Opens early enough for any 16:00 kickoff.",
+      "Every WC match in a football room with 20+ screens; opens 08:00 — easy cover for any 16:00 kickoff.",
     mapsQuery: "Pizzería Nani Av. Francisco Beiró 4819 Villa Devoto Buenos Aires",
     source: "Time Out BA",
     acceptsReservations: true,
@@ -243,7 +244,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Palermo",
     status: "WC matches · all day on Argentina dates",
     detail:
-      "La Nación: transmitting World Cup matches, with all-day service when Argentina plays. Tapas, vermouth and cocktails; opens from 10:00.",
+      "WC matches on screen; all-day service when Argentina plays. Opens 10:00 — covers 16:00 semis/final.",
     mapsQuery: "Bilbao Thames 1795 Palermo Buenos Aires",
     source: "La Nación",
     acceptsReservations: true,
@@ -256,7 +257,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Belgrano",
     status: "All matches · opens early",
     detail:
-      "Time Out: screens for every World Cup match; historic Belgrano pizzeria open from early morning with tournament merch and promos. Walk-in only — they do not take reservations.",
+      "Every WC match on screens; opens early enough for 16:00 kickoffs. Walk-in only — no reservations.",
     mapsQuery: "Burgio Av. Cabildo 2477 Belgrano Buenos Aires",
     source: "Time Out BA",
     instagramUrl: "https://www.instagram.com/burgiopizzeria/",
@@ -267,7 +268,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Almagro",
     status: "Confirmed WC screening",
     detail:
-      "Hosted Japan’s ambassador for a World Cup group-stage match; walls of 500+ club pennants. Character over 4K — confirm the specific semi/final still, but screening is proven this tournament. No reservations.",
+      "Proven WC screening this tournament. Confirm semis/final still run; character bar, no reservations.",
     mapsQuery: "El Banderín Guardia Vieja 3601 Almagro Buenos Aires",
     source: "CEMBA / press",
     instagramUrl: "https://www.instagram.com/barelbanderin/",
@@ -344,17 +345,7 @@ const structuredData = {
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
-    <meta
-      name="theme-color"
-      content={themeColorLight}
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content={themeColorDark}
-      media="(prefers-color-scheme: dark)"
-    />
-    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-TileColor" content={themeColorLight} />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -363,7 +354,7 @@ const structuredData = {
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorLight} />
     <link rel="manifest" href="/site.webmanifest" />
 
     <meta property="og:title" content={pageTitle} />
@@ -683,7 +674,7 @@ const structuredData = {
 
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: light only;
         --bg: #f7f2e7;
         --paper: #fffaf0;
         --paper-strong: #fff3d2;
@@ -695,23 +686,6 @@ const structuredData = {
         --green: #2d6b4b;
         --warn: #8a4b12;
         --shadow: 0 12px 36px rgb(68 42 16 / 8%);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          color-scheme: dark;
-          --bg: #17130d;
-          --paper: #211a12;
-          --paper-strong: #2e2417;
-          --ink: #f5ead6;
-          --muted: #c8b89d;
-          --line: rgb(245 234 214 / 16%);
-          --accent: #ff9d64;
-          --accent-strong: #ffc9a6;
-          --green: #93d2ac;
-          --warn: #ffc078;
-          --shadow: 0 12px 36px rgb(0 0 0 / 22%);
-        }
       }
 
       * {
