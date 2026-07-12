@@ -28,21 +28,56 @@ const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
+/** Collapse granular tags into a short, meaningful cuisine filter set. */
+const cuisineGroupFor = (cuisineType: string) => {
+  switch (cuisineType) {
+    case "Pizza":
+      return "Pizza";
+    case "Bakery":
+      return "Bakery";
+    case "Cafe":
+    case "Breakfast":
+    case "Brunch":
+      return "Cafe";
+    case "Brewpub":
+    case "Beer":
+    case "Tapas":
+    case "Bar":
+    case "Wine":
+      return "Brewpub & beer";
+    case "Argentine":
+    case "Parrilla":
+    case "Roadside":
+      return "Argentine & parrilla";
+    case "Burgers":
+    case "Fast food":
+    case "Hot dogs":
+      return "Burgers & fast food";
+    case "Italian":
+    case "Pasta":
+    case "Noodles":
+      return "Pasta & Italian";
+    case "Sandwiches":
+    case "Takeaway":
+    case "Delivery":
+      return "Sandwiches & takeaway";
+    case "Tiramisu":
+      return "Tiramisu";
+    default:
+      return cuisineType;
+  }
+};
+const cuisineGroupsFor = (cuisineTypes: string[]) => [
+  ...new Set(cuisineTypes.map(cuisineGroupFor)),
+];
 const cuisineCounts = restaurants.reduce((counts, restaurant: Restaurant) => {
-  for (const cuisineType of restaurant.cuisineTypes) {
+  for (const cuisineType of cuisineGroupsFor(restaurant.cuisineTypes)) {
     counts.set(cuisineType, (counts.get(cuisineType) ?? 0) + 1);
   }
 
   return counts;
 }, new Map<string, number>());
 const cuisineOptions = [...cuisineCounts.entries()]
-  .sort(([first], [second]) => collator.compare(first, second))
-  .map(([name, count]) => ({ name, count }));
-const neighborhoodCounts = restaurants.reduce((counts, restaurant: Restaurant) => {
-  counts.set(restaurant.neighborhood, (counts.get(restaurant.neighborhood) ?? 0) + 1);
-  return counts;
-}, new Map<string, number>());
-const neighborhoodOptions = [...neighborhoodCounts.entries()]
   .sort(
     ([nameA, countA], [nameB, countB]) =>
       countB - countA || collator.compare(nameA, nameB),
@@ -142,18 +177,22 @@ const isOpenPastMidnightSaturday = (weekdayHours: string[]) => {
 const openPastMidnightSaturdayCount = restaurants.filter((restaurant) =>
   isOpenPastMidnightSaturday(restaurant.weekdayHours),
 ).length;
-const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => ({
-  ...restaurant,
-  cuisineTypesAttribute: restaurant.cuisineTypes.join("|"),
-  openPastMidnightSaturday: isOpenPastMidnightSaturday(restaurant.weekdayHours),
-  reviewCountLabel: formatter.format(restaurant.reviewCount),
-  sortOrderStyle: [
-    `--sort-name: ${nameRanks.get(restaurant.id)}`,
-    `--sort-rating: ${ratingRanks.get(restaurant.id)}`,
-    `--sort-price: ${priceRanks.get(restaurant.id)}`,
-    `--sort-popularity: ${popularityRanks.get(restaurant.id)}`,
-  ].join("; "),
-}));
+const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => {
+  const cuisineGroups = cuisineGroupsFor(restaurant.cuisineTypes);
+  return {
+    ...restaurant,
+    cuisineGroups,
+    cuisineTypesAttribute: cuisineGroups.join("|"),
+    openPastMidnightSaturday: isOpenPastMidnightSaturday(restaurant.weekdayHours),
+    reviewCountLabel: formatter.format(restaurant.reviewCount),
+    sortOrderStyle: [
+      `--sort-name: ${nameRanks.get(restaurant.id)}`,
+      `--sort-rating: ${ratingRanks.get(restaurant.id)}`,
+      `--sort-price: ${priceRanks.get(restaurant.id)}`,
+      `--sort-popularity: ${popularityRanks.get(restaurant.id)}`,
+    ].join("; "),
+  };
+});
 const googleMapsApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
@@ -162,8 +201,7 @@ const restaurantMapData = restaurantsWithSort.map((restaurant) => ({
   id: restaurant.id,
   name: restaurant.name,
   googleMapsUrl: restaurant.googleMapsUrl,
-  cuisineTypes: restaurant.cuisineTypes,
-  neighborhood: restaurant.neighborhood,
+  cuisineTypes: restaurant.cuisineGroups,
   openPastMidnightSaturday: restaurant.openPastMidnightSaturday,
   position: restaurant.location,
 }));
@@ -294,15 +332,6 @@ const structuredData = {
               >Open past midnight Saturday ({openPastMidnightSaturdayCount})</label
             >
           </fieldset>
-          <label class="filter-dropdown" for="neighborhood-filter">
-            <span>Neighborhood</span>
-            <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
-              <option value="">All ({restaurants.length})</option>
-              {neighborhoodOptions.map((option) => (
-                <option value={option.name}>{option.name} ({option.count})</option>
-              ))}
-            </select>
-          </label>
           <label class="filter-dropdown" for="cuisine-filter">
             <span>Cuisine type</span>
             <select id="cuisine-filter" name="cuisine" autocomplete="off">
@@ -332,7 +361,6 @@ const structuredData = {
           <article
             class="restaurant-row"
             style={restaurant.sortOrderStyle}
-            data-neighborhood={restaurant.neighborhood}
             data-cuisine-types={restaurant.cuisineTypesAttribute}
             data-open-past-midnight-saturday={String(restaurant.openPastMidnightSaturday)}
           >
@@ -435,7 +463,6 @@ const structuredData = {
     });
   }
 
-  const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const cuisineFilter = document.querySelector("#cuisine-filter");
   const saturdayLateFilter = document.querySelector("#filter-saturday-late");
   const defaultSort = document.querySelector("#sort-name");
@@ -457,33 +484,19 @@ const structuredData = {
       "'": "&#39;",
     })[character]);
 
-  const getVisibleRestaurants = (
-    selectedNeighborhood,
-    selectedCuisine,
-    saturdayLateOnly,
-  ) =>
+  const getVisibleRestaurants = (selectedCuisine, saturdayLateOnly) =>
     restaurantMapData.filter(
       (restaurant) =>
-        (!selectedNeighborhood || restaurant.neighborhood === selectedNeighborhood) &&
         (!selectedCuisine || restaurant.cuisineTypes.includes(selectedCuisine)) &&
         (!saturdayLateOnly || restaurant.openPastMidnightSaturday),
     );
 
-  const updateMapStatus = (
-    selectedNeighborhood,
-    selectedCuisine,
-    saturdayLateOnly,
-  ) => {
+  const updateMapStatus = (selectedCuisine, saturdayLateOnly) => {
     if (!mapStatus) return;
 
-    const visibleCount = getVisibleRestaurants(
-      selectedNeighborhood,
-      selectedCuisine,
-      saturdayLateOnly,
-    ).length;
+    const visibleCount = getVisibleRestaurants(selectedCuisine, saturdayLateOnly).length;
     const restaurantLabel = visibleCount === 1 ? "restaurant" : "restaurants";
     const categoryParts = [
-      selectedNeighborhood,
       selectedCuisine,
       saturdayLateOnly ? "open past midnight Saturday" : "",
     ].filter(Boolean);
@@ -511,25 +524,15 @@ const structuredData = {
     restaurantMap.fitBounds(bounds, 44);
   };
 
-  const syncMapMarkers = (
-    selectedNeighborhood,
-    selectedCuisine,
-    saturdayLateOnly,
-  ) => {
-    updateMapStatus(
-      selectedNeighborhood,
-      selectedCuisine,
-      saturdayLateOnly,
-    );
+  const syncMapMarkers = (selectedCuisine, saturdayLateOnly) => {
+    updateMapStatus(selectedCuisine, saturdayLateOnly);
 
     if (!restaurantMap) return;
 
     const visibleIds = new Set(
-      getVisibleRestaurants(
-        selectedNeighborhood,
-        selectedCuisine,
-        saturdayLateOnly,
-      ).map((restaurant) => restaurant.id),
+      getVisibleRestaurants(selectedCuisine, saturdayLateOnly).map(
+        (restaurant) => restaurant.id,
+      ),
     );
     const visibleRecords = [];
 
@@ -578,48 +581,35 @@ const structuredData = {
     }
 
     syncMapMarkers(
-      neighborhoodFilter?.value ?? "",
       cuisineFilter?.value ?? "",
       saturdayLateFilter?.checked ?? false,
     );
   };
 
   const applyFilters = () => {
-    const selectedNeighborhood = neighborhoodFilter?.value ?? "";
     const selectedCuisine = cuisineFilter?.value ?? "";
     const saturdayLateOnly = saturdayLateFilter?.checked ?? false;
 
     for (const row of restaurantRows) {
       const cuisines = row.dataset.cuisineTypes?.split("|") ?? [];
-      const neighborhoodMismatch =
-        Boolean(selectedNeighborhood) && row.dataset.neighborhood !== selectedNeighborhood;
       const cuisineMismatch = Boolean(selectedCuisine) && !cuisines.includes(selectedCuisine);
       const saturdayLateMismatch =
         saturdayLateOnly && row.dataset.openPastMidnightSaturday !== "true";
-      row.hidden =
-        neighborhoodMismatch ||
-        cuisineMismatch ||
-        saturdayLateMismatch;
+      row.hidden = cuisineMismatch || saturdayLateMismatch;
     }
 
-    syncMapMarkers(
-      selectedNeighborhood,
-      selectedCuisine,
-      saturdayLateOnly,
-    );
+    syncMapMarkers(selectedCuisine, saturdayLateOnly);
   };
 
   const resetFilters = () => {
     if (defaultSort) defaultSort.checked = true;
     if (defaultCurrency) defaultCurrency.checked = true;
-    if (neighborhoodFilter) neighborhoodFilter.value = "";
     if (cuisineFilter) cuisineFilter.value = "";
     if (saturdayLateFilter) saturdayLateFilter.checked = false;
 
     applyFilters();
   };
 
-  neighborhoodFilter?.addEventListener("change", applyFilters);
   cuisineFilter?.addEventListener("change", applyFilters);
   saturdayLateFilter?.addEventListener("change", applyFilters);
   resetFilters();
