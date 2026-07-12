@@ -21,8 +21,6 @@ const categoryLabels: Record<string, string> = {
   public: "Public screening",
   indoor: "Indoor bar",
   neighborhood: "Neighborhood",
-  "final-only": "Final only",
-  amba: "AMBA",
 };
 
 const venueMapData = venueGeoData.venues
@@ -46,12 +44,6 @@ type Match = {
   note?: string;
 };
 
-type DecisionPick = {
-  label: string;
-  title: string;
-  detail: string;
-};
-
 type Venue = {
   name: string;
   address: string;
@@ -68,11 +60,6 @@ type Venue = {
 
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
 const reservationIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 2.75a.75.75 0 0 1 .75.75V5h8.5V3.5a.75.75 0 0 1 1.5 0V5H19a2 2 0 0 1 2 2v12.25A2.75 2.75 0 0 1 18.25 22H5.75A2.75 2.75 0 0 1 3 19.25V7a2 2 0 0 1 2-2h1.25V3.5A.75.75 0 0 1 7 2.75Zm12 7.75H5v8.75c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V10.5ZM5 7v2h14V7a.5.5 0 0 0-.5-.5H5.5A.5.5 0 0 0 5 7Zm4.22 5.22a.75.75 0 0 1 1.06 0l1.47 1.47 3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 0 1 0-1.06Z"/></svg>`;
-
-type MatchPick = {
-  match: string;
-  picks: string;
-};
 
 const mapsUrl = (query: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -92,27 +79,6 @@ const matches: Match[] = [
     label: "Final",
     date: "Sunday, July 19",
     note: "Reserve right after the second semifinal.",
-  },
-];
-
-const decisionPicks: DecisionPick[] = [
-  {
-    label: "Public screen",
-    title: "Plaza Seeber only",
-    detail:
-      "Official LINDA calendar lists July 14, 15, 18 and 19 from 12:00 — free Fan Fest at Plaza Seeber. Parque Los Andes / Modo Hincha BA is finished for earlier rounds and is not listed for the semis or final.",
-  },
-  {
-    label: "Indoor locks",
-    title: "Locos · BetWarrior · Cantina · Triumph",
-    detail:
-      "Best football bar: Locos x el Fútbol (opens 10:00). Biggest indoor room: BetWarrior. Safest seat + meal: Cantina Recoleta (all-day, three giant screens). Near Obelisco for a post-win walk: Triumph.",
-  },
-  {
-    label: "Dropped",
-    title: "Night bars and late openers",
-    detail:
-      "878’s published World Cup plan was for nighttime Argentina matches. Temple, Hormiga Negra, Pinchos, Distrito Federal, Rabia and El Álamo normally open at/after 17:00–20:00 — they miss a 16:00 kickoff unless they announce a special opening.",
   },
 ];
 
@@ -210,6 +176,32 @@ const indoorBars: Venue[] = [
 
 const neighborhoodSpots: Venue[] = [
   {
+    name: "La Farola",
+    address: "Amenábar 1602, Belgrano (and other CABA branches)",
+    neighborhood: "Belgrano",
+    status: "All matches · from early morning",
+    detail:
+      "Time Out: transmitting every World Cup match from the early afternoon, with daily hours from early morning until midnight — covers the Tuesday/Wednesday semis and Sunday final at 16:00. Classic milanesas/pizza chain; Amenábar is the Belgrano flagship listed by Time Out.",
+    mapsQuery: "La Farola Amenábar 1602 Belgrano Buenos Aires",
+    source: "Time Out BA",
+    highlight: true,
+    acceptsReservations: true,
+    reservationUrl: "https://wa.me/5491147803526",
+  },
+  {
+    name: "Hell's Pizza",
+    address: "Humboldt 1654, Palermo (also Devoto and other branches)",
+    neighborhood: "Palermo",
+    status: "Argentina · semis + final",
+    detail:
+      "3copas / Hell’s: live projector screening for every Argentina World Cup match including the semis and final, with salón service from about noon. Confirmed for Argentina’s remaining 16:00 games — not claimed for France–Spain.",
+    mapsQuery: "Hell's Pizza Humboldt 1654 Palermo Buenos Aires",
+    source: "3copas · Hell’s IG",
+    highlight: true,
+    acceptsReservations: true,
+    reservationUrl: "https://wa.me/5491128564402",
+  },
+  {
     name: "Roma del Abasto",
     address: "Anchorena 806, Abasto",
     neighborhood: "Abasto",
@@ -267,144 +259,6 @@ const neighborhoodSpots: Venue[] = [
   },
 ];
 
-const finalOnlyVenues: Venue[] = [
-  {
-    name: "The Classic Sports Bar",
-    address: "Malabia 1885, Palermo",
-    neighborhood: "Palermo",
-    status: "Sunday final only",
-    detail:
-      "Time Out: transmitting every World Cup match, but weekdays open from 17:00 — too late for the Tuesday/Wednesday semis. Sunday opens at noon, so it fits the final only.",
-    mapsQuery: "The Classic Sports Bar Malabia 1885 Palermo Buenos Aires",
-    source: "Time Out BA",
-    highlight: true,
-    acceptsReservations: true,
-    reservationUrl: "https://wa.me/5491134628588",
-  },
-];
-
-const ambaVenues: Venue[] = [
-  {
-    name: "TACU Resto & Bowling",
-    address: "General Arias 710, San Fernando",
-    neighborhood: "San Fernando",
-    status: "Whole tournament",
-    detail:
-      "Ámbito / TN: screens in the dining room, heated patio and bowling area for World Cup matches throughout the tournament. Opens from noon.",
-    mapsQuery: "TACU Resto Bowling General Arias 710 San Fernando",
-    source: "Ámbito · TN",
-  },
-  {
-    name: "Ribs al Río Las Lomitas",
-    address: "Italia 257, Las Lomitas (and other AMBA branches)",
-    neighborhood: "Las Lomitas",
-    status: "Argentina matches confirmed",
-    detail:
-      "Ámbito: live World Cup screens with Argentina-match promos (2x1 / free beer rounds). Best for Scaloneta dates; confirm France–Spain if you want that semi.",
-    mapsQuery: "Ribs al Rio Italia 257 Las Lomitas",
-    source: "Ámbito",
-  },
-];
-
-const excludedNotes = [
-  {
-    name: "Parque Los Andes / Modo Hincha BA",
-    detail:
-      "Official LINDA page now says the event has finished. It ran for earlier Argentina knockouts (e.g. July 11), not the semis or final.",
-  },
-  {
-    name: "878 Bar",
-    detail:
-      "Planeta Urbano: World Cup plan was built for nighttime Argentina matches, not 16:00 afternoon semis/final.",
-  },
-  {
-    name: "Temple · Hormiga Negra · Pinchos · Distrito Federal · Rabia · El Álamo",
-    detail:
-      "Advertise World Cup screens, but published hours start at/after 17:00–20:00 — they miss kickoff unless a special opening appears.",
-  },
-  {
-    name: "Obelisco",
-    detail:
-      "Celebration point only, not a programmed screening. Post-Egypt celebrations turned violent.",
-  },
-];
-
-const matchPicks: MatchPick[] = [
-  {
-    match: "Argentina–England · Wed July 15",
-    picks:
-      "Plaza Seeber for the biggest free crowd · Locos x el Fútbol for the classic sports bar · BetWarrior for the biggest indoor room · Cantina Recoleta for a reserved seat and meal · Triumph if you want a short walk to the Obelisco after.",
-  },
-  {
-    match: "France–Spain · Tue July 14",
-    picks:
-      "Much smaller crowds — walk in. Locos, Cantina Recoleta, Roma del Abasto, Pizzería Nani, Bilbao or La Puerta Roja. Ribs al Río is Argentina-focused; confirm that semi first.",
-  },
-  {
-    match: "Final · Sun July 19",
-    picks:
-      "Same confirmed list, plus The Classic Sports Bar (Sunday noon opening). If Argentina is in it, Plaza Seeber at 12:00 is the obvious first choice — lock a plan the day before.",
-  },
-];
-
-const safetyTips = [
-  {
-    title: "Arrive early",
-    body: "2+ hours for Argentina matches at Plaza Seeber and popular bars.",
-  },
-  {
-    title: "Big-crowd safety (Obelisco especially)",
-    body: "Stampede risk is real — four people died in a Mexico City crush after Mexico beat Ecuador this tournament. Keep ~1 m² of personal space, move diagonally out of dense crowds, never push against the flow, don't climb monuments, don't bring children into crushes, agree a meeting point, and leave if density spikes.",
-  },
-  {
-    title: "Petty crime",
-    body: "Phone theft happened during Obelisco celebrations — carry minimal valuables.",
-  },
-  {
-    title: "Transport",
-    body: "The City extends subte Line D (Plaza Seeber) on Argentina match days. Don't drive or try to park in Palermo on match day.",
-  },
-  {
-    title: "Re-check the day before",
-    body: "Bars can still add cover charges or change hours. This list only keeps places with current confirmation they can actually host a 16:00 screening.",
-  },
-];
-
-const sourceLinks = [
-  {
-    label: "LINDA — Buenos Aires Fan Fest",
-    href: "https://linda.buenosaires.gob.ar/eventos/buenos-aires-fan-fest",
-  },
-  {
-    label: "LINDA — Modo Hincha Parque Los Andes (finished)",
-    href: "https://linda.buenosaires.gob.ar/eventos/modo-hincha-en-ba-parque-los-andes",
-  },
-  {
-    label: "Time Out BA — bares para ver el Mundial 2026",
-    href: "https://www.timeout.com/es/buenos-aires/lugares-donde-ver-mundial-2026-restaurantes-bares-pizzerias",
-  },
-  {
-    label: "Ámbito — pantallas gigantes y promos",
-    href: "https://www.ambito.com/lifestyle/mundial-2026-los-mejores-lugares-ver-la-seleccion-pantalla-gigante-promos-pizzas-y-cerveza-n6296872",
-  },
-  {
-    label: "La Nación — promos para ver a Argentina",
-    href: "https://www.lanacion.com.ar/que-sale/mundial-2026-bares-y-restaurantes-con-2x1-descuentos-happy-hour-y-promocioes-para-ver-a-la-argentina-nid10062026/",
-  },
-  {
-    label: "El Destape — cinco bares con pantalla gigante",
-    href: "https://www.eldestapeweb.com/sociedad/donde-ver-argentina-hoy-cinco-bares-pantalla-gigante-alentar-seleccion-202671114517",
-  },
-  {
-    label: "Planeta Urbano — 878 (noche)",
-    href: "https://elplanetaurbano.com/2026/06/futbol-trago-y-choripan-el-bar-de-villa-crespo-que-celebra-el-mundial-con-promos-regalos-y-partidos-en-vivo/",
-  },
-  {
-    label: "TN — TACU y otros con promos",
-    href: "https://tn.com.ar/cocina/tendencias/2026/06/12/donde-ver-los-partidos-del-mundial-2026-bares-parrillas-y-restaurantes-con-promos-especiales/",
-  },
-];
-
 const geoByName = new Map(
   venueGeoData.venues.map((venue) => [venue.name, venue] as const),
 );
@@ -413,8 +267,6 @@ const allVenuesForSchema = [
   ...publicVenues,
   ...indoorBars,
   ...neighborhoodSpots,
-  ...finalOnlyVenues,
-  ...ambaVenues,
 ];
 
 const structuredData = {
@@ -554,29 +406,6 @@ const structuredData = {
           ))}
         </div>
       </header>
-
-      <section class="panel quick-answer" id="tldr" aria-labelledby="tldr-heading">
-        <div class="section-copy">
-          <p class="eyebrow">TL;DR</p>
-          <h2 id="tldr-heading">Confirmed for a 16:00 kickoff</h2>
-          <p>
-            Plaza Seeber is the only public screen with official semis/final dates.
-            Indoor locks that open early enough: Locos, BetWarrior, Cantina Recoleta and
-            Triumph. Everything else below was re-checked against current City / press /
-            venue sources on July 12.
-          </p>
-        </div>
-
-        <div class="decision-grid">
-          {decisionPicks.map((pick) => (
-            <article class="decision-card">
-              <p>{pick.label}</p>
-              <h3>{pick.title}</h3>
-              <span>{pick.detail}</span>
-            </article>
-          ))}
-        </div>
-      </section>
 
       <section class="region" id="public-screenings" aria-labelledby="public-heading">
         <div class="region-heading">
@@ -755,238 +584,12 @@ const structuredData = {
         </div>
       </section>
 
-      <section class="region" id="final-only" aria-labelledby="final-only-heading">
-        <div class="region-heading">
-          <p class="eyebrow">Sunday final only</p>
-          <h2 id="final-only-heading">Fits the final, not the semis</h2>
-          <p>
-            Confirmed World Cup screens, but weekday hours miss the Tuesday/Wednesday
-            16:00 kickoffs.
-          </p>
-        </div>
-
-        <div class="venue-grid">
-          {finalOnlyVenues.map((venue) => (
-            <article
-              class:list={["venue-card", venue.highlight && "is-pick"]}
-              data-venue-card
-              data-accepts-reservations={venue.acceptsReservations ? "true" : "false"}
-            >
-              <div class="option-topline">
-                <span>{venue.status}</span>
-                {venue.neighborhood && <strong>{venue.neighborhood}</strong>}
-              </div>
-              <div class="venue-title-row">
-                <h3>
-                  <a href={mapsUrl(venue.mapsQuery)} target="_blank" rel="noreferrer noopener">
-                    {venue.name}
-                  </a>
-                </h3>
-                <div class="venue-actions">
-                  <a
-                    class="maps-link"
-                    href={mapsUrl(venue.mapsQuery)}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={`Open ${venue.name} on Google Maps`}
-                    title="Open in Google Maps"
-                  >
-                    <span class="maps-icon" set:html={mapsIcon} />
-                  </a>
-                  {venue.acceptsReservations && venue.reservationUrl && (
-                    <a
-                      class="reservation-link"
-                      href={venue.reservationUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Book or reserve at ${venue.name}`}
-                      title="Accepts reservations — open booking"
-                    >
-                      <span class="reservation-icon" set:html={reservationIcon} />
-                    </a>
-                  )}
-                </div>
-              </div>
-              <p class="address">{venue.address}</p>
-              <p class="detail">{venue.detail}</p>
-              {venue.source && <p class="source-tag">Source: {venue.source}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section class="region" id="amba" aria-labelledby="amba-heading">
-        <div class="region-heading">
-          <p class="eyebrow">Nearby AMBA</p>
-          <h2 id="amba-heading">Outside CABA</h2>
-          <p>Confirmed tournament screens north and south of the city.</p>
-        </div>
-
-        <div class="venue-grid">
-          {ambaVenues.map((venue) => (
-            <article
-              class="venue-card"
-              data-venue-card
-              data-accepts-reservations={venue.acceptsReservations ? "true" : "false"}
-            >
-              <div class="option-topline">
-                <span>{venue.status}</span>
-                {venue.neighborhood && <strong>{venue.neighborhood}</strong>}
-              </div>
-              <div class="venue-title-row">
-                <h3>
-                  <a href={mapsUrl(venue.mapsQuery)} target="_blank" rel="noreferrer noopener">
-                    {venue.name}
-                  </a>
-                </h3>
-                <div class="venue-actions">
-                  <a
-                    class="maps-link"
-                    href={mapsUrl(venue.mapsQuery)}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={`Open ${venue.name} on Google Maps`}
-                    title="Open in Google Maps"
-                  >
-                    <span class="maps-icon" set:html={mapsIcon} />
-                  </a>
-                  {venue.acceptsReservations && venue.reservationUrl && (
-                    <a
-                      class="reservation-link"
-                      href={venue.reservationUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Book or reserve at ${venue.name}`}
-                      title="Accepts reservations — open booking"
-                    >
-                      <span class="reservation-icon" set:html={reservationIcon} />
-                    </a>
-                  )}
-                </div>
-              </div>
-              <p class="address">{venue.address}</p>
-              <p class="detail">{venue.detail}</p>
-              {venue.source && <p class="source-tag">Source: {venue.source}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section class="region" id="excluded" aria-labelledby="excluded-heading">
-        <div class="region-heading">
-          <p class="eyebrow">Removed from the watch list</p>
-          <h2 id="excluded-heading">No clear 16:00 confirmation</h2>
-          <p>
-            These were in earlier drafts or still advertise World Cup vibes, but current
-            sources do not clearly support watching a 16:00 semi or final there.
-          </p>
-        </div>
-
-        <ul class="trap-list">
-          {excludedNotes.map((item) => (
-            <li>
-              <strong>{item.name}</strong>
-              <p>{item.detail}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section class="panel match-picks" id="by-match" aria-labelledby="by-match-heading">
-        <div>
-          <p class="eyebrow">Best choices by match</p>
-          <h2 id="by-match-heading">Pick for the fixture</h2>
-        </div>
-        <div class="match-pick-grid">
-          {matchPicks.map((item) => (
-            <article class="match-pick-card">
-              <h3>{item.match}</h3>
-              <p>{item.picks}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section class="panel notes" id="neighborhoods" aria-labelledby="tourists-heading">
-        <div>
-          <p class="eyebrow">Neighborhoods</p>
-          <h2 id="tourists-heading">Tourists vs locals</h2>
-        </div>
-        <div class="note-columns">
-          <p>
-            <strong>Tourists:</strong> Palermo for transport (Lines D and H) plus Plaza
-            Seeber. Recoleta (Locos / Cantina) is calm and well-connected. Triumph sits
-            next to the Obelisco if you want a post-win walk.
-          </p>
-          <p>
-            <strong>More local:</strong> San Telmo (La Puerta Roja), Almagro (El Banderín),
-            Abasto (Roma), Villa Devoto (Nani), Belgrano (Burgio).
-          </p>
-        </div>
-      </section>
-
-      <section class="region" id="safety" aria-labelledby="safety-heading">
-        <div class="region-heading">
-          <p class="eyebrow">Safety & practical tips</p>
-          <h2 id="safety-heading">Arrive early, leave dense crowds</h2>
-          <p>
-            Argentina match days pack Plaza Seeber and popular bars. Plan transport and a
-            meeting point before kickoff.
-          </p>
-        </div>
-
-        <dl class="tip-list">
-          {safetyTips.map((tip) => (
-            <div>
-              <dt>{tip.title}</dt>
-              <dd>{tip.body}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <section class="panel caveats" id="caveats" aria-labelledby="caveats-heading">
-        <div>
-          <p class="eyebrow">Caveats</p>
-          <h2 id="caveats-heading">Still verify the day before</h2>
-        </div>
-        <div class="note-columns">
-          <p>
-            <strong>Final atmosphere depends on Argentina.</strong> Guidance for the final
-            assumes they qualify from the England semi. If they don't, demand drops and
-            walk-ins get easier.
-          </p>
-          <p>
-            <strong>Sources change fast.</strong> Plaza Seeber has the only exact published
-            public calendar. Bars can still add cover charges or change hours — call or DM
-            the day before, especially for France–Spain.
-          </p>
-        </div>
-      </section>
-
-      <section class="region" id="sources" aria-labelledby="sources-heading">
-        <div class="region-heading">
-          <p class="eyebrow">Sources</p>
-          <h2 id="sources-heading">Checked July 12, 2026</h2>
-          <p>BrightData search + scrape against City pages, Time Out, Ámbito, La Nación, TN, El Destape and Planeta Urbano.</p>
-        </div>
-        <ul class="source-list">
-          {sourceLinks.map((source) => (
-            <li>
-              <a href={source.href} target="_blank" rel="noreferrer noopener">
-                {source.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section class="region venue-map-section" id="map" aria-labelledby="venue-map-heading">
         <div class="region-heading">
           <p class="eyebrow">Map</p>
           <h2 id="venue-map-heading">All listed spots</h2>
           <p id="venue-map-status" class="map-status">
-            Showing {venueMapData.length} venues across CABA and nearby AMBA.
+            Showing {venueMapData.length} venues across Buenos Aires.
           </p>
         </div>
 
@@ -1125,11 +728,7 @@ const structuredData = {
 
       .topbar,
       .hero-grid,
-      .region-heading,
-      .quick-answer,
-      .notes,
-      .caveats,
-      .match-picks {
+      .region-heading {
         display: grid;
         gap: clamp(10px, 1.6vw, 18px);
       }
@@ -1144,9 +743,7 @@ const structuredData = {
       .updated,
       .eyebrow,
       .option-topline span,
-      .decision-card > p,
-      .match-card > p,
-      dt {
+      .match-card > p {
         font-size: 0.76rem;
         font-weight: 800;
         letter-spacing: 0.11em;
@@ -1264,11 +861,6 @@ const structuredData = {
         padding: clamp(14px, 2.4vw, 26px);
       }
 
-      .quick-answer {
-        grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
-        align-items: start;
-      }
-
       h2 {
         font-family: Georgia, "Times New Roman", serif;
         font-size: clamp(1.05rem, 1.6vw, 1.35rem);
@@ -1277,50 +869,15 @@ const structuredData = {
         text-wrap: balance;
       }
 
-      .section-copy p,
-      .region-heading p,
-      .note-columns p {
+      .region-heading p {
         color: var(--muted);
         font-size: clamp(0.94rem, 1.2vw, 1.02rem);
         line-height: 1.5;
       }
 
-      .section-copy p:not(.eyebrow),
       .region-heading p:not(.eyebrow) {
         margin-top: 8px;
         max-width: 760px;
-      }
-
-      .decision-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      .decision-card {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: color-mix(in srgb, var(--paper-strong) 72%, var(--paper));
-        padding: 12px 14px;
-      }
-
-      .decision-card > p {
-        color: var(--accent);
-      }
-
-      .decision-card h3 {
-        margin-top: 6px;
-        font-size: clamp(0.98rem, 1.3vw, 1.12rem);
-        line-height: 1.2;
-        letter-spacing: -0.02em;
-      }
-
-      .decision-card span {
-        display: block;
-        margin-top: 6px;
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.4;
       }
 
       .region-heading {
@@ -1462,150 +1019,15 @@ const structuredData = {
         letter-spacing: 0.02em;
       }
 
-      .source-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px 18px;
-        margin: 0;
-        padding-left: 1.2rem;
-      }
-
-      .source-list li {
-        color: var(--muted);
-        line-height: 1.45;
-      }
-
-      .trap-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        padding: 0;
-        list-style: none;
-      }
-
-      .trap-list li {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: color-mix(in srgb, var(--paper-strong) 55%, var(--paper));
-        padding: 12px 14px;
-      }
-
-      .trap-list a {
-        font-weight: 750;
-        text-decoration: none;
-      }
-
-      .trap-list a:hover {
-        text-decoration: underline;
-      }
-
-      .trap-address {
-        display: block;
-        margin-top: 4px;
-        color: var(--muted);
-        font-size: 0.86rem;
-      }
-
-      .trap-list p {
-        margin-top: 6px;
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-
-      .match-pick-grid {
-        display: grid;
-        gap: 8px;
-      }
-
-      .match-pick-card {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: rgb(255 255 255 / 22%);
-        padding: 12px 14px;
-      }
-
-      .match-pick-card h3 {
-        font-size: clamp(0.98rem, 1.3vw, 1.1rem);
-        letter-spacing: -0.015em;
-        line-height: 1.25;
-      }
-
-      .match-pick-card p {
-        margin-top: 6px;
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.45;
-      }
-
-      .notes,
-      .caveats,
-      .match-picks {
-        grid-template-columns: minmax(200px, 0.45fr) minmax(0, 1fr);
-        align-items: start;
-      }
-
-      .note-columns {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-      }
-
-      .note-columns p {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: rgb(255 255 255 / 22%);
-        padding: 12px 14px;
-      }
-
-      .note-columns strong {
-        color: var(--ink);
-      }
-
-      .tip-list {
-        display: grid;
-        gap: 8px;
-      }
-
-      .tip-list > div {
-        display: grid;
-        grid-template-columns: minmax(9rem, 0.32fr) minmax(0, 1fr);
-        gap: 10px;
-        border-top: 1px solid var(--line);
-        padding-top: 8px;
-      }
-
-      .tip-list dt {
-        color: var(--accent);
-      }
-
-      .tip-list dd {
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.45;
-      }
-
       @media (max-width: 980px) {
         .hero-grid,
-        .quick-answer,
-        .notes,
-        .caveats,
-        .match-picks,
         .venue-grid--compact {
           grid-template-columns: 1fr;
         }
 
         .match-row,
-        .venue-grid,
-        .trap-list,
-        .note-columns,
-        .source-list {
+        .venue-grid {
           grid-template-columns: 1fr;
-        }
-
-        .tip-list > div {
-          grid-template-columns: 1fr;
-          gap: 6px;
         }
       }
 
@@ -1779,7 +1201,7 @@ const structuredData = {
     if (!activeCategory) {
       mapStatus.textContent = reservationsOnly
         ? `Showing ${visibleCount} ${venueLabel}${reservationNote}.`
-        : `Showing all ${visibleCount} ${venueLabel} across CABA and nearby AMBA.`;
+        : `Showing all ${visibleCount} ${venueLabel} across Buenos Aires.`;
       return;
     }
 
