@@ -1040,7 +1040,7 @@ const structuredData = {
         --accent-strong: #762813;
         --green: #2d6b4b;
         --warn: #8a4b12;
-        --shadow: 0 24px 70px rgb(68 42 16 / 12%);
+        --shadow: 0 12px 36px rgb(68 42 16 / 8%);
       }
 
       @media (prefers-color-scheme: dark) {
@@ -1056,7 +1056,7 @@ const structuredData = {
           --accent-strong: #ffc9a6;
           --green: #93d2ac;
           --warn: #ffc078;
-          --shadow: 0 24px 70px rgb(0 0 0 / 28%);
+          --shadow: 0 12px 36px rgb(0 0 0 / 22%);
         }
       }
 
@@ -1103,16 +1103,16 @@ const structuredData = {
       }
 
       .page {
-        width: min(1180px, calc(100% - clamp(28px, 5vw, 72px)));
+        width: min(1180px, calc(100% - clamp(24px, 4vw, 56px)));
         margin: 0 auto;
-        padding: clamp(18px, 3.2vw, 42px) 0 clamp(32px, 6vw, 72px);
+        padding: clamp(12px, 2vw, 28px) 0 clamp(24px, 4vw, 48px);
       }
 
       .hero,
       .panel,
       .region {
         border: 1px solid var(--line);
-        border-radius: clamp(22px, 3vw, 34px);
+        border-radius: clamp(18px, 2.4vw, 26px);
         background:
           linear-gradient(145deg, rgb(255 255 255 / 38%), transparent 34rem),
           var(--paper);
@@ -1120,7 +1120,7 @@ const structuredData = {
       }
 
       .hero {
-        padding: clamp(20px, 3.8vw, 42px);
+        padding: clamp(16px, 2.6vw, 28px);
       }
 
       .topbar,
@@ -1131,13 +1131,13 @@ const structuredData = {
       .caveats,
       .match-picks {
         display: grid;
-        gap: clamp(16px, 2.4vw, 28px);
+        gap: clamp(10px, 1.6vw, 18px);
       }
 
       .topbar {
         grid-template-columns: 1fr auto;
         align-items: center;
-        margin-bottom: clamp(28px, 5vw, 54px);
+        margin-bottom: clamp(14px, 2.4vw, 28px);
       }
 
       .home-link,
@@ -1169,24 +1169,24 @@ const structuredData = {
 
       .eyebrow {
         color: var(--accent);
-        margin-bottom: 12px;
+        margin-bottom: 6px;
       }
 
       h1 {
-        max-width: 18ch;
+        max-width: 22ch;
         font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(1.7rem, 5.1vw, 3.55rem);
+        font-size: clamp(1.45rem, 3.2vw, 2.15rem);
         font-weight: 780;
-        letter-spacing: -0.07em;
-        line-height: 0.92;
+        letter-spacing: -0.045em;
+        line-height: 1.05;
         text-wrap: balance;
       }
 
       .dek {
         max-width: 760px;
-        margin-top: clamp(18px, 2.6vw, 28px);
+        margin-top: clamp(10px, 1.6vw, 16px);
         color: var(--muted);
-        font-size: clamp(1.06rem, 1.8vw, 1.28rem);
+        font-size: clamp(0.98rem, 1.4vw, 1.08rem);
         line-height: 1.45;
       }
 
@@ -1196,9 +1196,9 @@ const structuredData = {
 
       .kickoff-note {
         border: 1px solid var(--line);
-        border-radius: 24px;
+        border-radius: 18px;
         background: var(--paper-strong);
-        padding: 18px;
+        padding: 14px;
       }
 
       .kickoff-note span {
@@ -1212,30 +1212,30 @@ const structuredData = {
 
       .kickoff-note strong {
         display: block;
-        margin-top: 10px;
-        font-size: clamp(1.08rem, 1.7vw, 1.35rem);
-        line-height: 1.15;
+        margin-top: 6px;
+        font-size: clamp(1rem, 1.4vw, 1.15rem);
+        line-height: 1.2;
       }
 
       .kickoff-note p {
-        margin-top: 10px;
+        margin-top: 6px;
         color: var(--muted);
-        font-size: 0.96rem;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        line-height: 1.45;
       }
 
       .match-row {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: clamp(22px, 3.5vw, 36px);
+        gap: 8px;
+        margin-top: clamp(14px, 2.2vw, 22px);
       }
 
       .match-card {
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 16px;
         background: color-mix(in srgb, var(--paper-strong) 70%, var(--paper));
-        padding: 14px 16px;
+        padding: 12px 14px;
       }
 
       .match-card > p {
@@ -1243,25 +1243,25 @@ const structuredData = {
       }
 
       .match-card h2 {
-        margin-top: 8px;
+        margin-top: 4px;
         font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(1.15rem, 2vw, 1.45rem);
-        letter-spacing: -0.03em;
-        line-height: 1.1;
+        font-size: clamp(1rem, 1.5vw, 1.2rem);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
       }
 
       .match-card span {
         display: block;
-        margin-top: 8px;
+        margin-top: 4px;
         color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.4;
+        font-size: 0.86rem;
+        line-height: 1.35;
       }
 
       .panel,
       .region {
-        margin-top: clamp(14px, 2vw, 22px);
-        padding: clamp(20px, 3.8vw, 42px);
+        margin-top: clamp(10px, 1.5vw, 16px);
+        padding: clamp(14px, 2.4vw, 26px);
       }
 
       .quick-answer {
@@ -1271,9 +1271,9 @@ const structuredData = {
 
       h2 {
         font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(1.15rem, 2.28vw, 2rem);
-        letter-spacing: -0.045em;
-        line-height: 1.05;
+        font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+        letter-spacing: -0.03em;
+        line-height: 1.15;
         text-wrap: balance;
       }
 
@@ -1281,27 +1281,27 @@ const structuredData = {
       .region-heading p,
       .note-columns p {
         color: var(--muted);
-        font-size: clamp(1rem, 1.4vw, 1.1rem);
-        line-height: 1.6;
+        font-size: clamp(0.94rem, 1.2vw, 1.02rem);
+        line-height: 1.5;
       }
 
       .section-copy p:not(.eyebrow),
       .region-heading p:not(.eyebrow) {
-        margin-top: 14px;
+        margin-top: 8px;
         max-width: 760px;
       }
 
       .decision-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 8px;
       }
 
       .decision-card {
         border: 1px solid var(--line);
-        border-radius: 22px;
+        border-radius: 16px;
         background: color-mix(in srgb, var(--paper-strong) 72%, var(--paper));
-        padding: 16px;
+        padding: 12px 14px;
       }
 
       .decision-card > p {
@@ -1309,28 +1309,28 @@ const structuredData = {
       }
 
       .decision-card h3 {
-        margin-top: 10px;
-        font-size: clamp(1.1rem, 1.7vw, 1.35rem);
-        line-height: 1.15;
-        letter-spacing: -0.03em;
+        margin-top: 6px;
+        font-size: clamp(0.98rem, 1.3vw, 1.12rem);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
       }
 
       .decision-card span {
         display: block;
-        margin-top: 10px;
+        margin-top: 6px;
         color: var(--muted);
-        font-size: 0.94rem;
-        line-height: 1.45;
+        font-size: 0.9rem;
+        line-height: 1.4;
       }
 
       .region-heading {
-        margin-bottom: 18px;
+        margin-bottom: 10px;
       }
 
       .venue-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .venue-grid--compact {
@@ -1339,13 +1339,13 @@ const structuredData = {
 
       .venue-card {
         display: grid;
-        gap: 10px;
+        gap: 6px;
         border: 1px solid var(--line);
-        border-radius: 24px;
+        border-radius: 18px;
         background:
           linear-gradient(160deg, rgb(255 255 255 / 30%), transparent 18rem),
           color-mix(in srgb, var(--paper) 88%, var(--paper-strong));
-        padding: clamp(16px, 2.4vw, 22px);
+        padding: clamp(12px, 1.8vw, 16px);
       }
 
       .venue-card.is-pick {
@@ -1384,9 +1384,9 @@ const structuredData = {
 
       .venue-card h3 {
         font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(1.2rem, 2.2vw, 1.7rem);
-        letter-spacing: -0.04em;
-        line-height: 1.05;
+        font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+        letter-spacing: -0.025em;
+        line-height: 1.15;
         text-wrap: balance;
       }
 
@@ -1394,7 +1394,7 @@ const structuredData = {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 10px;
+        gap: 8px;
       }
 
       .venue-title-row h3 {
@@ -1444,15 +1444,15 @@ const structuredData = {
 
       .address {
         color: var(--ink);
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         font-weight: 650;
         line-height: 1.35;
       }
 
       .detail {
         color: var(--muted);
-        font-size: 0.96rem;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        line-height: 1.45;
       }
 
       .source-tag {
@@ -1478,16 +1478,16 @@ const structuredData = {
       .trap-list {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
         padding: 0;
         list-style: none;
       }
 
       .trap-list li {
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 16px;
         background: color-mix(in srgb, var(--paper-strong) 55%, var(--paper));
-        padding: 16px;
+        padding: 12px 14px;
       }
 
       .trap-list a {
@@ -1507,55 +1507,55 @@ const structuredData = {
       }
 
       .trap-list p {
-        margin-top: 10px;
+        margin-top: 6px;
         color: var(--muted);
-        font-size: 0.94rem;
-        line-height: 1.45;
+        font-size: 0.9rem;
+        line-height: 1.4;
       }
 
       .match-pick-grid {
         display: grid;
-        gap: 12px;
+        gap: 8px;
       }
 
       .match-pick-card {
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 16px;
         background: rgb(255 255 255 / 22%);
-        padding: 16px 18px;
+        padding: 12px 14px;
       }
 
       .match-pick-card h3 {
-        font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-        letter-spacing: -0.02em;
-        line-height: 1.2;
+        font-size: clamp(0.98rem, 1.3vw, 1.1rem);
+        letter-spacing: -0.015em;
+        line-height: 1.25;
       }
 
       .match-pick-card p {
-        margin-top: 10px;
+        margin-top: 6px;
         color: var(--muted);
-        font-size: 0.98rem;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        line-height: 1.45;
       }
 
       .notes,
       .caveats,
       .match-picks {
-        grid-template-columns: minmax(240px, 0.55fr) minmax(0, 1fr);
+        grid-template-columns: minmax(200px, 0.45fr) minmax(0, 1fr);
         align-items: start;
       }
 
       .note-columns {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
+        gap: 8px;
       }
 
       .note-columns p {
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 16px;
         background: rgb(255 255 255 / 22%);
-        padding: 16px;
+        padding: 12px 14px;
       }
 
       .note-columns strong {
@@ -1564,15 +1564,15 @@ const structuredData = {
 
       .tip-list {
         display: grid;
-        gap: 12px;
+        gap: 8px;
       }
 
       .tip-list > div {
         display: grid;
-        grid-template-columns: minmax(10rem, 0.35fr) minmax(0, 1fr);
-        gap: 14px;
+        grid-template-columns: minmax(9rem, 0.32fr) minmax(0, 1fr);
+        gap: 10px;
         border-top: 1px solid var(--line);
-        padding-top: 12px;
+        padding-top: 8px;
       }
 
       .tip-list dt {
@@ -1581,8 +1581,8 @@ const structuredData = {
 
       .tip-list dd {
         color: var(--muted);
-        font-size: 0.98rem;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        line-height: 1.45;
       }
 
       @media (max-width: 980px) {
@@ -1611,19 +1611,19 @@ const structuredData = {
 
       @media (max-width: 760px) {
         .page {
-          width: min(100% - 20px, 1180px);
-          padding-top: 10px;
+          width: min(100% - 16px, 1180px);
+          padding-top: 8px;
         }
 
         .topbar {
           grid-template-columns: 1fr;
-          gap: 8px;
-          margin-bottom: 24px;
+          gap: 6px;
+          margin-bottom: 14px;
         }
 
         h1 {
           max-width: 100%;
-          font-size: clamp(1.7rem, 9vw, 2.5rem);
+          font-size: clamp(1.35rem, 6.5vw, 1.85rem);
         }
       }
 
@@ -1634,21 +1634,21 @@ const structuredData = {
       }
 
       .venue-map-section .region-heading {
-        margin-bottom: 12px;
+        margin-bottom: 8px;
       }
 
       .map-status,
       .map-unavailable {
         color: var(--muted);
-        font-size: 0.96rem;
-        line-height: 1.45;
+        font-size: 0.9rem;
+        line-height: 1.4;
       }
 
       .map-filters {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 14px;
+        gap: 6px;
+        margin-bottom: 10px;
       }
 
       .map-filter {
@@ -1658,9 +1658,9 @@ const structuredData = {
         background: color-mix(in srgb, var(--paper-strong) 70%, var(--paper));
         color: var(--muted);
         cursor: pointer;
-        padding: 0.42rem 0.78rem;
+        padding: 0.35rem 0.7rem;
         font: inherit;
-        font-size: 0.78rem;
+        font-size: 0.74rem;
         font-weight: 750;
         letter-spacing: 0.04em;
       }
@@ -1682,10 +1682,10 @@ const structuredData = {
       }
 
       .venue-map {
-        min-height: clamp(18rem, 48vw, 32rem);
+        min-height: clamp(16rem, 42vw, 28rem);
         overflow: hidden;
         border: 1px solid var(--line);
-        border-radius: 22px;
+        border-radius: 18px;
         background: var(--paper-strong);
       }
     </style>
