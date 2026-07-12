@@ -240,7 +240,7 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires furniture guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {brands.length} furniture brands across CABA and Buenos Aires province ({storeCount} map locations). Includes {provinceAdditionCount} dedicated province furniture stores found via Google Maps with ≥100 reviews, ≥3.8 rating, still operating, and open ≥5 days/week, plus curated CABA showrooms and {manualBrandCount} researched online/showroom additions ({onlineOnlyBrandCount} without a physical BA location). Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
+            {brands.length} furniture brands across CABA and Greater Buenos Aires / La Plata ({storeCount} map locations). Includes {provinceAdditionCount} dedicated province furniture stores found via Google Maps with ≥100 reviews, ≥3.8 rating, still operating, and open ≥5 days/week—kept only when a public online chair price was found—plus curated CABA showrooms and {manualBrandCount} researched online/showroom additions ({onlineOnlyBrandCount} without a physical BA location). Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
           </p>
         </div>
       </header>
@@ -309,12 +309,6 @@ const structuredData = {
               </div>
               <div class="brand-copy">
                 <p class="summary">{brand.summary}</p>
-                {(brand.stores.length === 0 && !hasManualBaLocation(brand)) || brand.isProvinceAddition ? (
-                  <div class="brand-tags" aria-label={`${brand.name} facts`}>
-                    {brand.stores.length === 0 && !hasManualBaLocation(brand) && <span>online-only</span>}
-                    {brand.isProvinceAddition && <span>province · ≥100 reviews · ≥3.8</span>}
-                  </div>
-                ) : null}
               </div>
             </div>
 
@@ -1014,23 +1008,6 @@ const structuredData = {
     overflow-wrap: anywhere;
   }
 
-  .brand-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.32rem;
-  }
-
-  .brand-tags span {
-    padding: 0.28rem 0.48rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface-soft);
-    color: var(--text-muted);
-    font-size: 0.7rem;
-    font-weight: 750;
-    line-height: 1.15;
-  }
-
   .store-card {
     display: grid;
     align-content: start;
@@ -1251,26 +1228,6 @@ const structuredData = {
       line-height: 1.36;
     }
 
-    .brand-tags {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-      margin-inline: -0.15rem;
-      padding-inline: 0.15rem;
-    }
-
-    .brand-tags::-webkit-scrollbar {
-      display: none;
-    }
-
-    .brand-tags span {
-      flex: 0 0 auto;
-      font-size: 0.7rem;
-      line-height: 1.15;
-      padding: 0.3rem 0.48rem;
-    }
-
     .store-list {
       grid-template-columns: minmax(0, 1fr);
       gap: 0.48rem;
@@ -1375,13 +1332,6 @@ const structuredData = {
 
     .brand-title-row h2 {
       font-size: clamp(1.08rem, 5.4vw, 1.36rem);
-    }
-
-    .brand-tags {
-      flex-wrap: wrap;
-      overflow-x: visible;
-      margin-inline: 0;
-      padding-inline: 0;
     }
 
     .store-card {
