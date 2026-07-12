@@ -139,7 +139,6 @@ const furnitureMapData = brandsWithStoreLabels.flatMap((brand) =>
     brandSampleSize: brand.chairPrice.sampleSize ?? 0,
     brandHasMultipleBaLocations: brand.storeCount >= 2,
     brandHasFourStarStore: brand.stores.some((entry) => (entry.rating ?? 0) >= 4),
-    brandIsProvinceAddition: brand.isProvinceAddition,
     openSunday: store.openSunday,
     address: store.address,
     googleMapsUrl: store.googleMapsUrl,
@@ -290,10 +289,6 @@ const structuredData = {
             <input id="three-sampled-chairs-only" type="checkbox" autocomplete="off" />
             <span>3+ sampled chairs</span>
           </label>
-          <label class="filter-toggle" for="province-additions-only">
-            <input id="province-additions-only" type="checkbox" autocomplete="off" />
-            <span>Province additions</span>
-          </label>
           <label class="filter-toggle" for="open-sunday-only">
             <input id="open-sunday-only" type="checkbox" autocomplete="off" />
             <span>Open on Sundays</span>
@@ -317,7 +312,6 @@ const structuredData = {
             data-max-reviews={brand.maxReviewCount}
             data-multi-location={brand.storeCount >= 2}
             data-four-star-brand={brand.stores.some((store) => (store.rating ?? 0) >= 4)}
-            data-province-addition={brand.isProvinceAddition}
             data-open-sunday={brand.hasSundayStore}
           >
             <div class="brand-main">
@@ -457,7 +451,6 @@ const structuredData = {
   const multiLocationOnlyToggle = document.querySelector("#multi-location-only");
   const fourStarBrandOnlyToggle = document.querySelector("#four-star-brand-only");
   const threeSampledChairsOnlyToggle = document.querySelector("#three-sampled-chairs-only");
-  const provinceAdditionsOnlyToggle = document.querySelector("#province-additions-only");
   const openSundayOnlyToggle = document.querySelector("#open-sunday-only");
   const visibleCount = document.querySelector("[data-visible-count]");
   const brandCards = brandList ? [...brandList.querySelectorAll(".brand-card")] : [];
@@ -531,7 +524,6 @@ const structuredData = {
     ...(multiLocationOnlyToggle?.checked ? ["2+ BA locations"] : []),
     ...(fourStarBrandOnlyToggle?.checked ? ["at least one 4.0+ rated store"] : []),
     ...(threeSampledChairsOnlyToggle?.checked ? ["at least 3 sampled chairs"] : []),
-    ...(provinceAdditionsOnlyToggle?.checked ? ["province Google Maps additions"] : []),
     ...(openSundayOnlyToggle?.checked ? ["open on Sundays"] : []),
   ];
 
@@ -539,14 +531,12 @@ const structuredData = {
     (!multiLocationOnlyToggle?.checked || card.dataset.multiLocation === "true") &&
     (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true") &&
     (!threeSampledChairsOnlyToggle?.checked || getNumericSortValue(card, "sampleSize", 0) >= 3) &&
-    (!provinceAdditionsOnlyToggle?.checked || card.dataset.provinceAddition === "true") &&
     (!openSundayOnlyToggle?.checked || card.dataset.openSunday === "true");
 
   const storePassesActiveFilters = (store) =>
     (!multiLocationOnlyToggle?.checked || store.brandHasMultipleBaLocations) &&
     (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore) &&
     (!threeSampledChairsOnlyToggle?.checked || store.brandSampleSize >= 3) &&
-    (!provinceAdditionsOnlyToggle?.checked || store.brandIsProvinceAddition) &&
     (!openSundayOnlyToggle?.checked || store.openSunday);
 
   const visibleFurnitureBrands = () => brandCards.filter(cardPassesActiveFilters);
@@ -606,7 +596,6 @@ const structuredData = {
   multiLocationOnlyToggle?.addEventListener("change", applyBrandFilters);
   fourStarBrandOnlyToggle?.addEventListener("change", applyBrandFilters);
   threeSampledChairsOnlyToggle?.addEventListener("change", applyBrandFilters);
-  provinceAdditionsOnlyToggle?.addEventListener("change", applyBrandFilters);
   openSundayOnlyToggle?.addEventListener("change", applyBrandFilters);
   applyBrandFilters();
 

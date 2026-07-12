@@ -1,0 +1,366 @@
+---
+import data from "../../data/cishet-male-archetypes.json";
+
+export const prerender = true;
+
+const pageTitle = "Cishet male archetypes";
+const pageDescription =
+  "A field guide to heterosexual male archetypes currently in circulation on the English-language web — glosses of usage, not endorsements.";
+const themeColorLight = "#ffffff";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Entry = { kind: "entry"; terms: string | null; gloss: string };
+type Aside = { kind: "aside"; text: string };
+type Item = Entry | Aside;
+type Subsection = {
+  id: string;
+  title: string;
+  note: string | null;
+  items: Item[];
+};
+type Section = {
+  id: string;
+  title: string;
+  note: string | null;
+  items: Item[];
+  subsections: Subsection[];
+};
+
+const sections = data.sections as Section[];
+
+const entryCount = sections.reduce((n, section) => {
+  const own = section.items.filter((item) => item.kind === "entry").length;
+  const nested = section.subsections.reduce(
+    (m, sub) => m + sub.items.filter((item) => item.kind === "entry").length,
+    0,
+  );
+  return n + own + nested;
+}, 0);
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+/** Inline markdown: **bold**, *italic* (order matters). */
+function inlineMd(value: string) {
+  return escapeHtml(value)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>");
+}
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: entryCount,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <p class="home"><a href="/">sokolsky.me</a></p>
+
+      <header class="hero">
+        <h1>{pageTitle}</h1>
+        <p class="lede" set:html={inlineMd(data.intro)} />
+        <p class="meta">{entryCount} entries · {sections.length} sections</p>
+      </header>
+
+      <nav class="toc" aria-label="Sections">
+        {
+          sections.map((section) => (
+            <a href={`#${section.id}`}>{section.title}</a>
+          ))
+        }
+      </nav>
+
+      {
+        sections.map((section) => (
+          <section class="group" id={section.id}>
+            <h2>{section.title}</h2>
+            {section.note && <p class="note" set:html={inlineMd(section.note)} />}
+            <div class="entries">
+              {section.items.map((item) =>
+                item.kind === "aside" ? (
+                  <p class="aside" set:html={inlineMd(item.text)} />
+                ) : (
+                  <div class="entry">
+                    {item.terms ? (
+                      <span class="term" set:html={inlineMd(item.terms)} />
+                    ) : null}
+                    <span class="gloss" set:html={inlineMd(item.gloss)} />
+                  </div>
+                ),
+              )}
+            </div>
+
+            {section.subsections.map((sub) => (
+              <div class="subgroup" id={sub.id}>
+                <h3>{sub.title}</h3>
+                {sub.note && <p class="note" set:html={inlineMd(sub.note)} />}
+                <div class="entries">
+                  {sub.items.map((item) =>
+                    item.kind === "aside" ? (
+                      <p class="aside" set:html={inlineMd(item.text)} />
+                    ) : (
+                      <div class="entry">
+                        {item.terms ? (
+                          <span class="term" set:html={inlineMd(item.terms)} />
+                        ) : null}
+                        <span class="gloss" set:html={inlineMd(item.gloss)} />
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            ))}
+          </section>
+        ))
+      }
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #161616;
+    --muted: #5c5c5c;
+    --soft: #8a8a8a;
+    --rule: #e6e6e6;
+    --link: #161616;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --text: #eeeeee;
+      --muted: #b0b0b0;
+      --soft: #888888;
+      --rule: #2a2a2a;
+      --link: #eeeeee;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .page {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0.85rem 1rem 2.5rem;
+  }
+
+  .home {
+    margin: 0 0 0.65rem;
+    color: var(--soft);
+    font-size: 0.8rem;
+  }
+
+  .home a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .home a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .hero {
+    margin: 0 0 0.75rem;
+    padding: 0 0 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .meta {
+    margin: 0.4rem 0 0;
+    color: var(--soft);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+  }
+
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.55rem;
+    margin: 0 0 1rem;
+    padding: 0 0 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .toc a {
+    color: var(--muted);
+    font-size: 0.72rem;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .group {
+    margin: 0 0 0.95rem;
+    scroll-margin-top: 0.75rem;
+  }
+
+  .subgroup {
+    margin: 0.55rem 0 0;
+    scroll-margin-top: 0.75rem;
+  }
+
+  h2 {
+    margin: 0 0 0.25rem;
+    color: var(--text);
+    font-size: 0.98rem;
+    font-weight: 650;
+    line-height: 1.25;
+  }
+
+  h3 {
+    margin: 0 0 0.2rem;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 650;
+    line-height: 1.25;
+  }
+
+  .note {
+    margin: 0 0 0.35rem;
+    color: var(--soft);
+    font-size: 0.78rem;
+    font-style: italic;
+    line-height: 1.35;
+  }
+
+  .entries {
+    margin: 0;
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 32%) 1fr;
+    column-gap: 0.65rem;
+    align-items: baseline;
+    padding: 0.12rem 0;
+  }
+
+  .term {
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 650;
+    line-height: 1.35;
+  }
+
+  .gloss {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .aside {
+    margin: 0.2rem 0 0.1rem;
+    color: var(--soft);
+    font-size: 0.78rem;
+    font-style: italic;
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  @media (max-width: 560px) {
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 0.05rem;
+      padding: 0.28rem 0;
+      border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
+    }
+
+    .entry:last-child {
+      border-bottom: 0;
+    }
+
+    .term {
+      font-size: 0.84rem;
+    }
+  }
+</style>
