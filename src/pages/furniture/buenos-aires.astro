@@ -5,7 +5,7 @@ export const prerender = true;
 
 const pageTitle = pageData.title;
 const pageDescription =
-  "Furniture brands in Buenos Aires plus researched Argentina furniture shops with online chair prices, stock evidence and domestic shipping.";
+  "Furniture brands and dedicated furniture stores across Buenos Aires city and province, with Google Maps ratings, hours filters, and sampled online chair prices where available.";
 const themeColorLight = "#f4efe7";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -16,7 +16,12 @@ type Store = Brand["stores"][number];
 const brands = pageData.brands;
 const hasManualBaLocation = (brand: { hasPhysicalBaLocation?: boolean }) =>
   brand.hasPhysicalBaLocation === true;
+const isProvinceAddition = (brand: Brand) =>
+  brand.category === "Province / Google Maps addition";
+const maxStoreReviews = (brand: Brand) =>
+  brand.stores.reduce((max, store) => Math.max(max, store.reviewCount ?? 0), 0);
 const storeCount = brands.reduce((sum, brand) => sum + brand.stores.length, 0);
+const provinceAdditionCount = brands.filter(isProvinceAddition).length;
 const manualBrandCount = brands.filter((brand) => brand.stores.length === 0).length;
 const onlineOnlyBrandCount = brands.filter(
   (brand) => brand.stores.length === 0 && !hasManualBaLocation(brand),
@@ -68,24 +73,42 @@ const formatChairPrice = (brand: Brand) => {
   };
 };
 const pricedBrandCount = brands.filter((brand) => brand.chairPrice.median != null).length;
-const sortStoresByReviewCount = (stores: Store[]) =>
+const isOpenSunday = (weekdayHours: string[] | undefined) => {
+  const sundayLine = (weekdayHours ?? []).find((line) =>
+    /^(sunday|domingo)\b/i.test(line.trim()),
+  );
+  if (!sundayLine) return false;
+  return !/\b(closed|cerrado)\b/i.test(sundayLine);
+};
+const sortStoresByReviewCount = <T extends Store>(stores: T[]) =>
   [...stores].sort((first, second) =>
     (second.reviewCount ?? 0) - (first.reviewCount ?? 0) ||
     (second.rating ?? 0) - (first.rating ?? 0) ||
     first.name.localeCompare(second.name)
   );
-const brandsWithStoreLabels = brands.map((brand: Brand, index: number) => ({
-  ...brand,
-  stores: sortStoresByReviewCount(brand.stores),
-  listPosition: index + 1,
-  chairPriceDisplay: formatChairPrice(brand),
-}));
+const brandsWithStoreLabels = brands.map((brand: Brand, index: number) => {
+  const stores = sortStoresByReviewCount(
+    brand.stores.map((store) => ({
+      ...store,
+      openSunday: isOpenSunday(store.weekdayHours),
+    })),
+  );
+  return {
+    ...brand,
+    stores,
+    listPosition: index + 1,
+    chairPriceDisplay: formatChairPrice(brand),
+    isProvinceAddition: isProvinceAddition(brand),
+    maxReviewCount: maxStoreReviews(brand),
+    hasSundayStore: stores.some((store) => store.openSunday),
+  };
+});
 const googleMapsApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   "";
-const furnitureMapData = brands.flatMap((brand) =>
-  brand.stores.map((store: Store) => ({
+const furnitureMapData = brandsWithStoreLabels.flatMap((brand) =>
+  brand.stores.map((store) => ({
     id: store.id,
     brandId: brand.id,
     brandName: brand.name,
@@ -93,7 +116,9 @@ const furnitureMapData = brands.flatMap((brand) =>
     category: brand.category,
     brandSampleSize: brand.chairPrice.sampleSize ?? 0,
     brandHasMultipleBaLocations: brand.storeCount >= 2,
-    brandHasFourStarStore: brand.stores.some((store) => (store.rating ?? 0) >= 4),
+    brandHasFourStarStore: brand.stores.some((entry) => (entry.rating ?? 0) >= 4),
+    brandIsProvinceAddition: brand.isProvinceAddition,
+    openSunday: store.openSunday,
     address: store.address,
     googleMapsUrl: store.googleMapsUrl,
     rating: store.rating,
@@ -170,7 +195,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="Buenos Aires furniture brands, Buenos Aires furniture stores, furniture showrooms Buenos Aires, muebles Buenos Aires"
+      content="Buenos Aires furniture brands, Buenos Aires province furniture stores, muebles Provincia de Buenos Aires, furniture showrooms Buenos Aires"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -215,7 +240,7 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires furniture guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            {brands.length} furniture brands: exact Google Maps matches with operational Buenos Aires stores/showrooms, plus {manualBrandCount} manually researched online/showroom additions ({onlineOnlyBrandCount} without a physical BA location) with public chair prices, stock evidence and domestic Argentina shipping. Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
+            {brands.length} furniture brands across CABA and Buenos Aires province ({storeCount} map locations). Includes {provinceAdditionCount} dedicated province furniture stores found via Google Maps with ≥50 reviews, still operating, and open ≥5 days/week, plus curated CABA showrooms and {manualBrandCount} researched online/showroom additions ({onlineOnlyBrandCount} without a physical BA location). Sorted by median online chair price ({pricedBrandCount} brands with public list prices).
           </p>
         </div>
       </header>
@@ -226,6 +251,7 @@ const structuredData = {
             <span>Sort by</span>
             <select id="brand-sort" name="brand-sort" autocomplete="off">
               <option value="price" selected>Price</option>
+              <option value="reviews">Google Maps reviews</option>
               <option value="stores">Number of BA stores</option>
               <option value="sample-size">Number of sampled chairs</option>
             </select>
@@ -241,6 +267,14 @@ const structuredData = {
           <label class="filter-toggle" for="three-sampled-chairs-only">
             <input id="three-sampled-chairs-only" type="checkbox" autocomplete="off" />
             <span>3+ sampled chairs</span>
+          </label>
+          <label class="filter-toggle" for="province-additions-only">
+            <input id="province-additions-only" type="checkbox" autocomplete="off" />
+            <span>Province additions</span>
+          </label>
+          <label class="filter-toggle" for="open-sunday-only">
+            <input id="open-sunday-only" type="checkbox" autocomplete="off" />
+            <span>Open on Sundays</span>
           </label>
         </div>
         <p class="visible-count" data-visible-count>
@@ -258,8 +292,11 @@ const structuredData = {
             data-price-position={brand.listPosition}
             data-store-count={brand.storeCount}
             data-sample-size={brand.chairPrice.sampleSize ?? 0}
+            data-max-reviews={brand.maxReviewCount}
             data-multi-location={brand.storeCount >= 2}
-            data-four-star-brand={brand.stores.some((store: Store) => (store.rating ?? 0) >= 4)}
+            data-four-star-brand={brand.stores.some((store) => (store.rating ?? 0) >= 4)}
+            data-province-addition={brand.isProvinceAddition}
+            data-open-sunday={brand.hasSundayStore}
           >
             <div class="brand-main">
               <div class="brand-title-row">
@@ -272,11 +309,12 @@ const structuredData = {
               </div>
               <div class="brand-copy">
                 <p class="summary">{brand.summary}</p>
-                {brand.stores.length === 0 && !hasManualBaLocation(brand) && (
+                {(brand.stores.length === 0 && !hasManualBaLocation(brand)) || brand.isProvinceAddition ? (
                   <div class="brand-tags" aria-label={`${brand.name} facts`}>
-                    <span>online-only</span>
+                    {brand.stores.length === 0 && !hasManualBaLocation(brand) && <span>online-only</span>}
+                    {brand.isProvinceAddition && <span>province · ≥50 reviews</span>}
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
 
@@ -300,8 +338,8 @@ const structuredData = {
 
             {brand.stores.length > 0 && (
               <div class="store-list" aria-label={`${brand.name} store locations`}>
-                {brand.stores.map((store: Store) => (
-                  <article class="store-card">
+                {brand.stores.map((store) => (
+                  <article class="store-card" data-open-sunday={store.openSunday}>
                     <div class="store-heading">
                       <h3>{store.name}</h3>
                       <a
@@ -339,7 +377,7 @@ const structuredData = {
           <p class="eyebrow">Map</p>
           <h2 id="furniture-map-heading">All operational Buenos Aires store locations</h2>
           <p id="furniture-map-status" class="map-status">
-            Showing all {storeCount} Google Maps locations from brands with Buenos Aires stores.
+            Showing all {storeCount} Google Maps locations across CABA and Buenos Aires province.
           </p>
         </div>
         {googleMapsApiKey ? (
@@ -403,6 +441,8 @@ const structuredData = {
   const multiLocationOnlyToggle = document.querySelector("#multi-location-only");
   const fourStarBrandOnlyToggle = document.querySelector("#four-star-brand-only");
   const threeSampledChairsOnlyToggle = document.querySelector("#three-sampled-chairs-only");
+  const provinceAdditionsOnlyToggle = document.querySelector("#province-additions-only");
+  const openSundayOnlyToggle = document.querySelector("#open-sunday-only");
   const visibleCount = document.querySelector("[data-visible-count]");
   const brandCards = brandList ? [...brandList.querySelectorAll(".brand-card")] : [];
   const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
@@ -455,6 +495,13 @@ const structuredData = {
         if (sampleSizeDifference !== 0) return sampleSizeDifference;
       }
 
+      if (sortMode === "reviews") {
+        const reviewDifference =
+          getNumericSortValue(b, "maxReviews", 0) - getNumericSortValue(a, "maxReviews", 0);
+
+        if (reviewDifference !== 0) return reviewDifference;
+      }
+
       return aPricePosition - bPricePosition;
     });
 
@@ -468,17 +515,23 @@ const structuredData = {
     ...(multiLocationOnlyToggle?.checked ? ["2+ BA locations"] : []),
     ...(fourStarBrandOnlyToggle?.checked ? ["at least one 4.0+ rated store"] : []),
     ...(threeSampledChairsOnlyToggle?.checked ? ["at least 3 sampled chairs"] : []),
+    ...(provinceAdditionsOnlyToggle?.checked ? ["province Google Maps additions"] : []),
+    ...(openSundayOnlyToggle?.checked ? ["open on Sundays"] : []),
   ];
 
   const cardPassesActiveFilters = (card) =>
     (!multiLocationOnlyToggle?.checked || card.dataset.multiLocation === "true") &&
     (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true") &&
-    (!threeSampledChairsOnlyToggle?.checked || getNumericSortValue(card, "sampleSize", 0) >= 3);
+    (!threeSampledChairsOnlyToggle?.checked || getNumericSortValue(card, "sampleSize", 0) >= 3) &&
+    (!provinceAdditionsOnlyToggle?.checked || card.dataset.provinceAddition === "true") &&
+    (!openSundayOnlyToggle?.checked || card.dataset.openSunday === "true");
 
   const storePassesActiveFilters = (store) =>
     (!multiLocationOnlyToggle?.checked || store.brandHasMultipleBaLocations) &&
     (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore) &&
-    (!threeSampledChairsOnlyToggle?.checked || store.brandSampleSize >= 3);
+    (!threeSampledChairsOnlyToggle?.checked || store.brandSampleSize >= 3) &&
+    (!provinceAdditionsOnlyToggle?.checked || store.brandIsProvinceAddition) &&
+    (!openSundayOnlyToggle?.checked || store.openSunday);
 
   const visibleFurnitureBrands = () => brandCards.filter(cardPassesActiveFilters);
 
@@ -519,8 +572,13 @@ const structuredData = {
   };
 
   const applyBrandFilters = () => {
+    const sundayOnly = Boolean(openSundayOnlyToggle?.checked);
+
     for (const card of brandCards) {
       card.hidden = !cardPassesActiveFilters(card);
+      for (const storeCard of card.querySelectorAll(".store-card")) {
+        storeCard.hidden = sundayOnly && storeCard.dataset.openSunday !== "true";
+      }
     }
 
     updateVisibleCount();
@@ -532,6 +590,8 @@ const structuredData = {
   multiLocationOnlyToggle?.addEventListener("change", applyBrandFilters);
   fourStarBrandOnlyToggle?.addEventListener("change", applyBrandFilters);
   threeSampledChairsOnlyToggle?.addEventListener("change", applyBrandFilters);
+  provinceAdditionsOnlyToggle?.addEventListener("change", applyBrandFilters);
+  openSundayOnlyToggle?.addEventListener("change", applyBrandFilters);
   applyBrandFilters();
 
   const fitMapToMarkers = (visibleRecords) => {
