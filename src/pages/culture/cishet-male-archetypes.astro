@@ -1,5 +1,6 @@
 ---
 import data from "../../data/cishet-male-archetypes.json";
+import wikiLinksRaw from "../../data/cishet-male-archetype-wiki-links.json";
 
 export const prerender = true;
 
@@ -12,6 +13,7 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
+type WikiLink = { title: string; url: string };
 type Entry = { kind: "entry"; terms: string | null; gloss: string };
 type Aside = { kind: "aside"; text: string };
 type Item = Entry | Aside;
@@ -29,6 +31,7 @@ type Section = {
   subsections: Subsection[];
 };
 
+const wikiLinks = wikiLinksRaw as Record<string, WikiLink>;
 const sections = data.sections as Section[];
 
 const entryCount = sections.reduce((n, section) => {
@@ -39,6 +42,8 @@ const entryCount = sections.reduce((n, section) => {
   );
   return n + own + nested;
 }, 0);
+
+const wikiTermCount = Object.keys(wikiLinks).length;
 
 function escapeHtml(value: string) {
   return value
@@ -54,6 +59,39 @@ function inlineMd(value: string) {
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>");
 }
+
+/** Link individual slash-separated archetype names to English Wikipedia when mapped. */
+function renderTerms(terms: string) {
+  return terms
+    .split(/\s*\/\s*/)
+    .map((part) => {
+      const link = wikiLinks[part];
+      const label = escapeHtml(part);
+      if (!link) return label;
+      return `<a class="wiki-term" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(link.title)}">${label}</a>`;
+    })
+    .join(" / ");
+}
+
+function entryHasWiki(terms: string | null) {
+  if (!terms) return false;
+  return terms.split(/\s*\/\s*/).some((part) => Boolean(wikiLinks[part]));
+}
+
+const wikiEntryCount = sections.reduce((n, section) => {
+  const own = section.items.filter(
+    (item) => item.kind === "entry" && entryHasWiki(item.terms),
+  ).length;
+  const nested = section.subsections.reduce(
+    (m, sub) =>
+      m +
+      sub.items.filter(
+        (item) => item.kind === "entry" && entryHasWiki(item.terms),
+      ).length,
+    0,
+  );
+  return n + own + nested;
+}, 0);
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -106,61 +144,139 @@ const structuredData = {
       <header class="hero">
         <h1>{pageTitle}</h1>
         <p class="lede" set:html={inlineMd(data.intro)} />
-        <p class="meta">{entryCount} entries · {sections.length} sections</p>
+        <p class="meta">
+          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} linked terms
+        </p>
+        <label class="filter">
+          <input type="checkbox" id="wiki-only" />
+          Only archetypes with a Wiki page
+          <span class="filter-count">({wikiEntryCount})</span>
+        </label>
       </header>
 
       <nav class="toc" aria-label="Sections">
         {
           sections.map((section) => (
-            <a href={`#${section.id}`}>{section.title}</a>
+            <a href={`#${section.id}`} data-toc-for={section.id}>{section.title}</a>
           ))
         }
       </nav>
 
       {
-        sections.map((section) => (
-          <section class="group" id={section.id}>
-            <h2>{section.title}</h2>
-            {section.note && <p class="note" set:html={inlineMd(section.note)} />}
-            <div class="entries">
-              {section.items.map((item) =>
-                item.kind === "aside" ? (
-                  <p class="aside" set:html={inlineMd(item.text)} />
-                ) : (
-                  <div class="entry">
-                    {item.terms ? (
-                      <span class="term" set:html={inlineMd(item.terms)} />
-                    ) : null}
-                    <span class="gloss" set:html={inlineMd(item.gloss)} />
-                  </div>
-                ),
-              )}
-            </div>
+        sections.map((section) => {
+          const sectionWikiCount =
+            section.items.filter(
+              (item) => item.kind === "entry" && entryHasWiki(item.terms),
+            ).length +
+            section.subsections.reduce(
+              (m, sub) =>
+                m +
+                sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasWiki(item.terms),
+                ).length,
+              0,
+            );
 
-            {section.subsections.map((sub) => (
-              <div class="subgroup" id={sub.id}>
-                <h3>{sub.title}</h3>
-                {sub.note && <p class="note" set:html={inlineMd(sub.note)} />}
-                <div class="entries">
-                  {sub.items.map((item) =>
-                    item.kind === "aside" ? (
-                      <p class="aside" set:html={inlineMd(item.text)} />
-                    ) : (
-                      <div class="entry">
-                        {item.terms ? (
-                          <span class="term" set:html={inlineMd(item.terms)} />
-                        ) : null}
-                        <span class="gloss" set:html={inlineMd(item.gloss)} />
-                      </div>
-                    ),
-                  )}
-                </div>
+          return (
+            <section
+              class="group"
+              id={section.id}
+              data-wiki-count={sectionWikiCount}
+            >
+              <h2>{section.title}</h2>
+              {section.note && <p class="note" set:html={inlineMd(section.note)} />}
+              <div class="entries">
+                {section.items.map((item) =>
+                  item.kind === "aside" ? (
+                    <p class="aside" data-wiki="false" set:html={inlineMd(item.text)} />
+                  ) : (
+                    <div
+                      class="entry"
+                      data-wiki={entryHasWiki(item.terms) ? "true" : "false"}
+                    >
+                      {item.terms ? (
+                        <span class="term" set:html={renderTerms(item.terms)} />
+                      ) : null}
+                      <span class="gloss" set:html={inlineMd(item.gloss)} />
+                    </div>
+                  ),
+                )}
               </div>
-            ))}
-          </section>
-        ))
+
+              {section.subsections.map((sub) => {
+                const subWikiCount = sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasWiki(item.terms),
+                ).length;
+                return (
+                  <div
+                    class="subgroup"
+                    id={sub.id}
+                    data-wiki-count={subWikiCount}
+                  >
+                    <h3>{sub.title}</h3>
+                    {sub.note && <p class="note" set:html={inlineMd(sub.note)} />}
+                    <div class="entries">
+                      {sub.items.map((item) =>
+                        item.kind === "aside" ? (
+                          <p class="aside" data-wiki="false" set:html={inlineMd(item.text)} />
+                        ) : (
+                          <div
+                            class="entry"
+                            data-wiki={entryHasWiki(item.terms) ? "true" : "false"}
+                          >
+                            {item.terms ? (
+                              <span class="term" set:html={renderTerms(item.terms)} />
+                            ) : null}
+                            <span class="gloss" set:html={inlineMd(item.gloss)} />
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </section>
+          );
+        })
       }
     </main>
+
+    <script define:vars={{ entryCount, wikiEntryCount }}>
+      const checkbox = document.getElementById("wiki-only");
+      const page = document.querySelector(".page");
+      const metaCount = document.querySelector("[data-meta-count]");
+
+      function applyFilter(on) {
+        page?.classList.toggle("wiki-only", on);
+        if (metaCount) {
+          metaCount.textContent = on
+            ? `${wikiEntryCount} entries`
+            : `${entryCount} entries`;
+        }
+
+        document.querySelectorAll(".group, .subgroup").forEach((el) => {
+          const count = Number(el.dataset.wikiCount || "0");
+          el.hidden = on && count === 0;
+        });
+
+        document.querySelectorAll("[data-toc-for]").forEach((link) => {
+          const section = document.getElementById(link.dataset.tocFor || "");
+          link.hidden = Boolean(on && section?.hidden);
+        });
+
+        const url = new URL(location.href);
+        if (on) url.searchParams.set("wiki", "1");
+        else url.searchParams.delete("wiki");
+        history.replaceState(null, "", url);
+      }
+
+      if (checkbox) {
+        const initial = new URLSearchParams(location.search).get("wiki") === "1";
+        checkbox.checked = initial;
+        applyFilter(initial);
+        checkbox.addEventListener("change", () => applyFilter(checkbox.checked));
+      }
+    </script>
   </body>
 </html>
 
@@ -255,6 +371,32 @@ const structuredData = {
     letter-spacing: 0.02em;
   }
 
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.55rem 0 0;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    user-select: none;
+  }
+
+  .filter input {
+    margin: 0;
+    accent-color: var(--text);
+  }
+
+  .filter-count {
+    color: var(--soft);
+  }
+
+  .page.wiki-only .entry[data-wiki="false"],
+  .page.wiki-only .aside[data-wiki="false"] {
+    display: none;
+  }
+
   .toc {
     display: flex;
     flex-wrap: wrap;
@@ -328,6 +470,18 @@ const structuredData = {
     font-size: 0.82rem;
     font-weight: 650;
     line-height: 1.35;
+  }
+
+  .term .wiki-term {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .term .wiki-term:hover {
+    color: var(--muted);
   }
 
   .gloss {
