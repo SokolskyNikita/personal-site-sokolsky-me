@@ -96,6 +96,24 @@ const isOpenSunday = (weekdayHours: string[] | undefined) => {
   if (!sundayLine) return false;
   return !/\b(closed|cerrado)\b/i.test(sundayLine);
 };
+const isMostlyUppercase = (value: string) => {
+  const letters = Array.from(value).filter((character) => /\p{L}/u.test(character));
+  if (letters.length < 2) return false;
+  const uppercaseCount = letters.filter(
+    (character) => character === character.toUpperCase() && character !== character.toLowerCase(),
+  ).length;
+  return uppercaseCount / letters.length >= 0.8;
+};
+const toNormalCaps = (value: string) => {
+  if (!value || !isMostlyUppercase(value)) return value;
+  return value
+    .toLocaleLowerCase("es-AR")
+    .replace(
+      /(^|[^\p{L}\p{M}])(\p{L})/gu,
+      (_match, boundary: string, letter: string) =>
+        `${boundary}${letter.toLocaleUpperCase("es-AR")}`,
+    );
+};
 const sortStoresByReviewCount = <T extends Store>(stores: T[]) =>
   [...stores].sort((first, second) =>
     (second.reviewCount ?? 0) - (first.reviewCount ?? 0) ||
@@ -111,11 +129,13 @@ const brandsWithStoreLabels = brandsSortedByPrice.map((brand: Brand, index: numb
   const stores = sortStoresByReviewCount(
     brand.stores.map((store) => ({
       ...store,
+      name: toNormalCaps(store.name),
       openSunday: isOpenSunday(store.weekdayHours),
     })),
   );
   return {
     ...brand,
+    name: toNormalCaps(brand.name),
     stores,
     listPosition: index + 1,
     priceSortUsd: chairPriceSortValueUsd(brand),
