@@ -1,6 +1,7 @@
 ---
 import data from "../../data/cishet-male-archetypes.json";
 import wikiLinksRaw from "../../data/cishet-male-archetype-wiki-links.json";
+import kymLinksRaw from "../../data/cishet-male-archetype-kym-links.json";
 
 export const prerender = true;
 
@@ -13,7 +14,7 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
-type WikiLink = { title: string; url: string };
+type ExtLink = { title: string; url: string };
 type Entry = { kind: "entry"; terms: string | null; gloss: string };
 type Aside = { kind: "aside"; text: string };
 type Item = Entry | Aside;
@@ -31,7 +32,8 @@ type Section = {
   subsections: Subsection[];
 };
 
-const wikiLinks = wikiLinksRaw as Record<string, WikiLink>;
+const wikiLinks = wikiLinksRaw as Record<string, ExtLink>;
+const kymLinks = kymLinksRaw as Record<string, ExtLink>;
 const sections = data.sections as Section[];
 
 const entryCount = sections.reduce((n, section) => {
@@ -44,6 +46,7 @@ const entryCount = sections.reduce((n, section) => {
 }, 0);
 
 const wikiTermCount = Object.keys(wikiLinks).length;
+const kymTermCount = Object.keys(kymLinks).length;
 
 function escapeHtml(value: string) {
   return value
@@ -60,38 +63,66 @@ function inlineMd(value: string) {
     .replace(/\*(.+?)\*/g, "<em>$1</em>");
 }
 
-/** Link individual slash-separated archetype names to English Wikipedia when mapped. */
+function linkForTerm(part: string): (ExtLink & { source: "wiki" | "kym" }) | null {
+  if (wikiLinks[part]) return { ...wikiLinks[part], source: "wiki" };
+  if (kymLinks[part]) return { ...kymLinks[part], source: "kym" };
+  return null;
+}
+
+/** Link slash-separated names to Wikipedia, else Know Your Meme, when mapped. */
 function renderTerms(terms: string) {
   return terms
     .split(/\s*\/\s*/)
     .map((part) => {
-      const link = wikiLinks[part];
+      const link = linkForTerm(part);
       const label = escapeHtml(part);
       if (!link) return label;
-      return `<a class="wiki-term" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(link.title)}">${label}</a>`;
+      const cls = link.source === "wiki" ? "wiki-term" : "kym-term";
+      const sourceLabel = link.source === "wiki" ? "Wikipedia" : "Know Your Meme";
+      return `<a class="${cls}" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(`${sourceLabel}: ${link.title}`)}">${label}</a>`;
     })
     .join(" / ");
 }
 
-function entryHasWiki(terms: string | null) {
-  if (!terms) return false;
-  return terms.split(/\s*\/\s*/).some((part) => Boolean(wikiLinks[part]));
+function entryParts(terms: string | null) {
+  if (!terms) return [] as string[];
+  return terms.split(/\s*\/\s*/).filter(Boolean);
 }
 
-const wikiEntryCount = sections.reduce((n, section) => {
-  const own = section.items.filter(
-    (item) => item.kind === "entry" && entryHasWiki(item.terms),
-  ).length;
-  const nested = section.subsections.reduce(
-    (m, sub) =>
-      m +
-      sub.items.filter(
-        (item) => item.kind === "entry" && entryHasWiki(item.terms),
-      ).length,
-    0,
-  );
-  return n + own + nested;
-}, 0);
+function entryHasWiki(terms: string | null) {
+  return entryParts(terms).some((part) => Boolean(wikiLinks[part]));
+}
+
+function entryHasKym(terms: string | null) {
+  return entryParts(terms).some((part) => Boolean(kymLinks[part]));
+}
+
+function entryHasEither(terms: string | null) {
+  return entryHasWiki(terms) || entryHasKym(terms);
+}
+
+function countEntries(
+  predicate: (terms: string | null) => boolean,
+) {
+  return sections.reduce((n, section) => {
+    const own = section.items.filter(
+      (item) => item.kind === "entry" && predicate(item.terms),
+    ).length;
+    const nested = section.subsections.reduce(
+      (m, sub) =>
+        m +
+        sub.items.filter(
+          (item) => item.kind === "entry" && predicate(item.terms),
+        ).length,
+      0,
+    );
+    return n + own + nested;
+  }, 0);
+}
+
+const wikiEntryCount = countEntries(entryHasWiki);
+const kymEntryCount = countEntries(entryHasKym);
+const linkedEntryCount = countEntries(entryHasEither);
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -145,13 +176,30 @@ const structuredData = {
         <h1>{pageTitle}</h1>
         <p class="lede" set:html={inlineMd(data.intro)} />
         <p class="meta">
-          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} linked terms
+          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} Wiki · {kymTermCount} KYM
         </p>
-        <label class="filter">
-          <input type="checkbox" id="wiki-only" />
-          Only archetypes with a Wiki page
-          <span class="filter-count">({wikiEntryCount})</span>
-        </label>
+        <fieldset class="filters">
+          <legend class="filters-legend">Show</legend>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="all" checked />
+            All
+          </label>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="wiki" />
+            Wiki only
+            <span class="filter-count">({wikiEntryCount})</span>
+          </label>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="kym" />
+            Know Your Meme only
+            <span class="filter-count">({kymEntryCount})</span>
+          </label>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="linked" />
+            Wiki or Know Your Meme
+            <span class="filter-count">({linkedEntryCount})</span>
+          </label>
+        </fieldset>
       </header>
 
       <nav class="toc" aria-label="Sections">
@@ -176,23 +224,57 @@ const structuredData = {
                 ).length,
               0,
             );
+          const sectionKymCount =
+            section.items.filter(
+              (item) => item.kind === "entry" && entryHasKym(item.terms),
+            ).length +
+            section.subsections.reduce(
+              (m, sub) =>
+                m +
+                sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasKym(item.terms),
+                ).length,
+              0,
+            );
+          const sectionLinkedCount =
+            section.items.filter(
+              (item) => item.kind === "entry" && entryHasEither(item.terms),
+            ).length +
+            section.subsections.reduce(
+              (m, sub) =>
+                m +
+                sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasEither(item.terms),
+                ).length,
+              0,
+            );
 
           return (
             <section
               class="group"
               id={section.id}
               data-wiki-count={sectionWikiCount}
+              data-kym-count={sectionKymCount}
+              data-linked-count={sectionLinkedCount}
             >
               <h2>{section.title}</h2>
               {section.note && <p class="note" set:html={inlineMd(section.note)} />}
               <div class="entries">
                 {section.items.map((item) =>
                   item.kind === "aside" ? (
-                    <p class="aside" data-wiki="false" set:html={inlineMd(item.text)} />
+                    <p
+                      class="aside"
+                      data-wiki="false"
+                      data-kym="false"
+                      data-linked="false"
+                      set:html={inlineMd(item.text)}
+                    />
                   ) : (
                     <div
                       class="entry"
                       data-wiki={entryHasWiki(item.terms) ? "true" : "false"}
+                      data-kym={entryHasKym(item.terms) ? "true" : "false"}
+                      data-linked={entryHasEither(item.terms) ? "true" : "false"}
                     >
                       {item.terms ? (
                         <span class="term" set:html={renderTerms(item.terms)} />
@@ -207,22 +289,40 @@ const structuredData = {
                 const subWikiCount = sub.items.filter(
                   (item) => item.kind === "entry" && entryHasWiki(item.terms),
                 ).length;
+                const subKymCount = sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasKym(item.terms),
+                ).length;
+                const subLinkedCount = sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasEither(item.terms),
+                ).length;
                 return (
                   <div
                     class="subgroup"
                     id={sub.id}
                     data-wiki-count={subWikiCount}
+                    data-kym-count={subKymCount}
+                    data-linked-count={subLinkedCount}
                   >
                     <h3>{sub.title}</h3>
                     {sub.note && <p class="note" set:html={inlineMd(sub.note)} />}
                     <div class="entries">
                       {sub.items.map((item) =>
                         item.kind === "aside" ? (
-                          <p class="aside" data-wiki="false" set:html={inlineMd(item.text)} />
+                          <p
+                            class="aside"
+                            data-wiki="false"
+                            data-kym="false"
+                            data-linked="false"
+                            set:html={inlineMd(item.text)}
+                          />
                         ) : (
                           <div
                             class="entry"
                             data-wiki={entryHasWiki(item.terms) ? "true" : "false"}
+                            data-kym={entryHasKym(item.terms) ? "true" : "false"}
+                            data-linked={
+                              entryHasEither(item.terms) ? "true" : "false"
+                            }
                           >
                             {item.terms ? (
                               <span class="term" set:html={renderTerms(item.terms)} />
@@ -241,41 +341,87 @@ const structuredData = {
       }
     </main>
 
-    <script define:vars={{ entryCount, wikiEntryCount }}>
-      const checkbox = document.getElementById("wiki-only");
+    <script
+      define:vars={{
+        entryCount,
+        wikiEntryCount,
+        kymEntryCount,
+        linkedEntryCount,
+      }}
+    >
       const page = document.querySelector(".page");
       const metaCount = document.querySelector("[data-meta-count]");
+      const radios = document.querySelectorAll('input[name="link-filter"]');
 
-      function applyFilter(on) {
-        page?.classList.toggle("wiki-only", on);
+      const filterCounts = {
+        all: entryCount,
+        wiki: wikiEntryCount,
+        kym: kymEntryCount,
+        linked: linkedEntryCount,
+      };
+
+      function sectionCountKey(mode) {
+        if (mode === "wiki") return "wikiCount";
+        if (mode === "kym") return "kymCount";
+        if (mode === "linked") return "linkedCount";
+        return null;
+      }
+
+      function applyFilter(mode) {
+        page?.classList.remove(
+          "filter-wiki",
+          "filter-kym",
+          "filter-linked",
+        );
+        if (mode === "wiki") page?.classList.add("filter-wiki");
+        if (mode === "kym") page?.classList.add("filter-kym");
+        if (mode === "linked") page?.classList.add("filter-linked");
+
         if (metaCount) {
-          metaCount.textContent = on
-            ? `${wikiEntryCount} entries`
-            : `${entryCount} entries`;
+          metaCount.textContent = `${filterCounts[mode] ?? entryCount} entries`;
         }
 
+        const countKey = sectionCountKey(mode);
         document.querySelectorAll(".group, .subgroup").forEach((el) => {
-          const count = Number(el.dataset.wikiCount || "0");
-          el.hidden = on && count === 0;
+          if (!countKey) {
+            el.hidden = false;
+            return;
+          }
+          const count = Number(el.dataset[countKey] || "0");
+          el.hidden = count === 0;
         });
 
         document.querySelectorAll("[data-toc-for]").forEach((link) => {
           const section = document.getElementById(link.dataset.tocFor || "");
-          link.hidden = Boolean(on && section?.hidden);
+          link.hidden = Boolean(mode !== "all" && section?.hidden);
         });
 
         const url = new URL(location.href);
-        if (on) url.searchParams.set("wiki", "1");
-        else url.searchParams.delete("wiki");
+        url.searchParams.delete("wiki");
+        if (mode === "all") url.searchParams.delete("filter");
+        else url.searchParams.set("filter", mode);
         history.replaceState(null, "", url);
       }
 
-      if (checkbox) {
-        const initial = new URLSearchParams(location.search).get("wiki") === "1";
-        checkbox.checked = initial;
-        applyFilter(initial);
-        checkbox.addEventListener("change", () => applyFilter(checkbox.checked));
+      function initialMode() {
+        const params = new URLSearchParams(location.search);
+        const filter = params.get("filter");
+        if (filter === "wiki" || filter === "kym" || filter === "linked") {
+          return filter;
+        }
+        // Back-compat with older ?wiki=1 (either-linked)
+        if (params.get("wiki") === "1") return "linked";
+        return "all";
       }
+
+      const mode = initialMode();
+      radios.forEach((radio) => {
+        radio.checked = radio.value === mode;
+        radio.addEventListener("change", () => {
+          if (radio.checked) applyFilter(radio.value);
+        });
+      });
+      applyFilter(mode);
     </script>
   </body>
 </html>
@@ -371,11 +517,28 @@ const structuredData = {
     letter-spacing: 0.02em;
   }
 
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.85rem;
+    margin: 0.55rem 0 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .filters-legend {
+    float: left;
+    margin: 0 0.55rem 0 0;
+    padding: 0;
+    color: var(--soft);
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+
   .filter {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    margin: 0.55rem 0 0;
+    gap: 0.35rem;
     color: var(--muted);
     cursor: pointer;
     font-size: 0.78rem;
@@ -392,8 +555,12 @@ const structuredData = {
     color: var(--soft);
   }
 
-  .page.wiki-only .entry[data-wiki="false"],
-  .page.wiki-only .aside[data-wiki="false"] {
+  .page.filter-wiki .entry[data-wiki="false"],
+  .page.filter-wiki .aside[data-wiki="false"],
+  .page.filter-kym .entry[data-kym="false"],
+  .page.filter-kym .aside[data-kym="false"],
+  .page.filter-linked .entry[data-linked="false"],
+  .page.filter-linked .aside[data-linked="false"] {
     display: none;
   }
 
@@ -472,7 +639,8 @@ const structuredData = {
     line-height: 1.35;
   }
 
-  .term .wiki-term {
+  .term .wiki-term,
+  .term .kym-term {
     color: inherit;
     font-weight: inherit;
     text-decoration: underline;
@@ -480,7 +648,8 @@ const structuredData = {
     text-underline-offset: 0.18em;
   }
 
-  .term .wiki-term:hover {
+  .term .wiki-term:hover,
+  .term .kym-term:hover {
     color: var(--muted);
   }
 

@@ -1,7 +1,7 @@
 {
   "title": "Furniture brands in Buenos Aires",
   "city": "Buenos Aires",
-  "generatedAt": "2026-07-12T17:11:47.770629Z",
+  "generatedAt": "2026-07-12T17:14:34.158300Z",
   "source": {
     "localNotes": "local-text/ba-furniture.md",
     "placeLookup": "Google Places API exact brand/store matches",
@@ -63,10 +63,18 @@
       {
         "name": "MITE",
         "reason": "Checked by user request on 2026-06-30; official chair category and product pages showed priced chairs, but the checked chair cards/pages were marked Sin stock."
+      },
+      {
+        "name": "Fradusco",
+        "reason": "Fewer than 3 publicly sampled dining-chair list prices after 2026-07-12 BrightData pass."
+      },
+      {
+        "name": "SarmientoMuebles",
+        "reason": "Fewer than 3 publicly sampled dining-chair list prices after 2026-07-12 BrightData pass."
       }
     ],
     "filteredOut": "Shopping malls, unrelated furniture stores, generic leather shops, warehouses, low-confidence social-only listings, non-BA matches, and duplicate/non-showroom manufacturer listings were removed from the public list.",
-    "chairPriceSource": "Rechecked 2026-06-30 using BrightData Google search, BrightData scrapes of official brand/category pages, and regular web search cross-checks. Medians use current public online chair selling/list prices, divide explicit multi-chair sets by unit count, and exclude transfer/cash-only discounts, financing installment amounts, zero-price placeholders, combo sets and out-of-stock cards. Brands without public chair prices remain null with updated notes; Sajo was added under a user-specific 3+ in-stock chair-unit threshold; Geben Argentina, Denver Concept, Muebledón and Decorando Shop were added under a user-specific 1+ in-stock priced-chair threshold. Chair-only brands were removed from the public list. Re-sampled 2026-07-12 with BrightData for previously unsampled brands; brands without public dining-chair list prices were removed.",
+    "chairPriceSource": "Rechecked 2026-06-30 using BrightData Google search, BrightData scrapes of official brand/category pages, and regular web search cross-checks. Medians use current public online chair selling/list prices, divide explicit multi-chair sets by unit count, and exclude transfer/cash-only discounts, financing installment amounts, zero-price placeholders, combo sets and out-of-stock cards. Brands without public chair prices remain null with updated notes; Sajo was added under a user-specific 3+ in-stock chair-unit threshold; Geben Argentina, Denver Concept, Muebledón and Decorando Shop were added under a user-specific 1+ in-stock priced-chair threshold. Chair-only brands were removed from the public list. Re-sampled 2026-07-12 with BrightData for previously unsampled brands; brands without public dining-chair list prices were removed. Low-sample pass 2026-07-12: La Fábrica Muebles BA (25 chairs) and Ciudad Muebles (4 dining chairs) expanded to ≥3; Fradusco (2) and SarmientoMuebles (1) remain limited by public catalog. Dropped brands with fewer than 3 sampled dining chairs (Fradusco, SarmientoMuebles) on 2026-07-12; Mercado Libre kept as the sole exception.",
     "provinceInclusion": {
       "includedStatus": "OPERATIONAL",
       "minReviewCount": 100,
@@ -465,25 +473,6 @@
   },
   "brands": [
     {
-      "id": "sajo",
-      "name": "SAJO",
-      "category": "Online / requested addition",
-      "style": "Pine and melamine home furniture",
-      "summary": "Online shop for pine and melamine home furniture, including storage, tables, chairs and bedroom pieces.",
-      "storeCount": 0,
-      "showroomLocation": "Beruti 56, San Fernando",
-      "showroomLabel": "Online store / San Fernando contact address",
-      "officialUrl": "https://sajo.com.ar/",
-      "stores": [],
-      "chairPrice": {
-        "median": 26599,
-        "currency": "ARS",
-        "sampleSize": 1,
-        "sourceUrl": "https://sajo.com.ar/cocina-comedor/sillas/",
-        "note": "Added 2026-06-30 by user request with a lower threshold: official Sajo chair category shows Silla Ñandu Comedor Bar Estilo Moderno at $26.599 with add-to-cart controls and 'Solo quedan 4 en stock.' Only one chair SKU was found; this qualifies on at least 3 chair units marked in stock, not 3 separate chair models. Site footer/contact lists Beruti 56, San Fernando and TiendaNube shipping methods."
-      }
-    },
-    {
       "id": "mercado-libre-muebles",
       "name": "Mercado Libre",
       "category": "Marketplace / online only",
@@ -499,7 +488,7 @@
         "displayPrimary": "$20~$250 (varies)",
         "displaySecondary": "Marketplace listings vary by seller",
         "sourceUrl": "https://listado.mercadolibre.com.ar/muebles",
-        "note": "Added 2026-07-01 by user request as an online-only marketplace source. Price shown as a broad USD listing range because Mercado Libre inventory, seller type, condition, shipping and furniture category vary substantially by listing."
+        "note": "Added 2026-07-01 by user request as an online-only marketplace source. Price shown as a broad USD listing range because Mercado Libre inventory, seller type, condition, shipping and furniture category vary substantially by listing. Kept as sole exception to the ≥3 sampled-chairs rule."
       }
     },
     {
@@ -735,11 +724,38 @@
         }
       ],
       "chairPrice": {
-        "median": 131853,
+        "median": 203570,
         "currency": "ARS",
-        "sampleSize": 1,
-        "sourceUrl": "http://lafabricamueblesba.com.ar/",
-        "note": "Current official/search-visible chair price; only one public chair SKU found."
+        "sampleSize": 25,
+        "sourceUrl": "https://lafabricamueblesba.com/productos/comedor/sillas-madera",
+        "note": "Official catalog transfer list prices from Sillas Madera + Sillas Diseño (25 dining chairs; excluded banco). Sampled 2026-07-12 via BrightData.",
+        "sampledPrices": [
+          50942,
+          102239,
+          118608,
+          131853,
+          143888,
+          143888,
+          152022,
+          180146,
+          188795,
+          191166,
+          192915,
+          193068,
+          203570,
+          215341,
+          216038,
+          218364,
+          218364,
+          220934,
+          223626,
+          236606,
+          247498,
+          260688,
+          269124,
+          273367,
+          294661
+        ]
       }
     },
     {
@@ -2195,11 +2211,17 @@
         }
       ],
       "chairPrice": {
-        "median": 471100,
+        "median": 197550,
         "currency": "ARS",
-        "sampleSize": 1,
+        "sampleSize": 4,
         "sourceUrl": "https://ciudad-muebles.com.ar/categoria-producto/sillas/",
-        "note": "Current official/search-visible chair price; only one public chair SKU found in category snippets."
+        "note": "Official category dining chairs only (4); excluded gamer/office. Sampled 2026-07-12 via BrightData.",
+        "sampledPrices": [
+          159000,
+          190000,
+          205100,
+          226900
+        ]
       }
     },
     {
@@ -3027,100 +3049,6 @@
         "sampleSize": 4,
         "sourceUrl": "https://www.habitamos.com.ar/productos/page/2/",
         "note": "Current official/search-visible chair prices; $0 product detail placeholders excluded."
-      }
-    },
-    {
-      "id": "fradusco",
-      "name": "Fradusco",
-      "category": "Sofa / specialist",
-      "style": "Argentine sofa and upholstery specialist",
-      "summary": "Sofa maker with armchairs, tables and living-room furniture.",
-      "storeCount": 2,
-      "officialUrl": "https://www.fradusco.com/",
-      "stores": [
-        {
-          "id": "ChIJ2YzBcWTLvJURsDK-0fBNWNE",
-          "name": "Fradusco",
-          "googlePlaceId": "ChIJ2YzBcWTLvJURsDK-0fBNWNE",
-          "googleMapsUrl": "https://maps.google.com/?cid=15084892648583869104&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-          "website": "http://www.fradusco.com/",
-          "phone": "011 4811-2925",
-          "businessStatus": "OPERATIONAL",
-          "address": "Juncal 1202",
-          "fullAddress": "Juncal 1202, C1062 Cdad. Autónoma de Buenos Aires, Argentina",
-          "rating": 3.8,
-          "reviewCount": 26,
-          "primaryType": "furniture_store",
-          "types": [
-            "furniture_store",
-            "manufacturer",
-            "home_improvement_store",
-            "home_goods_store",
-            "store",
-            "general_contractor",
-            "point_of_interest",
-            "service",
-            "establishment"
-          ],
-          "location": {
-            "lat": -34.5929661,
-            "lng": -58.384606
-          },
-          "weekdayHours": [
-            "Monday: 11:00 AM – 7:00 PM",
-            "Tuesday: 11:00 AM – 7:00 PM",
-            "Wednesday: 11:00 AM – 7:00 PM",
-            "Thursday: 11:00 AM – 7:00 PM",
-            "Friday: 11:00 AM – 7:00 PM",
-            "Saturday: Closed",
-            "Sunday: Closed"
-          ],
-          "sortOrder": 1
-        },
-        {
-          "id": "ChIJYziBSACxvJURRUnARKlv--M",
-          "name": "FRADUSCO CASA",
-          "branch": "CASA",
-          "googlePlaceId": "ChIJYziBSACxvJURRUnARKlv--M",
-          "googleMapsUrl": "https://maps.google.com/?cid=16427846838557624645&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
-          "website": "https://fradusco.com/",
-          "phone": "011 3273-1967",
-          "businessStatus": "OPERATIONAL",
-          "address": "Esteban Echeverria 3750 Loc 25, Munro",
-          "fullAddress": "Esteban Echeverria 3750 Loc 25, B1605 Munro, Provincia de Buenos Aires, Argentina",
-          "rating": 3.6,
-          "reviewCount": 14,
-          "primaryType": "furniture_store",
-          "types": [
-            "furniture_store",
-            "home_improvement_store",
-            "home_goods_store",
-            "store",
-            "point_of_interest",
-            "establishment"
-          ],
-          "location": {
-            "lat": -34.5148577,
-            "lng": -58.52330190000001
-          },
-          "weekdayHours": [
-            "Monday: 12:00 – 8:00 PM",
-            "Tuesday: 12:00 – 8:00 PM",
-            "Wednesday: 12:00 – 8:00 PM",
-            "Thursday: 12:00 – 8:00 PM",
-            "Friday: 12:00 – 8:00 PM",
-            "Saturday: 12:00 – 8:00 PM",
-            "Sunday: 12:00 – 8:00 PM"
-          ],
-          "sortOrder": 2
-        }
-      ],
-      "chairPrice": {
-        "median": 1175000,
-        "currency": "ARS",
-        "sampleSize": 2,
-        "sourceUrl": "https://fradusco.com/entrega-inmediata/",
-        "note": "Current in-stock official chair listings from search snippets."
       }
     },
     {
@@ -5374,64 +5302,6 @@
           254000,
           265000,
           300000
-        ]
-      }
-    },
-    {
-      "id": "sarmientomuebles",
-      "name": "SarmientoMuebles",
-      "category": "Province / Google Maps addition",
-      "style": "Furniture store",
-      "summary": "Furniture shop for dining chairs and comedor sets, including tulip-style seating packs.",
-      "storeCount": 1,
-      "officialUrl": "https://sarmientomuebles.com.ar/",
-      "stores": [
-        {
-          "id": "ChIJDSyHosmlvJURtZIuedW5bGA",
-          "name": "SarmientoMuebles",
-          "branch": "San Fernando",
-          "googlePlaceId": "ChIJDSyHosmlvJURtZIuedW5bGA",
-          "googleMapsUrl": "https://maps.google.com/?cid=6948132651638100661&g_mp=Cilnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaE5lYXJieRACGAQgAA",
-          "website": "https://sarmientomuebles.com.ar/",
-          "phone": "011 5024-9602",
-          "businessStatus": "OPERATIONAL",
-          "address": "Sarmiento 1743, San Fernando",
-          "fullAddress": "Sarmiento 1743, B1646 San Fernando, Provincia de Buenos Aires",
-          "rating": 4.9,
-          "reviewCount": 143,
-          "primaryType": "furniture_store",
-          "types": [
-            "furniture_store",
-            "home_improvement_store",
-            "home_goods_store",
-            "store",
-            "point_of_interest",
-            "establishment"
-          ],
-          "location": {
-            "lat": -34.4434685,
-            "lng": -58.562169499999996
-          },
-          "weekdayHours": [
-            "lunes: 8:00–12:00, 13:00–17:00",
-            "martes: 8:00–12:00, 13:00–17:00",
-            "miércoles: 8:00–12:00, 13:00–17:00",
-            "jueves: 8:00–12:00, 13:00–17:00",
-            "viernes: 8:00–12:00, 13:00–17:00",
-            "sábado: 8:00–11:00",
-            "domingo: Cerrado"
-          ],
-          "sortOrder": 1
-        }
-      ],
-      "chairPrice": {
-        "median": 49010,
-        "currency": "ARS",
-        "sampleSize": 1,
-        "sourceUrl": "https://sarmientomuebles.com.ar/productos/sillas-tulip-x4/",
-        "note": "Tulip x4 pack /4. Sampled 2026-07-12 via BrightData.",
-        "sampledPrices": [
-          49010
         ]
       }
     },

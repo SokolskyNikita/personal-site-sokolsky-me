@@ -136,7 +136,6 @@ const furnitureMapData = brandsWithStoreLabels.flatMap((brand) =>
     brandName: brand.name,
     storeName: store.name,
     category: brand.category,
-    brandSampleSize: brand.chairPrice.sampleSize ?? 0,
     brandHasMultipleBaLocations: brand.storeCount >= 2,
     brandHasFourStarStore: brand.stores.some((entry) => (entry.rating ?? 0) >= 4),
     openSunday: store.openSunday,
@@ -284,10 +283,6 @@ const structuredData = {
           <label class="filter-toggle" for="four-star-brand-only">
             <input id="four-star-brand-only" type="checkbox" autocomplete="off" />
             <span>4.0+ rated store</span>
-          </label>
-          <label class="filter-toggle" for="three-sampled-chairs-only">
-            <input id="three-sampled-chairs-only" type="checkbox" autocomplete="off" />
-            <span>3+ sampled chairs</span>
           </label>
           <label class="filter-toggle" for="open-sunday-only">
             <input id="open-sunday-only" type="checkbox" autocomplete="off" />
@@ -450,7 +445,6 @@ const structuredData = {
   const brandSortSelect = document.querySelector("#brand-sort");
   const multiLocationOnlyToggle = document.querySelector("#multi-location-only");
   const fourStarBrandOnlyToggle = document.querySelector("#four-star-brand-only");
-  const threeSampledChairsOnlyToggle = document.querySelector("#three-sampled-chairs-only");
   const openSundayOnlyToggle = document.querySelector("#open-sunday-only");
   const visibleCount = document.querySelector("[data-visible-count]");
   const brandCards = brandList ? [...brandList.querySelectorAll(".brand-card")] : [];
@@ -523,20 +517,17 @@ const structuredData = {
   const activeFilterDescriptions = () => [
     ...(multiLocationOnlyToggle?.checked ? ["2+ BA locations"] : []),
     ...(fourStarBrandOnlyToggle?.checked ? ["at least one 4.0+ rated store"] : []),
-    ...(threeSampledChairsOnlyToggle?.checked ? ["at least 3 sampled chairs"] : []),
     ...(openSundayOnlyToggle?.checked ? ["open on Sundays"] : []),
   ];
 
   const cardPassesActiveFilters = (card) =>
     (!multiLocationOnlyToggle?.checked || card.dataset.multiLocation === "true") &&
     (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true") &&
-    (!threeSampledChairsOnlyToggle?.checked || getNumericSortValue(card, "sampleSize", 0) >= 3) &&
     (!openSundayOnlyToggle?.checked || card.dataset.openSunday === "true");
 
   const storePassesActiveFilters = (store) =>
     (!multiLocationOnlyToggle?.checked || store.brandHasMultipleBaLocations) &&
     (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore) &&
-    (!threeSampledChairsOnlyToggle?.checked || store.brandSampleSize >= 3) &&
     (!openSundayOnlyToggle?.checked || store.openSunday);
 
   const visibleFurnitureBrands = () => brandCards.filter(cardPassesActiveFilters);
@@ -577,7 +568,7 @@ const structuredData = {
     fitMapToMarkers(visibleRecords);
   };
 
-  const applyBrandFilters = () => {
+  const applyBrandFilters = ({ syncUrl = true } = {}) => {
     const sundayOnly = Boolean(openSundayOnlyToggle?.checked);
 
     for (const card of brandCards) {
@@ -590,14 +581,85 @@ const structuredData = {
     updateVisibleCount();
     sortBrandCards();
     applyMapFilters();
+
+    if (syncUrl) {
+      updateFilterUrl();
+    }
   };
 
-  brandSortSelect?.addEventListener("change", sortBrandCards);
-  multiLocationOnlyToggle?.addEventListener("change", applyBrandFilters);
-  fourStarBrandOnlyToggle?.addEventListener("change", applyBrandFilters);
-  threeSampledChairsOnlyToggle?.addEventListener("change", applyBrandFilters);
-  openSundayOnlyToggle?.addEventListener("change", applyBrandFilters);
-  applyBrandFilters();
+  const filterUrlParams = [
+    "sort",
+    "multiLocation",
+    "fourStar",
+    "openSunday",
+  ];
+
+  const hasEnabledUrlParam = (params, paramName) => {
+    const value = params.get(paramName);
+    if (value === null) return false;
+    return !["0", "false", "no", "off"].includes(value.toLowerCase());
+  };
+
+  const updateFilterUrl = () => {
+    const url = new URL(window.location.href);
+
+    for (const paramName of filterUrlParams) {
+      url.searchParams.delete(paramName);
+    }
+
+    const sortMode = brandSortSelect?.value ?? "price";
+    if (sortMode && sortMode !== "price") url.searchParams.set("sort", sortMode);
+    if (multiLocationOnlyToggle?.checked) url.searchParams.set("multiLocation", "1");
+    if (fourStarBrandOnlyToggle?.checked) url.searchParams.set("fourStar", "1");
+    if (openSundayOnlyToggle?.checked) url.searchParams.set("openSunday", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
+  const resetFilterControls = () => {
+    if (brandSortSelect) brandSortSelect.value = "price";
+    if (multiLocationOnlyToggle) multiLocationOnlyToggle.checked = false;
+    if (fourStarBrandOnlyToggle) fourStarBrandOnlyToggle.checked = false;
+    if (openSundayOnlyToggle) openSundayOnlyToggle.checked = false;
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    resetFilterControls();
+
+    const sortMode = params.get("sort");
+    if (
+      brandSortSelect &&
+      sortMode &&
+      [...brandSortSelect.options].some((option) => option.value === sortMode)
+    ) {
+      brandSortSelect.value = sortMode;
+    }
+
+    if (multiLocationOnlyToggle) {
+      multiLocationOnlyToggle.checked = hasEnabledUrlParam(params, "multiLocation");
+    }
+    if (fourStarBrandOnlyToggle) {
+      fourStarBrandOnlyToggle.checked = hasEnabledUrlParam(params, "fourStar");
+    }
+    if (openSundayOnlyToggle) {
+      openSundayOnlyToggle.checked = hasEnabledUrlParam(params, "openSunday");
+    }
+
+    applyBrandFilters({ syncUrl: false });
+  };
+
+  brandSortSelect?.addEventListener("change", () => applyBrandFilters());
+  multiLocationOnlyToggle?.addEventListener("change", () => applyBrandFilters());
+  fourStarBrandOnlyToggle?.addEventListener("change", () => applyBrandFilters());
+  openSundayOnlyToggle?.addEventListener("change", () => applyBrandFilters());
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
 
   const fitMapToMarkers = (visibleRecords) => {
     if (!furnitureMap || !window.google?.maps || visibleRecords.length === 0) return;
