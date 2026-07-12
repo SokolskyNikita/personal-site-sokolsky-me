@@ -8,8 +8,8 @@ export const prerender = true;
 const pageTitle = "Cishet male archetypes";
 const pageDescription =
   "A field guide to heterosexual male archetypes currently in circulation on the English-language web — glosses of usage, not endorsements.";
-const themeColorLight = "#ffffff";
-const themeColorDark = "#111111";
+const themeColorLight = "#f4f5f3";
+const themeColorDark = "#141614";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
@@ -166,6 +166,13 @@ const structuredData = {
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:url" content={canonicalUrl} />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
+    />
+
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
   </head>
   <body>
@@ -178,37 +185,29 @@ const structuredData = {
         <p class="meta">
           <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} Wiki · {kymTermCount} KYM
         </p>
-        <fieldset class="filters">
-          <legend class="filters-legend">Show</legend>
+      </header>
+
+      <fieldset class="filters">
+        <legend class="filters-legend">Show</legend>
+        <div class="filter-options">
           <label class="filter">
             <input type="radio" name="link-filter" value="all" checked />
-            All
+            <span>All</span>
           </label>
           <label class="filter">
             <input type="radio" name="link-filter" value="wiki" />
-            Wiki only
-            <span class="filter-count">({wikiEntryCount})</span>
+            <span>Wiki <span class="filter-count">({wikiEntryCount})</span></span>
           </label>
           <label class="filter">
             <input type="radio" name="link-filter" value="kym" />
-            Know Your Meme only
-            <span class="filter-count">({kymEntryCount})</span>
+            <span>Know Your Meme <span class="filter-count">({kymEntryCount})</span></span>
           </label>
           <label class="filter">
             <input type="radio" name="link-filter" value="linked" />
-            Wiki or Know Your Meme
-            <span class="filter-count">({linkedEntryCount})</span>
+            <span>Wiki or KYM <span class="filter-count">({linkedEntryCount})</span></span>
           </label>
-        </fieldset>
-      </header>
-
-      <nav class="toc" aria-label="Sections">
-        {
-          sections.map((section) => (
-            <a href={`#${section.id}`} data-toc-for={section.id}>{section.title}</a>
-          ))
-        }
-      </nav>
+        </div>
+      </fieldset>
 
       {
         sections.map((section) => {
@@ -391,11 +390,6 @@ const structuredData = {
           el.hidden = count === 0;
         });
 
-        document.querySelectorAll("[data-toc-for]").forEach((link) => {
-          const section = document.getElementById(link.dataset.tocFor || "");
-          link.hidden = Boolean(mode !== "all" && section?.hidden);
-        });
-
         const url = new URL(location.href);
         url.searchParams.delete("wiki");
         if (mode === "all") url.searchParams.delete("filter");
@@ -429,23 +423,35 @@ const structuredData = {
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #ffffff;
-    --text: #161616;
-    --muted: #5c5c5c;
-    --soft: #8a8a8a;
-    --rule: #e6e6e6;
-    --link: #161616;
-    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --bg: #f4f5f3;
+    --surface: #fcfcfa;
+    --text: #1a1d1a;
+    --muted: #5a635c;
+    --soft: #7d877f;
+    --rule: #d8ddd8;
+    --rule-soft: color-mix(in srgb, var(--rule) 55%, transparent);
+    --accent: #2f5d4a;
+    --accent-soft: #e4eee8;
+    --link: var(--accent);
+    --focus: #3d7a62;
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --page-pad-x: clamp(1rem, 3.5vw, 1.75rem);
+    --page-pad-y: clamp(1rem, 2.5vw, 1.5rem);
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #111111;
-      --text: #eeeeee;
-      --muted: #b0b0b0;
-      --soft: #888888;
-      --rule: #2a2a2a;
-      --link: #eeeeee;
+      --bg: #141614;
+      --surface: #1a1d1a;
+      --text: #edf0eb;
+      --muted: #a7b0a8;
+      --soft: #889188;
+      --rule: #2f3530;
+      --accent: #8fbfa5;
+      --accent-soft: #24332b;
+      --link: var(--accent);
+      --focus: #a5d0b8;
     }
   }
 
@@ -453,29 +459,52 @@ const structuredData = {
     box-sizing: border-box;
   }
 
+  [hidden] {
+    display: none !important;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    color: var(--text);
+  }
+
   html {
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.45;
+    font-size: 16px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     margin: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+    background:
+      radial-gradient(
+        42rem 28rem at 8% -4%,
+        color-mix(in srgb, var(--accent-soft) 70%, transparent),
+        transparent 70%
+      ),
+      var(--bg);
   }
 
   .page {
-    max-width: 44rem;
+    width: 100%;
+    max-width: 52rem;
     margin: 0 auto;
-    padding: 0.85rem 1rem 2.5rem;
+    padding: var(--page-pad-y) var(--page-pad-x) clamp(2.5rem, 8vw, 4rem);
   }
 
   .home {
-    margin: 0 0 0.65rem;
+    margin: 0 0 1rem;
     color: var(--soft);
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   .home a {
@@ -490,69 +519,114 @@ const structuredData = {
   }
 
   .hero {
-    margin: 0 0 0.75rem;
-    padding: 0 0 0.7rem;
+    margin: 0 0 clamp(1.1rem, 3vw, 1.6rem);
+    padding: 0 0 clamp(0.9rem, 2.5vw, 1.2rem);
     border-bottom: 1px solid var(--rule);
   }
 
   h1 {
-    margin: 0 0 0.35rem;
-    font-size: 1.35rem;
-    font-weight: 650;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    margin: 0 0 0.55rem;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: clamp(1.65rem, 4.2vw, 2.15rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-optical-sizing: auto;
   }
 
   .lede {
     margin: 0;
+    max-width: 40rem;
     color: var(--muted);
-    font-size: 0.88rem;
-    line-height: 1.4;
+    font-size: clamp(0.92rem, 2.2vw, 1rem);
+    line-height: 1.55;
   }
 
   .meta {
-    margin: 0.4rem 0 0;
+    margin: 0.7rem 0 0;
     color: var(--soft);
-    font-size: 0.72rem;
-    letter-spacing: 0.02em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
   }
 
   .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem 0.85rem;
-    margin: 0.55rem 0 0;
-    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: grid;
+    gap: 0.45rem;
+    margin: 0 0 clamp(1rem, 2.8vw, 1.35rem);
+    padding: 0.65rem 0 0.7rem;
     border: 0;
+    border-bottom: 1px solid var(--rule-soft);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .filters-legend {
-    float: left;
-    margin: 0 0.55rem 0 0;
+    margin: 0;
     padding: 0;
     color: var(--soft);
-    font-size: 0.72rem;
-    line-height: 1.4;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
 
   .filter {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    min-height: 2.1rem;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--surface);
     color: var(--muted);
     cursor: pointer;
     font-size: 0.78rem;
+    font-weight: 500;
     line-height: 1.2;
     user-select: none;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease;
   }
 
   .filter input {
-    margin: 0;
-    accent-color: var(--text);
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .filter:hover {
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--rule));
+    color: var(--text);
+  }
+
+  .filter:has(input:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .filter:has(input:checked) {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--rule));
+    background: var(--accent-soft);
+    color: var(--text);
   }
 
   .filter-count {
     color: var(--soft);
+    font-weight: 400;
   }
 
   .page.filter-wiki .entry[data-wiki="false"],
@@ -564,79 +638,66 @@ const structuredData = {
     display: none;
   }
 
-  .toc {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 0.55rem;
-    margin: 0 0 1rem;
-    padding: 0 0 0.7rem;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .toc a {
-    color: var(--muted);
-    font-size: 0.72rem;
-    line-height: 1.3;
-    text-decoration: none;
-  }
-
-  .toc a:hover {
-    color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
   .group {
-    margin: 0 0 0.95rem;
-    scroll-margin-top: 0.75rem;
+    margin: 0 0 clamp(1.35rem, 3.5vw, 1.85rem);
+    scroll-margin-top: 4.5rem;
   }
 
   .subgroup {
-    margin: 0.55rem 0 0;
-    scroll-margin-top: 0.75rem;
+    margin: 0.85rem 0 0;
+    padding-left: 0.05rem;
+    scroll-margin-top: 4.5rem;
   }
 
   h2 {
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.4rem;
     color: var(--text);
-    font-size: 0.98rem;
-    font-weight: 650;
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 2.4vw, 1.2rem);
+    font-weight: 600;
     line-height: 1.25;
+    letter-spacing: -0.015em;
   }
 
   h3 {
-    margin: 0 0 0.2rem;
+    margin: 0 0 0.3rem;
     color: var(--text);
-    font-size: 0.88rem;
-    font-weight: 650;
-    line-height: 1.25;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
   }
 
   .note {
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.55rem;
     color: var(--soft);
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-style: italic;
-    line-height: 1.35;
+    line-height: 1.45;
   }
 
   .entries {
     margin: 0;
+    border-top: 1px solid var(--rule-soft);
   }
 
   .entry {
     display: grid;
-    grid-template-columns: minmax(7.5rem, 32%) 1fr;
-    column-gap: 0.65rem;
+    grid-template-columns: minmax(8rem, 34%) minmax(0, 1fr);
+    column-gap: 0.9rem;
     align-items: baseline;
-    padding: 0.12rem 0;
+    margin: 0 -0.35rem;
+    padding: 0.42rem 0.35rem;
+    border-bottom: 1px solid var(--rule-soft);
+    border-radius: 0.25rem;
   }
 
   .term {
     color: var(--text);
-    font-size: 0.82rem;
-    font-weight: 650;
-    line-height: 1.35;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
   }
 
   .term .wiki-term,
@@ -648,42 +709,89 @@ const structuredData = {
     text-underline-offset: 0.18em;
   }
 
+  .term .wiki-term {
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  .term .kym-term {
+    text-decoration-style: dotted;
+    text-decoration-color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+
   .term .wiki-term:hover,
   .term .kym-term:hover {
-    color: var(--muted);
+    color: var(--accent);
   }
 
   .gloss {
+    min-width: 0;
     color: var(--muted);
-    font-size: 0.82rem;
-    line-height: 1.35;
+    font-size: 0.875rem;
+    line-height: 1.45;
   }
 
   .aside {
-    margin: 0.2rem 0 0.1rem;
+    margin: 0;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--rule-soft);
     color: var(--soft);
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-style: italic;
+    line-height: 1.45;
   }
 
   a {
     color: var(--link);
   }
 
-  @media (max-width: 560px) {
-    .entry {
-      grid-template-columns: 1fr;
-      gap: 0.05rem;
-      padding: 0.28rem 0;
-      border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .filters {
+      margin-inline: calc(var(--page-pad-x) * -1);
+      padding-inline: var(--page-pad-x);
     }
 
-    .entry:last-child {
-      border-bottom: 0;
+    .filter {
+      min-height: 2.35rem;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+      margin: 0;
+      padding: 0.55rem 0;
+      border-radius: 0;
     }
 
     .term {
-      font-size: 0.84rem;
+      font-size: 0.9rem;
+    }
+
+    .gloss {
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .subgroup {
+      margin-top: 1rem;
+    }
+  }
+
+  @media (min-width: 641px) {
+    .entry:hover {
+      background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filter {
+      transition: none;
     }
   }
 </style>
