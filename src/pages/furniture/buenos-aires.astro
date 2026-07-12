@@ -73,6 +73,22 @@ const formatChairPrice = (brand: Brand) => {
   };
 };
 const pricedBrandCount = brands.filter((brand) => brand.chairPrice.median != null).length;
+const chairPriceSortValueUsd = (brand: Brand) => {
+  const chairPrice = brand.chairPrice;
+  if (
+    chairPrice &&
+    "displayPrimary" in chairPrice &&
+    typeof chairPrice.displayPrimary === "string" &&
+    chairPrice.displayPrimary.length > 0 &&
+    chairPrice.median == null
+  ) {
+    return Number.POSITIVE_INFINITY;
+  }
+  if (chairPrice?.median == null) return Number.POSITIVE_INFINITY;
+  return chairPrice.currency === "USD"
+    ? chairPrice.median
+    : chairPrice.median / arsPerUsd;
+};
 const isOpenSunday = (weekdayHours: string[] | undefined) => {
   const sundayLine = (weekdayHours ?? []).find((line) =>
     /^(sunday|domingo)\b/i.test(line.trim()),
@@ -86,7 +102,12 @@ const sortStoresByReviewCount = <T extends Store>(stores: T[]) =>
     (second.rating ?? 0) - (first.rating ?? 0) ||
     first.name.localeCompare(second.name)
   );
-const brandsWithStoreLabels = brands.map((brand: Brand, index: number) => {
+const brandsSortedByPrice = [...brands].sort(
+  (first, second) =>
+    chairPriceSortValueUsd(first) - chairPriceSortValueUsd(second) ||
+    first.name.localeCompare(second.name),
+);
+const brandsWithStoreLabels = brandsSortedByPrice.map((brand: Brand, index: number) => {
   const stores = sortStoresByReviewCount(
     brand.stores.map((store) => ({
       ...store,
@@ -97,6 +118,7 @@ const brandsWithStoreLabels = brands.map((brand: Brand, index: number) => {
     ...brand,
     stores,
     listPosition: index + 1,
+    priceSortUsd: chairPriceSortValueUsd(brand),
     chairPriceDisplay: formatChairPrice(brand),
     isProvinceAddition: isProvinceAddition(brand),
     maxReviewCount: maxStoreReviews(brand),
@@ -133,8 +155,8 @@ const structuredData = {
   name: pageTitle,
   description: pageDescription,
   url: canonicalUrl,
-  numberOfItems: brands.length,
-  itemListElement: brands.map((brand, index) => ({
+  numberOfItems: brandsWithStoreLabels.length,
+  itemListElement: brandsWithStoreLabels.map((brand, index) => ({
     "@type": "ListItem",
     position: index + 1,
     item: {
