@@ -20,11 +20,11 @@ const structuredData = {
   inLanguage: "en"
 };
 
-// The current World Bank series uses the post-2016 reconstruction of Argentina's
-// national accounts. It does not use the GDP path published during the intervention.
-// Do not substitute the blue-dollar rate here: NY.GDP.PCAP.CD is defined using
-// official period-average exchange rates, so doing so would create a different metric.
-const revisedGdpPerCapita = [
+// Both World Bank series use the post-2016 reconstruction of Argentina's national
+// accounts, not the GDP path published during the 2007–15 INDEC intervention.
+// Current US$ uses official period-average FX by definition. PPP uses international
+// dollars and is therefore the better view of domestic purchasing power.
+const currentDollarGdpPerCapita = [
   [1990, 4315], [1991, 5709], [1992, 6790], [1993, 6932], [1994, 7438],
   [1995, 7358], [1996, 7663], [1997, 8147], [1998, 8219], [1999, 7706],
   [2000, 7637], [2001, 7141], [2002, 2570], [2003, 3320], [2004, 4242],
@@ -34,6 +34,24 @@ const revisedGdpPerCapita = [
   [2020, 8536], [2021, 10738], [2022, 13962], [2023, 14262], [2024, 13970],
   [2025, 14898]
 ] as const;
+
+// World Bank WDI through 2024. The 2025 point extrapolates the 2024 WDI level
+// by the IMF WEO April 2026 estimate of 2025 PPP-per-capita growth (6.45%).
+const pppGdpPerCapita = [
+  [1990, 7158], [1991, 7961], [1992, 8668], [1993, 9472], [1994, 10103],
+  [1995, 9891], [1996, 10496], [1997, 11403], [1998, 11836], [1999, 11464],
+  [2000, 11500], [2001, 11118], [2002, 9953], [2003, 10933], [2004, 12118],
+  [2005, 13465], [2006, 14844], [2007, 16455], [2008, 17277], [2009, 16182],
+  [2010, 17848], [2011, 19105], [2012, 19430], [2013, 19929], [2014, 19487],
+  [2015, 19899], [2016, 20106], [2017, 23385], [2018, 24410], [2019, 23517],
+  [2020, 22393], [2021, 26300], [2022, 29809], [2023, 30221], [2024, 30431],
+  [2025, 32382]
+] as const;
+
+const gdpSeries = {
+  current: currentDollarGdpPerCapita,
+  ppp: pppGdpPerCapita
+};
 
 const chart = {
   width: 760,
@@ -50,7 +68,7 @@ const xForYear = (year: number) =>
   chart.left + ((year - 1990) / (2025 - 1990)) * plotWidth;
 const yForValue = (value: number) =>
   chart.top + plotHeight - (value / chart.max) * plotHeight;
-const linePath = revisedGdpPerCapita
+const linePath = currentDollarGdpPerCapita
   .map(([year, value], index) =>
     `${index === 0 ? "M" : "L"} ${xForYear(year).toFixed(1)} ${yForValue(value).toFixed(1)}`
   )
@@ -58,11 +76,6 @@ const linePath = revisedGdpPerCapita
 const areaPath = `${linePath} L ${xForYear(2025).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} L ${xForYear(1990).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} Z`;
 const xTicks = [1990, 2000, 2010, 2020, 2025];
 const yTicks = [0, 4000, 8000, 12000, 16000];
-const chartLabels = revisedGdpPerCapita.filter(([year]) =>
-  [1998, 2002, 2011, 2025].includes(year)
-);
-const formatDollars = (value: number) =>
-  `$${Math.round(value / 100) / 10}k`;
 ---
 
 <!doctype html>
@@ -133,87 +146,134 @@ const formatDollars = (value: number) =>
           <p>
             Numbers from 2007 to 2015 deserve extra caution because the government manipulated official statistics. After Néstor Kirchner replaced senior staff at the statistics agency, INDEC, reported inflation fell far below private estimates. In 2011, for example, the official rate was <a href="https://www.bloomberg.com/news/articles/2013-02-01/argentina-becomes-first-nation-censured-by-imf-on-inflation-data" target="_blank" rel="noreferrer noopener">10.8%, versus a private estimate of 25.6%</a>. This also made reported economic growth look stronger than it was. In 2013 the IMF formally <a href="https://www.imf.org/en/news/articles/2015/09/14/01/49/pr1333" target="_blank" rel="noreferrer noopener">censured Argentina</a>, the first such action in its history. It <a href="https://www.imf.org/en/News/Articles/2016/11/09/PR16497-Argentina-IMF-Executive-Board-Removes-Declaration-of-Censure" target="_blank" rel="noreferrer noopener">lifted the censure</a> in 2016 after INDEC was rebuilt.
           </p>
-          <figure class="gdp-chart">
+          <figure class="gdp-chart" data-gdp-chart>
             <div class="chart-heading">
               <div>
-                <p class="chart-kicker">The dollar-value roller coaster</p>
-                <h3>GDP per person, current US dollars, adjusted for bad reporting</h3>
+                <p class="chart-kicker">Two lenses on living standards</p>
+                <h3>GDP per person, corrected historical series</h3>
               </div>
-              <div class="chart-meta">
-                <p class="chart-unit">1990–2025 · US$ at official period-average FX</p>
-                <p class="chart-status"><span aria-hidden="true"></span>Post-2016 national-accounts revision</p>
+              <div class="chart-toggle" aria-label="GDP measurement">
+                <button type="button" data-metric="current" aria-pressed="true">Current US$</button>
+                <button type="button" data-metric="ppp" aria-pressed="false">PPP adjusted</button>
               </div>
             </div>
-            <svg
-              viewBox={`0 0 ${chart.width} ${chart.height}`}
-              role="img"
-              aria-labelledby="gdp-chart-title gdp-chart-desc"
-            >
-              <title id="gdp-chart-title">Argentina GDP per person in current US dollars, adjusted for bad reporting, 1990 to 2025</title>
-              <desc id="gdp-chart-desc">The post-2016 revised World Bank series rises from about 4,300 dollars in 1990 to 14,900 dollars in 2025, with a collapse to 2,570 dollars in 2002. The years originally affected by the 2007 through 2015 INDEC intervention are shaded, but the plotted values are the later reconstruction.</desc>
-              <defs>
-                <linearGradient id="gdp-area" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="var(--chart-line)" stop-opacity="0.2"></stop>
-                  <stop offset="100%" stop-color="var(--chart-line)" stop-opacity="0"></stop>
-                </linearGradient>
-              </defs>
+            <div class="chart-meta">
+              <p class="chart-unit" data-chart-unit>1990–2025 · current US$ at official period-average FX</p>
+              <p class="chart-status"><span aria-hidden="true"></span>Revised national accounts</p>
+            </div>
+            <div class="chart-stage">
+              <div class="chart-readout" aria-live="polite" aria-atomic="true">
+                <span class="readout-year" data-readout-year>2025</span>
+                <strong data-readout-value>$14,898</strong>
+                <span class="readout-note" data-readout-note>World Bank observation</span>
+              </div>
+              <svg
+                viewBox={`0 0 ${chart.width} ${chart.height}`}
+                role="img"
+                tabindex="0"
+                aria-labelledby="gdp-chart-title gdp-chart-desc"
+                data-chart-svg
+              >
+                <title id="gdp-chart-title">Interactive chart of Argentina GDP per person, 1990 to 2025</title>
+                <desc id="gdp-chart-desc">Choose current US dollars or purchasing-power-parity adjusted international dollars. Move across or click the plot, or use the year slider and arrow keys, to inspect annual values. The shaded 2007 through 2015 period uses the later reconstructed national accounts rather than the figures originally reported.</desc>
+                <defs>
+                  <linearGradient id="gdp-area" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--chart-line)" stop-opacity="0.22"></stop>
+                    <stop offset="100%" stop-color="var(--chart-line)" stop-opacity="0"></stop>
+                  </linearGradient>
+                </defs>
 
-              <rect
-                class="chart-warning"
-                x={xForYear(2007)}
-                y={chart.top}
-                width={xForYear(2015) - xForYear(2007)}
-                height={plotHeight}
-              ></rect>
-              <text
-                class="warning-label"
-                x={(xForYear(2007) + xForYear(2015)) / 2}
-                y={chart.top - 15}
-                text-anchor="middle"
-              >Later reconstructed</text>
-
-              {yTicks.map((tick) => (
-                <g>
-                  <line
-                    class="grid-line"
-                    x1={chart.left}
-                    x2={chart.width - chart.right}
-                    y1={yForValue(tick)}
-                    y2={yForValue(tick)}
-                  ></line>
-                  <text
-                    class="axis-label axis-label-y"
-                    x={chart.left - 12}
-                    y={yForValue(tick) + 4}
-                    text-anchor="end"
-                  >{tick === 0 ? "$0" : `$${tick / 1000}k`}</text>
-                </g>
-              ))}
-
-              {xTicks.map((tick) => (
+                <rect
+                  class="chart-warning"
+                  x={xForYear(2007)}
+                  y={chart.top}
+                  width={xForYear(2015) - xForYear(2007)}
+                  height={plotHeight}
+                ></rect>
                 <text
-                  class="axis-label"
-                  x={xForYear(tick)}
-                  y={chart.height - 17}
-                  text-anchor={tick === 1990 ? "start" : tick === 2025 ? "end" : "middle"}
-                >{tick}</text>
-              ))}
+                  class="warning-label"
+                  x={(xForYear(2007) + xForYear(2015)) / 2}
+                  y={chart.top - 15}
+                  text-anchor="middle"
+                >2007–15 · later reconstructed</text>
 
-              <path class="chart-area" d={areaPath}></path>
-              <path class="chart-line" d={linePath}></path>
-
-              {chartLabels.map(([year, value]) => (
-                <g class="chart-marker">
-                  <circle cx={xForYear(year)} cy={yForValue(value)} r="4.5"></circle>
-                  <text
-                    x={xForYear(year)}
-                    y={yForValue(value) - 12}
-                    text-anchor={year === 1998 ? "end" : year === 2025 ? "end" : "middle"}
-                    dx={year === 1998 ? -6 : year === 2025 ? -5 : 0}
-                  >{formatDollars(value)}</text>
+                <g data-y-axis>
+                  {yTicks.map((tick) => (
+                    <g>
+                      <line
+                        class="grid-line"
+                        x1={chart.left}
+                        x2={chart.width - chart.right}
+                        y1={yForValue(tick)}
+                        y2={yForValue(tick)}
+                      ></line>
+                      <text
+                        class="axis-label axis-label-y"
+                        x={chart.left - 12}
+                        y={yForValue(tick) + 4}
+                        text-anchor="end"
+                      >{tick === 0 ? "$0" : `$${tick / 1000}k`}</text>
+                    </g>
+                  ))}
                 </g>
-              ))}
-            </svg>
+
+                {xTicks.map((tick) => (
+                  <text
+                    class="axis-label"
+                    x={xForYear(tick)}
+                    y={chart.height - 17}
+                    text-anchor={tick === 1990 ? "start" : tick === 2025 ? "end" : "middle"}
+                  >{tick}</text>
+                ))}
+
+                <path class="chart-area" d={areaPath} data-chart-area></path>
+                <path class="chart-line" d={linePath} data-chart-line></path>
+                <g class="chart-points" data-chart-points>
+                  {currentDollarGdpPerCapita.map(([year, value]) => (
+                    <circle cx={xForYear(year)} cy={yForValue(value)} r="2.2"></circle>
+                  ))}
+                </g>
+                <line
+                  class="chart-crosshair"
+                  x1={xForYear(2025)}
+                  x2={xForYear(2025)}
+                  y1={chart.top}
+                  y2={chart.top + plotHeight}
+                  data-chart-crosshair
+                ></line>
+                <circle
+                  class="chart-selection"
+                  cx={xForYear(2025)}
+                  cy={yForValue(14898)}
+                  r="5"
+                  data-chart-selection
+                ></circle>
+                <rect
+                  class="chart-hit-area"
+                  x={chart.left}
+                  y={chart.top}
+                  width={plotWidth}
+                  height={plotHeight}
+                  data-chart-hit-area
+                ></rect>
+              </svg>
+            </div>
+            <label class="year-scrubber">
+              <span>Year</span>
+              <input type="range" min="1990" max="2025" value="2025" step="1" data-year-scrubber />
+              <output data-year-output>2025</output>
+            </label>
+            <figcaption class="chart-caption">
+              <span><i class="legend-swatch reconstructed" aria-hidden="true"></i>2007–15 values come from the replacement series published after INDEC was rebuilt.</span>
+              <span data-estimate-legend hidden><i class="legend-swatch estimate" aria-hidden="true"></i>2025 PPP is an estimate, extrapolated from the 2024 World Bank level using IMF growth.</span>
+            </figcaption>
+            <p class="chart-source">
+              Sources: <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=AR" target="_blank" rel="noreferrer noopener">World Bank current US$</a>,
+              <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.PP.CD?locations=AR" target="_blank" rel="noreferrer noopener">World Bank PPP</a>, and
+              <a href="https://www.imf.org/external/datamapper/PPPPC@WEO/ARG" target="_blank" rel="noreferrer noopener">IMF WEO</a>.
+              Current dollars show the exchange-rate value; PPP adjusts for local prices. Neither series is inflation-adjusted over time.
+            </p>
+            <script type="application/json" data-gdp-data set:html={JSON.stringify(gdpSeries)}></script>
           </figure>
         </section>
 
@@ -706,6 +766,197 @@ const formatDollars = (value: number) =>
       </article>
     </main>
 
+<script>
+  const charts = document.querySelectorAll<HTMLElement>("[data-gdp-chart]");
+  const svgNamespace = "http://www.w3.org/2000/svg";
+  const dimensions = {
+    width: 760,
+    height: 390,
+    left: 62,
+    right: 20,
+    top: 48,
+    bottom: 48
+  };
+  const plotWidth = dimensions.width - dimensions.left - dimensions.right;
+  const plotHeight = dimensions.height - dimensions.top - dimensions.bottom;
+
+  const formatValue = (value: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0
+    }).format(value);
+
+  const xForYear = (year: number) =>
+    dimensions.left + ((year - 1990) / 35) * plotWidth;
+  const yForValue = (value: number, max: number) =>
+    dimensions.top + plotHeight - (value / max) * plotHeight;
+
+  charts.forEach((chart) => {
+    const dataNode = chart.querySelector<HTMLScriptElement>("[data-gdp-data]");
+    const svg = chart.querySelector<SVGSVGElement>("[data-chart-svg]");
+    const hitArea = chart.querySelector<SVGRectElement>("[data-chart-hit-area]");
+    const line = chart.querySelector<SVGPathElement>("[data-chart-line]");
+    const area = chart.querySelector<SVGPathElement>("[data-chart-area]");
+    const points = chart.querySelector<SVGGElement>("[data-chart-points]");
+    const crosshair = chart.querySelector<SVGLineElement>("[data-chart-crosshair]");
+    const selection = chart.querySelector<SVGCircleElement>("[data-chart-selection]");
+    const yAxis = chart.querySelector<SVGGElement>("[data-y-axis]");
+    const scrubber = chart.querySelector<HTMLInputElement>("[data-year-scrubber]");
+    const yearOutput = chart.querySelector<HTMLOutputElement>("[data-year-output]");
+    const readoutYear = chart.querySelector<HTMLElement>("[data-readout-year]");
+    const readoutValue = chart.querySelector<HTMLElement>("[data-readout-value]");
+    const readoutNote = chart.querySelector<HTMLElement>("[data-readout-note]");
+    const unit = chart.querySelector<HTMLElement>("[data-chart-unit]");
+    const estimateLegend = chart.querySelector<HTMLElement>("[data-estimate-legend]");
+    const buttons = chart.querySelectorAll<HTMLButtonElement>("[data-metric]");
+
+    if (
+      !dataNode || !svg || !hitArea || !line || !area || !points ||
+      !crosshair || !selection || !yAxis || !scrubber || !yearOutput ||
+      !readoutYear || !readoutValue || !readoutNote || !unit || !estimateLegend
+    ) return;
+
+    const series = JSON.parse(dataNode.textContent || "{}") as Record<
+      "current" | "ppp",
+      [number, number][]
+    >;
+    const config = {
+      current: {
+        max: 16000,
+        ticks: [0, 4000, 8000, 12000, 16000],
+        unit: "1990–2025 · current US$ at official period-average FX"
+      },
+      ppp: {
+        max: 40000,
+        ticks: [0, 10000, 20000, 30000, 40000],
+        unit: "1990–2025 · current international dollars, PPP adjusted"
+      }
+    } as const;
+
+    let metric: "current" | "ppp" = "current";
+    let pinnedYear = 2025;
+
+    const buildPath = (values: [number, number][], max: number) =>
+      values.map(([year, value], index) =>
+        `${index === 0 ? "M" : "L"} ${xForYear(year).toFixed(1)} ${yForValue(value, max).toFixed(1)}`
+      ).join(" ");
+
+    const renderSelection = (year: number) => {
+      const point = series[metric].find(([pointYear]) => pointYear === year);
+      if (!point) return;
+
+      const [, value] = point;
+      const x = xForYear(year);
+      const y = yForValue(value, config[metric].max);
+      crosshair.setAttribute("x1", String(x));
+      crosshair.setAttribute("x2", String(x));
+      selection.setAttribute("cx", String(x));
+      selection.setAttribute("cy", String(y));
+      scrubber.value = String(year);
+      yearOutput.value = String(year);
+      readoutYear.textContent = String(year);
+      readoutValue.textContent = formatValue(value);
+
+      const reconstructed = year >= 2007 && year <= 2015;
+      const estimated = metric === "ppp" && year === 2025;
+      readoutNote.textContent = estimated
+        ? "Estimate · IMF growth applied to World Bank level"
+        : reconstructed
+          ? "World Bank · post-2016 reconstruction"
+          : "World Bank observation";
+      svg.setAttribute(
+        "aria-label",
+        `${year}: ${formatValue(value)}, ${
+          metric === "ppp" ? "PPP-adjusted international dollars" : "current US dollars"
+        }. ${readoutNote.textContent}`
+      );
+    };
+
+    const renderMetric = () => {
+      const values = series[metric];
+      const { max, ticks } = config[metric];
+      const path = buildPath(values, max);
+      line.setAttribute("d", path);
+      area.setAttribute(
+        "d",
+        `${path} L ${xForYear(2025).toFixed(1)} ${(dimensions.top + plotHeight).toFixed(1)} L ${xForYear(1990).toFixed(1)} ${(dimensions.top + plotHeight).toFixed(1)} Z`
+      );
+
+      points.replaceChildren(...values.map(([year, value]) => {
+        const point = document.createElementNS(svgNamespace, "circle");
+        point.setAttribute("cx", String(xForYear(year)));
+        point.setAttribute("cy", String(yForValue(value, max)));
+        point.setAttribute("r", "2.2");
+        return point;
+      }));
+
+      Array.from(yAxis.children).forEach((tickNode, index) => {
+        const value = ticks[index];
+        const y = yForValue(value, max);
+        tickNode.querySelector("line")?.setAttribute("y1", String(y));
+        tickNode.querySelector("line")?.setAttribute("y2", String(y));
+        const label = tickNode.querySelector("text");
+        if (label) {
+          label.setAttribute("y", String(y + 4));
+          label.textContent = value === 0 ? "$0" : `$${value / 1000}k`;
+        }
+      });
+
+      buttons.forEach((button) =>
+        button.setAttribute("aria-pressed", String(button.dataset.metric === metric))
+      );
+      unit.textContent = config[metric].unit;
+      estimateLegend.hidden = metric !== "ppp";
+      chart.dataset.activeMetric = metric;
+      renderSelection(pinnedYear);
+    };
+
+    const yearFromPointer = (event: PointerEvent) => {
+      const bounds = svg.getBoundingClientRect();
+      const svgX = ((event.clientX - bounds.left) / bounds.width) * dimensions.width;
+      return Math.min(2025, Math.max(1990, Math.round(
+        1990 + ((svgX - dimensions.left) / plotWidth) * 35
+      )));
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        metric = button.dataset.metric === "ppp" ? "ppp" : "current";
+        renderMetric();
+      });
+    });
+
+    hitArea.addEventListener("pointermove", (event) =>
+      renderSelection(yearFromPointer(event))
+    );
+    hitArea.addEventListener("pointerleave", () => renderSelection(pinnedYear));
+    hitArea.addEventListener("click", (event) => {
+      pinnedYear = yearFromPointer(event);
+      renderSelection(pinnedYear);
+    });
+
+    scrubber.addEventListener("input", () => {
+      pinnedYear = Number(scrubber.value);
+      renderSelection(pinnedYear);
+    });
+
+    svg.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      if (event.key === "Home") pinnedYear = 1990;
+      else if (event.key === "End") pinnedYear = 2025;
+      else pinnedYear = Math.min(
+        2025,
+        Math.max(1990, pinnedYear + (event.key === "ArrowRight" ? 1 : -1))
+      );
+      renderSelection(pinnedYear);
+    });
+
+    renderMetric();
+  });
+</script>
+
 <style>
 
   :root {
@@ -961,17 +1212,18 @@ const formatDollars = (value: number) =>
     left: 50%;
     width: min(58rem, calc(100vw - 2rem));
     margin: 1.35rem 0 0;
-    padding: clamp(1rem, 2.5vw, 1.5rem);
+    padding: clamp(1rem, 2.5vw, 1.6rem);
     border: 1px solid var(--rule);
     background: var(--paper);
     transform: translateX(-50%);
+    container-type: inline-size;
   }
 
   .chart-heading {
     display: flex;
-    align-items: end;
+    align-items: start;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .chart-heading h3 {
@@ -981,7 +1233,12 @@ const formatDollars = (value: number) =>
 
   .chart-kicker,
   .chart-unit,
-  .chart-status {
+  .chart-status,
+  .chart-toggle,
+  .chart-readout,
+  .year-scrubber,
+  .chart-caption,
+  .chart-source {
     font-family: var(--sans);
   }
 
@@ -997,14 +1254,14 @@ const formatDollars = (value: number) =>
     color: var(--muted);
     font-size: 0.76rem;
     line-height: 1.3;
-    text-align: right;
   }
 
   .chart-meta {
-    flex: 0 0 auto;
-    display: grid;
-    justify-items: end;
-    gap: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-top: 0.8rem;
   }
 
   .chart-status {
@@ -1024,12 +1281,96 @@ const formatDollars = (value: number) =>
     background: var(--chart-line);
   }
 
+  .chart-toggle {
+    flex: 0 0 auto;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0.2rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.45rem;
+    background: var(--bg);
+  }
+
+  .chart-toggle button {
+    min-height: 2.2rem;
+    padding: 0.35rem 0.7rem;
+    border: 0;
+    border-radius: 0.3rem;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 720;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .chart-toggle button[aria-pressed="true"] {
+    background: var(--paper);
+    color: var(--text);
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--text) 12%, transparent);
+  }
+
+  .chart-toggle button:focus-visible,
+  .year-scrubber input:focus-visible,
+  .gdp-chart svg:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .chart-stage {
+    position: relative;
+    margin-top: 0.35rem;
+  }
+
+  .chart-readout {
+    position: absolute;
+    z-index: 2;
+    top: 3.8rem;
+    left: 4.1rem;
+    display: grid;
+    min-width: 9rem;
+    padding: 0.55rem 0.65rem 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--chart-line) 35%, var(--rule));
+    background: color-mix(in srgb, var(--paper) 94%, transparent);
+    box-shadow: 0 0.35rem 1.2rem color-mix(in srgb, var(--text) 8%, transparent);
+    pointer-events: none;
+  }
+
+  .readout-year {
+    color: var(--muted);
+    font-size: 0.67rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+  }
+
+  .chart-readout strong {
+    margin-top: 0.05rem;
+    color: var(--text);
+    font-size: 1.08rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .readout-note {
+    max-width: 22ch;
+    margin-top: 0.12rem;
+    color: var(--muted);
+    font-size: 0.62rem;
+    line-height: 1.3;
+  }
+
   .gdp-chart svg {
     display: block;
     width: 100%;
     height: auto;
-    margin-top: 0.6rem;
     overflow: visible;
+    touch-action: pan-y;
+    cursor: crosshair;
   }
 
   .chart-warning {
@@ -1038,8 +1379,7 @@ const formatDollars = (value: number) =>
   }
 
   .warning-label,
-  .axis-label,
-  .chart-marker text {
+  .axis-label {
     fill: var(--muted);
     font-family: var(--sans);
     font-size: 12px;
@@ -1072,21 +1412,107 @@ const formatDollars = (value: number) =>
     vector-effect: non-scaling-stroke;
   }
 
-  .chart-marker circle {
-    fill: var(--paper);
-    stroke: var(--chart-line);
-    stroke-width: 2.5;
+  .chart-points circle {
+    fill: var(--chart-line);
+    opacity: 0.58;
     vector-effect: non-scaling-stroke;
   }
 
-  .chart-marker text {
-    fill: var(--text);
-    font-size: 12px;
-    font-weight: 750;
-    paint-order: stroke;
-    stroke: var(--paper);
-    stroke-linejoin: round;
-    stroke-width: 4px;
+  .chart-crosshair {
+    stroke: var(--text);
+    stroke-dasharray: 3 4;
+    stroke-width: 1;
+    opacity: 0.32;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .chart-selection {
+    fill: var(--paper);
+    stroke: var(--chart-line);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .chart-hit-area {
+    fill: transparent;
+    pointer-events: all;
+  }
+
+  .year-scrubber {
+    display: grid;
+    grid-template-columns: auto minmax(8rem, 1fr) 3ch;
+    align-items: center;
+    gap: 0.65rem;
+    margin: -0.2rem 0 0;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .year-scrubber input {
+    width: 100%;
+    margin: 0;
+    accent-color: var(--chart-line);
+    cursor: ew-resize;
+  }
+
+  .year-scrubber output {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .chart-caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    margin-top: 0.85rem;
+    color: var(--text-soft);
+    font-size: 0.68rem;
+    line-height: 1.45;
+  }
+
+  .chart-caption span {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.38rem;
+  }
+
+  .chart-caption [hidden] {
+    display: none;
+  }
+
+  .legend-swatch {
+    flex: 0 0 auto;
+    width: 0.55rem;
+    height: 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--chart-warning) 75%, var(--text));
+    background: color-mix(in srgb, var(--chart-warning) 22%, transparent);
+  }
+
+  .legend-swatch.estimate {
+    border-color: var(--chart-line);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+
+  .chart-source {
+    margin-top: 0.65rem;
+    color: var(--muted);
+    font-size: 0.67rem;
+    line-height: 1.5;
+  }
+
+  .chart-source a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.12em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chart-toggle button {
+      transition: none;
+    }
   }
 
   table {
@@ -1181,21 +1607,50 @@ const formatDollars = (value: number) =>
     }
 
     .chart-heading {
-      display: block;
+      display: grid;
+      gap: 0.75rem;
     }
 
-    .chart-unit {
-      margin-top: 0.25rem;
-      text-align: left;
+    .chart-toggle {
+      width: 100%;
     }
 
     .chart-meta {
-      justify-items: start;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.3rem;
     }
 
-    .axis-label,
-    .chart-marker text {
+    .chart-readout {
+      top: 3rem;
+      left: 3.35rem;
+      min-width: 7.8rem;
+      padding: 0.42rem 0.5rem 0.48rem;
+    }
+
+    .chart-readout strong {
+      font-size: 0.92rem;
+    }
+
+    .readout-note {
+      max-width: 18ch;
+      font-size: 0.56rem;
+    }
+
+    .warning-label {
+      font-size: 9px;
+    }
+
+    .axis-label {
       font-size: 13px;
+    }
+
+    .year-scrubber {
+      margin-top: 0.15rem;
+    }
+
+    .chart-caption {
+      display: grid;
     }
 
     h2 {

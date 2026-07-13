@@ -1,0 +1,1528 @@
+---
+export const prerender = true;
+
+const pageTitle = "Ukraine's population to 2150: how many people will still live there?";
+const pageDescription =
+  "Plain-English projection for people actually living in Kyiv-controlled territory: about 29 million in 2026, 21-22 million in 2050, 11-12 million in 2100 and about 7 million in 2150.";
+const themeColorLight = "#fdfcf9";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  datePublished: "2026-07-13",
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  },
+  about: {
+    "@type": "Country",
+    name: "Ukraine"
+  },
+  inLanguage: "en"
+};
+
+// 2026–2100: stated scenario table. 2110–2150: continue each path from its
+// 2100 anchor with the same migration rules and a gradual easing of the
+// birth–death gap (age structure slowly less extreme; fertility still below
+// replacement, so decline continues).
+const scenarios = {
+  adverse: [
+    [2026, 29.0], [2030, 26.8], [2040, 22.6], [2050, 18.9],
+    [2060, 15.8], [2070, 13.4], [2080, 11.4], [2090, 9.9], [2100, 8.6],
+    [2110, 7.5], [2120, 6.5], [2130, 5.7], [2140, 5.0], [2150, 4.4]
+  ],
+  central: [
+    [2026, 29.0], [2030, 27.4], [2040, 25.0], [2050, 21.6],
+    [2060, 18.8], [2070, 16.5], [2080, 14.4], [2090, 12.8], [2100, 11.5],
+    [2110, 10.4], [2120, 9.4], [2130, 8.6], [2140, 7.9], [2150, 7.3]
+  ],
+  strong: [
+    [2026, 29.0], [2030, 27.7], [2040, 26.6], [2050, 24.4],
+    [2060, 22.4], [2070, 20.9], [2080, 19.6], [2090, 18.6], [2100, 17.7],
+    [2110, 16.7], [2120, 15.8], [2130, 15.2], [2140, 14.5], [2150, 14.0]
+  ]
+} as const;
+
+const chart = {
+  width: 760,
+  height: 400,
+  left: 52,
+  right: 24,
+  top: 52,
+  bottom: 48,
+  minYear: 2026,
+  maxYear: 2150,
+  minPop: 0,
+  maxPop: 32
+};
+
+const plotWidth = chart.width - chart.left - chart.right;
+const plotHeight = chart.height - chart.top - chart.bottom;
+
+const xForYear = (year: number) =>
+  chart.left + ((year - chart.minYear) / (chart.maxYear - chart.minYear)) * plotWidth;
+const yForPop = (value: number) =>
+  chart.top + plotHeight - ((value - chart.minPop) / (chart.maxPop - chart.minPop)) * plotHeight;
+
+const pathFor = (series: readonly (readonly [number, number])[]) =>
+  series
+    .map(([year, value], index) =>
+      `${index === 0 ? "M" : "L"} ${xForYear(year).toFixed(1)} ${yForPop(value).toFixed(1)}`
+    )
+    .join(" ");
+
+const adversePath = pathFor(scenarios.adverse);
+const centralPath = pathFor(scenarios.central);
+const strongPath = pathFor(scenarios.strong);
+const xTicks = [2026, 2050, 2075, 2100, 2125, 2150];
+const yTicks = [0, 4, 8, 12, 16, 20, 24, 28, 32];
+const formatMillions = (value: number) =>
+  value % 1 === 0 ? `${value}m` : `${value.toFixed(1)}m`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Plain-English projection of Ukraine's resident population to 2150." />
+    <meta name="application-name" content={pageTitle} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="keywords" content="Ukraine population 2150, Ukraine population 2100, Ukraine demographics, Ukraine fertility rate, Ukrainian refugees return" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        </div>
+        <p class="eyebrow">Ukraine · Population · 2026–2150</p>
+        <h1>How many people will still live in Ukraine by 2150?</h1>
+        <p class="dek">
+          A plain-English projection for people actually living on land Kyiv controls today: births, deaths and migration, without the optimistic assumptions that often sneak into official forecasts.
+        </p>
+        <p class="meta">Written July 2026</p>
+      </header>
+
+      <article class="article">
+        <section id="bottom-line" aria-labelledby="bottom-line-heading">
+          <h2 id="bottom-line-heading">Bottom line</h2>
+          <p>
+            I am counting people who are physically living on territory Kyiv controls now, not everyone who still has a Ukrainian passport and lives in Poland or Germany.
+          </p>
+          <p>
+            My best estimate for that group:
+          </p>
+          <blockquote>
+            <p>
+              about <strong>29 million in 2026 → 21–22 million in 2050 → 11–12 million in 2100 → 7–8 million in 2150</strong>.
+            </p>
+          </blockquote>
+          <p>
+            For planning, use <strong>10–13 million by 2100</strong> and <strong>6–9 million by 2150</strong>. Getting under 10 million by 2100 (or under 6 million by 2150) does not require a sci-fi disaster: a bit worse birth rates and more people leaving will do it. Getting near 18 million in 2100, or holding near 14 million in 2150, would need lots of refugees coming home, steady immigration, longer lives <em>and</em> women having closer to 1.5 children on average. Possible. Not my base case.
+          </p>
+
+          <figure class="pop-chart">
+            <div class="chart-heading">
+              <div>
+                <p class="chart-kicker">Three scenarios</p>
+                <h3>People living in Kyiv-controlled territory</h3>
+              </div>
+              <div class="chart-meta">
+                <p class="chart-unit">2026–2150 · millions of people</p>
+                <ul class="chart-legend" aria-label="Scenario legend">
+                  <li><span class="swatch swatch-adverse" aria-hidden="true"></span>Worse case</li>
+                  <li><span class="swatch swatch-central" aria-hidden="true"></span>Central</li>
+                  <li><span class="swatch swatch-strong" aria-hidden="true"></span>Strong recovery</li>
+                </ul>
+              </div>
+            </div>
+            <svg
+              viewBox={`0 0 ${chart.width} ${chart.height}`}
+              role="img"
+              aria-labelledby="pop-chart-title pop-chart-desc"
+            >
+              <title id="pop-chart-title">Ukraine population living in Kyiv-controlled territory, 2026 to 2150</title>
+              <desc id="pop-chart-desc">
+                Three scenario lines starting at 29 million in 2026. The worse-case path falls to 4.4 million in 2150, the central path to 7.3 million and the strong-recovery path to 14.0 million.
+              </desc>
+              <defs>
+                <linearGradient id="central-area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="var(--chart-central)" stop-opacity="0.18"></stop>
+                  <stop offset="100%" stop-color="var(--chart-central)" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+
+              {yTicks.map((tick) => (
+                <g>
+                  <line
+                    class="grid-line"
+                    x1={chart.left}
+                    x2={chart.width - chart.right}
+                    y1={yForPop(tick)}
+                    y2={yForPop(tick)}
+                  ></line>
+                  <text
+                    class="axis-label axis-label-y"
+                    x={chart.left - 10}
+                    y={yForPop(tick) + 4}
+                    text-anchor="end"
+                  >{tick === 0 ? "0" : formatMillions(tick)}</text>
+                </g>
+              ))}
+
+              {xTicks.map((tick) => (
+                <text
+                  class="axis-label"
+                  x={xForYear(tick)}
+                  y={chart.height - 16}
+                  text-anchor={tick === 2026 ? "start" : tick === 2150 ? "end" : "middle"}
+                >{tick}</text>
+              ))}
+
+              <path
+                class="chart-area"
+                d={`${centralPath} L ${xForYear(2150).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} L ${xForYear(2026).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} Z`}
+              ></path>
+              <path class="chart-line chart-line-strong" d={strongPath}></path>
+              <path class="chart-line chart-line-adverse" d={adversePath}></path>
+              <path class="chart-line chart-line-central" d={centralPath}></path>
+
+              <g class="chart-marker">
+                <circle cx={xForYear(2050)} cy={yForPop(21.6)} r="4.5"></circle>
+                <text x={xForYear(2050)} y={yForPop(21.6) - 12} text-anchor="middle">21.6m</text>
+              </g>
+              <g class="chart-marker">
+                <circle cx={xForYear(2100)} cy={yForPop(11.5)} r="4"></circle>
+                <text x={xForYear(2100)} y={yForPop(11.5) - 12} text-anchor="middle">11.5m</text>
+              </g>
+              <g class="chart-marker chart-marker-central-end">
+                <circle cx={xForYear(2150)} cy={yForPop(7.3)} r="4.5"></circle>
+                <text
+                  x={xForYear(2150) - 6}
+                  y={yForPop(7.3) - 12}
+                  text-anchor="end"
+                >7.3m</text>
+              </g>
+              <g class="chart-marker chart-marker-muted chart-marker-adverse-end">
+                <circle class="marker-adverse" cx={xForYear(2150)} cy={yForPop(4.4)} r="3.5"></circle>
+                <text
+                  x={xForYear(2135)}
+                  y={yForPop(4.4) + 16}
+                  text-anchor="middle"
+                >4.4m</text>
+              </g>
+              <g class="chart-marker chart-marker-muted chart-marker-strong-end">
+                <circle class="marker-strong" cx={xForYear(2150)} cy={yForPop(14.0)} r="3.5"></circle>
+                <text
+                  x={xForYear(2135)}
+                  y={yForPop(14.0) - 12}
+                  text-anchor="middle"
+                >14.0m</text>
+              </g>
+            </svg>
+            <p class="chart-footnote">
+              2150 endpoints: worse case 4.4m · central 7.3m · strong recovery 14.0m
+            </p>
+          </figure>
+
+          <div class="table-wrap">
+            <table>
+              <caption class="sr-only">Population scenarios by decade, millions of people</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Year</th>
+                  <th scope="col">Worse case</th>
+                  <th scope="col">Central</th>
+                  <th scope="col">Strong recovery</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scenarios.central.map((_, index) => {
+                  const year = scenarios.central[index][0];
+                  const adverse = scenarios.adverse[index][1];
+                  const central = scenarios.central[index][1];
+                  const strong = scenarios.strong[index][1];
+                  const emphasize =
+                    year === 2050 || year === 2100 || year === 2150;
+                  return (
+                    <tr class={emphasize ? "row-emphasis" : undefined}>
+                      <th scope="row">{year}</th>
+                      <td>{formatMillions(adverse)}</td>
+                      <td><strong>{formatMillions(central)}</strong></td>
+                      <td>{formatMillions(strong)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            These are my scenarios with the assumptions listed below. They are not an official government forecast.
+          </p>
+          <p>
+            If Ukraine later gets back all of its internationally recognized land <em>and</em> keeps the people who live in today's occupied areas, the central path rises to about <strong>13–14.5 million in 2100</strong> and about <strong>8.5–10 million in 2150</strong>. That is a different question from "how many people live under Kyiv now."
+          </p>
+          <p>
+            After 2100 the path is more speculative. I keep the same migration rules and let the birth–death gap ease a little as the age structure stops getting worse so fast. Birth rates stay below replacement, so the decline continues—just a bit more slowly.
+          </p>
+        </section>
+
+        <section id="starting-population" aria-labelledby="starting-population-heading">
+          <h2 id="starting-population-heading">First problem: which 29 million?</h2>
+          <p>
+            Ukraine has not run a full census since 2001. So published "population of Ukraine" numbers often mix four different piles:
+          </p>
+          <ul>
+            <li>people actually living on land Kyiv controls;</li>
+            <li>people living inside Ukraine's old borders, including occupied areas;</li>
+            <li>people still on paper as Ukrainian residents, even if they live abroad;</li>
+            <li>refugees abroad who some databases still count as part of Ukraine.</li>
+          </ul>
+          <p>
+            <a href="https://eeca.unfpa.org/sites/default/files/pub-pdf/2025-08/Ukraine%20Regional%20SitRep%20-%206_months_2025.pdf" target="_blank" rel="noreferrer noopener">UNFPA</a> put about <strong>35.8 million people inside Ukraine in July 2024</strong>, of whom about <strong>31.1 million were on government-controlled land</strong>. By early 2026, demographer Oleksandr Gladun put the number actually living under Kyiv at about <a href="https://euobserver.com/217278/war-is-draining-ukraine-of-people-and-even-eu-membership-wont-stop-the-population-collapse/" target="_blank" rel="noreferrer noopener"><strong>28 million</strong></a>. People kept leaving, deaths still beat births and counting methods differ.
+          </p>
+          <p>
+            I start from <strong>29 million</strong> in 2026, give or take about a million either way.
+          </p>
+          <p>
+            You will still see 38–40 million in some international databases. That is usually a country-level statistical series, not a headcount of bodies on Kyiv-controlled streets. Line those two numbers up and the ~10 million gap looks like a measurement scandal. Mostly it is a definition mismatch.
+          </p>
+        </section>
+
+        <section id="projection-method" aria-labelledby="projection-method-heading">
+          <h2 id="projection-method-heading">How the projection works</h2>
+          <p>
+            Population next year is just this year's population, plus babies, minus deaths, plus people moving in, minus people moving out:
+          </p>
+          <pre class="formula" aria-label="How population changes each year"><code>Population next year =
+  population this year
+  + births
+  − deaths
+  + people moving in
+  − people moving out</code></pre>
+          <p>
+            In peacetime, demographers often track every age group of men and women separately. Ukraine has no recent census, millions of refugees, occupied land and wartime deaths. Pretending you know every age cell to three decimal places is theater.
+          </p>
+          <p>
+            So I use four pieces you can argue with:
+          </p>
+          <ol>
+            <li>A realistic starting headcount of people actually there.</li>
+            <li>How many children women are likely to have.</li>
+            <li>How much the death-vs-birth gap will shrink or widen as the country ages.</li>
+            <li>How many people leave or return after the war.</li>
+          </ol>
+        </section>
+
+        <section id="fertility" aria-labelledby="fertility-heading">
+          <h2 id="fertility-heading">1. Very few babies</h2>
+          <p>
+            Ukrainian women now have about <strong>0.9 children each</strong> on average over a lifetime. To keep a population stable with no migration, you need about 2.1. Ukraine is nowhere near that.
+          </p>
+          <p>
+            In 2024 only <a href="https://kyivindependent.com/almost-3-times-more-people-died-in-ukraine-than-were-born-in-2024-data-shows/" target="_blank" rel="noreferrer noopener">176,679 babies were registered</a>, 35% fewer than in 2021. In the first half of 2025 there were about <strong>86,800 births and 249,000 deaths</strong>: almost three deaths for every birth.
+          </p>
+          <p>
+            My central path assumes the average number of children per woman rises slowly:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Year</th>
+                  <th scope="col">Children per woman (central)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">2026–30</th>
+                  <td>0.95</td>
+                </tr>
+                <tr>
+                  <th scope="row">2035</th>
+                  <td>1.10</td>
+                </tr>
+                <tr>
+                  <th scope="row">2050</th>
+                  <td>1.18</td>
+                </tr>
+                <tr>
+                  <th scope="row">2075</th>
+                  <td>1.25</td>
+                </tr>
+                <tr>
+                  <th scope="row">2100</th>
+                  <td>1.30</td>
+                </tr>
+                <tr>
+                  <th scope="row">2150</th>
+                  <td>1.35</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            That is a mild postwar bounce. It is not "everyone suddenly has two kids."
+          </p>
+          <p>
+            At 1.3 children per woman, each generation is still about 38% smaller than the one before it, even if nobody emigrates and nobody dies young.
+          </p>
+          <p>
+            There is a second squeeze: the people who should be having kids now were born in the low-birth years of the 1990s and early 2000s. So even if each woman has a bit more children, there are fewer women of childbearing age.
+          </p>
+        </section>
+
+        <section id="natural-decrease" aria-labelledby="natural-decrease-heading">
+          <h2 id="natural-decrease-heading">2. Deaths will keep beating births</h2>
+          <p>
+            When the big fighting stops, fewer people die from war. Life expectancy can improve. That still does not mean births catch up with deaths.
+          </p>
+          <p>
+            Ukraine is already old. A lot of people will hit ages where death rates are high, while the pool of potential parents stays small. You can have better hospitals and still lose population every year.
+          </p>
+          <p>
+            Before counting migration, my central path assumes the population shrinks from births and deaths alone by roughly:
+          </p>
+          <ul>
+            <li><strong>1.1% a year</strong> in the late 2020s;</li>
+            <li><strong>1.15% a year</strong> in the 2030s;</li>
+            <li><strong>1.45% a year</strong> from 2041 to 2060;</li>
+            <li><strong>1.4% a year</strong> from 2061 to 2080;</li>
+            <li><strong>1.25% a year</strong> near 2100;</li>
+            <li>easing toward about <strong>1.0–1.1% a year</strong> by the 2140s as the age mix stops getting worse so fast.</li>
+          </ul>
+          <p>
+            The worse stretch after 2040 is not "healthcare collapses." It is the age pyramid doing what age pyramids do: more funerals from today's large older groups, fewer births from yesterday's small young groups. After 2100 that squeeze gradually softens, but births still do not catch deaths.
+          </p>
+        </section>
+
+        <section id="refugees" aria-labelledby="refugees-heading">
+          <h2 id="refugees-heading">3. Most refugees will not come home for good</h2>
+          <p>
+            In early 2026 the <a href="https://ces.org.ua/en/ukrainian-refugees-fifth-wave/" target="_blank" rel="noreferrer noopener">Centre for Economic Strategy</a> estimated <strong>5.6 million Ukrainians</strong> who fled the full-scale invasion were still abroad. On 31 May 2026, <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20260710-1" target="_blank" rel="noreferrer noopener">4.38 million</a> still had EU temporary protection (a temporary legal status to stay and work). Almost 30% of them were children.
+          </p>
+          <p>
+            Surveys say fewer people plan to return than early in the war:
+          </p>
+          <ul>
+            <li>43% of adult refugees said they planned to return.</li>
+            <li>Only 32% of refugee children were expected by their parents to return.</li>
+            <li>36% of adults did not plan to return.</li>
+            <li>47% of parents thought their children would stay abroad.</li>
+            <li>Among kids only in foreign secondary schools, 57% were expected not to return.</li>
+          </ul>
+          <p>
+            CES turns those answers into estimated postwar homecomings of 2.2 million (optimistic), 1.6 million (middle) or 1.3 million (pessimistic). That excludes people who went to Russia or Belarus.
+          </p>
+          <p>
+            "People who come back" is not the same as the net change from migration. When exit rules loosen, some working-age men currently stuck in Ukraine will leave. Some returnees will leave again. Ordinary job migration will restart.
+          </p>
+          <p>
+            So the central path assumes:
+          </p>
+          <ul>
+            <li><strong>2026–30:</strong> about 500,000 more people leave than arrive;</li>
+            <li><strong>2031–35:</strong> about 800,000 more people arrive than leave (the main return wave);</li>
+            <li><strong>2036–50:</strong> roughly flat, with a small net loss of about 150,000;</li>
+            <li><strong>2051–2150:</strong> about 15,000 more arrivals than departures each year.</li>
+          </ul>
+          <p>
+            That is CES's middle homecoming estimate, with new departures wiping out about half of it. Over 2026–2100, arrivals minus departures add about <strong>0.9 million</strong> people. Stretch the same late-century immigration rule to 2150 and the cumulative migration gain rises to about <strong>1.65 million</strong>.
+          </p>
+        </section>
+
+        <section id="economic-incentives" aria-labelledby="economic-incentives-heading">
+          <h2 id="economic-incentives-heading">4. Money and schools pull people abroad</h2>
+          <p>
+            Refugees are not only asking "are missiles still falling?"
+          </p>
+          <p>
+            In the latest CES survey:
+          </p>
+          <ul>
+            <li>27% said they had adapted to life abroad;</li>
+            <li>27% cited better infrastructure or quality of life;</li>
+            <li>22% feared they would not find a good job in Ukraine;</li>
+            <li>22% cited better prospects for their children;</li>
+            <li>among 18–24 year olds, 35% feared Ukraine could not offer competitive jobs.</li>
+          </ul>
+          <p>
+            Average income per person, <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=UA-PL" target="_blank" rel="noreferrer noopener">World Bank 2025</a>: about <strong>$5,866 in Ukraine vs $28,420 in Poland</strong>. Almost five times higher next door.
+          </p>
+          <p>
+            Rebuilding may pay well in construction, logistics, engineering and defense. That is not the same as a normal economy with European wages, hospitals, schools and a sense of safety.
+          </p>
+          <p>
+            Joining the EU could help investment and rules. It also makes it legally easier to leave before Ukrainian wages catch up. I do not assume EU membership automatically brings people home.
+          </p>
+        </section>
+
+        <section id="scenario-assumptions" aria-labelledby="scenario-assumptions-heading">
+          <h2 id="scenario-assumptions-heading">What differs across the three paths</h2>
+          <div class="table-wrap table-wrap-wide">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Assumption</th>
+                  <th scope="col">Worse case</th>
+                  <th scope="col">Central</th>
+                  <th scope="col">Strong recovery</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Children per woman around 2035</th>
+                  <td>0.95</td>
+                  <td>1.10</td>
+                  <td>1.25</td>
+                </tr>
+                <tr>
+                  <th scope="row">Children per woman around 2100</th>
+                  <td>1.10</td>
+                  <td>1.30</td>
+                  <td>1.50</td>
+                </tr>
+                <tr>
+                  <th scope="row">Children per woman around 2150</th>
+                  <td>1.15</td>
+                  <td>1.35</td>
+                  <td>1.55</td>
+                </tr>
+                <tr>
+                  <th scope="row">People gained or lost to migration, 2026–2150</th>
+                  <td>−1.7m</td>
+                  <td>+1.65m</td>
+                  <td>+6.3m</td>
+                </tr>
+                <tr>
+                  <th scope="row">Postwar refugee return</th>
+                  <td>Weak; new leavers cancel most of it</td>
+                  <td>Partial; about +0.8m net</td>
+                  <td>Large; about +1.5m net</td>
+                </tr>
+                <tr>
+                  <th scope="row">Immigration later in the century</th>
+                  <td>Almost none</td>
+                  <td>About 15,000/year</td>
+                  <td>About 50,000/year</td>
+                </tr>
+                <tr>
+                  <th scope="row">How fast death rates improve</th>
+                  <td>Slow</td>
+                  <td>Better, but not West European</td>
+                  <td>Closes a lot of the gap with richer Europe</td>
+                </tr>
+                <tr>
+                  <th scope="row">Population in 2100</th>
+                  <td>8.6m</td>
+                  <td>11.5m</td>
+                  <td>17.7m</td>
+                </tr>
+                <tr class="row-emphasis">
+                  <th scope="row">Population in 2150</th>
+                  <td><strong>4.4m</strong></td>
+                  <td><strong>7.3m</strong></td>
+                  <td><strong>14.0m</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The strong path is not "peace arrives." It needs a long run of good news:
+          </p>
+          <ul>
+            <li>security that lasts;</li>
+            <li>lots of younger refugees and kids coming home;</li>
+            <li>birth rates climbing toward 1.4–1.5;</li>
+            <li>Ukraine attracting and keeping foreign workers;</li>
+            <li>the economy catching up for real;</li>
+            <li>no major war later.</li>
+          </ul>
+          <p>
+            Even then the population keeps falling. Too much of the decline is already baked into who is alive today.
+          </p>
+        </section>
+
+        <section id="un-projection" aria-labelledby="un-projection-heading">
+          <h2 id="un-projection-heading">Why the UN says 15.3 million</h2>
+          <p>
+            The UN's <a href="https://kyivindependent.com/ukraines-population-could-drop-to-15-3-million-people-by-2100-un-says/" target="_blank" rel="noreferrer noopener">2024 World Population Prospects</a> middle case puts Ukraine at about <strong>15.3 million in 2100</strong>, with a wide band from roughly 9 to 23 million.
+          </p>
+          <p>
+            That is higher than my central path for three ordinary reasons.
+          </p>
+
+          <h3 id="broader-starting-base">They start from a bigger country</h3>
+          <p>
+            The UN treats Ukraine as the internationally recognized country and uses its usual country-population rules. That is not the same as starting from 29 million people living under Kyiv today.
+          </p>
+          <p>
+            If I scale my central path up to include people in occupied areas, 2100 rises from 11.5 million to about 13–14.5 million, and 2150 from 7.3 million to about 8.5–10 million. The remaining gap with the UN's 2100 figure shrinks to maybe one or two million, not four.
+          </p>
+
+          <h3 id="stronger-fertility">They assume more babies later</h3>
+          <p>
+            The path that gets you near 15 million assumes women go from about 1.0 child each toward <strong>1.5</strong>. A <a href="https://newsukraine.rbc.ua/news/ukraine-s-population-could-fall-below-10-1747308645.html" target="_blank" rel="noreferrer noopener">Kyiv School of Economics write-up</a> notes that worse assumptions can push Ukraine under 10 million.
+          </p>
+          <p>
+            1.5 is possible. Treat it as good news, not the default. Birth rates were already low before 2022, and the war pulled many young women and children out of the country.
+          </p>
+
+          <h3 id="favorable-migration">They have to guess migration</h3>
+          <p>
+            Global forecasts need simple rules about who returns and who leaves. Nobody knows how the war ends, where the border settles, how safe people feel or when military-age men can freely emigrate again.
+          </p>
+          <p>
+            Treat the UN middle case as an <strong>optimistic-leaning central scenario</strong>, not as a count of people on Kyiv-controlled land.
+          </p>
+        </section>
+
+        <section id="below-10m" aria-labelledby="below-10m-heading">
+          <h2 id="below-10m-heading">How you get under 10 million—and then under 5</h2>
+          <p>
+            The worse path hits about 8.6 million in 2100 and about 4.4 million in 2150 without assuming national extinction. It mainly needs:
+          </p>
+          <ul>
+            <li>birth rates stuck near 1.0–1.15 children per woman;</li>
+            <li>more people leaving during and after the war;</li>
+            <li>few refugees coming home;</li>
+            <li>almost no foreign workers moving in;</li>
+            <li>death rates staying high;</li>
+            <li>another serious security shock later this century.</li>
+          </ul>
+          <p>
+            Refugees skew young, so the loss multiplies. You lose the people who leave and many of the kids and grandkids they would have had in Ukraine. After 2100 that compound loss is already locked into the age structure.
+          </p>
+        </section>
+
+        <section id="near-18m" aria-labelledby="near-18m-heading">
+          <h2 id="near-18m-heading">How you stay near 14–18 million</h2>
+          <p>
+            The strong-recovery path ends near 17.7 million in 2100 and about 14.0 million in 2150. That needs:
+          </p>
+          <ul>
+            <li>birth rates climbing toward 1.5–1.55;</li>
+            <li>about 1.5 million net refugee returns after accounting for new leavers;</li>
+            <li>about 50,000 immigrants a year in the long run;</li>
+            <li>people living substantially longer;</li>
+            <li>reconstruction and better institutions that actually stick.</li>
+          </ul>
+          <p>
+            Doable in theory. Hard in practice: Ukraine would need to become a place people move <em>to</em>, while also pulling back many Ukrainians already settled in richer EU countries. Even then, the population is still smaller in 2150 than in 2100.
+          </p>
+        </section>
+
+        <section id="final-estimate" aria-labelledby="final-estimate-heading">
+          <h2 id="final-estimate-heading">Numbers I would use</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">What you are counting</th>
+                  <th scope="col">2050</th>
+                  <th scope="col">2100</th>
+                  <th scope="col">2150</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">People on land Kyiv controls today</th>
+                  <td><strong>21–22m</strong></td>
+                  <td><strong>10–12m</strong></td>
+                  <td><strong>6–9m</strong></td>
+                </tr>
+                <tr>
+                  <th scope="row">Whole recognized Ukraine, including occupied areas</th>
+                  <td><strong>24–26m</strong></td>
+                  <td><strong>13–14.5m</strong></td>
+                  <td><strong>8.5–10m</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Best single numbers for people actually living under Kyiv:
+          </p>
+          <blockquote class="final-callout">
+            <p><strong>11.5 million in 2100 · 7.3 million in 2150</strong></p>
+          </blockquote>
+          <p>
+            The UN's 15.3 million for 2100 can make sense if you count a bigger territory and assume more babies and friendlier migration. If you refuse that optimism and assume people follow the income gap, <strong>10–13 million by 2100 and 6–9 million by 2150</strong> are the better central ranges. Below 10 million by 2100—and below 6 million by 2150—are real downside cases.
+          </p>
+        </section>
+
+        <section id="sources" aria-labelledby="sources-heading">
+          <h2 id="sources-heading">Selected sources</h2>
+          <ul class="sources">
+            <li>
+              <a href="https://eeca.unfpa.org/sites/default/files/pub-pdf/2025-08/Ukraine%20Regional%20SitRep%20-%206_months_2025.pdf" target="_blank" rel="noreferrer noopener">UNFPA Ukraine regional situation report</a> — 35.8m inside Ukraine / 31.1m government-controlled, July 2024
+            </li>
+            <li>
+              <a href="https://euobserver.com/217278/war-is-draining-ukraine-of-people-and-even-eu-membership-wont-stop-the-population-collapse/" target="_blank" rel="noreferrer noopener">EU Observer interview with Oleksandr Gladun</a> — ~28m in government-controlled territory, early 2026
+            </li>
+            <li>
+              <a href="https://ces.org.ua/en/ukrainian-refugees-fifth-wave/" target="_blank" rel="noreferrer noopener">Centre for Economic Strategy, fifth refugee wave</a> — 5.6m abroad; return scenarios 1.3–2.2m
+            </li>
+            <li>
+              <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20260710-1" target="_blank" rel="noreferrer noopener">Eurostat temporary protection statistics</a> — 4.38m under temporary protection, 31 May 2026
+            </li>
+            <li>
+              <a href="https://kyivindependent.com/almost-3-times-more-people-died-in-ukraine-than-were-born-in-2024-data-shows/" target="_blank" rel="noreferrer noopener">Kyiv Independent on 2024 vital statistics</a> — 176,679 births vs ~495,000 deaths
+            </li>
+            <li>
+              <a href="https://opendatabot.ua/en/analytics/birth-death-2025" target="_blank" rel="noreferrer noopener">Opendatabot on H1 2025 vital statistics</a> — ~86,800 births and ~249,000 deaths
+            </li>
+            <li>
+              <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=UA-PL" target="_blank" rel="noreferrer noopener">World Bank average income per person</a> — Ukraine $5,866; Poland $28,420 (2025)
+            </li>
+            <li>
+              <a href="https://kyivindependent.com/ukraines-population-could-drop-to-15-3-million-people-by-2100-un-says/" target="_blank" rel="noreferrer noopener">UN WPP 2024 coverage</a> — medium variant ~15.3m in 2100
+            </li>
+            <li>
+              <a href="https://newsukraine.rbc.ua/news/ukraine-s-population-could-fall-below-10-1747308645.html" target="_blank" rel="noreferrer noopener">RBC-Ukraine on KSE / UN fertility cases</a> — recovery to 1.5 vs below-10m downside
+            </li>
+          </ul>
+        </section>
+      </article>
+    </main>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fdfcf9;
+    --paper: #fffefa;
+    --text: #1d1a16;
+    --text-soft: #403a33;
+    --muted: #756d63;
+    --rule: #ddd3c5;
+    --accent: #805324;
+    --accent-soft: #f1e7d8;
+    --selection: #e7c99d;
+    --chart-central: #9b542d;
+    --chart-adverse: #8a6f5a;
+    --chart-strong: #2f6f62;
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171410;
+      --paper: #1f1b16;
+      --text: #f3eadf;
+      --text-soft: #d9cabc;
+      --muted: #aa9a8a;
+      --rule: #3d342b;
+      --accent: #e0ae74;
+      --accent-soft: #2b241d;
+      --selection: #6e4a25;
+      --chart-central: #e0ae74;
+      --chart-adverse: #b89a82;
+      --chart-strong: #7dcbba;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--text);
+  }
+
+  html {
+    max-width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 60%, transparent), transparent 28rem),
+      var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  .hero {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 0.55rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .home-link,
+  .eyebrow,
+  .meta {
+    font-family: var(--sans);
+  }
+
+  .site-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-underline-offset: 0.28em;
+  }
+
+  .home-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.85rem 0 0;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 22ch;
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+    font-weight: 650;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    overflow-wrap: break-word;
+  }
+
+  .dek {
+    max-width: 44rem;
+    margin: 0.15rem 0 0;
+    color: var(--text-soft);
+    font-size: clamp(0.98rem, 1.35vw, 1.1rem);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    overflow-wrap: break-word;
+  }
+
+  .meta {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  .article {
+    width: 100%;
+    display: grid;
+    gap: clamp(1.6rem, 3.2vw, 2.4rem);
+    max-width: 67ch;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2rem) 0;
+  }
+
+  section {
+    min-width: 0;
+    scroll-margin-top: 1.5rem;
+  }
+
+  h2,
+  h3 {
+    color: var(--text);
+    letter-spacing: -0.035em;
+  }
+
+  h2 {
+    max-width: 34ch;
+    margin: 0 0 0.7rem;
+    font-size: clamp(1.28rem, 2.4vw, 1.65rem);
+    font-weight: 650;
+    line-height: 1.12;
+  }
+
+  h3 {
+    max-width: 40ch;
+    margin: 1.6rem 0 0.55rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    line-height: 1.22;
+  }
+
+  h2 + h3 {
+    margin-top: 1rem;
+  }
+
+  p,
+  li,
+  td,
+  th {
+    color: var(--text-soft);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    overflow-wrap: break-word;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p,
+  p + ul,
+  p + ol,
+  ul + p,
+  ol + p,
+  p + .table-wrap,
+  .table-wrap + p,
+  p + .formula,
+  .formula + p,
+  p + blockquote,
+  blockquote + p,
+  figure + p,
+  p + figure {
+    margin-top: 0.85rem;
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 720;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.17em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+
+  ul,
+  ol {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  li + li {
+    margin-top: 0.55rem;
+  }
+
+  blockquote {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-left: 3px solid var(--accent);
+    background: color-mix(in srgb, var(--accent-soft) 70%, transparent);
+  }
+
+  blockquote p {
+    color: var(--text);
+    font-size: 1.12rem;
+    line-height: 1.55;
+  }
+
+  .final-callout {
+    text-align: center;
+    border-left: 0;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    padding: 1.25rem 1rem;
+  }
+
+  .final-callout p {
+    font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  .formula {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--text);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .formula code {
+    font: inherit;
+    white-space: pre;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  .pop-chart {
+    position: relative;
+    left: 50%;
+    width: min(58rem, calc(100vw - 2rem));
+    margin: 1.35rem 0 0;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    transform: translateX(-50%);
+  }
+
+  .chart-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .chart-heading h3 {
+    margin: 0.15rem 0 0;
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+  }
+
+  .chart-kicker,
+  .chart-unit,
+  .chart-legend {
+    font-family: var(--sans);
+  }
+
+  .chart-kicker {
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .chart-unit {
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.3;
+    text-align: right;
+  }
+
+  .chart-meta {
+    flex: 0 0 auto;
+    display: grid;
+    justify-items: end;
+    gap: 0.45rem;
+  }
+
+  .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.55rem 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text-soft);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .chart-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .swatch {
+    width: 0.85rem;
+    height: 0.22rem;
+    border-radius: 999px;
+  }
+
+  .swatch-adverse {
+    background: var(--chart-adverse);
+  }
+
+  .swatch-central {
+    background: var(--chart-central);
+  }
+
+  .swatch-strong {
+    background: var(--chart-strong);
+  }
+
+  .pop-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 0.6rem;
+    overflow: visible;
+  }
+
+  .axis-label,
+  .chart-marker text {
+    fill: var(--muted);
+    font-family: var(--sans);
+    font-size: 12px;
+  }
+
+  .grid-line {
+    stroke: var(--rule);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .chart-area {
+    fill: url("#central-area");
+  }
+
+  .chart-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .chart-line-central {
+    stroke: var(--chart-central);
+    stroke-width: 3.2;
+  }
+
+  .chart-line-adverse {
+    stroke: var(--chart-adverse);
+    stroke-width: 2.2;
+    stroke-dasharray: 5 4;
+  }
+
+  .chart-line-strong {
+    stroke: var(--chart-strong);
+    stroke-width: 2.2;
+    stroke-dasharray: 2 4;
+  }
+
+  .chart-footnote {
+    display: none;
+    margin: 0.65rem 0 0;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .chart-marker circle {
+    fill: var(--paper);
+    stroke: var(--chart-central);
+    stroke-width: 2.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .chart-marker .marker-adverse {
+    stroke: var(--chart-adverse);
+  }
+
+  .chart-marker .marker-strong {
+    stroke: var(--chart-strong);
+  }
+
+  .chart-marker text {
+    fill: var(--text);
+    font-size: 12px;
+    font-weight: 750;
+    paint-order: stroke;
+    stroke: var(--paper);
+    stroke-linejoin: round;
+    stroke-width: 4px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  tbody th {
+    width: 28%;
+    color: var(--text);
+    font-weight: 680;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .row-emphasis th,
+  .row-emphasis td {
+    background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+  }
+
+  .sources {
+    font-size: 0.98rem;
+  }
+
+  .sources li {
+    color: var(--text-soft);
+  }
+
+  @media (min-width: 900px) {
+    .table-wrap {
+      position: relative;
+      left: 50%;
+      width: min(62rem, calc(100vw - 4rem));
+      max-width: none;
+      transform: translateX(-50%);
+    }
+
+    th,
+    td {
+      padding-inline: 1.25rem;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      padding: 1rem;
+    }
+
+    .site-tools {
+      align-items: flex-start;
+    }
+
+    .hero {
+      padding-bottom: 1rem;
+    }
+
+    h1 {
+      max-width: 18ch;
+      font-size: clamp(1.7rem, 7.5vw, 2.15rem);
+      letter-spacing: -0.035em;
+    }
+
+    .dek {
+      font-size: 1.02rem;
+      line-height: 1.48;
+    }
+
+    .article {
+      gap: 1.75rem;
+      max-width: 100%;
+      padding: 1.25rem 0 2.5rem;
+    }
+
+    .pop-chart {
+      width: calc(100vw - 2rem);
+      padding: 0.9rem 0.75rem 1rem;
+    }
+
+    .chart-heading {
+      display: block;
+    }
+
+    .chart-unit {
+      margin-top: 0.25rem;
+      text-align: left;
+    }
+
+    .chart-meta {
+      justify-items: start;
+    }
+
+    .chart-legend {
+      justify-content: flex-start;
+    }
+
+    .axis-label,
+    .chart-marker text {
+      font-size: 13px;
+    }
+
+    .chart-marker-adverse-end text,
+    .chart-marker-strong-end text {
+      display: none;
+    }
+
+    .chart-footnote {
+      display: block;
+    }
+
+    h2 {
+      max-width: 100%;
+      margin-bottom: 0.65rem;
+      font-size: clamp(1.22rem, 5vw, 1.45rem);
+      line-height: 1.12;
+    }
+
+    h3 {
+      max-width: 100%;
+      margin-top: 1.35rem;
+      font-size: 1.08rem;
+      line-height: 1.22;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      font-size: 1rem;
+      line-height: 1.72;
+    }
+
+    .table-wrap {
+      border: 0;
+      background: transparent;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    tbody {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    tbody tr {
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      padding: 0.85rem 0.95rem 0.95rem;
+    }
+
+    tbody th,
+    tbody td {
+      border-bottom: 0;
+      padding: 0;
+    }
+
+    tbody th {
+      width: 100%;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 750;
+      letter-spacing: 0.07em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    tbody td {
+      margin-top: 0.35rem;
+    }
+
+    tbody td + td {
+      margin-top: 0.55rem;
+    }
+
+    #bottom-line tbody td:nth-of-type(1)::before {
+      content: "Worse case · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #bottom-line tbody td:nth-of-type(2)::before {
+      content: "Central · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #bottom-line tbody td:nth-of-type(3)::before {
+      content: "Strong recovery · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #scenario-assumptions tbody td:nth-of-type(1)::before {
+      content: "Worse case · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #scenario-assumptions tbody td:nth-of-type(2)::before {
+      content: "Central · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #scenario-assumptions tbody td:nth-of-type(3)::before {
+      content: "Strong recovery · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #final-estimate tbody td:nth-of-type(1)::before {
+      content: "2050 · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #final-estimate tbody td:nth-of-type(2)::before {
+      content: "2100 · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #final-estimate tbody td:nth-of-type(3)::before {
+      content: "2150 · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+</style>
+  </body>
+</html>
