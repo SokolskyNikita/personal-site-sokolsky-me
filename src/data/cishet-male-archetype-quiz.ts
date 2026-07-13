@@ -112,7 +112,6 @@ const POLES = {
     "female-gaze-and-fandom-men": 2,
     "fashion-and-aesthetic-men": 2,
     "music-and-nightlife-men": 1,
-    "roleplay-and-paranormal-romance-lads": 1,
   },
   /** Terminally online / hierarchy / manosphere / niche internet */
   online: {
@@ -125,7 +124,6 @@ const POLES = {
     "dating-app-personas-and-behaviors": 1,
     "political-and-ideological-men": 1,
     "autists-special-interest-men": 1,
-    "meme-characters-pepe-and-friends": 1,
     "psychonauts-and-consciousness-explorers": 1,
   },
 } as const;
@@ -537,11 +535,9 @@ export const DECK: QuizQuestion[] = [
       ]),
       opt("A uniform that people in my niche recognize immediately and everyone else finds odd.", "online", {
         "fashion-and-aesthetic-men": 1,
-        "roleplay-and-paranormal-romance-lads": 1,
       }, [
         { match: "Techwear ninja", w: 1 },
         { match: "Cosplay", w: 1 },
-        { match: "Fae / Vampire", w: 2 },
         { match: "Warrior-skull", w: 1 },
       ]),
     ],
@@ -977,8 +973,6 @@ export const DECK: QuizQuestion[] = [
         { match: "Terminally online", w: 2 },
         { match: "Pepe", w: 1 },
         { match: "Doomer", w: 1 },
-        { match: "Honkler", w: 1 },
-        { match: "Apu Apustaja", w: 1 },
       ]),
     ],
   },
@@ -986,7 +980,7 @@ export const DECK: QuizQuestion[] = [
     topic: "Romance code",
     q: "Which romance trope is least wrong for you?",
     opts: [
-      opt("Not applicable. I don’t speak Blorbo.", "default", {}, [
+      opt("Not applicable. I don’t speak fandom trope.", "default", {}, [
         { match: "Unserious", w: 1 },
         { match: "Normie", w: 1 },
       ]),
@@ -999,10 +993,8 @@ export const DECK: QuizQuestion[] = [
         "female-gaze-and-fandom-men": 2,
         "internet-boyfriend-zoology": 1,
       }, [
-        { match: "Feral protector", w: 2 },
         { match: "German shepherd boyfriend", w: 2 },
         { match: "Beefcake", w: 1 },
-        { match: "\"Who did this to you?\"", w: 2 },
         { match: "Guts guy", w: 1 },
         { match: "Doberman boyfriend", w: 1 },
         { match: "Wolf / werewolf boyfriend", w: 1 },
@@ -1010,8 +1002,6 @@ export const DECK: QuizQuestion[] = [
       opt("Morally gray rich man whose calendar is somehow tragic.", "capital", {
         "female-gaze-and-fandom-men": 2,
       }, [
-        { match: "Morally gray", w: 2 },
-        { match: "Shadow daddy", w: 2 },
         { match: "Don Draper", w: 1 },
         { match: "Sugar daddy", w: 1 },
         { match: "Tony Montana", w: 1 },
@@ -1023,8 +1013,6 @@ export const DECK: QuizQuestion[] = [
         { match: "Poor little meow meow", w: 2 },
         { match: "Babygirl", w: 1 },
         { match: "Pathetic-but-affectionate", w: 2 },
-        { match: "Touch-starved villain", w: 1 },
-        { match: "Feels Good Man", w: 1 },
       ]),
       opt("Problematic fave. There is probably a Patrick Bateman edit involved.", "online", {
         "female-gaze-and-fandom-men": 2,
@@ -1193,9 +1181,8 @@ export const DECK: QuizQuestion[] = [
         "autists-special-interest-men": 1,
         "female-gaze-and-fandom-men": 1,
       }, [
-        { match: "Blorbo", w: 2 },
-        { match: "Book husband", w: 1 },
-        { match: "Tumblr Sexyman", w: 1 },
+        { match: "Waifu", w: 1 },
+        { match: "Cosplay boyfriend", w: 1 },
         { match: "Wolf / werewolf boyfriend", w: 1 },
       ]),
       opt("One tiny subject that I can talk about for hours.", "online", {
@@ -1205,7 +1192,6 @@ export const DECK: QuizQuestion[] = [
         { match: "AuADHD", w: 3 },
         { match: "Warhammer", w: 1 },
         { match: "Transit guy", w: 1 },
-        { match: "Apu Apustaja", w: 1 },
       ]),
     ],
   },
