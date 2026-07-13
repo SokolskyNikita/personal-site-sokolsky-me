@@ -392,6 +392,18 @@ const structuredData = {
           dot.addEventListener("click", () => goTo(i));
           progressEl.appendChild(dot);
         });
+        const currentDot = progressEl.children[state.idx];
+        if (currentDot) {
+          requestAnimationFrame(() => {
+            progressEl.scrollTo({
+              left:
+                currentDot.offsetLeft -
+                progressEl.clientWidth / 2 +
+                currentDot.clientWidth / 2,
+              behavior: "smooth",
+            });
+          });
+        }
       }
 
       function renderQuestion() {
@@ -632,7 +644,7 @@ const structuredData = {
   </body>
 </html>
 
-<style>
+<style is:global>
   :root {
     color-scheme: light dark;
     --bg: #fdfefc;
@@ -706,7 +718,7 @@ const structuredData = {
 
   .page {
     width: 100%;
-    max-width: 44rem;
+    max-width: 48rem;
     margin: 0 auto;
     padding: var(--page-pad-y) var(--page-pad-x) clamp(2.5rem, 8vw, 4rem);
   }
@@ -783,7 +795,7 @@ const structuredData = {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding: 0.45rem 1rem;
     border: 1px solid var(--rule);
     border-radius: 0.35rem;
@@ -794,6 +806,7 @@ const structuredData = {
     font-size: 0.9rem;
     font-weight: 500;
     line-height: 1.2;
+    touch-action: manipulation;
     transition:
       background 120ms ease,
       border-color 120ms ease,
@@ -830,29 +843,49 @@ const structuredData = {
   }
 
   .progress {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.28rem;
+    display: grid;
+    grid-template-columns: repeat(25, minmax(0, 1fr));
+    gap: 0.2rem;
     margin: 0 0 1rem;
+    scrollbar-width: none;
   }
 
   .p-dot {
-    width: 0.55rem;
-    height: 0.55rem;
+    position: relative;
+    width: 100%;
+    height: 1.5rem;
     padding: 0;
     border: 0;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--rule) 80%, transparent);
+    background: transparent;
     cursor: pointer;
+    touch-action: manipulation;
   }
 
-  .p-dot.done {
+  .p-dot::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--rule) 80%, transparent);
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  .p-dot.done::after {
     background: color-mix(in srgb, var(--accent) 55%, var(--rule));
   }
 
   .p-dot.here {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+    outline: 0;
+  }
+
+  .p-dot.here::after {
+    background: var(--accent);
+    box-shadow:
+      0 0 0 2px var(--bg),
+      0 0 0 4px var(--focus);
   }
 
   .p-dot:disabled {
@@ -919,15 +952,18 @@ const structuredData = {
     font-family: var(--sans);
     font-size: 0.92rem;
     line-height: 1.4;
+    touch-action: manipulation;
     transition:
       background 120ms ease,
       border-color 120ms ease,
       opacity 180ms ease;
   }
 
-  .q-option:hover {
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
-    background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
+  @media (hover: hover) {
+    .q-option:hover {
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+      background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
+    }
   }
 
   .q-option.selected {
@@ -1076,6 +1112,112 @@ const structuredData = {
 
   .results-links a {
     color: var(--link);
+  }
+
+  @media (max-width: 640px) {
+    :root {
+      --page-pad-x: clamp(0.85rem, 4vw, 1.15rem);
+      --page-pad-y: 0.85rem;
+    }
+
+    .page {
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    }
+
+    .home {
+      margin-bottom: 0.75rem;
+    }
+
+    .hero {
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(1.55rem, 8vw, 2rem);
+    }
+
+    .lede {
+      font-size: 0.95rem;
+    }
+
+    .progress {
+      display: flex;
+      gap: 0;
+      margin-inline: calc(var(--page-pad-x) * -1);
+      padding-inline: var(--page-pad-x);
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .progress::-webkit-scrollbar {
+      display: none;
+    }
+
+    .p-dot {
+      flex: 0 0 2.75rem;
+      height: 2.75rem;
+      scroll-snap-align: center;
+    }
+
+    .q-meta {
+      font-size: 0.72rem;
+    }
+
+    .q-prompt {
+      font-size: clamp(1.25rem, 6vw, 1.5rem);
+      line-height: 1.25;
+    }
+
+    .q-hint {
+      font-size: 0.84rem;
+    }
+
+    .q-options {
+      gap: 0.55rem;
+    }
+
+    .q-option {
+      min-height: 3rem;
+      grid-template-columns: 1.35rem minmax(0, 1fr);
+      gap: 0.55rem;
+      padding: 0.75rem;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .q-nav {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .match-item {
+      grid-template-columns: 1.35rem minmax(0, 1fr);
+      gap: 0.6rem;
+    }
+
+    .match-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: flex-start;
+    }
+
+    .share-row {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .share-row .btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .q-option {
+      grid-template-columns: 1.2rem minmax(0, 1fr);
+      padding-inline: 0.65rem;
+    }
+
   }
 
   a {
