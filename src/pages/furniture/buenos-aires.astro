@@ -367,8 +367,12 @@ const structuredData = {
 
             {brand.stores.length > 0 && (
               <div class="store-list" aria-label={`${brand.name} store locations`}>
-                {brand.stores.map((store) => (
-                  <article class="store-card" data-open-sunday={store.openSunday}>
+                {brand.stores.map((store, storeIndex) => (
+                  <article
+                    class="store-card"
+                    data-open-sunday={store.openSunday}
+                    data-store-index={storeIndex}
+                  >
                     <div class="store-heading">
                       <h3>{store.name}</h3>
                       <a
@@ -395,6 +399,16 @@ const structuredData = {
                     </p>
                   </article>
                 ))}
+                {brand.stores.length > 3 && (
+                  <button
+                    class="store-toggle"
+                    type="button"
+                    data-store-toggle
+                    aria-expanded="false"
+                  >
+                    Show more ({brand.stores.length - 3} more)
+                  </button>
+                )}
               </div>
             )}
           </article>
@@ -554,6 +568,30 @@ const structuredData = {
     (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore) &&
     (!openSundayOnlyToggle?.checked || store.openSunday);
 
+  const updateStoreListVisibility = (card) => {
+    const storeList = card.querySelector(".store-list");
+    if (!storeList) return;
+
+    const isExpanded = storeList.dataset.expanded === "true";
+    const sundayOnly = Boolean(openSundayOnlyToggle?.checked);
+    for (const storeCard of storeList.querySelectorAll(".store-card")) {
+      const storeIndex = Number(storeCard.dataset.storeIndex);
+      const isPastInitialStores = Number.isFinite(storeIndex) && storeIndex >= 3;
+      const isClosedOnSunday = sundayOnly && storeCard.dataset.openSunday !== "true";
+      storeCard.hidden = isClosedOnSunday || (!isExpanded && isPastInitialStores);
+    }
+  };
+
+  const updateStoreToggle = (storeList) => {
+    const toggle = storeList.querySelector("[data-store-toggle]");
+    if (!toggle) return;
+
+    const isExpanded = storeList.dataset.expanded === "true";
+    const extraStores = storeList.querySelectorAll(".store-card").length - 3;
+    toggle.setAttribute("aria-expanded", String(isExpanded));
+    toggle.textContent = isExpanded ? "Show less" : `Show more (${extraStores} more)`;
+  };
+
   const visibleFurnitureBrands = () => brandCards.filter(cardPassesActiveFilters);
 
   const visibleFurnitureStores = () => furnitureMapData.filter(storePassesActiveFilters);
@@ -593,13 +631,9 @@ const structuredData = {
   };
 
   const applyBrandFilters = ({ syncUrl = true } = {}) => {
-    const sundayOnly = Boolean(openSundayOnlyToggle?.checked);
-
     for (const card of brandCards) {
       card.hidden = !cardPassesActiveFilters(card);
-      for (const storeCard of card.querySelectorAll(".store-card")) {
-        storeCard.hidden = sundayOnly && storeCard.dataset.openSunday !== "true";
-      }
+      updateStoreListVisibility(card);
     }
 
     updateVisibleCount();
@@ -681,6 +715,17 @@ const structuredData = {
   multiLocationOnlyToggle?.addEventListener("change", () => applyBrandFilters());
   fourStarBrandOnlyToggle?.addEventListener("change", () => applyBrandFilters());
   openSundayOnlyToggle?.addEventListener("change", () => applyBrandFilters());
+  for (const toggle of document.querySelectorAll("[data-store-toggle]")) {
+    toggle.addEventListener("click", () => {
+      const storeList = toggle.closest(".store-list");
+      if (!storeList) return;
+
+      storeList.dataset.expanded = String(storeList.dataset.expanded !== "true");
+      const card = storeList.closest(".brand-card");
+      if (card) updateStoreListVisibility(card);
+      updateStoreToggle(storeList);
+    });
+  }
   applyFiltersFromUrl();
   window.addEventListener("pageshow", applyFiltersFromUrl);
   window.addEventListener("popstate", applyFiltersFromUrl);
@@ -1062,8 +1107,32 @@ const structuredData = {
   .store-list {
     grid-area: stores;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.55rem;
+  }
+
+  .store-toggle {
+    grid-column: 1 / -1;
+    justify-self: start;
+    min-height: 2.25rem;
+    padding: 0.42rem 0.75rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 750;
+  }
+
+  .store-toggle:hover {
+    background: var(--surface-soft);
+  }
+
+  .store-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .brand-card[hidden] {
@@ -1192,12 +1261,6 @@ const structuredData = {
     border: 1px solid var(--border);
     border-radius: 0.9rem;
     background: var(--surface-soft);
-  }
-
-  @media (max-width: 1060px) {
-    .store-list {
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-    }
   }
 
   @media (max-width: 900px) {
