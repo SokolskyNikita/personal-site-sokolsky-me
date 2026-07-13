@@ -231,6 +231,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Chill guy", w: 2 },
         { match: "Unserious", w: 1 },
         { match: "Grillpilled", w: 2 },
+        { match: "Normal guy from", w: 1 },
       ]),
       opt("Hardware store first. Then the lawn, the kids or Costco.", "domestic", {}, [
         { match: "Suburban", w: 2 },
@@ -255,7 +256,7 @@ export const DECK: QuizQuestion[] = [
       opt("Phone in hand: Discord, the timeline and a four-hour YouTube hole.", "online", {}, [
         { match: "Terminally online", w: 2 },
         { match: "NEET", w: 1 },
-        { match: "Reply-all", w: 1 },
+        { match: "Discord mod", w: 1 },
       ]),
     ],
   },
@@ -267,7 +268,6 @@ export const DECK: QuizQuestion[] = [
         { match: "Bro", w: 2 },
         { match: "Lad", w: 1 },
         { match: "Euro trash", w: 1 },
-        { match: "Bday boy", w: 1 },
       ]),
       opt("Home. Grill on, kids in bed, thermostat under my control.", "domestic", {}, [
         { match: "Grill dad", w: 2 },
@@ -303,7 +303,8 @@ export const DECK: QuizQuestion[] = [
     opts: [
       opt("Fine. I exist in it. Next question.", "default", {}, [
         { match: "Dad-bod", w: 2 },
-        { match: "Normal guy from 2016", w: 1 },
+        { match: "Normal guy from", w: 1 },
+        { match: "Chill guy", w: 1 },
       ]),
       opt("It works. I can carry the groceries and keep up with the kids.", "domestic", {}, [
         { match: "Functional-fitness", w: 2 },
@@ -347,19 +348,19 @@ export const DECK: QuizQuestion[] = [
       ]),
       opt("I think about the mortgage rate, Costco bill and whether the 529 is on track.", "domestic", {}, [
         { match: "Costco dad", w: 2 },
-        { match: "Dividend dad", w: 1 },
+        { match: "Boglehead", w: 1 },
         { match: "FIRE", w: 1 },
       ]),
       opt("Protein budget and gym membership before brunch.", "body", {}, [
         { match: "Protein guy", w: 2 },
         { match: "Gym bro", w: 1 },
-        { match: "Huel", w: 1 },
+        { match: "Meal-prep", w: 1 },
       ]),
       opt("Equity, allocation, deal flow. I enjoy this conversation more than I should.", "capital", {}, [
         { match: "Finance bro", w: 2 },
         { match: "Cryptobros", w: 2 },
         { match: "Options guy", w: 1 },
-        { match: "Private-equity", w: 1 },
+        { match: "VC bro", w: 1 },
       ]),
       opt("I would rather spend on a trip. If I buy something flashy, it should not look flashy.", "soft", {
         "fashion-and-aesthetic-men": 1,
@@ -396,8 +397,8 @@ export const DECK: QuizQuestion[] = [
         { match: "Gym bro", w: 1 },
       ]),
       opt("My job leaks into the prompts. There may be a podcast in the bio.", "capital", {}, [
-        { match: "Podcast-in-bio", w: 2 },
-        { match: "Hinge-prompt", w: 1 },
+        { match: "Gym-selfie", w: 1 },
+        { match: "Car-selfie", w: 1 },
         { match: "Man in finance", w: 2 },
       ]),
       opt("The prompts are soft and there is probably a playlist. People want to fix me.", "soft", {}, [
@@ -427,7 +428,7 @@ export const DECK: QuizQuestion[] = [
       ]),
       opt("Hear them out, apologize for the part I own and ask how to fix it.", "domestic", {}, [
         { match: "Avoidant king", w: 1 },
-        { match: "Midwest nice", w: 1 },
+        { match: "Green-flag", w: 1 },
         { match: "Trad dad", w: 1 },
         { match: "Nice guy", w: 1 },
       ]),
@@ -464,7 +465,7 @@ export const DECK: QuizQuestion[] = [
       opt("Sports, memes and whatever the group chat is yelling about.", "default", {}, [
         { match: "Bro", w: 1 },
         { match: "Fantasy-football", w: 1 },
-        { match: "Normal guy from 2016", w: 1 },
+        { match: "Normal guy from", w: 1 },
       ]),
       opt("Home-project videos and local Facebook arguments I pretend only my neighbors care about.", "domestic", {}, [
         { match: "YouTube-research dad", w: 3 },
@@ -505,7 +506,7 @@ export const DECK: QuizQuestion[] = [
     q: "You have five minutes to get dressed. What do you reach for?",
     opts: [
       opt("Whatever is clean. Brand logos optional, vibes mandatory.", "default", {}, [
-        { match: "Normcore", w: 2 },
+        { match: "Clean boy", w: 2 },
         { match: "Bro", w: 1 },
         { match: "Frat bro", w: 1 },
       ]),
@@ -522,8 +523,8 @@ export const DECK: QuizQuestion[] = [
       opt("Quarter-zip or Patagonia vest. Possibly expensive, never loud.", "capital", {
         "fashion-and-aesthetic-men": 1,
       }, [
-        { match: "Patagonia-vest", w: 3 },
-        { match: "Quarter-zip", w: 2 },
+        { match: "Finance bro", w: 2 },
+        { match: "Quarter-zip", w: 3 },
         { match: "Quiet-luxury", w: 1 },
       ]),
       opt("The mess is planned. The clothes may be archive, indie sleaze or last decade's mistake.", "soft", {}, [
@@ -547,9 +548,9 @@ export const DECK: QuizQuestion[] = [
     q: "When you learn for pleasure, where does your attention go?",
     opts: [
       opt("I know enough to argue at dinner. Depth is optional.", "default", {}, [
-        { match: "Creduloid", w: 1 },
         { match: "NPC", w: 1 },
         { match: "Brainlet", w: 1 },
+        { match: "Pseudo-intellectual", w: 1 },
       ]),
       opt("Things I can use: taxes, schools, appliance repair and the fastest route.", "domestic", {}, [
         { match: "Airport dad", w: 1 },
@@ -561,7 +562,7 @@ export const DECK: QuizQuestion[] = [
       }, [
         { match: "Science bro", w: 2 },
         { match: "Biohacker", w: 2 },
-        { match: "Gym-bro scientist", w: 1 },
+        { match: "Form-police", w: 1 },
       ]),
       opt("Markets and AI, usually through a framework someone posted in a long thread.", "capital", {}, [
         { match: "Substack", w: 2 },
@@ -574,7 +575,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Film bro", w: 2 },
         { match: "Lit bro", w: 2 },
         { match: "Infinite Jest", w: 1 },
-        { match: "Murakami", w: 1 },
+        { match: "Bukowski", w: 1 },
       ]),
       opt("Lore wikis, old forum arguments and ideological reading lists.", "online", {}, [
         { match: "Actually", w: 2 },
@@ -591,7 +592,7 @@ export const DECK: QuizQuestion[] = [
     opts: [
       opt("Mostly checked out. Grill first, discourse never.", "default", {}, [
         { match: "Grillpilled", w: 3 },
-        { match: "Normal guy from 2016", w: 1 },
+        { match: "Normal guy from", w: 1 },
       ]),
       opt("Whatever reaches my front door: schools, zoning, the HOA, crime nearby.", "domestic", {
         "political-and-ideological-men": 1,
@@ -605,7 +606,7 @@ export const DECK: QuizQuestion[] = [
       }, [
         { match: "Carnivore", w: 2 },
         { match: "Raw-milk", w: 1 },
-        { match: "Ancestral", w: 1 },
+        { match: "Meatfluencer", w: 1 },
         { match: "Ecofascist", w: 1 },
       ]),
       opt("Markets, new technology and whether the government can still do anything properly.", "capital", {}, [
@@ -640,7 +641,7 @@ export const DECK: QuizQuestion[] = [
       ]),
       opt("It pays for a stable life, decent benefits and the right school district.", "domestic", {}, [
         { match: "Trad dad", w: 1 },
-        { match: "Spreadsheet man", w: 1 },
+        { match: "Corporate drone", w: 1 },
         { match: "Wagecuck", w: 1 },
       ]),
       opt("I like work where you can see whether I did it well.", "body", {}, [
@@ -652,7 +653,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Founder-mode", w: 2 },
         { match: "Hustle bro", w: 2 },
         { match: "SaaS bro", w: 1 },
-        { match: "High-ticket", w: 1 },
+        { match: "Course seller", w: 1 },
         { match: "Don Draper", w: 1 },
       ]),
       opt("I make things. The job may involve design, writing or music.", "soft", {}, [
@@ -711,9 +712,9 @@ export const DECK: QuizQuestion[] = [
     q: "If you control the speakers for an hour, what comes on?",
     opts: [
       opt("Whatever the aux dictates. Chart stuff, party stuff.", "default", {}, [
-        { match: "Aux-cord", w: 2 },
-        { match: "Festival fluffer", w: 1 },
-        { match: "Performative techno", w: 1 },
+        { match: "Playlist boyfriend", w: 2 },
+        { match: "Euro trash", w: 1 },
+        { match: "Boiler Room", w: 1 },
       ]),
       opt("Dad rock until a child's playlist takes over.", "domestic", {}, [
         { match: "Festival dad", w: 1 },
@@ -727,19 +728,18 @@ export const DECK: QuizQuestion[] = [
       ]),
       opt("Instrumental playlists or podcasts. Silence makes it harder to work.", "capital", {}, [
         { match: "Productivity bro", w: 1 },
-        { match: "Inbox-zero", w: 1 },
+        { match: "Hustle bro", w: 1 },
       ]),
       opt("Indie, jazz and music made by sad men. The collection is a little too deliberate.", "soft", {}, [
         { match: "Male-manipulator-music", w: 2 },
         { match: "Vinyl", w: 2 },
         { match: "Indie boy", w: 1 },
-        { match: "Clairo", w: 1 },
-        { match: "Serenading sirens", w: 1 },
+        { match: "Radiohead", w: 1 },
       ]),
       opt("Phonk edits, hyperpop and audio that makes no sense off the internet.", "online", {}, [
         { match: "Hyperpop", w: 2 },
         { match: "Drainer", w: 2 },
-        { match: "SoundCloud", w: 1 },
+        { match: "DJ boyfriend", w: 1 },
         { match: "Boiler Room", w: 1 },
       ]),
     ],
@@ -753,7 +753,8 @@ export const DECK: QuizQuestion[] = [
         { match: "Fantasy-football", w: 1 },
       ]),
       opt("I mostly stopped, though Nintendo with the kids still counts.", "domestic", {}, [
-        { match: "Lego lads", w: 1 },
+        { match: "Toy trains", w: 1 },
+        { match: "Retro-gaming", w: 1 },
         { match: "Dad", w: 1 },
       ]),
       opt("I would rather climb, skate or ride than simulate any of them.", "body", {}, [
@@ -799,7 +800,6 @@ export const DECK: QuizQuestion[] = [
         { match: "Chicken-and-rice", w: 3 },
         { match: "Protein guy", w: 2 },
         { match: "Meal-prep", w: 2 },
-        { match: "Huel", w: 1 },
       ]),
       opt("Expense-account spots or “interesting” wine lists.", "capital", {}, [
         { match: "Michelin", w: 2 },
@@ -809,14 +809,15 @@ export const DECK: QuizQuestion[] = [
       opt("A cute café, good sourdough and a date who notices the plates.", "soft", {}, [
         { match: "Coffee snob", w: 2 },
         { match: "Sourdough", w: 2 },
-        { match: "Home-chef boyfriend", w: 1 },
+        { match: "Home-barista boyfriend", w: 1 },
       ]),
-      opt("Carnivore phase, raw milk argument, seed-oil blacklist.", "online", {
+      opt("Carnivore phase, raw milk argument, ancestral-diet manifesto.", "online", {
         "wellness-longevity-and-optimization-men": 2,
       }, [
         { match: "Carnivore", w: 3 },
         { match: "Raw egg", w: 2 },
-        { match: "Seed-oil", w: 2 },
+        { match: "Raw-milk", w: 2 },
+        { match: "Meatfluencer", w: 1 },
       ]),
     ],
   },
@@ -846,7 +847,7 @@ export const DECK: QuizQuestion[] = [
       ]),
       opt("Plants and art books. The lighting has been considered.", "soft", {}, [
         { match: "Plant dad", w: 2 },
-        { match: "Mid-century", w: 1 },
+        { match: "Architecture", w: 1 },
         { match: "Design guy", w: 1 },
         { match: "Clean boy", w: 1 },
       ]),
@@ -903,7 +904,7 @@ export const DECK: QuizQuestion[] = [
     q: "When someone says “be a man,” what does the phrase mean to you?",
     opts: [
       opt("Shrug. Be decent, don’t overthink the costume.", "default", {}, [
-        { match: "Normal guy from 2016", w: 2 },
+        { match: "Normal guy from", w: 2 },
         { match: "King", w: 1 },
       ]),
       opt("Show up for your family and do the jobs nobody wants.", "domestic", {}, [
@@ -941,7 +942,7 @@ export const DECK: QuizQuestion[] = [
     opts: [
       opt("Basically offline. Lurk, react, leave.", "default", {}, [
         { match: "NPC", w: 2 },
-        { match: "Normal guy from 2016", w: 1 },
+        { match: "Normal guy from", w: 1 },
         { match: "30-Year-Old Boomer", w: 1 },
       ]),
       opt("The family WhatsApp, neighborhood group or a Facebook post everyone can see.", "domestic", {}, [
@@ -951,7 +952,7 @@ export const DECK: QuizQuestion[] = [
       opt("Workout logs and progress photos with carefully bad lighting.", "body", {}, [
         { match: "Gym-selfie", w: 2 },
         { match: "Run-club", w: 1 },
-        { match: "Photo-maxxer", w: 1 },
+        { match: "Gymmaxxer", w: 1 },
       ]),
       opt("LinkedIn main character or founder Twitter.", "capital", {}, [
         { match: "LinkedIn lunatic", w: 3 },
@@ -1053,12 +1054,12 @@ export const DECK: QuizQuestion[] = [
         { match: "Peptide", w: 1 },
         { match: "Optimization", w: 1 },
       ]),
-      opt("Molly, ketamine and a little festival spirituality.", "soft", {
+      opt("Festival chemistry and a little spiritual language about connection.", "soft", {
         "psychonauts-and-consciousness-explorers": 3,
       }, [
-        { match: "Molly males", w: 3 },
-        { match: "Ketamine", w: 2 },
+        { match: "Spiritual", w: 3 },
         { match: "Tantra", w: 2 },
+        { match: "Raver", w: 2 },
         { match: "Burner", w: 1 },
       ]),
       opt("Psychedelics and consciousness. Reality seems stranger afterward.", "online", {
@@ -1079,14 +1080,14 @@ export const DECK: QuizQuestion[] = [
         { match: "Digital bromad", w: 1 },
       ]),
       opt("The museums have time slots. I packed snacks for everybody.", "domestic", {}, [
-        { match: "Vacation-itinerary dad", w: 3 },
+        { match: "Thermostat dad", w: 2 },
         { match: "Airport dad", w: 3 },
         { match: "Disney dad", w: 2 },
       ]),
       opt("The trip is built around a race, trek, ski day or surf break.", "body", {}, [
         { match: "Ski bum", w: 2 },
         { match: "Surf bro", w: 2 },
-        { match: "Ultramarathon", w: 1 },
+        { match: "Ironman", w: 1 },
         { match: "Climbing dirtbag", w: 1 },
       ]),
       opt("I use points, fly up front if possible and attach a beach to a work trip.", "capital", {}, [
@@ -1165,8 +1166,8 @@ export const DECK: QuizQuestion[] = [
       opt("Training science, gear reviews and my own race data.", "body", {
         "autists-special-interest-men": 1,
       }, [
-        { match: "Zone-2", w: 1 },
-        { match: "Flashlight", w: 1 },
+        { match: "Hybrid athlete", w: 1 },
+        { match: "Watch guy", w: 1 },
         { match: "EDC", w: 1 },
       ]),
       opt("Markets, forecasting or what the next AI model may be able to do.", "capital", {
