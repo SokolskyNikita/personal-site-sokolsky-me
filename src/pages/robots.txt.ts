@@ -123,6 +123,9 @@ export const GET: APIRoute = ({ site, url }) => {
     "# Explicitly allow AI search and training bots",
     ...aiAllowRules,
     `Sitemap: ${origin}/sitemap-index.xml`,
+    "",
+    "# HTML sitemap (human- and bot-readable page index)",
+    `# ${origin}/sitemap/`,
   ].join("\n");
 
   return new Response(body, {

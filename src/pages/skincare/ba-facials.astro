@@ -315,13 +315,14 @@ const structuredData = {
             </p>
           </article>
         ))}
+        <p class="empty-state">No providers match these filters. Try a different neighborhood or remove a filter.</p>
       </section>
 
       <section class="facialPlace-map-section" aria-labelledby="facialPlace-map-heading">
         <div class="map-copy">
           <p class="eyebrow">Map</p>
           <h2 id="facialPlace-map-heading">Buenos Aires facial provider map</h2>
-          <p id="facialPlace-map-status" class="map-status">
+          <p id="facialPlace-map-status" class="map-status" aria-live="polite">
             Showing all {facialPlaces.length} facial providers.
           </p>
         </div>
@@ -1218,6 +1219,139 @@ const structuredData = {
     .facialPlace-map-section {
       border-radius: 1.2rem;
       padding: 0.7rem;
+    }
+  }
+
+  /* Responsive interaction and information-preservation pass */
+  button,
+  select,
+  input,
+  label {
+    touch-action: manipulation;
+  }
+
+  .sort-toggle label,
+  .extras-toggle label {
+    min-height: 2.75rem;
+    padding-inline: 0.85rem;
+  }
+
+  .sort-toggle legend,
+  .extras-toggle legend {
+    line-height: 2.75rem;
+  }
+
+  .filter-dropdown select {
+    min-height: 2.75rem;
+  }
+
+  .maps-link {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: 999px;
+  }
+
+  .maps-link:focus-visible,
+  .facialPlace-name a:focus-visible,
+  .price-label:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .empty-state {
+    display: none;
+    margin: 0;
+    padding: 1.2rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .facialPlace-list:not(:has(.facialPlace-row:not(.facialPlace-head):not([hidden]))) .empty-state {
+    display: block;
+  }
+
+  @media (max-width: 900px) {
+    .toolbar {
+      position: sticky;
+      top: max(0.35rem, env(safe-area-inset-top));
+      z-index: 4;
+      margin-inline: -0.2rem;
+      padding: 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      box-shadow: 0 10px 30px color-mix(in srgb, var(--text) 10%, transparent);
+      backdrop-filter: blur(12px);
+    }
+
+    .sort-toggle,
+    .extras-toggle {
+      width: 100%;
+      border-radius: 0.9rem;
+    }
+
+    .filter-dropdown {
+      width: 100%;
+      max-width: none;
+    }
+
+    .facialPlace-row {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "name price map"
+        "desc desc desc"
+        "address address address"
+        "hours rating rating";
+      gap: 0.5rem 0.65rem;
+      padding: 0.85rem;
+    }
+
+    .maps-link {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .address,
+    .hours {
+      display: block;
+      padding-top: 0.45rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .address {
+      grid-area: address;
+    }
+
+    .hours {
+      grid-area: hours;
+    }
+
+    .rating {
+      align-self: start;
+      padding-top: 0.45rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .meta {
+      margin-top: 0.15rem;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .sort-toggle,
+    .extras-toggle {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .sort-toggle legend,
+    .extras-toggle legend,
+    .sort-toggle label,
+    .extras-toggle label {
+      flex: 0 0 auto;
     }
   }
 </style>

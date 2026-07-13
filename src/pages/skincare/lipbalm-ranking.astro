@@ -705,6 +705,7 @@ const structuredData = {
         <a class="home-link" href="/">Nikita Sokolsky</a>
         <p class="eyebrow">Skincare notes</p>
         <h1>{pageTitle}</h1>
+        <p class="summary">{pageDescription}</p>
       </header>
 
       <section class="ranking" aria-label="Ranking">
@@ -1258,5 +1259,283 @@ const structuredData = {
       background: rgb(255 255 255 / 0.025);
     }
 
+  }
+
+  /* Responsive table and touch pass */
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .page {
+    width: min(100% - clamp(1rem, 3vw, 3rem), 1460px);
+    padding: clamp(0.85rem, 2vw, 1.5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .page-header {
+    gap: 0.5rem;
+    margin-bottom: clamp(1rem, 2.5vw, 1.8rem);
+  }
+
+  .home-link {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.86rem;
+  }
+
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.15rem, 4vw, 3.8rem);
+    font-weight: 600;
+    line-height: 0.98;
+  }
+
+  .summary {
+    max-width: 68ch;
+    font-size: clamp(0.96rem, 1.2vw, 1.08rem);
+    line-height: 1.55;
+  }
+
+  .table-wrap {
+    border-radius: 1.1rem;
+  }
+
+  table {
+    min-width: 1280px;
+  }
+
+  th,
+  td {
+    padding: 0.72rem;
+  }
+
+  td {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .sort-button {
+    min-height: 2.75rem;
+  }
+
+  .rank-column,
+  .rank-cell {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--panel);
+  }
+
+  .rank-column {
+    z-index: 4;
+    background: var(--panel-strong);
+  }
+
+  .product-cell,
+  th:nth-child(2) {
+    position: sticky;
+    left: 4.8rem;
+    z-index: 2;
+    background: var(--panel);
+    box-shadow: 8px 0 16px rgb(65 36 18 / 0.06);
+  }
+
+  th:nth-child(2) {
+    z-index: 4;
+    background: var(--panel-strong);
+  }
+
+  .methodology {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 720px) {
+    body {
+      font-size: 16px;
+    }
+
+    .page {
+      width: min(100% - 1rem, 1460px);
+      padding: 0.75rem 0 1.25rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 10vw, 2.8rem);
+    }
+
+    .summary {
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr {
+      display: block;
+      min-width: 0;
+      width: 100%;
+    }
+
+    thead {
+      position: sticky;
+      top: max(0.35rem, env(safe-area-inset-top));
+      z-index: 5;
+      margin-bottom: 0.75rem;
+      padding: 0.45rem;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      box-shadow: 0 8px 24px rgb(65 36 18 / 0.1);
+      backdrop-filter: blur(12px);
+      scrollbar-width: thin;
+    }
+
+    thead tr {
+      display: flex;
+      gap: 0.35rem;
+      width: max-content;
+    }
+
+    th,
+    th:nth-child(2),
+    .rank-column {
+      position: static;
+      width: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .sort-button {
+      min-height: 2.75rem;
+      width: auto;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    th[aria-sort] .sort-button {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    tbody {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    tbody tr,
+    tbody tr:nth-child(even) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: var(--panel);
+      box-shadow: 0 10px 28px rgb(65 36 18 / 0.08);
+    }
+
+    td,
+    .rank-cell,
+    .product-cell {
+      position: static;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+      width: auto;
+      min-width: 0;
+      padding: 0.7rem 0.8rem;
+      border: 0;
+      border-top: 1px solid var(--border);
+      background: transparent;
+      box-shadow: none;
+      font-size: 0.88rem;
+      text-align: left;
+      white-space: normal;
+    }
+
+    td::before {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td:nth-child(1)::before { content: "Rank"; }
+    td:nth-child(2)::before { content: "Product"; }
+    td:nth-child(3)::before { content: "Region"; }
+    td:nth-child(4)::before { content: "Type"; }
+    td:nth-child(5)::before { content: "Key ingredients"; }
+    td:nth-child(6)::before { content: "Barrier repair"; }
+    td:nth-child(7)::before { content: "Healing actives"; }
+    td:nth-child(8)::before { content: "Irritant-free"; }
+    td:nth-child(9)::before { content: "Daily use"; }
+    td:nth-child(10)::before { content: "Score"; }
+    td:nth-child(11)::before { content: "Best for"; }
+
+    td:nth-child(1),
+    td:nth-child(10) {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      border-top: 0;
+      font-size: 1rem;
+      font-weight: 850;
+    }
+
+    td:nth-child(1) {
+      color: var(--accent);
+    }
+
+    td:nth-child(2),
+    td:nth-child(5),
+    td:nth-child(11) {
+      grid-column: 1 / -1;
+    }
+
+    td:nth-child(2) {
+      border-top: 0;
+      font-size: 1rem;
+    }
+
+    td:nth-child(3),
+    td:nth-child(6),
+    td:nth-child(8) {
+      border-right: 1px solid var(--border);
+    }
+
+    td:nth-child(5),
+    td:nth-child(11) {
+      grid-template-columns: 1fr;
+    }
+
+    .methodology {
+      font-size: 0.88rem;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) and (max-width: 720px) {
+    tbody tr,
+    tbody tr:nth-child(even) {
+      background: var(--panel);
+      box-shadow: 0 10px 28px rgb(0 0 0 / 0.28);
+    }
   }
 </style>

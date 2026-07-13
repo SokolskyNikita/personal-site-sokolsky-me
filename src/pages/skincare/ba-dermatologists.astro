@@ -3233,4 +3233,50 @@ const structuredData = {
       border-radius: 1.2rem;
     }
   }
+
+  /* Long-list performance and mobile scanability */
+  .doctor-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 58rem;
+  }
+
+  .doctor-card a,
+  .home-link {
+    touch-action: manipulation;
+  }
+
+  @media (max-width: 620px) {
+    .rank {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      gap: 0.45rem;
+      padding-inline: 0.15rem;
+    }
+
+    .rank span {
+      order: 2;
+      margin-left: auto;
+      font-size: 0.75rem;
+    }
+
+    .rank strong {
+      font-size: 2.35rem;
+    }
+
+    .rank small {
+      padding-bottom: 0;
+    }
+
+    .doctor-main {
+      box-shadow: 0 14px 44px rgba(67, 43, 24, 0.1);
+    }
+
+    .google-place a,
+    .sources a,
+    .instagram-link {
+      min-height: 2.75rem;
+      min-width: 2.75rem;
+    }
+  }
 </style>

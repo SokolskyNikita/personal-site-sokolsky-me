@@ -1,0 +1,360 @@
+---
+export const prerender = true;
+
+/**
+ * HTML sitemap for search-engine and AI crawlers.
+ * Auto-indexes all public Astro pages (excludes private/* and non-content routes).
+ */
+const pageSources = import.meta.glob<string>("./**/*.{astro,md,mdx}", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
+const dataModules = import.meta.glob<{ title?: string }>("../data/**/*.{json,ts}", {
+  eager: true,
+});
+
+/** Same tracked redirect paths excluded from the XML sitemap in astro.config.mjs */
+const trackedRedirectPaths = new Set([
+  "/apartments/palermo/",
+  "/travel/best-of-antarctica/",
+  "/travel/best-of-arctic/",
+  "/travel/best-of-sa/",
+]);
+
+const excludedExactPaths = new Set(["/404/", "/sitemap/"]);
+
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}/sitemap/`;
+const pageTitle = "Sitemap";
+const pageDescription =
+  "Complete HTML index of all public pages on sokolsky.me for search engines and crawlers.";
+
+type SitemapEntry = {
+  path: string;
+  url: string;
+  title: string;
+  section: string;
+};
+
+const extractQuoted = (source: string, patterns: RegExp[]): string | null => {
+  for (const pattern of patterns) {
+    const match = source.match(pattern);
+    const title = match?.[1]?.trim();
+    if (title) return title;
+  }
+  return null;
+};
+
+/** Match a quoted string without stopping on apostrophes inside double quotes (and vice versa). */
+const titlePatterns = [
+  /const\s+pageTitle\s*=\s*"([^"]+)"/,
+  /const\s+pageTitle\s*=\s*'([^']+)'/,
+  /const\s+pageTitle\s*=\s*`([^`]+)`/,
+  /pageTitle=\{"([^"]+)"\}/,
+  /pageTitle=\{'([^']+)'\}/,
+  /pageTitle=\{`([^`]+)`\}/,
+  /<title>([^<{]+)<\/title>/i,
+];
+
+const filePathToRoute = (filePath: string): string | null => {
+  let route = filePath
+    .replace(/^\.\//, "/")
+    .replace(/\.(astro|md|mdx)$/, "");
+
+  if (route.endsWith("/index")) {
+    route = route.slice(0, -"/index".length) || "/";
+  }
+
+  if (!route.endsWith("/")) {
+    route += "/";
+  }
+
+  if (excludedExactPaths.has(route)) return null;
+  if (route === "/private/" || route.startsWith("/private/")) return null;
+  if (trackedRedirectPaths.has(route)) return null;
+
+  return route;
+};
+
+const humanizePath = (pathname: string): string => {
+  if (pathname === "/") return "Home";
+  return pathname
+    .replace(/^\/|\/$/g, "")
+    .split("/")
+    .map((segment) =>
+      segment
+        .split("-")
+        .map((word) => {
+          if (word === "usa") return "USA";
+          if (word === "ai") return "AI";
+          if (word === "ba") return "BA";
+          if (word === "std") return "STD";
+          if (word === "bf") return "BF";
+          if (word === "fifa") return "FIFA";
+          if (word === "pg") return "PG";
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" "),
+    )
+    .join(" · ");
+};
+
+const extractTitleFromPageData = (source: string): string | null => {
+  if (!/\bpageTitle\s*=\s*pageData\.title\b/.test(source)) return null;
+
+  const importMatch = source.match(
+    /import\s+pageData\s+from\s+["']([^"']+)["']/,
+  );
+  const basename = importMatch?.[1]?.split("/").pop();
+  if (!basename) return null;
+
+  for (const [key, mod] of Object.entries(dataModules)) {
+    if (!key.endsWith(`/${basename}`) && !key.endsWith(basename)) continue;
+    const record = mod as { title?: string; default?: { title?: string } };
+    const title = record.title ?? record.default?.title;
+    if (typeof title === "string" && title.trim()) return title.trim();
+  }
+
+  return null;
+};
+
+const extractTitle = (source: string, pathname: string): string => {
+  return (
+    extractQuoted(source, titlePatterns) ??
+    extractTitleFromPageData(source) ??
+    humanizePath(pathname)
+  );
+};
+
+const sectionLabel = (pathname: string): string => {
+  if (pathname === "/") return "Home";
+  const segment = pathname.replace(/^\//, "").split("/")[0] ?? "other";
+  return humanizePath(`/${segment}/`);
+};
+
+const entries: SitemapEntry[] = Object.entries(pageSources)
+  .map(([filePath, source]) => {
+    const path = filePathToRoute(filePath);
+    if (!path) return null;
+
+    return {
+      path,
+      url: `${siteUrl}${path}`,
+      title: extractTitle(String(source), path),
+      section: sectionLabel(path),
+    } satisfies SitemapEntry;
+  })
+  .filter((entry): entry is SitemapEntry => entry !== null)
+  .sort((a, b) => a.path.localeCompare(b.path));
+
+const sections = Object.entries(
+  entries.reduce<Record<string, SitemapEntry[]>>((acc, entry) => {
+    (acc[entry.section] ??= []).push(entry);
+    return acc;
+  }, {}),
+).sort(([a], [b]) => {
+  if (a === "Home") return -1;
+  if (b === "Home") return 1;
+  return a.localeCompare(b);
+});
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "Nikita Sokolsky",
+    url: `${siteUrl}/`,
+  },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: entries.length,
+    itemListElement: entries.map((entry, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: entry.url,
+      name: entry.title,
+    })),
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · Nikita Sokolsky</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:title" content={`${pageTitle} · Nikita Sokolsky`} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={`${pageTitle} · Nikita Sokolsky`} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <header>
+      <h1>Sitemap</h1>
+      <p>
+        HTML index of {entries.length} public pages on
+        <a href={`${siteUrl}/`}>{siteUrl.replace(/^https?:\/\//, "")}</a>.
+        Machine-readable XML sitemap:
+        <a href={`${siteUrl}/sitemap-index.xml`}>{siteUrl}/sitemap-index.xml</a>.
+      </p>
+    </header>
+
+    <nav aria-label="Sitemap sections">
+      <h2>Sections</h2>
+      <ul>
+        {
+          sections.map(([section]) => (
+            <li>
+              <a href={`#${section.toLowerCase().replace(/\s+/g, "-")}`}>{section}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <main>
+      {
+        sections.map(([section, pages]) => (
+          <section id={section.toLowerCase().replace(/\s+/g, "-")}>
+            <h2>{section}</h2>
+            <ul>
+              {pages.map((page) => (
+                <li>
+                  <a href={page.url}>{page.title}</a>
+                  <br />
+                  <code>{page.url}</code>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light;
+    --text: #111;
+    --muted: #444;
+    --link: #0645ad;
+    --border: #ccc;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--text);
+    background: #fff;
+  }
+
+  body {
+    margin: 0 auto;
+    max-width: 52rem;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  h1,
+  h2 {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    line-height: 1.25;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+    margin: 1.75rem 0 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  p,
+  li {
+    color: var(--text);
+  }
+
+  header p,
+  nav p {
+    color: var(--muted);
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  a:visited {
+    color: #0b0080;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin: 0.65rem 0;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    color: var(--muted);
+    word-break: break-all;
+  }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  nav li {
+    margin: 0;
+  }
+</style>
