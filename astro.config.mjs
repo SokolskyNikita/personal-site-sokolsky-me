@@ -10,6 +10,7 @@ const posthogHost = 'https://images.sokolsky.me';
 const posthogUiHost = process.env.PUBLIC_POSTHOG_UI_HOST || env.PUBLIC_POSTHOG_UI_HOST || 'https://us.posthog.com';
 const trackedRedirectPaths = new Set([
   '/apartments/palermo/',
+  '/skincare/ari-match-tool-usa/',
   '/travel/best-of-antarctica/',
   '/travel/best-of-arctic/',
   '/travel/best-of-sa/',

@@ -1,6 +1,10 @@
 ---
 export const prerender = true;
 
+import AriMatchMarketPanel from "../../components/AriMatchMarketPanel.astro";
+import { usaMarketData } from "../../data/ari-match-tool-usa";
+import type { AriMatchMarketData } from "../../data/ari-match-tool-usa";
+
 type Link = {
   label: string;
   url: string;
@@ -31,7 +35,7 @@ type ProductMatch = {
 
 const pageTitle = "Ari match tool";
 const pageDescription =
-  "Compact Argentina match tool for Ari's current skincare list, with domestic direct buys and ingredient-match substitutes.";
+  "Argentina and US match tool for Ari's current skincare list, with domestic direct buys and ingredient-match substitutes.";
 const themeColorLight = "#ffffff";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -1796,6 +1800,20 @@ const localMarkupValues = displayedProductNames
   .map((name) => localMarkupPercent(getPrice(name)))
   .filter((value): value is number => value !== undefined);
 const medianLocalMarkup = median(localMarkupValues);
+
+const argentinaMarketData: AriMatchMarketData = {
+  groupedMatches,
+  totalItems,
+  directItems,
+  mappedItems,
+  localMarkupValues,
+  medianLocalMarkup,
+  formatMarkup,
+  directPriceParts,
+  sourcePriceParts,
+  pricePartsByName: (name, sourceName) => priceParts(getPrice(name), getPrice(sourceName)),
+  highMarkupAlternativesFor,
+};
 ---
 
 <!doctype html>
@@ -1817,214 +1835,61 @@ const medianLocalMarkup = median(localMarkupValues);
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <script is:inline>
+      const requestedMarket = new URLSearchParams(window.location.search).get("market");
+      document.documentElement.dataset.market = requestedMarket === "usa" ? "usa" : "argentina";
+    </script>
   </head>
   <body>
     <main>
       <p class="home"><a href="/">sokolsky.me</a></p>
 
-      <header class="page-head">
-        <div>
-          <h1>{pageTitle}</h1>
-          <p>
-            Each item from Ari's current list is mapped to an Argentina buy. Exact domestic listings show one link. Items without domestic as-is stock show the closest ingredient matches, ranked by percent.
-          </p>
+      <fieldset class="market-switch" aria-label="Choose shopping market">
+        <legend>Shopping market</legend>
+        <div class="market-options">
+          <label>
+            <input type="radio" name="market" value="argentina" checked />
+            <span>Argentina</span>
+          </label>
+          <label>
+            <input type="radio" name="market" value="usa" />
+            <span>USA</span>
+          </label>
         </div>
-        <p class="count">{totalItems} items · {directItems} direct · {mappedItems} mapped</p>
-      </header>
+      </fieldset>
 
-      <section class="markup-summary" aria-label="Median local markup">
-        <span>median local markup</span>
-        <strong>{medianLocalMarkup === undefined ? "n/a" : formatMarkup(medianLocalMarkup)}</strong>
-        <span>across {localMarkupValues.length} priced items with abroad benchmarks</span>
-      </section>
+      <AriMatchMarketPanel
+        market="argentina"
+        title="Ari match tool"
+        intro="Each item from Ari's current list is mapped to an Argentina buy. Exact domestic listings show one link. Items without domestic as-is stock show the closest ingredient matches, ranked by percent."
+        markupLabel="median local markup"
+        note="Prices are rough public-listing USD estimates, normalized to comparable volume when a local listing is a mini or travel size. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box."
+        data={argentinaMarketData}
+      />
 
-      <section class="controls" aria-label="Match controls">
-        <label>
-          Search
-          <input id="match-search" type="search" placeholder="product, ingredient or category" autocomplete="off" />
-        </label>
-        <label class="checkbox">
-          <input id="mapped-only" type="checkbox" />
-          mapped only
-        </label>
-        <p id="visible-count">{totalItems} shown</p>
-      </section>
-
-      <p class="note">
-        Prices are rough public-listing USD estimates, normalized to comparable volume when a local listing is a mini or travel size. Scores compare ingredient overlap, product role and texture notes. Mercado Libre import, aduana and puerta-a-puerta listings do not count as direct matches. For tretinoin, acids and clinic products, check with the prescriber and read the box.
-      </p>
-
-      {
-        Array.from(groupedMatches.entries()).map(([group, groupItems]) => (
-          <section class="group" data-group={group}>
-            <h2>{group}</h2>
-            <div class="cards">
-              {groupItems.map((item) => (
-                <article
-                  class={`card ${item.status}`}
-                  data-status={item.status}
-                  data-haystack={`${item.group} ${item.source} ${item.anchors.join(" ")} ${
-                    item.direct?.label ?? ""
-                  } ${(item.matches ?? [])
-                    .map(
-                      (match) =>
-                        `${match.name} ${match.reason} ${highMarkupAlternativesFor(match.name)
-                          .map((alt) => `${alt.name} ${alt.reason}`)
-                          .join(" ")}`,
-                    )
-                    .join(" ")} ${highMarkupAlternativesFor(item.source)
-                    .map((match) => `${match.name} ${match.reason}`)
-                    .join(" ")}`.toLowerCase()}
-                >
-                  <div class="card-top">
-                    <div>
-                      <p class="eyebrow">{item.status === "direct" ? "direct" : "ingredient match"}</p>
-                      <h3>{item.source}</h3>
-                    </div>
-                    <span class={`pill ${item.status}`}>{item.status === "direct" ? "as-is" : "ranked"}</span>
-                  </div>
-
-                  <ul class="anchors" aria-label={`Ingredient anchors for ${item.source}`}>
-                    {item.anchors.map((anchor) => <li>{anchor}</li>)}
-                  </ul>
-
-                  {item.status === "direct" && directPriceParts(item.source).length > 0 && (
-                    <p class="price-line">
-                      {directPriceParts(item.source).map((part) => (
-                        <span>{part}</span>
-                      ))}
-                    </p>
-                  )}
-
-                  {item.status === "direct" && item.direct && (
-                    <p class="direct-link">
-                      <a href={item.direct.url} target="_blank" rel="noreferrer noopener">
-                        {item.direct.label}
-                      </a>
-                    </p>
-                  )}
-
-                  {item.status === "direct" && highMarkupAlternativesFor(item.source).length > 0 && (
-                    <div class="direct-alts">
-                      <p class="alt-heading">lower-markup alternatives</p>
-                      <ol class="ranked">
-                        {highMarkupAlternativesFor(item.source).map((match) => (
-                          <li>
-                            <div class="rank-line">
-                              <strong>{match.percent}%</strong>
-                              <span>{match.name}</span>
-                            </div>
-                            <p>{match.reason}</p>
-                            {priceParts(getPrice(match.name), getPrice(item.source)).length > 0 && (
-                              <p class="price-line match-price">
-                                {priceParts(getPrice(match.name), getPrice(item.source)).map((part) => (
-                                  <span>{part}</span>
-                                ))}
-                              </p>
-                            )}
-                            <ul class="buy">
-                              {match.buy.map((link) => (
-                                <li>
-                                  <a href={link.url} target="_blank" rel="noreferrer noopener">
-                                    {link.label}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-
-                  {item.status === "mapped" && item.matches && (
-                    <>
-                      {sourcePriceParts(item.source).length > 0 && (
-                        <p class="price-line source-price">
-                          {sourcePriceParts(item.source).map((part) => (
-                            <span>{part}</span>
-                          ))}
-                        </p>
-                      )}
-                      <ol class="ranked">
-                        {item.matches.map((match) => (
-                          <li>
-                            <div class="rank-line">
-                              <strong>{match.percent}%</strong>
-                              <span>{match.name}</span>
-                            </div>
-                            <p>{match.reason}</p>
-                            {priceParts(getPrice(match.name), getPrice(item.source)).length > 0 && (
-                              <p class="price-line match-price">
-                                {priceParts(getPrice(match.name), getPrice(item.source)).map((part) => (
-                                  <span>{part}</span>
-                                ))}
-                              </p>
-                            )}
-                            <ul class="buy">
-                              {match.buy.map((link) => (
-                                <li>
-                                  <a href={link.url} target="_blank" rel="noreferrer noopener">
-                                    {link.label}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                            {highMarkupAlternativesFor(match.name).length > 0 && (
-                              <div class="direct-alts">
-                                <p class="alt-heading">lower-markup alternatives</p>
-                                <ol class="ranked">
-                                  {highMarkupAlternativesFor(match.name).map((alt) => (
-                                    <li>
-                                      <div class="rank-line">
-                                        <strong>{alt.percent}%</strong>
-                                        <span>{alt.name}</span>
-                                      </div>
-                                      <p>{alt.reason}</p>
-                                      {priceParts(getPrice(alt.name), getPrice(match.name)).length > 0 && (
-                                        <p class="price-line match-price">
-                                          {priceParts(getPrice(alt.name), getPrice(match.name)).map((part) => (
-                                            <span>{part}</span>
-                                          ))}
-                                        </p>
-                                      )}
-                                      <ul class="buy">
-                                        {alt.buy.map((link) => (
-                                          <li>
-                                            <a href={link.url} target="_blank" rel="noreferrer noopener">
-                                              {link.label}
-                                            </a>
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    </li>
-                                  ))}
-                                </ol>
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                      </ol>
-                    </>
-                  )}
-
-                  {item.note && <p class="item-note">{item.note}</p>}
-                </article>
-              ))}
-            </div>
-          </section>
-        ))
-      }
+      <AriMatchMarketPanel
+        market="usa"
+        title="Ari match tool USA"
+        intro="Each item from Ari's current list is mapped to a US buy. Exact domestic listings show one link. Items without domestic as-is stock show the closest ingredient matches, ranked by percent."
+        markupLabel="median US markup"
+        note="Prices are rough public-listing USD estimates. Scores compare ingredient overlap, product role, texture notes and Ari's preferences. Amazon search links should still be checked for seller and shipper before buying."
+        data={usaMarketData}
+        hidden
+      />
     </main>
 
     <script>
-      const searchInput = document.querySelector("#match-search");
-      const mappedOnly = document.querySelector("#mapped-only");
-      const visibleCount = document.querySelector("#visible-count");
-      const cards = Array.from(document.querySelectorAll(".card"));
-      const groups = Array.from(document.querySelectorAll(".group"));
+      const marketInputs = Array.from(document.querySelectorAll('input[name="market"]'));
+      const marketPanels = Array.from(document.querySelectorAll("[data-market-panel]"));
 
-      const updateCards = () => {
+      const updateCards = (panel: Element) => {
+        if (!(panel instanceof HTMLElement)) return;
+
+        const searchInput = panel.querySelector(".match-search");
+        const mappedOnly = panel.querySelector(".mapped-only");
+        const visibleCount = panel.querySelector(".visible-count");
+        const cards = Array.from(panel.querySelectorAll(".card"));
+        const groups = Array.from(panel.querySelectorAll(".group"));
         const query = searchInput instanceof HTMLInputElement ? searchInput.value.trim().toLowerCase() : "";
         const onlyMapped = mappedOnly instanceof HTMLInputElement && mappedOnly.checked;
         let shown = 0;
@@ -2042,18 +1907,50 @@ const medianLocalMarkup = median(localMarkupValues);
           group.toggleAttribute("hidden", !hasVisibleCards);
         });
 
-        if (visibleCount) {
-          visibleCount.textContent = `${shown} shown`;
+        if (visibleCount) visibleCount.textContent = `${shown} shown`;
+      };
+
+      const setMarket = (market: string | undefined, updateUrl = false) => {
+        const selectedMarket = market === "usa" ? "usa" : "argentina";
+        document.documentElement.dataset.market = selectedMarket;
+
+        marketInputs.forEach((input) => {
+          if (input instanceof HTMLInputElement) input.checked = input.value === selectedMarket;
+        });
+
+        marketPanels.forEach((panel) => {
+          const active = panel.getAttribute("data-market-panel") === selectedMarket;
+          panel.toggleAttribute("hidden", !active);
+          if (active) updateCards(panel);
+        });
+
+        document.title = selectedMarket === "usa" ? "Ari match tool USA" : "Ari match tool";
+
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          if (selectedMarket === "usa") url.searchParams.set("market", "usa");
+          else url.searchParams.delete("market");
+          history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
         }
       };
 
-      searchInput?.addEventListener("input", updateCards);
-      mappedOnly?.addEventListener("change", updateCards);
+      marketPanels.forEach((panel) => {
+        panel.querySelector(".match-search")?.addEventListener("input", () => updateCards(panel));
+        panel.querySelector(".mapped-only")?.addEventListener("change", () => updateCards(panel));
+      });
+
+      marketInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          if (input instanceof HTMLInputElement && input.checked) setMarket(input.value, true);
+        });
+      });
+
+      setMarket(document.documentElement.dataset.market);
     </script>
   </body>
 </html>
 
-<style>
+<style is:global>
   :root {
     color-scheme: light dark;
     --bg: #ffffff;
@@ -2114,6 +2011,74 @@ const medianLocalMarkup = median(localMarkupValues);
     color: var(--muted);
     font-size: 0.78rem;
     margin-bottom: 0.55rem;
+  }
+
+  .market-switch {
+    margin: 0 0 1.25rem;
+    padding: 0;
+    border: 0;
+  }
+
+  .market-switch legend {
+    margin-bottom: 0.4rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .market-options {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(7rem, 1fr));
+    gap: 0.35rem;
+    padding: 0.3rem;
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: var(--panel);
+  }
+
+  .market-options label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .market-options input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .market-options span {
+    display: grid;
+    min-height: 2.75rem;
+    place-items: center;
+    padding: 0.55rem 1rem;
+    border-radius: 0.62rem;
+    color: var(--muted);
+    font-weight: 750;
+  }
+
+  .market-options input:checked + span {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .market-options input:focus-visible + span {
+    outline: 3px solid var(--direct);
+    outline-offset: 3px;
+  }
+
+  html[data-market="usa"] [data-market-panel="argentina"] {
+    display: none;
+  }
+
+  html[data-market="usa"] [data-market-panel="usa"][hidden] {
+    display: block;
   }
 
   .page-head {
@@ -2200,7 +2165,7 @@ const medianLocalMarkup = median(localMarkupValues);
     padding-bottom: 0.38rem;
   }
 
-  #visible-count {
+  .visible-count {
     margin-left: auto;
     padding-bottom: 0.38rem;
     color: var(--muted);
@@ -2399,7 +2364,7 @@ const medianLocalMarkup = median(localMarkupValues);
       white-space: normal;
     }
 
-    #visible-count {
+    .visible-count {
       width: 100%;
       margin-left: 0;
       padding-bottom: 0;
@@ -2511,7 +2476,7 @@ const medianLocalMarkup = median(localMarkupValues);
     height: 1.15rem;
   }
 
-  #visible-count {
+  .visible-count {
     padding-bottom: 0.65rem;
     font-size: 0.86rem;
   }
@@ -2621,7 +2586,7 @@ const medianLocalMarkup = median(localMarkupValues);
 
     .controls label:first-child,
     input[type="search"],
-    #visible-count {
+    .visible-count {
       width: 100%;
     }
 
@@ -2629,7 +2594,7 @@ const medianLocalMarkup = median(localMarkupValues);
       grid-column: 1 / -1;
     }
 
-    #visible-count {
+    .visible-count {
       grid-column: 2;
       grid-row: 2;
       align-self: center;

@@ -1,0 +1,225 @@
+---
+import type { AriMatchMarketData } from "../data/ari-match-tool-usa";
+
+interface Props {
+  market: "argentina" | "usa";
+  title: string;
+  intro: string;
+  markupLabel: string;
+  note: string;
+  data: AriMatchMarketData;
+  hidden?: boolean;
+}
+
+const { market, title, intro, markupLabel, note, data, hidden = false } = Astro.props;
+const {
+  groupedMatches,
+  totalItems,
+  directItems,
+  mappedItems,
+  localMarkupValues,
+  medianLocalMarkup,
+  formatMarkup,
+  directPriceParts,
+  sourcePriceParts,
+  pricePartsByName,
+  highMarkupAlternativesFor,
+} = data;
+---
+
+<section class="market-panel" data-market-panel={market} hidden={hidden}>
+  <header class="page-head">
+    <div>
+      <h1>{title}</h1>
+      <p>{intro}</p>
+    </div>
+    <p class="count">{totalItems} items · {directItems} direct · {mappedItems} mapped</p>
+  </header>
+
+  <section class="markup-summary" aria-label={markupLabel}>
+    <span>{markupLabel}</span>
+    <strong>{medianLocalMarkup === undefined ? "n/a" : formatMarkup(medianLocalMarkup)}</strong>
+    <span>across {localMarkupValues.length} priced items with abroad benchmarks</span>
+  </section>
+
+  <section class="controls" aria-label={`${title} controls`}>
+    <label>
+      Search
+      <input
+        class="match-search"
+        type="search"
+        placeholder="product, ingredient or category"
+        autocomplete="off"
+      />
+    </label>
+    <label class="checkbox">
+      <input class="mapped-only" type="checkbox" />
+      mapped only
+    </label>
+    <p class="visible-count" aria-live="polite" aria-atomic="true">{totalItems} shown</p>
+  </section>
+
+  <p class="note">{note}</p>
+
+  {
+    Array.from(groupedMatches.entries()).map(([group, groupItems]) => (
+      <section class="group" data-group={group}>
+        <h2>{group}</h2>
+        <div class="cards">
+          {groupItems.map((item) => (
+            <article
+              class={`card ${item.status}`}
+              data-status={item.status}
+              data-haystack={`${item.group} ${item.source} ${item.anchors.join(" ")} ${
+                item.direct?.label ?? ""
+              } ${(item.matches ?? [])
+                .map(
+                  (match) =>
+                    `${match.name} ${match.reason} ${highMarkupAlternativesFor(match.name)
+                      .map((alternative) => `${alternative.name} ${alternative.reason}`)
+                      .join(" ")}`,
+                )
+                .join(" ")} ${highMarkupAlternativesFor(item.source)
+                .map((match) => `${match.name} ${match.reason}`)
+                .join(" ")}`.toLowerCase()}
+            >
+              <div class="card-top">
+                <div>
+                  <p class="eyebrow">{item.status === "direct" ? "direct" : "ingredient match"}</p>
+                  <h3>{item.source}</h3>
+                </div>
+                <span class={`pill ${item.status}`}>{item.status === "direct" ? "as-is" : "ranked"}</span>
+              </div>
+
+              <ul class="anchors" aria-label={`Ingredient anchors for ${item.source}`}>
+                {item.anchors.map((anchor) => <li>{anchor}</li>)}
+              </ul>
+
+              {item.status === "direct" && directPriceParts(item.source).length > 0 && (
+                <p class="price-line">
+                  {directPriceParts(item.source).map((part) => (
+                    <span>{part}</span>
+                  ))}
+                </p>
+              )}
+
+              {item.status === "direct" && item.direct && (
+                <p class="direct-link">
+                  <a href={item.direct.url} target="_blank" rel="noreferrer noopener">
+                    {item.direct.label}
+                  </a>
+                </p>
+              )}
+
+              {item.status === "direct" && highMarkupAlternativesFor(item.source).length > 0 && (
+                <div class="direct-alts">
+                  <p class="alt-heading">lower-markup alternatives</p>
+                  <ol class="ranked">
+                    {highMarkupAlternativesFor(item.source).map((match) => (
+                      <li>
+                        <div class="rank-line">
+                          <strong>{match.percent}%</strong>
+                          <span>{match.name}</span>
+                        </div>
+                        <p>{match.reason}</p>
+                        {pricePartsByName(match.name, item.source).length > 0 && (
+                          <p class="price-line match-price">
+                            {pricePartsByName(match.name, item.source).map((part) => (
+                              <span>{part}</span>
+                            ))}
+                          </p>
+                        )}
+                        <ul class="buy">
+                          {match.buy.map((link) => (
+                            <li>
+                              <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                {link.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {item.status === "mapped" && item.matches && (
+                <>
+                  {sourcePriceParts(item.source).length > 0 && (
+                    <p class="price-line source-price">
+                      {sourcePriceParts(item.source).map((part) => (
+                        <span>{part}</span>
+                      ))}
+                    </p>
+                  )}
+                  <ol class="ranked">
+                    {item.matches.map((match) => (
+                      <li>
+                        <div class="rank-line">
+                          <strong>{match.percent}%</strong>
+                          <span>{match.name}</span>
+                        </div>
+                        <p>{match.reason}</p>
+                        {pricePartsByName(match.name, item.source).length > 0 && (
+                          <p class="price-line match-price">
+                            {pricePartsByName(match.name, item.source).map((part) => (
+                              <span>{part}</span>
+                            ))}
+                          </p>
+                        )}
+                        <ul class="buy">
+                          {match.buy.map((link) => (
+                            <li>
+                              <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                {link.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                        {highMarkupAlternativesFor(match.name).length > 0 && (
+                          <div class="direct-alts">
+                            <p class="alt-heading">lower-markup alternatives</p>
+                            <ol class="ranked">
+                              {highMarkupAlternativesFor(match.name).map((alternative) => (
+                                <li>
+                                  <div class="rank-line">
+                                    <strong>{alternative.percent}%</strong>
+                                    <span>{alternative.name}</span>
+                                  </div>
+                                  <p>{alternative.reason}</p>
+                                  {pricePartsByName(alternative.name, match.name).length > 0 && (
+                                    <p class="price-line match-price">
+                                      {pricePartsByName(alternative.name, match.name).map((part) => (
+                                        <span>{part}</span>
+                                      ))}
+                                    </p>
+                                  )}
+                                  <ul class="buy">
+                                    {alternative.buy.map((link) => (
+                                      <li>
+                                        <a href={link.url} target="_blank" rel="noreferrer noopener">
+                                          {link.label}
+                                        </a>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                </>
+              )}
+
+              {item.note && <p class="item-note">{item.note}</p>}
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</section>
