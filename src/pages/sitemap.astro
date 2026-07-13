@@ -3,26 +3,21 @@ export const prerender = true;
 
 /**
  * HTML sitemap for search-engine and AI crawlers.
- * Auto-indexes all public Astro pages (excludes private/* and non-content routes).
+ * Auto-indexes all public Astro pages from the filesystem.
+ * Excludes private/*, self, 404, and TrackedRedirect stubs.
  */
-const pageSources = import.meta.glob<string>("./**/*.{astro,md,mdx}", {
-  eager: true,
-  query: "?raw",
-  import: "default",
-});
+const pageSources = import.meta.glob<string>(
+  ["./**/*.{astro,md,mdx}", "!./private/**"],
+  {
+    eager: true,
+    query: "?raw",
+    import: "default",
+  },
+);
 
 const dataModules = import.meta.glob<{ title?: string }>("../data/**/*.{json,ts}", {
   eager: true,
 });
-
-/** Same tracked redirect paths excluded from the XML sitemap in astro.config.mjs */
-const trackedRedirectPaths = new Set([
-  "/apartments/palermo/",
-  "/skincare/ari-match-tool-usa/",
-  "/travel/best-of-antarctica/",
-  "/travel/best-of-arctic/",
-  "/travel/best-of-sa/",
-]);
 
 const excludedExactPaths = new Set(["/404/", "/sitemap/"]);
 
@@ -62,7 +57,15 @@ const titlePatterns = [
   /<title>([^<{]+)<\/title>/i,
 ];
 
+const isTrackedRedirectPage = (source: string): boolean =>
+  /\bTrackedRedirect\b/.test(source);
+
 const filePathToRoute = (filePath: string): string | null => {
+  // Belt-and-suspenders: never list private routes even if a glob leak appears.
+  if (filePath === "./private" || filePath.startsWith("./private/")) {
+    return null;
+  }
+
   let route = filePath
     .replace(/^\.\//, "/")
     .replace(/\.(astro|md|mdx)$/, "");
@@ -77,7 +80,6 @@ const filePathToRoute = (filePath: string): string | null => {
 
   if (excludedExactPaths.has(route)) return null;
   if (route === "/private/" || route.startsWith("/private/")) return null;
-  if (trackedRedirectPaths.has(route)) return null;
 
   return route;
 };
@@ -140,13 +142,16 @@ const sectionLabel = (pathname: string): string => {
 
 const entries: SitemapEntry[] = Object.entries(pageSources)
   .map(([filePath, source]) => {
+    const sourceText = String(source);
+    if (isTrackedRedirectPage(sourceText)) return null;
+
     const path = filePathToRoute(filePath);
     if (!path) return null;
 
     return {
       path,
       url: `${siteUrl}${path}`,
-      title: extractTitle(String(source), path),
+      title: extractTitle(sourceText, path),
       section: sectionLabel(path),
     } satisfies SitemapEntry;
   })

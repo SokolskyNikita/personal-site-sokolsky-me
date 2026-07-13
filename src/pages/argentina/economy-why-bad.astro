@@ -1,6 +1,4 @@
 ---
-export const prerender = true;
-
 const pageTitle = "Why Argentina stopped growing: 1990-2026, fact-checked";
 const pageDescription =
   "What the IMF's own post-mortems and free-market economists actually blame, where they disagree with each other and which popular explanations don't survive contact with the data.";
@@ -22,7 +20,11 @@ const structuredData = {
   inLanguage: "en"
 };
 
-const worldBankGdpPerCapita = [
+// The current World Bank series uses the post-2016 reconstruction of Argentina's
+// national accounts, rather than the GDP path published during the intervention.
+// Do not substitute the blue-dollar rate here: NY.GDP.PCAP.CD is defined using
+// official period-average exchange rates, so doing so would create a different metric.
+const revisedGdpPerCapita = [
   [1990, 4315], [1991, 5709], [1992, 6790], [1993, 6932], [1994, 7438],
   [1995, 7358], [1996, 7663], [1997, 8147], [1998, 8219], [1999, 7706],
   [2000, 7637], [2001, 7141], [2002, 2570], [2003, 3320], [2004, 4242],
@@ -32,32 +34,6 @@ const worldBankGdpPerCapita = [
   [2020, 8536], [2021, 10738], [2022, 13962], [2023, 14262], [2024, 13970],
   [2025, 14898]
 ] as const;
-
-const worldBankConstant2015 = {
-  2006: 11870, 2007: 12812, 2008: 13197, 2009: 12285, 2010: 13387,
-  2011: 14041, 2012: 13754, 2013: 13946, 2014: 13456, 2015: 13680
-} as const;
-
-// Parallel-market FX correction for cepo years (official ÷ blue-dollar rate).
-const parallelFxFactor = {
-  2011: 0.92, 2012: 0.75, 2013: 0.63, 2014: 0.66, 2015: 0.67
-} as const;
-
-const arklemsCagr2007_2015 = 0.018;
-const arklemsRealBase2006 = worldBankConstant2015[2006];
-
-const adjustedGdpPerCapita = worldBankGdpPerCapita.map(([year, value]) => {
-  if (year < 2007 || year > 2015) return [year, value];
-
-  const arklemsReal =
-    arklemsRealBase2006 * Math.pow(1 + arklemsCagr2007_2015, year - 2006);
-  const conversionRatio =
-    value / worldBankConstant2015[year as keyof typeof worldBankConstant2015];
-  const fxFactor =
-    parallelFxFactor[year as keyof typeof parallelFxFactor] ?? 1;
-  const adjusted = Math.round(arklemsReal * conversionRatio * fxFactor);
-  return [year, adjusted];
-});
 
 const chart = {
   width: 760,
@@ -74,22 +50,17 @@ const xForYear = (year: number) =>
   chart.left + ((year - 1990) / (2025 - 1990)) * plotWidth;
 const yForValue = (value: number) =>
   chart.top + plotHeight - (value / chart.max) * plotHeight;
-const pathForSeries = (series: [number, number][]) =>
-  series
-    .map(([year, value], index) =>
-      `${index === 0 ? "M" : "L"} ${xForYear(year).toFixed(1)} ${yForValue(value).toFixed(1)}`
-    )
-    .join(" ");
-const adjustedLinePath = pathForSeries(adjustedGdpPerCapita);
-const publishedLinePath = pathForSeries(worldBankGdpPerCapita);
-const areaPath = `${adjustedLinePath} L ${xForYear(2025).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} L ${xForYear(1990).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} Z`;
+const linePath = revisedGdpPerCapita
+  .map(([year, value], index) =>
+    `${index === 0 ? "M" : "L"} ${xForYear(year).toFixed(1)} ${yForValue(value).toFixed(1)}`
+  )
+  .join(" ");
+const areaPath = `${linePath} L ${xForYear(2025).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} L ${xForYear(1990).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} Z`;
 const xTicks = [1990, 2000, 2010, 2020, 2025];
 const yTicks = [0, 4000, 8000, 12000, 16000];
-const adjustedByYear = Object.fromEntries(adjustedGdpPerCapita);
-const chartLabels = ([1998, 2002, 2011, 2025] as const).map((year) => [
-  year,
-  adjustedByYear[year]
-]);
+const chartLabels = revisedGdpPerCapita.filter(([year]) =>
+  [1998, 2002, 2011, 2025].includes(year)
+);
 const formatDollars = (value: number) =>
   `$${Math.round(value / 100) / 10}k`;
 ---
@@ -163,17 +134,20 @@ const formatDollars = (value: number) =>
             <div class="chart-heading">
               <div>
                 <p class="chart-kicker">The dollar-value roller coaster</p>
-                <h3>GDP per person, current US dollars</h3>
+                <h3>GDP per person, current US dollars—rebuilt series</h3>
               </div>
-              <p class="chart-unit">1990–2025 · ARKLEMS + parallel-FX adjusted</p>
+              <div class="chart-meta">
+                <p class="chart-unit">1990–2025 · US$ at official period-average FX</p>
+                <p class="chart-status"><span aria-hidden="true"></span>Post-2016 national-accounts revision</p>
+              </div>
             </div>
             <svg
               viewBox={`0 0 ${chart.width} ${chart.height}`}
               role="img"
               aria-labelledby="gdp-chart-title gdp-chart-desc"
             >
-              <title id="gdp-chart-title">Argentina GDP per capita in current US dollars, 1990 to 2025</title>
-              <desc id="gdp-chart-desc">Adjusted series chains ARKLEMS real GDP growth at 1.8 percent a year for 2007 through 2015 and deflates cepo-era dollar values with parallel-market exchange rates. Dashed line shows the World Bank revised series without those corrections. Values fall from about 4,300 dollars in 1990 to 2,570 in 2002, peak near 10,800 adjusted dollars in 2011, and reach 14,900 dollars in 2025.</desc>
+              <title id="gdp-chart-title">Argentina GDP per capita in current US dollars, using reconstructed national accounts, 1990 to 2025</title>
+              <desc id="gdp-chart-desc">The post-2016 revised World Bank series rises from about 4,300 dollars in 1990 to 14,900 dollars in 2025, with a collapse to 2,570 dollars in 2002. The years originally affected by the 2007 through 2015 INDEC intervention are shaded, but the plotted values are the later reconstruction.</desc>
               <defs>
                 <linearGradient id="gdp-area" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="var(--chart-line)" stop-opacity="0.2"></stop>
@@ -193,7 +167,7 @@ const formatDollars = (value: number) =>
                 x={(xForYear(2007) + xForYear(2015)) / 2}
                 y={chart.top - 15}
                 text-anchor="middle"
-              >INDEC intervention</text>
+              >Later reconstructed</text>
 
               {yTicks.map((tick) => (
                 <g>
@@ -223,8 +197,7 @@ const formatDollars = (value: number) =>
               ))}
 
               <path class="chart-area" d={areaPath}></path>
-              <path class="chart-line chart-line-published" d={publishedLinePath}></path>
-              <path class="chart-line" d={adjustedLinePath}></path>
+              <path class="chart-line" d={linePath}></path>
 
               {chartLabels.map(([year, value]) => (
                 <g class="chart-marker">
@@ -237,20 +210,14 @@ const formatDollars = (value: number) =>
                   >{formatDollars(value)}</text>
                 </g>
               ))}
-
-              <g class="chart-legend" transform={`translate(${chart.left}, ${chart.top - 34})`}>
-                <line class="chart-legend-line" x1="0" x2="22" y1="6" y2="6"></line>
-                <text class="chart-legend-label" x="28" y="10">Adjusted (ARKLEMS + parallel FX)</text>
-                <line class="chart-legend-line chart-legend-line-published" x1="248" x2="270" y1="6" y2="6"></line>
-                <text class="chart-legend-label" x="276" y="10">World Bank revised</text>
-              </g>
             </svg>
             <div class="chart-reading">
-              <p><strong>Real output correction:</strong> 2007–2015 values chain ARKLEMS growth (1.8% a year) from the 2006 anchor instead of the old INDEK path (3.3%). The rebuilt World Bank series already matches ARKLEMS on real GDP; this step makes that explicit.</p>
-              <p><strong>Exchange-rate correction:</strong> 2011–2015 values are further scaled by the official-to-parallel peso rate during the cepo. Capital controls kept the official dollar artificially cheap, inflating dollar-denominated GDP by up to one-third.</p>
+              <p><strong>Maximum defensible correction:</strong> the plotted World Bank values use INDEC's post-2016 reconstruction, not the numbers released during the intervention. For 2007–2015, the old series claimed 3.3% annual real GDP growth; rebuilt INDEC and independent ARKLEMS both find 1.8%.</p>
+              <p><strong>No blue-dollar substitution:</strong> “current US$” is conventionally converted at the official period-average exchange rate. Repricing GDP at the parallel rate would measure something else, so the chart keeps the standard definition instead of introducing a speculative second adjustment.</p>
+              <p><strong>Irreducible limit:</strong> some underlying surveys were lost or destroyed, so no source can recreate every nominal component from scratch. Agreement between the rebuilt official series and ARKLEMS on real growth is the strongest available cross-check.</p>
             </div>
             <figcaption>
-              Adjusted series: World Bank <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=AR" target="_blank" rel="noreferrer noopener">NY.GDP.PCAP.CD</a> and <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.KD?locations=AR" target="_blank" rel="noreferrer noopener">NY.GDP.PCAP.KD</a> (July 1, 2026), with 2007–2015 real GDP re-chained to Ariel Coremberg's <a href="https://arklems.org/wp-content/uploads/2017/12/coremberg_2017_ipm.pdf" target="_blank" rel="noreferrer noopener">ARKLEMS</a> 1.8% CAGR (table 2) and cepo-year dollar values deflated using documented blue-dollar premia. Dashed line: revised World Bank series without those two corrections. Values rounded to the nearest dollar.
+              Source: <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=AR" target="_blank" rel="noreferrer noopener">World Bank, NY.GDP.PCAP.CD</a> (<a href="https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.PCAP.CD?format=json&amp;per_page=100" target="_blank" rel="noreferrer noopener">API series</a>, updated July 1, 2026), rounded to the nearest dollar. Revision audit: Ariel Coremberg, <cite><a href="https://arklems.org/wp-content/uploads/2017/12/coremberg_2017_ipm.pdf" target="_blank" rel="noreferrer noopener">“Argentina Was Not the Productivity and Economic Growth Champion of Latin America”</a></cite>, charts 1–2 and table 2. The paper reports cumulative 2007–2015 growth of 30.2% in the manipulated series versus 15.7% in rebuilt INDEC and 15.8% in ARKLEMS.
             </figcaption>
           </figure>
         </section>
@@ -673,7 +640,6 @@ const formatDollars = (value: number) =>
     --accent-soft: #f1e7d8;
     --selection: #e7c99d;
     --chart-line: #9b542d;
-    --chart-line-published: #a89888;
     --chart-warning: #d7aa55;
     --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
     --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -691,7 +657,6 @@ const formatDollars = (value: number) =>
       --accent-soft: #2b241d;
       --selection: #6e4a25;
       --chart-line: #e0ae74;
-      --chart-line-published: #8a7d70;
       --chart-warning: #b8873a;
     }
   }
@@ -936,6 +901,7 @@ const formatDollars = (value: number) =>
 
   .chart-kicker,
   .chart-unit,
+  .chart-status,
   .chart-reading p,
   .gdp-chart figcaption {
     font-family: var(--sans);
@@ -950,11 +916,34 @@ const formatDollars = (value: number) =>
   }
 
   .chart-unit {
-    flex: 0 0 auto;
     color: var(--muted);
     font-size: 0.76rem;
     line-height: 1.3;
     text-align: right;
+  }
+
+  .chart-meta {
+    flex: 0 0 auto;
+    display: grid;
+    justify-items: end;
+    gap: 0.3rem;
+  }
+
+  .chart-status {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    color: var(--text-soft);
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .chart-status span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: var(--chart-line);
   }
 
   .gdp-chart svg {
@@ -1005,37 +994,6 @@ const formatDollars = (value: number) =>
     vector-effect: non-scaling-stroke;
   }
 
-  .chart-line-published {
-    stroke: var(--chart-line-published);
-    stroke-width: 2;
-    stroke-dasharray: 7 5;
-    opacity: 0.85;
-  }
-
-  .chart-legend-line,
-  .chart-legend-label {
-    font-family: var(--sans);
-  }
-
-  .chart-legend-line {
-    stroke: var(--chart-line);
-    stroke-linecap: round;
-    stroke-width: 3;
-    vector-effect: non-scaling-stroke;
-  }
-
-  .chart-legend-line-published {
-    stroke: var(--chart-line-published);
-    stroke-width: 2;
-    stroke-dasharray: 7 5;
-    opacity: 0.85;
-  }
-
-  .chart-legend-label {
-    fill: var(--muted);
-    font-size: 11px;
-  }
-
   .chart-marker circle {
     fill: var(--paper);
     stroke: var(--chart-line);
@@ -1055,7 +1013,7 @@ const formatDollars = (value: number) =>
 
   .chart-reading {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid var(--rule);
@@ -1172,6 +1130,10 @@ const formatDollars = (value: number) =>
     .chart-unit {
       margin-top: 0.25rem;
       text-align: left;
+    }
+
+    .chart-meta {
+      justify-items: start;
     }
 
     .chart-reading {
