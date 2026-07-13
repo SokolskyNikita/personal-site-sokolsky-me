@@ -185,6 +185,9 @@ const structuredData = {
         <p class="meta">
           <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} Wiki · {kymTermCount} KYM
         </p>
+        <p class="quiz-cta">
+          <a href="/tests/cishet-male-archetypes">Which ones are you? Take the 25-question quiz →</a>
+        </p>
       </header>
 
       <fieldset class="filters">
@@ -551,6 +554,22 @@ const structuredData = {
     letter-spacing: 0.03em;
   }
 
+  .quiz-cta {
+    margin: 0.85rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .quiz-cta a {
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .quiz-cta a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
   .filters {
     position: sticky;
     top: 0;
@@ -813,6 +832,10 @@ const structuredData = {
     }
 
     .meta {
+      grid-column: 2;
+    }
+
+    .quiz-cta {
       grid-column: 2;
     }
   }

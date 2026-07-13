@@ -1,0 +1,1050 @@
+---
+import {
+  ARCHETYPES,
+  DECK,
+  type QuizQuestion,
+} from "../../data/cishet-male-archetype-quiz";
+import wikiLinksRaw from "../../data/cishet-male-archetype-wiki-links.json";
+import kymLinksRaw from "../../data/cishet-male-archetype-kym-links.json";
+
+export const prerender = true;
+
+const pageTitle = "Which cishet male archetypes are you?";
+const pageDescription =
+  "Answer 25 questions and get your five closest matches from 383 cishet male archetypes.";
+const themeColorLight = "#fdfefc";
+const themeColorDark = "#141614";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type ExtLink = { title: string; url: string };
+const wikiLinks = wikiLinksRaw as Record<string, ExtLink>;
+const kymLinks = kymLinksRaw as Record<string, ExtLink>;
+
+const deckForClient: QuizQuestion[] = DECK.map((q) => ({
+  topic: q.topic,
+  q: q.q,
+  opts: q.opts.map((o) => ({
+    t: o.t,
+    sections: o.sections,
+    boosts: o.boosts,
+  })),
+}));
+
+const archetypesForClient = ARCHETYPES.map((a) => ({
+  id: a.id,
+  terms: a.terms,
+  gloss: a.gloss,
+  sectionId: a.sectionId,
+  sectionTitle: a.sectionTitle,
+}));
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  applicationCategory: "EntertainmentApplication",
+  operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: { "@type": "Person", name: "Nikita Sokolsky" },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <p class="home"><a href="/">sokolsky.me</a></p>
+
+      <header class="hero">
+        <h1>{pageTitle}</h1>
+        <p class="lede">
+          Pick the least wrong answer to twenty-five questions. The quiz scores
+          all <a href="/culture/cishet-male-archetypes">{ARCHETYPES.length} labels in the field guide</a>
+          and gives you the five closest matches.
+        </p>
+        <p class="meta">{DECK.length} questions · top 5 of {ARCHETYPES.length} labels</p>
+      </header>
+
+      <section id="intro" aria-label="Start the quiz">
+        <button type="button" class="btn btn-primary" id="start-quiz">Take the quiz</button>
+        <p class="intro-note">
+          No skips. If nothing fits, choose the answer that annoys you least.
+        </p>
+        <noscript>
+          <p class="intro-note">
+            This quiz needs JavaScript. You can still browse the
+            <a href="/culture/cishet-male-archetypes">full archetype list</a>.
+          </p>
+        </noscript>
+      </section>
+
+      <section id="quiz" aria-label="The quiz" hidden>
+        <nav class="progress" id="progress" aria-label="Questions"></nav>
+        <div class="quiz-card" id="quiz-card" aria-live="polite"></div>
+      </section>
+
+      <section id="results" aria-label="Your results" hidden>
+        <div class="verdict" id="verdict"></div>
+        <div class="share-row">
+          <button type="button" class="btn btn-primary" id="copy-link">Copy share link</button>
+          <button type="button" class="btn" id="copy-text">Copy as text</button>
+          <button type="button" class="btn btn-ghost" id="retake">Retake</button>
+        </div>
+        <p class="results-links">
+          <a href="/culture/cishet-male-archetypes">Browse the full field guide →</a>
+        </p>
+      </section>
+    </main>
+
+    <script
+      is:inline
+      define:vars={{
+        DECK: deckForClient,
+        ARCHETYPES: archetypesForClient,
+        wikiLinks,
+        kymLinks,
+      }}
+    >
+      const STORE_KEY = "cishet-archetype-quiz-v1";
+      const UNANSWERED = -1;
+      const TOP_N = 5;
+
+      const state = {
+        answers: new Array(DECK.length).fill(UNANSWERED),
+        idx: 0,
+        finished: false,
+      };
+
+      const introSection = document.getElementById("intro");
+      const quizSection = document.getElementById("quiz");
+      const quizCard = document.getElementById("quiz-card");
+      const progressEl = document.getElementById("progress");
+      const resultsSection = document.getElementById("results");
+      const verdictEl = document.getElementById("verdict");
+
+      let advanceTimer = null;
+
+      function saveLocal() {
+        try {
+          localStorage.setItem(
+            STORE_KEY,
+            JSON.stringify({
+              answers: state.answers,
+              idx: state.idx,
+              finished: state.finished,
+            }),
+          );
+        } catch (_) {}
+      }
+
+      function loadLocal() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return false;
+          const data = JSON.parse(raw);
+          if (!Array.isArray(data.answers) || data.answers.length !== DECK.length) return false;
+          state.answers = data.answers.map((v, i) =>
+            Number.isInteger(v) && v >= UNANSWERED && v < DECK[i].opts.length ? v : UNANSWERED,
+          );
+          state.idx = Math.min(Math.max(0, data.idx | 0), DECK.length - 1);
+          state.finished = Boolean(data.finished);
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function encodeAnswers() {
+        return state.answers.map((v) => (v >= 0 ? String(v + 1) : "0")).join("");
+      }
+
+      function decodeAnswers(str) {
+        if (typeof str !== "string" || str.length !== DECK.length) return null;
+        const answers = [];
+        for (let i = 0; i < str.length; i++) {
+          const digit = str.charCodeAt(i) - 48;
+          if (digit < 0 || digit > DECK[i].opts.length) return null;
+          answers.push(digit === 0 ? UNANSWERED : digit - 1);
+        }
+        return answers;
+      }
+
+      function firstUnansweredIndex() {
+        const idx = state.answers.findIndex((v) => v === UNANSWERED);
+        return idx === -1 ? DECK.length - 1 : idx;
+      }
+
+      function allAnswered() {
+        return state.answers.every((v) => v >= 0);
+      }
+
+      function canVisitQuestion(idx) {
+        return state.answers[idx] !== UNANSWERED || idx <= firstUnansweredIndex();
+      }
+
+      const LEXICAL_STOP_WORDS = new Set(
+        "about after again against almost also always among around because before being between both could default does doing down during each enough every first from further have having here honestly into just maybe more most much myself next only other over same should some still such than that their them then there these they this those through under until very what when where which while with would your youre guy guys male man mostly energy mode thing stuff vibe vibes looks like".split(" "),
+      );
+      const optionTokenCache = new WeakMap();
+      const archetypeTokenCache = new Map();
+
+      function lexicalTokens(value) {
+        return new Set(
+          String(value)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, " ")
+            .split(/\s+/)
+            .filter((token) => token.length >= 4 && !LEXICAL_STOP_WORDS.has(token))
+            .map((token) => token.replace(/(ies|ing|ers|er|ed|s)$/, "")),
+        );
+      }
+
+      function lexicalWeight(option, archetype) {
+        let optionTokens = optionTokenCache.get(option);
+        if (!optionTokens) {
+          optionTokens = lexicalTokens(option.t);
+          optionTokenCache.set(option, optionTokens);
+        }
+
+        let archetypeTokens = archetypeTokenCache.get(archetype.id);
+        if (!archetypeTokens) {
+          archetypeTokens = lexicalTokens(archetype.terms + " " + archetype.gloss);
+          archetypeTokenCache.set(archetype.id, archetypeTokens);
+        }
+
+        let overlaps = 0;
+        for (const token of optionTokens) {
+          if (token.length >= 3 && archetypeTokens.has(token)) overlaps += 1;
+        }
+        return Math.min(2.4, overlaps * 0.6);
+      }
+
+      function optionWeight(option, archetype) {
+        let w = option.sections[archetype.sectionId] || 0;
+        if (option.boosts) {
+          const hay = archetype.terms.toLowerCase();
+          for (const boost of option.boosts) {
+            if (hay.includes(String(boost.match).toLowerCase())) w += boost.w;
+          }
+        }
+        return w + lexicalWeight(option, archetype);
+      }
+
+      function rankMatches(answers) {
+        const scores = new Float64Array(ARCHETYPES.length);
+        const maxes = new Float64Array(ARCHETYPES.length);
+
+        for (let qi = 0; qi < DECK.length; qi++) {
+          const answer = answers[qi];
+          const q = DECK[qi];
+          if (answer == null || answer < 0 || answer >= q.opts.length) continue;
+          const chosen = q.opts[answer];
+          for (let ai = 0; ai < ARCHETYPES.length; ai++) {
+            const arch = ARCHETYPES[ai];
+            scores[ai] += optionWeight(chosen, arch);
+            let best = 0;
+            for (const opt of q.opts) best = Math.max(best, optionWeight(opt, arch));
+            maxes[ai] += best;
+          }
+        }
+
+        return ARCHETYPES.map((archetype, i) => {
+          const score = scores[i];
+          const maxPossible = maxes[i];
+          const matchPct =
+            maxPossible > 0 ? Math.round((1000 * score) / maxPossible) / 10 : 0;
+          return { archetype, score, maxPossible, matchPct };
+        }).sort((a, b) => b.matchPct - a.matchPct || b.score - a.score);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function linkForTerm(part) {
+        if (wikiLinks[part]) return { ...wikiLinks[part], source: "wiki" };
+        if (kymLinks[part]) return { ...kymLinks[part], source: "kym" };
+        return null;
+      }
+
+      function renderTermsHtml(terms) {
+        return terms
+          .split(/\s*\/\s*/)
+          .map((part) => {
+            const link = linkForTerm(part);
+            const label = escapeHtml(part);
+            if (!link) return label;
+            const cls = link.source === "wiki" ? "wiki-term" : "kym-term";
+            const sourceLabel = link.source === "wiki" ? "Wikipedia" : "Know Your Meme";
+            return (
+              `<a class="${cls}" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(sourceLabel + ": " + link.title)}">${label}</a>`
+            );
+          })
+          .join(" / ");
+      }
+
+      function renderProgress() {
+        progressEl.innerHTML = "";
+        DECK.forEach((q, i) => {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "p-dot";
+          if (state.answers[i] >= 0) dot.classList.add("done");
+          if (i === state.idx) dot.classList.add("here");
+          dot.disabled = !canVisitQuestion(i);
+          const status = state.answers[i] >= 0 ? "answered" : "unanswered";
+          dot.setAttribute("aria-label", `Question ${i + 1}: ${q.topic}, ${status}`);
+          dot.title = `${i + 1} · ${q.topic}`;
+          dot.addEventListener("click", () => goTo(i));
+          progressEl.appendChild(dot);
+        });
+      }
+
+      function renderQuestion() {
+        const q = DECK[state.idx];
+        const chosen = state.answers[state.idx];
+        const isLast = state.idx === DECK.length - 1;
+
+        quizCard.innerHTML = "";
+
+        const meta = document.createElement("div");
+        meta.className = "q-meta";
+        meta.innerHTML =
+          `<span class="q-topic">${escapeHtml(q.topic)}</span>` +
+          `<span class="q-count">${state.idx + 1} / ${DECK.length}</span>`;
+        quizCard.appendChild(meta);
+
+        const prompt = document.createElement("h2");
+        prompt.className = "q-prompt";
+        prompt.textContent = q.q;
+        quizCard.appendChild(prompt);
+
+        const hint = document.createElement("p");
+        hint.className = "q-hint";
+        hint.textContent = "Pick the least wrong answer.";
+        quizCard.appendChild(hint);
+
+        const list = document.createElement("div");
+        list.className = "q-options";
+        list.setAttribute("role", "radiogroup");
+        list.setAttribute("aria-label", "Answers");
+        q.opts.forEach((opt, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "q-option";
+          btn.setAttribute("role", "radio");
+          btn.setAttribute("aria-checked", chosen === i ? "true" : "false");
+          if (chosen === i) btn.classList.add("selected");
+          btn.innerHTML = `<span class="q-key">${i + 1}</span><span class="q-text"></span>`;
+          btn.querySelector(".q-text").textContent = opt.t;
+          btn.addEventListener("click", () => selectOption(i));
+          list.appendChild(btn);
+        });
+        quizCard.appendChild(list);
+
+        const nav = document.createElement("div");
+        nav.className = "q-nav";
+
+        const back = document.createElement("button");
+        back.type = "button";
+        back.className = "btn btn-ghost";
+        back.textContent = "← Back";
+        back.disabled = state.idx === 0;
+        back.addEventListener("click", () => goTo(state.idx - 1));
+        nav.appendChild(back);
+
+        if (isLast || allAnswered()) {
+          const finish = document.createElement("button");
+          finish.type = "button";
+          finish.className = "btn btn-primary";
+          finish.textContent = "See my results";
+          finish.disabled = !allAnswered();
+          finish.addEventListener("click", () => showResults());
+          nav.appendChild(finish);
+        }
+
+        quizCard.appendChild(nav);
+        renderProgress();
+      }
+
+      function selectOption(optIdx) {
+        state.answers[state.idx] = optIdx;
+        state.finished = false;
+        saveLocal();
+        renderQuestion();
+        quizCard.classList.add("settling");
+        if (advanceTimer) clearTimeout(advanceTimer);
+        if (state.idx < DECK.length - 1) {
+          advanceTimer = setTimeout(() => goTo(state.idx + 1), 420);
+        } else {
+          advanceTimer = setTimeout(() => {
+            advanceTimer = null;
+            showResults();
+          }, 420);
+        }
+      }
+
+      function goTo(idx) {
+        if (advanceTimer) {
+          clearTimeout(advanceTimer);
+          advanceTimer = null;
+        }
+        quizCard.classList.remove("settling");
+        const clamped = Math.min(Math.max(0, idx), DECK.length - 1);
+        state.idx = canVisitQuestion(clamped) ? clamped : firstUnansweredIndex();
+        saveLocal();
+        renderQuestion();
+      }
+
+      function resultText(top) {
+        return (
+          `My cishet male archetypes:\n` +
+          top
+            .map((r, i) => `${i + 1}. ${r.matchPct}% — ${r.archetype.terms}`)
+            .join("\n") +
+          `\n${location.origin}/tests/cishet-male-archetypes?r=${encodeAnswers()}`
+        );
+      }
+
+      function showResults() {
+        if (!allAnswered()) return;
+        state.finished = true;
+        saveLocal();
+
+        const ranked = rankMatches(state.answers);
+        const top = ranked.slice(0, TOP_N);
+        const url = new URL(location.href);
+        url.searchParams.set("r", encodeAnswers());
+        history.replaceState(null, "", url);
+
+        introSection.hidden = true;
+        quizSection.hidden = true;
+        resultsSection.hidden = false;
+
+        verdictEl.innerHTML =
+          `<p class="verdict-kicker">Your five best matches</p>` +
+          `<ol class="match-list">` +
+          top
+            .map((r, i) => {
+              const pct = r.matchPct;
+              return (
+                `<li class="match-item" style="--pct:${pct}">` +
+                `<div class="match-rank">${i + 1}</div>` +
+                `<div class="match-body">` +
+                `<div class="match-head">` +
+                `<span class="match-terms">${renderTermsHtml(r.archetype.terms)}</span>` +
+                `<span class="match-pct">${pct}%</span>` +
+                `</div>` +
+                `<p class="match-gloss">${escapeHtml(r.archetype.gloss)}</p>` +
+                `<p class="match-section">${escapeHtml(r.archetype.sectionTitle)}</p>` +
+                `<div class="match-bar" aria-hidden="true"><span style="width:${pct}%"></span></div>` +
+                `</div>` +
+                `</li>`
+              );
+            })
+            .join("") +
+          `</ol>` +
+          `<p class="verdict-note">The percentage compares your answers with the strongest possible score for each label. The descriptions explain how people use these terms; they are not endorsements.</p>`;
+
+        resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function startQuiz(resume) {
+        introSection.hidden = true;
+        resultsSection.hidden = true;
+        quizSection.hidden = false;
+        state.finished = false;
+        if (!resume) {
+          state.answers = new Array(DECK.length).fill(UNANSWERED);
+          state.idx = 0;
+        } else {
+          state.idx = firstUnansweredIndex();
+        }
+        saveLocal();
+        renderQuestion();
+        quizSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function retake() {
+        const url = new URL(location.href);
+        url.searchParams.delete("r");
+        history.replaceState(null, "", url);
+        startQuiz(false);
+      }
+
+      document.getElementById("start-quiz")?.addEventListener("click", () => {
+        const hasProgress = state.answers.some((v) => v >= 0);
+        startQuiz(hasProgress && !state.finished);
+      });
+      document.getElementById("retake")?.addEventListener("click", retake);
+
+      document.getElementById("copy-link")?.addEventListener("click", async () => {
+        const url = new URL(location.href);
+        url.searchParams.set("r", encodeAnswers());
+        try {
+          await navigator.clipboard.writeText(url.toString());
+          const btn = document.getElementById("copy-link");
+          if (btn) {
+            const prev = btn.textContent;
+            btn.textContent = "Copied";
+            setTimeout(() => {
+              btn.textContent = prev;
+            }, 1200);
+          }
+        } catch (_) {}
+      });
+
+      document.getElementById("copy-text")?.addEventListener("click", async () => {
+        const top = rankMatches(state.answers).slice(0, TOP_N);
+        try {
+          await navigator.clipboard.writeText(resultText(top));
+          const btn = document.getElementById("copy-text");
+          if (btn) {
+            const prev = btn.textContent;
+            btn.textContent = "Copied";
+            setTimeout(() => {
+              btn.textContent = prev;
+            }, 1200);
+          }
+        } catch (_) {}
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (quizSection.hidden) return;
+        if (e.target && ["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+        const n = e.keyCode >= 49 && e.keyCode <= 54 ? e.keyCode - 49 : -1;
+        if (n >= 0 && n < DECK[state.idx].opts.length) {
+          e.preventDefault();
+          selectOption(n);
+        }
+      });
+
+      // boot
+      const params = new URLSearchParams(location.search);
+      const shared = decodeAnswers(params.get("r") || "");
+      if (shared && shared.every((v) => v >= 0)) {
+        state.answers = shared;
+        state.finished = true;
+        showResults();
+      } else {
+        loadLocal();
+        if (state.finished && allAnswered()) showResults();
+        else if (state.answers.some((v) => v >= 0)) {
+          const startBtn = document.getElementById("start-quiz");
+          if (startBtn) startBtn.textContent = "Continue quiz";
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fdfefc;
+    --surface: #ffffff;
+    --text: #1a1d1a;
+    --muted: #5a635c;
+    --soft: #7d877f;
+    --rule: #d8ddd8;
+    --rule-soft: color-mix(in srgb, var(--rule) 55%, transparent);
+    --accent: #2f5d4a;
+    --accent-soft: #e4eee8;
+    --link: var(--accent);
+    --focus: #3d7a62;
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --page-pad-x: clamp(1rem, 3.5vw, 1.75rem);
+    --page-pad-y: clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141614;
+      --surface: #1a1d1a;
+      --text: #edf0eb;
+      --muted: #a7b0a8;
+      --soft: #889188;
+      --rule: #2f3530;
+      --accent: #8fbfa5;
+      --accent-soft: #24332b;
+      --link: var(--accent);
+      --focus: #a5d0b8;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    color: var(--text);
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+    background:
+      radial-gradient(
+        42rem 28rem at 8% -4%,
+        color-mix(in srgb, var(--accent-soft) 70%, transparent),
+        transparent 70%
+      ),
+      var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: var(--page-pad-y) var(--page-pad-x) clamp(2.5rem, 8vw, 4rem);
+  }
+
+  .home {
+    margin: 0 0 1rem;
+    color: var(--soft);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .home a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .home a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .hero {
+    margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+    padding: 0 0 clamp(0.9rem, 2.5vw, 1.2rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  h1 {
+    margin: 0 0 0.55rem;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: clamp(1.55rem, 4vw, 2.05rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .lede {
+    margin: 0;
+    color: var(--muted);
+    font-size: clamp(0.92rem, 2.2vw, 1rem);
+    line-height: 1.55;
+  }
+
+  .lede a {
+    color: var(--link);
+  }
+
+  .meta {
+    margin: 0.7rem 0 0;
+    color: var(--soft);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  #intro {
+    display: grid;
+    gap: 0.85rem;
+    justify-items: start;
+  }
+
+  .intro-note {
+    margin: 0;
+    max-width: 36rem;
+    color: var(--soft);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.35rem;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.2;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .btn:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--rule));
+    background: var(--accent);
+    color: #f7fbf8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn-primary {
+      color: #0f1411;
+    }
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+
+  .btn-ghost {
+    background: transparent;
+  }
+
+  .progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.28rem;
+    margin: 0 0 1rem;
+  }
+
+  .p-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--rule) 80%, transparent);
+    cursor: pointer;
+  }
+
+  .p-dot.done {
+    background: color-mix(in srgb, var(--accent) 55%, var(--rule));
+  }
+
+  .p-dot.here {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .p-dot:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .quiz-card {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .quiz-card.settling .q-option:not(.selected) {
+    opacity: 0.55;
+  }
+
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    color: var(--soft);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .q-prompt {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.2rem, 2.8vw, 1.45rem);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .q-hint {
+    margin: -0.25rem 0 0;
+    color: var(--soft);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .q-options {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .q-option {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    gap: 0.7rem;
+    align-items: start;
+    width: 100%;
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.4rem;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    line-height: 1.4;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease,
+      opacity 180ms ease;
+  }
+
+  .q-option:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+    background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
+  }
+
+  .q-option.selected {
+    border-color: color-mix(in srgb, var(--accent) 60%, var(--rule));
+    background: var(--accent-soft);
+  }
+
+  .q-key {
+    color: var(--soft);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .q-option.selected .q-key {
+    color: var(--accent);
+  }
+
+  .q-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding-top: 0.35rem;
+  }
+
+  .verdict-kicker {
+    margin: 0 0 0.85rem;
+    color: var(--soft);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .match-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .match-item {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .match-rank {
+    color: var(--soft);
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .match-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    align-items: baseline;
+  }
+
+  .match-terms {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .match-terms .wiki-term,
+  .match-terms .kym-term {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .match-terms .wiki-term {
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  .match-terms .kym-term {
+    text-decoration-style: dotted;
+    text-decoration-color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+
+  .match-pct {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .match-gloss {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .match-section {
+    margin: 0.25rem 0 0;
+    color: var(--soft);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .match-bar {
+    margin-top: 0.55rem;
+    height: 0.28rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--rule) 70%, transparent);
+    overflow: hidden;
+  }
+
+  .match-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent);
+  }
+
+  .verdict-note {
+    margin: 1.1rem 0 0;
+    color: var(--soft);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .share-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.35rem 0 0.85rem;
+  }
+
+  .results-links {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .results-links a {
+    color: var(--link);
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn,
+    .q-option,
+    .quiz-card.settling .q-option {
+      transition: none;
+    }
+  }
+</style>

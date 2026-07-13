@@ -1,0 +1,797 @@
+---
+export const prerender = true;
+
+const pageTitle = "Why Argentina stopped growing: 1990-2026, fact-checked";
+const pageDescription =
+  "What the IMF's own post-mortems and free-market economists actually blame, where they disagree with each other and which popular explanations don't survive contact with the data.";
+const themeColorLight = "#fbfaf6";
+const themeColorDark = "#171410";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky"
+  },
+  inLanguage: "en"
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="A fact-checked account of why Argentina's per-capita growth stalled after 1990, with IMF and free-market diagnoses." />
+    <meta name="application-name" content={pageTitle} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="keywords" content="Argentina economy, Argentina GDP per capita, fiscal dominance, convertibility, cepo, Milei, IMF Argentina, dollarization" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="site-tools">
+          <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        </div>
+        <p class="eyebrow">Argentina · Economy · 1990–2026</p>
+        <h1>{pageTitle}</h1>
+        <p class="dek">
+          What the IMF's own post-mortems and free-market economists actually blame, where they disagree with each other and which popular explanations don't survive contact with the data.
+        </p>
+      </header>
+
+      <article class="article">
+        <section id="overview" aria-labelledby="overview-heading">
+          <h2 id="overview-heading">Overview</h2>
+          <p>
+            Argentina's GDP per capita did grow after 1990. In constant 2021 PPP dollars it rose from about <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.PP.KD?locations=AR" target="_blank" rel="noreferrer noopener">$17,000 in 1990 to $26,800 in 2024</a>, a 57% gain. That sounds respectable until you annualize it (1.34% a year) and compare it with plausible peers over the same window: Uruguay grew about 128%, Chile 176% and Poland 252%. Worse, all of Argentina's net progress happened before 2011. The <a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.KD?locations=AR" target="_blank" rel="noreferrer noopener">World Bank series in constant 2015 dollars</a> peaked at $14,041 in 2011 and stood at $12,774 in 2024, 9% below the peak. The IMF's <a href="https://www.imf.org/-/media/files/publications/cr/2026/english/1argea2026001.pdf" target="_blank" rel="noreferrer noopener">2026 Article IV consultation</a> puts the 2011-2024 decline at close to 15%, using a different national-accounts vintage. The estimates differ, but both show more than a decade without lasting per-capita growth in a country that ranked among the world's ten richest around 1913.
+          </p>
+          <p>
+            The 2007-2015 data are less reliable because Argentina falsified its official statistics. After Néstor Kirchner replaced senior INDEC staff in early 2007, official inflation ran at a fraction of private estimates (<a href="https://www.bloomberg.com/news/articles/2013-02-01/argentina-becomes-first-nation-censured-by-imf-on-inflation-data" target="_blank" rel="noreferrer noopener">10.8% official versus 25.6% private for 2011</a>) and GDP was overstated accordingly. In February 2013 the IMF issued a <a href="https://www.imf.org/en/news/articles/2015/09/14/01/49/pr1333" target="_blank" rel="noreferrer noopener">declaration of censure</a> against Argentina, the first in the Fund's history. It <a href="https://www.imf.org/en/News/Articles/2016/11/09/PR16497-Argentina-IMF-Executive-Board-Removes-Declaration-of-Censure" target="_blank" rel="noreferrer noopener">lifted the censure in November 2016</a> after the statistics agency was rebuilt. Treat figures from that window cautiously.
+          </p>
+        </section>
+
+        <section id="the-core-disease" aria-labelledby="the-core-disease-heading">
+          <h2 id="the-core-disease-heading">The core disease</h2>
+          <p>
+            The same combination kept recurring. Governments adopted monetary or exchange-rate anchors inconsistent with fiscal policy, financed the gap by printing pesos or borrowing in dollars, resisted adjustment with controls and repeatedly changed the rules. Each crisis destroyed savings, credit, investment and productivity.
+          </p>
+          <p>
+            The University of Chicago history, Nicolás Cachanosky, the World Bank and the IMF all put fiscal dominance near the root of the problem, though deficits alone do not explain every crisis. The <a href="https://manifold.bfi.uchicago.edu/read/case-of-argentina/section/9905ef24-8c94-42ad-adf7-068efb4d9afb" target="_blank" rel="noreferrer noopener">Chicago monetary-and-fiscal history</a> dates a structural break in Argentina's deficit behavior to 1991 (when convertibility briefly ended inflation) and notes that after 2010 inflation rose again and per-capita income stopped growing. Cachanosky puts <a href="https://www.bloomberglinea.com/english/argentina-can-dollarize-in-2024-without-limiting-growth-says-nicolas-cachanosky/" target="_blank" rel="noreferrer noopener">average annual inflation since 1940 at 60%</a>, punctuated by hyperinflations. The country has defaulted on its sovereign debt nine times, three of them since 2001. The <a href="https://documents1.worldbank.org/curated/en/099061224182598390/pdf/P1749671ac038b03e1bc271505e88eab550.pdf" target="_blank" rel="noreferrer noopener">World Bank's country economic memorandum</a> ranks macroeconomic volatility driven by procyclical fiscal policy as the first of three binding constraints on growth, ahead of restrictive trade policy and declining human capital. The <a href="https://www.imf.org/-/media/files/publications/cr/2022/english/1argea2022001.pdf" target="_blank" rel="noreferrer noopener">IMF's 2022 program</a> treated ending monetary financing of the deficit as the precondition for everything else.
+          </p>
+          <p>
+            The damage compounds through finance. Because the peso cannot be trusted, Argentines hold well over $200 billion in physical dollars and offshore accounts; domestic credit to the private sector is <a href="https://www.cato.org/free-society/fall-2025/liberty-versus-power-mileis-argentina" target="_blank" rel="noreferrer noopener">about 15% of GDP, versus 71% in Brazil, 109% in Chile and 192% in the United States</a>. Firms that cannot borrow cannot invest, whatever the tax code says.
+          </p>
+        </section>
+
+        <section id="seven-episodes-seven-verdicts" aria-labelledby="seven-episodes-seven-verdicts-heading">
+          <h2 id="seven-episodes-seven-verdicts-heading">Seven episodes, seven verdicts</h2>
+          <h3 id="1991-1997-stabilization-that-worked">1991-1997: stabilization that worked</h3>
+          <p>
+            The Convertibility Plan of April 1991 pegged the peso 1:1 to the dollar with (mostly) full reserve backing. It killed hyperinflation dead and, together with privatization, deregulation and trade opening, produced <a href="https://www.imf.org/external/np/ieo/2003/arg/index.htm" target="_blank" rel="noreferrer noopener">average growth near 6% through 1997</a>. Calling this period an unqualified neoliberal failure is simply false. The mistake was believing early stabilization had permanently solved the fiscal, debt and institutional problems underneath.
+          </p>
+          <h3 id="1998-2002-a-doomed-regime-defended-too-long">1998-2002: a doomed regime defended too long</h3>
+          <p>
+            The peg removed the exchange rate as a shock absorber just as the shocks arrived: a strong dollar, Brazil's 1999 devaluation and the post-1998 emerging-market sudden stop. <a href="https://users.nber.org/~confer/2002/argentina02/velasco2.pdf" target="_blank" rel="noreferrer noopener">Hausmann and Velasco</a> estimated the peso was overvalued by 40% or more by 2001, while dollar-denominated public and private debt meant devaluation would detonate balance sheets. They also showed that primary spending as a share of GDP did not balloon over 1993-2001. The fiscal rot came from provincial deficits, rising interest costs and above all the 1994 pension privatization, whose transition the <a href="https://www.imf.org/-/media/websites/imf/imported-full-text-pdf/external/np/ieo/2004/arg/eng/pdf/_report.pdf" target="_blank" rel="noreferrer noopener">IMF's Independent Evaluation Office</a> later costed at no less than 2.7% of GDP a year by 2001, introduced with no credible way to pay for it. GDP per capita fell 22% from 1998 to 2002, poverty passed 50% and Argentina defaulted on roughly $100 billion, then the largest default in history. The IEO's verdict on the Fund itself was blunt: it "erred by supporting inadequate policies too long" and committed up to $22 billion from late 2000 to defend a peg its own staff increasingly knew was unsustainable, with no contingency plan for exit.
+          </p>
+          <h3 id="2003-2011-the-boom-that-bought-nothing-durable">2003-2011: the boom that bought nothing durable</h3>
+          <p>
+            Recovery was fast (8-9% growth a year through 2007) thanks to idle capacity, a cheap peso and the commodity supercycle. The failure was converting none of it into institutions: no stabilization fund, no structural surplus, no independent central bank, no deep peso capital market. Chile and Norway built savings mechanisms in the same boom; Argentina built energy subsidies, export taxes of up to 35% on soy and, in 2008, the nationalization of roughly $25-30 billion in private pension assets. Statistics falsification began in 2007. When prices turned, the spending commitments stayed and the revenues left.
+          </p>
+          <h3 id="2011-2015-controls-instead-of-correction">2011-2015: controls instead of correction</h3>
+          <p>
+            Rather than fix the widening deficit, the government imposed capital controls (the cepo, November 2011), expropriated 51% of YPF from Repsol (2012), ran multiple exchange rates, capped prices and rationed imports through the DJAI licensing system, under which <a href="https://www.nber.org/system/files/working_papers/w32037/w32037.pdf" target="_blank" rel="noreferrer noopener">about 30% of applications, covering 36.5% of requested import value, were simply denied</a>; an NBER study estimates the restrictions raised importers' input prices by around 4%. Stagnation set in. The 2014 pari passu ruling by Judge Griesa in the NML holdout litigation tipped Argentina into another technical default and prolonged its exile from credit markets.
+          </p>
+          <h3 id="2015-2019-liberalization-financed-the-riskiest-way-possible">2015-2019: liberalization, financed the riskiest way possible</h3>
+          <p>
+            Macri lifted the cepo, cut export taxes and floated the peso, but paired those changes with fiscal gradualism and heavy external dollar borrowing. He reopened the capital account before establishing fiscal credibility, low inflation or an export base to service the debt. When global conditions turned in 2018, the sudden stop arrived on schedule and Argentina signed the <a href="https://www.imf.org/-/media/files/publications/cr/2021/english/1argea2021001.pdf" target="_blank" rel="noreferrer noopener">largest program in IMF history</a>: $50 billion, raised to $57 billion (1,277% of quota). About $44 billion was disbursed. Only 4 of 12 reviews were ever completed.
+          </p>
+          <h3 id="2019-2023-back-to-the-printing-press">2019-2023: back to the printing press</h3>
+          <p>
+            The cepo returned in 2019, followed by a ninth default and restructuring in 2020, price controls, export bans and monetary financing that reached roughly 7% of GDP in the pandemic year. Inflation reached 211.4% in 2023, its highest rate since the tail of the 1990 hyperinflation, and ran at 25.5% per month by December.
+          </p>
+          <h3 id="2023-2026-the-milei-test">2023-2026: the Milei test</h3>
+          <p>
+            Milei inherited, in the Cato Institute's <a href="https://www.cato.org/blog/one-year-javier-milei" target="_blank" rel="noreferrer noopener">summary</a>, inflation above 200%, poverty around 40%, a combined fiscal and quasi-fiscal deficit near 15% of GDP and a bankrupt central bank. He cut real spending about 30%, turned a 4.6%-of-GDP deficit into a <a href="https://www.cato.org/blog/two-years-milei-reform-agenda-moves-forward-argentina" target="_blank" rel="noreferrer noopener">0.3% financial surplus in 2024, the first since 2010</a> and ended monetary financing. Monthly inflation fell from 25.5% to about 2%; annual inflation fell from 117.8% in 2024 to 31.5% in 2025. Most currency controls were lifted in April 2025, backed by a new <a href="https://www.imf.org/en/news/articles/2025/04/12/pr25101-argentina-imf-executive-board-approves-48-month-usd20-billion-extended-arrangement" target="_blank" rel="noreferrer noopener">$20 billion IMF Extended Fund Facility</a> (479% of quota, $12 billion up front). The economy contracted 1.7% in 2024, then grew by more than 4% in 2025. <a href="https://www.batimes.com.ar/news/argentina/sharp-drop-in-argentinas-poverty-rate-delivers-boost-for-milei.phtml" target="_blank" rel="noreferrer noopener">Poverty fell from a peak of 52.9% in early 2024 to 28.2% in the second half of 2025</a>, the lowest since 2018. The October 2025 midterms made his party the largest in the lower house; Congress has since passed fiscal, trade and labor legislation. Reserve targets were <a href="https://www.imf.org/-/media/files/publications/cr/2025/english/1argea2025003-source-pdf.pdf" target="_blank" rel="noreferrer noopener">missed and waived</a> in 2025, the peso is still contested as overvalued and the IMF's <a href="https://www.imf.org/en/news/articles/2026/05/21/pr26165-argentina-imf-completes-2nd-rev-of-extended-arr-under-eff-concludes-2026-aiv-consultation" target="_blank" rel="noreferrer noopener">May 2026 review</a> called performance through end-2025 mixed, with delays in rebuilding external buffers. Two years of stabilization and rebound do not establish sustained convergence.
+          </p>
+        </section>
+
+        <section id="the-mistakes-ranked" aria-labelledby="the-mistakes-ranked-heading">
+          <h2 id="the-mistakes-ranked-heading">The mistakes, ranked</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Mistake</th>
+                  <th scope="col">Weight</th>
+                  <th scope="col">How it suppressed GDP per capita</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Chronic deficits financed by money printing or dollar debt (fiscal dominance)</th>
+                  <td>Very high</td>
+                  <td>The engine of every inflation episode and all nine defaults; made stabilization plans non-credible by construction</td>
+                </tr>
+                <tr>
+                  <th scope="row">Exchange-rate regimes inconsistent with fiscal reality</th>
+                  <td>Very high</td>
+                  <td>Overvaluation, reserve losses, then devaluation and inflation; adjustment arrived through depression instead of prices</td>
+                </tr>
+                <tr>
+                  <th scope="row">Borrowing in dollars against a peso tax base and a narrow export sector</th>
+                  <td>Very high</td>
+                  <td>Every depreciation worsened public and private solvency, turning currency wobbles into debt crises (2001, 2018)</td>
+                </tr>
+                <tr>
+                  <th scope="row">Policy and institutional instability, weak property rights</th>
+                  <td>Very high</td>
+                  <td>YPF and pension expropriations, serial default and rule changes shortened investment horizons and pushed savings abroad</td>
+                </tr>
+                <tr>
+                  <th scope="row">Rent-seeking and talent misallocation</th>
+                  <td>High, cumulative</td>
+                  <td>Shifting rules made political access and regulatory arbitrage pay better than production, pulling entrepreneurial talent into unproductive survival skills</td>
+                </tr>
+                <tr>
+                  <th scope="row">Capital controls and multiple exchange rates (cepo, 2011-2015 and 2019-2023)</th>
+                  <td>High</td>
+                  <td>Dried up investment, created black markets and rewarded lobbying for cheap dollars over producing anything</td>
+                </tr>
+                <tr>
+                  <th scope="row">Export taxes and anti-export bias</th>
+                  <td>High</td>
+                  <td>Uniquely taxed the most competitive sector; starved the economy of the foreign currency its debts required</td>
+                </tr>
+                <tr>
+                  <th scope="row">Price controls on food, energy and housing</th>
+                  <td>High after 2002</td>
+                  <td>Stage-one relief, stage-two shortages: frozen tariffs turned an energy exporter into an importer and rent control gutted rental supply</td>
+                </tr>
+                <tr>
+                  <th scope="row">Failure to save the commodity windfall</th>
+                  <td>High</td>
+                  <td>Turned the 2003-2011 boom into a consumption episode; no buffers existed when prices fell</td>
+                </tr>
+                <tr>
+                  <th scope="row">Protectionism and import licensing</th>
+                  <td>High after 2011</td>
+                  <td>Reduced competition and scale and raised input costs about 4% under DJAI alone</td>
+                </tr>
+                <tr>
+                  <th scope="row">Distortionary taxes, labor rigidity, oversized public sector</th>
+                  <td>Moderate to high</td>
+                  <td>Pushed activity informal and kept firms small; real, but secondary to the macro chaos</td>
+                </tr>
+                <tr>
+                  <th scope="row">Statistical falsification and a captive central bank</th>
+                  <td>Moderate, as enabler</td>
+                  <td>Destroyed the informational basis for policy and the monetary basis for saving in pesos</td>
+                </tr>
+                <tr>
+                  <th scope="row">Shallow domestic finance</th>
+                  <td>High, partly an outcome</td>
+                  <td>Credit at 15% of GDP means investment must be self-financed or foreign, so it mostly doesn't happen</td>
+                </tr>
+                <tr>
+                  <th scope="row">Human capital erosion (schooling quality, emigration)</th>
+                  <td>Rising</td>
+                  <td>Only 27% of 15-year-olds reach baseline math proficiency and skilled Argentines keep leaving; caps the payoff from any stabilization</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="what-the-imf-says-including-about-itself" aria-labelledby="what-the-imf-says-including-about-itself-heading">
+          <h2 id="what-the-imf-says-including-about-itself-heading">What the IMF says, including about itself</h2>
+          <p>
+            The Fund's paper trail on Argentina is unusually self-critical, which makes it useful.
+          </p>
+          <p>
+            The <a href="https://www.imf.org/-/media/websites/imf/imported-full-text-pdf/external/np/ieo/2004/arg/eng/pdf/_report.pdf" target="_blank" rel="noreferrer noopener">Independent Evaluation Office's 2004 report</a> concluded that Argentine policymakers failed to correct course early, while the Fund's surveillance missed the growing vulnerabilities and its lending propped up a dying regime. It found that the IMF did too little medium-term analysis of the peg, tolerated repeated fiscal non-compliance and had no plan for an orderly exit. It recommended stop-loss rules against escalating support for an unsustainable strategy. The resources spent defending the peg, the IEO noted, could have cushioned an earlier restructuring instead.
+          </p>
+          <p>
+            The <a href="https://www.imf.org/-/media/files/publications/cr/2021/english/1argea2021001.pdf" target="_blank" rel="noreferrer noopener">ex-post evaluation published in December 2021</a> found that the 2018 Stand-By Arrangement "did not achieve its objectives". The program treated a structural solvency problem as temporary illiquidity. It relied on optimistic official forecasts and renewed private capital inflows, ruled out both an early debt operation and temporary emergency measures to slow capital flight, underestimated short-maturity dollar debt and had no agreed plan B. Those limited crisis measures differ from the years-long cepo, which rationed access at multiple exchange rates. Argentine gradualism was financed in the riskiest possible way, and the Fund's crisis design and forecasting failed on their own terms.
+          </p>
+          <p>
+            The Fund's assessment became more favorable in 2025. When it approved the EFF, management praised the zero-deficit anchor and the <a href="https://www.imf.org/en/news/articles/2025/04/12/pr25101-argentina-imf-executive-board-approves-48-month-usd20-billion-extended-arrangement" target="_blank" rel="noreferrer noopener">first fiscal surplus in almost two decades</a>. The <a href="https://www.imf.org/-/media/files/publications/cr/2026/english/1argea2026001.pdf" target="_blank" rel="noreferrer noopener">2026 Article IV</a> projects net consolidated public debt falling from about 52% of GDP at end-2025 to below 30% within five years. It also points to a narrow export base, shallow finance, remaining trade barriers and insufficient reserve accumulation.
+          </p>
+        </section>
+
+        <section id="explanations-tested-against-the-evidence" aria-labelledby="explanations-tested-against-the-evidence-heading">
+          <h2 id="explanations-tested-against-the-evidence-heading">Explanations tested against the evidence</h2>
+          <p>
+            Cato, Austrian and Chicago economists and the Argentine liberals around Milei agree that fiscal dominance, an unusable peso and the control apparatus damaged growth; Argentina ranked <a href="https://www.cato.org/blog/one-year-javier-milei" target="_blank" rel="noreferrer noopener">159th of 165 countries on economic freedom</a> before Milei. They disagree over the monetary regime, the weight of government and which institutional failures mattered most. Foreign-ownership limits and weak farming fit the record poorly.
+          </p>
+          <h3 id="was-convertibility-a-real-currency-board">Was convertibility a real currency board?</h3>
+          <p>
+            Steve Hanke <a href="https://www.cato.org/testimony/argentinas-current-political-economic-crisis" target="_blank" rel="noreferrer noopener">argues it never was</a>: the central bank routinely sterilized reserve flows and retained discretion no orthodox board permits, so 2001 indicts Argentine central banking, not currency boards or dollarization. His factual point stands; the IMF itself calls the regime "currency-board-like". His counterfactual, that an orthodox board or full dollarization would have prevented the collapse, is unprovable and sits uneasily with the fiscal, provincial and dollar-debt problems a harder peg would not have touched. Hausmann and Velasco found the evidence that dollarization expands sustainable borrowing capacity to be mixed. Domingo Cavallo, convertibility's architect, maintains the system could have survived had provincial deficits been controlled early. Michael Mussa, the IMF's former chief economist, argued in his Peterson Institute post-mortem that the failure to run surpluses in the good years of the 1990s doomed the regime regardless.
+          </p>
+          <h3 id="dollarize-or-float">Dollarize or float?</h3>
+          <p>
+            Emilio Ocampo and Nicolás Cachanosky, whose book <a href="https://www.mercatus.org/macro-musings/nicolas-cachanosky-dollarization-argentina" target="_blank" rel="noreferrer noopener"><cite>Dollarization: A Solution for Argentina</cite></a> shaped Milei's campaign, argue Argentina is "already de facto dollarized" and that only abolishing the peso (and with it the central bank) makes fiscal dominance impossible for future Peronist governments; <a href="https://fee.org/articles/can-dollarization-fix-argentina-s-inflation-problems/" target="_blank" rel="noreferrer noopener">Ecuador's experience</a> shows even a hostile populist could not reverse it. Ocampo traces the idea back to Milton Friedman's advice to Argentina in the 1970s. Skeptics reply that Argentina lacks the reserves to dollarize credibly and that dollarization without fiscal discipline solves nothing. In office, Milei shelved dollarization for a fiscal surplus plus a managed float within bands; Ocampo left the team. Cato remains <a href="https://www.cato.org/blog/two-years-milei-reform-agenda-moves-forward-argentina" target="_blank" rel="noreferrer noopener">openly impatient</a>: as long as the central bank exists, a future government can reflate, so the sooner Milei dollarizes the better. Other free-marketeers would rather see a clean float than a defended band, on the classic ground that fixed-but-adjustable regimes invite speculative attacks. This argument is not settled and the current regime is a compromise nobody's model prescribed.
+          </p>
+          <h3 id="how-much-was-big-government">How much was "big government"?</h3>
+          <p>
+            Ross Levine's <a href="https://www.washingtonpost.com/opinions/2025/05/20/us-argentina-economic-policy-reversal/" target="_blank" rel="noreferrer noopener">account</a>, protectionism plus politically directed finance plus monetary subordination, fits the long run. It fits 2001 less well. Hausmann and Velasco found that overvaluation, dollar liabilities, a closed economy and a sudden stop mattered more than a spending binge, and the IMF later adopted much of that analysis. Acemoglu and Robinson trace the instability further back: universal male suffrage arrived in 1912, followed by coups in 1930, 1943, 1955, 1962, 1966 and 1976 and stable democracy only since 1983. Political actors learned that rules might last no longer than one administration. Every anchor, peg, plan and program operated under that constraint.
+          </p>
+          <h3 id="foreign-ownership-limits">Were limits on foreign buyers an important factor?</h3>
+          <p>
+            Argentina restricts some foreign purchases of land, property and companies, but these formal entry barriers explain little of the growth record. Their erratic enforcement is part of the larger property-rights problem.
+          </p>
+          <p>
+            Consider the timing. The 1990s were maximally open: YPF went to Spain's Repsol, the telecoms to Telefonica and France Telecom, the banks to Santander and BBVA. There are still <a href="https://www.state.gov/reports/2025-investment-climate-statements/argentina" target="_blank" rel="noreferrer noopener">no restrictions at all on foreigners buying residential or commercial real estate</a>. The economy collapsed anyway. The notable ownership caps came later and were narrow: a 2003 law limiting foreign stakes in media and "cultural goods" companies to 30% and the <a href="https://wsclegal.com/en/more-on-the-argentina-rural-land-law-a-stand-for-sovereignty-or-the-pursuit-of-foreign-investment/" target="_blank" rel="noreferrer noopener">2011 Rural Land Law</a>, which capped foreign rural land at 15% of any national, provincial or municipal territory, 1,000 hectares per foreigner in the Pampas core zone and zero near borders or major water bodies. The cap bound almost nobody: when the registry the law created finished counting, foreigners held roughly 6% of rural land nationally, <a href="https://www.bowtiedmara.io/p/update-on-the-ley-de-tierras" target="_blank" rel="noreferrer noopener">and only a few dozen departments out of hundreds ever exceeded a local limit</a>. Milei's December 2023 megadecree attempted to repeal the law, but courts suspended that provision; the restriction remains in force pending a Supreme Court ruling.
+          </p>
+          <p>
+            What actually repelled foreign capital was what happened after entry. The 2002 pesification and tariff freeze hit the mostly foreign-owned privatized utilities and made Argentina <a href="https://legalblogs.wolterskluwer.com/arbitration-blog/aes-v-argentina-icsid-award-closing-the-chapter-on-argentinas-2001-2002-crisis-saga/" target="_blank" rel="noreferrer noopener">the most-sued state in ICSID history, with over 59 cases, nearly 6% of the institution's entire docket</a>. Then came the pension seizure (2008), the YPF expropriation (2012, settled with Repsol for <a href="https://isds-americalatina.org/argentina_eng/" target="_blank" rel="noreferrer noopener">$5.3 billion</a>) and cepo-era rules that <a href="https://www.state.gov/reports/2025-investment-climate-statements/argentina" target="_blank" rel="noreferrer noopener">blocked dividend repatriation for years at a time</a>. Since the 2001 default, <a href="https://data.worldbank.org/indicator/BX.KLT.DINV.WD.GD.ZS?locations=AR-CL-UY" target="_blank" rel="noreferrer noopener">FDI inflows have run at a fraction of Chile's or Uruguay's relative to GDP</a>. Foreigners could buy nearly anything in Argentina; the problem was keeping it, pricing it and getting the money out. That is why Milei's flagship investment tool, the 2024 RIGI regime, offers large investors 30 years of tax, customs and FX stability rather than merely open doors. The doors were rarely the issue.
+          </p>
+          <h3 id="agricultural-productivity">Was agricultural productivity the problem?</h3>
+          <p>
+            Argentine agriculture has been one of the country's most productive sectors. The growth record would look better if the rest of the economy had performed like the farm sector.
+          </p>
+          <p>
+            GM soy, approved in 1996, <a href="https://globalagriculturalproductivity.org/2023-gap-report/latin-america-and-the-caribbean/agricultural-tfp-growth-in-argentina-investments-in-research-and-innovation/" target="_blank" rel="noreferrer noopener">spread to more than 90% of production within five years, faster than in the United States</a>. Today <a href="https://www.yieldgap.org/argentina" target="_blank" rel="noreferrer noopener">99% of soy and 95% of corn is transgenic while 90% of cropland is under no-till</a>, among the highest shares on earth. Farm capital stock doubled between 1995 and 2020. Grain and oilseed output roughly tripled from about 40 million tonnes in the early 1990s to records around 140 million, and Argentina became the world's top exporter of soybean meal and oil. The state taxed the sector throughout that expansion.
+          </p>
+          <p>
+            Policy held back an otherwise productive sector. Retenciones took up to 35% of the soy price at the border; during cepo years the overvalued official exchange rate confiscated a further slice, so growers at times kept roughly half the world price. The 2008 attempt to push sliding-scale rates above 40% (Resolution 125) triggered a four-month farm lockout and died on the vice president's tie-breaking Senate vote. In beef, the <a href="https://quarterraglobal.com/blog/2021/7/8/the-banning-of-argentine-beef-past-present-and-future" target="_blank" rel="noreferrer noopener">March 2006 export ban and subsequent quotas</a> knocked Argentina from third-largest exporter (700,000 tonnes in 2005) to eleventh (200,000 tonnes by 2014), while <a href="https://link.springer.com/article/10.1186/s40100-016-0070-9" target="_blank" rel="noreferrer noopener">the herd shrank by more than 10 million head between 2007 and 2012</a>. Once duties were cut and quotas scrapped under Milei, <a href="https://www.marineinsight.com/shipping-news/argentina-lifts-50-year-ban-on-live-cattle-exports-to-boost-economy/" target="_blank" rel="noreferrer noopener">2024 exports hit their highest volume in a century</a>. Wheat plantings fell to multi-decade lows under Kirchner-era export permits. Brazil, which does not tax farm exports, now harvests more than three times Argentina's soybean tonnage; thirty years ago the gap was about two to one.
+          </p>
+          <p>
+            So the "narrow export base" the IMF keeps flagging is not evidence that farming itself was unproductive. It partly reflects how policy constrained the country's most productive tradable sector and how little the protected manufacturing and non-tradable sectors diversified exports.
+          </p>
+          <p>
+            <strong>Sowell's addition.</strong> Milei <a href="https://www.econlib.org/javier-mileis-economic-understanding/" target="_blank" rel="noreferrer noopener">quotes Thomas Sowell approvingly</a>. Sowell's work on price signals, political incentives, talent allocation and human capital helps explain how the macroeconomic cycle kept reproducing itself.
+          </p>
+          <h3 id="price-controls-stage-two">Sowell on price controls: stage two</h3>
+          <p>
+            Sowell's oldest lesson is that a price ceiling delivers stage-one relief and stage-two shortages. Argentina ran the experiment repeatedly. Energy first: the 2002 emergency law froze utility tariffs, investment stopped and a country sitting on <a href="https://www.argentinashale.com/en/production/argentina-regains-a-surplus-in-the-energy-balance/" target="_blank" rel="noreferrer noopener">the world's second-largest shale gas and fourth-largest shale oil resources</a> became a net energy importer. The energy trade balance stayed negative from 2011 through 2023; the resulting <a href="https://buenosairesherald.com/business/energy/argentina-ends-record-year-in-oil-production-and-energy-surplus-thanks-to-vaca-muerta" target="_blank" rel="noreferrer noopener">$4.4 billion deficit in 2022</a> drained central bank reserves. The cepo arrived in 2011, the same year the energy balance went negative. Once tariffs were unfrozen and Vaca Muerta built out, the sign flipped: a $5.7 billion surplus in 2024, the largest in 18 years, with <a href="https://www.shale24.com/en/oil-and-gas/energy-trade-surplus-kicks-off-2026-cementing-vaca-muertas-export-dominance-n590" target="_blank" rel="noreferrer noopener">energy supplying about 70% of the entire 2025 trade surplus</a>. Housing second: the 2020 rental law mandated three-year peso-denominated leases with formula indexation, <a href="https://reason.com/2024/09/26/rents-fall-and-listings-increase-after-javier-milei-ends-rent-control-in-argentina/" target="_blank" rel="noreferrer noopener">listings halved while inflation-adjusted rents rose about 140%</a>; one in seven Buenos Aires homes sat empty. Milei repealed it in the megadecree and <a href="https://reason.com/2025/02/08/the-end-of-rent-control-in-argentina/" target="_blank" rel="noreferrer noopener">within months supply had roughly tripled while real rents fell by between 27% and 40%</a>. The beef ban above applied the same mechanism to exports.
+          </p>
+          <h3 id="the-incentives-of-the-patronage-state">The incentives of the patronage state</h3>
+          <p>
+            Sowell evaluates policies through the incentives they create. In Argentina, the patronage state helps explain how the fiscal and institutional problem reproduced itself politically. Between 2011 and 2022, <a href="https://www.batimes.com.ar/news/economy/report-public-employment-up-34-in-argentina-since-2011-private-up-only-3.phtml" target="_blank" rel="noreferrer noopener">public payrolls grew 34% while private-sector jobs grew 3%</a>. Registered private employment was <a href="https://en.mercopress.com/2020/07/27/in-argentina-55-of-all-registered-workers-are-employed-by-government" target="_blank" rel="noreferrer noopener">lower in 2020 than in 2012, while government jobs rose 26% to 3.2 million</a> and <a href="https://milei.ufm.edu/en/fiscal-monitor/" target="_blank" rel="noreferrer noopener">more than 40% of salaried workers are informal</a>. Eduardo Levy Yeyati calls this the <a href="https://www.brookings.edu/articles/after-the-default-argentinas-unsustainable-20-80-economy/" target="_blank" rel="noreferrer noopener">20/80 society: by the end of 2019 only 20 of every 100 working-age Argentines held a stable formal private-sector job; their taxes financed the benefits of the other 80</a>. Those workers and beneficiaries also vote. Organized groups receive visible benefits while the costs arrive later and are spread across taxpayers, consumers and peso holders. Milei's most Sowellian move may be <a href="https://www.riotimesonline.com/argentina-poverty-28-percent-lowest-since-2018/" target="_blank" rel="noreferrer noopener">routing welfare payments directly to recipients</a> to cut out the piquetero organizations that had brokered them for votes.
+          </p>
+          <h3 id="the-allocation-of-talent">The allocation of talent</h3>
+          <p>
+            Rent-seeking is the public-choice term for a simple response to incentives. Half a century of shifting import licenses, export quotas, multiple exchange rates, tax amnesties and subsidy schemes made political access and regulatory arbitrage pay better than production, so that is where entrepreneurial energy went. The carry trade is so embedded in national life that it has a folk name, the <em>bicicleta financiera</em>; a generation of the country's best minds built careers in tax engineering, FX arbitrage, subsidy management and litigation, work that is individually rational and collectively creates nothing new. <a href="https://link.springer.com/article/10.1186/s40503-019-0076-2" target="_blank" rel="noreferrer noopener">Rok Spruk's synthetic-control study of the divergence</a> argues that Argentina's institutional breakdowns entrenched state-backed favoritism and rent-seeking in place of productive activity. It estimates that Argentina's income would otherwise resemble New Zealand's. <a href="https://data.worldbank.org/indicator/NE.GDI.FTOT.ZS?locations=AR-CL" target="_blank" rel="noreferrer noopener">Gross fixed investment has stayed in the mid-teens as a share of GDP for most of three decades, far below Chile's</a>. When rules are provisional, surviving the next political cycle pays better than planning for the next twenty years.
+          </p>
+          <h3 id="human-capital-the-original-endowment">Human capital, the original endowment</h3>
+          <p>
+            Sowell's histories treat human capital as the real wealth of nations; Argentina's founding advantage was exactly that, Sarmiento's schools and mass immigration having made it the best-educated country in Latin America. That endowment is eroding. In <a href="https://www.oecd.org/en/publications/pisa-2022-results-volume-i-and-ii-country-notes_ed6fbcc5-en/argentina_09c7d993-en.html" target="_blank" rel="noreferrer noopener">PISA 2022, Argentine 15-year-olds scored 378 in math against an OECD average of 472, only 27% reached baseline proficiency (a share lower than in 2012) and almost none reached the top levels</a>. <a href="https://www.batimes.com.ar/news/argentina/government-reacts-to-tough-report-on-secondary-school-crisis-only-10-out-of-100-students-complete-studies.phtml" target="_blank" rel="noreferrer noopener">Roughly one in ten students finishes secondary school on time with adequate language and math</a>. And the capital walks: <a href="https://www.cato.org/free-society/fall-2025/liberty-versus-power-mileis-argentina" target="_blank" rel="noreferrer noopener">about 1.8 million Argentines have emigrated since 2013</a>, the skilled disproportionately. Stabilization can be decreed in a quarter; rebuilding this takes a generation, which is why it now has its own row in the ranking above.
+          </p>
+        </section>
+
+        <section id="fact-check-twelve-claims" aria-labelledby="fact-check-twelve-claims-heading">
+          <h2 id="fact-check-twelve-claims-heading">Fact-check: twelve claims at a glance</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Claim</th>
+                  <th scope="col">Verdict</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">"Argentina's GDP per capita hasn't grown since 1990"</th>
+                  <td><strong>False.</strong> Up 57% in PPP terms, but at a third of Chile's pace and with zero net progress after 2011</td>
+                </tr>
+                <tr>
+                  <th scope="row">"The 1990s market reforms were a complete failure"</th>
+                  <td><strong>False.</strong> Hyperinflation ended and growth ran near 6% through 1997; what failed was the fiscal base and the exit strategy</td>
+                </tr>
+                <tr>
+                  <th scope="row">"The 2001 crisis was caused entirely by fiscal profligacy"</th>
+                  <td><strong>Incomplete.</strong> Primary spending's GDP share was roughly flat 1993-2001; provincial deficits, the unfunded pension transition, overvaluation and dollar debt did the killing</td>
+                </tr>
+                <tr>
+                  <th scope="row">"The IMF caused 2001 through austerity"</th>
+                  <td><strong>False, with a caveat.</strong> The vulnerabilities were homegrown, but the Fund financed an unsustainable strategy too long and admits it</td>
+                </tr>
+                <tr>
+                  <th scope="row">"The fixed exchange rate alone caused 2001"</th>
+                  <td><strong>Incomplete.</strong> Lethal only in combination with fiscal weakness, dollarized balance sheets and external shocks</td>
+                </tr>
+                <tr>
+                  <th scope="row">"An orthodox currency board or dollarization would definitely have prevented it"</th>
+                  <td><strong>Unproven counterfactual.</strong> Hanke's factual critique of convertibility is correct; the strong claim is untestable</td>
+                </tr>
+                <tr>
+                  <th scope="row">"Protectionism explains the whole stagnation"</th>
+                  <td><strong>Overstated.</strong> A major productivity and export drag, especially after 2011, but it cannot explain 1998-2002</td>
+                </tr>
+                <tr>
+                  <th scope="row">"Labor law is Argentina's principal economic problem"</th>
+                  <td><strong>Unsupported.</strong> It matters at the margin; macro instability and policy unpredictability dominate</td>
+                </tr>
+                <tr>
+                  <th scope="row">"Argentina was just unlucky with external shocks"</th>
+                  <td><strong>False.</strong> The shocks were triggers; peers hit by the same shocks did not lose a decade</td>
+                </tr>
+                <tr>
+                  <th scope="row">"Macri failed simply because he reformed too little"</th>
+                  <td><strong>Incomplete.</strong> Sequencing was the killer: capital-account opening and dollar borrowing before fiscal credibility, plus an IMF program that misdiagnosed the problem</td>
+                </tr>
+                <tr>
+                  <th scope="row">"The 1990s privatizations were an unqualified success"</th>
+                  <td><strong>Mixed.</strong> Service quality improved dramatically, but corruption and dollar-indexed private monopolies were real costs</td>
+                </tr>
+                <tr>
+                  <th scope="row">"Milei's poverty collapse is fake" / "is fully real"</th>
+                  <td><strong>Real direction, overstated magnitude.</strong> The fall to 28.2% is genuine in INDEC data, but the <a href="https://www.batimes.com.ar/news/argentina/poverty-in-argentina-fell-to-316-in-the-first-half-of-2025-reports-indec.phtml" target="_blank" rel="noreferrer noopener">Buenos Aires Times report</a> notes that self-reported income and outdated consumption baskets flatter the level; child poverty remains above 41%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="what-would-prove-the-cycle-is-broken" aria-labelledby="what-would-prove-the-cycle-is-broken-heading">
+          <h2 id="what-would-prove-the-cycle-is-broken-heading">What would prove the cycle is broken</h2>
+          <p>
+            Watch five things, in order. First, the fiscal anchor surviving an electoral cycle: a sustained primary surplus that a hostile Congress or a bad harvest doesn't erase, because a return to monetized deficits is the single clearest relapse signal. Second, reserves: the central bank has repeatedly undershot its accumulation targets and the 2026 program hinges on building at least $8 billion of net reserves this year while keeping the peso genuinely flexible. Third, structural reform passing through Congress rather than relying on decree, because statutes are harder for the next government to reverse; the labor, tax and trade laws passed after the 2025 midterms are the first real test. Fourth, monetary institutions that outlive Milei, whether via dollarization or a central bank made credibly unable to finance the Treasury. Fifth, private investment and exports growing across several political cycles. That did not happen after 1998 or 2011. A government hostile to Milei's program will provide the real test.
+          </p>
+        </section>
+
+        <section id="the-synthesis" aria-labelledby="the-synthesis-heading">
+          <h2 id="the-synthesis-heading">The synthesis</h2>
+          <p>
+            My read is narrower. Argentina repeatedly borrowed credibility instead of earning it. Convertibility borrowed it from dollar reserves; the Kirchners borrowed time from exporters and peso savers; Macri borrowed dollars. Each arrangement ended when its financing did. Milei's program differs in one important respect: the Treasury is no longer being financed by the central bank. The fiscal surplus has also lasted less than one presidential term. Whether this is a break with the past depends on whether a later government can restart monetary financing, currency controls and discretionary rule changes. Until that test, call it stabilization, not convergence.
+          </p>
+        </section>
+      </article>
+    </main>
+
+<style>
+
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfaf6;
+    --paper: #fffefa;
+    --text: #1d1a16;
+    --text-soft: #403a33;
+    --muted: #756d63;
+    --rule: #ddd3c5;
+    --accent: #805324;
+    --accent-soft: #f1e7d8;
+    --selection: #e7c99d;
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171410;
+      --paper: #1f1b16;
+      --text: #f3eadf;
+      --text-soft: #d9cabc;
+      --muted: #aa9a8a;
+      --rule: #3d342b;
+      --accent: #e0ae74;
+      --accent-soft: #2b241d;
+      --selection: #6e4a25;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--text);
+  }
+
+  html {
+    max-width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 60%, transparent), transparent 28rem),
+      var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  .hero {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 0.55rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .home-link,
+  .eyebrow {
+    font-family: var(--sans);
+  }
+
+  .site-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-underline-offset: 0.28em;
+  }
+
+  .home-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.85rem 0 0;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 26ch;
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+    font-weight: 650;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    overflow-wrap: break-word;
+  }
+
+  .dek {
+    max-width: 44rem;
+    margin: 0.15rem 0 0;
+    color: var(--text-soft);
+    font-size: clamp(0.98rem, 1.35vw, 1.1rem);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    overflow-wrap: break-word;
+  }
+
+  .article {
+    width: 100%;
+    display: grid;
+    gap: clamp(1.6rem, 3.2vw, 2.4rem);
+    max-width: 67ch;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2rem) 0;
+  }
+
+  section {
+    min-width: 0;
+    scroll-margin-top: 1.5rem;
+  }
+
+  h2,
+  h3 {
+    color: var(--text);
+    letter-spacing: -0.035em;
+  }
+
+  h2 {
+    max-width: 34ch;
+    margin: 0 0 0.7rem;
+    font-size: clamp(1.28rem, 2.4vw, 1.65rem);
+    font-weight: 650;
+    line-height: 1.12;
+  }
+
+  h3 {
+    max-width: 40ch;
+    margin: 1.6rem 0 0.55rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    line-height: 1.22;
+  }
+
+  h2 + h3 {
+    margin-top: 1rem;
+  }
+
+  p,
+  li,
+  td,
+  th {
+    color: var(--text-soft);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    overflow-wrap: break-word;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p,
+  p + ul,
+  p + ol,
+  ul + p,
+  ol + p,
+  .table-wrap {
+    margin-top: 0.85rem;
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 720;
+  }
+
+  em,
+  cite {
+    font-style: italic;
+  }
+
+  a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.17em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+
+  ul,
+  ol {
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    padding-left: 0.25rem;
+  }
+
+  li + li {
+    margin-top: 0.55rem;
+  }
+
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  tbody th {
+    width: 32%;
+    color: var(--text);
+    font-weight: 680;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  /* Fact-check table: claim column wider */
+  #fact-check-twelve-claims tbody th {
+    width: 42%;
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      padding: 1rem;
+    }
+
+    .site-tools {
+      align-items: flex-start;
+    }
+
+    .hero {
+      padding-bottom: 1rem;
+    }
+
+    h1 {
+      max-width: 18ch;
+      font-size: clamp(1.7rem, 7.5vw, 2.15rem);
+      letter-spacing: -0.035em;
+    }
+
+    .dek {
+      font-size: 1.02rem;
+      line-height: 1.48;
+    }
+
+    .article {
+      gap: 1.75rem;
+      max-width: 100%;
+      padding: 1.25rem 0 2.5rem;
+    }
+
+    h2 {
+      max-width: 100%;
+      margin-bottom: 0.65rem;
+      font-size: clamp(1.22rem, 5vw, 1.45rem);
+      line-height: 1.12;
+    }
+
+    h3 {
+      max-width: 100%;
+      margin-top: 1.35rem;
+      font-size: 1.08rem;
+      line-height: 1.22;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      font-size: 1rem;
+      line-height: 1.72;
+    }
+
+    .table-wrap {
+      border: 0;
+      background: transparent;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    tbody {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    tbody tr {
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      padding: 0.85rem 0.95rem 0.95rem;
+    }
+
+    tbody th,
+    tbody td {
+      border-bottom: 0;
+      padding: 0;
+    }
+
+    tbody th {
+      width: 100%;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 750;
+      letter-spacing: 0.07em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    tbody td {
+      margin-top: 0.35rem;
+    }
+
+    tbody td + td {
+      margin-top: 0.55rem;
+    }
+
+    /* Show weight label on stacked 3-col table */
+    #the-mistakes-ranked tbody td:first-of-type::before {
+      content: "Weight · ";
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+
+</style>
+  </body>
+</html>
