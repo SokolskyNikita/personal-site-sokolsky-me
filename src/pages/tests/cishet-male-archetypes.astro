@@ -262,20 +262,41 @@ const structuredData = {
         return Math.min(2.4, overlaps * 0.6);
       }
 
-      function optionWeight(option, archetype) {
-        let w = option.sections[archetype.sectionId] || 0;
+      function escapeRegExp(value) {
+        return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      function exactPhraseMatch(haystack, needle) {
+        const pattern = new RegExp(
+          `(^|[^a-z0-9])${escapeRegExp(needle)}(?=$|[^a-z0-9])`,
+          "i",
+        );
+        return pattern.test(haystack);
+      }
+
+      function specificWeight(option, archetype) {
+        let w = lexicalWeight(option, archetype);
         if (option.boosts) {
-          const hay = archetype.terms.toLowerCase();
+          const hay = archetype.terms;
           for (const boost of option.boosts) {
-            if (hay.includes(String(boost.match).toLowerCase())) w += boost.w;
+            if (exactPhraseMatch(hay, boost.match)) w += boost.w;
           }
         }
-        return w + lexicalWeight(option, archetype);
+        return w;
+      }
+
+      function optionWeight(option, archetype) {
+        return (
+          (option.sections[archetype.sectionId] || 0) +
+          specificWeight(option, archetype)
+        );
       }
 
       function rankMatches(answers) {
         const scores = new Float64Array(ARCHETYPES.length);
         const maxes = new Float64Array(ARCHETYPES.length);
+        const specificScores = new Float64Array(ARCHETYPES.length);
+        const specificMaxes = new Float64Array(ARCHETYPES.length);
 
         for (let qi = 0; qi < DECK.length; qi++) {
           const answer = answers[qi];
@@ -285,19 +306,45 @@ const structuredData = {
           for (let ai = 0; ai < ARCHETYPES.length; ai++) {
             const arch = ARCHETYPES[ai];
             scores[ai] += optionWeight(chosen, arch);
+            specificScores[ai] += specificWeight(chosen, arch);
             let best = 0;
-            for (const opt of q.opts) best = Math.max(best, optionWeight(opt, arch));
+            let bestSpecific = 0;
+            for (const opt of q.opts) {
+              best = Math.max(best, optionWeight(opt, arch));
+              bestSpecific = Math.max(bestSpecific, specificWeight(opt, arch));
+            }
             maxes[ai] += best;
+            specificMaxes[ai] += bestSpecific;
           }
         }
 
         return ARCHETYPES.map((archetype, i) => {
           const score = scores[i];
           const maxPossible = maxes[i];
+          const baseFit = maxPossible > 0 ? score / maxPossible : 0;
+          const specificFit =
+            specificMaxes[i] > 0
+              ? specificScores[i] / specificMaxes[i]
+              : baseFit;
+          const fit = baseFit * 0.85 + specificFit * 0.15;
           const matchPct =
-            maxPossible > 0 ? Math.round((1000 * score) / maxPossible) / 10 : 0;
-          return { archetype, score, maxPossible, matchPct };
-        }).sort((a, b) => b.matchPct - a.matchPct || b.score - a.score);
+            Math.round(1000 * fit) / 10;
+          const specificScore = specificScores[i];
+          return {
+            archetype,
+            score,
+            maxPossible,
+            matchPct,
+            fit,
+            specificFit,
+            specificScore,
+          };
+        }).sort(
+          (a, b) =>
+            b.fit - a.fit ||
+            b.specificScore - a.specificScore ||
+            a.archetype.terms.localeCompare(b.archetype.terms),
+        );
       }
 
       function escapeHtml(value) {
@@ -491,7 +538,7 @@ const structuredData = {
             })
             .join("") +
           `</ol>` +
-          `<p class="verdict-note">The percentage compares your answers with the strongest possible score for each label. The descriptions explain how people use these terms; they are not endorsements.</p>`;
+          `<p class="verdict-note">The percentage combines your general pattern with direct matches to a label’s name and description. The descriptions explain how people use these terms; they are not endorsements.</p>`;
 
         resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }

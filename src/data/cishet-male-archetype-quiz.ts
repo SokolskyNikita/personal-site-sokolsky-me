@@ -133,6 +133,16 @@ const POLES = {
 type SectionWeights = Record<string, number>;
 type Boost = { match: string; w: number };
 
+const sectionBaselineMax = new Map<string, number>();
+for (const weights of Object.values(POLES)) {
+  for (const [sectionId, weight] of Object.entries(weights)) {
+    sectionBaselineMax.set(
+      sectionId,
+      Math.max(sectionBaselineMax.get(sectionId) ?? 0, weight),
+    );
+  }
+}
+
 const LEXICAL_STOP_WORDS = new Set(
   "about after again against almost also always among around because before being between both could default does doing down during each enough every first from further have having here honestly into just maybe more most much myself next only other over same should some still such than that their them then there these they this those through under until very what when where which while with would your youre guy guys male man mostly energy mode thing stuff vibe vibes looks like".split(
     " ",
@@ -190,7 +200,11 @@ function pole(
   extras: SectionWeights = {},
   boosts: Boost[] = [],
 ): Pick<QuizOption, "sections" | "boosts"> {
-  const sections: SectionWeights = { ...POLES[key] };
+  const sections: SectionWeights = {};
+  for (const [sectionId, weight] of Object.entries(POLES[key])) {
+    const max = sectionBaselineMax.get(sectionId) ?? weight;
+    sections[sectionId] = (weight * 3) / max;
+  }
   for (const [id, w] of Object.entries(extras)) {
     sections[id] = (sections[id] ?? 0) + w;
   }
@@ -255,6 +269,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Bro", w: 2 },
         { match: "Lad", w: 1 },
         { match: "Euro trash", w: 1 },
+        { match: "Bday boy", w: 1 },
       ]),
       opt("Home. Grill on, kids in bed, thermostat under my control.", "domestic", {}, [
         { match: "Grill dad", w: 2 },
@@ -477,7 +492,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Soft boy", w: 1 },
       ]),
       opt("Anon boards or a wiki hole so narrow that I cannot explain how I got there.", "online", {}, [
-        { match: "4chan", w: 2 },
+        { match: "4chaners", w: 2 },
         { match: "Reddit", w: 1 },
         { match: "Blackpill", w: 1 },
         { match: "Wikipedia guy", w: 1 },
@@ -963,6 +978,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Pepe", w: 1 },
         { match: "Doomer", w: 1 },
         { match: "Honkler", w: 1 },
+        { match: "Apu Apustaja", w: 1 },
       ]),
     ],
   },
@@ -1189,6 +1205,7 @@ export const DECK: QuizQuestion[] = [
         { match: "AuADHD", w: 3 },
         { match: "Warhammer", w: 1 },
         { match: "Transit guy", w: 1 },
+        { match: "Apu Apustaja", w: 1 },
       ]),
     ],
   },
@@ -1240,17 +1257,39 @@ export type MatchResult = {
   score: number;
   maxPossible: number;
   matchPct: number;
+  fit: number;
+  specificFit: number;
+  specificScore: number;
 };
 
-export function optionWeight(option: QuizOption, archetype: Archetype): number {
-  let w = option.sections[archetype.sectionId] ?? 0;
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function exactPhraseMatch(haystack: string, needle: string): boolean {
+  const pattern = new RegExp(
+    `(^|[^a-z0-9])${escapeRegExp(needle)}(?=$|[^a-z0-9])`,
+    "i",
+  );
+  return pattern.test(haystack);
+}
+
+function specificWeight(option: QuizOption, archetype: Archetype): number {
+  let w = lexicalWeight(option, archetype);
   if (option.boosts) {
-    const hay = archetype.terms.toLowerCase();
+    const hay = archetype.terms;
     for (const boost of option.boosts) {
-      if (hay.includes(boost.match.toLowerCase())) w += boost.w;
+      if (exactPhraseMatch(hay, boost.match)) w += boost.w;
     }
   }
-  return w + lexicalWeight(option, archetype);
+  return w;
+}
+
+export function optionWeight(option: QuizOption, archetype: Archetype): number {
+  return (
+    (option.sections[archetype.sectionId] ?? 0) +
+    specificWeight(option, archetype)
+  );
 }
 
 export function maxPossibleForArchetype(archetype: Archetype): number {
@@ -1268,6 +1307,8 @@ export function maxPossibleForArchetype(archetype: Archetype): number {
 export function scoreAnswers(answerIndexes: number[]): MatchResult[] {
   const scores = new Float64Array(ARCHETYPES.length);
   const maxes = new Float64Array(ARCHETYPES.length);
+  const specificScores = new Float64Array(ARCHETYPES.length);
+  const specificMaxes = new Float64Array(ARCHETYPES.length);
 
   for (let qi = 0; qi < DECK.length; qi++) {
     const answer = answerIndexes[qi];
@@ -1278,19 +1319,45 @@ export function scoreAnswers(answerIndexes: number[]): MatchResult[] {
     for (let ai = 0; ai < ARCHETYPES.length; ai++) {
       const arch = ARCHETYPES[ai];
       scores[ai] += optionWeight(chosen, arch);
+      specificScores[ai] += specificWeight(chosen, arch);
       let best = 0;
-      for (const opt of q.opts) best = Math.max(best, optionWeight(opt, arch));
+      let bestSpecific = 0;
+      for (const opt of q.opts) {
+        best = Math.max(best, optionWeight(opt, arch));
+        bestSpecific = Math.max(bestSpecific, specificWeight(opt, arch));
+      }
       maxes[ai] += best;
+      specificMaxes[ai] += bestSpecific;
     }
   }
 
   return ARCHETYPES.map((archetype, i) => {
     const score = scores[i];
     const maxPossible = maxes[i];
+    const baseFit = maxPossible > 0 ? score / maxPossible : 0;
+    const specificFit =
+      specificMaxes[i] > 0
+        ? specificScores[i] / specificMaxes[i]
+        : baseFit;
+    const fit = baseFit * 0.85 + specificFit * 0.15;
     const matchPct =
-      maxPossible > 0 ? Math.round((1000 * score) / maxPossible) / 10 : 0;
-    return { archetype, score, maxPossible, matchPct };
-  }).sort((a, b) => b.matchPct - a.matchPct || b.score - a.score);
+      Math.round(1000 * fit) / 10;
+    const specificScore = specificScores[i];
+    return {
+      archetype,
+      score,
+      maxPossible,
+      matchPct,
+      fit,
+      specificFit,
+      specificScore,
+    };
+  }).sort(
+    (a, b) =>
+      b.fit - a.fit ||
+      b.specificScore - a.specificScore ||
+      a.archetype.terms.localeCompare(b.archetype.terms),
+  );
 }
 
 /** Dev/test helper: every question’s options should touch every section. */
