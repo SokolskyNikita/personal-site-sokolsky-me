@@ -212,7 +212,7 @@ export const DECK: QuizQuestion[] = [
     ["A tote, merch or something linked to a book, band or character.", "culture", ["Art hoe", "Fangirl", "Hello Kitty girl"]],
     ["Whatever the latest online aesthetic calls for.", "online", ["E-girl", "Trad girl", "Quirk Chungus"]],
   ]),
-  question("Beauty routine", "How much time do you spend on hair, makeup and skincare on a normal weekday?", [
+  question("Beauty routine", "Which best describes your hair, makeup and skincare routine on a normal weekday?", [
     ["Almost none.", "neutral", ["Chill girl", "Basic"]],
     ["Ten to twenty minutes. I use familiar products and stop there.", "social", ["Basic", "Becky", "Valley girl"]],
     ["As little as possible because other tasks come first.", "domestic", ["Soccer mom", "Boy mom", "Dog mom"]],
