@@ -155,6 +155,8 @@ const structuredData = {
     >
       const STORE_KEY = "cishet-archetype-quiz-v2";
       const LEGACY_STORE_KEY = "cishet-archetype-quiz-v1";
+      const TELEMETRY_ENDPOINT = "/api/cishet-archetypes/result";
+      const QUIZ_ID = "cishet-male-archetypes";
       const TOP_N = 5;
       const SPECIFIC_EVIDENCE_PRIOR = 4;
 
@@ -162,6 +164,8 @@ const structuredData = {
         answers: Array.from({ length: DECK.length }, () => []),
         idx: 0,
         finished: false,
+        telemetrySent: false,
+        startedAt: Date.now(),
       };
 
       const introSection = document.getElementById("intro");
@@ -179,6 +183,8 @@ const structuredData = {
               answers: state.answers,
               idx: state.idx,
               finished: state.finished,
+              telemetrySent: state.telemetrySent,
+              startedAt: state.startedAt,
             }),
           );
         } catch (_) {}
@@ -203,6 +209,13 @@ const structuredData = {
           });
           state.idx = Math.min(Math.max(0, data.idx | 0), DECK.length - 1);
           state.finished = Boolean(data.finished);
+          state.telemetrySent =
+            data.telemetrySent === undefined && state.finished
+              ? true
+              : Boolean(data.telemetrySent);
+          state.startedAt = Number.isFinite(data.startedAt)
+            ? data.startedAt
+            : Date.now();
           return true;
         } catch (_) {
           return false;
@@ -531,6 +544,7 @@ const structuredData = {
             : [...withoutSkip, optIdx].sort((a, b) => a - b);
         }
         state.finished = false;
+        state.telemetrySent = false;
         saveLocal();
         renderQuestion();
       }
@@ -553,10 +567,40 @@ const structuredData = {
         );
       }
 
-      function showResults() {
+      function sendResultTelemetry(top, matchedQuestions, persist) {
+        if (!persist || state.telemetrySent || !("fetch" in window)) return;
+
+        const durationMs = Number.isFinite(state.startedAt)
+          ? Date.now() - state.startedAt
+          : null;
+        fetch(TELEMETRY_ENDPOINT, {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            version: 1,
+            quiz: QUIZ_ID,
+            path: location.pathname,
+            answers: encodeAnswers(),
+            matchedQuestions,
+            topIds: top.map((result) => result.archetype.id),
+            topNames: top.map((result) => result.archetype.terms),
+            topFits: top.map((result) => result.matchPct),
+            durationMs,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) return;
+            state.telemetrySent = true;
+            saveLocal();
+          })
+          .catch(() => { /* telemetry should never affect the quiz. */ });
+      }
+
+      function showResults(persist = true) {
         if (!allAnswered()) return;
         state.finished = true;
-        saveLocal();
+        if (persist) saveLocal();
 
         const ranked = rankMatches(state.answers);
         const top = ranked.slice(0, TOP_N);
@@ -605,6 +649,7 @@ const structuredData = {
             `<p class="verdict-note">${escapeHtml(confidenceNote)} The descriptions explain how people use these terms; they are not endorsements.</p>`;
         }
 
+        sendResultTelemetry(top, matchedQuestions, persist);
         resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
@@ -616,6 +661,8 @@ const structuredData = {
         if (!resume) {
           state.answers = Array.from({ length: DECK.length }, () => []);
           state.idx = 0;
+          state.telemetrySent = false;
+          state.startedAt = Date.now();
         } else {
           state.idx = firstUnansweredIndex();
         }
@@ -689,7 +736,7 @@ const structuredData = {
       if (shared && shared.every((selection) => selection.length > 0)) {
         state.answers = shared;
         state.finished = true;
-        showResults();
+        showResults(false);
       } else {
         loadLocal();
         if (state.finished && allAnswered()) showResults();

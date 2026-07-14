@@ -35,6 +35,18 @@ interface AiCompassPayload {
   durationMs: number | null;
 }
 
+interface ArchetypeQuizPayload {
+  version: number;
+  quiz: "cishet-male-archetypes" | "cishet-female-archetypes";
+  path: string;
+  answers: string;
+  matchedQuestions: number;
+  topIds: string[];
+  topNames: string[];
+  topFits: number[];
+  durationMs: number | null;
+}
+
 interface CfProperties {
   country?: string;
   continent?: string;
@@ -44,6 +56,7 @@ interface CfProperties {
 
 const AI_COMPASS_RESULT_PATH = "/api/ai-compass/result";
 const AI_COMPASS_STATS_PATH = "/api/ai-compass/stats";
+const ARCHETYPE_QUIZ_RESULT_PATH = "/api/cishet-archetypes/result";
 const PRIVATE_PATH_PREFIX = "/private/";
 const LLMS_TXT_PATH = "/llms.txt";
 const AXIS_KEYS = ["T", "V", "S", "I", "P"] as const;
@@ -84,6 +97,10 @@ export default {
 
     if (url.pathname === AI_COMPASS_STATS_PATH) {
       return handleAiCompassStats(request, env);
+    }
+
+    if (url.pathname === ARCHETYPE_QUIZ_RESULT_PATH) {
+      return handleArchetypeQuizResult(request, env, url);
     }
 
     if (isPrivatePath(url.pathname)) {
@@ -279,6 +296,86 @@ async function handleAiCompassResult(
   });
 }
 
+async function handleArchetypeQuizResult(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "POST") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+
+  const origin = request.headers.get("Origin");
+  if (origin && origin !== url.origin) {
+    return json({ ok: false, error: "origin_not_allowed" }, 403);
+  }
+
+  const contentLength = Number(request.headers.get("Content-Length") || "0");
+  if (contentLength > 4096) {
+    return json({ ok: false, error: "payload_too_large" }, 413);
+  }
+
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return json({ ok: false, error: "invalid_json" }, 400);
+  }
+
+  const payload = parseArchetypeQuizPayload(raw);
+  if (!payload) {
+    return json({ ok: false, error: "invalid_payload" }, 400);
+  }
+
+  if (!env.AI_COMPASS_DB) {
+    return json({ ok: true, stored: false });
+  }
+
+  const cf = (request as Request & { cf?: CfProperties }).cf;
+
+  try {
+    await env.AI_COMPASS_DB.prepare(
+      `INSERT INTO cishet_archetype_results (
+        quiz_version,
+        quiz,
+        path,
+        answers,
+        matched_questions,
+        top_ids,
+        top_names,
+        top_fits,
+        duration_ms,
+        country,
+        continent,
+        colo,
+        timezone,
+        device_category
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+      .bind(
+        payload.version,
+        payload.quiz,
+        payload.path,
+        payload.answers,
+        payload.matchedQuestions,
+        JSON.stringify(payload.topIds),
+        JSON.stringify(payload.topNames),
+        JSON.stringify(payload.topFits),
+        payload.durationMs,
+        String(cf?.country ?? ""),
+        String(cf?.continent ?? ""),
+        String(cf?.colo ?? ""),
+        String(cf?.timezone ?? ""),
+        deviceCategory(request.headers.get("User-Agent") || ""),
+      )
+      .run();
+  } catch {
+    return json({ ok: false, error: "store_failed" }, 500);
+  }
+
+  return json({ ok: true, stored: true });
+}
+
 function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
   if (!raw || typeof raw !== "object") return null;
 
@@ -343,6 +440,69 @@ function parseAiCompassPayload(raw: unknown): AiCompassPayload | null {
     runnerNames,
     runnerFits,
     scores: parsedScores,
+    durationMs: parsedDurationMs,
+  };
+}
+
+function parseArchetypeQuizPayload(raw: unknown): ArchetypeQuizPayload | null {
+  if (!raw || typeof raw !== "object") return null;
+
+  const payload = raw as Record<string, unknown>;
+  const quiz = payload.quiz;
+  if (quiz !== "cishet-male-archetypes" && quiz !== "cishet-female-archetypes") {
+    return null;
+  }
+
+  const expectedPath = `/tests/${quiz}`;
+  const path = payload.path;
+  const answers = payload.answers;
+  if (typeof answers !== "string" || answers.length > 512) return null;
+  const answerSegments = answers.split(".");
+  if (
+    answerSegments.length !== 25 ||
+    answerSegments.some((segment) => !/^[1-9a-z]+$/.test(segment))
+  ) {
+    return null;
+  }
+
+  const topIds = readStringArray(payload.topIds, 5, 120);
+  const topNames = readStringArray(payload.topNames, 5, 240);
+  const topFits = readNumberArray(payload.topFits, 5, 0, 100);
+  if (
+    !topIds ||
+    !topNames ||
+    !topFits ||
+    topIds.length !== topNames.length ||
+    topIds.length !== topFits.length
+  ) {
+    return null;
+  }
+
+  const durationMs = payload.durationMs;
+  const parsedDurationMs =
+    durationMs === null
+      ? null
+      : isFiniteNumber(durationMs) && durationMs >= 0 && durationMs <= 86_400_000
+        ? Math.round(durationMs)
+        : null;
+
+  if (
+    payload.version !== 1 ||
+    (path !== expectedPath && path !== `${expectedPath}/`) ||
+    !isIntegerInRange(payload.matchedQuestions, 0, 25)
+  ) {
+    return null;
+  }
+
+  return {
+    version: 1,
+    quiz,
+    path,
+    answers,
+    matchedQuestions: payload.matchedQuestions,
+    topIds,
+    topNames,
+    topFits,
     durationMs: parsedDurationMs,
   };
 }
