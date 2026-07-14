@@ -1,0 +1,1021 @@
+---
+export const prerender = true;
+
+const pageTitle =
+  "When the pilot collapses: documented cases of amateurs landing the plane";
+const pageDescription =
+  "Documented cases of passengers and undertrained pilots landing aircraft after pilot incapacitation, including fatal attempts and why airliners are different.";
+const themeColorLight = "#f4f7fa";
+const themeColorDark = "#10151a";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: {
+    "@type": "Thing",
+    name: "Pilot incapacitation and passenger landings",
+  },
+  inLanguage: "en",
+};
+
+type Experience =
+  | "non-pilot"
+  | "trainee"
+  | "lapsed"
+  | "licensed-unfamiliar"
+  | "commercial-unqualified";
+
+type CaseOutcome = "success" | "partial" | "failure";
+
+type LandingCase = {
+  id: string;
+  when: string;
+  where: string;
+  aircraft?: string;
+  passenger: string;
+  experience: Experience;
+  outcome: CaseOutcome;
+  /** HTML with short inline source links (anchor text ≤4 words). */
+  body: string;
+};
+
+const experienceLabels: Record<Experience, string> = {
+  "non-pilot": "Non-pilot",
+  trainee: "Trainee",
+  lapsed: "Lapsed / rusty",
+  "licensed-unfamiliar": "Licensed, unfamiliar type",
+  "commercial-unqualified": "CPL, not type-qualified",
+};
+
+const successes: LandingCase[] = [
+  {
+    id: "1974-75-unnamed",
+    when: "June 1974",
+    where: "McGuire AFB, New Jersey",
+    aircraft: "Piper Cherokee",
+    passenger: "Martha Waite",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `An <a href="https://pubmed.ncbi.nlm.nih.gov/708352/" target="_blank" rel="noopener noreferrer">aviation-medical study</a> by Mohler and Booze of 13 US general-aviation pilots who died of cardiovascular disease in flight during 1974–75 records that one pilot's wife, a non-pilot, landed the aircraft. Press coverage identifies her as Martha Waite: after William Waite, 52, suffered a fatal heart seizure in their Piper Cherokee, controllers and a shadow aircraft talked her into a crash-landing at McGuire Air Force Base (<a href="https://www.nytimes.com/1974/06/17/archives/wife-lands-plane-safely-as-man-dies-at-controls.html" target="_blank" rel="noopener noreferrer">New York Times</a>). Gear and propeller were damaged; nobody else was hurt.`,
+  },
+  {
+    id: "1985-lansing",
+    when: "July 1985",
+    where: "Lansing, Michigan",
+    aircraft: "Cessna",
+    passenger: "Unnamed passenger",
+    experience: "trainee",
+    outcome: "success",
+    body: `A passenger who had reportedly flown a plane only once brought a single-engine airplane down safely at Capital City Airport in Lansing after the pilot suffered a fatal heart attack mid-flight (<a href="https://www.wsj.com/articles/BL-MSB-3586" target="_blank" rel="noopener noreferrer">Wall Street Journal</a>).`,
+  },
+  {
+    id: "1996-renton",
+    when: "March 20, 1996",
+    where: "Renton, Washington",
+    aircraft: "Cessna U206E floatplane",
+    passenger: "Leland Capps",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `Leland Capps, 52, had limited flying experience but was not a pilot when Raymond Ihrke suffered a fatal heart attack in a Cessna U206E floatplane. Capps called Renton tower, where a controller who was also a flight instructor talked him down. After an unsuccessful first approach, he landed hard beside the paved runway; the floats collapsed and the aircraft sustained substantial damage (<a href="https://aviation-safety.net/wikibase/31201" target="_blank" rel="noopener noreferrer">NTSB case summary</a>; <a href="https://www.spokesman.com/stories/1996/mar/21/man-lands-plane-after-pilot-dies/" target="_blank" rel="noopener noreferrer">contemporary report</a>). Capps was treated for minor injuries and released.`,
+  },
+  {
+    id: "1998-mount-comfort",
+    when: "June 17, 1998",
+    where: "Greenfield, Indiana",
+    aircraft: "Cessna 172R",
+    passenger: "Unnamed passenger",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `An 81-year-old non-pilot took over a Cessna 172R after its pilot suffered a fatal heart attack near Greenfield, Indiana. A commercial pilot in another airplane coached him into Mount Comfort Airport. The Cessna bounced; the passenger's recovery attempt overloaded and collapsed the nose gear, but he was not injured (<a href="https://aviation-safety.net/wikibase/34738" target="_blank" rel="noopener noreferrer">NTSB case summary</a>; <a href="https://www.orlandosentinel.com/1998/06/18/pilot-dies-at-controls-passenger-lands-plane/" target="_blank" rel="noopener noreferrer">contemporary report</a>).`,
+  },
+  {
+    id: "1998-mineral-wells",
+    when: "November 10, 1998",
+    where: "Mineral Wells, Texas",
+    aircraft: "Piper PA-23-235 Apache",
+    passenger: "Unnamed pilot-rated passenger",
+    experience: "licensed-unfamiliar",
+    outcome: "success",
+    body: `A 600-hour pilot rated only for single-engine aircraft took over a twin-engine Piper Apache after its owner-pilot became incapacitated during a practice approach near Mineral Wells. An airline pilot coached the passenger by radio. He landed without damage or injury; emergency personnel met the airplane, but the original pilot died (<a href="https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateNewestReport/45284/pdf" target="_blank" rel="noopener noreferrer">NTSB final report</a>; <a href="https://aviation-safety.net/wikibase/40066" target="_blank" rel="noopener noreferrer">case summary</a>).`,
+  },
+  {
+    id: "2000-winter-haven",
+    when: "August 5, 2000",
+    where: "Winter Haven, Florida",
+    aircraft: "Piper Cherokee Six",
+    passenger: "Henry Anhalt",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `Pilot Kristopher Pearce, 36, collapsed at the controls of a Piper Cherokee Six / Saratoga and later died of an apparent heart attack. Passenger Henry Anhalt, 33, who had never flown an aircraft, took over with his wife and three sons aboard. He transmitted a mayday. Flight instructor Dan McCullough, airborne nearby giving instrument lessons, talked him down as fuel ran low (<a href="https://www.aopa.org/news-and-media/all-news/2000/october/pilot/pilot-briefing-(10)" target="_blank" rel="noopener noreferrer">AOPA Pilot briefing</a>; <a href="https://www.theledger.com/story/news/2000/08/13/faa-thanks-rescue-pilot/8091204007/" target="_blank" rel="noopener noreferrer">Ledger coverage</a>). Anhalt bounced, ran off the runway and caused minor damage; nobody was hurt.`,
+  },
+  {
+    id: "2002-cape-cod",
+    when: "February 8, 2002",
+    where: "Provincetown, Massachusetts",
+    aircraft: "Cessna 402",
+    passenger: "Melanie Oswalt",
+    experience: "trainee",
+    outcome: "partial",
+    body: `Melanie Oswalt, a Cape Air employee and student pilot with roughly 48 hours of training, took the controls of a twin-engine Cessna 402 after pilot Ronald Crews became incoherent from an insulin reaction on a Cape Air flight from Martha's Vineyard toward Hyannis (<a href="https://avweb.com/news/jail-for-diabetic-pilot/" target="_blank" rel="noopener noreferrer">AVweb report</a>; <a href="https://www.capecodtimes.com/story/news/2002/02/12/emergency-pilot-conquered-long-odds/50910986007/" target="_blank" rel="noopener noreferrer">Cape Cod Times</a>). Other passengers restrained Crews. With the intended airport behind them and Provincetown closed and unmanned, she crash-landed gear-up beside the runway. Everyone aboard survived.`,
+  },
+  {
+    id: "2005-north-las-vegas",
+    when: "May 5, 2005",
+    where: "North Las Vegas, Nevada",
+    aircraft: "Gulfstream 695A",
+    passenger: "Unnamed passenger",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `The pilot of a pressurized twin-turboprop Gulfstream 695A became incapacitated and died while flying from North Las Vegas to San Diego. A right-seat passenger with no piloting experience took control while the other passenger worked the radio. On the fourth landing attempt, the amateur pilot stalled at low altitude and the airplane struck terrain flat on its belly a few hundred feet short of the runway (<a href="https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateNewestReport/61404/pdf" target="_blank" rel="noopener noreferrer">NTSB final report</a>; <a href="https://www.aopa.org/training-and-safety/air-safety-institute/accident-analysis/featured-accidents/epilot-asf-accident-reports-pilot-conks-out-passengers-save-the-day" target="_blank" rel="noopener noreferrer">AOPA case review</a>). One passenger was seriously injured and the other received minor injuries, but both survived.`,
+  },
+  {
+    id: "2009-fort-myers",
+    when: "April 12, 2009",
+    where: "Fort Myers, Florida",
+    aircraft: "Beechcraft King Air 200",
+    passenger: "Doug White",
+    experience: "licensed-unfamiliar",
+    outcome: "success",
+    body: `Doug White, a 56-year-old Louisiana pharmacist flying home from his brother's funeral with his wife and two daughters, watched charter pilot Joe Cabuk die shortly after takeoff in a Beechcraft King Air 200. White held a private certificate with about 230 hours, all in Cessna 172s. He had never flown the larger, faster twin turboprop or flown from the right seat (<a href="https://www.aopa.org/news-and-media/all-news/2009/april/14/unintentional-king-air-pilot-an-interview-with-doug-white" target="_blank" rel="noopener noreferrer">AOPA interview</a>; <a href="https://www.nbcnews.com/id/wbna30190350" target="_blank" rel="noopener noreferrer">NBC News report</a>). His questions ran through a relay: Fort Myers controllers Brian Norton and Dan Favio phoned Connecticut King Air instructor Kari Sorenson on his personal cell phone. Sorenson's core advice was to fly it like a single. White made what he called a "greaser" landing. Sorenson later said he did not think you could have made the plane more complex or the pilot less experienced and still have succeeded. The story became the <a href="https://en.wikipedia.org/wiki/Doug_White_(aviator)" target="_blank" rel="noopener noreferrer">2023 film adaptation</a>.`,
+  },
+  {
+    id: "2011-california-colorado",
+    when: "May 27, 2011",
+    where: "En route from California to Colorado",
+    passenger: "Unnamed woman",
+    experience: "non-pilot",
+    outcome: "success",
+    body: `A woman landed the plane, its type unrecorded in press accounts, after her husband, the pilot, had trouble breathing. Another pilot in the air talked her down (<a href="https://en.wikipedia.org/wiki/Talk-down_aircraft_landing" target="_blank" rel="noopener noreferrer">talk-down landing list</a>).`,
+  },
+  {
+    id: "2012-sturgeon-bay",
+    when: "April 2, 2012",
+    where: "Sturgeon Bay, Wisconsin",
+    aircraft: "Cessna 414",
+    passenger: "Helen Collins",
+    experience: "lapsed",
+    outcome: "partial",
+    body: `Helen Collins, 80, took over a twin-engine Cessna 414 after her husband John, 81, lost consciousness from a heart attack he did not survive. She had some flight training decades earlier but hadn't piloted in years and had never flown the twin (<a href="https://abcnews.com/US/wisconsin-wife-80-lands-plane-dying-pilot-husband/story?id=16062534" target="_blank" rel="noopener noreferrer">ABC News report</a>; <a href="https://www.csmonitor.com/USA/Latest-News-Wires/2012/0403/An-80-year-old-woman-lands-plane-after-pilot-passes-out" target="_blank" rel="noopener noreferrer">CS Monitor wire</a>). Her son and an instructor coached her by radio while another pilot flew a shadow aircraft off her wing. She circled for about 90 minutes practicing approaches as one engine ran dry and the other sputtered, then put the plane down hard. The nose gear collapsed and it skidded about 1,000 feet. Collins survived with a crushed vertebra and a cracked rib.`,
+  },
+  {
+    id: "2013-humberside",
+    when: "October 8, 2013",
+    where: "Humberside, England",
+    aircraft: "Cessna 172",
+    passenger: "John Wildey",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `John Wildey, 77, a former RAF serviceman who had never been a pilot, took control of a Cessna 172 after the pilot collapsed and later died. Wildey flew for over an hour in darkness, at first unable to work the controls or the lighting, while instructor Roy Murray and colleagues talked him through repeated approaches (<a href="https://www.bbc.com/news/uk-england-humber-24457031" target="_blank" rel="noopener noreferrer">BBC News report</a>; <a href="https://www.theguardian.com/uk-news/2013/oct/09/passenger-landing-plane-passenger" target="_blank" rel="noopener noreferrer">Guardian interview</a>). He landed on the fourth attempt, a controlled crash rough enough to throw sparks, with a punctured tire the main damage. The incident became the television documentary <cite>Mayday: The Passenger Who Landed a Plane</cite>.`,
+  },
+  {
+    id: "2017-alta-gracia",
+    when: "April 22, 2017",
+    where: "Alta Gracia, Argentina",
+    passenger: "Néstor Sargioto",
+    experience: "trainee",
+    outcome: "partial",
+    body: `Néstor Sargioto, 33, a trainee with basic flying knowledge but none in the larger aircraft involved, took the controls after pilot Rodolfo Ostermeyer suffered convulsions and lost consciousness near the Alta Gracia aeroclub (<a href="https://eldoce.tv/sociedad/el-piloto-se-desmayo-y-un-pasajero-aterrizo-el-avion-aeroclub-alta-gracia_40353/" target="_blank" rel="noopener noreferrer">El Doce report</a>). He contacted emergency services and circled the town while receiving instructions. He didn't know how to lower the landing gear, so he landed without it. All four occupants survived, and the pilot regained consciousness after landing.`,
+  },
+  {
+    id: "2019-jandakot",
+    when: "August 31, 2019",
+    where: "Jandakot, Australia",
+    aircraft: "Cessna 152",
+    passenger: "Max Sylvester",
+    experience: "trainee",
+    outcome: "success",
+    body: `Max Sylvester, 29, was on an early flying lesson and his first in that Cessna 152 when instructor Robert Mollard blacked out and slumped onto his shoulder. Sylvester had never landed an aircraft. Controllers coached him through practice approaches, and after nearly an hour alone at the controls he landed cleanly (<a href="https://www.abc.net.au/news/2019-09-01/trainee-pilot-makes-emergency-landing-jandakot/11468580" target="_blank" rel="noopener noreferrer">ABC News Australia</a>; <a href="https://nypost.com/2019/09/03/student-pilot-lands-plane-during-first-lesson-after-instructor-loses-consciousness/" target="_blank" rel="noopener noreferrer">New York Post</a>). The instructor survived; he was later diagnosed with a brain tumour.`,
+  },
+  {
+    id: "2022-palm-beach",
+    when: "May 10, 2022",
+    where: "Palm Beach, Florida",
+    aircraft: "Cessna 208 Caravan",
+    passenger: "Darren Harrison",
+    experience: "non-pilot",
+    outcome: "success",
+    body: `Pilot Ken Allen suffered an aortic dissection on a flight from the Bahamas and collapsed, knocking the autopilot of his Cessna 208 Caravan off. The plane dove about 3,500 feet and hit 295 knots, well past its 190-knot limit, before passenger Darren Harrison, a 39-year-old with zero flight time, climbed forward, pulled it level and found a working radio (<a href="https://sundaylongread.com/2024/10/17/palm-beach-airport-heart-surgeon/" target="_blank" rel="noopener noreferrer">Sunday Long Read</a>; <a href="https://www.nbcnews.com/news/us-news/passenger-no-flight-experience-saved-plane-nosedive-landed-pilot-passe-rcna28492" target="_blank" rel="noopener noreferrer">NBC News report</a>). Controllers first had to locate the aircraft, because Harrison couldn't say where he was. Robert Morgan, a controller who was also a flight instructor, was called off his break and guided Harrison by radio through flaps, trim, touchdown and braking on Palm Beach's long runway (<a href="https://www.bbc.com/news/world-us-canada-61416384" target="_blank" rel="noopener noreferrer">BBC News report</a>). Allen survived after emergency surgery. Aortic dissection kills a large share of victims before hospital arrival; published estimates range from about 20% to 50% (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10871943/" target="_blank" rel="noopener noreferrer">PMC review</a>).`,
+  },
+  {
+    id: "2023-marthas-vineyard",
+    when: "July 15, 2023",
+    where: "Martha's Vineyard",
+    aircraft: "Piper Meridian",
+    passenger: "Unnamed passenger",
+    experience: "non-pilot",
+    outcome: "partial",
+    body: `The 79-year-old pilot of a Piper PA-46 Meridian suffered a medical emergency during a go-around at Martha's Vineyard Airport. His passenger, who was not a pilot, took the controls and made an emergency gear-up landing off the runway; the left wing fractured (<a href="https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateNewestReport/192636/pdf" target="_blank" rel="noopener noreferrer">NTSB final report</a>; <a href="https://apnews.com/article/airplane-crash-landing-marthas-vineyard-massachusetts-8bccda0624046936e606a3d9ea3f5c54" target="_blank" rel="noopener noreferrer">AP News report</a>). The pilot was fatally injured; the passenger sustained minor injuries. It was a destructive landing but a successful intervention.`,
+  },
+  {
+    id: "2024-raleigh-durham",
+    when: "April 7, 2024",
+    where: "Raleigh-Durham, North Carolina",
+    aircraft: "Cirrus SR-20",
+    passenger: "Unnamed passenger",
+    experience: "non-pilot",
+    outcome: "success",
+    body: `Joseph Izatt, 61, chair of Duke University's biomedical engineering department, suffered a medical emergency while flying his Cirrus SR-20. His lone passenger radioed that the pilot was slumped over the controls, took over and landed safely at RDU (<a href="https://www.nbcnews.com/news/us-news/passenger-lands-single-engine-plane-duke-professor-piloting-aircraft-s-rcna147219" target="_blank" rel="noopener noreferrer">NBC News report</a>; <a href="https://abc11.com/post/duke-professor-joseph-izat-passenger-lands-small-plane-at-rdu-after-pilot-suffers-medical-emergency/14636400/" target="_blank" rel="noopener noreferrer">ABC11 coverage</a>). Izatt died at the hospital.`,
+  },
+  {
+    id: "2024-bakersfield",
+    when: "October 4, 2024",
+    where: "Bakersfield, California",
+    aircraft: "Beechcraft King Air C90B",
+    passenger: "Yvonne Kinane-Wells",
+    experience: "non-pilot",
+    outcome: "success",
+    body: `Yvonne Kinane-Wells assumed control of a twin-engine Beechcraft King Air C90B after her husband, Eliot Alper, became incapacitated on a flight from Henderson, Nevada, toward Monterey. She had ridden along often but reportedly had no piloting experience. With controller assistance she diverted to Meadows Field and landed (<a href="https://apnews.com/article/california-pilot-wife-emergency-landing-plane-06348a2665bf6479d0afad07e181bfb2" target="_blank" rel="noopener noreferrer">AP News report</a>; <a href="https://www.latimes.com/california/story/2024-10-08/wife-lands-plane-after-husbands-heart-attack-audio-files-reveal-tense-moments" target="_blank" rel="noopener noreferrer">Los Angeles Times</a>). Alper later died. The King Air was far more complex than the trainers used in most novice landings.`,
+  },
+];
+
+const failures: LandingCase[] = [
+  {
+    id: "2005-helios-522",
+    when: "August 14, 2005",
+    where: "Greece",
+    aircraft: "Boeing 737 (Helios Airways Flight 522)",
+    passenger: "Andreas Prodromou",
+    experience: "commercial-unqualified",
+    outcome: "failure",
+    body: `A pressurization failure incapacitated both pilots and nearly everyone aboard the Boeing 737. Flight attendant Andreas Prodromou, who held a UK commercial pilot license but was not qualified on the 737, reached the cockpit on portable oxygen (<a href="https://en.wikipedia.org/wiki/Helios_Airways_Flight_522" target="_blank" rel="noopener noreferrer">Helios Flight 522</a>; <a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/HCY522" target="_blank" rel="noopener noreferrer">FAA lessons learned</a>). Greek fighter pilots shadowing the jet, along with flight data, showed him trying to control it after the first engine flamed out from fuel starvation. His mayday calls never transmitted because the radio wasn't set to the correct frequency. The second engine quit before impact. All 121 aboard died. Prodromou was no amateur; he may have been hypoxic too.`,
+  },
+  {
+    id: "2025-lebanon-tn",
+    when: "November 8, 2025",
+    where: "Near Lebanon, Tennessee",
+    aircraft: "Airbus EC130 (Vanderbilt LifeFlight)",
+    passenger: "Andrew Sikes",
+    experience: "non-pilot",
+    outcome: "failure",
+    body: `A Vanderbilt LifeFlight medical helicopter, an Airbus EC130, crashed after the pilot suffered a medical emergency mid-flight. Flight paramedic Andrew Sikes, who had no flight training, saw the pilot go blank, grabbed the stick over the pilot's hands and tried to slow and land the helicopter by imitating what he'd seen pilots do (<a href="https://people.com/ntsb-report-reveals-untrained-pilot-took-over-controls-before-fatal-helicopter-crash-11890023" target="_blank" rel="noopener noreferrer">NTSB preliminary report</a>; <a href="https://www.newschannel5.com/news/state/tennessee/wilson-county/paramedic-took-control-of-helicopter-during-pilots-medical-emergency" target="_blank" rel="noopener noreferrer">NewsChannel 5</a>). The aircraft struck treetops. Flight nurse Allan Williams, 55, was killed; the pilot and Sikes were seriously injured. Investigators have reported no mechanical malfunction so far. Helicopters are far less forgiving than fixed-wing aircraft, and without a talk-down or an inherently stable airframe the odds collapse.`,
+  },
+];
+
+const outcomeLabels: Record<CaseOutcome, string> = {
+  success: "Landed",
+  partial: "Survived rough landing",
+  failure: "Fatal / crashed",
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="subject"
+      content="Documented amateur and undertrained passenger aircraft landings after pilot incapacitation."
+    />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="passenger lands plane, pilot collapses, amateur landing, Doug White King Air, Darren Harrison Caravan, Helios 522, pilot incapacitation"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        <p class="eyebrow">Aviation · Pilot incapacitation</p>
+        <h1>When the pilot collapses</h1>
+        <p class="dek">
+          Documented cases of amateurs landing the plane, including attempts
+          that ended fatally.
+        </p>
+      </header>
+
+      <article class="article">
+        <section id="intro" aria-labelledby="intro-heading">
+          <h2 id="intro-heading" class="visually-hidden">Introduction</h2>
+          <p>
+            It's a stock movie scene: the pilot slumps over, a terrified
+            passenger grabs the controls and a calm voice on the radio talks
+            them down. It has happened in real life more than a dozen times,
+            almost always in general-aviation aircraft. Some takeover attempts
+            have also ended fatally. This record is drawn from the
+            <a
+              href="https://en.wikipedia.org/wiki/Talk-down_aircraft_landing"
+              target="_blank"
+              rel="noopener noreferrer">talk-down landing list</a
+            >, accident reports and contemporary news.
+          </p>
+          <p>
+            The cases include genuine non-pilots, students and licensed pilots
+            caught in unfamiliar types. Survival depended less on fitting one
+            label than on keeping the aircraft controllable and reaching an
+            experienced voice. No completely untrained passenger has ever landed
+            a large commercial jet. The closest attempt, a fatal one, involved a
+            flight attendant who held a commercial pilot license but wasn't
+            qualified on the aircraft (
+            <a
+              href="https://en.wikipedia.org/wiki/Helios_Airways_Flight_522"
+              target="_blank"
+              rel="noopener noreferrer">Helios Flight 522</a
+            >).
+          </p>
+        </section>
+
+        <section id="successes" aria-labelledby="successes-heading">
+          <h2 id="successes-heading">The survivable landings</h2>
+          <ol class="case-list">
+            {
+              successes.map((entry) => (
+                <li class="case" id={entry.id}>
+                  <header class="case-header">
+                    <p class="case-meta">
+                      <time>{entry.when}</time>
+                      <span aria-hidden="true">·</span>
+                      <span>{entry.where}</span>
+                    </p>
+                    <h3>{entry.passenger}</h3>
+                    <p class="case-tags">
+                      <span class={`tag tag-${entry.outcome}`}>
+                        {outcomeLabels[entry.outcome]}
+                      </span>
+                      <span class="tag">{experienceLabels[entry.experience]}</span>
+                      {entry.aircraft && (
+                        <span class="tag tag-aircraft">{entry.aircraft}</span>
+                      )}
+                    </p>
+                  </header>
+                  <div class="case-body" set:html={entry.body} />
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section id="failures" aria-labelledby="failures-heading">
+          <h2 id="failures-heading">The fatal takeover attempts</h2>
+          <p>
+            Failures are far harder to document, which matters for reading the
+            list above. A fatal crash usually leaves investigators unable to
+            tell whether a passenger recognized the incapacitation, reached the
+            controls, consciously tried to fly or merely disturbed the controls
+            while trying to help. Successful passengers can describe what they
+            did, controllers keep recordings and the aircraft survives for
+            examination. In a fatal uncontrolled crash, an amateur takeover
+            attempt may simply be unknowable. The public record carries heavy
+            survivorship bias.
+          </p>
+          <p>
+            Two well-documented takeover attempts ended with passenger or crew
+            fatalities.
+          </p>
+          <ol class="case-list">
+            {
+              failures.map((entry) => (
+                <li class="case case-failure" id={entry.id}>
+                  <header class="case-header">
+                    <p class="case-meta">
+                      <time>{entry.when}</time>
+                      <span aria-hidden="true">·</span>
+                      <span>{entry.where}</span>
+                    </p>
+                    <h3>{entry.passenger}</h3>
+                    <p class="case-tags">
+                      <span class={`tag tag-${entry.outcome}`}>
+                        {outcomeLabels[entry.outcome]}
+                      </span>
+                      <span class="tag">{experienceLabels[entry.experience]}</span>
+                      {entry.aircraft && (
+                        <span class="tag tag-aircraft">{entry.aircraft}</span>
+                      )}
+                    </p>
+                  </header>
+                  <div class="case-body" set:html={entry.body} />
+                </li>
+              ))
+            }
+          </ol>
+          <p>
+            NTSB files also hold fixed-wing incapacitation crashes in which the
+            aircraft was lost with others aboard, usually involving
+            high-performance types, high altitude or depressurization, where
+            nobody reached the controls or the radio in time.
+          </p>
+        </section>
+
+        <section id="airliner" aria-labelledby="airliner-heading">
+          <h2 id="airliner-heading">
+            Why passengers fare better in small planes
+          </h2>
+          <p>
+            There is no verified case of a completely untrained passenger
+            landing a large commercial jet. A simulator shows that a novice can
+            succeed under ideal coaching, but real airline operations rarely
+            put a passenger in those conditions.
+          </p>
+          <p>
+            Airliners carry two qualified pilots and sometimes relief crews.
+            When a
+            <a
+              href="https://apnews.com/article/idaho-boise-ff61891effb14a1c833f0f0ec5b7fe15"
+              target="_blank"
+              rel="noopener noreferrer">United 737 captain</a
+            >
+            had a heart attack on a Houston–Seattle flight in 2013, the flight
+            diverted to Boise; an off-duty United pilot onboard assisted, and
+            the airplane landed safely with the remaining qualified crew. The
+            On a
+            <a
+              href="https://www.nbcnews.com/news/us-news/pilot-another-airline-helps-land-southwest-flight-captain-falls-ill-rcna76275"
+              target="_blank"
+              rel="noopener noreferrer">2023 Southwest flight</a
+            >
+            that returned to Las Vegas and a
+            <a
+              href="https://www.nbcboston.com/news/local/newark-halifax-flight-boston-captain-medical/3970960/"
+              target="_blank"
+              rel="noopener noreferrer">2026 PAL Airlines</a
+            >
+            diversion into Boston, the remaining qualified pilot also landed.
+            Simultaneous incapacitation is vanishingly rare. When it results
+            from hypoxia or airborne contaminants, a replacement may be impaired
+            too. That happened on Helios 522.
+          </p>
+          <p>
+            A passenger would also need to operate an unfamiliar cockpit. When
+            <a
+              href="https://mythresults.com/episode94"
+              target="_blank"
+              rel="noopener noreferrer">MythBusters tested</a
+            >
+            the scenario in its December 2007 <cite>Airplane Hour</cite>. Adam
+            Savage and Jamie Hyneman each tried to land a simulated Boeing 747
+            with no preparation and both crashed. On a second attempt, each
+            landed safely while a licensed pilot gave step-by-step radio
+            instructions. The show rated the claim "plausible," not confirmed:
+            it was a simulator demonstration with the instructor immediately
+            available and no real consequences for the failed first try. With
+            coaching, both novices operated the prepared simulator. A passenger
+            in flight would first have to diagnose and configure an unfamiliar
+            airliner. Boeing and Airbus cockpits differ enough that professional
+            pilots need type training.
+          </p>
+          <p>
+            Autoland won't rescue you either. It exists, but it requires a
+            certified aircraft, specific instrument-landing infrastructure at
+            the airport and pilots to program and monitor it. It accounts for a
+            small minority of airline landings and can't be set up by a novice
+            from cruise. The episode's suggestion that a modern jet's autopilot
+            could simply land by itself blurred ordinary autopilot with
+            autoland: conventional airline autoland still requires the crew to
+            configure and supervise it. Small planes mostly have no autoland at
+            all; Garmin's emergency system on some new light aircraft is a
+            different, recent exception. In the real cases above, autopilot
+            bought time in cruise at best. Every touchdown in this record was
+            hand-flown; in Harrison's case the collapse knocked the autopilot
+            off and turned a stable cruise into a dive.
+          </p>
+          <p>
+            Taking over a general-aviation aircraft is a narrower problem.
+            Duplicate controls are within reach, approach speeds are lower and
+            the plane is often stable in cruise. Controllers can clear traffic
+            and choose a long runway. The standard is a survivable touchdown,
+            not a professional landing. In nearly every survivable case here, a
+            calm instructor, controller or experienced pilot was available by
+            radio.
+          </p>
+          <p>
+            A Caravan or King Air is much more complex than a basic
+            trainer. White and Kinane-Wells had to manage that complexity on
+            their first flights in those aircraft. The easier cases involved a
+            docile light aircraft, daylight and a working radio.
+            Darkness, bad weather, speed, radio failure and helicopter controls
+            make the task harder.
+          </p>
+        </section>
+
+        <section id="how-often" aria-labelledby="how-often-heading">
+          <h2 id="how-often-heading">Frequency of pilot incapacitation</h2>
+          <p>
+            Rarely. An
+            <a
+              href="https://www.atsb.gov.au/sites/default/files/media/32864/b20060170.pdf"
+              target="_blank"
+              rel="noopener noreferrer">ATSB research report</a
+            >
+            found 98 medical or physiological pilot-incapacitation events
+            between 1975 and March 2006, ten of them fatal. All ten fatal
+            accidents were single-pilot operations, killing 24 people. A later
+            <a
+              href="https://www.atsb.gov.au/publications/2015/ar-2015-096"
+              target="_blank"
+              rel="noopener noreferrer">ATSB study</a
+            >
+            covering 2010 to 2014 counted about 23 reported incapacitation
+            occurrences a year, roughly one per 34,000 flights in high-capacity
+            transport, most of them gastrointestinal illness. The leading cause
+            of actual in-flight pilot death in single-pilot operations is
+            cardiovascular disease. In US general aviation, incapacitation
+            causes only a handful of accidents in a typical year, and in most of
+            those nobody else is aboard.
+          </p>
+        </section>
+
+        <aside class="takeaways" aria-labelledby="takeaways-heading">
+          <h2 id="takeaways-heading">If you're a passenger</h2>
+          <ol>
+            <li>
+              Press the radio's transmit button and say <strong>mayday</strong>.
+            </li>
+            <li>
+              Emergency frequency <strong>121.5</strong>; squawk
+              <strong>7700</strong>.
+            </li>
+            <li>Hold the wings level until ATC takes over.</li>
+            <li>
+              Take an AOPA
+              <a
+                href="https://aopa.org/training-and-safety/online-learning/safety-spotlights/pinch-hitter"
+                target="_blank"
+                rel="noopener noreferrer">pinch-hitter course</a
+              >
+              before an emergency.
+            </li>
+          </ol>
+        </aside>
+      </article>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f7fa;
+    --paper: #fbfcfe;
+    --text: #15202b;
+    --text-soft: #314152;
+    --muted: #5d7084;
+    --rule: #c9d5e1;
+    --accent: #0b6e8a;
+    --accent-soft: #d7eef4;
+    --danger: #8b2e2e;
+    --danger-soft: #f3e0e0;
+    --ok: #1f6b45;
+    --ok-soft: #dcefe4;
+    --warn: #7a5a12;
+    --warn-soft: #f3ead2;
+    --selection: #b9dde8;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+      Georgia, serif;
+    --sans: "Avenir Next", "Segoe UI", ui-sans-serif, -apple-system,
+      BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10151a;
+      --paper: #171e26;
+      --text: #e8eef4;
+      --text-soft: #c2cedb;
+      --muted: #91a2b4;
+      --rule: #2c3948;
+      --accent: #6ec4dc;
+      --accent-soft: #1a333c;
+      --danger: #f0a0a0;
+      --danger-soft: #3a2222;
+      --ok: #8fd0ad;
+      --ok-soft: #1d3328;
+      --warn: #e0c57a;
+      --warn-soft: #3a3118;
+      --selection: #2a5563;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--text);
+  }
+
+  html {
+    max-width: 100%;
+    overflow-x: clip;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    background:
+      radial-gradient(
+        ellipse 70% 45% at 12% -8%,
+        color-mix(in srgb, var(--accent-soft) 80%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bg) 88%, #9eb8c8) 0%,
+        var(--bg) 28%
+      );
+  }
+
+  .page {
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    overflow-x: clip;
+  }
+
+  .hero {
+    min-width: 0;
+    display: grid;
+    gap: 0.3rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 0.75rem;
+  }
+
+  .home-link,
+  .eyebrow,
+  .case-meta,
+  .tag,
+  .takeaways h2 {
+    font-family: var(--sans);
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-underline-offset: 0.28em;
+  }
+
+  .home-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.4rem 0 0;
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(1.35rem, 3.2vw, 1.75rem);
+    font-weight: 650;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+
+  .dek {
+    max-width: 38rem;
+    margin: 0.1rem 0 0;
+    color: var(--text-soft);
+    font-size: clamp(0.92rem, 1.3vw, 1.02rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    overflow-wrap: break-word;
+  }
+
+  .article {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    gap: 1.35rem;
+    max-width: 100%;
+    margin: 0;
+    padding: 0.85rem 0 2rem;
+  }
+
+  section {
+    min-width: 0;
+    max-width: 100%;
+    scroll-margin-top: 1.25rem;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  h2 {
+    max-width: 100%;
+    margin: 0 0 0.45rem;
+    color: var(--text);
+    font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    overflow-wrap: break-word;
+  }
+
+  h3 {
+    margin: 0;
+    max-width: 100%;
+    color: var(--text);
+    font-size: clamp(0.98rem, 1.4vw, 1.08rem);
+    font-weight: 650;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    overflow-wrap: break-word;
+  }
+
+  p {
+    margin: 0;
+    max-width: 100%;
+    color: var(--text-soft);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    overflow-wrap: break-word;
+  }
+
+  p + p {
+    margin-top: 0.65rem;
+  }
+
+  a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.17em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+
+  .case-body {
+    min-width: 0;
+    max-width: 100%;
+    color: var(--text-soft);
+    font-size: 0.94rem;
+    line-height: 1.62;
+    overflow-wrap: break-word;
+  }
+
+  .case-body p {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  .case-list {
+    display: grid;
+    gap: 0;
+    margin: 0.55rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  .case {
+    min-width: 0;
+    max-width: 100%;
+    padding: 0.85rem 0 0.9rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .case-header {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.4rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .case-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.28rem;
+    margin: 0.1rem 0 0;
+  }
+
+  .tag {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    padding: 0.14rem 0.38rem;
+    border: 1px solid var(--rule);
+    border-radius: 0.2rem;
+    color: var(--muted);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .tag-success {
+    border-color: color-mix(in srgb, var(--ok) 35%, var(--rule));
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+
+  .tag-partial {
+    border-color: color-mix(in srgb, var(--warn) 35%, var(--rule));
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+
+  .tag-failure {
+    border-color: color-mix(in srgb, var(--danger) 35%, var(--rule));
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  .tag-aircraft {
+    color: var(--text-soft);
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-weight: 600;
+  }
+
+  .takeaways {
+    min-width: 0;
+    max-width: 100%;
+    margin-top: 0.1rem;
+    border-block: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+    padding: 0.85rem 0.8rem 0.95rem;
+  }
+
+  .takeaways h2 {
+    margin: 0 0 0.45rem;
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .takeaways ol {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .takeaways li {
+    color: var(--text-soft);
+    font-size: 0.94rem;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+  }
+
+  .takeaways li + li {
+    margin-top: 0.35rem;
+  }
+
+  .takeaways strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      padding: 0.65rem 0.7rem 1.25rem;
+    }
+
+    .hero {
+      gap: 0.25rem;
+      padding-bottom: 0.65rem;
+    }
+
+    h1 {
+      max-width: 100%;
+      font-size: clamp(1.28rem, 5.8vw, 1.55rem);
+      line-height: 1.15;
+    }
+
+    .dek {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .article {
+      gap: 1.15rem;
+      padding: 0.7rem 0 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+
+    h3 {
+      font-size: 0.98rem;
+    }
+
+    p,
+    .case-body,
+    .takeaways li {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .case {
+      padding: 0.75rem 0 0.8rem;
+    }
+
+    .takeaways {
+      padding: 0.75rem 0.7rem 0.85rem;
+    }
+  }
+</style>

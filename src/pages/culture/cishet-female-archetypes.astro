@@ -1,0 +1,865 @@
+---
+import data from "../../data/cishet-female-archetypes.json";
+import wikiLinksRaw from "../../data/cishet-female-archetype-wiki-links.json";
+import kymLinksRaw from "../../data/cishet-female-archetype-kym-links.json";
+
+export const prerender = true;
+
+const pageTitle = "Cishet female archetypes";
+const pageDescription =
+  "A field guide to heterosexual female archetypes currently in circulation on the English-language web — the companion volume to the cishet male guide.";
+const themeColorLight = "#fdfefc";
+const themeColorDark = "#141614";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type ExtLink = { title: string; url: string };
+type Entry = { kind: "entry"; terms: string | null; gloss: string };
+type Aside = { kind: "aside"; text: string };
+type Item = Entry | Aside;
+type Subsection = {
+  id: string;
+  title: string;
+  note: string | null;
+  items: Item[];
+};
+type Section = {
+  id: string;
+  title: string;
+  note: string | null;
+  items: Item[];
+  subsections: Subsection[];
+};
+
+const wikiLinks = wikiLinksRaw as Record<string, ExtLink>;
+const kymLinks = kymLinksRaw as Record<string, ExtLink>;
+const sections = data.sections as Section[];
+
+const entryCount = sections.reduce((n, section) => {
+  const own = section.items.filter((item) => item.kind === "entry").length;
+  const nested = section.subsections.reduce(
+    (m, sub) => m + sub.items.filter((item) => item.kind === "entry").length,
+    0,
+  );
+  return n + own + nested;
+}, 0);
+
+const wikiTermCount = Object.keys(wikiLinks).length;
+const kymTermCount = Object.keys(kymLinks).length;
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+/** Inline markdown: **bold**, *italic* (order matters). */
+function inlineMd(value: string) {
+  return escapeHtml(value)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>");
+}
+
+function linkForTerm(part: string): (ExtLink & { source: "wiki" | "kym" }) | null {
+  if (wikiLinks[part]) return { ...wikiLinks[part], source: "wiki" };
+  if (kymLinks[part]) return { ...kymLinks[part], source: "kym" };
+  return null;
+}
+
+/** Link slash-separated names to Wikipedia, else Know Your Meme, when mapped. */
+function renderTerms(terms: string) {
+  return terms
+    .split(/\s*\/\s*/)
+    .map((part) => {
+      const link = linkForTerm(part);
+      const label = escapeHtml(part);
+      if (!link) return label;
+      const cls = link.source === "wiki" ? "wiki-term" : "kym-term";
+      const sourceLabel = link.source === "wiki" ? "Wikipedia" : "Know Your Meme";
+      return `<a class="${cls}" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(`${sourceLabel}: ${link.title}`)}">${label}</a>`;
+    })
+    .join(" / ");
+}
+
+function entryParts(terms: string | null) {
+  if (!terms) return [] as string[];
+  return terms.split(/\s*\/\s*/).filter(Boolean);
+}
+
+function entryHasWiki(terms: string | null) {
+  return entryParts(terms).some((part) => Boolean(wikiLinks[part]));
+}
+
+function entryHasKym(terms: string | null) {
+  return entryParts(terms).some((part) => Boolean(kymLinks[part]));
+}
+
+function entryHasEither(terms: string | null) {
+  return entryHasWiki(terms) || entryHasKym(terms);
+}
+
+function countEntries(
+  predicate: (terms: string | null) => boolean,
+) {
+  return sections.reduce((n, section) => {
+    const own = section.items.filter(
+      (item) => item.kind === "entry" && predicate(item.terms),
+    ).length;
+    const nested = section.subsections.reduce(
+      (m, sub) =>
+        m +
+        sub.items.filter(
+          (item) => item.kind === "entry" && predicate(item.terms),
+        ).length,
+      0,
+    );
+    return n + own + nested;
+  }, 0);
+}
+
+const wikiEntryCount = countEntries(entryHasWiki);
+const kymEntryCount = countEntries(entryHasKym);
+const linkedEntryCount = countEntries(entryHasEither);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: entryCount,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta name="theme-color" content={themeColorLight} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={themeColorDark} media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <p class="home"><a href="/">sokolsky.me</a></p>
+
+      <header class="hero">
+        <h1>{pageTitle}</h1>
+        <p class="lede" set:html={inlineMd(data.intro)} />
+        <p class="meta">
+          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} Wiki · {kymTermCount} KYM
+        </p>
+        <p class="quiz-cta">
+          <a href="/culture/cishet-male-archetypes">Companion: cishet male archetypes →</a>
+        </p>
+      </header>
+
+      <fieldset class="filters">
+        <legend class="filters-legend">Show</legend>
+        <div class="filter-options">
+          <label class="filter">
+            <input type="radio" name="link-filter" value="all" checked />
+            <span>All</span>
+          </label>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="wiki" />
+            <span>Wiki <span class="filter-count">({wikiEntryCount})</span></span>
+          </label>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="kym" />
+            <span>Know Your Meme <span class="filter-count">({kymEntryCount})</span></span>
+          </label>
+          <label class="filter">
+            <input type="radio" name="link-filter" value="linked" />
+            <span>Wiki or KYM <span class="filter-count">({linkedEntryCount})</span></span>
+          </label>
+        </div>
+      </fieldset>
+
+      {
+        sections.map((section) => {
+          const sectionWikiCount =
+            section.items.filter(
+              (item) => item.kind === "entry" && entryHasWiki(item.terms),
+            ).length +
+            section.subsections.reduce(
+              (m, sub) =>
+                m +
+                sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasWiki(item.terms),
+                ).length,
+              0,
+            );
+          const sectionKymCount =
+            section.items.filter(
+              (item) => item.kind === "entry" && entryHasKym(item.terms),
+            ).length +
+            section.subsections.reduce(
+              (m, sub) =>
+                m +
+                sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasKym(item.terms),
+                ).length,
+              0,
+            );
+          const sectionLinkedCount =
+            section.items.filter(
+              (item) => item.kind === "entry" && entryHasEither(item.terms),
+            ).length +
+            section.subsections.reduce(
+              (m, sub) =>
+                m +
+                sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasEither(item.terms),
+                ).length,
+              0,
+            );
+
+          return (
+            <section
+              class="group"
+              id={section.id}
+              data-wiki-count={sectionWikiCount}
+              data-kym-count={sectionKymCount}
+              data-linked-count={sectionLinkedCount}
+            >
+              <h2>
+                {section.title}
+                <a class="heading-anchor" href={`#${section.id}`} aria-label={`Link to ${section.title}`}>#</a>
+              </h2>
+              {section.note && <p class="note" set:html={inlineMd(section.note)} />}
+              <div class="entries">
+                {section.items.map((item) =>
+                  item.kind === "aside" ? (
+                    <p
+                      class="aside"
+                      data-wiki="false"
+                      data-kym="false"
+                      data-linked="false"
+                      set:html={inlineMd(item.text)}
+                    />
+                  ) : (
+                    <div
+                      class="entry"
+                      data-wiki={entryHasWiki(item.terms) ? "true" : "false"}
+                      data-kym={entryHasKym(item.terms) ? "true" : "false"}
+                      data-linked={entryHasEither(item.terms) ? "true" : "false"}
+                    >
+                      {item.terms ? (
+                        <span class="term" set:html={renderTerms(item.terms)} />
+                      ) : null}
+                      <span class="gloss" set:html={inlineMd(item.gloss)} />
+                    </div>
+                  ),
+                )}
+              </div>
+
+              {section.subsections.map((sub) => {
+                const subWikiCount = sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasWiki(item.terms),
+                ).length;
+                const subKymCount = sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasKym(item.terms),
+                ).length;
+                const subLinkedCount = sub.items.filter(
+                  (item) => item.kind === "entry" && entryHasEither(item.terms),
+                ).length;
+                return (
+                  <div
+                    class="subgroup"
+                    id={sub.id}
+                    data-wiki-count={subWikiCount}
+                    data-kym-count={subKymCount}
+                    data-linked-count={subLinkedCount}
+                  >
+                    <h3>
+                      {sub.title}
+                      <a class="heading-anchor" href={`#${sub.id}`} aria-label={`Link to ${sub.title}`}>#</a>
+                    </h3>
+                    {sub.note && <p class="note" set:html={inlineMd(sub.note)} />}
+                    <div class="entries">
+                      {sub.items.map((item) =>
+                        item.kind === "aside" ? (
+                          <p
+                            class="aside"
+                            data-wiki="false"
+                            data-kym="false"
+                            data-linked="false"
+                            set:html={inlineMd(item.text)}
+                          />
+                        ) : (
+                          <div
+                            class="entry"
+                            data-wiki={entryHasWiki(item.terms) ? "true" : "false"}
+                            data-kym={entryHasKym(item.terms) ? "true" : "false"}
+                            data-linked={
+                              entryHasEither(item.terms) ? "true" : "false"
+                            }
+                          >
+                            {item.terms ? (
+                              <span class="term" set:html={renderTerms(item.terms)} />
+                            ) : null}
+                            <span class="gloss" set:html={inlineMd(item.gloss)} />
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </section>
+          );
+        })
+      }
+    </main>
+
+    <script
+      define:vars={{
+        entryCount,
+        wikiEntryCount,
+        kymEntryCount,
+        linkedEntryCount,
+      }}
+    >
+      const page = document.querySelector(".page");
+      const metaCount = document.querySelector("[data-meta-count]");
+      const radios = document.querySelectorAll('input[name="link-filter"]');
+
+      const filterCounts = {
+        all: entryCount,
+        wiki: wikiEntryCount,
+        kym: kymEntryCount,
+        linked: linkedEntryCount,
+      };
+
+      function sectionCountKey(mode) {
+        if (mode === "wiki") return "wikiCount";
+        if (mode === "kym") return "kymCount";
+        if (mode === "linked") return "linkedCount";
+        return null;
+      }
+
+      function applyFilter(mode) {
+        page?.classList.remove(
+          "filter-wiki",
+          "filter-kym",
+          "filter-linked",
+        );
+        if (mode === "wiki") page?.classList.add("filter-wiki");
+        if (mode === "kym") page?.classList.add("filter-kym");
+        if (mode === "linked") page?.classList.add("filter-linked");
+
+        if (metaCount) {
+          metaCount.textContent = `${filterCounts[mode] ?? entryCount} entries`;
+        }
+
+        const countKey = sectionCountKey(mode);
+        document.querySelectorAll(".group, .subgroup").forEach((el) => {
+          if (!countKey) {
+            el.hidden = false;
+            return;
+          }
+          const count = Number(el.dataset[countKey] || "0");
+          el.hidden = count === 0;
+        });
+
+        const url = new URL(location.href);
+        url.searchParams.delete("wiki");
+        if (mode === "all") url.searchParams.delete("filter");
+        else url.searchParams.set("filter", mode);
+        history.replaceState(null, "", url);
+      }
+
+      function initialMode() {
+        const params = new URLSearchParams(location.search);
+        const filter = params.get("filter");
+        if (filter === "wiki" || filter === "kym" || filter === "linked") {
+          return filter;
+        }
+        // Back-compat with older ?wiki=1 (either-linked)
+        if (params.get("wiki") === "1") return "linked";
+        return "all";
+      }
+
+      const mode = initialMode();
+      radios.forEach((radio) => {
+        radio.checked = radio.value === mode;
+        radio.addEventListener("change", () => {
+          if (radio.checked) applyFilter(radio.value);
+        });
+      });
+      applyFilter(mode);
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fdfefc;
+    --surface: #ffffff;
+    --text: #1a1d1a;
+    --muted: #5a635c;
+    --soft: #7d877f;
+    --rule: #d8ddd8;
+    --rule-soft: color-mix(in srgb, var(--rule) 55%, transparent);
+    --accent: #2f5d4a;
+    --accent-soft: #e4eee8;
+    --link: var(--accent);
+    --focus: #3d7a62;
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --page-pad-x: clamp(1rem, 3.5vw, 1.75rem);
+    --page-pad-y: clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141614;
+      --surface: #1a1d1a;
+      --text: #edf0eb;
+      --muted: #a7b0a8;
+      --soft: #889188;
+      --rule: #2f3530;
+      --accent: #8fbfa5;
+      --accent-soft: #24332b;
+      --link: var(--accent);
+      --focus: #a5d0b8;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    color: var(--text);
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+    background:
+      radial-gradient(
+        42rem 28rem at 8% -4%,
+        color-mix(in srgb, var(--accent-soft) 70%, transparent),
+        transparent 70%
+      ),
+      var(--bg);
+  }
+
+  .page {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--page-pad-y) var(--page-pad-x) clamp(2.5rem, 8vw, 4rem);
+  }
+
+  .home {
+    margin: 0 0 1rem;
+    color: var(--soft);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .home a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .home a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .hero {
+    margin: 0 0 clamp(1.1rem, 3vw, 1.6rem);
+    padding: 0 0 clamp(0.9rem, 2.5vw, 1.2rem);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  h1 {
+    margin: 0 0 0.55rem;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: clamp(1.65rem, 4.2vw, 2.15rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-optical-sizing: auto;
+  }
+
+  .lede {
+    margin: 0;
+    max-width: 52rem;
+    color: var(--muted);
+    font-size: clamp(0.92rem, 2.2vw, 1rem);
+    line-height: 1.55;
+  }
+
+  .meta {
+    margin: 0.7rem 0 0;
+    color: var(--soft);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .quiz-cta {
+    margin: 0.85rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .quiz-cta a {
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .quiz-cta a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .filters {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0 0 clamp(1rem, 2.8vw, 1.35rem);
+    padding: 0 0 0.7rem;
+    border: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .filters-legend {
+    margin: 0;
+    padding: 0;
+    color: var(--soft);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.1rem;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1.2;
+    user-select: none;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .filter input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .filter:hover {
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--rule));
+    color: var(--text);
+  }
+
+  .filter:has(input:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .filter:has(input:checked) {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--rule));
+    background: var(--accent-soft);
+    color: var(--text);
+  }
+
+  .filter-count {
+    color: var(--soft);
+    font-weight: 400;
+  }
+
+  .page.filter-wiki .entry[data-wiki="false"],
+  .page.filter-wiki .aside[data-wiki="false"],
+  .page.filter-kym .entry[data-kym="false"],
+  .page.filter-kym .aside[data-kym="false"],
+  .page.filter-linked .entry[data-linked="false"],
+  .page.filter-linked .aside[data-linked="false"] {
+    display: none;
+  }
+
+  .group {
+    margin: 0 0 clamp(1.35rem, 3.5vw, 1.85rem);
+    scroll-margin-top: 1rem;
+  }
+
+  .subgroup {
+    margin: 0.85rem 0 0;
+    padding-left: 0.05rem;
+    scroll-margin-top: 1rem;
+  }
+
+  h2,
+  h3 {
+    margin: 0 0 0.4rem;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: clamp(1.26rem, 2.88vw, 1.44rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .heading-anchor {
+    margin-left: 0.35em;
+    color: var(--soft);
+    font-family: var(--sans);
+    font-size: 0.72em;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-decoration: none;
+    opacity: 0.45;
+    transition: opacity 120ms ease, color 120ms ease;
+  }
+
+  h2:hover .heading-anchor,
+  h3:hover .heading-anchor,
+  .heading-anchor:focus-visible {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .heading-anchor:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 0.15rem;
+  }
+
+  .note {
+    margin: 0 0 0.55rem;
+    color: var(--soft);
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.45;
+  }
+
+  .entries {
+    margin: 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: minmax(14rem, 31%) minmax(0, 1fr);
+    column-gap: clamp(1rem, 2.5vw, 2rem);
+    align-items: baseline;
+    margin: 0 -0.35rem;
+    padding: 0.42rem 0.35rem;
+    border-bottom: 1px solid var(--rule-soft);
+    border-radius: 0.25rem;
+  }
+
+  .term {
+    color: var(--text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .term .wiki-term,
+  .term .kym-term {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .term .wiki-term {
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  .term .kym-term {
+    text-decoration-style: dotted;
+    text-decoration-color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+
+  .term .wiki-term:hover,
+  .term .kym-term:hover {
+    color: var(--accent);
+  }
+
+  .gloss {
+    min-width: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .aside {
+    margin: 0;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+    color: var(--soft);
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.45;
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .filters {
+      margin-inline: calc(var(--page-pad-x) * -1);
+      padding-inline: var(--page-pad-x);
+    }
+
+    .filter {
+      min-height: 2.35rem;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+      margin: 0;
+      padding: 0.55rem 0;
+      border-radius: 0;
+    }
+
+    .term {
+      font-size: 0.9rem;
+    }
+
+    .gloss {
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .subgroup {
+      margin-top: 1rem;
+    }
+  }
+
+  @media (min-width: 641px) {
+    .filters {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      column-gap: 0.8rem;
+    }
+
+    .entry:hover {
+      background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(16rem, 0.7fr) minmax(28rem, 1.3fr);
+      column-gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+
+    h1 {
+      grid-row: 1 / span 2;
+      margin-bottom: 0;
+    }
+
+    .lede {
+      grid-column: 2;
+    }
+
+    .meta {
+      grid-column: 2;
+    }
+
+    .quiz-cta {
+      grid-column: 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filter {
+      transition: none;
+    }
+  }
+</style>
