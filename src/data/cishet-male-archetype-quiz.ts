@@ -218,9 +218,591 @@ function opt(
   return { t, ...pole(key, extras, boosts) };
 }
 
+function mappedOpt(
+  t: string,
+  sections: SectionWeights,
+  boosts: Boost[] = [],
+): QuizOption {
+  return boosts.length ? { t, sections, boosts } : { t, sections };
+}
+
 /**
- * 25 questions. Each has the same six poles in shuffled order so the
- * “full gamut” is always on the table; vignettes and boosts differentiate.
+ * The six recurring poles make the quiz scorable, but they leave ordinary
+ * middle cases out. These options cover the common gaps without making every
+ * question a wall of near-duplicates. Their section weights are deliberately
+ * narrow: choosing "quiet night alone" should not also imply fashion, dating
+ * and fandom just because it sits near the soft pole.
+ */
+const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
+  Saturday: [
+    mappedOpt(
+      "Coffee, errands and seeing whoever is around. Nothing becomes a project.",
+      {
+        "normie-default-guys": 3,
+        "regional-english-language-types": 1,
+      },
+      [
+        { match: "Chill guy", w: 2 },
+        { match: "High-tier normie", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Outside, if the weather cooperates: a hike, fishing, surfing or a long drive.",
+      {
+        "sports-fitness-and-gear-men": 3,
+        "regional-english-language-types": 2,
+      },
+      [
+        { match: "Surf bro", w: 2 },
+        { match: "Country boy", w: 1 },
+        { match: "Car guy", w: 1 },
+      ],
+    ),
+  ],
+  "Friday night": [
+    mappedOpt(
+      "A quiet night alone. I cook, read or watch something and go to bed early.",
+      {
+        "food-drink-and-domestic-hobby-men": 2,
+        "think-boys-and-intellectual-capital-men": 1,
+        "normie-default-guys": 1,
+      },
+    ),
+    mappedOpt(
+      "Live music, dancing or a crowded bar. I want some noise.",
+      { "music-and-nightlife-men": 4 },
+      [
+        { match: "Raver", w: 2 },
+        { match: "Boiler Room", w: 1 },
+        { match: "Metalhead", w: 1 },
+      ],
+    ),
+  ],
+  Body: [
+    mappedOpt(
+      "I move because I like a sport or being outside. I do not track it.",
+      { "sports-fitness-and-gear-men": 4 },
+      [
+        { match: "Skater", w: 1 },
+        { match: "Surf bro", w: 1 },
+        { match: "Functional-fitness", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Complicated. Pain, illness or body image takes up more room than I would like.",
+      {
+        "emotional-soft-boys": 3,
+        "wellness-longevity-and-optimization-men": 1,
+      },
+    ),
+  ],
+  Money: [
+    mappedOpt(
+      "Automate the savings, buy boring funds and stop checking.",
+      {
+        "professional-and-money-men": 4,
+        "life-stage-and-domestic-men": 1,
+      },
+      [
+        { match: "Boglehead", w: 3 },
+        { match: "FIRE", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "It makes me anxious, so I put off looking until I have to.",
+      {
+        "emotional-soft-boys": 2,
+        "normie-default-guys": 2,
+      },
+    ),
+  ],
+  Dating: [
+    mappedOpt(
+      "I am married or in a long-term relationship. Apps are not part of my life.",
+      {
+        "life-stage-and-domestic-men": 3,
+        "dating-app-personas-and-behaviors": 1,
+        "female-gaze-and-fandom-men": 1,
+      },
+      [
+        { match: "Wife guy", w: 2 },
+        { match: "Serial monogamist", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "I text a lot, get attached quickly and start imagining a relationship early.",
+      {
+        "dating-app-personas-and-behaviors": 3,
+        "emotional-soft-boys": 2,
+      },
+      [
+        { match: "Good-morning texter", w: 2 },
+        { match: "Anxious king", w: 2 },
+      ],
+    ),
+    mappedOpt(
+      "I keep several conversations alive and decide late whom I actually want to see.",
+      { "dating-app-personas-and-behaviors": 4 },
+      [
+        { match: "Roster guy", w: 3 },
+        { match: "Bencher", w: 2 },
+        { match: "Breadcrumber", w: 1 },
+      ],
+    ),
+  ],
+  Conflict: [
+    mappedOpt(
+      "I go quiet and need space before I can say anything useful.",
+      {
+        "emotional-soft-boys": 3,
+        "dating-app-personas-and-behaviors": 1,
+      },
+      [{ match: "Avoidant king", w: 3 }],
+    ),
+    mappedOpt(
+      "I defend what I meant first. The apology may arrive after the argument.",
+      {
+        "normie-default-guys": 2,
+        "dating-app-personas-and-behaviors": 2,
+      },
+      [{ match: "Devil's-advocate date", w: 2 }],
+    ),
+  ],
+  Feed: [
+    mappedOpt(
+      "News and politics, including people arguing about both.",
+      {
+        "political-and-ideological-men": 4,
+        "wojaks-and-terminally-online-men": 1,
+      },
+    ),
+    mappedOpt(
+      "I barely have a feed. Messages and links from friends are enough.",
+      { "normie-default-guys": 4 },
+      [{ match: "30-Year-Old Boomer", w: 1 }],
+    ),
+  ],
+  Clothes: [
+    mappedOpt(
+      "Jeans, T-shirt, hoodie. It is basically the same rotation every week.",
+      { "normie-default-guys": 4 },
+    ),
+    mappedOpt(
+      "Workwear, good denim or boots that I have opinions about.",
+      {
+        "fashion-and-aesthetic-men": 4,
+        "food-drink-and-domestic-hobby-men": 1,
+      },
+      [
+        { match: "Workwear guy", w: 3 },
+        { match: "Selvedge-denim guy", w: 3 },
+        { match: "Heritage-menswear guy", w: 2 },
+      ],
+    ),
+  ],
+  Mind: [
+    mappedOpt(
+      "History, politics or religion. I want to know how people ended up believing this.",
+      {
+        "think-boys-and-intellectual-capital-men": 3,
+        "political-and-ideological-men": 2,
+      },
+      [
+        { match: "History buff", w: 2 },
+        { match: "Roman-Empire", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "One practical hobby at a time. I learn enough to make or repair the thing.",
+      {
+        "food-drink-and-domestic-hobby-men": 3,
+        "autists-special-interest-men": 2,
+      },
+      [{ match: "YouTube-research dad", w: 1 }],
+    ),
+  ],
+  Politics: [
+    mappedOpt(
+      "Conventional center-left politics. Elections and public services matter more than posting.",
+      { "political-and-ideological-men": 4 },
+      [
+        { match: "Brunch liberal", w: 2 },
+        { match: "Resistance lib", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Conventional center-right politics. Taxes, public order and local control.",
+      { "political-and-ideological-men": 4 },
+      [
+        { match: "Barstool conservative", w: 1 },
+        { match: "Localist", w: 2 },
+      ],
+    ),
+    mappedOpt(
+      "One issue has most of my attention. The usual left-right package does not fit.",
+      {
+        "political-and-ideological-men": 3,
+        "think-boys-and-intellectual-capital-men": 1,
+      },
+      [{ match: "Heterodox guy", w: 2 }],
+    ),
+  ],
+  Work: [
+    mappedOpt(
+      "Teaching, care or public service. The useful part is working with people.",
+      {
+        "professional-and-money-men": 2,
+        "emotional-soft-boys": 2,
+      },
+    ),
+    mappedOpt(
+      "I do what the job requires and protect the rest of my time.",
+      {
+        "professional-and-money-men": 2,
+        "normie-default-guys": 3,
+      },
+      [
+        { match: "Email-job", w: 2 },
+        { match: "Corporate drone", w: 1 },
+      ],
+    ),
+  ],
+  Friends: [
+    mappedOpt(
+      "One or two close friends. We can talk honestly without turning it into a group event.",
+      { "emotional-soft-boys": 4 },
+      [{ match: "Green-flag", w: 1 }],
+    ),
+    mappedOpt(
+      "A shared hobby keeps us together: games, music, cars or making things.",
+      {
+        "gaming-and-fandom-men": 2,
+        "music-and-nightlife-men": 2,
+        "autists-special-interest-men": 2,
+      },
+    ),
+  ],
+  Music: [
+    mappedOpt(
+      "Guitar music, from classic rock to metal or punk.",
+      { "music-and-nightlife-men": 4 },
+      [
+        { match: "Metalhead", w: 3 },
+        { match: "Punk guy", w: 2 },
+        { match: "Guitar guy", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Hip-hop and R&B. The aux is not getting a lecture.",
+      { "music-and-nightlife-men": 4 },
+    ),
+    mappedOpt(
+      "Country, folk or Americana.",
+      {
+        "music-and-nightlife-men": 3,
+        "regional-english-language-types": 2,
+      },
+      [{ match: "Country boy", w: 1 }],
+    ),
+    mappedOpt(
+      "Classical, ambient or electronic music with few words.",
+      {
+        "music-and-nightlife-men": 3,
+        "think-boys-and-intellectual-capital-men": 1,
+      },
+    ),
+  ],
+  Games: [
+    mappedOpt(
+      "Tabletop games. I will learn the rules and probably end up running the campaign.",
+      {
+        "gaming-and-fandom-men": 4,
+        "autists-special-interest-men": 2,
+      },
+      [
+        { match: "TTRPG lorekeeper", w: 3 },
+        { match: "Forever DM", w: 3 },
+        { match: "Board-game", w: 2 },
+      ],
+    ),
+    mappedOpt(
+      "I mostly watch: streams, esports or somebody else's playthrough.",
+      {
+        "gaming-and-fandom-men": 4,
+        "wojaks-and-terminally-online-men": 1,
+      },
+      [
+        { match: "Twitch streamer", w: 2 },
+        { match: "Gen-Z speedrunner", w: 1 },
+      ],
+    ),
+  ],
+  Food: [
+    mappedOpt(
+      "I like cooking and will lose an afternoon to one recipe.",
+      { "food-drink-and-domestic-hobby-men": 4 },
+      [
+        { match: "Cast-iron", w: 1 },
+        { match: "Sourdough", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Vegetarian, vegan or restricted by what my body will tolerate.",
+      {
+        "food-drink-and-domestic-hobby-men": 2,
+        "wellness-longevity-and-optimization-men": 2,
+      },
+    ),
+  ],
+  Home: [
+    mappedOpt(
+      "Clean and ordinary. I want to find my keys and sit down without moving anything.",
+      {
+        "life-stage-and-domestic-men": 3,
+        "normie-default-guys": 2,
+      },
+    ),
+    mappedOpt(
+      "Books, collections and half-finished projects have taken most of the surfaces.",
+      {
+        "autists-special-interest-men": 3,
+        "think-boys-and-intellectual-capital-men": 2,
+      },
+    ),
+  ],
+  "Self-improve": [
+    mappedOpt(
+      "Learn a skill, finish a course or become less bad at something I care about.",
+      {
+        "think-boys-and-intellectual-capital-men": 3,
+        "professional-and-money-men": 1,
+      },
+    ),
+    mappedOpt(
+      "The basics: sleep better, drink less and call people back.",
+      {
+        "wellness-longevity-and-optimization-men": 2,
+        "emotional-soft-boys": 2,
+        "normie-default-guys": 1,
+      },
+    ),
+  ],
+  Masculinity: [
+    mappedOpt(
+      "A cultural or religious duty. Provider, husband and father come with rules.",
+      {
+        "dad-daddy": 3,
+        "political-and-ideological-men": 2,
+      },
+      [
+        { match: "Trad husband", w: 3 },
+        { match: "Tradcath guy", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Masculinity is a minor part of how I see myself.",
+      {
+        "normie-default-guys": 3,
+        "emotional-soft-boys": 2,
+      },
+    ),
+  ],
+  "Online self": [
+    mappedOpt(
+      "I post about one hobby and become much more talkative when it comes up.",
+      {
+        "autists-special-interest-men": 3,
+        "gaming-and-fandom-men": 1,
+      },
+    ),
+    mappedOpt(
+      "My real name, strong political opinions and no instinct to log off.",
+      {
+        "political-and-ideological-men": 3,
+        "wojaks-and-terminally-online-men": 2,
+      },
+      [{ match: "Reply guy", w: 1 }],
+    ),
+  ],
+  "Romance code": [
+    mappedOpt(
+      "An equal partnership with no animal metaphor. We like each other and split the work.",
+      {
+        "life-stage-and-domestic-men": 3,
+        "emotional-soft-boys": 2,
+      },
+      [
+        { match: "Green-flag", w: 2 },
+        { match: "Man written by a woman", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "I fall first and make it obvious. Subtlety has never helped me.",
+      {
+        "female-gaze-and-fandom-men": 4,
+        "emotional-soft-boys": 1,
+      },
+      [
+        { match: "He-falls-first", w: 3 },
+        { match: "Good-morning texter", w: 1 },
+      ],
+    ),
+  ],
+  Risk: [
+    mappedOpt(
+      "Mostly cannabis. Familiar, low-key and not a spiritual project.",
+      {
+        "psychonauts-and-consciousness-explorers": 2,
+        "normie-default-guys": 2,
+      },
+    ),
+    mappedOpt(
+      "Drinks and party drugs when the night calls for them.",
+      {
+        "music-and-nightlife-men": 3,
+        "psychonauts-and-consciousness-explorers": 1,
+      },
+      [
+        { match: "Raver", w: 2 },
+        { match: "Euro trash", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Sober now. I learned that moderation was not going to happen.",
+      {
+        "emotional-soft-boys": 2,
+        "wellness-longevity-and-optimization-men": 2,
+      },
+    ),
+  ],
+  Travel: [
+    mappedOpt(
+      "A resort or cruise. I want the decisions made before I arrive.",
+      {
+        "normie-default-guys": 3,
+        "professional-and-money-men": 1,
+      },
+    ),
+    mappedOpt(
+      "A road trip or campsite. The route matters more than the hotel.",
+      {
+        "sports-fitness-and-gear-men": 2,
+        "regional-english-language-types": 3,
+      },
+      [
+        { match: "Country boy", w: 1 },
+        { match: "Car guy", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Visit family, return somewhere familiar or stay home and save the money.",
+      {
+        "life-stage-and-domestic-men": 3,
+        "normie-default-guys": 2,
+      },
+    ),
+  ],
+  Status: [
+    mappedOpt(
+      "Respect from people who know the craft better than I do.",
+      {
+        "think-boys-and-intellectual-capital-men": 3,
+        "professional-and-money-men": 2,
+      },
+    ),
+    mappedOpt(
+      "Trust. I want friends and neighbors to call me when something matters.",
+      {
+        "emotional-soft-boys": 2,
+        "life-stage-and-domestic-men": 3,
+      },
+      [{ match: "Green-flag", w: 1 }],
+    ),
+  ],
+  "Special interest": [
+    mappedOpt(
+      "Vehicles, tools, maps or transit systems.",
+      {
+        "autists-special-interest-men": 4,
+        "sports-fitness-and-gear-men": 1,
+      },
+      [
+        { match: "Car guy", w: 2 },
+        { match: "Map guy", w: 2 },
+        { match: "Transit guy", w: 2 },
+      ],
+    ),
+    mappedOpt(
+      "Music or film. Credits, scenes and release histories stick in my head.",
+      {
+        "music-and-nightlife-men": 2,
+        "think-boys-and-intellectual-capital-men": 3,
+      },
+      [
+        { match: "Film bro", w: 2 },
+        { match: "Vinyl", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "History and politics, including arguments that ended before I was born.",
+      {
+        "political-and-ideological-men": 2,
+        "think-boys-and-intellectual-capital-men": 3,
+      },
+      [
+        { match: "History buff", w: 2 },
+        { match: "Roman-Empire", w: 1 },
+      ],
+    ),
+    mappedOpt(
+      "Plants, animals or whatever is living outside nearby.",
+      {
+        "dad-daddy": 2,
+        "food-drink-and-domestic-hobby-men": 2,
+        "autists-special-interest-men": 1,
+      },
+      [{ match: "Plant dad", w: 2 }],
+    ),
+  ],
+  Reputation: [
+    mappedOpt(
+      "“Dependable. Quiet life, shows up every time.”",
+      {
+        "life-stage-and-domestic-men": 3,
+        "professional-and-money-men": 1,
+      },
+      [{ match: "Green-flag", w: 2 }],
+    ),
+    mappedOpt(
+      "“Very funny. Bad at knowing when the joke is over.”",
+      {
+        "normie-default-guys": 3,
+        "wojaks-and-terminally-online-men": 1,
+      },
+      [{ match: "Unserious", w: 2 }],
+    ),
+    mappedOpt(
+      "“Intense. Ask one question and you may get a lecture.”",
+      {
+        "think-boys-and-intellectual-capital-men": 3,
+        "autists-special-interest-men": 2,
+      },
+      [{ match: "Actually", w: 1 }],
+    ),
+    mappedOpt(
+      "“Private. We have known him for years and still do not know what he is thinking.”",
+      {
+        "emotional-soft-boys": 2,
+        "internet-boyfriend-zoology": 2,
+      },
+      [{ match: "Black cat boyfriend", w: 2 }],
+    ),
+  ],
+};
+
+/**
+ * 25 questions. Each starts with the same six poles, then adds common middle
+ * cases that need narrower mappings.
  */
 export const DECK: QuizQuestion[] = [
   {
@@ -230,15 +812,13 @@ export const DECK: QuizQuestion[] = [
       opt("Still horizontal. Maybe brunch later if someone else plans it.", "default", {}, [
         { match: "Chill guy", w: 2 },
         { match: "Unserious", w: 1 },
-        { match: "Grillpilled", w: 2 },
-        { match: "Normal guy from", w: 1 },
       ]),
       opt("Hardware store first. Then the lawn, the kids or Costco.", "domestic", {}, [
         { match: "Suburban", w: 2 },
         { match: "Costco dad", w: 2 },
         { match: "DIY dad", w: 1 },
       ]),
-      opt("Already training. Lifting, running, zone 2 — whatever the plan says.", "body", {}, [
+      opt("Already training. Lifting, running, zone 2. Whatever the plan says.", "body", {}, [
         { match: "Gym bro", w: 2 },
         { match: "Run-club", w: 1 },
         { match: "Huberman", w: 1 },
@@ -397,9 +977,9 @@ export const DECK: QuizQuestion[] = [
         { match: "Gym bro", w: 1 },
       ]),
       opt("My job leaks into the prompts. There may be a podcast in the bio.", "capital", {}, [
-        { match: "Gym-selfie", w: 1 },
-        { match: "Car-selfie", w: 1 },
         { match: "Man in finance", w: 2 },
+        { match: "First-date podcaster", w: 2 },
+        { match: "LinkedIn", w: 1 },
       ]),
       opt("The prompts are soft and there is probably a playlist. People want to fix me.", "soft", {}, [
         { match: "Golden retriever", w: 2 },
@@ -411,7 +991,6 @@ export const DECK: QuizQuestion[] = [
         { match: "Orbiter", w: 2 },
         { match: "Simp", w: 1 },
         { match: "Incel", w: 2 },
-        { match: "PUA", w: 1 },
         { match: "Hypergamy", w: 1 },
       ]),
     ],
@@ -427,13 +1006,10 @@ export const DECK: QuizQuestion[] = [
         { match: "Chihuahua boyfriend", w: 1 },
       ]),
       opt("Hear them out, apologize for the part I own and ask how to fix it.", "domestic", {}, [
-        { match: "Avoidant king", w: 1 },
-        { match: "Green-flag", w: 1 },
-        { match: "Trad dad", w: 1 },
-        { match: "Nice guy", w: 1 },
+        { match: "Green-flag", w: 3 },
+        { match: "Man written by a woman", w: 1 },
       ]),
       opt("Train harder. Anger becomes a workout.", "body", {}, [
-        { match: "Crashout", w: 1 },
         { match: "Locked-in", w: 1 },
         { match: "BJJ", w: 1 },
       ]),
@@ -493,11 +1069,8 @@ export const DECK: QuizQuestion[] = [
       opt("Anon boards or a wiki hole so narrow that I cannot explain how I got there.", "online", {}, [
         { match: "4chaners", w: 2 },
         { match: "Reddit", w: 1 },
-        { match: "Blackpill", w: 1 },
         { match: "Wikipedia guy", w: 1 },
-        { match: "Coomer", w: 1 },
-        { match: "Free-speech absolutist", w: 1 },
-        { match: "Smugjak", w: 1 },
+        { match: "Terminally online", w: 1 },
       ]),
     ],
   },
@@ -506,7 +1079,6 @@ export const DECK: QuizQuestion[] = [
     q: "You have five minutes to get dressed. What do you reach for?",
     opts: [
       opt("Whatever is clean. Brand logos optional, vibes mandatory.", "default", {}, [
-        { match: "Clean boy", w: 2 },
         { match: "Bro", w: 1 },
         { match: "Frat bro", w: 1 },
       ]),
@@ -601,7 +1173,7 @@ export const DECK: QuizQuestion[] = [
         { match: "Father-rights", w: 1 },
         { match: "Suburban", w: 1 },
       ]),
-      opt("Food, hormones, public health, and suspicion of official advice.", "body", {
+      opt("Food, hormones, public health and suspicion of official advice.", "body", {
         "political-and-ideological-men": 1,
       }, [
         { match: "Carnivore", w: 2 },
@@ -1080,7 +1652,6 @@ export const DECK: QuizQuestion[] = [
         { match: "Digital bromad", w: 1 },
       ]),
       opt("The museums have time slots. I packed snacks for everybody.", "domestic", {}, [
-        { match: "Thermostat dad", w: 2 },
         { match: "Airport dad", w: 3 },
         { match: "Disney dad", w: 2 },
       ]),
@@ -1234,9 +1805,14 @@ export const DECK: QuizQuestion[] = [
     ],
   },
 ].map((q, i) => {
-  // Rotate poles so answer position isn't a reliable shortcut across questions.
+  // Keep the original six positions stable so old saved and shared answers
+  // still mean the same thing. New middle cases follow the rotated poles.
   const rot = i % 6;
-  return { ...q, opts: [...q.opts.slice(rot), ...q.opts.slice(0, rot)] };
+  const poles = [...q.opts.slice(rot), ...q.opts.slice(0, rot)];
+  return {
+    ...q,
+    opts: [...poles, ...(SUPPLEMENTAL_OPTIONS[q.topic] ?? [])],
+  };
 });
 
 export type MatchResult = {

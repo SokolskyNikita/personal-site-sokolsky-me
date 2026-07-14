@@ -202,14 +202,17 @@ const structuredData = {
       }
 
       function encodeAnswers() {
-        return state.answers.map((v) => (v >= 0 ? String(v + 1) : "0")).join("");
+        return state.answers
+          .map((v) => (v >= 0 ? (v + 1).toString(36) : "0"))
+          .join("");
       }
 
       function decodeAnswers(str) {
         if (typeof str !== "string" || str.length !== DECK.length) return null;
         const answers = [];
         for (let i = 0; i < str.length; i++) {
-          const digit = str.charCodeAt(i) - 48;
+          const digit = Number.parseInt(str[i], 36);
+          if (!Number.isInteger(digit)) return null;
           if (digit < 0 || digit > DECK[i].opts.length) return null;
           answers.push(digit === 0 ? UNANSWERED : digit - 1);
         }
@@ -622,7 +625,12 @@ const structuredData = {
       document.addEventListener("keydown", (e) => {
         if (quizSection.hidden) return;
         if (e.target && ["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
-        const n = e.keyCode >= 49 && e.keyCode <= 54 ? e.keyCode - 49 : -1;
+        const n =
+          e.key >= "1" && e.key <= "9"
+            ? Number(e.key) - 1
+            : e.key === "0"
+              ? 9
+              : -1;
         if (n >= 0 && n < DECK[state.idx].opts.length) {
           e.preventDefault();
           selectOption(n);
