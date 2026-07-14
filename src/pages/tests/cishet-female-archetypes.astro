@@ -291,8 +291,8 @@ const structuredData = {
           const baseFit = maxes[index] > 0 ? scores[index] / maxes[index] : 0;
           const specificFit = specificMaxes[index] > 0
             ? specificScores[index] / specificMaxes[index]
-            : baseFit;
-          const fit = baseFit * 0.85 + specificFit * 0.15;
+            : 0;
+          const fit = baseFit * 0.55 + specificFit * 0.45;
           return {
             archetype,
             fit,
@@ -429,7 +429,7 @@ const structuredData = {
         return (
           `My cishet female archetypes:\n` +
           top.map((result, index) =>
-            `${index + 1}. ${result.matchPct}% — ${result.archetype.terms}`,
+            `${index + 1}. ${result.matchPct}%: ${result.archetype.terms}`,
           ).join("\n") +
           `\n${location.origin}/tests/cishet-female-archetypes?r=${encodeAnswers()}`
         );
@@ -463,7 +463,7 @@ const structuredData = {
             `</div></li>`,
           ).join("") +
           `</ol>` +
-          `<p class="verdict-note">The percentage combines your general pattern with direct matches to a label’s name and description. The descriptions explain usage; they are not endorsements.</p>`;
+          `<p class="verdict-note">Scores use answer categories plus direct label matches. The descriptions show how people use each term; they are not endorsements.</p>`;
         resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
@@ -516,7 +516,7 @@ const structuredData = {
       });
       document.addEventListener("keydown", (event) => {
         if (quizSection.hidden) return;
-        const optionIndex = event.keyCode >= 49 && event.keyCode <= 54
+        const optionIndex = event.keyCode >= 49 && event.keyCode <= 57
           ? event.keyCode - 49
           : -1;
         if (optionIndex >= 0 && optionIndex < DECK[state.idx].opts.length) {
