@@ -1555,7 +1555,7 @@ export const DECK: QuizQuestion[] = [
     opts: [
       opt("Not applicable. I don’t speak fandom trope.", "default", {}, [
         { match: "Unserious", w: 1 },
-        { match: "Normie", w: 1 },
+        { match: "Chill guy", w: 1 },
       ]),
       opt("Reliable husband. Golden retriever, but house-trained.", "domestic", {}, [
         { match: "Golden retriever husband", w: 3 },
@@ -1745,7 +1745,6 @@ export const DECK: QuizQuestion[] = [
         "autists-special-interest-men": 1,
         "tech-ai-and-futurist-men": 2,
       }, [
-        { match: "Quant", w: 1 },
         { match: "RATS", w: 1 },
         { match: "EAs", w: 1 },
       ]),
