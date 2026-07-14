@@ -1,0 +1,790 @@
+---
+import {
+  ARCHETYPES,
+  DECK,
+  type QuizQuestion,
+} from "../../data/cishet-female-archetype-quiz";
+import wikiLinksRaw from "../../data/cishet-female-archetype-wiki-links.json";
+import kymLinksRaw from "../../data/cishet-female-archetype-kym-links.json";
+
+export const prerender = true;
+
+const pageTitle = "Which cishet female archetypes are you?";
+const pageDescription =
+  `Answer 25 questions and get your five closest matches from ${ARCHETYPES.length} cishet female archetypes.`;
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type ExtLink = { title: string; url: string };
+const wikiLinks = wikiLinksRaw as Record<string, ExtLink>;
+const kymLinks = kymLinksRaw as Record<string, ExtLink>;
+
+const deckForClient: QuizQuestion[] = DECK.map((question) => ({
+  topic: question.topic,
+  q: question.q,
+  opts: question.opts.map((option) => ({
+    t: option.t,
+    sections: option.sections,
+    boosts: option.boosts,
+  })),
+}));
+const archetypesForClient = ARCHETYPES.map((archetype) => ({
+  id: archetype.id,
+  terms: archetype.terms,
+  gloss: archetype.gloss,
+  sectionId: archetype.sectionId,
+  sectionTitle: archetype.sectionTitle,
+}));
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  applicationCategory: "EntertainmentApplication",
+  operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: { "@type": "Person", name: "Nikita Sokolsky" },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#fdfefc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141614" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <p class="home"><a href="/">sokolsky.me</a></p>
+      <header class="hero">
+        <h1>{pageTitle}</h1>
+        <p class="lede">
+          Pick the least wrong answer to twenty-five questions. The quiz scores
+          all <a href="/culture/cishet-female-archetypes">{ARCHETYPES.length} labels in the field guide</a>
+          and gives you the five closest matches.
+        </p>
+        <p class="meta">{DECK.length} questions · top 5 of {ARCHETYPES.length} labels</p>
+      </header>
+
+      <section id="intro" aria-label="Start the quiz">
+        <button type="button" class="btn btn-primary" id="start-quiz">Take the quiz</button>
+        <p class="intro-note">No skips. If nothing fits, choose the answer that annoys you least.</p>
+        <noscript>
+          <p class="intro-note">
+            This quiz needs JavaScript. You can still browse the
+            <a href="/culture/cishet-female-archetypes">full archetype list</a>.
+          </p>
+        </noscript>
+      </section>
+
+      <section id="quiz" aria-label="The quiz" hidden>
+        <nav class="progress" id="progress" aria-label="Questions"></nav>
+        <div class="quiz-card" id="quiz-card" aria-live="polite"></div>
+      </section>
+
+      <section id="results" aria-label="Your results" hidden>
+        <div class="verdict" id="verdict"></div>
+        <div class="share-row">
+          <button type="button" class="btn btn-primary" id="copy-link">Copy share link</button>
+          <button type="button" class="btn" id="copy-text">Copy as text</button>
+          <button type="button" class="btn btn-ghost" id="retake">Retake</button>
+        </div>
+        <p class="results-links">
+          <a href="/culture/cishet-female-archetypes">Browse the full field guide →</a>
+        </p>
+      </section>
+    </main>
+
+    <script
+      is:inline
+      define:vars={{
+        DECK: deckForClient,
+        ARCHETYPES: archetypesForClient,
+        wikiLinks,
+        kymLinks,
+      }}
+    >
+      const STORE_KEY = "cishet-female-archetype-quiz-v1";
+      const UNANSWERED = -1;
+      const TOP_N = 5;
+      const state = {
+        answers: new Array(DECK.length).fill(UNANSWERED),
+        idx: 0,
+        finished: false,
+      };
+      const introSection = document.getElementById("intro");
+      const quizSection = document.getElementById("quiz");
+      const quizCard = document.getElementById("quiz-card");
+      const progressEl = document.getElementById("progress");
+      const resultsSection = document.getElementById("results");
+      const verdictEl = document.getElementById("verdict");
+      let advanceTimer = null;
+
+      function saveLocal() {
+        try {
+          localStorage.setItem(
+            STORE_KEY,
+            JSON.stringify({
+              answers: state.answers,
+              idx: state.idx,
+              finished: state.finished,
+            }),
+          );
+        } catch (_) {}
+      }
+
+      function loadLocal() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+          if (!saved || !Array.isArray(saved.answers) || saved.answers.length !== DECK.length) return false;
+          state.answers = saved.answers.map((value, index) =>
+            Number.isInteger(value) &&
+            value >= UNANSWERED &&
+            value < DECK[index].opts.length
+              ? value
+              : UNANSWERED,
+          );
+          state.idx = Math.min(Math.max(0, saved.idx | 0), DECK.length - 1);
+          state.finished = Boolean(saved.finished);
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      function encodeAnswers() {
+        return state.answers.map((value) => value >= 0 ? String(value + 1) : "0").join("");
+      }
+
+      function decodeAnswers(value) {
+        if (typeof value !== "string" || value.length !== DECK.length) return null;
+        const answers = [];
+        for (let index = 0; index < value.length; index++) {
+          const digit = value.charCodeAt(index) - 48;
+          if (digit < 0 || digit > DECK[index].opts.length) return null;
+          answers.push(digit === 0 ? UNANSWERED : digit - 1);
+        }
+        return answers;
+      }
+
+      function firstUnansweredIndex() {
+        const index = state.answers.findIndex((value) => value === UNANSWERED);
+        return index === -1 ? DECK.length - 1 : index;
+      }
+
+      function allAnswered() {
+        return state.answers.every((value) => value >= 0);
+      }
+
+      function canVisitQuestion(index) {
+        return state.answers[index] !== UNANSWERED || index <= firstUnansweredIndex();
+      }
+
+      const stopWords = new Set(
+        "about after again against almost also always among around because before being between both could default does doing down during each enough every first from further have having here honestly into just maybe more most much myself next only other over same should some still such than that their them then there these they this those through under until very what when where which while with would your youre girl girls female woman women mostly energy mode thing stuff vibe vibes looks like".split(" "),
+      );
+      const optionTokenCache = new WeakMap();
+      const archetypeTokenCache = new Map();
+
+      function lexicalTokens(value) {
+        return new Set(
+          String(value)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, " ")
+            .split(/\s+/)
+            .filter((token) => token.length >= 4 && !stopWords.has(token))
+            .map((token) => token.replace(/(ies|ing|ers|er|ed|s)$/, "")),
+        );
+      }
+
+      function lexicalWeight(option, archetype) {
+        let optionTokens = optionTokenCache.get(option);
+        if (!optionTokens) {
+          optionTokens = lexicalTokens(option.t);
+          optionTokenCache.set(option, optionTokens);
+        }
+        let archetypeTokens = archetypeTokenCache.get(archetype.id);
+        if (!archetypeTokens) {
+          archetypeTokens = lexicalTokens(archetype.terms + " " + archetype.gloss);
+          archetypeTokenCache.set(archetype.id, archetypeTokens);
+        }
+        let overlaps = 0;
+        for (const token of optionTokens) {
+          if (archetypeTokens.has(token)) overlaps += 1;
+        }
+        return Math.min(2.4, overlaps * 0.6);
+      }
+
+      function escapeRegExp(value) {
+        return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      function specificWeight(option, archetype) {
+        let weight = lexicalWeight(option, archetype);
+        for (const boost of option.boosts || []) {
+          const pattern = new RegExp(
+            `(^|[^a-z0-9])${escapeRegExp(boost.match)}(?=$|[^a-z0-9])`,
+            "i",
+          );
+          if (pattern.test(archetype.terms)) weight += boost.w;
+        }
+        return weight;
+      }
+
+      function optionWeight(option, archetype) {
+        return (option.sections[archetype.sectionId] || 0) + specificWeight(option, archetype);
+      }
+
+      function rankMatches(answers) {
+        const scores = new Float64Array(ARCHETYPES.length);
+        const maxes = new Float64Array(ARCHETYPES.length);
+        const specificScores = new Float64Array(ARCHETYPES.length);
+        const specificMaxes = new Float64Array(ARCHETYPES.length);
+        for (let questionIndex = 0; questionIndex < DECK.length; questionIndex++) {
+          const answer = answers[questionIndex];
+          const question = DECK[questionIndex];
+          if (answer == null || answer < 0 || answer >= question.opts.length) continue;
+          const chosen = question.opts[answer];
+          for (let archetypeIndex = 0; archetypeIndex < ARCHETYPES.length; archetypeIndex++) {
+            const archetype = ARCHETYPES[archetypeIndex];
+            scores[archetypeIndex] += optionWeight(chosen, archetype);
+            specificScores[archetypeIndex] += specificWeight(chosen, archetype);
+            let best = 0;
+            let bestSpecific = 0;
+            for (const option of question.opts) {
+              best = Math.max(best, optionWeight(option, archetype));
+              bestSpecific = Math.max(bestSpecific, specificWeight(option, archetype));
+            }
+            maxes[archetypeIndex] += best;
+            specificMaxes[archetypeIndex] += bestSpecific;
+          }
+        }
+        return ARCHETYPES.map((archetype, index) => {
+          const baseFit = maxes[index] > 0 ? scores[index] / maxes[index] : 0;
+          const specificFit = specificMaxes[index] > 0
+            ? specificScores[index] / specificMaxes[index]
+            : baseFit;
+          const fit = baseFit * 0.85 + specificFit * 0.15;
+          return {
+            archetype,
+            fit,
+            specificScore: specificScores[index],
+            matchPct: Math.round(1000 * fit) / 10,
+          };
+        }).sort(
+          (a, b) =>
+            b.fit - a.fit ||
+            b.specificScore - a.specificScore ||
+            a.archetype.terms.localeCompare(b.archetype.terms),
+        );
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function renderTermsHtml(terms) {
+        return terms.split(/\s*\/\s*/).map((part) => {
+          const link = wikiLinks[part]
+            ? { ...wikiLinks[part], source: "wiki" }
+            : kymLinks[part]
+              ? { ...kymLinks[part], source: "kym" }
+              : null;
+          if (!link) return escapeHtml(part);
+          const sourceLabel = link.source === "wiki" ? "Wikipedia" : "Know Your Meme";
+          return `<a class="${link.source}-term" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(sourceLabel + ": " + link.title)}">${escapeHtml(part)}</a>`;
+        }).join(" / ");
+      }
+
+      function renderProgress() {
+        progressEl.innerHTML = "";
+        DECK.forEach((question, index) => {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "p-dot";
+          if (state.answers[index] >= 0) dot.classList.add("done");
+          if (index === state.idx) dot.classList.add("here");
+          dot.disabled = !canVisitQuestion(index);
+          dot.setAttribute(
+            "aria-label",
+            `Question ${index + 1}: ${question.topic}, ${state.answers[index] >= 0 ? "answered" : "unanswered"}`,
+          );
+          dot.title = `${index + 1} · ${question.topic}`;
+          dot.addEventListener("click", () => goTo(index));
+          progressEl.appendChild(dot);
+        });
+        const currentDot = progressEl.children[state.idx];
+        if (currentDot) {
+          requestAnimationFrame(() => {
+            progressEl.scrollTo({
+              left: currentDot.offsetLeft - progressEl.clientWidth / 2 + currentDot.clientWidth / 2,
+              behavior: "smooth",
+            });
+          });
+        }
+      }
+
+      function renderQuestion() {
+        const question = DECK[state.idx];
+        const chosen = state.answers[state.idx];
+        quizCard.innerHTML = `
+          <div class="q-meta">
+            <span class="q-topic">${escapeHtml(question.topic)}</span>
+            <span>${state.idx + 1} / ${DECK.length}</span>
+          </div>
+          <h2 class="q-prompt">${escapeHtml(question.q)}</h2>
+          <p class="q-hint">Pick the least wrong answer.</p>
+          <div class="q-options" role="radiogroup" aria-label="Answers"></div>
+          <div class="q-nav"></div>
+        `;
+        const options = quizCard.querySelector(".q-options");
+        question.opts.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `q-option${chosen === index ? " selected" : ""}`;
+          button.setAttribute("role", "radio");
+          button.setAttribute("aria-checked", chosen === index ? "true" : "false");
+          button.innerHTML = `<span class="q-key">${index + 1}</span><span class="q-text"></span>`;
+          button.querySelector(".q-text").textContent = option.t;
+          button.addEventListener("click", () => selectOption(index));
+          options.appendChild(button);
+        });
+        const nav = quizCard.querySelector(".q-nav");
+        const back = document.createElement("button");
+        back.type = "button";
+        back.className = "btn btn-ghost";
+        back.textContent = "← Back";
+        back.disabled = state.idx === 0;
+        back.addEventListener("click", () => goTo(state.idx - 1));
+        nav.appendChild(back);
+        if (state.idx === DECK.length - 1 || allAnswered()) {
+          const finish = document.createElement("button");
+          finish.type = "button";
+          finish.className = "btn btn-primary";
+          finish.textContent = "See my results";
+          finish.disabled = !allAnswered();
+          finish.addEventListener("click", showResults);
+          nav.appendChild(finish);
+        }
+        renderProgress();
+      }
+
+      function selectOption(optionIndex) {
+        state.answers[state.idx] = optionIndex;
+        state.finished = false;
+        saveLocal();
+        renderQuestion();
+        quizCard.classList.add("settling");
+        if (advanceTimer) clearTimeout(advanceTimer);
+        advanceTimer = setTimeout(() => {
+          advanceTimer = null;
+          if (state.idx < DECK.length - 1) goTo(state.idx + 1);
+          else showResults();
+        }, 420);
+      }
+
+      function goTo(index) {
+        if (advanceTimer) clearTimeout(advanceTimer);
+        advanceTimer = null;
+        quizCard.classList.remove("settling");
+        const clamped = Math.min(Math.max(0, index), DECK.length - 1);
+        state.idx = canVisitQuestion(clamped) ? clamped : firstUnansweredIndex();
+        saveLocal();
+        renderQuestion();
+      }
+
+      function resultText(top) {
+        return (
+          `My cishet female archetypes:\n` +
+          top.map((result, index) =>
+            `${index + 1}. ${result.matchPct}% — ${result.archetype.terms}`,
+          ).join("\n") +
+          `\n${location.origin}/tests/cishet-female-archetypes?r=${encodeAnswers()}`
+        );
+      }
+
+      function showResults() {
+        if (!allAnswered()) return;
+        state.finished = true;
+        saveLocal();
+        const top = rankMatches(state.answers).slice(0, TOP_N);
+        const url = new URL(location.href);
+        url.searchParams.set("r", encodeAnswers());
+        history.replaceState(null, "", url);
+        introSection.hidden = true;
+        quizSection.hidden = true;
+        resultsSection.hidden = false;
+        verdictEl.innerHTML =
+          `<p class="verdict-kicker">Your five best matches</p>` +
+          `<ol class="match-list">` +
+          top.map((result, index) =>
+            `<li class="match-item">` +
+            `<div class="match-rank">${index + 1}</div>` +
+            `<div class="match-body">` +
+            `<div class="match-head">` +
+            `<span class="match-terms">${renderTermsHtml(result.archetype.terms)}</span>` +
+            `<span class="match-pct">${result.matchPct}%</span>` +
+            `</div>` +
+            `<p class="match-gloss">${escapeHtml(result.archetype.gloss)}</p>` +
+            `<p class="match-section">${escapeHtml(result.archetype.sectionTitle)}</p>` +
+            `<div class="match-bar" aria-hidden="true"><span style="width:${result.matchPct}%"></span></div>` +
+            `</div></li>`,
+          ).join("") +
+          `</ol>` +
+          `<p class="verdict-note">The percentage combines your general pattern with direct matches to a label’s name and description. The descriptions explain usage; they are not endorsements.</p>`;
+        resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function startQuiz(resume) {
+        introSection.hidden = true;
+        resultsSection.hidden = true;
+        quizSection.hidden = false;
+        state.finished = false;
+        if (!resume) {
+          state.answers = new Array(DECK.length).fill(UNANSWERED);
+          state.idx = 0;
+        } else {
+          state.idx = firstUnansweredIndex();
+        }
+        saveLocal();
+        renderQuestion();
+        quizSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      document.getElementById("start-quiz")?.addEventListener("click", () => {
+        startQuiz(state.answers.some((value) => value >= 0) && !state.finished);
+      });
+      document.getElementById("retake")?.addEventListener("click", () => {
+        const url = new URL(location.href);
+        url.searchParams.delete("r");
+        history.replaceState(null, "", url);
+        startQuiz(false);
+      });
+      document.getElementById("copy-link")?.addEventListener("click", async (event) => {
+        const url = new URL(location.href);
+        url.searchParams.set("r", encodeAnswers());
+        try {
+          await navigator.clipboard.writeText(url.toString());
+          const button = event.currentTarget;
+          const previous = button.textContent;
+          button.textContent = "Copied";
+          setTimeout(() => { button.textContent = previous; }, 1200);
+        } catch (_) {}
+      });
+      document.getElementById("copy-text")?.addEventListener("click", async (event) => {
+        try {
+          await navigator.clipboard.writeText(
+            resultText(rankMatches(state.answers).slice(0, TOP_N)),
+          );
+          const button = event.currentTarget;
+          const previous = button.textContent;
+          button.textContent = "Copied";
+          setTimeout(() => { button.textContent = previous; }, 1200);
+        } catch (_) {}
+      });
+      document.addEventListener("keydown", (event) => {
+        if (quizSection.hidden) return;
+        const optionIndex = event.keyCode >= 49 && event.keyCode <= 54
+          ? event.keyCode - 49
+          : -1;
+        if (optionIndex >= 0 && optionIndex < DECK[state.idx].opts.length) {
+          event.preventDefault();
+          selectOption(optionIndex);
+        }
+      });
+
+      const shared = decodeAnswers(new URLSearchParams(location.search).get("r") || "");
+      if (shared && shared.every((value) => value >= 0)) {
+        state.answers = shared;
+        state.finished = true;
+        showResults();
+      } else {
+        loadLocal();
+        if (state.finished && allAnswered()) showResults();
+        else if (state.answers.some((value) => value >= 0)) {
+          document.getElementById("start-quiz").textContent = "Continue quiz";
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light dark;
+    --bg: #fefffd;
+    --surface: #fff;
+    --text: #1a1d1a;
+    --muted: #5a635c;
+    --soft: #7d877f;
+    --rule: #d8ddd8;
+    --rule-soft: color-mix(in srgb, var(--rule) 55%, transparent);
+    --accent: #2f5d4a;
+    --accent-soft: #e4eee8;
+    --focus: #3d7a62;
+    --serif: "Newsreader", "Iowan Old Style", Palatino, Georgia, serif;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --pad-x: clamp(1rem, 3.5vw, 1.75rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141614;
+      --surface: #1a1d1a;
+      --text: #edf0eb;
+      --muted: #a7b0a8;
+      --soft: #889188;
+      --rule: #2f3530;
+      --accent: #8fbfa5;
+      --accent-soft: #24332b;
+      --focus: #a5d0b8;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+      radial-gradient(42rem 28rem at 8% -4%, color-mix(in srgb, var(--accent-soft) 70%, transparent), transparent 70%),
+      var(--bg);
+  }
+  .page {
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: clamp(.85rem, 2.5vw, 1.5rem) var(--pad-x) clamp(2.5rem, 8vw, 4rem);
+  }
+  .home {
+    margin: 0 0 1rem;
+    color: var(--soft);
+    font-size: .8125rem;
+    font-weight: 500;
+  }
+  .home a { color: inherit; text-decoration: none; }
+  .home a:hover { color: var(--text); text-decoration: underline; }
+  .hero {
+    margin-bottom: clamp(1.25rem, 3vw, 1.75rem);
+    padding-bottom: clamp(.9rem, 2.5vw, 1.2rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  h1 {
+    margin: 0 0 .55rem;
+    font-family: var(--serif);
+    font-size: clamp(1.55rem, 4vw, 2.05rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+  }
+  .lede { margin: 0; color: var(--muted); font-size: clamp(.92rem, 2.2vw, 1rem); }
+  a { color: var(--accent); }
+  .meta {
+    margin: .7rem 0 0;
+    color: var(--soft);
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .03em;
+  }
+  #intro { display: grid; gap: .85rem; justify-items: start; }
+  .intro-note { margin: 0; color: var(--soft); font-size: .86rem; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: .45rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: .35rem;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font: 500 .9rem/1.2 var(--sans);
+  }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-primary {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--rule));
+    background: var(--accent);
+    color: #f7fbf8;
+  }
+  @media (prefers-color-scheme: dark) { .btn-primary { color: #0f1411; } }
+  .btn-ghost { background: transparent; }
+  .progress {
+    display: grid;
+    grid-template-columns: repeat(25, minmax(0, 1fr));
+    gap: .2rem;
+    margin: 0 0 1rem;
+  }
+  .p-dot {
+    position: relative;
+    width: 100%;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .p-dot::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: .45rem;
+    height: .45rem;
+    border-radius: 50%;
+    background: var(--rule);
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+  .p-dot.done::after { background: color-mix(in srgb, var(--accent) 55%, var(--rule)); }
+  .p-dot.here::after {
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus);
+  }
+  .quiz-card { display: grid; gap: .85rem; }
+  .quiz-card.settling .q-option:not(.selected) { opacity: .55; }
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    color: var(--soft);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .q-prompt {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.2rem, 2.8vw, 1.45rem);
+    line-height: 1.3;
+  }
+  .q-hint { margin: -.25rem 0 0; color: var(--soft); font-size: .82rem; }
+  .q-options { display: grid; gap: .45rem; }
+  .q-option {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    gap: .7rem;
+    width: 100%;
+    padding: .7rem .8rem;
+    border: 1px solid var(--rule);
+    border-radius: .4rem;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    font: 400 .92rem/1.4 var(--sans);
+    transition: background 120ms, border-color 120ms, opacity 180ms;
+  }
+  .q-option:hover, .q-option.selected {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--rule));
+    background: var(--accent-soft);
+  }
+  .q-key { color: var(--soft); font-size: .75rem; font-weight: 600; }
+  .q-option.selected .q-key { color: var(--accent); }
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: .6rem;
+    padding-top: .35rem;
+  }
+  .verdict-kicker {
+    margin: 0 0 .85rem;
+    color: var(--soft);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .match-list { display: grid; gap: .85rem; margin: 0; padding: 0; list-style: none; }
+  .match-item {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: .75rem;
+    padding: .85rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .match-rank { color: var(--soft); font: 600 1.25rem/1.2 var(--serif); }
+  .match-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .5rem 1rem;
+  }
+  .match-terms { font-weight: 600; }
+  .match-terms a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: .18em;
+  }
+  .match-terms .kym-term { text-decoration-style: dotted; }
+  .match-pct { color: var(--accent); font-size: 1.05rem; font-weight: 600; }
+  .match-gloss { margin: .35rem 0 0; color: var(--muted); font-size: .9rem; }
+  .match-section { margin: .25rem 0 0; color: var(--soft); font-size: .75rem; }
+  .match-bar {
+    height: .28rem;
+    margin-top: .55rem;
+    border-radius: 999px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .match-bar span { display: block; height: 100%; background: var(--accent); }
+  .verdict-note { margin: 1.1rem 0 0; color: var(--soft); font-size: .82rem; }
+  .share-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.35rem 0 .85rem; }
+  .results-links { margin: 0; font-size: .9rem; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    .progress {
+      display: flex;
+      gap: 0;
+      margin-inline: calc(var(--pad-x) * -1);
+      padding-inline: var(--pad-x);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .p-dot { flex: 0 0 2.75rem; height: 2.75rem; }
+    .q-option { min-height: 3rem; font-size: 1rem; }
+    .match-item { grid-template-columns: 1.35rem minmax(0, 1fr); gap: .6rem; }
+    .share-row { display: grid; grid-template-columns: 1fr; }
+    .share-row .btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .q-option { transition: none; }
+  }
+</style>
