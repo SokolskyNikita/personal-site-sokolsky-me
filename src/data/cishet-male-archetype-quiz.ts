@@ -512,6 +512,21 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
         "think-boys-and-intellectual-capital-men": 1,
       },
     ),
+    mappedOpt(
+      "I do not listen to music at all. I usually prefer silence.",
+      {
+        "normie-default-guys": 2,
+        "professional-and-money-men": 1,
+      },
+    ),
+    mappedOpt(
+      "Podcasts only. I almost never put on music.",
+      {
+        "think-boys-and-intellectual-capital-men": 3,
+        "professional-and-money-men": 1,
+      },
+      [{ match: "Podcast intellectual", w: 3 }],
+    ),
   ],
   Games: [
     mappedOpt(
@@ -1093,11 +1108,18 @@ export const DECK: QuizQuestion[] = [
         { match: "Techwear", w: 1 },
         { match: "Gym bro", w: 1 },
       ]),
-      opt("Quarter-zip or Patagonia vest. Possibly expensive, never loud.", "capital", {
+      opt("Business casual: chinos, an Oxford shirt and a quarter-zip or unstructured blazer.", "capital", {
         "fashion-and-aesthetic-men": 1,
       }, [
         { match: "Finance bro", w: 2 },
         { match: "Quarter-zip", w: 3 },
+        { match: "Quiet-luxury", w: 1 },
+      ]),
+      opt("Classic formalwear: a well-cut suit, crisp shirt and proper leather shoes.", "soft", {
+        "fashion-and-aesthetic-men": 2,
+      }, [
+        { match: "Heritage-menswear guy", w: 2 },
+        { match: "Old-money", w: 2 },
         { match: "Quiet-luxury", w: 1 },
       ]),
       opt("The mess is planned. The clothes may be archive, indie sleaze or last decade's mistake.", "soft", {}, [
