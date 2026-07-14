@@ -23,7 +23,10 @@ const excludedStoreIds = new Set([
 ]);
 const stores = pageData.stores.filter(
   (store: Store) =>
-    store.focus !== "food-only" && !excludedStoreIds.has(store.id),
+    store.focus !== "food-only" &&
+    store.mapsStatus === "OPERATIONAL" &&
+    Boolean(store.googlePlaceId) &&
+    !excludedStoreIds.has(store.id),
 );
 const updatedDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -314,7 +317,6 @@ const structuredData = {
         <div class="store-row store-head" aria-hidden="true">
           <span>Store</span>
           <span>Map</span>
-          <span>Focus</span>
           <span>Visit</span>
           <span>Address</span>
           <span>Hours</span>
@@ -370,12 +372,6 @@ const structuredData = {
                 </a>
               )}
             </div>
-            <p class="focus-cell">
-              <span class={`focus-badge focus-${store.focus}`}>{store.focusLabel}</span>
-              {store.mapsStatus === "CLOSED_TEMPORARILY" && (
-                <span class="status-badge status-closed">{store.statusLabel}</span>
-              )}
-            </p>
             <p class="visit-cell">{store.visitLabel}</p>
             <p class="address">{store.address}</p>
             <p class="hours">{store.hours}</p>
@@ -1036,8 +1032,7 @@ const structuredData = {
     display: grid;
     grid-template-columns:
       minmax(9rem, 1.15fr)
-      3.6rem
-      minmax(5.5rem, 0.7fr)
+      4rem
       minmax(4.5rem, 0.55fr)
       minmax(7rem, 0.9fr)
       minmax(7rem, 0.9fr)
@@ -1088,10 +1083,16 @@ const structuredData = {
   }
 
   .map-actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1.35rem);
     align-items: center;
     justify-content: center;
     gap: 0.18rem;
+  }
+
+  .map-actions > :only-child {
+    grid-column: 1 / -1;
+    justify-self: center;
   }
 
   .maps-link,
@@ -1130,19 +1131,12 @@ const structuredData = {
     height: 1.05rem;
   }
 
-  .focus-cell,
   .visit-cell,
   .address,
   .hours,
   .description {
     color: var(--text-muted);
     font-size: 0.82rem;
-  }
-
-  .focus-cell {
-    display: grid;
-    gap: 0.28rem;
-    align-content: start;
   }
 
   .focus-badge,
@@ -1340,8 +1334,7 @@ const structuredData = {
     .store-row {
       grid-template-columns:
         minmax(8rem, 1.2fr)
-        3rem
-        minmax(5rem, 0.7fr)
+        3.5rem
         minmax(4rem, 0.55fr)
         minmax(6rem, 0.85fr)
         minmax(6rem, 0.85fr)
@@ -1413,13 +1406,13 @@ const structuredData = {
     }
 
     .store-row {
-      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas:
-        "name focus map"
-        "desc desc desc"
-        "address address address"
-        "hours rating rating"
-        "visit visit visit";
+        "name map"
+        "desc desc"
+        "address address"
+        "hours rating"
+        "visit visit";
       gap: 0.38rem 0.55rem;
       align-items: start;
       border-top: 1px solid var(--border);
@@ -1454,11 +1447,6 @@ const structuredData = {
     .maps-empty {
       width: 2.75rem;
       height: 2.75rem;
-    }
-
-    .focus-cell {
-      grid-area: focus;
-      justify-items: end;
     }
 
     .visit-cell {
