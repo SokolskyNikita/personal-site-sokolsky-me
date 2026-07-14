@@ -238,14 +238,6 @@ const priceByName: Record<string, PriceInfo> = {
   "Naturium Multi-Bright Tranexamic Acid Treatment": {
     localUsd: "~US$22",
   },
-  "La Roche-Posay Pure Vitamin C10": {
-    localUsd: "~US$45",
-    abroadUsd: "~US$45 US/EU",
-  },
-  "La Roche-Posay Vitamin C serum": {
-    localUsd: "~US$45",
-    abroadUsd: "~US$45 US/EU",
-  },
   "Murad Deep Relief Acne Treatment": {
     localUsd: "~US$45",
     abroadUsd: "~US$45 US",
@@ -945,22 +937,8 @@ const matches: ProductMatch[] = [
         reason: "US brightening option with tranexamic-acid direction; not the same cream base.",
         buy: [targetSearch("Naturium Multi-Bright Tranexamic Acid Treatment")],
       },
-      {
-        name: "La Roche-Posay Pure Vitamin C10",
-        percent: 52,
-        reason: "Easy pharmacy vitamin C, but Ari says it leaves an orange cast and runs out fast.",
-        buy: [amazonSearch("La Roche-Posay Pure Vitamin C10")],
-      },
     ],
     note: "Ari: Codexial is the best vitamin C she has tried, but it is difficult to ship.",
-  },
-  {
-    group: "Pigmentation and antioxidants",
-    source: "La Roche-Posay Vitamin C serum",
-    anchors: ["ascorbic acid", "salicylic acid", "hyaluronic acid"],
-    status: "direct",
-    direct: amazonSearch("La Roche-Posay Pure Vitamin C10"),
-    note: "Ari: leaves orange cast, lasts too little, okay results.",
   },
   {
     group: "Acids, retinoids, peels and spot treatment",
