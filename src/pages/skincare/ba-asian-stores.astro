@@ -7,7 +7,6 @@ const pageTitle = pageData.title;
 const pageDescription =
   "Buenos Aires guide to operational physical stores with verified Korean or Japanese skincare stock, checked against Google Maps and retailer evidence.";
 const themeColorLight = "#f7f2ea";
-const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
@@ -156,6 +155,7 @@ const storeMapData = stores
     position: store.location,
   }));
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
+const instagramIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069ZM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0Zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881Z"/></svg>`;
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -221,17 +221,7 @@ const structuredData = {
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
-    <meta
-      name="theme-color"
-      content={themeColorLight}
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content={themeColorDark}
-      media="(prefers-color-scheme: dark)"
-    />
-    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-TileColor" content={themeColorLight} />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -240,7 +230,7 @@ const structuredData = {
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#111111" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <meta property="og:title" content={pageTitle} />
@@ -367,6 +357,18 @@ const structuredData = {
               ) : (
                 <span class="maps-empty" aria-hidden="true">—</span>
               )}
+              {store.instagram && (
+                <a
+                  class="instagram-link"
+                  href={store.instagram}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label={`Open ${store.name} on Instagram`}
+                  title={`Open ${store.name} on Instagram`}
+                >
+                  <span class="instagram-icon" set:html={instagramIcon} />
+                </a>
+              )}
             </div>
             <p class="focus-cell">
               <span class={`focus-badge focus-${store.focus}`}>{store.focusLabel}</span>
@@ -430,42 +432,6 @@ const structuredData = {
         )}
       </section>
 
-      <section class="editorial" aria-labelledby="findings-heading">
-        <h2 id="findings-heading">Key findings</h2>
-        <ul>
-          {pageData.keyFindings.map((item) => <li>{item}</li>)}
-        </ul>
-      </section>
-
-      <section class="editorial" aria-labelledby="recs-heading">
-        <h2 id="recs-heading">Recommendations</h2>
-        <ol>
-          {pageData.recommendations.map((item) => (
-            <li>
-              <strong>{item.title}.</strong> {item.body}
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section class="editorial" aria-labelledby="caveats-heading">
-        <h2 id="caveats-heading">Caveats</h2>
-        <ul>
-          {pageData.caveats.map((item) => <li>{item}</li>)}
-        </ul>
-        {pageData.excluded.length > 0 && (
-          <div class="excluded">
-            <h3>Not mapped as walk-in destinations</h3>
-            <ul>
-              {pageData.excluded.map((item) => (
-                <li>
-                  <strong>{item.name}:</strong> {item.reason}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </section>
     </main>
   </body>
 </html>
@@ -751,7 +717,7 @@ const structuredData = {
 
 <style>
   :root {
-    color-scheme: light dark;
+    color-scheme: light;
     --bg: #f7f2ea;
     --surface: #fffdf8;
     --surface-soft: #efe7db;
@@ -767,29 +733,15 @@ const structuredData = {
     --warn-soft: #f3e2d0;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #10100e;
-      --surface: #171613;
-      --surface-soft: #211f1a;
-      --text: #f2eee7;
-      --text-muted: #aaa297;
-      --border: #343027;
-      --border-strong: #4a4338;
-      --accent: #dce8d2;
-      --accent-soft: #263022;
-      --link: #f6f1e8;
-      --shadow: none;
-      --warn: #f0c39a;
-      --warn-soft: #3a2a1c;
-    }
-  }
-
   * {
     box-sizing: border-box;
   }
 
   html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-x: clip;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 16px;
     background: var(--bg);
@@ -800,6 +752,11 @@ const structuredData = {
   }
 
   body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-x: clip;
     margin: 0;
     background:
       radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-soft), transparent 35%), transparent 32rem),
@@ -808,6 +765,7 @@ const structuredData = {
 
   a {
     color: var(--link);
+    overflow-wrap: anywhere;
     text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
@@ -819,13 +777,21 @@ const structuredData = {
 
   .page {
     width: min(100%, 92rem);
+    max-width: 100%;
+    min-width: 0;
     margin: 0 auto;
     padding: clamp(0.55rem, 1.4vw, 1.1rem);
   }
 
+  .page > *,
+  .toolbar > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .page-header {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.55rem;
     align-items: start;
     padding: 0.45rem 0 0.55rem;
@@ -989,8 +955,12 @@ const structuredData = {
   .sort-toggle input,
   .extras-toggle input {
     position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
     opacity: 0;
-    pointer-events: none;
   }
 
   .sort-toggle label,
@@ -1118,15 +1088,23 @@ const structuredData = {
   }
 
   .map-actions {
-    display: contents;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.18rem;
   }
 
-  .maps-link {
+  .maps-link,
+  .instagram-link {
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text);
     text-decoration: none;
+  }
+
+  .instagram-link {
+    color: #a82f72;
   }
 
   .maps-empty {
@@ -1136,7 +1114,8 @@ const structuredData = {
     color: var(--text-muted);
   }
 
-  .maps-icon {
+  .maps-icon,
+  .instagram-icon {
     display: flex;
   }
 
@@ -1144,6 +1123,11 @@ const structuredData = {
     width: 1.35rem;
     height: 1.35rem;
     filter: saturate(0.95);
+  }
+
+  .instagram-icon :global(svg) {
+    width: 1.05rem;
+    height: 1.05rem;
   }
 
   .focus-cell,
@@ -1395,7 +1379,9 @@ const structuredData = {
       position: sticky;
       top: max(0.35rem, env(safe-area-inset-top));
       z-index: 4;
-      margin-inline: -0.2rem;
+      width: 100%;
+      max-width: 100%;
+      margin-inline: 0;
       padding: 0.4rem;
       border: 1px solid var(--border);
       border-radius: 1rem;
@@ -1464,6 +1450,7 @@ const structuredData = {
     }
 
     .maps-link,
+    .instagram-link,
     .maps-empty {
       width: 2.75rem;
       height: 2.75rem;
