@@ -3,7 +3,7 @@ export const prerender = true;
 
 const pageTitle = "Ukraine's population to 2150: how many people will still live there?";
 const pageDescription =
-  "Plain-English projection for people actually living in Kyiv-controlled territory: about 29 million in 2026, 21-22 million in 2050, 11-12 million in 2100 and about 7 million in 2150.";
+  "Plain-English projection for people actually living in Kyiv-controlled territory: about 29 million in 2026, 20-21 million in 2050, 8 million in 2100 and about 4 million in 2150.";
 const themeColorLight = "#fdfcf9";
 const themeColorDark = "#171410";
 const siteUrl =
@@ -27,25 +27,24 @@ const structuredData = {
   inLanguage: "en"
 };
 
-// 2026–2100: stated scenario table. 2110–2150: continue each path from its
-// 2100 anchor with the same migration rules and a gradual easing of the
-// birth–death gap (age structure slowly less extreme; fertility still below
-// replacement, so decline continues).
+// Central fertility converges to 1.0 child per woman; the adverse and strong
+// paths converge to 0.8 and 1.2 respectively. After 2100, each path keeps its
+// migration rule while the age structure gradually becomes less extreme.
 const scenarios = {
   adverse: [
-    [2026, 29.0], [2030, 26.8], [2040, 22.6], [2050, 18.9],
-    [2060, 15.8], [2070, 13.4], [2080, 11.4], [2090, 9.9], [2100, 8.6],
-    [2110, 7.5], [2120, 6.5], [2130, 5.7], [2140, 5.0], [2150, 4.4]
+    [2026, 29.0], [2030, 26.7], [2040, 22.1], [2050, 18.0],
+    [2060, 14.6], [2070, 11.8], [2080, 9.5], [2090, 7.7], [2100, 6.3],
+    [2110, 5.1], [2120, 4.1], [2130, 3.3], [2140, 2.7], [2150, 2.2]
   ],
   central: [
-    [2026, 29.0], [2030, 27.4], [2040, 25.0], [2050, 21.6],
-    [2060, 18.8], [2070, 16.5], [2080, 14.4], [2090, 12.8], [2100, 11.5],
-    [2110, 10.4], [2120, 9.4], [2130, 8.6], [2140, 7.9], [2150, 7.3]
+    [2026, 29.0], [2030, 27.3], [2040, 24.6], [2050, 20.8],
+    [2060, 17.3], [2070, 14.4], [2080, 11.9], [2090, 9.9], [2100, 8.3],
+    [2110, 7.0], [2120, 5.9], [2130, 5.0], [2140, 4.3], [2150, 3.7]
   ],
   strong: [
-    [2026, 29.0], [2030, 27.7], [2040, 26.6], [2050, 24.4],
-    [2060, 22.4], [2070, 20.9], [2080, 19.6], [2090, 18.6], [2100, 17.7],
-    [2110, 16.7], [2120, 15.8], [2130, 15.2], [2140, 14.5], [2150, 14.0]
+    [2026, 29.0], [2030, 27.7], [2040, 26.3], [2050, 23.7],
+    [2060, 21.2], [2070, 19.1], [2080, 17.3], [2090, 15.8], [2100, 14.5],
+    [2110, 13.3], [2120, 12.3], [2130, 11.5], [2140, 10.8], [2150, 10.2]
   ]
 } as const;
 
@@ -154,11 +153,11 @@ const formatMillions = (value: number) =>
           </p>
           <blockquote>
             <p>
-              about <strong>29 million in 2026 → 21–22 million in 2050 → 11–12 million in 2100 → 7–8 million in 2150</strong>.
+              about <strong>29 million in 2026 → 20–21 million in 2050 → 8 million in 2100 → 4 million in 2150</strong>.
             </p>
           </blockquote>
           <p>
-            For planning, use <strong>10–13 million by 2100</strong> and <strong>6–9 million by 2150</strong>. Getting under 10 million by 2100 (or under 6 million by 2150) does not require a sci-fi disaster: a bit worse birth rates and more people leaving will do it. Getting near 18 million in 2100, or holding near 14 million in 2150, would need lots of refugees coming home, steady immigration, longer lives <em>and</em> women having closer to 1.5 children on average. Possible. Not my base case.
+            For planning, use <strong>7–10 million by 2100</strong> and <strong>3–5 million by 2150</strong>. Getting near 6 million by 2100 (or near 2 million by 2150) does not require a sci-fi disaster: fertility settling around 0.8 and more people leaving will do it. Holding near 14–15 million in 2100, or 10 million in 2150, would need lots of refugees coming home, steady immigration, longer lives <em>and</em> fertility recovering toward 1.2. Possible. Not my base case.
           </p>
 
           <figure class="pop-chart">
@@ -183,7 +182,7 @@ const formatMillions = (value: number) =>
             >
               <title id="pop-chart-title">Ukraine population living in Kyiv-controlled territory, 2026 to 2150</title>
               <desc id="pop-chart-desc">
-                Three scenario lines starting at 29 million in 2026. The worse-case path falls to 4.4 million in 2150, the central path to 7.3 million and the strong-recovery path to 14.0 million.
+                Three scenario lines starting at 29 million in 2026. The worse-case path falls to 2.2 million in 2150, the central path to 3.7 million and the strong-recovery path to 10.2 million.
               </desc>
               <defs>
                 <linearGradient id="central-area" x1="0" y1="0" x2="0" y2="1">
@@ -228,40 +227,40 @@ const formatMillions = (value: number) =>
               <path class="chart-line chart-line-central" d={centralPath}></path>
 
               <g class="chart-marker">
-                <circle cx={xForYear(2050)} cy={yForPop(21.6)} r="4.5"></circle>
-                <text x={xForYear(2050)} y={yForPop(21.6) - 12} text-anchor="middle">21.6m</text>
+                <circle cx={xForYear(2050)} cy={yForPop(20.8)} r="4.5"></circle>
+                <text x={xForYear(2050)} y={yForPop(20.8) - 12} text-anchor="middle">20.8m</text>
               </g>
               <g class="chart-marker">
-                <circle cx={xForYear(2100)} cy={yForPop(11.5)} r="4"></circle>
-                <text x={xForYear(2100)} y={yForPop(11.5) - 12} text-anchor="middle">11.5m</text>
+                <circle cx={xForYear(2100)} cy={yForPop(8.3)} r="4"></circle>
+                <text x={xForYear(2100)} y={yForPop(8.3) - 12} text-anchor="middle">8.3m</text>
               </g>
               <g class="chart-marker chart-marker-central-end">
-                <circle cx={xForYear(2150)} cy={yForPop(7.3)} r="4.5"></circle>
+                <circle cx={xForYear(2150)} cy={yForPop(3.7)} r="4.5"></circle>
                 <text
                   x={xForYear(2150) - 6}
-                  y={yForPop(7.3) - 12}
+                  y={yForPop(3.7) - 12}
                   text-anchor="end"
-                >7.3m</text>
+                >3.7m</text>
               </g>
               <g class="chart-marker chart-marker-muted chart-marker-adverse-end">
-                <circle class="marker-adverse" cx={xForYear(2150)} cy={yForPop(4.4)} r="3.5"></circle>
+                <circle class="marker-adverse" cx={xForYear(2150)} cy={yForPop(2.2)} r="3.5"></circle>
                 <text
                   x={xForYear(2135)}
-                  y={yForPop(4.4) + 16}
+                  y={yForPop(2.2) + 16}
                   text-anchor="middle"
-                >4.4m</text>
+                >2.2m</text>
               </g>
               <g class="chart-marker chart-marker-muted chart-marker-strong-end">
-                <circle class="marker-strong" cx={xForYear(2150)} cy={yForPop(14.0)} r="3.5"></circle>
+                <circle class="marker-strong" cx={xForYear(2150)} cy={yForPop(10.2)} r="3.5"></circle>
                 <text
                   x={xForYear(2135)}
-                  y={yForPop(14.0) - 12}
+                  y={yForPop(10.2) - 12}
                   text-anchor="middle"
-                >14.0m</text>
+                >10.2m</text>
               </g>
             </svg>
             <p class="chart-footnote">
-              2150 endpoints: worse case 4.4m · central 7.3m · strong recovery 14.0m
+              2150 endpoints: worse case 2.2m · central 3.7m · strong recovery 10.2m
             </p>
           </figure>
 
@@ -301,10 +300,10 @@ const formatMillions = (value: number) =>
             These are my scenarios with the assumptions listed below. They are not an official government forecast.
           </p>
           <p>
-            If Ukraine later gets back all of its internationally recognized land <em>and</em> keeps the people who live in today's occupied areas, the central path rises to about <strong>13–14.5 million in 2100</strong> and about <strong>8.5–10 million in 2150</strong>. That is a different question from "how many people live under Kyiv now."
+            If Ukraine later gets back all of its internationally recognized land <em>and</em> keeps the people who live in today's occupied areas, the central path rises to about <strong>9.5–11 million in 2100</strong> and about <strong>4.5–6 million in 2150</strong>. That is a different question from "how many people live under Kyiv now."
           </p>
           <p>
-            After 2100 the path is more speculative. I keep the same migration rules and let the birth–death gap ease a little as the age structure stops getting worse so fast. Birth rates stay below replacement, so the decline continues—just a bit more slowly.
+            After 2100 the path is more speculative. I keep the same migration rules and let the birth–death gap ease a little as the age structure stops getting worse so fast. With fertility settled near 1.0 in the central case, the decline still continues—just a bit more slowly.
           </p>
         </section>
 
@@ -381,32 +380,32 @@ const formatMillions = (value: number) =>
                 </tr>
                 <tr>
                   <th scope="row">2035</th>
-                  <td>1.10</td>
+                  <td>0.95</td>
                 </tr>
                 <tr>
                   <th scope="row">2050</th>
-                  <td>1.18</td>
+                  <td>0.98</td>
                 </tr>
                 <tr>
                   <th scope="row">2075</th>
-                  <td>1.25</td>
+                  <td>1.00</td>
                 </tr>
                 <tr>
                   <th scope="row">2100</th>
-                  <td>1.30</td>
+                  <td>1.00</td>
                 </tr>
                 <tr>
                   <th scope="row">2150</th>
-                  <td>1.35</td>
+                  <td>1.00</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p>
-            That is a mild postwar bounce. It is not "everyone suddenly has two kids."
+            That is stabilization near today's very low level, not a postwar baby boom.
           </p>
           <p>
-            At 1.3 children per woman, each generation is still about 38% smaller than the one before it, even if nobody emigrates and nobody dies young.
+            At 1.0 child per woman, each generation is about 52% smaller than the one before it, even if nobody emigrates and nobody dies young.
           </p>
           <p>
             There is a second squeeze: the people who should be having kids now were born in the low-birth years of the 1990s and early 2000s. So even if each woman has a bit more children, there are fewer women of childbearing age.
@@ -426,11 +425,11 @@ const formatMillions = (value: number) =>
           </p>
           <ul>
             <li><strong>1.1% a year</strong> in the late 2020s;</li>
-            <li><strong>1.15% a year</strong> in the 2030s;</li>
-            <li><strong>1.45% a year</strong> from 2041 to 2060;</li>
-            <li><strong>1.4% a year</strong> from 2061 to 2080;</li>
-            <li><strong>1.25% a year</strong> near 2100;</li>
-            <li>easing toward about <strong>1.0–1.1% a year</strong> by the 2140s as the age mix stops getting worse so fast.</li>
+            <li><strong>1.2% a year</strong> in the 2030s;</li>
+            <li><strong>1.6% a year</strong> from 2041 to 2060;</li>
+            <li><strong>1.55% a year</strong> from 2061 to 2080;</li>
+            <li><strong>1.45% a year</strong> near 2100;</li>
+            <li>easing toward about <strong>1.25–1.35% a year</strong> by the 2140s as the age mix stops getting worse so fast.</li>
           </ul>
           <p>
             The worse stretch after 2040 is not "healthcare collapses." It is the age pyramid doing what age pyramids do: more funerals from today's large older groups, fewer births from yesterday's small young groups. After 2100 that squeeze gradually softens, but births still do not catch deaths.
@@ -513,21 +512,21 @@ const formatMillions = (value: number) =>
               <tbody>
                 <tr>
                   <th scope="row">Children per woman around 2035</th>
+                  <td>0.85</td>
                   <td>0.95</td>
                   <td>1.10</td>
-                  <td>1.25</td>
                 </tr>
                 <tr>
                   <th scope="row">Children per woman around 2100</th>
-                  <td>1.10</td>
-                  <td>1.30</td>
-                  <td>1.50</td>
+                  <td>0.80</td>
+                  <td>1.00</td>
+                  <td>1.20</td>
                 </tr>
                 <tr>
                   <th scope="row">Children per woman around 2150</th>
-                  <td>1.15</td>
-                  <td>1.35</td>
-                  <td>1.55</td>
+                  <td>0.80</td>
+                  <td>1.00</td>
+                  <td>1.20</td>
                 </tr>
                 <tr>
                   <th scope="row">People gained or lost to migration, 2026–2150</th>
@@ -555,15 +554,15 @@ const formatMillions = (value: number) =>
                 </tr>
                 <tr>
                   <th scope="row">Population in 2100</th>
-                  <td>8.6m</td>
-                  <td>11.5m</td>
-                  <td>17.7m</td>
+                  <td>6.3m</td>
+                  <td>8.3m</td>
+                  <td>14.5m</td>
                 </tr>
                 <tr class="row-emphasis">
                   <th scope="row">Population in 2150</th>
-                  <td><strong>4.4m</strong></td>
-                  <td><strong>7.3m</strong></td>
-                  <td><strong>14.0m</strong></td>
+                  <td><strong>2.2m</strong></td>
+                  <td><strong>3.7m</strong></td>
+                  <td><strong>10.2m</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -574,7 +573,7 @@ const formatMillions = (value: number) =>
           <ul>
             <li>security that lasts;</li>
             <li>lots of younger refugees and kids coming home;</li>
-            <li>birth rates climbing toward 1.4–1.5;</li>
+            <li>birth rates climbing toward 1.2 rather than settling near 1.0;</li>
             <li>Ukraine attracting and keeping foreign workers;</li>
             <li>the economy catching up for real;</li>
             <li>no major war later.</li>
@@ -598,12 +597,12 @@ const formatMillions = (value: number) =>
             The UN treats Ukraine as the internationally recognized country and uses its usual country-population rules. That is not the same as starting from 29 million people living under Kyiv today.
           </p>
           <p>
-            If I scale my central path up to include people in occupied areas, 2100 rises from 11.5 million to about 13–14.5 million, and 2150 from 7.3 million to about 8.5–10 million. The remaining gap with the UN's 2100 figure shrinks to maybe one or two million, not four.
+            If I scale my central path up to include people in occupied areas, 2100 rises from 8.3 million to about 9.5–11 million, and 2150 from 3.7 million to about 4.5–6 million. The remaining gap with the UN's 2100 figure is still large because the fertility assumptions now differ sharply.
           </p>
 
           <h3 id="stronger-fertility">They assume more babies later</h3>
           <p>
-            The path that gets you near 15 million assumes women go from about 1.0 child each toward <strong>1.5</strong>. A <a href="https://newsukraine.rbc.ua/news/ukraine-s-population-could-fall-below-10-1747308645.html" target="_blank" rel="noreferrer noopener">Kyiv School of Economics write-up</a> notes that worse assumptions can push Ukraine under 10 million.
+            The path that gets you near 15 million assumes women go from about 1.0 child each toward <strong>1.5</strong>. My median case instead has fertility converge on <strong>1.0</strong>. A <a href="https://newsukraine.rbc.ua/news/ukraine-s-population-could-fall-below-10-1747308645.html" target="_blank" rel="noreferrer noopener">Kyiv School of Economics write-up</a> notes that worse assumptions can push Ukraine under 10 million.
           </p>
           <p>
             1.5 is possible. Treat it as good news, not the default. Birth rates were already low before 2022, and the war pulled many young women and children out of the country.
@@ -619,12 +618,12 @@ const formatMillions = (value: number) =>
         </section>
 
         <section id="below-10m" aria-labelledby="below-10m-heading">
-          <h2 id="below-10m-heading">How you get under 10 million—and then under 5</h2>
+          <h2 id="below-10m-heading">How you get near 6 million—and then near 2</h2>
           <p>
-            The worse path hits about 8.6 million in 2100 and about 4.4 million in 2150 without assuming national extinction. It mainly needs:
+            The worse path hits about 6.3 million in 2100 and about 2.2 million in 2150 without assuming national extinction. It mainly needs:
           </p>
           <ul>
-            <li>birth rates stuck near 1.0–1.15 children per woman;</li>
+            <li>birth rates sliding toward 0.8 children per woman;</li>
             <li>more people leaving during and after the war;</li>
             <li>few refugees coming home;</li>
             <li>almost no foreign workers moving in;</li>
@@ -637,12 +636,12 @@ const formatMillions = (value: number) =>
         </section>
 
         <section id="near-18m" aria-labelledby="near-18m-heading">
-          <h2 id="near-18m-heading">How you stay near 14–18 million</h2>
+          <h2 id="near-18m-heading">How you stay near 10–15 million</h2>
           <p>
-            The strong-recovery path ends near 17.7 million in 2100 and about 14.0 million in 2150. That needs:
+            The strong-recovery path ends near 14.5 million in 2100 and about 10.2 million in 2150. That needs:
           </p>
           <ul>
-            <li>birth rates climbing toward 1.5–1.55;</li>
+            <li>birth rates climbing toward 1.2;</li>
             <li>about 1.5 million net refugee returns after accounting for new leavers;</li>
             <li>about 50,000 immigrants a year in the long run;</li>
             <li>people living substantially longer;</li>
@@ -668,15 +667,15 @@ const formatMillions = (value: number) =>
               <tbody>
                 <tr>
                   <th scope="row">People on land Kyiv controls today</th>
-                  <td><strong>21–22m</strong></td>
-                  <td><strong>10–12m</strong></td>
-                  <td><strong>6–9m</strong></td>
+                  <td><strong>20–21m</strong></td>
+                  <td><strong>7–10m</strong></td>
+                  <td><strong>3–5m</strong></td>
                 </tr>
                 <tr>
                   <th scope="row">Whole recognized Ukraine, including occupied areas</th>
-                  <td><strong>24–26m</strong></td>
-                  <td><strong>13–14.5m</strong></td>
-                  <td><strong>8.5–10m</strong></td>
+                  <td><strong>23–25m</strong></td>
+                  <td><strong>9.5–11m</strong></td>
+                  <td><strong>4.5–6m</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -685,10 +684,10 @@ const formatMillions = (value: number) =>
             Best single numbers for people actually living under Kyiv:
           </p>
           <blockquote class="final-callout">
-            <p><strong>11.5 million in 2100 · 7.3 million in 2150</strong></p>
+            <p><strong>8.3 million in 2100 · 3.7 million in 2150</strong></p>
           </blockquote>
           <p>
-            The UN's 15.3 million for 2100 can make sense if you count a bigger territory and assume more babies and friendlier migration. If you refuse that optimism and assume people follow the income gap, <strong>10–13 million by 2100 and 6–9 million by 2150</strong> are the better central ranges. Below 10 million by 2100—and below 6 million by 2150—are real downside cases.
+            The UN's 15.3 million for 2100 can make sense if you count a bigger territory and assume more babies and friendlier migration. If the median assumption is instead that fertility converges on 1.0, <strong>7–10 million by 2100 and 3–5 million by 2150</strong> are the better central ranges. Near 6 million by 2100—and near 2 million by 2150—are real downside cases.
           </p>
         </section>
 
