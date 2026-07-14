@@ -29,6 +29,7 @@ const deckForClient: QuizQuestion[] = DECK.map((q) => ({
     t: o.t,
     sections: o.sections,
     boosts: o.boosts,
+    skip: o.skip,
   })),
 }));
 
@@ -101,7 +102,7 @@ const structuredData = {
       <header class="hero">
         <h1>{pageTitle}</h1>
         <p class="lede">
-          Pick the least wrong answer to twenty-five questions. The quiz scores
+          Choose every answer that fits across twenty-five questions. The quiz scores
           all <a href="/culture/cishet-male-archetypes">{ARCHETYPES.length} labels in the field guide</a>
           and gives you the five closest matches.
         </p>
@@ -115,7 +116,7 @@ const structuredData = {
       <section id="intro" aria-label="Start the quiz">
         <button type="button" class="btn btn-primary" id="start-quiz">Take the quiz</button>
         <p class="intro-note">
-          No skips. If nothing fits, choose the answer that annoys you least.
+          Choose one or several answers per question. “None of these” is always available and does not count toward any archetype.
         </p>
         <noscript>
           <p class="intro-note">
@@ -152,12 +153,13 @@ const structuredData = {
         kymLinks,
       }}
     >
-      const STORE_KEY = "cishet-archetype-quiz-v1";
-      const UNANSWERED = -1;
+      const STORE_KEY = "cishet-archetype-quiz-v2";
+      const LEGACY_STORE_KEY = "cishet-archetype-quiz-v1";
       const TOP_N = 5;
+      const SPECIFIC_EVIDENCE_PRIOR = 4;
 
       const state = {
-        answers: new Array(DECK.length).fill(UNANSWERED),
+        answers: Array.from({ length: DECK.length }, () => []),
         idx: 0,
         finished: false,
       };
@@ -168,8 +170,6 @@ const structuredData = {
       const progressEl = document.getElementById("progress");
       const resultsSection = document.getElementById("results");
       const verdictEl = document.getElementById("verdict");
-
-      let advanceTimer = null;
 
       function saveLocal() {
         try {
@@ -186,13 +186,21 @@ const structuredData = {
 
       function loadLocal() {
         try {
-          const raw = localStorage.getItem(STORE_KEY);
+          const raw =
+            localStorage.getItem(STORE_KEY) ||
+            localStorage.getItem(LEGACY_STORE_KEY);
           if (!raw) return false;
           const data = JSON.parse(raw);
           if (!Array.isArray(data.answers) || data.answers.length !== DECK.length) return false;
-          state.answers = data.answers.map((v, i) =>
-            Number.isInteger(v) && v >= UNANSWERED && v < DECK[i].opts.length ? v : UNANSWERED,
-          );
+          state.answers = data.answers.map((value, questionIndex) => {
+            const values = Array.isArray(value) ? value : [value];
+            return [...new Set(values)].filter(
+              (optionIndex) =>
+                Number.isInteger(optionIndex) &&
+                optionIndex >= 0 &&
+                optionIndex < DECK[questionIndex].opts.length,
+            );
+          });
           state.idx = Math.min(Math.max(0, data.idx | 0), DECK.length - 1);
           state.finished = Boolean(data.finished);
           return true;
@@ -202,34 +210,51 @@ const structuredData = {
       }
 
       function encodeAnswers() {
-        return state.answers
-          .map((v) => (v >= 0 ? (v + 1).toString(36) : "0"))
-          .join("");
+        return state.answers.map((selection) =>
+          selection.map((value) => (value + 1).toString(36)).join("")
+        ).join(".");
       }
 
-      function decodeAnswers(str) {
-        if (typeof str !== "string" || str.length !== DECK.length) return null;
-        const answers = [];
-        for (let i = 0; i < str.length; i++) {
-          const digit = Number.parseInt(str[i], 36);
-          if (!Number.isInteger(digit)) return null;
-          if (digit < 0 || digit > DECK[i].opts.length) return null;
-          answers.push(digit === 0 ? UNANSWERED : digit - 1);
+      function decodeAnswers(value) {
+        if (typeof value !== "string") return null;
+        if (!value.includes(".") && value.length === DECK.length) {
+          const legacyAnswers = [];
+          for (let index = 0; index < value.length; index++) {
+            const digit = Number.parseInt(value[index], 36);
+            if (!Number.isInteger(digit) || digit < 0 || digit > DECK[index].opts.length) {
+              return null;
+            }
+            legacyAnswers.push(digit === 0 ? [] : [digit - 1]);
+          }
+          return legacyAnswers;
         }
-        return answers;
+        const segments = value.split(".");
+        if (segments.length !== DECK.length) return null;
+        const answers = segments.map((segment, questionIndex) => {
+          const selection = [...new Set([...segment].map((character) =>
+            Number.parseInt(character, 36) - 1
+          ))];
+          return selection.every(
+            (optionIndex) =>
+              Number.isInteger(optionIndex) &&
+              optionIndex >= 0 &&
+              optionIndex < DECK[questionIndex].opts.length,
+          ) ? selection : null;
+        });
+        return answers.some((selection) => selection === null) ? null : answers;
       }
 
       function firstUnansweredIndex() {
-        const idx = state.answers.findIndex((v) => v === UNANSWERED);
+        const idx = state.answers.findIndex((selection) => selection.length === 0);
         return idx === -1 ? DECK.length - 1 : idx;
       }
 
       function allAnswered() {
-        return state.answers.every((v) => v >= 0);
+        return state.answers.every((selection) => selection.length > 0);
       }
 
       function canVisitQuestion(idx) {
-        return state.answers[idx] !== UNANSWERED || idx <= firstUnansweredIndex();
+        return state.answers[idx].length > 0 || idx <= firstUnansweredIndex();
       }
 
       const LEXICAL_STOP_WORDS = new Set(
@@ -306,14 +331,19 @@ const structuredData = {
         const specificMaxes = new Float64Array(ARCHETYPES.length);
 
         for (let qi = 0; qi < DECK.length; qi++) {
-          const answer = answers[qi];
+          const selection = answers[qi];
           const q = DECK[qi];
-          if (answer == null || answer < 0 || answer >= q.opts.length) continue;
-          const chosen = q.opts[answer];
+          if (!Array.isArray(selection) || selection.length === 0) continue;
+          const chosenOptions = selection
+            .filter((answer) => answer >= 0 && answer < q.opts.length)
+            .map((answer) => q.opts[answer]);
+          if (chosenOptions.length === 0) continue;
           for (let ai = 0; ai < ARCHETYPES.length; ai++) {
             const arch = ARCHETYPES[ai];
-            scores[ai] += optionWeight(chosen, arch);
-            specificScores[ai] += specificWeight(chosen, arch);
+            for (const chosen of chosenOptions) {
+              scores[ai] += optionWeight(chosen, arch) / chosenOptions.length;
+              specificScores[ai] += specificWeight(chosen, arch) / chosenOptions.length;
+            }
             let best = 0;
             let bestSpecific = 0;
             for (const opt of q.opts) {
@@ -331,9 +361,10 @@ const structuredData = {
           const baseFit = maxPossible > 0 ? score / maxPossible : 0;
           const specificFit =
             specificMaxes[i] > 0
-              ? specificScores[i] / specificMaxes[i]
-              : baseFit;
-          const fit = baseFit * 0.85 + specificFit * 0.15;
+              ? specificScores[i] /
+                (specificMaxes[i] + SPECIFIC_EVIDENCE_PRIOR)
+              : 0;
+          const fit = baseFit * 0.65 + specificFit * 0.35;
           const matchPct =
             Math.round(1000 * fit) / 10;
           const specificScore = specificScores[i];
@@ -346,7 +377,7 @@ const structuredData = {
             specificFit,
             specificScore,
           };
-        }).sort(
+        }).filter((result) => result.fit > 0).sort(
           (a, b) =>
             b.fit - a.fit ||
             b.specificScore - a.specificScore ||
@@ -390,10 +421,10 @@ const structuredData = {
           const dot = document.createElement("button");
           dot.type = "button";
           dot.className = "p-dot";
-          if (state.answers[i] >= 0) dot.classList.add("done");
+          if (state.answers[i].length > 0) dot.classList.add("done");
           if (i === state.idx) dot.classList.add("here");
           dot.disabled = !canVisitQuestion(i);
-          const status = state.answers[i] >= 0 ? "answered" : "unanswered";
+          const status = state.answers[i].length > 0 ? "answered" : "unanswered";
           dot.setAttribute("aria-label", `Question ${i + 1}: ${q.topic}, ${status}`);
           dot.title = `${i + 1} · ${q.topic}`;
           dot.addEventListener("click", () => goTo(i));
@@ -434,20 +465,20 @@ const structuredData = {
 
         const hint = document.createElement("p");
         hint.className = "q-hint";
-        hint.textContent = "Pick the least wrong answer.";
+        hint.textContent = "Choose one or several. Multiple answers are blended equally.";
         quizCard.appendChild(hint);
 
         const list = document.createElement("div");
         list.className = "q-options";
-        list.setAttribute("role", "radiogroup");
+        list.setAttribute("role", "group");
         list.setAttribute("aria-label", "Answers");
         q.opts.forEach((opt, i) => {
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "q-option";
-          btn.setAttribute("role", "radio");
-          btn.setAttribute("aria-checked", chosen === i ? "true" : "false");
-          if (chosen === i) btn.classList.add("selected");
+          btn.setAttribute("role", "checkbox");
+          btn.setAttribute("aria-checked", chosen.includes(i) ? "true" : "false");
+          if (chosen.includes(i)) btn.classList.add("selected");
           btn.innerHTML = `<span class="q-key">${i + 1}</span><span class="q-text"></span>`;
           btn.querySelector(".q-text").textContent = opt.t;
           btn.addEventListener("click", () => selectOption(i));
@@ -466,7 +497,7 @@ const structuredData = {
         back.addEventListener("click", () => goTo(state.idx - 1));
         nav.appendChild(back);
 
-        if (isLast || allAnswered()) {
+        if (isLast) {
           const finish = document.createElement("button");
           finish.type = "button";
           finish.className = "btn btn-primary";
@@ -474,6 +505,14 @@ const structuredData = {
           finish.disabled = !allAnswered();
           finish.addEventListener("click", () => showResults());
           nav.appendChild(finish);
+        } else {
+          const next = document.createElement("button");
+          next.type = "button";
+          next.className = "btn btn-primary";
+          next.textContent = "Next →";
+          next.disabled = chosen.length === 0;
+          next.addEventListener("click", () => goTo(state.idx + 1));
+          nav.appendChild(next);
         }
 
         quizCard.appendChild(nav);
@@ -481,27 +520,22 @@ const structuredData = {
       }
 
       function selectOption(optIdx) {
-        state.answers[state.idx] = optIdx;
+        const selection = state.answers[state.idx];
+        const options = DECK[state.idx].opts;
+        if (options[optIdx].skip) {
+          state.answers[state.idx] = [optIdx];
+        } else {
+          const withoutSkip = selection.filter((value) => !options[value].skip);
+          state.answers[state.idx] = withoutSkip.includes(optIdx)
+            ? withoutSkip.filter((value) => value !== optIdx)
+            : [...withoutSkip, optIdx].sort((a, b) => a - b);
+        }
         state.finished = false;
         saveLocal();
         renderQuestion();
-        quizCard.classList.add("settling");
-        if (advanceTimer) clearTimeout(advanceTimer);
-        if (state.idx < DECK.length - 1) {
-          advanceTimer = setTimeout(() => goTo(state.idx + 1), 420);
-        } else {
-          advanceTimer = setTimeout(() => {
-            advanceTimer = null;
-            showResults();
-          }, 420);
-        }
       }
 
       function goTo(idx) {
-        if (advanceTimer) {
-          clearTimeout(advanceTimer);
-          advanceTimer = null;
-        }
         quizCard.classList.remove("settling");
         const clamped = Math.min(Math.max(0, idx), DECK.length - 1);
         state.idx = canVisitQuestion(clamped) ? clamped : firstUnansweredIndex();
@@ -526,6 +560,9 @@ const structuredData = {
 
         const ranked = rankMatches(state.answers);
         const top = ranked.slice(0, TOP_N);
+        const matchedQuestions = state.answers.filter((selection, questionIndex) =>
+          selection.some((optionIndex) => !DECK[questionIndex].opts[optionIndex].skip)
+        ).length;
         const url = new URL(location.href);
         url.searchParams.set("r", encodeAnswers());
         history.replaceState(null, "", url);
@@ -534,30 +571,39 @@ const structuredData = {
         quizSection.hidden = true;
         resultsSection.hidden = false;
 
-        verdictEl.innerHTML =
-          `<p class="verdict-kicker">Your five best matches</p>` +
-          `<ol class="match-list">` +
-          top
-            .map((r, i) => {
-              const pct = r.matchPct;
-              return (
-                `<li class="match-item" style="--pct:${pct}">` +
-                `<div class="match-rank">${i + 1}</div>` +
-                `<div class="match-body">` +
-                `<div class="match-head">` +
-                `<span class="match-terms">${renderTermsHtml(r.archetype.terms)}</span>` +
-                `<span class="match-pct">${pct}%</span>` +
-                `</div>` +
-                `<p class="match-gloss">${escapeHtml(r.archetype.gloss)}</p>` +
-                `<p class="match-section">${escapeHtml(r.archetype.sectionTitle)}</p>` +
-                `<div class="match-bar" aria-hidden="true"><span style="width:${pct}%"></span></div>` +
-                `</div>` +
-                `</li>`
-              );
-            })
-            .join("") +
-          `</ol>` +
-          `<p class="verdict-note">The percentage combines your general pattern with direct matches to a label’s name and description. The descriptions explain how people use these terms; they are not endorsements.</p>`;
+        if (top.length === 0) {
+          verdictEl.innerHTML =
+            `<p class="verdict-kicker">No strong match</p>` +
+            `<p class="no-match">These answers did not point to any archetype in the current quiz. That is a limitation of the quiz, not a requirement to force yourself into the closest label.</p>`;
+        } else {
+          const confidenceNote = matchedQuestions < 15
+            ? `You found a fitting answer for ${matchedQuestions} of ${DECK.length} questions, so treat these as low-confidence suggestions. The archetype you have in mind may not be represented here.`
+            : `The percentage combines your general pattern with direct matches to a label’s name and description.`;
+          verdictEl.innerHTML =
+            `<p class="verdict-kicker">Your five best matches</p>` +
+            `<ol class="match-list">` +
+            top
+              .map((r, i) => {
+                const pct = r.matchPct;
+                return (
+                  `<li class="match-item" style="--pct:${pct}">` +
+                  `<div class="match-rank">${i + 1}</div>` +
+                  `<div class="match-body">` +
+                  `<div class="match-head">` +
+                  `<span class="match-terms">${renderTermsHtml(r.archetype.terms)}</span>` +
+                  `<span class="match-pct">${pct}%</span>` +
+                  `</div>` +
+                  `<p class="match-gloss">${escapeHtml(r.archetype.gloss)}</p>` +
+                  `<p class="match-section">${escapeHtml(r.archetype.sectionTitle)}</p>` +
+                  `<div class="match-bar" aria-hidden="true"><span style="width:${pct}%"></span></div>` +
+                  `</div>` +
+                  `</li>`
+                );
+              })
+              .join("") +
+            `</ol>` +
+            `<p class="verdict-note">${escapeHtml(confidenceNote)} The descriptions explain how people use these terms; they are not endorsements.</p>`;
+        }
 
         resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -568,7 +614,7 @@ const structuredData = {
         quizSection.hidden = false;
         state.finished = false;
         if (!resume) {
-          state.answers = new Array(DECK.length).fill(UNANSWERED);
+          state.answers = Array.from({ length: DECK.length }, () => []);
           state.idx = 0;
         } else {
           state.idx = firstUnansweredIndex();
@@ -586,7 +632,7 @@ const structuredData = {
       }
 
       document.getElementById("start-quiz")?.addEventListener("click", () => {
-        const hasProgress = state.answers.some((v) => v >= 0);
+        const hasProgress = state.answers.some((selection) => selection.length > 0);
         startQuiz(hasProgress && !state.finished);
       });
       document.getElementById("retake")?.addEventListener("click", retake);
@@ -640,14 +686,14 @@ const structuredData = {
       // boot
       const params = new URLSearchParams(location.search);
       const shared = decodeAnswers(params.get("r") || "");
-      if (shared && shared.every((v) => v >= 0)) {
+      if (shared && shared.every((selection) => selection.length > 0)) {
         state.answers = shared;
         state.finished = true;
         showResults();
       } else {
         loadLocal();
         if (state.finished && allAnswered()) showResults();
-        else if (state.answers.some((v) => v >= 0)) {
+        else if (state.answers.some((selection) => selection.length > 0)) {
           const startBtn = document.getElementById("start-quiz");
           if (startBtn) startBtn.textContent = "Continue quiz";
         }

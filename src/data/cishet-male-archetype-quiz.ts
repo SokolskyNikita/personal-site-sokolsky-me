@@ -185,6 +185,7 @@ export type QuizOption = {
   t: string;
   sections: SectionWeights;
   boosts?: Boost[];
+  skip?: true;
 };
 
 export type QuizQuestion = {
@@ -807,7 +808,7 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
 export const DECK: QuizQuestion[] = [
   {
     topic: "Saturday",
-    q: "You wake up with nothing planned. What happens before lunch?",
+    q: "Which of these are usually part of a free Saturday morning?",
     opts: [
       opt("Still horizontal. Maybe brunch later if someone else plans it.", "default", {}, [
         { match: "Chill guy", w: 2 },
@@ -1810,7 +1811,11 @@ export const DECK: QuizQuestion[] = [
   const poles = [...q.opts.slice(rot), ...q.opts.slice(0, rot)];
   return {
     ...q,
-    opts: [...poles, ...(SUPPLEMENTAL_OPTIONS[q.topic] ?? [])],
+    opts: [
+      ...poles,
+      ...(SUPPLEMENTAL_OPTIONS[q.topic] ?? []),
+      { t: "None of these describes me.", sections: {}, skip: true },
+    ],
   };
 });
 
@@ -1866,7 +1871,7 @@ export function maxPossibleForArchetype(archetype: Archetype): number {
   return total;
 }
 
-export function scoreAnswers(answerIndexes: number[]): MatchResult[] {
+export function scoreAnswers(answerIndexes: (number | number[])[]): MatchResult[] {
   const scores = new Float64Array(ARCHETYPES.length);
   const maxes = new Float64Array(ARCHETYPES.length);
   const specificScores = new Float64Array(ARCHETYPES.length);
@@ -1875,13 +1880,21 @@ export function scoreAnswers(answerIndexes: number[]): MatchResult[] {
   for (let qi = 0; qi < DECK.length; qi++) {
     const answer = answerIndexes[qi];
     const q = DECK[qi];
-    if (answer == null || answer < 0 || answer >= q.opts.length) continue;
-    const chosen = q.opts[answer];
+    const selection = (Array.isArray(answer) ? answer : [answer]).filter(
+      (optionIndex) =>
+        optionIndex != null &&
+        optionIndex >= 0 &&
+        optionIndex < q.opts.length,
+    );
+    if (selection.length === 0) continue;
+    const chosenOptions = selection.map((optionIndex) => q.opts[optionIndex]);
 
     for (let ai = 0; ai < ARCHETYPES.length; ai++) {
       const arch = ARCHETYPES[ai];
-      scores[ai] += optionWeight(chosen, arch);
-      specificScores[ai] += specificWeight(chosen, arch);
+      for (const chosen of chosenOptions) {
+        scores[ai] += optionWeight(chosen, arch) / chosenOptions.length;
+        specificScores[ai] += specificWeight(chosen, arch) / chosenOptions.length;
+      }
       let best = 0;
       let bestSpecific = 0;
       for (const opt of q.opts) {
@@ -1899,9 +1912,9 @@ export function scoreAnswers(answerIndexes: number[]): MatchResult[] {
     const baseFit = maxPossible > 0 ? score / maxPossible : 0;
     const specificFit =
       specificMaxes[i] > 0
-        ? specificScores[i] / specificMaxes[i]
-        : baseFit;
-    const fit = baseFit * 0.85 + specificFit * 0.15;
+        ? specificScores[i] / (specificMaxes[i] + 4)
+        : 0;
+    const fit = baseFit * 0.65 + specificFit * 0.35;
     const matchPct =
       Math.round(1000 * fit) / 10;
     const specificScore = specificScores[i];
