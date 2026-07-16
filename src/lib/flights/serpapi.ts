@@ -269,7 +269,7 @@ export class SerpApiProvider implements FlightProvider {
 
   async search(spec: LegSearch): Promise<ItineraryOption[]> {
     // Single-airport convenience path; planner uses searchStep for batches.
-    return this.searchStep({
+    const { options } = await this.searchStep({
       originBatch: [spec.origin],
       destBatch: [spec.dest],
       date: spec.dateRange.start,
@@ -280,6 +280,7 @@ export class SerpApiProvider implements FlightProvider {
       hl: spec.hl,
       deepSearch: spec.deepSearch,
     });
+    return options;
   }
 
   async searchStep(step: {
