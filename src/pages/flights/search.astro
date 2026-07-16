@@ -15,7 +15,9 @@ const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
   "",
 );
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-const defaultStart = new Date().toISOString().slice(0, 10);
+const tomorrow = new Date();
+tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+const defaultStart = tomorrow.toISOString().slice(0, 10);
 ---
 
 <!doctype html>

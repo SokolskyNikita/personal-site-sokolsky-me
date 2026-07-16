@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FORM,
   defaultFormState,
@@ -7,7 +7,18 @@ import {
   formStateToSearchParams,
 } from "../url";
 
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe("spec ↔ URL round-trip", () => {
+  it("starts the default search tomorrow so the window excludes today", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
+
+    expect(defaultFormState().start).toBe("2026-07-17");
+  });
+
   it("round-trips cabin and lieFlatPolicy explicitly", () => {
     const form = defaultFormState("2026-07-20");
     form.origin = DEFAULT_FORM.origin;

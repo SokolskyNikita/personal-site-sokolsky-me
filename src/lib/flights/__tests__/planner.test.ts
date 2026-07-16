@@ -8,6 +8,24 @@ import { planSearch } from "../planner";
 import { DEFAULT_FORM } from "../url";
 
 describe("planSearch", () => {
+  it("covers seven future dates without counting the current day", () => {
+    const plan = planSearch({
+      origin: "EZE",
+      dest: "JFK",
+      dateRange: { start: "2026-07-17", days: 7 },
+    });
+
+    expect(plan.dates).toEqual([
+      "2026-07-17",
+      "2026-07-18",
+      "2026-07-19",
+      "2026-07-20",
+      "2026-07-21",
+      "2026-07-22",
+      "2026-07-23",
+    ]);
+  });
+
   it("computes exact cross-product call count with multi-batch sets on both sides", () => {
     // Schengen/EU = 40 airports → 4 batches at size 10
     // Canada = 6 airports → 1 batch
