@@ -92,6 +92,14 @@ describe("resolveLocation", () => {
       "XIY",
       "TPE",
     ]);
+    expect(resolveLocation("vietnam")).toEqual([
+      "SGN",
+      "HAN",
+      "DAD",
+      "CXR",
+      "PQC",
+      "HPH",
+    ]);
     expect(resolveLocation("germany-gateways")).toHaveLength(5);
   });
 

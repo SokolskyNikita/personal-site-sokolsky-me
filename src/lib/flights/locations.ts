@@ -231,6 +231,13 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
       "TPE",
     ],
   },
+  vietnam: {
+    id: "vietnam",
+    type: "country",
+    label: "Vietnam",
+    // Top 6 Vietnamese airports by 2024 passenger traffic.
+    airports: ["SGN", "HAN", "DAD", "CXR", "PQC", "HPH"],
+  },
   "germany-gateways": {
     id: "germany-gateways",
     type: "country",
@@ -379,6 +386,12 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   TAS: "Tashkent",
   TVT: "Tashkent",
   VOD: "Prague",
+  SGN: "Ho Chi Minh City",
+  HAN: "Hanoi",
+  DAD: "Da Nang",
+  CXR: "Nha Trang",
+  PQC: "Phu Quoc",
+  HPH: "Hai Phong",
 };
 
 export function airportLabel(code: string): string {
