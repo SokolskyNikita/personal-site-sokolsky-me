@@ -135,6 +135,9 @@ export function mountFlightSearch(root: HTMLElement): void {
     delete (runBtn as HTMLButtonElement & { _plan?: PlanResponse })._plan;
     planSummary.textContent = "Plan the search to see call count and budget.";
     banners.innerHTML = "";
+    progress.textContent = "";
+    results.innerHTML = "";
+    footer.innerHTML = "";
   }
 
   planBtn.addEventListener("click", async () => {
@@ -143,6 +146,9 @@ export function mountFlightSearch(root: HTMLElement): void {
     banners.innerHTML = "";
     planSummary.textContent = "Planning…";
     runBtn.disabled = true;
+    planBtn.disabled = true;
+    planBtn.textContent = "Planning…";
+    planBtn.setAttribute("aria-busy", "true");
 
     const spec = formStateToLegSearch(form);
     let data: PlanResponse;
@@ -156,6 +162,10 @@ export function mountFlightSearch(root: HTMLElement): void {
     } catch (err) {
       planSummary.textContent = `Plan failed: ${err instanceof Error ? err.message : String(err)}`;
       return;
+    } finally {
+      planBtn.disabled = false;
+      planBtn.textContent = "Plan";
+      planBtn.removeAttribute("aria-busy");
     }
 
     if (!data.ok || !data.plan) {
@@ -166,7 +176,8 @@ export function mountFlightSearch(root: HTMLElement): void {
     const cached = data.cachedSteps ?? 0;
     const uncached = data.uncachedCalls ?? data.plan.callCount;
     const remaining = data.budget?.remaining ?? 0;
-    planSummary.textContent = `This search = ${data.plan.callCount} API calls (${cached} cached, ${remaining} budget remaining). Run?`;
+    const callLabel = data.plan.callCount === 1 ? "call" : "calls";
+    planSummary.textContent = `${data.plan.callCount} ${callLabel} · ${cached} cached · ${remaining} daily budget remaining. Ready to run.`;
 
     if (!data.canRun) {
       runBtn.disabled = true;
@@ -184,9 +195,12 @@ export function mountFlightSearch(root: HTMLElement): void {
     if (!planData?.plan) return;
 
     runBtn.disabled = true;
+    runBtn.textContent = "Searching…";
+    runBtn.setAttribute("aria-busy", "true");
     planBtn.disabled = true;
     banners.innerHTML = "";
     results.innerHTML = "";
+    results.setAttribute("aria-busy", "true");
     footer.innerHTML = "";
     progress.textContent = "Running…";
 
@@ -243,6 +257,13 @@ export function mountFlightSearch(root: HTMLElement): void {
       progress.textContent = `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`;
     });
 
+    if (allOptions.length === 0) {
+      results.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="fs-empty"><strong>No matching flights found.</strong><span>Try another cabin, fewer seat restrictions, or a wider date range.</span></div>`,
+      );
+    }
+
     const searchResult = {
       spec,
       options: allOptions,
@@ -271,9 +292,12 @@ export function mountFlightSearch(root: HTMLElement): void {
     });
 
     progress.textContent = `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
+    results.removeAttribute("aria-busy");
     planBtn.disabled = false;
     // Keep Run enabled so an immediate rerun can use cache.
     runBtn.disabled = false;
+    runBtn.textContent = "Run search";
+    runBtn.removeAttribute("aria-busy");
   });
 }
 
@@ -483,6 +507,8 @@ function syncDaysLabel(
   daysValue: HTMLElement,
 ): void {
   daysValue.textContent = daysInput.value;
+  const unit = daysInput.ownerDocument.getElementById("fs-days-unit");
+  if (unit) unit.textContent = daysInput.value === "1" ? "day" : "days";
   daysInput.setAttribute("aria-valuenow", daysInput.value);
 }
 

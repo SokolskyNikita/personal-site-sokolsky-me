@@ -60,96 +60,106 @@ const defaultStart = new Date().toISOString().slice(0, 10);
       </div>
 
       <form class="fs-form" id="fs-form" onsubmit="return false;">
-        <div class="fs-field">
-          <label for="fs-origin-reg">Origin</label>
-          <div class="fs-loc">
-            <select id="fs-origin-reg" data-registry aria-label="Origin location"></select>
-            <input
-              id="fs-origin-iata"
-              type="text"
-              maxlength="3"
-              placeholder="IATA"
-              aria-label="Origin IATA"
-              autocomplete="off"
-            />
+        <div class="fs-primary">
+          <div class="fs-field fs-field-origin">
+            <label for="fs-origin-reg">Origin</label>
+            <div class="fs-loc">
+              <select id="fs-origin-reg" data-registry aria-label="Origin location"></select>
+              <input
+                id="fs-origin-iata"
+                type="text"
+                maxlength="3"
+                placeholder="IATA"
+                aria-label="Origin IATA override"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+
+          <button type="button" class="fs-swap" id="fs-swap" title="Swap origin and destination" aria-label="Swap origin and destination">⇄</button>
+
+          <div class="fs-field fs-field-destination">
+            <label for="fs-dest-reg">Destination</label>
+            <div class="fs-loc">
+              <select id="fs-dest-reg" data-registry aria-label="Destination location"></select>
+              <input
+                id="fs-dest-iata"
+                type="text"
+                maxlength="3"
+                placeholder="IATA"
+                aria-label="Destination IATA override"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+
+          <div class="fs-field fs-field-mode">
+            <label for="fs-mode">Cabin and seat</label>
+            <select id="fs-mode"></select>
+          </div>
+
+          <div class="fs-field fs-field-date">
+            <label for="fs-start">Start date</label>
+            <input id="fs-start" type="date" value={defaultStart} />
           </div>
         </div>
 
-        <button type="button" class="fs-swap" id="fs-swap" title="Swap origin and destination" aria-label="Swap origin and destination">⇄</button>
-
-        <div class="fs-field">
-          <label for="fs-dest-reg">Destination</label>
-          <div class="fs-loc">
-            <select id="fs-dest-reg" data-registry aria-label="Destination location"></select>
+        <div class="fs-secondary">
+          <div class="fs-field fs-field-days">
+            <label for="fs-days">Search window <span><strong id="fs-days-value">{DEFAULT_FORM.days}</strong> <span id="fs-days-unit">days</span></span></label>
             <input
-              id="fs-dest-iata"
-              type="text"
-              maxlength="3"
-              placeholder="IATA"
-              aria-label="Destination IATA"
-              autocomplete="off"
+              id="fs-days"
+              type="range"
+              min="1"
+              max="14"
+              value={String(DEFAULT_FORM.days)}
+              aria-valuemin="1"
+              aria-valuemax="14"
+              aria-valuenow={String(DEFAULT_FORM.days)}
             />
           </div>
-        </div>
 
-        <div class="fs-field">
-          <label for="fs-mode">Search mode</label>
-          <select id="fs-mode"></select>
-        </div>
+          <div class="fs-field">
+            <label for="fs-max-stops">Max stops</label>
+            <select id="fs-max-stops">
+              <option value="1">1 stop</option>
+              <option value="2">2 stops</option>
+            </select>
+          </div>
 
-        <div class="fs-field">
-          <label for="fs-start">Start date</label>
-          <input id="fs-start" type="date" value={defaultStart} />
-        </div>
+          <div class="fs-field">
+            <label for="fs-topn">Results / date</label>
+            <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
+          </div>
 
-        <div class="fs-field fs-field-days">
-          <label for="fs-days">Days <span id="fs-days-value">{DEFAULT_FORM.days}</span></label>
-          <input
-            id="fs-days"
-            type="range"
-            min="1"
-            max="14"
-            value={String(DEFAULT_FORM.days)}
-            aria-valuemin="1"
-            aria-valuemax="14"
-            aria-valuenow={String(DEFAULT_FORM.days)}
-          />
-        </div>
+          <div class="fs-toggles">
+            <label class="fs-check" id="fs-unverified-wrap">
+              <input id="fs-unverified" type="checkbox" />
+              <span>Include unverified seats</span>
+            </label>
 
-        <div class="fs-field">
-          <label for="fs-max-stops">Max stops</label>
-          <select id="fs-max-stops">
-            <option value="1">1 stop</option>
-            <option value="2">2 stops</option>
-          </select>
-        </div>
+            <label class="fs-check">
+              <input id="fs-deep" type="checkbox" />
+              <span>Deep search</span>
+            </label>
+          </div>
 
-        <div class="fs-field">
-          <label for="fs-topn">Top N / date</label>
-          <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
-        </div>
-
-        <label class="fs-check" id="fs-unverified-wrap">
-          <input id="fs-unverified" type="checkbox" />
-          Include unverified seats
-        </label>
-
-        <label class="fs-check">
-          <input id="fs-deep" type="checkbox" />
-          Deep search
-        </label>
-
-        <div class="fs-actions">
-          <button type="button" class="fs-btn" id="fs-plan">Plan</button>
-          <button type="button" class="fs-btn fs-btn-primary" id="fs-run" disabled>Run</button>
+          <div class="fs-actions">
+            <button type="button" class="fs-btn" id="fs-plan">Plan</button>
+            <button type="button" class="fs-btn fs-btn-primary" id="fs-run" disabled>Run search</button>
+          </div>
         </div>
       </form>
 
-      <p class="fs-plan-summary" id="fs-plan-summary">
-        Plan the search to see call count and budget.
-      </p>
-      <div id="fs-banners"></div>
-      <p class="fs-progress" id="fs-progress"></p>
+      <div class="fs-status" aria-live="polite">
+        <p class="fs-plan-summary" id="fs-plan-summary">
+          Plan the search to see call count and budget.
+        </p>
+        <div id="fs-banners"></div>
+        <p class="fs-progress" id="fs-progress"></p>
+      </div>
       <div id="fs-results" aria-live="polite"></div>
       <div class="fs-footer-stats" id="fs-footer"></div>
     </div>
