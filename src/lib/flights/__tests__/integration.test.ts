@@ -21,7 +21,7 @@ describe("integration: fake provider through pipeline", () => {
       dest: "JFK",
       dateRange: { start: "2026-07-23", days: 1 },
     });
-    expect(plan.callCount).toBe(1);
+    expect(plan.callCount).toBe(2);
 
     const raw = JSON.parse(
       readFileSync(join(fixturesDir, "business-eze-jfk.json"), "utf8"),

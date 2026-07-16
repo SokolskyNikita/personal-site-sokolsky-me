@@ -12,9 +12,10 @@ export const DEFAULT_CACHE_TTL_SECONDS = 60 * 60;
 
 /**
  * Global daily SerpApi call budget.
- * A default EZE→gateway 7-day plan is ~28 live calls; 14 days ~56.
- * The largest 14-day registry pair (USA 35 × Schengen/EU 40) is 224 calls.
- * 10,000 permits 44 fully uncached largest searches while capping runaway spend.
+ * A default Buenos Aires→gateway plan is ~32 live calls at 7 days after the
+ * selected date, or ~60 at 14 days after it. The largest 14-day registry pair
+ * (USA 35 × Schengen/EU 40) is 240 calls. 10,000 permits 41 fully uncached
+ * largest searches while capping runaway spend.
  */
 export const DEFAULT_DAILY_BUDGET = 10_000;
 

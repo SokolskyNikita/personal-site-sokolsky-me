@@ -80,7 +80,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   populateSelects(root);
   let form = formStateFromSearchParams(
     new URLSearchParams(location.search),
-    tomorrowLocalDate(),
+    todayLocalDate(),
   );
   applyFormToDom(root, form);
   syncDaysLabel(daysInput, daysValue);
@@ -555,7 +555,7 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
 
   const startInput = root.querySelector<HTMLInputElement>("#fs-start");
   if (startInput) {
-    const min = tomorrowLocalDate();
+    const min = todayLocalDate();
     startInput.min = min;
     if (form.start < min) {
       startInput.value = min;
@@ -646,12 +646,11 @@ function syncDaysLabel(
   daysInput.setAttribute("aria-valuenow", daysInput.value);
 }
 
-function tomorrowLocalDate(): string {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const y = tomorrow.getFullYear();
-  const m = String(tomorrow.getMonth() + 1).padStart(2, "0");
-  const d = String(tomorrow.getDate()).padStart(2, "0");
+function todayLocalDate(): string {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, "0");
+  const d = String(today.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 

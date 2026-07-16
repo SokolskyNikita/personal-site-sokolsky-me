@@ -8,14 +8,15 @@ import { planSearch } from "../planner";
 import { DEFAULT_FORM } from "../url";
 
 describe("planSearch", () => {
-  it("covers seven future dates without counting the current day", () => {
+  it("covers the selected date plus seven days after it", () => {
     const plan = planSearch({
       origin: "EZE",
       dest: "JFK",
-      dateRange: { start: "2026-07-17", days: 7 },
+      dateRange: { start: "2026-07-16", days: 7 },
     });
 
     expect(plan.dates).toEqual([
+      "2026-07-16",
       "2026-07-17",
       "2026-07-18",
       "2026-07-19",
@@ -29,21 +30,26 @@ describe("planSearch", () => {
   it("computes exact cross-product call count with multi-batch sets on both sides", () => {
     // Schengen/EU = 40 airports → 4 batches at size 10
     // Canada = 6 airports → 1 batch
-    // 3 days → 4 × 1 × 3 = 12
+    // Selected date + 3 days → 4 × 1 × 4 = 16
     const plan = planSearch({
       origin: "schengen-eu-gateways",
       dest: "canada-gateways",
       dateRange: { start: "2026-07-20", days: 3 },
     });
-    expect(plan.callCount).toBe(12);
-    expect(plan.steps).toHaveLength(12);
-    expect(plan.dates).toEqual(["2026-07-20", "2026-07-21", "2026-07-22"]);
+    expect(plan.callCount).toBe(16);
+    expect(plan.steps).toHaveLength(16);
+    expect(plan.dates).toEqual([
+      "2026-07-20",
+      "2026-07-21",
+      "2026-07-22",
+      "2026-07-23",
+    ]);
   });
 
   it("batches both endpoints when sets exceed batch size", () => {
     // default dest registry = 35 airports → 4 batches
     // EZE = 1 → 1 batch
-    // 7 days → 4 × 1 × 7 = 28
+    // Selected date + 7 days → 4 × 1 × 8 = 32
     const plan = planSearch(
       {
         origin: "EZE",
@@ -53,7 +59,7 @@ describe("planSearch", () => {
       MAX_AIRPORTS_PER_BATCH,
     );
     expect(plan.destAirports).toHaveLength(35);
-    expect(plan.callCount).toBe(28);
+    expect(plan.callCount).toBe(32);
     expect(plan.steps[0]!.destBatch).toHaveLength(10);
     expect(plan.steps[1]!.destBatch).toHaveLength(10);
     expect(plan.steps[2]!.destBatch).toHaveLength(10);
@@ -62,7 +68,7 @@ describe("planSearch", () => {
 
   it("uses a smaller batch size for call-count math proof", () => {
     // 40 origin airports / batch 2 = 20 batches; 6 dest / batch 2 = 3 batches
-    // 2 days → 20 × 3 × 2 = 120
+    // Selected date + 2 days → 20 × 3 × 3 = 180
     const plan = planSearch(
       {
         origin: "schengen-eu-gateways",
@@ -73,7 +79,7 @@ describe("planSearch", () => {
     );
     expect(plan.originAirports).toHaveLength(40);
     expect(plan.destAirports).toHaveLength(6);
-    expect(plan.callCount).toBe(120);
+    expect(plan.callCount).toBe(180);
   });
 
   it("keeps the largest registry search within configured limits", () => {
@@ -83,7 +89,7 @@ describe("planSearch", () => {
       dateRange: { start: "2026-08-01", days: 14 },
     });
 
-    expect(plan.callCount).toBe(224);
+    expect(plan.callCount).toBe(240);
     expect(DEFAULT_RATE_LIMIT_PER_MINUTE).toBeGreaterThanOrEqual(plan.callCount);
     expect(DEFAULT_DAILY_BUDGET).toBeGreaterThanOrEqual(plan.callCount * 4);
   });

@@ -12,11 +12,11 @@ afterEach(() => {
 });
 
 describe("spec ↔ URL round-trip", () => {
-  it("starts the default search tomorrow so the window excludes today", () => {
+  it("starts the default search today", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
 
-    expect(defaultFormState().start).toBe("2026-07-17");
+    expect(defaultFormState().start).toBe("2026-07-16");
   });
 
   it("round-trips cabin and lieFlatPolicy explicitly", () => {

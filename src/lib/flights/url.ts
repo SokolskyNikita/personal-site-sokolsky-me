@@ -23,10 +23,8 @@ export const DEFAULT_FORM = {
   hl: "en",
 };
 
-function tomorrowUtc(): string {
-  const date = new Date();
-  date.setUTCDate(date.getUTCDate() + 1);
-  return date.toISOString().slice(0, 10);
+function todayUtc(): string {
+  return new Date().toISOString().slice(0, 10);
 }
 
 export type FormState = {
@@ -46,7 +44,7 @@ export type FormState = {
   hl: string;
 };
 
-export function defaultFormState(start = tomorrowUtc()): FormState {
+export function defaultFormState(start = todayUtc()): FormState {
   const mode = getSearchMode(DEFAULT_FORM.mode)!;
   return {
     origin: DEFAULT_FORM.origin,
@@ -106,7 +104,7 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
 
 export function formStateFromSearchParams(
   params: URLSearchParams,
-  fallbackStart = tomorrowUtc(),
+  fallbackStart = todayUtc(),
 ): FormState {
   const base = defaultFormState(fallbackStart);
   const modeId = params.get("mode") ?? base.mode;

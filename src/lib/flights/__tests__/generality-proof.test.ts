@@ -33,7 +33,7 @@ describe("generality proof: Schengen/EU → Mexico", () => {
       dest: "mexico-gateways",
       dateRange: { start: "2026-07-20", days: 2 },
     });
-    expect(plan.callCount).toBe(8);
+    expect(plan.callCount).toBe(12);
     expect(plan.originAirports).toContain("CDG");
     expect(plan.destAirports).toContain("MEX");
   });

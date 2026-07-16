@@ -15,7 +15,8 @@ function enumerateDates(start: string, days: number): string[] {
   const dates: string[] = [];
   const [y, m, d] = start.split("-").map(Number);
   const cursor = new Date(Date.UTC(y!, m! - 1, d!));
-  for (let i = 0; i < days; i++) {
+  // `days` is the number of days after the selected start date.
+  for (let i = 0; i <= days; i++) {
     const year = cursor.getUTCFullYear();
     const month = String(cursor.getUTCMonth() + 1).padStart(2, "0");
     const day = String(cursor.getUTCDate()).padStart(2, "0");
