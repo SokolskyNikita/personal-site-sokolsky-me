@@ -15,7 +15,7 @@ const fixturesDir = join(
 );
 
 /**
- * Generality proof (invariant 9): a composed non-USA pair requires ONLY
+ * Generality proof (invariant 9): a composed sample region pair requires ONLY
  * registry data — resolver → planner → classifier → policy → grouping.
  */
 describe("generality proof: western-europe-sample → south-america-sample", () => {

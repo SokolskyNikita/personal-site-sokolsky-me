@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MAX_AIRPORTS_PER_BATCH } from "../constants";
 import { planSearch } from "../planner";
+import { DEFAULT_FORM } from "../url";
 
 describe("planSearch", () => {
   it("computes exact cross-product call count with multi-batch sets on both sides", () => {
@@ -18,13 +19,13 @@ describe("planSearch", () => {
   });
 
   it("batches both endpoints when sets exceed batch size", () => {
-    // usa-gateways = 16 airports → 2 batches of 10
+    // default dest registry = 16 airports → 2 batches of 10
     // EZE = 1 → 1 batch
     // 7 days → 2 × 1 × 7 = 14
     const plan = planSearch(
       {
         origin: "EZE",
-        dest: "usa-gateways",
+        dest: DEFAULT_FORM.dest,
         dateRange: { start: "2026-07-20", days: 7 },
       },
       MAX_AIRPORTS_PER_BATCH,

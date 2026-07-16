@@ -1,4 +1,10 @@
-export interface Env {
+import {
+  handleFlightApi,
+  isFlightApiPath,
+  type FlightEnv,
+} from "./lib/flights/api";
+
+export interface Env extends FlightEnv {
   ASSETS: AssetFetcher;
   AI_COMPASS_DB?: D1Database;
 }
@@ -67,14 +73,12 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
-    // Enforce HTTPS and canonical apex host at the edge.
-    if (url.protocol === "http:") {
-      url.protocol = "https:";
-      return Response.redirect(url.toString(), 301);
-    }
-
+    // Apex canonicalization. HTTPS is enforced at the Cloudflare zone
+    // ("Always Use HTTPS"); doing it here breaks `wrangler dev` because routes
+    // rewrite the request hostname to sokolsky.me even for localhost clients.
     if (url.hostname === "www.sokolsky.me") {
       url.hostname = "sokolsky.me";
+      if (url.protocol === "http:") url.protocol = "https:";
       return Response.redirect(url.toString(), 301);
     }
 
@@ -101,6 +105,10 @@ export default {
 
     if (url.pathname === ARCHETYPE_QUIZ_RESULT_PATH) {
       return handleArchetypeQuizResult(request, env, url);
+    }
+
+    if (isFlightApiPath(url.pathname)) {
+      return handleFlightApi(request, env, url);
     }
 
     if (isPrivatePath(url.pathname)) {

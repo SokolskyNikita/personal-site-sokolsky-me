@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_FORM,
   defaultFormState,
   formStateFromSearchParams,
   formStateToLegSearch,
@@ -9,8 +10,8 @@ import {
 describe("spec ↔ URL round-trip", () => {
   it("round-trips cabin and lieFlatPolicy explicitly", () => {
     const form = defaultFormState("2026-07-20");
-    form.origin = "EZE";
-    form.dest = "usa-gateways";
+    form.origin = DEFAULT_FORM.origin;
+    form.dest = DEFAULT_FORM.dest;
     form.mode = "business-lie-flat";
     form.cabin = "business";
     form.lieFlatPolicy = "all_segments";
@@ -29,8 +30,8 @@ describe("spec ↔ URL round-trip", () => {
     expect(restored.lieFlatPolicy).toBe("all_segments");
     expect(restored.mode).toBe("business-lie-flat");
     expect(restored.deepSearch).toBe(true);
-    expect(restored.origin).toBe("EZE");
-    expect(restored.dest).toBe("usa-gateways");
+    expect(restored.origin).toBe(DEFAULT_FORM.origin);
+    expect(restored.dest).toBe(DEFAULT_FORM.dest);
 
     const spec = formStateToLegSearch(restored);
     expect(spec.cabin).toBe("business");

@@ -47,7 +47,10 @@ const TRAVEL_CLASS_TO_CABIN: Record<string, Cabin> = {
   first: "first",
 };
 
-export type SerpApiFetch = (url: string) => Promise<Response>;
+export type SerpApiFetch = (
+  url: string,
+  init?: RequestInit,
+) => Promise<Response>;
 
 export type SerpApiProviderOptions = {
   apiKey: string;
@@ -262,7 +265,9 @@ export class SerpApiProvider implements FlightProvider {
 
   constructor(options: SerpApiProviderOptions) {
     this.apiKey = options.apiKey;
-    this.fetchImpl = options.fetchImpl ?? fetch;
+    // Wrap global fetch — passing `fetch` unbound throws Illegal invocation on Workers.
+    this.fetchImpl =
+      options.fetchImpl ?? ((url, init) => globalThis.fetch(url, init));
     this.baseUrl = options.baseUrl ?? "https://serpapi.com/search.json";
     this.onDebug = options.onDebug;
   }
@@ -325,7 +330,7 @@ export class SerpApiProvider implements FlightProvider {
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 25_000);
-        const response = await this.fetchImpl(url);
+        const response = await this.fetchImpl(url, { signal: controller.signal });
         clearTimeout(timer);
 
         if (response.status === 429 || response.status >= 500) {
