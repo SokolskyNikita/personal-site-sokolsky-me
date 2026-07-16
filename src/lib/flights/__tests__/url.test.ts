@@ -94,6 +94,15 @@ describe("spec ↔ URL round-trip", () => {
     expect(form.maxTotalHours).toBe(24);
   });
 
+  it("accepts an 18-hour itinerary limit", () => {
+    const form = formStateFromSearchParams(
+      new URLSearchParams({ maxTotalHours: "18" }),
+    );
+
+    expect(form.maxTotalHours).toBe(18);
+    expect(formStateToLegSearch(form).maxTotalHours).toBe(18);
+  });
+
   it("preserves an explicitly disabled deep search", () => {
     const form = defaultFormState("2026-07-20");
     form.deepSearch = false;
