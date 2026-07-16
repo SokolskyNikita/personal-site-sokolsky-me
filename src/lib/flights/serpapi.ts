@@ -56,6 +56,9 @@ export type SerpApiProviderOptions = {
   apiKey: string;
   fetchImpl?: SerpApiFetch;
   baseUrl?: string;
+  retryAttempts?: number;
+  retryBaseDelayMs?: number;
+  requestTimeoutMs?: number;
   /** Called when an itinerary is dropped for missing price. */
   onDebug?: (message: string) => void;
 };
@@ -262,6 +265,9 @@ export class SerpApiProvider implements FlightProvider {
   private readonly fetchImpl: SerpApiFetch;
   private readonly baseUrl: string;
   private readonly onDebug?: (message: string) => void;
+  private readonly retryAttempts: number;
+  private readonly retryBaseDelayMs: number;
+  private readonly requestTimeoutMs: number;
 
   constructor(options: SerpApiProviderOptions) {
     this.apiKey = options.apiKey;
@@ -270,6 +276,9 @@ export class SerpApiProvider implements FlightProvider {
       options.fetchImpl ?? ((url, init) => globalThis.fetch(url, init));
     this.baseUrl = options.baseUrl ?? "https://serpapi.com/search.json";
     this.onDebug = options.onDebug;
+    this.retryAttempts = Math.max(1, options.retryAttempts ?? 4);
+    this.retryBaseDelayMs = Math.max(0, options.retryBaseDelayMs ?? 750);
+    this.requestTimeoutMs = Math.max(1, options.requestTimeoutMs ?? 45_000);
   }
 
   async search(spec: LegSearch): Promise<ItineraryOption[]> {
@@ -324,22 +333,28 @@ export class SerpApiProvider implements FlightProvider {
     return { options, raw };
   }
 
-  private async fetchWithRetry(url: string, attempts = 2): Promise<unknown> {
+  private async fetchWithRetry(url: string): Promise<unknown> {
     let lastError: Error | undefined;
-    for (let i = 0; i < attempts; i++) {
+    for (let i = 0; i < this.retryAttempts; i++) {
+      const attempt = i + 1;
+      const requestUrl = i === 0 ? url : withoutSerpApiCache(url);
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 25_000);
-        const response = await this.fetchImpl(url, { signal: controller.signal });
-        clearTimeout(timer);
+        const timer = setTimeout(
+          () => controller.abort(),
+          this.requestTimeoutMs,
+        );
+        let response: Response;
+        try {
+          response = await this.fetchImpl(requestUrl, {
+            signal: controller.signal,
+          });
+        } finally {
+          clearTimeout(timer);
+        }
 
-        if (response.status === 429 || response.status >= 500) {
-          lastError = new Error(`SerpApi HTTP ${response.status}`);
-          if (i < attempts - 1) {
-            await sleep(500 * (i + 1));
-            continue;
-          }
-          throw lastError;
+        if (isRetryableStatus(response.status)) {
+          throw new RetryableSerpApiError(`SerpApi HTTP ${response.status}`);
         }
 
         if (!response.ok) {
@@ -348,19 +363,53 @@ export class SerpApiProvider implements FlightProvider {
 
         const data = (await response.json()) as SerpApiResponse;
         if (data.error) {
+          if (isRetryableSerpApiMessage(data.error)) {
+            throw new RetryableSerpApiError(data.error);
+          }
           throw new Error(data.error);
         }
         return data;
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
-        if (i < attempts - 1) {
-          await sleep(500 * (i + 1));
-          continue;
-        }
+        const canRetry =
+          attempt < this.retryAttempts && isRetryableError(lastError);
+        if (!canRetry) break;
+
+        const delay = this.retryBaseDelayMs * 2 ** i;
+        this.onDebug?.(
+          `SerpApi attempt ${attempt} failed; retrying in ${delay}ms: ${lastError.message}`,
+        );
+        await sleep(delay);
       }
     }
     throw lastError ?? new Error("SerpApi fetch failed");
   }
+}
+
+class RetryableSerpApiError extends Error {}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+function isRetryableSerpApiMessage(message: string): boolean {
+  return /hasn't returned any results|timed? ?out|temporar|try again|unavailable/i.test(
+    message,
+  );
+}
+
+function isRetryableError(error: Error): boolean {
+  return (
+    error instanceof RetryableSerpApiError ||
+    error.name === "AbortError" ||
+    error instanceof TypeError
+  );
+}
+
+function withoutSerpApiCache(url: string): string {
+  const retryUrl = new URL(url);
+  retryUrl.searchParams.set("no_cache", "true");
+  return retryUrl.toString();
 }
 
 function sleep(ms: number): Promise<void> {

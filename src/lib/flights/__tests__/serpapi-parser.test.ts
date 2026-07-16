@@ -3,7 +3,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { classifySeat } from "../classifier";
-import { dedupeItineraries, parseSerpApiResponse } from "../serpapi";
+import {
+  dedupeItineraries,
+  parseSerpApiResponse,
+  SerpApiProvider,
+} from "../serpapi";
 
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), "../__fixtures__");
 
@@ -116,5 +120,64 @@ describe("real amenity strings from fixtures", () => {
     expect(classifySeat(["Below average legroom (28 in)"])).toBe("not_lie_flat");
     expect(classifySeat(["Average legroom (31 in)"])).toBe("not_lie_flat");
     expect(classifySeat(["Above average legroom (32 in)"])).toBe("not_lie_flat");
+  });
+});
+
+describe("SerpApiProvider retries", () => {
+  const step = {
+    originBatch: ["EZE"],
+    destBatch: ["JFK"],
+    date: "2026-07-23",
+    cabin: "business" as const,
+    maxStops: 1 as const,
+    currency: "USD",
+    gl: "us",
+    hl: "en",
+    deepSearch: true,
+  };
+
+  it("retries transient Google Flights errors without SerpApi cache", async () => {
+    const urls: string[] = [];
+    let calls = 0;
+    const provider = new SerpApiProvider({
+      apiKey: "test",
+      retryAttempts: 4,
+      retryBaseDelayMs: 0,
+      fetchImpl: async (url) => {
+        urls.push(url);
+        calls += 1;
+        const body =
+          calls < 3
+            ? { error: "Google Flights hasn't returned any results for this query." }
+            : { best_flights: [] };
+        return new Response(JSON.stringify(body), { status: 200 });
+      },
+    });
+
+    await expect(provider.searchStep(step)).resolves.toMatchObject({
+      options: [],
+    });
+    expect(calls).toBe(3);
+    expect(new URL(urls[0]!).searchParams.has("no_cache")).toBe(false);
+    expect(new URL(urls[1]!).searchParams.get("no_cache")).toBe("true");
+    expect(new URL(urls[2]!).searchParams.get("no_cache")).toBe("true");
+  });
+
+  it("does not retry permanent SerpApi errors", async () => {
+    let calls = 0;
+    const provider = new SerpApiProvider({
+      apiKey: "test",
+      retryAttempts: 4,
+      retryBaseDelayMs: 0,
+      fetchImpl: async () => {
+        calls += 1;
+        return new Response(JSON.stringify({ error: "Invalid API key" }), {
+          status: 200,
+        });
+      },
+    });
+
+    await expect(provider.searchStep(step)).rejects.toThrow("Invalid API key");
+    expect(calls).toBe(1);
   });
 });
