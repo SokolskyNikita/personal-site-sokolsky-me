@@ -1,4 +1,9 @@
-import type { ItineraryOption, LieFlatPolicy, Segment } from "./types";
+import type {
+  ItineraryOption,
+  LieFlatPolicy,
+  MaxTotalHours,
+  Segment,
+} from "./types";
 
 export type PolicyFilterResult = {
   passes: boolean;
@@ -84,4 +89,14 @@ export function filterByLieFlatPolicy(
     }
   }
   return out;
+}
+
+export function filterByMaxTotalHours(
+  options: ItineraryOption[],
+  maxTotalHours: MaxTotalHours,
+): ItineraryOption[] {
+  const maxMinutes = maxTotalHours * 60;
+  return options.filter(
+    (option) => option.totalDurationMinutes <= maxMinutes,
+  );
 }

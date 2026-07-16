@@ -13,7 +13,7 @@ import {
   type FlightKv,
 } from "./kv";
 import { planSearch } from "./planner";
-import { filterByLieFlatPolicy } from "./policy";
+import { filterByLieFlatPolicy, filterByMaxTotalHours } from "./policy";
 import {
   parseSerpApiResponse,
   SerpApiProvider,
@@ -243,10 +243,14 @@ async function handleQuery(
     currency: spec.currency,
     departureDate: step.date,
   });
-  const options = filterByLieFlatPolicy(
+  const durationFilteredOptions = filterByMaxTotalHours(
     parsedOptions,
+    spec.maxTotalHours,
+  );
+  const options = filterByLieFlatPolicy(
+    durationFilteredOptions,
     spec.lieFlatPolicy,
-    spec.includeUnverified,
+    false,
   );
 
   const budgetLimit = Number(env.FLIGHT_DAILY_BUDGET) || DEFAULT_DAILY_BUDGET;

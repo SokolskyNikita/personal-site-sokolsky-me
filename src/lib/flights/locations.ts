@@ -44,6 +44,18 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     label: "SF (all airports)",
     airports: ["SFO", "OAK", "SJC"],
   },
+  tashkent: {
+    id: "tashkent",
+    type: "city",
+    label: "Tashkent (all airports)",
+    airports: ["TAS", "TVT"],
+  },
+  prague: {
+    id: "prague",
+    type: "city",
+    label: "Prague (all airports)",
+    airports: ["PRG", "VOD"],
+  },
   "usa-gateways": {
     id: "usa-gateways",
     type: "country",
@@ -365,6 +377,9 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   KMG: "Kunming",
   XIY: "Xi’an",
   TPE: "Taipei",
+  TAS: "Tashkent",
+  TVT: "Tashkent",
+  VOD: "Prague",
 };
 
 export function airportLabel(code: string): string {

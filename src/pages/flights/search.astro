@@ -1,5 +1,6 @@
 ---
 import "../../styles/flights-search.css";
+import { MAX_TOTAL_HOURS_OPTIONS } from "../../lib/flights/types";
 import { DEFAULT_FORM } from "../../lib/flights/url";
 
 export const prerender = true;
@@ -130,20 +131,53 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           </div>
 
           <div class="fs-field">
+            <label for="fs-max-hours">Max total hours</label>
+            <select id="fs-max-hours">
+              {
+                MAX_TOTAL_HOURS_OPTIONS.map((hours) => (
+                  <option
+                    value={String(hours)}
+                    selected={hours === DEFAULT_FORM.maxTotalHours}
+                  >
+                    {hours}h
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div class="fs-field">
             <label for="fs-topn">Results / date</label>
             <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
           </div>
 
           <div class="fs-toggles">
-            <label class="fs-check" id="fs-unverified-wrap">
-              <input id="fs-unverified" type="checkbox" />
-              <span>Include unverified seats</span>
-            </label>
-
-            <label class="fs-check">
-              <input id="fs-deep" type="checkbox" />
-              <span>Deep search</span>
-            </label>
+            <div class="fs-check-help">
+              <label class="fs-check">
+                <input id="fs-deep" type="checkbox" />
+                <span>Deep search</span>
+              </label>
+              <div class="fs-help">
+                <button
+                  type="button"
+                  aria-label="What deep search does"
+                  aria-describedby="fs-deep-help"
+                ></button>
+                <div class="fs-help-popover" id="fs-deep-help" role="tooltip">
+                  <strong>More complete, but slower.</strong>
+                  <span>
+                    Waits for Google Flights to load fully so results more closely
+                    match the browser. It does not widen dates or airports or make
+                    extra search calls.
+                  </span>
+                  <a
+                    href="https://serpapi.com/google-flights-api"
+                    target="_blank"
+                    rel="noopener noreferrer">SerpApi docs ↗</a
+                  >
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="fs-actions">
@@ -161,6 +195,23 @@ const defaultStart = new Date().toISOString().slice(0, 10);
       </div>
       <div id="fs-results" aria-live="polite"></div>
       <div class="fs-footer-stats" id="fs-footer"></div>
+
+      <div class="fs-search-progress" id="fs-search-progress" hidden>
+        <div class="fs-search-progress-copy">
+          <strong id="fs-search-progress-label">Preparing search</strong>
+          <span id="fs-search-progress-count"></span>
+        </div>
+        <div
+          class="fs-search-progress-track"
+          id="fs-search-progress-track"
+          role="progressbar"
+          aria-label="Flight search progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <span id="fs-search-progress-fill"></span>
+        </div>
+      </div>
     </div>
 
     <script>

@@ -1,5 +1,12 @@
 import { DEFAULT_SEARCH_MODE_ID, getSearchMode } from "./modes";
-import { LegSearchSchema, type Cabin, type LegSearch, type LieFlatPolicy } from "./types";
+import {
+  LegSearchSchema,
+  MAX_TOTAL_HOURS_OPTIONS,
+  type Cabin,
+  type LegSearch,
+  type LieFlatPolicy,
+  type MaxTotalHours,
+} from "./types";
 
 /** Form defaults — "usa" string allowed only here and in locations registry. */
 export const DEFAULT_FORM = {
@@ -8,7 +15,7 @@ export const DEFAULT_FORM = {
   mode: DEFAULT_SEARCH_MODE_ID,
   days: 7,
   maxStops: 1 as 1 | 2,
-  includeUnverified: false,
+  maxTotalHours: 24 as MaxTotalHours,
   deepSearch: false,
   topN: 2,
   currency: "USD",
@@ -29,7 +36,7 @@ export type FormState = {
   start: string;
   days: number;
   maxStops: 1 | 2;
-  includeUnverified: boolean;
+  maxTotalHours: MaxTotalHours;
   deepSearch: boolean;
   topN: number;
   currency: string;
@@ -48,7 +55,7 @@ export function defaultFormState(start = todayUtc()): FormState {
     start,
     days: DEFAULT_FORM.days,
     maxStops: DEFAULT_FORM.maxStops,
-    includeUnverified: DEFAULT_FORM.includeUnverified,
+    maxTotalHours: DEFAULT_FORM.maxTotalHours,
     deepSearch: DEFAULT_FORM.deepSearch,
     topN: DEFAULT_FORM.topN,
     currency: DEFAULT_FORM.currency,
@@ -63,9 +70,10 @@ export function formStateToLegSearch(form: FormState): LegSearch {
     dest: form.dest,
     dateRange: { start: form.start, days: form.days },
     maxStops: form.maxStops,
+    maxTotalHours: form.maxTotalHours,
     cabin: form.cabin,
     lieFlatPolicy: form.lieFlatPolicy,
-    includeUnverified: form.includeUnverified,
+    includeUnverified: false,
     currency: form.currency,
     gl: form.gl,
     hl: form.hl,
@@ -85,11 +93,11 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
   params.set("start", form.start);
   params.set("days", String(form.days));
   params.set("maxStops", String(form.maxStops));
+  params.set("maxTotalHours", String(form.maxTotalHours));
   params.set("topN", String(form.topN));
   params.set("currency", form.currency);
   params.set("gl", form.gl);
   params.set("hl", form.hl);
-  if (form.includeUnverified) params.set("includeUnverified", "1");
   if (form.deepSearch) params.set("deepSearch", "1");
   return params;
 }
@@ -123,13 +131,26 @@ export function formStateFromSearchParams(
     start: params.get("start") ?? base.start,
     days: clampInt(params.get("days"), 1, 14, base.days),
     maxStops,
-    includeUnverified: params.get("includeUnverified") === "1",
+    maxTotalHours: parseMaxTotalHours(
+      params.get("maxTotalHours"),
+      base.maxTotalHours,
+    ),
     deepSearch: params.get("deepSearch") === "1",
     topN: clampInt(params.get("topN"), 1, 20, base.topN),
     currency: params.get("currency") ?? base.currency,
     gl: params.get("gl") ?? base.gl,
     hl: params.get("hl") ?? base.hl,
   };
+}
+
+function parseMaxTotalHours(
+  raw: string | null,
+  fallback: MaxTotalHours,
+): MaxTotalHours {
+  const value = Number(raw);
+  return MAX_TOTAL_HOURS_OPTIONS.includes(value as MaxTotalHours)
+    ? (value as MaxTotalHours)
+    : fallback;
 }
 
 function clampInt(

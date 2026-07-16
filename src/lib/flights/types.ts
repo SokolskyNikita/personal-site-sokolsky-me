@@ -33,11 +33,22 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
+export const MAX_TOTAL_HOURS_OPTIONS = [12, 24, 36, 48, 72] as const;
+export const MaxTotalHoursSchema = z.union([
+  z.literal(12),
+  z.literal(24),
+  z.literal(36),
+  z.literal(48),
+  z.literal(72),
+]);
+export type MaxTotalHours = z.infer<typeof MaxTotalHoursSchema>;
+
 export const LegSearchSchema = z.object({
   origin: LocationRefSchema,
   dest: LocationRefSchema,
   dateRange: DateRangeSchema,
   maxStops: z.union([z.literal(1), z.literal(2)]),
+  maxTotalHours: MaxTotalHoursSchema.default(24),
   cabin: CabinSchema,
   lieFlatPolicy: LieFlatPolicySchema,
   includeUnverified: z.boolean().default(false),

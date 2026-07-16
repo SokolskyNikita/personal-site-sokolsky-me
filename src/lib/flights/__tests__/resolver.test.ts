@@ -33,6 +33,14 @@ describe("resolveLocation", () => {
     expect(resolveLocation("san-francisco")).toEqual(["SFO", "OAK", "SJC"]);
   });
 
+  it("resolves Tashkent to both valid IATA airports", () => {
+    expect(resolveLocation("tashkent")).toEqual(["TAS", "TVT"]);
+  });
+
+  it("resolves Prague to both valid IATA airports", () => {
+    expect(resolveLocation("prague")).toEqual(["PRG", "VOD"]);
+  });
+
   it("resolves gateway registries", () => {
     expect(resolveLocation("usa-gateways")).toHaveLength(35);
     expect(resolveLocation("canada-gateways")).toEqual([

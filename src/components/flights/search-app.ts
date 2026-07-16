@@ -10,7 +10,14 @@ import {
   getSearchMode,
   modeInvolvesLieFlat,
 } from "../../lib/flights/modes";
-import type { ItineraryOption, LegSearch, PlanStep, QueryPlan } from "../../lib/flights/types";
+import {
+  MAX_TOTAL_HOURS_OPTIONS,
+  type ItineraryOption,
+  type LegSearch,
+  type MaxTotalHours,
+  type PlanStep,
+  type QueryPlan,
+} from "../../lib/flights/types";
 import {
   DEFAULT_FORM,
   defaultFormState,
@@ -54,16 +61,28 @@ export function mountFlightSearch(root: HTMLElement): void {
   const results = root.querySelector<HTMLElement>("#fs-results")!;
   const footer = root.querySelector<HTMLElement>("#fs-footer")!;
   const runBtn = root.querySelector<HTMLButtonElement>("#fs-run")!;
-  const unverifiedWrap = root.querySelector<HTMLElement>("#fs-unverified-wrap")!;
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days")!;
   const daysValue = root.querySelector<HTMLElement>("#fs-days-value")!;
+  const progressDock = root.querySelector<HTMLElement>("#fs-search-progress")!;
+  const progressTrack = root.querySelector<HTMLElement>(
+    "#fs-search-progress-track",
+  )!;
+  const progressFill = root.querySelector<HTMLElement>(
+    "#fs-search-progress-fill",
+  )!;
+  const progressLabel = root.querySelector<HTMLElement>(
+    "#fs-search-progress-label",
+  )!;
+  const progressCount = root.querySelector<HTMLElement>(
+    "#fs-search-progress-count",
+  )!;
 
   populateSelects(root);
   let form = formStateFromSearchParams(new URLSearchParams(location.search));
   applyFormToDom(root, form);
-  syncUnverifiedVisibility(form, unverifiedWrap);
   syncDaysLabel(daysInput, daysValue);
   let isRunning = false;
+  let progressHideTimer: ReturnType<typeof setTimeout> | undefined;
 
   // Registry select wins over leftover IATA text.
   for (const id of ["#fs-origin-reg", "#fs-dest-reg"] as const) {
@@ -108,7 +127,6 @@ export function mountFlightSearch(root: HTMLElement): void {
     form.dest = tmp;
     applyFormToDom(root, form);
     syncUrl(form);
-    syncUnverifiedVisibility(form, unverifiedWrap);
     invalidateSearch();
   });
 
@@ -128,13 +146,13 @@ export function mountFlightSearch(root: HTMLElement): void {
 
   function onFormChanged(): void {
     form = readForm(root, form);
-    syncUnverifiedVisibility(form, unverifiedWrap);
     syncUrl(form);
     invalidateSearch();
   }
 
   function invalidateSearch(): void {
     runBtn.disabled = isRunning;
+    hideSearchProgress();
     searchSummary.textContent = "Cached results are reused automatically.";
     banners.innerHTML = "";
     progress.textContent = "";
@@ -158,11 +176,49 @@ export function mountFlightSearch(root: HTMLElement): void {
     else runBtn.removeAttribute("aria-busy");
   }
 
+  function showSearchProgress(
+    label: string,
+    completed?: number,
+    total?: number,
+  ): void {
+    if (progressHideTimer) clearTimeout(progressHideTimer);
+    progressDock.hidden = false;
+    progressLabel.textContent = label;
+
+    if (typeof completed === "number" && typeof total === "number" && total > 0) {
+      const percent = Math.min(100, Math.max(0, (completed / total) * 100));
+      progressDock.classList.remove("is-indeterminate");
+      progressFill.style.transform = `scaleX(${percent / 100})`;
+      progressCount.textContent = `${completed} of ${total}`;
+      progressTrack.setAttribute("aria-valuenow", String(Math.round(percent)));
+      return;
+    }
+
+    progressDock.classList.add("is-indeterminate");
+    progressFill.style.removeProperty("transform");
+    progressCount.textContent = "";
+    progressTrack.removeAttribute("aria-valuenow");
+  }
+
+  function hideSearchProgress(): void {
+    if (progressHideTimer) clearTimeout(progressHideTimer);
+    progressDock.hidden = true;
+    progressDock.classList.remove("is-indeterminate");
+    progressFill.style.removeProperty("transform");
+    progressTrack.removeAttribute("aria-valuenow");
+  }
+
+  function completeSearchProgress(total: number): void {
+    showSearchProgress("Search complete", total, total);
+    progressHideTimer = setTimeout(hideSearchProgress, 900);
+  }
+
   runBtn.addEventListener("click", async () => {
     form = readForm(root, form);
     const spec = formStateToLegSearch(form);
     syncUrl(form);
     setSearchBusy(true, "Checking…");
+    showSearchProgress("Preparing search");
     banners.innerHTML = "";
     results.innerHTML = "";
     footer.innerHTML = "";
@@ -179,12 +235,14 @@ export function mountFlightSearch(root: HTMLElement): void {
       planData = (await res.json()) as PlanResponse;
     } catch (err) {
       searchSummary.textContent = `Search failed: ${err instanceof Error ? err.message : String(err)}`;
+      hideSearchProgress();
       setSearchBusy(false);
       return;
     }
 
     if (!planData.ok || !planData.plan) {
       searchSummary.textContent = `Search failed: ${planData.message ?? planData.error ?? "unknown error"}`;
+      hideSearchProgress();
       setSearchBusy(false);
       return;
     }
@@ -195,6 +253,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     if (!planData.canRun) {
       searchSummary.textContent = "Search not started.";
       banners.innerHTML = `<div class="fs-banner fs-banner-danger">Uncached calls (${uncached}) exceed remaining daily budget (${remaining}). Reduce the date range or try again later.</div>`;
+      hideSearchProgress();
       setSearchBusy(false);
       return;
     }
@@ -202,6 +261,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     const callLabel = planData.plan.callCount === 1 ? "call" : "calls";
     searchSummary.textContent = `${planData.plan.callCount} ${callLabel} · ${cached} cached · ${remaining} daily budget remaining.`;
     setSearchBusy(true, "Searching…");
+    showSearchProgress("Searching flights", 0, planData.plan.callCount);
     results.setAttribute("aria-busy", "true");
     progress.textContent = "Starting search…";
 
@@ -253,6 +313,11 @@ export function mountFlightSearch(root: HTMLElement): void {
       }
 
       progress.textContent = `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`;
+      showSearchProgress(
+        "Searching flights",
+        completedSteps,
+        planData.plan!.callCount,
+      );
     });
 
     if (allOptions.length === 0) {
@@ -291,6 +356,7 @@ export function mountFlightSearch(root: HTMLElement): void {
 
     progress.textContent = `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
     results.removeAttribute("aria-busy");
+    completeSearchProgress(planData.plan.callCount);
     setSearchBusy(false);
   });
 }
@@ -384,7 +450,6 @@ function renderResults(
             <div class="fs-result-meta">
               <span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>
               <span>${escapeHtml(stopDetail)}</span>
-              ${option.unverified ? '<span class="fs-unverified">Seat unverified</span>' : ""}
             </div>
           </div>
           <div class="fs-result-duration">
@@ -416,7 +481,7 @@ function formatLieFlatSegments(option: ItineraryOption): string {
     (segment) => segment.seatClassification === "lie_flat",
   );
   if (segments.length === 0) {
-    return option.unverified ? "Lie-flat unverified" : "No lie-flat segment";
+    return "No lie-flat segment";
   }
   return `Lie-flat · ${segments
     .map((segment) => {
@@ -481,6 +546,7 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
   setVal(root, "#fs-mode", matchingMode?.id ?? form.mode);
   setVal(root, "#fs-days", String(form.days));
   setVal(root, "#fs-max-stops", String(form.maxStops));
+  setVal(root, "#fs-max-hours", String(form.maxTotalHours));
   setVal(root, "#fs-topn", String(form.topN));
   setVal(root, "#fs-start", form.start);
 
@@ -493,8 +559,6 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
     }
   }
 
-  const unverified = root.querySelector<HTMLInputElement>("#fs-unverified");
-  if (unverified) unverified.checked = form.includeUnverified;
   const deep = root.querySelector<HTMLInputElement>("#fs-deep");
   if (deep) deep.checked = form.deepSearch;
 
@@ -532,6 +596,9 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
   const modeChanged = prev.mode !== mode.id;
   const cabin = modeChanged ? mode.cabin : prev.cabin;
   const lieFlatPolicy = modeChanged ? mode.lieFlatPolicy : prev.lieFlatPolicy;
+  const maxTotalHoursValue = Number(
+    root.querySelector<HTMLSelectElement>("#fs-max-hours")?.value,
+  ) as MaxTotalHours;
 
   const base = defaultFormState(
     root.querySelector<HTMLInputElement>("#fs-start")?.value || undefined,
@@ -551,9 +618,10 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
       2
         ? 2
         : 1,
+    maxTotalHours: MAX_TOTAL_HOURS_OPTIONS.includes(maxTotalHoursValue)
+      ? maxTotalHoursValue
+      : base.maxTotalHours,
     topN: Number(root.querySelector<HTMLInputElement>("#fs-topn")?.value) || 2,
-    includeUnverified:
-      root.querySelector<HTMLInputElement>("#fs-unverified")?.checked ?? false,
     deepSearch:
       root.querySelector<HTMLInputElement>("#fs-deep")?.checked ?? false,
   };
@@ -563,13 +631,6 @@ function syncUrl(form: FormState): void {
   const params = formStateToSearchParams(form);
   const next = `${location.pathname}?${params.toString()}`;
   history.replaceState(null, "", next);
-}
-
-function syncUnverifiedVisibility(
-  form: FormState,
-  wrap: HTMLElement,
-): void {
-  wrap.hidden = !modeInvolvesLieFlat(form.lieFlatPolicy);
 }
 
 function syncDaysLabel(

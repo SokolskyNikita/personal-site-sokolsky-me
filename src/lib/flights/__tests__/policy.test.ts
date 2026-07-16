@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { applyLieFlatPolicy, filterByLieFlatPolicy } from "../policy";
+import {
+  applyLieFlatPolicy,
+  filterByLieFlatPolicy,
+  filterByMaxTotalHours,
+} from "../policy";
 import type { ItineraryOption, Segment } from "../types";
 
 function seg(
@@ -106,5 +110,20 @@ describe("filterByLieFlatPolicy", () => {
       option([seg({ seatClassification: "lie_flat" })]),
     ];
     expect(filterByLieFlatPolicy(options, "none")).toHaveLength(2);
+  });
+});
+
+describe("filterByMaxTotalHours", () => {
+  it("keeps options at the limit and removes longer itineraries", () => {
+    const atLimit = option([
+      seg({ seatClassification: "lie_flat", durationMinutes: 24 * 60 }),
+    ]);
+    const overLimit = option([
+      seg({ seatClassification: "lie_flat", durationMinutes: 24 * 60 + 1 }),
+    ]);
+
+    expect(filterByMaxTotalHours([atLimit, overLimit], 24)).toEqual([
+      atLimit,
+    ]);
   });
 });
