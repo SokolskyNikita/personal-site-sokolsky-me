@@ -33,6 +33,9 @@ export const DateRangeSchema = z.object({
 });
 export type DateRange = z.infer<typeof DateRangeSchema>;
 
+export const TripTypeSchema = z.enum(["one_way", "round_trip"]);
+export type TripType = z.infer<typeof TripTypeSchema>;
+
 export const MAX_TOTAL_HOURS_OPTIONS = [12, 18, 24, 36, 48, 72] as const;
 export const MaxTotalHoursSchema = z.union([
   z.literal(12),
@@ -47,6 +50,8 @@ export type MaxTotalHours = z.infer<typeof MaxTotalHoursSchema>;
 export const LegSearchSchema = z.object({
   origin: LocationRefSchema,
   dest: LocationRefSchema,
+  tripType: TripTypeSchema.default("one_way"),
+  tripLengthDays: z.number().int().min(1).max(30).default(7),
   dateRange: DateRangeSchema,
   maxStops: z.union([z.literal(1), z.literal(2)]),
   maxTotalHours: MaxTotalHoursSchema.default(24),
@@ -93,9 +98,15 @@ export const ItineraryOptionSchema = z.object({
   currency: z.string(),
   provider: z.string(),
   googleFlightsUrl: z.string().optional(),
+  departureToken: z.string().optional(),
+  bookingToken: z.string().optional(),
   departureDate: z.string(),
   destinationAirport: z.string(),
   destinationLabel: z.string().optional(),
+  returnSegments: z.array(SegmentSchema).min(1).optional(),
+  returnLayovers: z.array(LayoverSchema).optional(),
+  returnDurationMinutes: z.number().int().nonnegative().optional(),
+  returnDate: z.string().optional(),
   unverified: z.boolean().default(false),
   raw: z.unknown().optional(),
 });
@@ -104,6 +115,7 @@ export type ItineraryOption = z.infer<typeof ItineraryOptionSchema>;
 export const PlanStepSchema = z.object({
   stepIndex: z.number().int().nonnegative(),
   date: z.string(),
+  returnDate: z.string().optional(),
   originBatch: z.array(z.string()).min(1),
   destBatch: z.array(z.string()).min(1),
 });
@@ -112,6 +124,7 @@ export type PlanStep = z.infer<typeof PlanStepSchema>;
 export const QueryPlanSchema = z.object({
   steps: z.array(PlanStepSchema),
   callCount: z.number().int().nonnegative(),
+  estimatedMaxCalls: z.number().int().nonnegative(),
   originAirports: z.array(z.string()),
   destAirports: z.array(z.string()),
   dates: z.array(z.string()),

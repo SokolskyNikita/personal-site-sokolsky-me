@@ -3,6 +3,7 @@ import {
   isFlightApiPath,
   type FlightEnv,
 } from "./lib/flights/api";
+export { FlightQuotaCoordinator } from "./lib/flights/quota-do";
 
 export interface Env extends FlightEnv {
   ASSETS: AssetFetcher;

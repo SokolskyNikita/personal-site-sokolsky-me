@@ -130,11 +130,19 @@ a {
   border-top: 1px solid color-mix(in srgb, var(--fs-line) 72%, transparent);
 }
 
+.fs-trip-length {
+  min-width: 7.5rem;
+}
+
 .fs-field {
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
   min-width: 0;
+}
+
+.fs-field[hidden] {
+  display: none;
 }
 
 .fs-field label {
@@ -412,6 +420,10 @@ a {
     opacity 160ms ease-out;
 }
 
+.fs-btn[hidden] {
+  display: none;
+}
+
 .fs-btn:not(:disabled):hover {
   border-color: color-mix(in srgb, var(--fs-accent) 60%, var(--fs-line));
   background: color-mix(in srgb, var(--fs-accent) 6%, var(--fs-bg));
@@ -446,9 +458,17 @@ a {
 
 .fs-status,
 #fs-results,
+.fs-trust-note,
 .fs-footer-stats {
   width: min(100%, 60rem);
   margin-inline: auto;
+}
+
+.fs-trust-note {
+  margin-top: 0.8rem;
+  color: var(--fs-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 
 .fs-search-summary {
@@ -465,6 +485,24 @@ a {
 .fs-search-summary a {
   font-weight: 600;
   text-decoration: none;
+}
+
+.fs-error-details {
+  margin-top: 0.55rem;
+  color: var(--fs-muted);
+  font-size: 0.76rem;
+}
+
+.fs-error-details summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--fs-ink);
+  font-weight: 600;
+}
+
+.fs-error-details ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.2rem;
 }
 
 .fs-banner {
@@ -698,6 +736,33 @@ a {
   line-height: 1.35;
 }
 
+.fs-result-return {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 0.22rem 0.55rem;
+  align-items: baseline;
+  margin-top: 0.55rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--fs-line) 65%, transparent);
+  color: var(--fs-muted);
+  font-size: 0.75rem;
+}
+
+.fs-result-return strong {
+  color: var(--fs-ink);
+  font-size: 0.82rem;
+}
+
+.fs-result-return > span:last-child {
+  grid-column: 2 / -1;
+}
+
+.fs-result-leg-label {
+  color: var(--fs-accent);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 .fs-seat-detail {
   color: var(--fs-ok);
   font-weight: 600;
@@ -866,7 +931,12 @@ a {
   .fs-toggles {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0 0.75rem;
+    gap: 0.35rem 0.75rem;
+    align-items: end;
+  }
+
+  .fs-trip-length {
+    grid-column: 1 / -1;
   }
 
   .fs-check {
@@ -953,6 +1023,14 @@ a {
   .fs-result-meta {
     gap: 0.2rem 0.55rem;
     margin-top: 0.4rem;
+  }
+
+  .fs-result-return {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fs-result-return > span:last-child {
+    grid-column: 1;
   }
 
   .fs-result-arrow {

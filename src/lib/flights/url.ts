@@ -6,6 +6,7 @@ import {
   type LegSearch,
   type LieFlatPolicy,
   type MaxTotalHours,
+  type TripType,
 } from "./types";
 
 /** Flight-search form defaults. */
@@ -13,6 +14,8 @@ export const DEFAULT_FORM = {
   origin: "buenos-aires",
   dest: "usa-gateways",
   mode: DEFAULT_SEARCH_MODE_ID,
+  tripType: "one_way" as TripType,
+  tripLengthDays: 7,
   days: 7,
   maxStops: 1 as 1 | 2,
   maxTotalHours: 24 as MaxTotalHours,
@@ -33,6 +36,8 @@ export type FormState = {
   mode: string;
   cabin: Cabin;
   lieFlatPolicy: LieFlatPolicy;
+  tripType: TripType;
+  tripLengthDays: number;
   start: string;
   days: number;
   maxStops: 1 | 2;
@@ -52,6 +57,8 @@ export function defaultFormState(start = todayUtc()): FormState {
     mode: mode.id,
     cabin: mode.cabin,
     lieFlatPolicy: mode.lieFlatPolicy,
+    tripType: DEFAULT_FORM.tripType,
+    tripLengthDays: DEFAULT_FORM.tripLengthDays,
     start,
     days: DEFAULT_FORM.days,
     maxStops: DEFAULT_FORM.maxStops,
@@ -68,6 +75,8 @@ export function formStateToLegSearch(form: FormState): LegSearch {
   return LegSearchSchema.parse({
     origin: form.origin,
     dest: form.dest,
+    tripType: form.tripType,
+    tripLengthDays: form.tripLengthDays,
     dateRange: { start: form.start, days: form.days },
     maxStops: form.maxStops,
     maxTotalHours: form.maxTotalHours,
@@ -90,6 +99,11 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
   params.set("mode", form.mode);
   params.set("cabin", form.cabin);
   params.set("lieFlatPolicy", form.lieFlatPolicy);
+  // One-way is the default; only persist round-trip details when opted in.
+  if (form.tripType === "round_trip") {
+    params.set("tripType", "round_trip");
+    params.set("tripLengthDays", String(form.tripLengthDays));
+  }
   params.set("start", form.start);
   params.set("days", String(form.days));
   params.set("maxStops", String(form.maxStops));
@@ -128,6 +142,14 @@ export function formStateFromSearchParams(
     mode: mode?.id ?? base.mode,
     cabin,
     lieFlatPolicy,
+    tripType:
+      params.get("tripType") === "round_trip" ? "round_trip" : "one_way",
+    tripLengthDays: clampInt(
+      params.get("tripLengthDays"),
+      1,
+      30,
+      base.tripLengthDays,
+    ),
     start: params.get("start") ?? base.start,
     days: clampInt(params.get("days"), 1, 14, base.days),
     maxStops,

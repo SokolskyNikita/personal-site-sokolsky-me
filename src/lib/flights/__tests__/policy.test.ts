@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyLieFlatPolicy,
+  filterByDirectionalLieFlatPolicy,
   filterByLieFlatPolicy,
   filterByMaxTotalHours,
 } from "../policy";
@@ -125,5 +126,25 @@ describe("filterByMaxTotalHours", () => {
     expect(filterByMaxTotalHours([atLimit, overLimit], 24)).toEqual([
       atLimit,
     ]);
+  });
+});
+
+describe("filterByDirectionalLieFlatPolicy", () => {
+  it("requires each round-trip direction to satisfy the policy", () => {
+    const valid = {
+      ...option([seg({ seatClassification: "lie_flat" })]),
+      returnSegments: [seg({ seatClassification: "lie_flat" })],
+    };
+    const invalid = {
+      ...option([seg({ seatClassification: "lie_flat" })]),
+      returnSegments: [seg({ seatClassification: "not_lie_flat" })],
+    };
+
+    expect(
+      filterByDirectionalLieFlatPolicy(
+        [valid, invalid],
+        "any_segment",
+      ),
+    ).toEqual([valid]);
   });
 });

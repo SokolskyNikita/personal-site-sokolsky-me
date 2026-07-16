@@ -1,5 +1,6 @@
 import { CABIN_TO_TRAVEL_CLASS, maxStopsToSerpApiStops } from "./cabin";
 import { classifySeat, extractLegroom } from "./classifier";
+import { ROUND_TRIP_CANDIDATES_PER_STEP } from "./constants";
 import { airportLabel } from "./locations";
 import type {
   Cabin,
@@ -29,6 +30,7 @@ type SerpItinerary = {
   price?: number;
   type?: string;
   booking_token?: string;
+  departure_token?: string;
 };
 type SerpApiResponse = {
   search_metadata?: { google_flights_url?: string; status?: string };
@@ -188,6 +190,8 @@ export function parseSerpApiResponse(
       departureDate,
       destinationAirport: dest,
       destinationLabel: airportLabel(dest),
+      departureToken: raw.departure_token,
+      bookingToken: raw.booking_token,
       unverified: false,
       raw,
     });
@@ -201,12 +205,40 @@ export function dedupeItineraries(options: ItineraryOption[]): ItineraryOption[]
   const seen = new Set<string>();
   const out: ItineraryOption[] = [];
   for (const option of options) {
-    const key = itineraryId(option.segments, option.price);
+    const key = itineraryId(
+      [...option.segments, ...(option.returnSegments ?? [])],
+      option.price,
+    );
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(option);
   }
   return out;
+}
+
+function combineRoundTrip(
+  outbound: ItineraryOption,
+  inbound: ItineraryOption,
+  returnDate: string,
+): ItineraryOption {
+  const returnSegments = inbound.segments;
+  const returnDurationMinutes = inbound.totalDurationMinutes;
+  return {
+    ...outbound,
+    id: `${outbound.id}::${inbound.id}`,
+    price: inbound.price,
+    googleFlightsUrl: inbound.googleFlightsUrl ?? outbound.googleFlightsUrl,
+    bookingToken: inbound.bookingToken,
+    departureToken: undefined,
+    returnSegments,
+    returnLayovers: inbound.layovers,
+    returnDurationMinutes,
+    returnDate: departureDateFromSegments(returnSegments, returnDate),
+    raw: {
+      outbound: outbound.raw,
+      return: inbound.raw,
+    },
+  };
 }
 
 export function buildSerpApiUrl(
@@ -220,16 +252,25 @@ export function buildSerpApiUrl(
     gl: string;
     hl: string;
     deepSearch?: boolean;
+    tripType?: "one_way" | "round_trip";
+    returnDate?: string;
+    departureToken?: string;
     apiKey: string;
   },
   baseUrl = "https://serpapi.com/search.json",
 ): string {
   const url = new URL(baseUrl);
   url.searchParams.set("engine", "google_flights");
-  url.searchParams.set("type", "2");
+  url.searchParams.set("type", params.tripType === "round_trip" ? "1" : "2");
   url.searchParams.set("departure_id", params.departureId);
   url.searchParams.set("arrival_id", params.arrivalId);
   url.searchParams.set("outbound_date", params.outboundDate);
+  if (params.tripType === "round_trip" && params.returnDate) {
+    url.searchParams.set("return_date", params.returnDate);
+  }
+  if (params.departureToken) {
+    url.searchParams.set("departure_token", params.departureToken);
+  }
   url.searchParams.set(
     "travel_class",
     String(CABIN_TO_TRAVEL_CLASS[params.cabin]),
@@ -255,18 +296,24 @@ export function serpApiCacheKey(params: {
   gl: string;
   hl: string;
   deepSearch?: boolean;
+  tripType?: "one_way" | "round_trip";
+  returnDate?: string;
+  topN?: number;
 }): string {
   return [
     "gf",
     params.departureId,
     params.arrivalId,
     params.outboundDate,
+    params.tripType ?? "one_way",
+    params.returnDate ?? "-",
     params.cabin,
     String(params.maxStops),
     params.currency,
     params.gl,
     params.hl,
     params.deepSearch ? "deep" : "std",
+    String(params.topN ?? "-"),
   ].join("|");
 }
 
@@ -345,6 +392,98 @@ export class SerpApiProvider implements FlightProvider {
       onDebug: this.onDebug,
     });
     return { options, raw, searchesUsed };
+  }
+
+  async searchRoundTripStep(step: {
+    originBatch: string[];
+    destBatch: string[];
+    date: string;
+    returnDate: string;
+    cabin: Cabin;
+    maxStops: 1 | 2;
+    currency: string;
+    gl: string;
+    hl: string;
+    deepSearch?: boolean;
+    topN: number;
+  }): Promise<{
+    options: ItineraryOption[];
+    raw: unknown;
+    searchesUsed: number;
+    partialFailures: number;
+  }> {
+    const baseParams = {
+      departureId: step.originBatch.join(","),
+      arrivalId: step.destBatch.join(","),
+      outboundDate: step.date,
+      returnDate: step.returnDate,
+      tripType: "round_trip" as const,
+      cabin: step.cabin,
+      maxStops: step.maxStops,
+      currency: step.currency,
+      gl: step.gl,
+      hl: step.hl,
+      deepSearch: step.deepSearch,
+      apiKey: this.apiKey,
+    };
+    const initialUrl = buildSerpApiUrl(baseParams, this.baseUrl);
+    const initial = await this.fetchWithRetry(initialUrl);
+    let searchesUsed = initial.searchesUsed;
+    let partialFailures = 0;
+    const candidates = parseSerpApiResponse(initial.raw, {
+      currency: step.currency,
+      departureDate: step.date,
+      onDebug: this.onDebug,
+    })
+      .filter((option) => option.departureToken)
+      .sort(
+        (a, b) =>
+          a.price - b.price ||
+          a.totalDurationMinutes - b.totalDurationMinutes,
+      )
+      .slice(
+        0,
+        Math.min(
+          ROUND_TRIP_CANDIDATES_PER_STEP,
+          Math.max(1, step.topN),
+        ),
+      );
+
+    const options: ItineraryOption[] = [];
+    for (const outbound of candidates) {
+      const returnUrl = buildSerpApiUrl(
+        { ...baseParams, departureToken: outbound.departureToken },
+        this.baseUrl,
+      );
+      try {
+        const inboundResult = await this.fetchWithRetry(returnUrl);
+        searchesUsed += inboundResult.searchesUsed;
+        const inboundOptions = parseSerpApiResponse(inboundResult.raw, {
+          currency: step.currency,
+          departureDate: step.returnDate,
+          onDebug: this.onDebug,
+        });
+        for (const inbound of inboundOptions) {
+          options.push(combineRoundTrip(outbound, inbound, step.returnDate));
+        }
+      } catch (error) {
+        partialFailures += 1;
+        searchesUsed +=
+          error instanceof SerpApiRequestError ? error.searchesUsed : 0;
+        this.onDebug?.(
+          `return-flight lookup failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    }
+
+    return {
+      options: dedupeItineraries(options),
+      raw: { kind: "round_trip", options },
+      searchesUsed,
+      partialFailures,
+    };
   }
 
   private async fetchWithRetry(

@@ -27,6 +27,23 @@ describe("planSearch", () => {
     ]);
   });
 
+  it("adds a return date and bounded call estimate for round trips", () => {
+    const plan = planSearch({
+      origin: "EZE",
+      dest: "JFK",
+      tripType: "round_trip",
+      tripLengthDays: 7,
+      dateRange: { start: "2026-07-16", days: 1 },
+    });
+
+    expect(plan.steps.map((step) => step.returnDate)).toEqual([
+      "2026-07-23",
+      "2026-07-24",
+    ]);
+    expect(plan.callCount).toBe(2);
+    expect(plan.estimatedMaxCalls).toBe(10);
+  });
+
   it("computes exact cross-product call count with multi-batch sets on both sides", () => {
     // Schengen/EU = 40 airports → 4 batches at size 10
     // Canada = 6 airports → 1 batch

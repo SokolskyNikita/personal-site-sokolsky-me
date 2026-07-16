@@ -13,17 +13,29 @@ import {
   type FlightKv,
 } from "./kv";
 import { planSearch } from "./planner";
-import { filterByLieFlatPolicy, filterByMaxTotalHours } from "./policy";
+import {
+  filterByDirectionalLieFlatPolicy,
+  filterByMaxTotalHours,
+} from "./policy";
 import {
   parseSerpApiResponse,
   SerpApiProvider,
   SerpApiRequestError,
   serpApiCacheKey,
 } from "./serpapi";
-import { LegSearchSchema, type LegSearch, type PlanStep } from "./types";
+import {
+  LegSearchSchema,
+  type ItineraryOption,
+  type LegSearch,
+  type PlanStep,
+} from "./types";
 
 export type FlightEnv = {
   FLIGHT_CACHE?: FlightKv;
+  FLIGHT_QUOTA?: {
+    idFromName(name: string): unknown;
+    get(id: unknown): { fetch(request: Request): Promise<Response> };
+  };
   SERPAPI_API_KEY?: string;
   FLIGHT_DAILY_BUDGET?: string;
   FLIGHT_CACHE_TTL_SECONDS?: string;
@@ -91,21 +103,26 @@ async function handlePlan(
 
   const kv = env.FLIGHT_CACHE;
   const budgetLimit = Number(env.FLIGHT_DAILY_BUDGET) || DEFAULT_DAILY_BUDGET;
-  const budget = kv
-    ? await getBudgetStatus(kv, budgetLimit)
-    : {
-        used: 0,
-        remaining: budgetLimit,
-        limit: budgetLimit,
-        day: new Date().toISOString().slice(0, 10),
-        overBudget: false,
-      };
+  const budget = env.FLIGHT_QUOTA
+    ? await getDurableBudgetStatus(env, budgetLimit)
+    : kv
+      ? await getBudgetStatus(kv, budgetLimit)
+      : {
+          used: 0,
+          remaining: budgetLimit,
+          limit: budgetLimit,
+          day: new Date().toISOString().slice(0, 10),
+          overBudget: false,
+        };
 
   const cacheKeys = plan.steps.map((step) =>
     stepCacheKey(spec, step),
   );
   const cachedSteps = kv ? await countCachedSteps(kv, cacheKeys) : 0;
-  const uncachedCalls = plan.callCount - cachedSteps;
+  const uncachedSteps = plan.callCount - cachedSteps;
+  const callsPerStep =
+    plan.callCount === 0 ? 0 : plan.estimatedMaxCalls / plan.callCount;
+  const uncachedCalls = Math.ceil(uncachedSteps * callsPerStep);
 
   return json({
     ok: true,
@@ -158,6 +175,9 @@ async function handleQuery(
   ) {
     return json({ ok: false, error: "invalid_step" }, 400);
   }
+  if (spec.tripType === "round_trip" && typeof step.returnDate !== "string") {
+    return json({ ok: false, error: "invalid_return_date" }, 400);
+  }
 
   // Spec order: cache → budget → rate-limit → SerpApi (cache hits skip the rest).
   const cacheKey = stepCacheKey(spec, step);
@@ -166,13 +186,18 @@ async function handleQuery(
   let cacheHit = false;
   let cacheOnly = false;
   let searchesUsed = 0;
+  let roundTripOptions: ItineraryOption[] | undefined;
+  let partialFailures = 0;
 
   if (cached.hit && cached.value) {
     raw = JSON.parse(cached.value);
+    if (isRoundTripCache(raw)) roundTripOptions = raw.options;
     cacheHit = true;
   } else {
     const budgetLimit = Number(env.FLIGHT_DAILY_BUDGET) || DEFAULT_DAILY_BUDGET;
-    const budget = await getBudgetStatus(kv, budgetLimit);
+    const budget = env.FLIGHT_QUOTA
+      ? await getDurableBudgetStatus(env, budgetLimit)
+      : await getBudgetStatus(kv, budgetLimit);
     if (budget.overBudget) {
       cacheOnly = true;
       return json({
@@ -190,11 +215,17 @@ async function handleQuery(
       request.headers.get("CF-Connecting-IP") ??
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
-    const rate = await checkAndIncrementRateLimit(
-      kv,
-      ip,
-      DEFAULT_RATE_LIMIT_PER_MINUTE,
-    );
+    const rate = env.FLIGHT_QUOTA
+      ? await consumeDurableRateLimit(
+          env,
+          ip,
+          DEFAULT_RATE_LIMIT_PER_MINUTE,
+        )
+      : await checkAndIncrementRateLimit(
+          kv,
+          ip,
+          DEFAULT_RATE_LIMIT_PER_MINUTE,
+        );
     if (!rate.allowed) {
       return json({
         ok: true,
@@ -213,27 +244,49 @@ async function handleQuery(
 
     const provider = new SerpApiProvider({ apiKey: env.SERPAPI_API_KEY });
     try {
-      const result = await provider.searchStep({
-        originBatch: step.originBatch,
-        destBatch: step.destBatch,
-        date: step.date,
-        cabin: spec.cabin,
-        maxStops: spec.maxStops,
-        currency: spec.currency,
-        gl: spec.gl,
-        hl: spec.hl,
-        deepSearch: spec.deepSearch,
-      });
+      const result =
+        spec.tripType === "round_trip"
+          ? await provider.searchRoundTripStep({
+              originBatch: step.originBatch,
+              destBatch: step.destBatch,
+              date: step.date,
+              returnDate: step.returnDate!,
+              cabin: spec.cabin,
+              maxStops: spec.maxStops,
+              currency: spec.currency,
+              gl: spec.gl,
+              hl: spec.hl,
+              deepSearch: spec.deepSearch,
+              topN: spec.topN,
+            })
+          : await provider.searchStep({
+              originBatch: step.originBatch,
+              destBatch: step.destBatch,
+              date: step.date,
+              cabin: spec.cabin,
+              maxStops: spec.maxStops,
+              currency: spec.currency,
+              gl: spec.gl,
+              hl: spec.hl,
+              deepSearch: spec.deepSearch,
+            });
       raw = result.raw;
+      if (
+        "partialFailures" in result &&
+        typeof result.partialFailures === "number"
+      ) {
+        partialFailures = result.partialFailures;
+        roundTripOptions = result.options;
+      }
       searchesUsed = result.searchesUsed;
-      await recordSearchesUsed(kv, budgetLimit, result.searchesUsed);
+      await recordSearchesUsed(env, kv, budgetLimit, result.searchesUsed);
       const ttl =
         Number(env.FLIGHT_CACHE_TTL_SECONDS) || DEFAULT_CACHE_TTL_SECONDS;
       await cachePut(kv, cacheKey, JSON.stringify(raw), ttl);
     } catch (err) {
       searchesUsed =
         err instanceof SerpApiRequestError ? err.searchesUsed : 0;
-      await recordSearchesUsed(kv, budgetLimit, searchesUsed);
+      await recordSearchesUsed(env, kv, budgetLimit, searchesUsed);
       return json({
         ok: true,
         stepIndex: step.stepIndex,
@@ -246,22 +299,40 @@ async function handleQuery(
     }
   }
 
-  const parsedOptions = parseSerpApiResponse(raw, {
-    currency: spec.currency,
-    departureDate: step.date,
-  });
+  const parsedOptions =
+    roundTripOptions ??
+    parseSerpApiResponse(raw, {
+      currency: spec.currency,
+      departureDate: step.date,
+    });
   const durationFilteredOptions = filterByMaxTotalHours(
     parsedOptions,
     spec.maxTotalHours,
   );
-  const options = filterByLieFlatPolicy(
+  const options = filterByDirectionalLieFlatPolicy(
     durationFilteredOptions,
     spec.lieFlatPolicy,
-    false,
   );
 
   const budgetLimit = Number(env.FLIGHT_DAILY_BUDGET) || DEFAULT_DAILY_BUDGET;
-  const budget = await getBudgetStatus(kv, budgetLimit);
+  const budget = env.FLIGHT_QUOTA
+    ? await getDurableBudgetStatus(env, budgetLimit)
+    : await getBudgetStatus(kv, budgetLimit);
+
+  const publicOptions = options.map(toPublicOption);
+
+  console.log(
+    JSON.stringify({
+      event: "flight_search_step_completed",
+      stepIndex: step.stepIndex,
+      tripType: spec.tripType,
+      cacheHit,
+      searchesUsed,
+      optionsParsed: parsedOptions.length,
+      optionsReturned: publicOptions.length,
+      partialFailures,
+    }),
+  );
 
   return json({
     ok: true,
@@ -270,19 +341,90 @@ async function handleQuery(
     cacheOnly,
     searchesUsed,
     optionsParsed: parsedOptions.length,
-    options,
+    options: publicOptions,
+    warning: partialFailures > 0 ? "partial_return_results" : undefined,
+    message:
+      partialFailures > 0
+        ? `${partialFailures} return-flight lookup${
+            partialFailures === 1 ? "" : "s"
+          } failed`
+        : undefined,
     budget,
   });
 }
 
+function toPublicOption(option: ItineraryOption): ItineraryOption {
+  const {
+    raw: _raw,
+    departureToken: _departureToken,
+    bookingToken: _bookingToken,
+    ...publicOption
+  } = option;
+  return publicOption;
+}
+
+function isRoundTripCache(
+  value: unknown,
+): value is { kind: "round_trip"; options: ItineraryOption[] } {
+  if (!value || typeof value !== "object") return false;
+  const record = value as Record<string, unknown>;
+  return record.kind === "round_trip" && Array.isArray(record.options);
+}
+
 async function recordSearchesUsed(
+  env: FlightEnv,
   kv: FlightKv,
   budgetLimit: number,
   searchesUsed: number,
 ): Promise<void> {
+  if (env.FLIGHT_QUOTA) {
+    const stub = durableQuotaStub(env);
+    await stub.fetch(
+      new Request("https://flight-quota/budget", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit: budgetLimit, searchesUsed }),
+      }),
+    );
+    return;
+  }
   for (let i = 0; i < searchesUsed; i++) {
     await incrementBudget(kv, budgetLimit);
   }
+}
+
+function durableQuotaStub(env: FlightEnv): {
+  fetch(request: Request): Promise<Response>;
+} {
+  const namespace = env.FLIGHT_QUOTA!;
+  return namespace.get(namespace.idFromName("global"));
+}
+
+async function getDurableBudgetStatus(
+  env: FlightEnv,
+  limit: number,
+): Promise<Awaited<ReturnType<typeof getBudgetStatus>>> {
+  const response = await durableQuotaStub(env).fetch(
+    new Request(`https://flight-quota/status?limit=${limit}`),
+  );
+  if (!response.ok) throw new Error("flight quota status unavailable");
+  return response.json();
+}
+
+async function consumeDurableRateLimit(
+  env: FlightEnv,
+  ip: string,
+  limit: number,
+): Promise<Awaited<ReturnType<typeof checkAndIncrementRateLimit>>> {
+  const response = await durableQuotaStub(env).fetch(
+    new Request("https://flight-quota/rate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ip, limit }),
+    }),
+  );
+  if (!response.ok) throw new Error("flight rate limiter unavailable");
+  return response.json();
 }
 
 function stepCacheKey(spec: LegSearch, step: PlanStep): string {
@@ -296,6 +438,9 @@ function stepCacheKey(spec: LegSearch, step: PlanStep): string {
     gl: spec.gl,
     hl: spec.hl,
     deepSearch: spec.deepSearch,
+    tripType: spec.tripType,
+    returnDate: step.returnDate,
+    topN: spec.topN,
   });
 }
 
@@ -331,7 +476,8 @@ function json(body: unknown, status = 200): Response {
 /** Allow same-origin and local wrangler (Host may differ from rewritten url.origin). */
 function isAllowedOrigin(request: Request, url: URL): boolean {
   const origin = request.headers.get("Origin");
-  if (!origin) return true;
+  // Browser fetch always sends Origin on POST; reject bare curl/script abuse.
+  if (!origin) return false;
   if (origin === url.origin) return true;
   const host = request.headers.get("Host");
   if (!host) return false;

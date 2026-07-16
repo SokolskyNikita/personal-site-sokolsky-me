@@ -7,6 +7,12 @@
  */
 export const MAX_AIRPORTS_PER_BATCH = 10;
 
+/**
+ * Outbound candidates hydrated with return-flight details per round-trip step.
+ * Keeping this bounded makes the maximum API cost predictable.
+ */
+export const ROUND_TRIP_CANDIDATES_PER_STEP = 4;
+
 /** Default KV cache TTL for raw SerpApi JSON (1 hour). */
 export const DEFAULT_CACHE_TTL_SECONDS = 60 * 60;
 

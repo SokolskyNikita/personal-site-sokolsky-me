@@ -181,4 +181,76 @@ describe("SerpApiProvider retries", () => {
     await expect(provider.searchStep(step)).rejects.toThrow("Invalid API key");
     expect(calls).toBe(1);
   });
+
+  it("hydrates round-trip candidates with return-flight details", async () => {
+    const urls: string[] = [];
+    const flight = (
+      from: string,
+      to: string,
+      date: string,
+      number: string,
+    ) => ({
+      flights: [
+        {
+          departure_airport: { id: from, time: `${date} 10:00` },
+          arrival_airport: { id: to, time: `${date} 20:00` },
+          duration: 600,
+          airline: "Test Air",
+          flight_number: number,
+          travel_class: "Business",
+          extensions: ["Lie flat seat"],
+        },
+      ],
+      total_duration: 600,
+      price: 1200,
+    });
+    const provider = new SerpApiProvider({
+      apiKey: "test",
+      retryAttempts: 1,
+      fetchImpl: async (url) => {
+        urls.push(url);
+        const parsed = new URL(url);
+        const body = parsed.searchParams.has("departure_token")
+          ? {
+              best_flights: [
+                {
+                  ...flight("JFK", "EZE", "2026-07-30", "TA 2"),
+                  booking_token: "book",
+                },
+              ],
+            }
+          : {
+              best_flights: [
+                {
+                  ...flight("EZE", "JFK", "2026-07-23", "TA 1"),
+                  departure_token: "depart",
+                },
+              ],
+            };
+        return new Response(JSON.stringify(body));
+      },
+    });
+
+    const result = await provider.searchRoundTripStep({
+      ...step,
+      returnDate: "2026-07-30",
+      topN: 4,
+    });
+
+    expect(result.searchesUsed).toBe(2);
+    expect(result.options).toHaveLength(1);
+    expect(result.options[0]).toMatchObject({
+      bookingToken: "book",
+      returnDate: "2026-07-30",
+      returnDurationMinutes: 600,
+    });
+    expect(result.options[0]!.returnSegments?.[0]?.flightNumber).toBe("TA 2");
+    expect(new URL(urls[0]!).searchParams.get("type")).toBe("1");
+    expect(new URL(urls[0]!).searchParams.get("return_date")).toBe(
+      "2026-07-30",
+    );
+    expect(new URL(urls[1]!).searchParams.get("departure_token")).toBe(
+      "depart",
+    );
+  });
 });

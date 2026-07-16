@@ -110,4 +110,32 @@ describe("spec ↔ URL round-trip", () => {
     const restored = formStateFromSearchParams(formStateToSearchParams(form));
     expect(restored.deepSearch).toBe(false);
   });
+
+  it("defaults to one-way without persisting trip params", () => {
+    const form = defaultFormState("2026-07-20");
+    const params = formStateToSearchParams(form);
+
+    expect(form.tripType).toBe("one_way");
+    expect(params.has("tripType")).toBe(false);
+    expect(params.has("tripLengthDays")).toBe(false);
+    expect(formStateToLegSearch(form).tripType).toBe("one_way");
+  });
+
+  it("round-trips round-trip searches with a trip length", () => {
+    const form = defaultFormState("2026-07-20");
+    form.tripType = "round_trip";
+    form.tripLengthDays = 10;
+
+    const params = formStateToSearchParams(form);
+    expect(params.get("tripType")).toBe("round_trip");
+    expect(params.get("tripLengthDays")).toBe("10");
+
+    const restored = formStateFromSearchParams(params);
+    expect(restored.tripType).toBe("round_trip");
+    expect(restored.tripLengthDays).toBe(10);
+    expect(formStateToLegSearch(restored)).toMatchObject({
+      tripType: "round_trip",
+      tripLengthDays: 10,
+    });
+  });
 });

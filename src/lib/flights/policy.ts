@@ -91,12 +91,34 @@ export function filterByLieFlatPolicy(
   return out;
 }
 
+/**
+ * Round trips must satisfy the selected seat policy independently in each
+ * direction. One-way options retain the existing behavior.
+ */
+export function filterByDirectionalLieFlatPolicy(
+  options: ItineraryOption[],
+  policy: LieFlatPolicy,
+): ItineraryOption[] {
+  return options.filter((option) => {
+    if (!applyLieFlatPolicy(option, policy, false).passes) return false;
+    if (!option.returnSegments) return true;
+    return applyLieFlatPolicy(
+      { ...option, segments: option.returnSegments },
+      policy,
+      false,
+    ).passes;
+  });
+}
+
 export function filterByMaxTotalHours(
   options: ItineraryOption[],
   maxTotalHours: MaxTotalHours,
 ): ItineraryOption[] {
   const maxMinutes = maxTotalHours * 60;
   return options.filter(
-    (option) => option.totalDurationMinutes <= maxMinutes,
+    (option) =>
+      option.totalDurationMinutes <= maxMinutes &&
+      (option.returnDurationMinutes === undefined ||
+        option.returnDurationMinutes <= maxMinutes),
   );
 }

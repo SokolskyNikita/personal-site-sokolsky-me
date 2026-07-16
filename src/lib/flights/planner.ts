@@ -1,4 +1,7 @@
-import { MAX_AIRPORTS_PER_BATCH } from "./constants";
+import {
+  MAX_AIRPORTS_PER_BATCH,
+  ROUND_TRIP_CANDIDATES_PER_STEP,
+} from "./constants";
 import { resolveLocation } from "./resolver";
 import type { LegSearch, PlanStep, QueryPlan } from "./types";
 
@@ -26,12 +29,20 @@ function enumerateDates(start: string, days: number): string[] {
   return dates;
 }
 
+function addDays(date: string, days: number): string {
+  const [year, month, day] = date.split("-").map(Number);
+  const value = new Date(Date.UTC(year!, month! - 1, day!));
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
+}
+
 /**
  * Pure cross-product planner: origin batches × destination batches × dates.
  * Batching applies to BOTH endpoints. Call count is exact for arbitrary set sizes.
  */
 export function planSearch(
-  spec: Pick<LegSearch, "origin" | "dest" | "dateRange">,
+  spec: Pick<LegSearch, "origin" | "dest" | "dateRange"> &
+    Partial<Pick<LegSearch, "tripType" | "tripLengthDays">>,
   batchSize = MAX_AIRPORTS_PER_BATCH,
 ): QueryPlan {
   const originAirports = resolveLocation(spec.origin);
@@ -49,6 +60,10 @@ export function planSearch(
         steps.push({
           stepIndex,
           date,
+          returnDate:
+            spec.tripType === "round_trip"
+              ? addDays(date, spec.tripLengthDays ?? 7)
+              : undefined,
           originBatch,
           destBatch,
         });
@@ -60,6 +75,10 @@ export function planSearch(
   return {
     steps,
     callCount: steps.length,
+    estimatedMaxCalls:
+      spec.tripType === "round_trip"
+        ? steps.length * (1 + ROUND_TRIP_CANDIDATES_PER_STEP)
+        : steps.length,
     originAirports,
     destAirports,
     dates,

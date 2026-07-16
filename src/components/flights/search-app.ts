@@ -63,6 +63,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   const results = root.querySelector<HTMLElement>("#fs-results")!;
   const footer = root.querySelector<HTMLElement>("#fs-footer")!;
   const runBtn = root.querySelector<HTMLButtonElement>("#fs-run")!;
+  const cancelBtn = root.querySelector<HTMLButtonElement>("#fs-cancel")!;
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days")!;
   const daysValue = root.querySelector<HTMLElement>("#fs-days-value")!;
   const progressDock = root.querySelector<HTMLElement>("#fs-search-progress")!;
@@ -86,7 +87,9 @@ export function mountFlightSearch(root: HTMLElement): void {
   );
   applyFormToDom(root, form);
   syncDaysLabel(daysInput, daysValue);
+  syncTripFields(root, form.tripType);
   let isRunning = false;
+  let activeController: AbortController | undefined;
   let progressHideTimer: ReturnType<typeof setTimeout> | undefined;
 
   // Registry select wins over leftover IATA text.
@@ -120,6 +123,15 @@ export function mountFlightSearch(root: HTMLElement): void {
     onFormChanged();
   });
 
+  root.querySelector("#fs-round-trip")?.addEventListener("change", () => {
+    const tripType = root.querySelector<HTMLInputElement>("#fs-round-trip")
+      ?.checked
+      ? "round_trip"
+      : "one_way";
+    syncTripFields(root, tripType);
+    onFormChanged();
+  });
+
   daysInput.addEventListener("input", () => {
     syncDaysLabel(daysInput, daysValue);
     onFormChanged();
@@ -142,6 +154,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       target?.id === "fs-origin-reg" ||
       target?.id === "fs-dest-reg" ||
       target?.id === "fs-mode" ||
+      target?.id === "fs-round-trip" ||
       target?.id === "fs-days"
     ) {
       return;
@@ -173,13 +186,20 @@ export function mountFlightSearch(root: HTMLElement): void {
         control instanceof HTMLSelectElement ||
         control instanceof HTMLButtonElement
       ) {
-        control.disabled = busy;
+        control.disabled = control === cancelBtn ? !busy : busy;
       }
     }
+    cancelBtn.hidden = !busy;
     runBtn.textContent = label;
     if (busy) runBtn.setAttribute("aria-busy", "true");
     else runBtn.removeAttribute("aria-busy");
   }
+
+  cancelBtn.addEventListener("click", () => {
+    activeController?.abort();
+    cancelBtn.disabled = true;
+    progress.textContent = "Cancelling…";
+  });
 
   function showSearchProgress(
     label: string,
@@ -219,6 +239,8 @@ export function mountFlightSearch(root: HTMLElement): void {
   }
 
   runBtn.addEventListener("click", async () => {
+    const controller = new AbortController();
+    activeController = controller;
     form = readForm(root, form);
     const spec = formStateToLegSearch(form);
     syncUrl(form);
@@ -236,9 +258,16 @@ export function mountFlightSearch(root: HTMLElement): void {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(spec),
+        signal: controller.signal,
       });
       planData = (await res.json()) as PlanResponse;
     } catch (err) {
+      if (controller.signal.aborted) {
+        searchSummary.textContent = "Search cancelled.";
+        hideSearchProgress();
+        setSearchBusy(false);
+        return;
+      }
       searchSummary.textContent = `Search failed: ${err instanceof Error ? err.message : String(err)}`;
       hideSearchProgress();
       setSearchBusy(false);
@@ -263,8 +292,10 @@ export function mountFlightSearch(root: HTMLElement): void {
       return;
     }
 
-    const callLabel = planData.plan.callCount === 1 ? "call" : "calls";
-    searchSummary.textContent = `${planData.plan.callCount} ${callLabel} · ${cached} cached · ${remaining} daily budget remaining.`;
+    const maxCalls = planData.plan.estimatedMaxCalls;
+    const callLabel = maxCalls === 1 ? "call" : "calls";
+    const qualifier = spec.tripType === "round_trip" ? "up to " : "";
+    searchSummary.textContent = `${qualifier}${maxCalls} ${callLabel} · ${cached} cached steps · ${remaining} daily budget remaining.`;
     setSearchBusy(true, "Searching…");
     showSearchProgress("Searching flights", 0, planData.plan.callCount);
     results.setAttribute("aria-busy", "true");
@@ -280,10 +311,12 @@ export function mountFlightSearch(root: HTMLElement): void {
     const seenIds = new Set<string>();
     const stepErrors: Array<{ stepIndex: number; message: string }> = [];
     let quotaBannerShown = false;
+    let partialReturnFailures = 0;
     let completedSteps = 0;
 
     await mapPool(planData.plan.steps, CONCURRENCY, async (step) => {
-      const outcome = await runStep(spec, step);
+      if (controller.signal.aborted) return;
+      const outcome = await runStep(spec, step, controller.signal);
       completedSteps += 1;
 
       if (outcome.cacheHit) stats.cacheHits += 1;
@@ -300,14 +333,16 @@ export function mountFlightSearch(root: HTMLElement): void {
         banners.innerHTML += `<div class="fs-banner fs-banner-warn">Daily quota reached — cached results only.</div>`;
       }
 
-      if (outcome.warning === "step_failed" || outcome.error) {
+      if (
+        outcome.warning === "step_failed" ||
+        (outcome.error && outcome.warning !== "cancelled")
+      ) {
         const message =
           outcome.message ?? outcome.error ?? "step failed";
         stepErrors.push({ stepIndex: step.stepIndex, message });
-        const err = document.createElement("p");
-        err.className = "fs-step-error";
-        err.textContent = `Step ${step.stepIndex} (${step.date}): ${message}`;
-        results.appendChild(err);
+      }
+      if (outcome.warning === "partial_return_results") {
+        partialReturnFailures += 1;
       }
 
       stats.optionsParsed += outcome.optionsParsed ?? 0;
@@ -329,10 +364,36 @@ export function mountFlightSearch(root: HTMLElement): void {
       );
     });
 
+    const wasCancelled = controller.signal.aborted;
+    activeController = undefined;
+
     if (allOptions.length === 0) {
       results.insertAdjacentHTML(
         "afterbegin",
         `<div class="fs-empty"><strong>No matching flights found.</strong><span>Try another cabin, fewer seat restrictions, or a wider date range.</span></div>`,
+      );
+    }
+    if (partialReturnFailures > 0) {
+      banners.insertAdjacentHTML(
+        "beforeend",
+        `<div class="fs-banner fs-banner-warn">Partial results: ${partialReturnFailures} search ${
+          partialReturnFailures === 1 ? "batch" : "batches"
+        } could not load every return-flight option.</div>`,
+      );
+    }
+    if (stepErrors.length > 0) {
+      const details = stepErrors
+        .slice(0, 12)
+        .map(
+          (error) =>
+            `<li>Batch ${error.stepIndex + 1}: ${escapeHtml(error.message)}</li>`,
+        )
+        .join("");
+      banners.insertAdjacentHTML(
+        "beforeend",
+        `<details class="fs-error-details"><summary>${stepErrors.length} failed ${
+          stepErrors.length === 1 ? "batch" : "batches"
+        }</summary><ul>${details}</ul></details>`,
       );
     }
 
@@ -363,10 +424,13 @@ export function mountFlightSearch(root: HTMLElement): void {
       URL.revokeObjectURL(a.href);
     });
 
-    progress.textContent = `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
+    progress.textContent = wasCancelled
+      ? `Cancelled after ${completedSteps} of ${planData.plan.callCount} batches. Partial results are shown.`
+      : `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
     renderCostSummary(searchSummary, stats.callsMade, stats.cacheHits);
     results.removeAttribute("aria-busy");
-    completeSearchProgress(planData.plan.callCount);
+    if (wasCancelled) hideSearchProgress();
+    else completeSearchProgress(planData.plan.callCount);
     setSearchBusy(false);
   });
 }
@@ -381,8 +445,8 @@ function renderCostSummary(
   const formattedCost = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
   }).format(estimatedCost);
   const searchLabel = searchesUsed === 1 ? "search" : "searches";
 
@@ -403,12 +467,14 @@ function renderCostSummary(
 async function runStep(
   spec: LegSearch,
   step: PlanStep,
+  signal?: AbortSignal,
 ): Promise<QueryResponse> {
   try {
     const res = await fetch("/api/flights/query", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ spec, step }),
+      signal,
     });
     const data = (await res.json()) as QueryResponse;
     if (!data.ok && !data.warning) {
@@ -422,6 +488,15 @@ async function runStep(
     }
     return data;
   } catch (err) {
+    if (signal?.aborted || (err instanceof Error && err.name === "AbortError")) {
+      return {
+        ok: true,
+        stepIndex: step.stepIndex,
+        warning: "cancelled",
+        message: "cancelled",
+        options: [],
+      };
+    }
     return {
       ok: true,
       stepIndex: step.stepIndex,
@@ -467,9 +542,51 @@ function renderResults(
         )
         .join("");
       const stopDetail = formatStops(option);
+      const outboundTimes = formatSegmentTimes(option.segments);
       const seatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
         ? formatLieFlatSegments(option)
         : formatCabinDetail(option);
+      let returnMarkup = "";
+      if (option.returnSegments?.length) {
+        const returnOption: ItineraryOption = {
+          ...option,
+          segments: option.returnSegments,
+          layovers: option.returnLayovers ?? [],
+          totalDurationMinutes:
+            option.returnDurationMinutes ??
+            option.returnSegments.reduce(
+              (total, segment) => total + segment.durationMinutes,
+              0,
+            ),
+        };
+        const returnRoute = option.returnSegments
+          .map((segment, index) =>
+            index === 0
+              ? `${segment.departureAirport} → ${segment.arrivalAirport}`
+              : ` → ${segment.arrivalAirport}`,
+          )
+          .join("");
+        const returnCarriers = [
+          ...new Set(option.returnSegments.map((segment) => segment.carrier)),
+        ].join(" + ");
+        const returnSeatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
+          ? formatLieFlatSegments(returnOption)
+          : formatCabinDetail(returnOption);
+        returnMarkup = `
+          <div class="fs-result-return">
+            <span class="fs-result-leg-label">Return · ${escapeHtml(
+              formatDateHeader(option.returnDate ?? ""),
+            )}</span>
+            <strong>${escapeHtml(returnCarriers)}</strong>
+            <span>${escapeHtml(returnRoute)}</span>
+            <span>${escapeHtml(formatSegmentTimes(option.returnSegments))} · ${escapeHtml(
+              returnSeatDetail,
+            )} · ${escapeHtml(
+              formatStops(returnOption),
+            )} · ${formatDuration(returnOption.totalDurationMinutes)}</span>
+          </div>
+        `;
+      }
       const tag = option.googleFlightsUrl ? "a" : "div";
       const href = option.googleFlightsUrl
         ? ` href="${escapeAttr(option.googleFlightsUrl)}" target="_blank" rel="noopener noreferrer"`
@@ -483,13 +600,22 @@ function renderResults(
           </div>
           <div class="fs-result-journey">
             <div class="fs-result-route">
+              ${
+                option.returnSegments?.length
+                  ? `<span class="fs-result-leg-label">Outbound · ${escapeHtml(
+                      formatDateHeader(option.departureDate),
+                    )}</span>`
+                  : ""
+              }
               <strong>${escapeHtml(carrierLabel)}</strong>
               <span>${escapeHtml(route)}</span>
             </div>
             <div class="fs-result-meta">
+              <span class="fs-result-times">${escapeHtml(outboundTimes)}</span>
               <span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>
               <span>${escapeHtml(stopDetail)}</span>
             </div>
+            ${returnMarkup}
           </div>
           <div class="fs-result-duration">
             <strong>${formatDuration(option.totalDurationMinutes)}</strong>
@@ -515,6 +641,20 @@ function formatStops(option: ItineraryOption): string {
   return `${count} ${label} · ${details}`;
 }
 
+function formatSegmentTimes(
+  segments: ItineraryOption["segments"],
+): string {
+  const first = segments[0];
+  const last = segments.at(-1);
+  if (!first || !last) return "Times unavailable";
+  return `${formatClock(first.departureTime)} → ${formatClock(last.arrivalTime)}`;
+}
+
+function formatClock(value: string): string {
+  const match = value.match(/(?:^|\s)(\d{1,2}:\d{2})$/);
+  return match?.[1] ?? (value || "—");
+}
+
 function formatLieFlatSegments(option: ItineraryOption): string {
   const segments = option.segments.filter(
     (segment) => segment.seatClassification === "lie_flat",
@@ -522,7 +662,7 @@ function formatLieFlatSegments(option: ItineraryOption): string {
   if (segments.length === 0) {
     return "No lie-flat segment";
   }
-  return `Lie-flat · ${segments
+  return `Google lists lie-flat · ${segments
     .map((segment) => {
       const aircraft = segment.aircraft ? ` · ${segment.aircraft}` : "";
       return `${segment.departureAirport}–${segment.arrivalAirport}${aircraft}`;
@@ -583,6 +723,7 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
     (m) => m.cabin === form.cabin && m.lieFlatPolicy === form.lieFlatPolicy,
   );
   setVal(root, "#fs-mode", matchingMode?.id ?? form.mode);
+  setVal(root, "#fs-trip-length", String(form.tripLengthDays));
   setVal(root, "#fs-days", String(form.days));
   setVal(root, "#fs-max-stops", String(form.maxStops));
   setVal(root, "#fs-max-hours", String(form.maxTotalHours));
@@ -598,8 +739,11 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
     }
   }
 
+  const roundTrip = root.querySelector<HTMLInputElement>("#fs-round-trip");
+  if (roundTrip) roundTrip.checked = form.tripType === "round_trip";
   const deep = root.querySelector<HTMLInputElement>("#fs-deep");
   if (deep) deep.checked = form.deepSearch;
+  syncTripFields(root, form.tripType);
 
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days");
   const daysValue = root.querySelector<HTMLElement>("#fs-days-value");
@@ -649,6 +793,18 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
     mode: mode.id,
     cabin,
     lieFlatPolicy,
+    tripType: root.querySelector<HTMLInputElement>("#fs-round-trip")?.checked
+      ? "round_trip"
+      : "one_way",
+    tripLengthDays: Math.min(
+      30,
+      Math.max(
+        1,
+        Number(
+          root.querySelector<HTMLSelectElement>("#fs-trip-length")?.value,
+        ) || base.tripLengthDays,
+      ),
+    ),
     start:
       root.querySelector<HTMLInputElement>("#fs-start")?.value || base.start,
     days: Number(root.querySelector<HTMLInputElement>("#fs-days")?.value) || 7,
@@ -664,6 +820,14 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
     deepSearch:
       root.querySelector<HTMLInputElement>("#fs-deep")?.checked ?? false,
   };
+}
+
+function syncTripFields(
+  root: HTMLElement,
+  tripType: FormState["tripType"],
+): void {
+  const field = root.querySelector<HTMLElement>("#fs-trip-length-field");
+  if (field) field.hidden = tripType !== "round_trip";
 }
 
 function syncUrl(form: FormState): void {

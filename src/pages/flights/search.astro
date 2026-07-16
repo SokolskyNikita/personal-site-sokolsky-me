@@ -152,6 +152,23 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           </div>
 
           <div class="fs-toggles">
+            <label class="fs-check">
+              <input id="fs-round-trip" type="checkbox" />
+              <span>Round trip</span>
+            </label>
+            <div class="fs-field fs-trip-length" id="fs-trip-length-field" hidden>
+              <label for="fs-trip-length">Trip length</label>
+              <select id="fs-trip-length">
+                {[3, 5, 7, 10, 14, 21, 28].map((days) => (
+                  <option
+                    value={String(days)}
+                    selected={days === DEFAULT_FORM.tripLengthDays}
+                  >
+                    {days} {days === 1 ? "day" : "days"}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div class="fs-check-help">
               <label class="fs-check">
                 <input id="fs-deep" type="checkbox" />
@@ -182,6 +199,9 @@ const defaultStart = new Date().toISOString().slice(0, 10);
 
           <div class="fs-actions">
             <button type="button" class="fs-btn fs-btn-primary" id="fs-run">Run search</button>
+            <button type="button" class="fs-btn" id="fs-cancel" hidden>
+              Cancel
+            </button>
           </div>
         </div>
       </form>
@@ -194,6 +214,10 @@ const defaultStart = new Date().toISOString().slice(0, 10);
         <p class="fs-progress" id="fs-progress"></p>
       </div>
       <div id="fs-results" aria-live="polite"></div>
+      <p class="fs-trust-note">
+        Seat details are reported by Google Flights. Airlines can substitute
+        aircraft, so confirm the seat product before booking.
+      </p>
       <div class="fs-footer-stats" id="fs-footer"></div>
 
       <div class="fs-search-progress" id="fs-search-progress" hidden>
