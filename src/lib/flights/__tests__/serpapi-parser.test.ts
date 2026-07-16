@@ -156,6 +156,7 @@ describe("SerpApiProvider retries", () => {
 
     await expect(provider.searchStep(step)).resolves.toMatchObject({
       options: [],
+      searchesUsed: 3,
     });
     expect(calls).toBe(3);
     expect(new URL(urls[0]!).searchParams.has("no_cache")).toBe(false);

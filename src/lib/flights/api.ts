@@ -17,6 +17,7 @@ import { filterByLieFlatPolicy, filterByMaxTotalHours } from "./policy";
 import {
   parseSerpApiResponse,
   SerpApiProvider,
+  SerpApiRequestError,
   serpApiCacheKey,
 } from "./serpapi";
 import { LegSearchSchema, type LegSearch, type PlanStep } from "./types";
@@ -164,6 +165,7 @@ async function handleQuery(
   let raw: unknown;
   let cacheHit = false;
   let cacheOnly = false;
+  let searchesUsed = 0;
 
   if (cached.hit && cached.value) {
     raw = JSON.parse(cached.value);
@@ -223,15 +225,20 @@ async function handleQuery(
         deepSearch: spec.deepSearch,
       });
       raw = result.raw;
-      await incrementBudget(kv, budgetLimit);
+      searchesUsed = result.searchesUsed;
+      await recordSearchesUsed(kv, budgetLimit, result.searchesUsed);
       const ttl =
         Number(env.FLIGHT_CACHE_TTL_SECONDS) || DEFAULT_CACHE_TTL_SECONDS;
       await cachePut(kv, cacheKey, JSON.stringify(raw), ttl);
     } catch (err) {
+      searchesUsed =
+        err instanceof SerpApiRequestError ? err.searchesUsed : 0;
+      await recordSearchesUsed(kv, budgetLimit, searchesUsed);
       return json({
         ok: true,
         stepIndex: step.stepIndex,
         cacheHit: false,
+        searchesUsed,
         warning: "step_failed",
         message: err instanceof Error ? err.message : String(err),
         options: [],
@@ -261,10 +268,21 @@ async function handleQuery(
     stepIndex: step.stepIndex,
     cacheHit,
     cacheOnly,
+    searchesUsed,
     optionsParsed: parsedOptions.length,
     options,
     budget,
   });
+}
+
+async function recordSearchesUsed(
+  kv: FlightKv,
+  budgetLimit: number,
+  searchesUsed: number,
+): Promise<void> {
+  for (let i = 0; i < searchesUsed; i++) {
+    await incrementBudget(kv, budgetLimit);
+  }
 }
 
 function stepCacheKey(spec: LegSearch, step: PlanStep): string {

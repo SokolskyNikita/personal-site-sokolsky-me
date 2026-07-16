@@ -63,6 +63,16 @@ export type SerpApiProviderOptions = {
   onDebug?: (message: string) => void;
 };
 
+export class SerpApiRequestError extends Error {
+  constructor(
+    message: string,
+    readonly searchesUsed: number,
+  ) {
+    super(message);
+    this.name = "SerpApiRequestError";
+  }
+}
+
 function mapTravelClass(raw?: string): Cabin | undefined {
   if (!raw) return undefined;
   return TRAVEL_CLASS_TO_CABIN[raw.toLowerCase()];
@@ -307,7 +317,11 @@ export class SerpApiProvider implements FlightProvider {
     gl: string;
     hl: string;
     deepSearch?: boolean;
-  }): Promise<{ options: ItineraryOption[]; raw: unknown }> {
+  }): Promise<{
+    options: ItineraryOption[];
+    raw: unknown;
+    searchesUsed: number;
+  }> {
     const url = buildSerpApiUrl(
       {
         departureId: step.originBatch.join(","),
@@ -324,21 +338,25 @@ export class SerpApiProvider implements FlightProvider {
       this.baseUrl,
     );
 
-    const raw = await this.fetchWithRetry(url);
+    const { raw, searchesUsed } = await this.fetchWithRetry(url);
     const options = parseSerpApiResponse(raw, {
       currency: step.currency,
       departureDate: step.date,
       onDebug: this.onDebug,
     });
-    return { options, raw };
+    return { options, raw, searchesUsed };
   }
 
-  private async fetchWithRetry(url: string): Promise<unknown> {
+  private async fetchWithRetry(
+    url: string,
+  ): Promise<{ raw: unknown; searchesUsed: number }> {
     let lastError: Error | undefined;
+    let searchesUsed = 0;
     for (let i = 0; i < this.retryAttempts; i++) {
       const attempt = i + 1;
       const requestUrl = i === 0 ? url : withoutSerpApiCache(url);
       try {
+        searchesUsed += 1;
         const controller = new AbortController();
         const timer = setTimeout(
           () => controller.abort(),
@@ -368,7 +386,7 @@ export class SerpApiProvider implements FlightProvider {
           }
           throw new Error(data.error);
         }
-        return data;
+        return { raw: data, searchesUsed };
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
         const canRetry =
@@ -382,7 +400,10 @@ export class SerpApiProvider implements FlightProvider {
         await sleep(delay);
       }
     }
-    throw lastError ?? new Error("SerpApi fetch failed");
+    throw new SerpApiRequestError(
+      lastError?.message ?? "SerpApi fetch failed",
+      searchesUsed,
+    );
   }
 }
 

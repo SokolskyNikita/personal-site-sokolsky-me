@@ -3,6 +3,7 @@ import {
   formatDuration,
   formatPrice,
 } from "../../lib/flights/format";
+import { SERPAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
 import { groupResults } from "../../lib/flights/group";
 import { listRegistryOptions } from "../../lib/flights/resolver";
 import {
@@ -43,6 +44,7 @@ type QueryResponse = {
   stepIndex?: number;
   cacheHit?: boolean;
   cacheOnly?: boolean;
+  searchesUsed?: number;
   options?: ItineraryOption[];
   optionsParsed?: number;
   warning?: string;
@@ -285,9 +287,13 @@ export function mountFlightSearch(root: HTMLElement): void {
       completedSteps += 1;
 
       if (outcome.cacheHit) stats.cacheHits += 1;
-      else if (!outcome.cacheOnly && outcome.warning !== "step_failed") {
-        stats.callsMade += 1;
-      }
+      stats.callsMade +=
+        outcome.searchesUsed ??
+        (!outcome.cacheHit &&
+        !outcome.cacheOnly &&
+        outcome.warning !== "step_failed"
+          ? 1
+          : 0);
 
       if (outcome.cacheOnly && !quotaBannerShown) {
         quotaBannerShown = true;
@@ -358,10 +364,40 @@ export function mountFlightSearch(root: HTMLElement): void {
     });
 
     progress.textContent = `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
+    renderCostSummary(searchSummary, stats.callsMade, stats.cacheHits);
     results.removeAttribute("aria-busy");
     completeSearchProgress(planData.plan.callCount);
     setSearchBusy(false);
   });
+}
+
+function renderCostSummary(
+  container: HTMLElement,
+  searchesUsed: number,
+  cacheHits: number,
+): void {
+  const estimatedCost =
+    searchesUsed * SERPAPI_ESTIMATED_COST_PER_SEARCH_USD;
+  const formattedCost = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(estimatedCost);
+  const searchLabel = searchesUsed === 1 ? "search" : "searches";
+
+  container.replaceChildren();
+  const cost = document.createElement("strong");
+  cost.textContent = `Approx. SerpApi cost: ${formattedCost}`;
+  const detail = document.createTextNode(
+    ` · ${searchesUsed} billable ${searchLabel} · ${cacheHits} cached (free) · `,
+  );
+  const pricing = document.createElement("a");
+  pricing.href = "https://serpapi.com/pricing";
+  pricing.target = "_blank";
+  pricing.rel = "noopener noreferrer";
+  pricing.textContent = "Starter pricing ↗";
+  container.append(cost, detail, pricing);
 }
 
 async function runStep(

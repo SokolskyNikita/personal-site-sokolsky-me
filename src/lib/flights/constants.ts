@@ -11,6 +11,12 @@ export const MAX_AIRPORTS_PER_BATCH = 10;
 export const DEFAULT_CACHE_TTL_SECONDS = 60 * 60;
 
 /**
+ * Approximate marginal cost using SerpApi's $25 / 1,000-search Starter plan.
+ * Cached SerpApi searches are free: https://serpapi.com/pricing
+ */
+export const SERPAPI_ESTIMATED_COST_PER_SEARCH_USD = 25 / 1_000;
+
+/**
  * Global daily SerpApi call budget.
  * A default Buenos Aires→gateway plan is ~32 live calls at 7 days after the
  * selected date, or ~60 at 14 days after it. The largest 14-day registry pair
