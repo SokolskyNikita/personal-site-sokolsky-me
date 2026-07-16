@@ -17,6 +17,22 @@ describe("resolveLocation", () => {
     expect(resolveLocation("EZE")).toEqual(["EZE"]);
   });
 
+  it("resolves London to all six commercial airports", () => {
+    expect(resolveLocation("london")).toEqual([
+      "LHR",
+      "LGW",
+      "STN",
+      "LTN",
+      "LCY",
+      "SEN",
+    ]);
+  });
+
+  it("resolves Seattle and San Francisco as separate metro areas", () => {
+    expect(resolveLocation("seattle")).toEqual(["SEA", "PAE", "BFI"]);
+    expect(resolveLocation("san-francisco")).toEqual(["SFO", "OAK", "SJC"]);
+  });
+
   it("resolves gateway registries", () => {
     expect(resolveLocation("usa-gateways")).toHaveLength(35);
     expect(resolveLocation("canada-gateways")).toEqual([
@@ -46,6 +62,23 @@ describe("resolveLocation", () => {
       "REC",
       "CTG",
       "POA",
+    ]);
+    expect(resolveLocation("east-asia-gateways")).toEqual([
+      "HND",
+      "PVG",
+      "CAN",
+      "ICN",
+      "PEK",
+      "SZX",
+      "TFU",
+      "HKG",
+      "PKX",
+      "CKG",
+      "HGH",
+      "SHA",
+      "KMG",
+      "XIY",
+      "TPE",
     ]);
     expect(resolveLocation("germany-gateways")).toHaveLength(5);
     expect(resolveLocation("france-gateways")).toHaveLength(5);
