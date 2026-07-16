@@ -17,14 +17,51 @@ describe("resolveLocation", () => {
     expect(resolveLocation("EZE")).toEqual(["EZE"]);
   });
 
+  it("resolves gateway registries", () => {
+    expect(resolveLocation("usa-gateways")).toHaveLength(20);
+    expect(resolveLocation("canada-gateways")).toEqual([
+      "YYZ",
+      "YVR",
+      "YUL",
+      "YYC",
+      "YEG",
+      "YOW",
+    ]);
+    expect(resolveLocation("uk-ireland-gateways")).toHaveLength(10);
+    expect(resolveLocation("schengen-eu-gateways")).toHaveLength(25);
+    expect(resolveLocation("mexico-gateways")).toHaveLength(6);
+    expect(resolveLocation("germany-gateways")).toHaveLength(5);
+    expect(resolveLocation("france-gateways")).toHaveLength(5);
+  });
+
   it("resolves composed entries with dedupe", () => {
-    const airports = resolveLocation("western-europe-sample");
-    // Own airports first, then composed refs (france, germany).
-    expect(airports).toEqual(["LHR", "CDG", "ORY", "FRA", "MUC"]);
-    // EZE appears in south-america-sample and as airport entry — no duplicate
-    const sa = resolveLocation("south-america-sample");
-    expect(sa).toEqual(["EZE", "GRU", "SCL"]);
-    expect(new Set(sa).size).toBe(sa.length);
+    LOCATION_REGISTRY["test-composed"] = {
+      id: "test-composed",
+      type: "region",
+      label: "Test composed",
+      airports: ["YYZ"],
+      refs: ["canada-gateways", "mexico-gateways"],
+    };
+    try {
+      const airports = resolveLocation("test-composed");
+      expect(airports).toEqual([
+        "YYZ",
+        "YVR",
+        "YUL",
+        "YYC",
+        "YEG",
+        "YOW",
+        "MEX",
+        "CUN",
+        "GDL",
+        "MTY",
+        "TIJ",
+        "SJD",
+      ]);
+      expect(new Set(airports).size).toBe(airports.length);
+    } finally {
+      delete LOCATION_REGISTRY["test-composed"];
+    }
   });
 
   it("detects cycles", () => {
@@ -60,8 +97,8 @@ describe("IATA helpers", () => {
     expect(isRawIata("EZE")).toBe(true);
     expect(isRawIata("eze")).toBe(false);
     expect(normalizeLocationRef("eze")).toBe("EZE");
-    expect(normalizeLocationRef("western-europe-sample")).toBe(
-      "western-europe-sample",
+    expect(normalizeLocationRef("schengen-eu-gateways")).toBe(
+      "schengen-eu-gateways",
     );
   });
 });

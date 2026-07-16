@@ -15,26 +15,27 @@ const fixturesDir = join(
 );
 
 /**
- * Generality proof (invariant 9): a composed sample region pair requires ONLY
- * registry data — resolver → planner → classifier → policy → grouping.
+ * Generality proof: a non-default region pair requires only registry data —
+ * resolver → planner → classifier → policy → grouping.
  */
-describe("generality proof: western-europe-sample → south-america-sample", () => {
-  it("resolves composed entries without hardcoded market logic", () => {
-    const origins = resolveLocation("western-europe-sample");
-    const dests = resolveLocation("south-america-sample");
-    expect(origins).toEqual(["LHR", "CDG", "ORY", "FRA", "MUC"]);
-    expect(dests).toEqual(["EZE", "GRU", "SCL"]);
+describe("generality proof: Schengen/EU → Mexico", () => {
+  it("resolves entries without hardcoded market logic", () => {
+    const origins = resolveLocation("schengen-eu-gateways");
+    const dests = resolveLocation("mexico-gateways");
+    expect(origins).toHaveLength(25);
+    expect(origins).toContain("AMS");
+    expect(dests).toEqual(["MEX", "CUN", "GDL", "MTY", "TIJ", "SJD"]);
   });
 
-  it("plans a cross-product for the composed pair", () => {
+  it("plans a cross-product for the region pair", () => {
     const plan = planSearch({
-      origin: "western-europe-sample",
-      dest: "south-america-sample",
+      origin: "schengen-eu-gateways",
+      dest: "mexico-gateways",
       dateRange: { start: "2026-07-20", days: 2 },
     });
-    expect(plan.callCount).toBe(2);
-    expect(plan.originAirports).toContain("LHR");
-    expect(plan.destAirports).toContain("GRU");
+    expect(plan.callCount).toBe(6);
+    expect(plan.originAirports).toContain("CDG");
+    expect(plan.destAirports).toContain("MEX");
   });
 
   it("runs fake provider fixture data through classifier → policy → grouping", () => {
@@ -51,14 +52,14 @@ describe("generality proof: western-europe-sample → south-america-sample", () 
         currency: "USD",
         departureDate: "2026-07-20",
       }),
-      "GRU",
+      "MEX",
     );
     const economyOpts = remapDest(
       parseSerpApiResponse(economy, {
         currency: "USD",
         departureDate: "2026-07-21",
       }),
-      "SCL",
+      "CUN",
     );
 
     const lieFlatPass = filterByLieFlatPolicy(
