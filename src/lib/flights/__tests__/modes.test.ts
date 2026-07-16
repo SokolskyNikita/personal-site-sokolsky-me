@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { SEARCH_MODES, getSearchMode } from "../modes";
 
 describe("SEARCH_MODES", () => {
-  it("ships exactly four rows with correct cabin/policy mappings", () => {
-    expect(SEARCH_MODES).toHaveLength(4);
+  it("ships five rows with correct cabin/policy mappings", () => {
+    expect(SEARCH_MODES).toHaveLength(5);
     expect(getSearchMode("economy")).toEqual(
       expect.objectContaining({ cabin: "economy", lieFlatPolicy: "none" }),
     );
@@ -15,6 +15,12 @@ describe("SEARCH_MODES", () => {
     );
     expect(getSearchMode("business")).toEqual(
       expect.objectContaining({ cabin: "business", lieFlatPolicy: "none" }),
+    );
+    expect(getSearchMode("business-any-lie-flat")).toEqual(
+      expect.objectContaining({
+        cabin: "business",
+        lieFlatPolicy: "any_segment",
+      }),
     );
     expect(getSearchMode("business-lie-flat")).toEqual(
       expect.objectContaining({

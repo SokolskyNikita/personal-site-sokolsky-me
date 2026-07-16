@@ -4,6 +4,7 @@ export type SearchModeId =
   | "economy"
   | "premium-economy"
   | "business"
+  | "business-any-lie-flat"
   | "business-lie-flat";
 
 export type SearchMode = {
@@ -35,6 +36,12 @@ export const SEARCH_MODES: readonly SearchMode[] = [
     label: "Business",
     cabin: "business",
     lieFlatPolicy: "none",
+  },
+  {
+    id: "business-any-lie-flat",
+    label: "Business (at least 1 segment lie-flat)",
+    cabin: "business",
+    lieFlatPolicy: "any_segment",
   },
   {
     id: "business-lie-flat",
