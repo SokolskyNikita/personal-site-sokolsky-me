@@ -44,12 +44,11 @@ const CONCURRENCY = 3;
 
 export function mountFlightSearch(root: HTMLElement): void {
   const formEl = root.querySelector<HTMLFormElement>("#fs-form")!;
-  const planSummary = root.querySelector<HTMLElement>("#fs-plan-summary")!;
+  const searchSummary = root.querySelector<HTMLElement>("#fs-search-summary")!;
   const banners = root.querySelector<HTMLElement>("#fs-banners")!;
   const progress = root.querySelector<HTMLElement>("#fs-progress")!;
   const results = root.querySelector<HTMLElement>("#fs-results")!;
   const footer = root.querySelector<HTMLElement>("#fs-footer")!;
-  const planBtn = root.querySelector<HTMLButtonElement>("#fs-plan")!;
   const runBtn = root.querySelector<HTMLButtonElement>("#fs-run")!;
   const unverifiedWrap = root.querySelector<HTMLElement>("#fs-unverified-wrap")!;
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days")!;
@@ -60,7 +59,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   applyFormToDom(root, form);
   syncUnverifiedVisibility(form, unverifiedWrap);
   syncDaysLabel(daysInput, daysValue);
-  runBtn.disabled = true;
+  let isRunning = false;
 
   // Registry select wins over leftover IATA text.
   for (const id of ["#fs-origin-reg", "#fs-dest-reg"] as const) {
@@ -106,7 +105,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     applyFormToDom(root, form);
     syncUrl(form);
     syncUnverifiedVisibility(form, unverifiedWrap);
-    invalidatePlan();
+    invalidateSearch();
   });
 
   formEl.addEventListener("change", (event) => {
@@ -127,85 +126,80 @@ export function mountFlightSearch(root: HTMLElement): void {
     form = readForm(root, form);
     syncUnverifiedVisibility(form, unverifiedWrap);
     syncUrl(form);
-    invalidatePlan();
+    invalidateSearch();
   }
 
-  function invalidatePlan(): void {
-    runBtn.disabled = true;
-    delete (runBtn as HTMLButtonElement & { _plan?: PlanResponse })._plan;
-    planSummary.textContent = "Plan the search to see call count and budget.";
+  function invalidateSearch(): void {
+    runBtn.disabled = isRunning;
+    searchSummary.textContent = "Cached results are reused automatically.";
     banners.innerHTML = "";
     progress.textContent = "";
     results.innerHTML = "";
     footer.innerHTML = "";
   }
 
-  planBtn.addEventListener("click", async () => {
-    form = readForm(root, form);
-    syncUrl(form);
-    banners.innerHTML = "";
-    planSummary.textContent = "Planning…";
-    runBtn.disabled = true;
-    planBtn.disabled = true;
-    planBtn.textContent = "Planning…";
-    planBtn.setAttribute("aria-busy", "true");
+  function setSearchBusy(busy: boolean, label = "Run search"): void {
+    isRunning = busy;
+    for (const control of Array.from(formEl.elements)) {
+      if (
+        control instanceof HTMLInputElement ||
+        control instanceof HTMLSelectElement ||
+        control instanceof HTMLButtonElement
+      ) {
+        control.disabled = busy;
+      }
+    }
+    runBtn.textContent = label;
+    if (busy) runBtn.setAttribute("aria-busy", "true");
+    else runBtn.removeAttribute("aria-busy");
+  }
 
+  runBtn.addEventListener("click", async () => {
+    form = readForm(root, form);
     const spec = formStateToLegSearch(form);
-    let data: PlanResponse;
+    syncUrl(form);
+    setSearchBusy(true, "Checking…");
+    banners.innerHTML = "";
+    results.innerHTML = "";
+    footer.innerHTML = "";
+    progress.textContent = "";
+    searchSummary.textContent = "Checking cache and daily budget…";
+
+    let planData: PlanResponse;
     try {
       const res = await fetch("/api/flights/plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(spec),
       });
-      data = (await res.json()) as PlanResponse;
+      planData = (await res.json()) as PlanResponse;
     } catch (err) {
-      planSummary.textContent = `Plan failed: ${err instanceof Error ? err.message : String(err)}`;
-      return;
-    } finally {
-      planBtn.disabled = false;
-      planBtn.textContent = "Plan";
-      planBtn.removeAttribute("aria-busy");
-    }
-
-    if (!data.ok || !data.plan) {
-      planSummary.textContent = `Plan failed: ${data.message ?? data.error ?? "unknown error"}`;
+      searchSummary.textContent = `Search failed: ${err instanceof Error ? err.message : String(err)}`;
+      setSearchBusy(false);
       return;
     }
 
-    const cached = data.cachedSteps ?? 0;
-    const uncached = data.uncachedCalls ?? data.plan.callCount;
-    const remaining = data.budget?.remaining ?? 0;
-    const callLabel = data.plan.callCount === 1 ? "call" : "calls";
-    planSummary.textContent = `${data.plan.callCount} ${callLabel} · ${cached} cached · ${remaining} daily budget remaining. Ready to run.`;
-
-    if (!data.canRun) {
-      runBtn.disabled = true;
-      banners.innerHTML = `<div class="fs-banner fs-banner-danger">Uncached calls (${uncached}) exceed remaining daily budget (${remaining}). Reduce days or wait for cache/budget reset.</div>`;
+    if (!planData.ok || !planData.plan) {
+      searchSummary.textContent = `Search failed: ${planData.message ?? planData.error ?? "unknown error"}`;
+      setSearchBusy(false);
       return;
     }
 
-    runBtn.disabled = false;
-    (runBtn as HTMLButtonElement & { _plan?: PlanResponse })._plan = data;
-  });
+    const cached = planData.cachedSteps ?? 0;
+    const uncached = planData.uncachedCalls ?? planData.plan.callCount;
+    const remaining = planData.budget?.remaining ?? 0;
+    if (!planData.canRun) {
+      searchSummary.textContent = "Search not started.";
+      banners.innerHTML = `<div class="fs-banner fs-banner-danger">Uncached calls (${uncached}) exceed remaining daily budget (${remaining}). Reduce the date range or try again later.</div>`;
+      setSearchBusy(false);
+      return;
+    }
 
-  runBtn.addEventListener("click", async () => {
-    form = readForm(root, form);
-    const planData = (runBtn as HTMLButtonElement & { _plan?: PlanResponse })._plan;
-    if (!planData?.plan) return;
-
-    runBtn.disabled = true;
-    runBtn.textContent = "Searching…";
-    runBtn.setAttribute("aria-busy", "true");
-    planBtn.disabled = true;
-    banners.innerHTML = "";
-    results.innerHTML = "";
+    const callLabel = planData.plan.callCount === 1 ? "call" : "calls";
+    searchSummary.textContent = `${planData.plan.callCount} ${callLabel} · ${cached} cached · ${remaining} daily budget remaining.`;
+    setSearchBusy(true, "Searching…");
     results.setAttribute("aria-busy", "true");
-    footer.innerHTML = "";
-    progress.textContent = "Running…";
-
-    const spec = formStateToLegSearch(form);
-    syncUrl(form);
+    progress.textContent = "Starting search…";
 
     const stats = {
       callsMade: 0,
@@ -293,11 +287,7 @@ export function mountFlightSearch(root: HTMLElement): void {
 
     progress.textContent = `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
     results.removeAttribute("aria-busy");
-    planBtn.disabled = false;
-    // Keep Run enabled so an immediate rerun can use cache.
-    runBtn.disabled = false;
-    runBtn.textContent = "Run search";
-    runBtn.removeAttribute("aria-busy");
+    setSearchBusy(false);
   });
 }
 
