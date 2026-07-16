@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { SEARCH_MODES, getSearchMode } from "../modes";
+import {
+  DEFAULT_SEARCH_MODE_ID,
+  SEARCH_MODES,
+  getSearchMode,
+} from "../modes";
 
 describe("SEARCH_MODES", () => {
+  it("defaults to business with at least one lie-flat segment", () => {
+    expect(DEFAULT_SEARCH_MODE_ID).toBe("business-any-lie-flat");
+  });
+
   it("ships five rows with correct cabin/policy mappings", () => {
     expect(SEARCH_MODES).toHaveLength(5);
     expect(getSearchMode("economy")).toEqual(
