@@ -149,6 +149,29 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     // Top 6 Mexican airports by 2024 passenger traffic.
     airports: ["MEX", "CUN", "GDL", "MTY", "TIJ", "SJD"],
   },
+  "south-america-gateways": {
+    id: "south-america-gateways",
+    type: "continent",
+    label: "South American gateways",
+    // Top 15 South American airports by 2024 passenger traffic.
+    airports: [
+      "GRU",
+      "BOG",
+      "LIM",
+      "SCL",
+      "CGH",
+      "GIG",
+      "AEP",
+      "BSB",
+      "MDE",
+      "CNF",
+      "VCP",
+      "EZE",
+      "REC",
+      "CTG",
+      "POA",
+    ],
+  },
   "germany-gateways": {
     id: "germany-gateways",
     type: "country",
@@ -267,7 +290,19 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   SJD: "Los Cabos",
   HAM: "Hamburg",
   GRU: "São Paulo",
+  BOG: "Bogotá",
+  LIM: "Lima",
   SCL: "Santiago",
+  CGH: "São Paulo",
+  GIG: "Rio de Janeiro",
+  AEP: "Buenos Aires",
+  BSB: "Brasília",
+  MDE: "Medellín",
+  CNF: "Belo Horizonte",
+  VCP: "Campinas",
+  REC: "Recife",
+  CTG: "Cartagena",
+  POA: "Porto Alegre",
 };
 
 export function airportLabel(code: string): string {

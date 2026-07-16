@@ -30,6 +30,23 @@ describe("resolveLocation", () => {
     expect(resolveLocation("uk-ireland-gateways")).toHaveLength(10);
     expect(resolveLocation("schengen-eu-gateways")).toHaveLength(40);
     expect(resolveLocation("mexico-gateways")).toHaveLength(6);
+    expect(resolveLocation("south-america-gateways")).toEqual([
+      "GRU",
+      "BOG",
+      "LIM",
+      "SCL",
+      "CGH",
+      "GIG",
+      "AEP",
+      "BSB",
+      "MDE",
+      "CNF",
+      "VCP",
+      "EZE",
+      "REC",
+      "CTG",
+      "POA",
+    ]);
     expect(resolveLocation("germany-gateways")).toHaveLength(5);
     expect(resolveLocation("france-gateways")).toHaveLength(5);
   });
