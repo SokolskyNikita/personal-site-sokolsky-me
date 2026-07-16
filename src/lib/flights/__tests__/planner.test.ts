@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { MAX_AIRPORTS_PER_BATCH } from "../constants";
+import {
+  DEFAULT_DAILY_BUDGET,
+  DEFAULT_RATE_LIMIT_PER_MINUTE,
+  MAX_AIRPORTS_PER_BATCH,
+} from "../constants";
 import { planSearch } from "../planner";
 import { DEFAULT_FORM } from "../url";
 
@@ -52,5 +56,17 @@ describe("planSearch", () => {
     expect(plan.originAirports).toHaveLength(40);
     expect(plan.destAirports).toHaveLength(6);
     expect(plan.callCount).toBe(120);
+  });
+
+  it("keeps the largest registry search within configured limits", () => {
+    const plan = planSearch({
+      origin: "usa-gateways",
+      dest: "schengen-eu-gateways",
+      dateRange: { start: "2026-08-01", days: 14 },
+    });
+
+    expect(plan.callCount).toBe(224);
+    expect(DEFAULT_RATE_LIMIT_PER_MINUTE).toBeGreaterThanOrEqual(plan.callCount);
+    expect(DEFAULT_DAILY_BUDGET).toBeGreaterThanOrEqual(plan.callCount * 4);
   });
 });
