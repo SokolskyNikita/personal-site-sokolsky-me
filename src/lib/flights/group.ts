@@ -1,4 +1,5 @@
 import type {
+  DateGroupSort,
   GroupResultsOptions,
   ItineraryOption,
   SearchResult,
@@ -44,6 +45,23 @@ export function groupResults(
   }
 
   return grouped;
+}
+
+/**
+ * Order date-group keys. `cheapest_day` uses each group's already-sorted
+ * cheapest option (index 0) so days with the lowest fares appear first.
+ */
+export function orderedGroupKeys(
+  grouped: Record<string, ItineraryOption[]>,
+  sort: DateGroupSort = "date",
+): string[] {
+  const keys = Object.keys(grouped);
+  if (sort === "date") return keys.sort();
+  return keys.sort((a, b) => {
+    const priceA = grouped[a]![0]?.price ?? Number.POSITIVE_INFINITY;
+    const priceB = grouped[b]![0]?.price ?? Number.POSITIVE_INFINITY;
+    return priceA - priceB || a.localeCompare(b);
+  });
 }
 
 export function buildSearchResult(

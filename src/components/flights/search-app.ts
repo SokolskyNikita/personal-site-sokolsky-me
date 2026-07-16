@@ -4,7 +4,7 @@ import {
   formatPrice,
 } from "../../lib/flights/format";
 import { SERPAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
-import { groupResults } from "../../lib/flights/group";
+import { groupResults, orderedGroupKeys } from "../../lib/flights/group";
 import { listRegistryOptions } from "../../lib/flights/resolver";
 import {
   SEARCH_MODES,
@@ -13,6 +13,7 @@ import {
 } from "../../lib/flights/modes";
 import {
   MAX_TOTAL_HOURS_OPTIONS,
+  type DateGroupSort,
   type ItineraryOption,
   type LegSearch,
   type MaxTotalHours,
@@ -66,6 +67,8 @@ export function mountFlightSearch(root: HTMLElement): void {
   const cancelBtn = root.querySelector<HTMLButtonElement>("#fs-cancel")!;
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days")!;
   const daysValue = root.querySelector<HTMLElement>("#fs-days-value")!;
+  const resultsToolbar = root.querySelector<HTMLElement>("#fs-results-toolbar")!;
+  const sortSelect = root.querySelector<HTMLSelectElement>("#fs-sort")!;
   const progressDock = root.querySelector<HTMLElement>("#fs-search-progress")!;
   const progressTrack = root.querySelector<HTMLElement>(
     "#fs-search-progress-track",
@@ -91,6 +94,24 @@ export function mountFlightSearch(root: HTMLElement): void {
   let isRunning = false;
   let activeController: AbortController | undefined;
   let progressHideTimer: ReturnType<typeof setTimeout> | undefined;
+  let latestOptions: ItineraryOption[] = [];
+  let latestSpec: LegSearch | null = null;
+
+  function currentSort(): DateGroupSort {
+    return sortSelect.value === "cheapest_day" ? "cheapest_day" : "date";
+  }
+
+  function showResults(options: ItineraryOption[], spec: LegSearch): void {
+    latestOptions = options;
+    latestSpec = spec;
+    resultsToolbar.hidden = options.length === 0;
+    renderResults(results, options, spec, currentSort());
+  }
+
+  sortSelect.addEventListener("change", () => {
+    if (!latestSpec || latestOptions.length === 0) return;
+    renderResults(results, latestOptions, latestSpec, currentSort());
+  });
 
   // Registry select wins over leftover IATA text.
   for (const id of ["#fs-origin-reg", "#fs-dest-reg"] as const) {
@@ -176,6 +197,9 @@ export function mountFlightSearch(root: HTMLElement): void {
     progress.textContent = "";
     results.innerHTML = "";
     footer.innerHTML = "";
+    resultsToolbar.hidden = true;
+    latestOptions = [];
+    latestSpec = null;
   }
 
   function setSearchBusy(busy: boolean, label = "Run search"): void {
@@ -249,6 +273,9 @@ export function mountFlightSearch(root: HTMLElement): void {
     banners.innerHTML = "";
     results.innerHTML = "";
     footer.innerHTML = "";
+    resultsToolbar.hidden = true;
+    latestOptions = [];
+    latestSpec = null;
     progress.textContent = "";
     searchSummary.textContent = "Checking cache and daily budget…";
 
@@ -353,7 +380,7 @@ export function mountFlightSearch(root: HTMLElement): void {
           allOptions.push(option);
         }
         stats.optionsPassingFilters = allOptions.length;
-        renderResults(results, allOptions, spec);
+        showResults(allOptions, spec);
       }
 
       progress.textContent = `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`;
@@ -454,14 +481,9 @@ function renderCostSummary(
   const cost = document.createElement("strong");
   cost.textContent = `Approx. SerpApi cost: ${formattedCost}`;
   const detail = document.createTextNode(
-    ` · ${searchesUsed} billable ${searchLabel} · ${cacheHits} cached (free) · `,
+    ` · ${searchesUsed} billable ${searchLabel} · ${cacheHits} cached (free)`,
   );
-  const pricing = document.createElement("a");
-  pricing.href = "https://serpapi.com/pricing";
-  pricing.target = "_blank";
-  pricing.rel = "noopener noreferrer";
-  pricing.textContent = "Starter pricing ↗";
-  container.append(cost, detail, pricing);
+  container.append(cost, detail);
 }
 
 async function runStep(
@@ -511,19 +533,25 @@ function renderResults(
   container: HTMLElement,
   options: ItineraryOption[],
   spec: LegSearch,
+  sort: DateGroupSort = "date",
 ): void {
   const grouped = groupResults(options, { groupBy: "date", topN: spec.topN });
-  const dates = Object.keys(grouped).sort();
+  const dates = orderedGroupKeys(grouped, sort);
   const errors = [...container.querySelectorAll(".fs-step-error")];
   const html: string[] = [];
   for (const date of dates) {
     const dateOptions = grouped[date]!;
     const optionLabel = dateOptions.length === 1 ? "option" : "options";
+    const cheapest = dateOptions[0];
+    const dayMeta =
+      sort === "cheapest_day" && cheapest
+        ? `${formatPrice(cheapest.price, cheapest.currency)} · ${dateOptions.length} ${optionLabel}`
+        : `${dateOptions.length} ${optionLabel}`;
     html.push(`
       <section class="fs-date-group">
         <header class="fs-date-heading">
           <h2>${formatDateHeader(date)}</h2>
-          <span>${dateOptions.length} ${optionLabel}</span>
+          <span>${escapeHtml(dayMeta)}</span>
         </header>
         <div class="fs-result-list">
     `);

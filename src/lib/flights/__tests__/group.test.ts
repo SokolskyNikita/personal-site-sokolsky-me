@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupResults } from "../group";
+import { groupResults, orderedGroupKeys } from "../group";
 import type { ItineraryOption, Segment } from "../types";
 
 function makeOption(
@@ -64,5 +64,17 @@ describe("groupResults", () => {
     const grouped = groupResults(mixed, { groupBy: "origin", topN: 5 });
     expect(grouped["EZE"]).toHaveLength(1);
     expect(grouped["GRU"]).toHaveLength(1);
+  });
+
+  it("orders date groups by cheapest day", () => {
+    const grouped = groupResults(options, { groupBy: "date", topN: 2 });
+    expect(orderedGroupKeys(grouped, "date")).toEqual([
+      "2026-07-20",
+      "2026-07-21",
+    ]);
+    expect(orderedGroupKeys(grouped, "cheapest_day")).toEqual([
+      "2026-07-21",
+      "2026-07-20",
+    ]);
   });
 });

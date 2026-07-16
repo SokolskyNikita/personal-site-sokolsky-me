@@ -154,6 +154,8 @@ export type SearchResult = z.infer<typeof SearchResultSchema>;
 
 export type GroupBy = "date" | "destination" | "origin";
 
+export type DateGroupSort = "date" | "cheapest_day";
+
 export type GroupResultsOptions = {
   groupBy: GroupBy;
   topN: number;

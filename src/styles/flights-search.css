@@ -482,9 +482,37 @@ a {
   font-weight: 650;
 }
 
-.fs-search-summary a {
+.fs-results-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  width: min(100%, 60rem);
+  margin: 0 auto 0.65rem;
+  padding: 0 0.15rem;
+}
+
+.fs-results-toolbar[hidden] {
+  display: none;
+}
+
+.fs-results-toolbar label {
+  color: var(--fs-muted);
+  font-size: 0.68rem;
   font-weight: 600;
-  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+}
+
+.fs-results-toolbar select {
+  min-height: 36px;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--fs-line);
+  border-radius: calc(var(--fs-radius) - 2px);
+  background: var(--fs-bg-elevated);
+  color: var(--fs-ink);
+  font: inherit;
+  font-size: 0.84rem;
 }
 
 .fs-error-details {
