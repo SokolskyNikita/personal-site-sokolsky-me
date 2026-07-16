@@ -33,6 +33,10 @@ describe("resolveLocation", () => {
     expect(resolveLocation("san-francisco")).toEqual(["SFO", "OAK", "SJC"]);
   });
 
+  it("resolves New York City to its three primary airports", () => {
+    expect(resolveLocation("new-york")).toEqual(["JFK", "LGA", "EWR"]);
+  });
+
   it("resolves Tashkent to both valid IATA airports", () => {
     expect(resolveLocation("tashkent")).toEqual(["TAS", "TVT"]);
   });

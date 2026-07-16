@@ -44,6 +44,12 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     label: "SF (all airports)",
     airports: ["SFO", "OAK", "SJC"],
   },
+  "new-york": {
+    id: "new-york",
+    type: "city",
+    label: "NYC (all airports)",
+    airports: ["JFK", "LGA", "EWR"],
+  },
   tashkent: {
     id: "tashkent",
     type: "city",
