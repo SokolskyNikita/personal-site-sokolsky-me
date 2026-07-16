@@ -12,7 +12,7 @@ export const DEFAULT_CACHE_TTL_SECONDS = 6 * 60 * 60;
 
 /**
  * Global daily SerpApi call budget.
- * A default EZE→gateway 7-day plan is ~14 live calls; 14 days ~28.
+ * A default EZE→gateway 7-day plan is ~28 live calls; 14 days ~56.
  * 500 allows many real searches/day while still capping runaway spend.
  */
 export const DEFAULT_DAILY_BUDGET = 500;

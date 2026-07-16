@@ -18,7 +18,7 @@ describe("resolveLocation", () => {
   });
 
   it("resolves gateway registries", () => {
-    expect(resolveLocation("usa-gateways")).toHaveLength(20);
+    expect(resolveLocation("usa-gateways")).toHaveLength(35);
     expect(resolveLocation("canada-gateways")).toEqual([
       "YYZ",
       "YVR",
@@ -28,7 +28,7 @@ describe("resolveLocation", () => {
       "YOW",
     ]);
     expect(resolveLocation("uk-ireland-gateways")).toHaveLength(10);
-    expect(resolveLocation("schengen-eu-gateways")).toHaveLength(25);
+    expect(resolveLocation("schengen-eu-gateways")).toHaveLength(40);
     expect(resolveLocation("mexico-gateways")).toHaveLength(6);
     expect(resolveLocation("germany-gateways")).toHaveLength(5);
     expect(resolveLocation("france-gateways")).toHaveLength(5);
