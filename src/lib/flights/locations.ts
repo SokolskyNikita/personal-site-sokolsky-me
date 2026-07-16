@@ -238,13 +238,6 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     // Top 5 German airports by 2024 passenger traffic.
     airports: ["FRA", "MUC", "BER", "DUS", "HAM"],
   },
-  "france-gateways": {
-    id: "france-gateways",
-    type: "country",
-    label: "France gateways",
-    // Top 5 French airports by 2024 passenger traffic.
-    airports: ["CDG", "ORY", "NCE", "MRS", "LYS"],
-  },
 };
 
 /** Display labels for common gateway airports (used in result rows). */

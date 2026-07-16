@@ -93,7 +93,6 @@ describe("resolveLocation", () => {
       "TPE",
     ]);
     expect(resolveLocation("germany-gateways")).toHaveLength(5);
-    expect(resolveLocation("france-gateways")).toHaveLength(5);
   });
 
   it("resolves composed entries with dedupe", () => {
