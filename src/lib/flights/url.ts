@@ -10,7 +10,7 @@ import {
 
 /** Form defaults — "usa" string allowed only here and in locations registry. */
 export const DEFAULT_FORM = {
-  origin: "EZE",
+  origin: "buenos-aires",
   dest: "usa-gateways",
   mode: DEFAULT_SEARCH_MODE_ID,
   days: 7,

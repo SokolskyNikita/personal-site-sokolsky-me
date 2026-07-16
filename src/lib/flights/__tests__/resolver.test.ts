@@ -14,7 +14,7 @@ describe("resolveLocation", () => {
   });
 
   it("resolves a flat registry entry", () => {
-    expect(resolveLocation("EZE")).toEqual(["EZE"]);
+    expect(resolveLocation("buenos-aires")).toEqual(["EZE", "AEP"]);
   });
 
   it("resolves London to all six commercial airports", () => {

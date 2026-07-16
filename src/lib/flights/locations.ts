@@ -20,11 +20,11 @@ export type LocationEntry = {
  * Resolution is recursive with cycle detection (see LocationResolver).
  */
 export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
-  EZE: {
-    id: "EZE",
-    type: "airport",
-    label: "Buenos Aires (EZE)",
-    airports: ["EZE"],
+  "buenos-aires": {
+    id: "buenos-aires",
+    type: "city",
+    label: "Buenos Aires (all airports)",
+    airports: ["EZE", "AEP"],
   },
   london: {
     id: "london",
