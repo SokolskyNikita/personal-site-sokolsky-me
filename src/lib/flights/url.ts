@@ -8,7 +8,7 @@ import {
   type MaxTotalHours,
 } from "./types";
 
-/** Form defaults — "usa" string allowed only here and in locations registry. */
+/** Flight-search form defaults. */
 export const DEFAULT_FORM = {
   origin: "buenos-aires",
   dest: "usa-gateways",
@@ -16,8 +16,8 @@ export const DEFAULT_FORM = {
   days: 7,
   maxStops: 1 as 1 | 2,
   maxTotalHours: 24 as MaxTotalHours,
-  deepSearch: false,
-  topN: 2,
+  deepSearch: true,
+  topN: 4,
   currency: "USD",
   gl: "us",
   hl: "en",
@@ -98,7 +98,7 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
   params.set("currency", form.currency);
   params.set("gl", form.gl);
   params.set("hl", form.hl);
-  if (form.deepSearch) params.set("deepSearch", "1");
+  params.set("deepSearch", form.deepSearch ? "1" : "0");
   return params;
 }
 
@@ -135,7 +135,10 @@ export function formStateFromSearchParams(
       params.get("maxTotalHours"),
       base.maxTotalHours,
     ),
-    deepSearch: params.get("deepSearch") === "1",
+    deepSearch:
+      params.get("deepSearch") === null
+        ? base.deepSearch
+        : params.get("deepSearch") === "1",
     topN: clampInt(params.get("topN"), 1, 20, base.topN),
     currency: params.get("currency") ?? base.currency,
     gl: params.get("gl") ?? base.gl,

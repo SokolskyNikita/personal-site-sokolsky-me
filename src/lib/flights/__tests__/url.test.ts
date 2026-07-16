@@ -12,11 +12,15 @@ afterEach(() => {
 });
 
 describe("spec ↔ URL round-trip", () => {
-  it("starts the default search today", () => {
+  it("uses today, four results, and deep search by default", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
 
-    expect(defaultFormState().start).toBe("2026-07-16");
+    expect(defaultFormState()).toMatchObject({
+      start: "2026-07-16",
+      topN: 4,
+      deepSearch: true,
+    });
   });
 
   it("round-trips cabin and lieFlatPolicy explicitly", () => {
@@ -88,5 +92,13 @@ describe("spec ↔ URL round-trip", () => {
     );
 
     expect(form.maxTotalHours).toBe(24);
+  });
+
+  it("preserves an explicitly disabled deep search", () => {
+    const form = defaultFormState("2026-07-20");
+    form.deepSearch = false;
+
+    const restored = formStateFromSearchParams(formStateToSearchParams(form));
+    expect(restored.deepSearch).toBe(false);
   });
 });
