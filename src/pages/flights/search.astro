@@ -1,0 +1,165 @@
+---
+import "../../styles/flights-search.css";
+import { DEFAULT_FORM } from "../../lib/flights/url";
+
+export const prerender = true;
+
+const pageTitle = "Flight search";
+const pageDescription =
+  "Find the cheapest one-way itineraries by cabin and lie-flat policy over the next two weeks.";
+const themeColorLight = "#f7f6f3";
+const themeColorDark = "#121412";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const defaultStart = new Date().toISOString().slice(0, 10);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;650&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="fs-page" id="fs-app">
+      <div class="fs-top">
+        <h1 class="fs-title">Flight search</h1>
+        <a class="fs-home" href="/">sokolsky.me</a>
+      </div>
+
+      <form class="fs-form" id="fs-form" onsubmit="return false;">
+        <div class="fs-field">
+          <label for="fs-origin-reg">Origin</label>
+          <div class="fs-loc">
+            <select id="fs-origin-reg" data-registry aria-label="Origin location"></select>
+            <input
+              id="fs-origin-iata"
+              type="text"
+              maxlength="3"
+              placeholder="IATA"
+              aria-label="Origin IATA"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <button type="button" class="fs-swap" id="fs-swap" title="Swap origin and destination" aria-label="Swap origin and destination">⇄</button>
+
+        <div class="fs-field">
+          <label for="fs-dest-reg">Destination</label>
+          <div class="fs-loc">
+            <select id="fs-dest-reg" data-registry aria-label="Destination location"></select>
+            <input
+              id="fs-dest-iata"
+              type="text"
+              maxlength="3"
+              placeholder="IATA"
+              aria-label="Destination IATA"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="fs-field">
+          <label for="fs-mode">Search mode</label>
+          <select id="fs-mode"></select>
+        </div>
+
+        <div class="fs-field">
+          <label for="fs-start">Start date</label>
+          <input id="fs-start" type="date" value={defaultStart} />
+        </div>
+
+        <div class="fs-field">
+          <label for="fs-days">Days (1–14)</label>
+          <input
+            id="fs-days"
+            type="range"
+            min="1"
+            max="14"
+            value={String(DEFAULT_FORM.days)}
+          />
+        </div>
+
+        <div class="fs-field">
+          <label for="fs-max-stops">Max stops</label>
+          <select id="fs-max-stops">
+            <option value="1">1 stop</option>
+            <option value="2">2 stops</option>
+          </select>
+        </div>
+
+        <div class="fs-field">
+          <label for="fs-topn">Top N / date</label>
+          <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
+        </div>
+
+        <label class="fs-check" id="fs-unverified-wrap">
+          <input id="fs-unverified" type="checkbox" />
+          Include unverified seats
+        </label>
+
+        <label class="fs-check">
+          <input id="fs-deep" type="checkbox" />
+          Deep search
+        </label>
+
+        <div class="fs-field" id="fs-token-field">
+          <label for="fs-token">Access token</label>
+          <input id="fs-token" type="password" autocomplete="off" placeholder="optional" />
+        </div>
+
+        <div class="fs-actions">
+          <button type="button" class="fs-btn" id="fs-plan">Plan</button>
+          <button type="button" class="fs-btn fs-btn-primary" id="fs-run" disabled>Run</button>
+        </div>
+      </form>
+
+      <p class="fs-plan-summary" id="fs-plan-summary">
+        Plan the search to see call count and budget.
+      </p>
+      <div id="fs-banners"></div>
+      <p class="fs-progress" id="fs-progress"></p>
+      <div id="fs-results" aria-live="polite"></div>
+      <div class="fs-footer-stats" id="fs-footer"></div>
+    </div>
+
+    <script>
+      import { mountFlightSearch } from "../../components/flights/search-app";
+      const root = document.getElementById("fs-app");
+      if (root) mountFlightSearch(root);
+    </script>
+  </body>
+</html>

@@ -86,3 +86,63 @@ When moving from temporary `workers.dev` to `sokolsky.me`:
 3. Set `SITE_URL=https://sokolsky.me` in your deploy environment (e.g., GitHub Secrets/Variables).
 
 `astro.config.mjs` uses `SITE_URL` (with a temporary workers.dev fallback) for canonical metadata.
+
+## flight search (`/flights/search`)
+
+Dense one-way flight finder backed by SerpApi Google Flights. Core logic lives in `src/lib/flights/` (UI-agnostic). API routes are handled by the custom Worker (`POST /api/flights/plan`, `POST /api/flights/query`).
+
+### secrets and env
+
+Local (gitignored):
+
+```bash
+cp .dev.vars.example .dev.vars
+# set SERPAPI_API_KEY=...
+# optional: SEARCH_ACCESS_TOKEN=...
+```
+
+Production:
+
+```bash
+npx wrangler secret put SERPAPI_API_KEY
+# optional gate for /api/flights/query:
+npx wrangler secret put SEARCH_ACCESS_TOKEN
+```
+
+### KV namespace
+
+Binding `FLIGHT_CACHE` is in `wrangler.jsonc`. To create a new namespace:
+
+```bash
+npx wrangler kv namespace create FLIGHT_CACHE
+# paste the id into wrangler.jsonc kv_namespaces
+```
+
+### local API testing
+
+APIs are Worker routes (not Astro endpoints). After a build:
+
+```bash
+npm run build
+npx wrangler dev
+# open http://localhost:8787/flights/search/
+```
+
+### example searches
+
+- Default: EZE → USA gateways, business lie-flat, 7 days, max 1 stop
+- Economy mode: same endpoints, no lie-flat filter (separate cache keys by cabin)
+- Swap button reverses origin/destination; both sides accept registry ids or raw IATA
+
+### extending
+
+- **Add a region**: new entry in `src/lib/flights/locations.ts` (`airports` and/or `refs` to other ids)
+- **Add a provider**: implement `FlightProvider` beside `SerpApiProvider` (do not leak provider field names into the interface)
+- **Add a search mode**: new row in `SEARCH_MODES` (`src/lib/flights/modes.ts`)
+
+### tests
+
+```bash
+npm test          # vitest, zero network
+npm run check     # astro check
+```
