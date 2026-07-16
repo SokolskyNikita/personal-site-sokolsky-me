@@ -1,4 +1,5 @@
 import { formatDateHeader, formatPrice, formatResultRow } from "../../lib/flights/format";
+import { groupResults } from "../../lib/flights/group";
 import { listRegistryOptions } from "../../lib/flights/resolver";
 import {
   SEARCH_MODES,
@@ -51,46 +52,114 @@ export function mountFlightSearch(root: HTMLElement): void {
   const planBtn = root.querySelector<HTMLButtonElement>("#fs-plan")!;
   const runBtn = root.querySelector<HTMLButtonElement>("#fs-run")!;
   const unverifiedWrap = root.querySelector<HTMLElement>("#fs-unverified-wrap")!;
+  const daysInput = root.querySelector<HTMLInputElement>("#fs-days")!;
+  const daysValue = root.querySelector<HTMLElement>("#fs-days-value")!;
 
   populateSelects(root);
   let form = formStateFromSearchParams(new URLSearchParams(location.search));
   applyFormToDom(root, form);
   syncUnverifiedVisibility(form, unverifiedWrap);
+  syncDaysLabel(daysInput, daysValue);
   runBtn.disabled = true;
 
+  // Registry select wins over leftover IATA text.
+  for (const id of ["#fs-origin-reg", "#fs-dest-reg"] as const) {
+    root.querySelector(id)?.addEventListener("change", (event) => {
+      const select = event.target as HTMLSelectElement;
+      const iataId = select.id === "fs-origin-reg" ? "#fs-origin-iata" : "#fs-dest-iata";
+      const iata = root.querySelector<HTMLInputElement>(iataId);
+      if (iata) iata.value = "";
+      onFormChanged();
+    });
+  }
+
+  // Typing a full IATA overrides the registry dropdown for that side.
+  for (const id of ["#fs-origin-iata", "#fs-dest-iata"] as const) {
+    root.querySelector(id)?.addEventListener("input", (event) => {
+      const input = event.target as HTMLInputElement;
+      input.value = input.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3);
+      onFormChanged();
+    });
+  }
+
+  root.querySelector("#fs-mode")?.addEventListener("change", () => {
+    const modeId =
+      root.querySelector<HTMLSelectElement>("#fs-mode")?.value ??
+      DEFAULT_FORM.mode;
+    const mode = getSearchMode(modeId);
+    if (mode) {
+      form = { ...form, mode: mode.id, cabin: mode.cabin, lieFlatPolicy: mode.lieFlatPolicy };
+    }
+    onFormChanged();
+  });
+
+  daysInput.addEventListener("input", () => {
+    syncDaysLabel(daysInput, daysValue);
+    onFormChanged();
+  });
+
   root.querySelector("#fs-swap")?.addEventListener("click", () => {
-    form = readForm(root);
+    form = readForm(root, form);
     const tmp = form.origin;
     form.origin = form.dest;
     form.dest = tmp;
     applyFormToDom(root, form);
     syncUrl(form);
+    syncUnverifiedVisibility(form, unverifiedWrap);
+    invalidatePlan();
   });
 
-  formEl.addEventListener("change", () => {
-    form = readForm(root);
+  formEl.addEventListener("change", (event) => {
+    const target = event.target as HTMLElement | null;
+    // Registry/mode/days handled above with dedicated listeners.
+    if (
+      target?.id === "fs-origin-reg" ||
+      target?.id === "fs-dest-reg" ||
+      target?.id === "fs-mode" ||
+      target?.id === "fs-days"
+    ) {
+      return;
+    }
+    onFormChanged();
+  });
+
+  function onFormChanged(): void {
+    form = readForm(root, form);
     syncUnverifiedVisibility(form, unverifiedWrap);
     syncUrl(form);
+    invalidatePlan();
+  }
+
+  function invalidatePlan(): void {
     runBtn.disabled = true;
+    delete (runBtn as HTMLButtonElement & { _plan?: PlanResponse })._plan;
     planSummary.textContent = "Plan the search to see call count and budget.";
-  });
+    banners.innerHTML = "";
+  }
 
   planBtn.addEventListener("click", async () => {
-    form = readForm(root);
+    form = readForm(root, form);
     syncUrl(form);
     banners.innerHTML = "";
     planSummary.textContent = "Planning…";
     runBtn.disabled = true;
 
     const spec = formStateToLegSearch(form);
-    const res = await fetch("/api/flights/plan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(spec),
-    });
-    const data = (await res.json()) as PlanResponse;
+    let data: PlanResponse;
+    try {
+      const res = await fetch("/api/flights/plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(spec),
+      });
+      data = (await res.json()) as PlanResponse;
+    } catch (err) {
+      planSummary.textContent = `Plan failed: ${err instanceof Error ? err.message : String(err)}`;
+      return;
+    }
+
     if (!data.ok || !data.plan) {
-      planSummary.textContent = `Plan failed: ${data.message ?? data.error ?? res.status}`;
+      planSummary.textContent = `Plan failed: ${data.message ?? data.error ?? "unknown error"}`;
       return;
     }
 
@@ -110,7 +179,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   });
 
   runBtn.addEventListener("click", async () => {
-    form = readForm(root);
+    form = readForm(root, form);
     const planData = (runBtn as HTMLButtonElement & { _plan?: PlanResponse })._plan;
     if (!planData?.plan) return;
 
@@ -122,6 +191,8 @@ export function mountFlightSearch(root: HTMLElement): void {
     progress.textContent = "Running…";
 
     const spec = formStateToLegSearch(form);
+    syncUrl(form);
+
     const stats = {
       callsMade: 0,
       cacheHits: 0,
@@ -129,46 +200,53 @@ export function mountFlightSearch(root: HTMLElement): void {
       optionsPassingFilters: 0,
     };
     const allOptions: ItineraryOption[] = [];
+    const seenIds = new Set<string>();
     const stepErrors: Array<{ stepIndex: number; message: string }> = [];
     let quotaBannerShown = false;
+    let completedSteps = 0;
 
     await mapPool(planData.plan.steps, CONCURRENCY, async (step) => {
-      const outcome = await runStep(spec, step, form.accessToken);
+      const outcome = await runStep(spec, step);
+      completedSteps += 1;
+
       if (outcome.cacheHit) stats.cacheHits += 1;
-      else if (!outcome.cacheOnly) stats.callsMade += 1;
+      else if (!outcome.cacheOnly && outcome.warning !== "step_failed") {
+        stats.callsMade += 1;
+      }
 
       if (outcome.cacheOnly && !quotaBannerShown) {
         quotaBannerShown = true;
         banners.innerHTML += `<div class="fs-banner fs-banner-warn">Daily quota reached — cached results only.</div>`;
       }
 
-      if (outcome.warning === "step_failed") {
-        stepErrors.push({
-          stepIndex: step.stepIndex,
-          message: outcome.message ?? "step failed",
-        });
+      if (outcome.warning === "step_failed" || outcome.error) {
+        const message =
+          outcome.message ?? outcome.error ?? "step failed";
+        stepErrors.push({ stepIndex: step.stepIndex, message });
         const err = document.createElement("p");
         err.className = "fs-step-error";
-        err.textContent = `Step ${step.stepIndex} (${step.date}): ${outcome.message ?? "failed"}`;
+        err.textContent = `Step ${step.stepIndex} (${step.date}): ${message}`;
         results.appendChild(err);
       }
 
       stats.optionsParsed += outcome.optionsParsed ?? 0;
       if (outcome.options?.length) {
-        allOptions.push(...outcome.options);
+        for (const option of outcome.options) {
+          if (seenIds.has(option.id)) continue;
+          seenIds.add(option.id);
+          allOptions.push(option);
+        }
         stats.optionsPassingFilters = allOptions.length;
         renderResults(results, allOptions, spec);
       }
 
-      const done =
-        stats.callsMade + stats.cacheHits + stepErrors.length;
-      progress.textContent = `Progress: ${Math.min(done, planData.plan!.callCount)}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`;
+      progress.textContent = `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`;
     });
 
     const searchResult = {
       spec,
       options: allOptions,
-      grouped: groupByDate(allOptions, spec.topN),
+      grouped: groupResults(allOptions, { groupBy: "date", topN: spec.topN }),
       stats,
       stepErrors,
     };
@@ -194,6 +272,7 @@ export function mountFlightSearch(root: HTMLElement): void {
 
     progress.textContent = `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
     planBtn.disabled = false;
+    // Keep Run enabled so an immediate rerun can use cache.
     runBtn.disabled = false;
   });
 }
@@ -201,20 +280,24 @@ export function mountFlightSearch(root: HTMLElement): void {
 async function runStep(
   spec: LegSearch,
   step: PlanStep,
-  accessToken?: string,
 ): Promise<QueryResponse> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-  if (accessToken) headers["X-Search-Access-Token"] = accessToken;
-
   try {
     const res = await fetch("/api/flights/query", {
       method: "POST",
-      headers,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ spec, step }),
     });
-    return (await res.json()) as QueryResponse;
+    const data = (await res.json()) as QueryResponse;
+    if (!data.ok && !data.warning) {
+      return {
+        ok: true,
+        stepIndex: step.stepIndex,
+        warning: "step_failed",
+        message: data.error ?? `HTTP ${res.status}`,
+        options: [],
+      };
+    }
+    return data;
   } catch (err) {
     return {
       ok: true,
@@ -231,8 +314,9 @@ function renderResults(
   options: ItineraryOption[],
   spec: LegSearch,
 ): void {
-  const grouped = groupByDate(options, spec.topN);
+  const grouped = groupResults(options, { groupBy: "date", topN: spec.topN });
   const dates = Object.keys(grouped).sort();
+  const errors = [...container.querySelectorAll(".fs-step-error")];
   const html: string[] = [];
   for (const date of dates) {
     html.push(`<section class="fs-date-group"><h2>${formatDateHeader(date)}</h2>`);
@@ -256,25 +340,7 @@ function renderResults(
     html.push("</section>");
   }
   container.innerHTML = html.join("");
-}
-
-function groupByDate(
-  options: ItineraryOption[],
-  topN: number,
-): Record<string, ItineraryOption[]> {
-  const buckets = new Map<string, ItineraryOption[]>();
-  for (const option of options) {
-    const list = buckets.get(option.departureDate) ?? [];
-    list.push(option);
-    buckets.set(option.departureDate, list);
-  }
-  const out: Record<string, ItineraryOption[]> = {};
-  for (const [date, list] of buckets) {
-    out[date] = [...list]
-      .sort((a, b) => a.price - b.price)
-      .slice(0, topN);
-  }
-  return out;
+  for (const err of errors) container.appendChild(err);
 }
 
 function populateSelects(root: HTMLElement): void {
@@ -291,24 +357,63 @@ function populateSelects(root: HTMLElement): void {
 }
 
 function applyFormToDom(root: HTMLElement, form: FormState): void {
-  setVal(root, "#fs-origin-reg", form.origin);
-  setVal(root, "#fs-dest-reg", form.dest);
-  setVal(root, "#fs-origin-iata", looksLikeIata(form.origin) ? form.origin : "");
-  setVal(root, "#fs-dest-iata", looksLikeIata(form.dest) ? form.dest : "");
-  setVal(root, "#fs-mode", form.mode);
+  const registryIds = new Set(
+    [...root.querySelectorAll<HTMLSelectElement>("[data-registry]")[0]?.options ?? []].map(
+      (o) => o.value,
+    ),
+  );
+
+  // Registry ids (including airport entries like EZE) live in the dropdown.
+  // The IATA box is only for raw override codes that aren't a registry selection.
+  if (registryIds.has(form.origin)) {
+    setVal(root, "#fs-origin-reg", form.origin);
+    setVal(root, "#fs-origin-iata", "");
+  } else {
+    setVal(root, "#fs-origin-reg", DEFAULT_FORM.origin);
+    setVal(root, "#fs-origin-iata", looksLikeIata(form.origin) ? form.origin : "");
+  }
+
+  if (registryIds.has(form.dest)) {
+    setVal(root, "#fs-dest-reg", form.dest);
+    setVal(root, "#fs-dest-iata", "");
+  } else {
+    setVal(root, "#fs-dest-reg", DEFAULT_FORM.dest);
+    setVal(root, "#fs-dest-iata", looksLikeIata(form.dest) ? form.dest : "");
+  }
+
+  const matchingMode = SEARCH_MODES.find(
+    (m) => m.cabin === form.cabin && m.lieFlatPolicy === form.lieFlatPolicy,
+  );
+  setVal(root, "#fs-mode", matchingMode?.id ?? form.mode);
   setVal(root, "#fs-days", String(form.days));
   setVal(root, "#fs-max-stops", String(form.maxStops));
   setVal(root, "#fs-topn", String(form.topN));
   setVal(root, "#fs-start", form.start);
+
+  const startInput = root.querySelector<HTMLInputElement>("#fs-start");
+  if (startInput) {
+    const min = todayLocalDate();
+    startInput.min = min;
+    if (form.start < min) {
+      startInput.value = min;
+    }
+  }
+
   const unverified = root.querySelector<HTMLInputElement>("#fs-unverified");
   if (unverified) unverified.checked = form.includeUnverified;
   const deep = root.querySelector<HTMLInputElement>("#fs-deep");
   if (deep) deep.checked = form.deepSearch;
-  const token = root.querySelector<HTMLInputElement>("#fs-token");
-  if (token && form.accessToken) token.value = form.accessToken;
+
+  const daysInput = root.querySelector<HTMLInputElement>("#fs-days");
+  const daysValue = root.querySelector<HTMLElement>("#fs-days-value");
+  if (daysInput && daysValue) syncDaysLabel(daysInput, daysValue);
 }
 
-function readForm(root: HTMLElement): FormState {
+/**
+ * Read the form. Cabin/policy follow the mode select when the mode changes;
+ * otherwise preserve explicit cabin/policy (e.g. first via URL).
+ */
+function readForm(root: HTMLElement, prev: FormState): FormState {
   const originIata = (
     root.querySelector<HTMLInputElement>("#fs-origin-iata")?.value ?? ""
   )
@@ -320,14 +425,19 @@ function readForm(root: HTMLElement): FormState {
     .trim()
     .toUpperCase();
   const originReg =
-    root.querySelector<HTMLSelectElement>("#fs-origin-reg")?.value ?? "EZE";
+    root.querySelector<HTMLSelectElement>("#fs-origin-reg")?.value ??
+    DEFAULT_FORM.origin;
   const destReg =
     root.querySelector<HTMLSelectElement>("#fs-dest-reg")?.value ??
     DEFAULT_FORM.dest;
   const modeId =
     root.querySelector<HTMLSelectElement>("#fs-mode")?.value ??
-    "business-lie-flat";
-  const mode = getSearchMode(modeId) ?? getSearchMode("business-lie-flat")!;
+    DEFAULT_FORM.mode;
+  const mode = getSearchMode(modeId) ?? getSearchMode(DEFAULT_FORM.mode)!;
+
+  const modeChanged = prev.mode !== mode.id;
+  const cabin = modeChanged ? mode.cabin : prev.cabin;
+  const lieFlatPolicy = modeChanged ? mode.lieFlatPolicy : prev.lieFlatPolicy;
 
   const base = defaultFormState(
     root.querySelector<HTMLInputElement>("#fs-start")?.value || undefined,
@@ -337,8 +447,8 @@ function readForm(root: HTMLElement): FormState {
     origin: looksLikeIata(originIata) ? originIata : originReg,
     dest: looksLikeIata(destIata) ? destIata : destReg,
     mode: mode.id,
-    cabin: mode.cabin,
-    lieFlatPolicy: mode.lieFlatPolicy,
+    cabin,
+    lieFlatPolicy,
     start:
       root.querySelector<HTMLInputElement>("#fs-start")?.value || base.start,
     days: Number(root.querySelector<HTMLInputElement>("#fs-days")?.value) || 7,
@@ -352,8 +462,6 @@ function readForm(root: HTMLElement): FormState {
       root.querySelector<HTMLInputElement>("#fs-unverified")?.checked ?? false,
     deepSearch:
       root.querySelector<HTMLInputElement>("#fs-deep")?.checked ?? false,
-    accessToken:
-      root.querySelector<HTMLInputElement>("#fs-token")?.value || undefined,
   };
 }
 
@@ -368,6 +476,22 @@ function syncUnverifiedVisibility(
   wrap: HTMLElement,
 ): void {
   wrap.hidden = !modeInvolvesLieFlat(form.lieFlatPolicy);
+}
+
+function syncDaysLabel(
+  daysInput: HTMLInputElement,
+  daysValue: HTMLElement,
+): void {
+  daysValue.textContent = daysInput.value;
+  daysInput.setAttribute("aria-valuenow", daysInput.value);
+}
+
+function todayLocalDate(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 function looksLikeIata(value: string): boolean {

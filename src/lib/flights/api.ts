@@ -24,7 +24,6 @@ import { LegSearchSchema, type LegSearch, type PlanStep } from "./types";
 export type FlightEnv = {
   FLIGHT_CACHE?: FlightKv;
   SERPAPI_API_KEY?: string;
-  SEARCH_ACCESS_TOKEN?: string;
   FLIGHT_DAILY_BUDGET?: string;
   FLIGHT_CACHE_TTL_SECONDS?: string;
 };
@@ -130,30 +129,9 @@ async function handleQuery(
     return json({ ok: false, error: "origin_not_allowed" }, 403);
   }
 
-  if (env.SEARCH_ACCESS_TOKEN) {
-    const token = request.headers.get("X-Search-Access-Token") ?? "";
-    if (token !== env.SEARCH_ACCESS_TOKEN) {
-      return json({ ok: false, error: "unauthorized" }, 401);
-    }
-  }
-
   const kv = env.FLIGHT_CACHE;
   if (!kv) {
     return json({ ok: false, error: "kv_unavailable" }, 503);
-  }
-
-  const ip =
-    request.headers.get("CF-Connecting-IP") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown";
-
-  const rate = await checkAndIncrementRateLimit(
-    kv,
-    ip,
-    DEFAULT_RATE_LIMIT_PER_MINUTE,
-  );
-  if (!rate.allowed) {
-    return json({ ok: false, error: "rate_limited", rate }, 429);
   }
 
   const parsed = await readJson(request);
@@ -180,6 +158,7 @@ async function handleQuery(
     return json({ ok: false, error: "invalid_step" }, 400);
   }
 
+  // Spec order: cache → budget → rate-limit → SerpApi (cache hits skip the rest).
   const cacheKey = stepCacheKey(spec, step);
   const cached = await cacheGet(kv, cacheKey);
   let raw: unknown;
@@ -202,6 +181,27 @@ async function handleQuery(
         options: [],
         warning: "daily_quota_reached",
         budget,
+      });
+    }
+
+    const ip =
+      request.headers.get("CF-Connecting-IP") ??
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+    const rate = await checkAndIncrementRateLimit(
+      kv,
+      ip,
+      DEFAULT_RATE_LIMIT_PER_MINUTE,
+    );
+    if (!rate.allowed) {
+      return json({
+        ok: true,
+        stepIndex: step.stepIndex,
+        cacheHit: false,
+        warning: "step_failed",
+        message: "rate_limited",
+        options: [],
+        rate,
       });
     }
 

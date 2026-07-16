@@ -10,8 +10,16 @@ export const MAX_AIRPORTS_PER_BATCH = 10;
 /** Default KV cache TTL for raw SerpApi JSON (6 hours). */
 export const DEFAULT_CACHE_TTL_SECONDS = 6 * 60 * 60;
 
-/** Global daily SerpApi call budget. */
-export const DEFAULT_DAILY_BUDGET = 100;
+/**
+ * Global daily SerpApi call budget.
+ * A default EZE→gateway 7-day plan is ~14 live calls; 14 days ~28.
+ * 500 allows many real searches/day while still capping runaway spend.
+ */
+export const DEFAULT_DAILY_BUDGET = 500;
 
-/** Per-IP rate limit on /query. */
-export const DEFAULT_RATE_LIMIT_PER_MINUTE = 15;
+/**
+ * Per-IP rate limit on /query (calls per minute).
+ * Client runs steps at concurrency 3 — a 28-step plan needs headroom
+ * above the old 15/min cap so a single search isn't mid-flight throttled.
+ */
+export const DEFAULT_RATE_LIMIT_PER_MINUTE = 60;

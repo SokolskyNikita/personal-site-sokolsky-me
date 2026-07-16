@@ -98,15 +98,12 @@ Local (gitignored):
 ```bash
 cp .dev.vars.example .dev.vars
 # set SERPAPI_API_KEY=...
-# optional: SEARCH_ACCESS_TOKEN=...
 ```
 
 Production:
 
 ```bash
 npx wrangler secret put SERPAPI_API_KEY
-# optional gate for /api/flights/query:
-npx wrangler secret put SEARCH_ACCESS_TOKEN
 ```
 
 ### KV namespace

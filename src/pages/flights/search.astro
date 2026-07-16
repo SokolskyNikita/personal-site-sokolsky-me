@@ -102,14 +102,17 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           <input id="fs-start" type="date" value={defaultStart} />
         </div>
 
-        <div class="fs-field">
-          <label for="fs-days">Days (1–14)</label>
+        <div class="fs-field fs-field-days">
+          <label for="fs-days">Days <span id="fs-days-value">{DEFAULT_FORM.days}</span></label>
           <input
             id="fs-days"
             type="range"
             min="1"
             max="14"
             value={String(DEFAULT_FORM.days)}
+            aria-valuemin="1"
+            aria-valuemax="14"
+            aria-valuenow={String(DEFAULT_FORM.days)}
           />
         </div>
 
@@ -135,11 +138,6 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           <input id="fs-deep" type="checkbox" />
           Deep search
         </label>
-
-        <div class="fs-field" id="fs-token-field">
-          <label for="fs-token">Access token</label>
-          <input id="fs-token" type="password" autocomplete="off" placeholder="optional" />
-        </div>
 
         <div class="fs-actions">
           <button type="button" class="fs-btn" id="fs-plan">Plan</button>

@@ -35,7 +35,6 @@ export type FormState = {
   currency: string;
   gl: string;
   hl: string;
-  accessToken?: string;
 };
 
 export function defaultFormState(start = todayUtc()): FormState {

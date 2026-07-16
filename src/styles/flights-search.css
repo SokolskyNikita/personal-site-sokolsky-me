@@ -118,6 +118,23 @@ a {
   letter-spacing: 0.04em;
 }
 
+.fs-field-days {
+  min-width: 8.5rem;
+}
+
+.fs-field-days input[type="range"] {
+  min-height: 44px;
+  padding: 0.85rem 0;
+  border: none;
+  background: transparent;
+  accent-color: var(--fs-accent);
+}
+
+#fs-days-value {
+  color: var(--fs-ink);
+  font-variant-numeric: tabular-nums;
+}
+
 .fs-field input,
 .fs-field select {
   font: inherit;
@@ -169,6 +186,13 @@ a {
   font-size: 0.85rem;
   color: var(--fs-muted);
   padding-bottom: 0.1rem;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+/* display:flex above would otherwise override the hidden attribute */
+.fs-check[hidden] {
+  display: none;
 }
 
 .fs-check input {
