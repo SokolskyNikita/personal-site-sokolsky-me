@@ -9,6 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "parse:imdb": "node scripts/parse-imdb-scores.mjs",
     "verify:posthog": "node scripts/verify-posthog-build.mjs",
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
@@ -21,9 +24,13 @@
     "@astrojs/sitemap": "^3.7.2",
     "astro": "^6.3.3",
     "typescript": "^6.0.3",
-    "wrangler": "^4.92.0"
+    "wrangler": "^4.92.0",
+    "zod": "^4.4.3"
   },
   "overrides": {
     "vite": "^7"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.10"
   }
 }
