@@ -1,4 +1,8 @@
-import { formatDateHeader, formatPrice, formatResultRow } from "../../lib/flights/format";
+import {
+  formatDateHeader,
+  formatDuration,
+  formatPrice,
+} from "../../lib/flights/format";
 import { groupResults } from "../../lib/flights/group";
 import { listRegistryOptions } from "../../lib/flights/resolver";
 import {
@@ -333,28 +337,104 @@ function renderResults(
   const errors = [...container.querySelectorAll(".fs-step-error")];
   const html: string[] = [];
   for (const date of dates) {
-    html.push(`<section class="fs-date-group"><h2>${formatDateHeader(date)}</h2>`);
-    for (const option of grouped[date]!) {
-      const line = formatResultRow(option, spec.lieFlatPolicy);
+    const dateOptions = grouped[date]!;
+    const optionLabel = dateOptions.length === 1 ? "option" : "options";
+    html.push(`
+      <section class="fs-date-group">
+        <header class="fs-date-heading">
+          <h2>${formatDateHeader(date)}</h2>
+          <span>${dateOptions.length} ${optionLabel}</span>
+        </header>
+        <div class="fs-result-list">
+    `);
+    for (const option of dateOptions) {
       const dest = option.destinationLabel ?? option.destinationAirport;
       const price = formatPrice(option.price, option.currency);
+      const firstSegment = option.segments[0]!;
+      const lastSegment = option.segments.at(-1)!;
+      const carriers = [...new Set(option.segments.map((segment) => segment.carrier))];
+      const carrierLabel = carriers.join(" + ");
+      const route = option.segments
+        .map((segment, index) =>
+          index === 0
+            ? `${segment.departureAirport} → ${segment.arrivalAirport}`
+            : ` → ${segment.arrivalAirport}`,
+        )
+        .join("");
+      const stopDetail = formatStops(option);
+      const seatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
+        ? formatLieFlatSegments(option)
+        : formatCabinDetail(option);
+      const tag = option.googleFlightsUrl ? "a" : "div";
       const href = option.googleFlightsUrl
         ? ` href="${escapeAttr(option.googleFlightsUrl)}" target="_blank" rel="noopener noreferrer"`
         : "";
+      const unavailableClass = option.googleFlightsUrl ? "" : " fs-result-unavailable";
       html.push(`
-        <div class="fs-row">
-          <a class="fs-row-desktop"${href}>${escapeHtml(line)}</a>
-          <a class="fs-row-mobile"${href}>
-            <div class="line1">${escapeHtml(price)} — ${escapeHtml(dest)}</div>
-            <div class="line2">${escapeHtml(line.split(" — ").slice(2).join(" — "))}</div>
-          </a>
-        </div>
+        <${tag} class="fs-result${unavailableClass}"${href}>
+          <div class="fs-result-price">
+            <strong>${escapeHtml(price)}</strong>
+            <span>to ${escapeHtml(dest)}</span>
+          </div>
+          <div class="fs-result-journey">
+            <div class="fs-result-route">
+              <strong>${escapeHtml(carrierLabel)}</strong>
+              <span>${escapeHtml(route)}</span>
+            </div>
+            <div class="fs-result-meta">
+              <span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>
+              <span>${escapeHtml(stopDetail)}</span>
+              ${option.unverified ? '<span class="fs-unverified">Seat unverified</span>' : ""}
+            </div>
+          </div>
+          <div class="fs-result-duration">
+            <strong>${formatDuration(option.totalDurationMinutes)}</strong>
+            <span>${escapeHtml(firstSegment.departureAirport)}–${escapeHtml(lastSegment.arrivalAirport)}</span>
+          </div>
+          ${option.googleFlightsUrl ? '<span class="fs-result-arrow" aria-hidden="true">↗</span>' : ""}
+        </${tag}>
       `);
     }
-    html.push("</section>");
+    html.push("</div></section>");
   }
   container.innerHTML = html.join("");
   for (const err of errors) container.appendChild(err);
+}
+
+function formatStops(option: ItineraryOption): string {
+  if (option.layovers.length === 0) return "Nonstop";
+  const count = option.layovers.length;
+  const label = count === 1 ? "stop" : "stops";
+  const details = option.layovers
+    .map((layover) => `${layover.airport} ${formatDuration(layover.durationMinutes)}`)
+    .join(" · ");
+  return `${count} ${label} · ${details}`;
+}
+
+function formatLieFlatSegments(option: ItineraryOption): string {
+  const segments = option.segments.filter(
+    (segment) => segment.seatClassification === "lie_flat",
+  );
+  if (segments.length === 0) {
+    return option.unverified ? "Lie-flat unverified" : "No lie-flat segment";
+  }
+  return `Lie-flat · ${segments
+    .map((segment) => {
+      const aircraft = segment.aircraft ? ` · ${segment.aircraft}` : "";
+      return `${segment.departureAirport}–${segment.arrivalAirport}${aircraft}`;
+    })
+    .join(" / ")}`;
+}
+
+function formatCabinDetail(option: ItineraryOption): string {
+  const longest = option.segments.reduce((current, segment) =>
+    segment.durationMinutes > current.durationMinutes ? segment : current,
+  );
+  const cabin = longest.cabin?.replace("_", " ") ?? "Cabin unknown";
+  const legroom =
+    longest.legroom ??
+    longest.amenities.find((amenity) => /legroom/i.test(amenity));
+  return legroom ? `${cabin} · ${legroom}` : cabin;
 }
 
 function populateSelects(root: HTMLElement): void {
