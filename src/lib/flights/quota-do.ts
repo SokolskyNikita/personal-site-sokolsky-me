@@ -1,3 +1,7 @@
+import {
+  DEFAULT_DAILY_BUDGET,
+  DEFAULT_RATE_LIMIT_PER_DAY,
+} from "./constants";
 import type { BudgetStatus, RateLimitStatus } from "./kv";
 
 type DurableObjectStorageLike = {
@@ -13,10 +17,6 @@ function utcDay(date = new Date()): string {
   return date.toISOString().slice(0, 10);
 }
 
-function utcMinute(date = new Date()): string {
-  return date.toISOString().slice(0, 16);
-}
-
 /**
  * Globally serialized budget and per-IP rate accounting.
  *
@@ -29,7 +29,10 @@ export class FlightQuotaCoordinator {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/status") {
-      const limit = positiveInt(url.searchParams.get("limit"), 10_000);
+      const limit = positiveInt(
+        url.searchParams.get("limit"),
+        DEFAULT_DAILY_BUDGET,
+      );
       return Response.json(await this.budgetStatus(limit));
     }
 
@@ -42,14 +45,14 @@ export class FlightQuotaCoordinator {
       return Response.json(
         await this.consumeRate(
           typeof body.ip === "string" ? body.ip : "unknown",
-          positiveInt(body.limit, 2_400),
+          positiveInt(body.limit, DEFAULT_RATE_LIMIT_PER_DAY),
         ),
       );
     }
     if (url.pathname === "/budget") {
       return Response.json(
         await this.consumeBudget(
-          positiveInt(body.limit, 10_000),
+          positiveInt(body.limit, DEFAULT_DAILY_BUDGET),
           nonnegativeInt(body.searchesUsed, 0),
         ),
       );
@@ -85,7 +88,7 @@ export class FlightQuotaCoordinator {
     ip: string,
     limit: number,
   ): Promise<RateLimitStatus> {
-    const key = `rate:${utcMinute()}:${ip}`;
+    const key = `rate:${utcDay()}:${ip}`;
     const count = (await this.state.storage.get<number>(key)) ?? 0;
     if (count >= limit) return { allowed: false, count, limit };
     const next = count + 1;

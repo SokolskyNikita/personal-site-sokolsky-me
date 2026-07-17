@@ -48,7 +48,7 @@ describe("FlightQuotaCoordinator", () => {
     });
   });
 
-  it("enforces a per-IP rate limit within the current minute", async () => {
+  it("enforces a per-IP rate limit within the current day", async () => {
     const quota = coordinator();
 
     const allowed = await quota.fetch(

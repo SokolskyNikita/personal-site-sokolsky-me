@@ -25,15 +25,13 @@ export const SERPAPI_ESTIMATED_COST_PER_SEARCH_USD = 25 / 1_000;
 /**
  * Global daily SerpApi call budget.
  * A default Buenos Aires→gateway plan is ~32 live calls at 7 days after the
- * selected date, or ~60 at 14 days after it. The largest 14-day registry pair
- * (USA 35 × Schengen/EU 40) is 240 calls. 10,000 permits 41 fully uncached
- * largest searches while capping runaway spend.
+ * selected date, or ~60 at 14 days after it. 1,000 permits roughly 15–30
+ * fully uncached typical searches site-wide while capping runaway spend.
  */
-export const DEFAULT_DAILY_BUDGET = 10_000;
+export const DEFAULT_DAILY_BUDGET = 1_000;
 
 /**
- * Per-IP rate limit on /query (calls per minute).
- * Client runs steps at concurrency 3. A 2,400-call ceiling accommodates
- * repeated largest searches without allowing an unbounded request burst.
+ * Per-IP daily rate limit on /query (uncached SerpApi steps).
+ * Caps a single client at ~3 typical Buenos Aires→gateway searches per day.
  */
-export const DEFAULT_RATE_LIMIT_PER_MINUTE = 2_400;
+export const DEFAULT_RATE_LIMIT_PER_DAY = 100;

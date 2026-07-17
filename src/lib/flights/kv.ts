@@ -1,7 +1,7 @@
 import {
   DEFAULT_CACHE_TTL_SECONDS,
   DEFAULT_DAILY_BUDGET,
-  DEFAULT_RATE_LIMIT_PER_MINUTE,
+  DEFAULT_RATE_LIMIT_PER_DAY,
 } from "./constants";
 
 /** Minimal KV surface used by flights modules (Cloudflare KVNamespace-compatible). */
@@ -38,10 +38,6 @@ export async function cachePut(
 
 function utcDayKey(date = new Date()): string {
   return date.toISOString().slice(0, 10);
-}
-
-function minuteKey(date = new Date()): string {
-  return date.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
 }
 
 export type BudgetStatus = {
@@ -100,10 +96,11 @@ export type RateLimitStatus = {
 export async function checkAndIncrementRateLimit(
   kv: FlightKv,
   ip: string,
-  limit = DEFAULT_RATE_LIMIT_PER_MINUTE,
+  limit = DEFAULT_RATE_LIMIT_PER_DAY,
   now = new Date(),
 ): Promise<RateLimitStatus> {
-  const key = `rl:${ip}:${minuteKey(now)}`;
+  const day = utcDayKey(now);
+  const key = `rl:${ip}:${day}`;
   const raw = await kv.get(key);
   const count = raw ? Number(raw) : 0;
   const safeCount = Number.isFinite(count) ? count : 0;
@@ -111,7 +108,8 @@ export async function checkAndIncrementRateLimit(
     return { allowed: false, count: safeCount, limit };
   }
   const next = safeCount + 1;
-  await kv.put(key, String(next), { expirationTtl: 120 });
+  // Expire shortly after day boundary (36h) so counters don't linger forever.
+  await kv.put(key, String(next), { expirationTtl: 36 * 60 * 60 });
   return { allowed: true, count: next, limit };
 }
 

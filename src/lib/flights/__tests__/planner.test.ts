@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_DAILY_BUDGET,
-  DEFAULT_RATE_LIMIT_PER_MINUTE,
+  DEFAULT_RATE_LIMIT_PER_DAY,
   MAX_AIRPORTS_PER_BATCH,
 } from "../constants";
 import { planSearch } from "../planner";
@@ -107,7 +107,10 @@ describe("planSearch", () => {
     });
 
     expect(plan.callCount).toBe(240);
-    expect(DEFAULT_RATE_LIMIT_PER_MINUTE).toBeGreaterThanOrEqual(plan.callCount);
+    // Largest plans exceed the per-IP daily cap; the global budget still
+    // covers a few of them site-wide when mostly uncached.
+    expect(DEFAULT_RATE_LIMIT_PER_DAY).toBe(100);
+    expect(DEFAULT_DAILY_BUDGET).toBe(1_000);
     expect(DEFAULT_DAILY_BUDGET).toBeGreaterThanOrEqual(plan.callCount * 4);
   });
 });

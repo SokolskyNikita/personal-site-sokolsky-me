@@ -1,7 +1,7 @@
 import {
   DEFAULT_CACHE_TTL_SECONDS,
   DEFAULT_DAILY_BUDGET,
-  DEFAULT_RATE_LIMIT_PER_MINUTE,
+  DEFAULT_RATE_LIMIT_PER_DAY,
 } from "./constants";
 import {
   cacheGet,
@@ -216,16 +216,8 @@ async function handleQuery(
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
     const rate = env.FLIGHT_QUOTA
-      ? await consumeDurableRateLimit(
-          env,
-          ip,
-          DEFAULT_RATE_LIMIT_PER_MINUTE,
-        )
-      : await checkAndIncrementRateLimit(
-          kv,
-          ip,
-          DEFAULT_RATE_LIMIT_PER_MINUTE,
-        );
+      ? await consumeDurableRateLimit(env, ip, DEFAULT_RATE_LIMIT_PER_DAY)
+      : await checkAndIncrementRateLimit(kv, ip, DEFAULT_RATE_LIMIT_PER_DAY);
     if (!rate.allowed) {
       return json({
         ok: true,
