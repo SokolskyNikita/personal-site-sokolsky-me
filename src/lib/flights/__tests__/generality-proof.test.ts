@@ -6,7 +6,7 @@ import { groupResults } from "../group";
 import { planSearch } from "../planner";
 import { filterByLieFlatPolicy } from "../policy";
 import { resolveLocation } from "../resolver";
-import { parseSerpApiResponse } from "../serpapi";
+import { parseSearchApiResponse } from "../searchapi";
 import type { ItineraryOption } from "../types";
 
 const fixturesDir = join(
@@ -48,14 +48,14 @@ describe("generality proof: Schengen/EU → Mexico", () => {
 
     // Remap fixture destinations to prove the pipeline is location-agnostic.
     const businessOpts = remapDest(
-      parseSerpApiResponse(business, {
+      parseSearchApiResponse(business, {
         currency: "USD",
         departureDate: "2026-07-20",
       }),
       "MEX",
     );
     const economyOpts = remapDest(
-      parseSerpApiResponse(economy, {
+      parseSearchApiResponse(economy, {
         currency: "USD",
         departureDate: "2026-07-21",
       }),

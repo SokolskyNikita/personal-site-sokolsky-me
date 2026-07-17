@@ -12,14 +12,14 @@ afterEach(() => {
 });
 
 describe("spec ↔ URL round-trip", () => {
-  it("uses today, four results, and deep search by default", () => {
+  it("uses today and four results by default", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
 
     expect(defaultFormState()).toMatchObject({
       start: "2026-07-16",
       topN: 4,
-      deepSearch: true,
+      deepSearch: false,
     });
   });
 
@@ -40,14 +40,14 @@ describe("spec ↔ URL round-trip", () => {
     expect(params.get("cabin")).toBe("business");
     expect(params.get("lieFlatPolicy")).toBe("all_segments");
     expect(params.get("maxTotalHours")).toBe("36");
-    expect(params.get("deepSearch")).toBe("1");
+    expect(params.has("deepSearch")).toBe(false);
 
     const restored = formStateFromSearchParams(params);
     expect(restored.cabin).toBe("business");
     expect(restored.lieFlatPolicy).toBe("all_segments");
     expect(restored.maxTotalHours).toBe(36);
     expect(restored.mode).toBe("business-lie-flat");
-    expect(restored.deepSearch).toBe(true);
+    expect(restored.deepSearch).toBe(false);
     expect(restored.origin).toBe(DEFAULT_FORM.origin);
     expect(restored.dest).toBe(DEFAULT_FORM.dest);
 
@@ -115,12 +115,12 @@ describe("spec ↔ URL round-trip", () => {
     expect(formStateToLegSearch(form).maxTotalHours).toBe(18);
   });
 
-  it("preserves an explicitly disabled deep search", () => {
-    const form = defaultFormState("2026-07-20");
-    form.deepSearch = false;
-
-    const restored = formStateFromSearchParams(formStateToSearchParams(form));
-    expect(restored.deepSearch).toBe(false);
+  it("accepts legacy deep-search URLs but no longer persists the flag", () => {
+    const restored = formStateFromSearchParams(
+      new URLSearchParams({ deepSearch: "1" }),
+    );
+    expect(restored.deepSearch).toBe(true);
+    expect(formStateToSearchParams(restored).has("deepSearch")).toBe(false);
   });
 
   it("defaults to one-way without persisting trip params", () => {

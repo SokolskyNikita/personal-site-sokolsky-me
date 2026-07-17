@@ -1,22 +1,20 @@
 import type { Cabin, MaxStops } from "./types";
 
-/** SerpApi google_flights travel_class mapping (verified via serpapi://engines/google_flights). */
-export const CABIN_TO_TRAVEL_CLASS: Record<Cabin, number> = {
-  economy: 1,
-  premium_economy: 2,
-  business: 3,
-  first: 4,
+/** SearchAPI.io Google Flights travel_class values. */
+export const CABIN_TO_TRAVEL_CLASS: Record<Cabin, string> = {
+  economy: "economy",
+  premium_economy: "premium_economy",
+  business: "business",
+  first: "first_class",
 };
 
-/**
- * SerpApi stops enum (verified via serpapi://engines/google_flights):
- * 0 = any, 1 = nonstop, 2 = 1 stop or fewer, 3 = 2 stops or fewer.
- * UI maxStops 0|1|2 maps to SerpApi 1|2|3.
- */
-export function maxStopsToSerpApiStops(maxStops: MaxStops): 1 | 2 | 3 {
-  if (maxStops === 0) return 1;
-  if (maxStops === 1) return 2;
-  return 3;
+/** SearchAPI.io Google Flights stops values. */
+export function maxStopsToSearchApiStops(
+  maxStops: MaxStops,
+): "nonstop" | "one_stop_or_fewer" | "two_stops_or_fewer" {
+  if (maxStops === 0) return "nonstop";
+  if (maxStops === 1) return "one_stop_or_fewer";
+  return "two_stops_or_fewer";
 }
 
 export const CABIN_LABELS: Record<Cabin, string> = {

@@ -180,6 +180,24 @@ a {
   font-size: 0.76rem;
 }
 
+.fs-route-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem 1rem;
+}
+
+.fs-custom-airports {
+  min-height: 0;
+  color: var(--fs-muted);
+  font-size: 0.76rem;
+}
+
+.fs-custom-airports input {
+  width: 1rem;
+  height: 1rem;
+}
+
 .fs-primary {
   display: grid;
   grid-template-columns:
@@ -361,8 +379,12 @@ a {
 
 .fs-loc {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 4.4rem;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.35rem;
+}
+
+.fs-loc.has-custom-airport {
+  grid-template-columns: minmax(0, 1fr) 4.4rem;
 }
 
 .fs-loc select {
@@ -475,107 +497,6 @@ a {
   .fs-check:hover input:not(:disabled) {
     border-color: var(--fs-accent);
   }
-}
-
-.fs-check-help {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-
-.fs-help {
-  position: relative;
-  margin-left: 0.12rem;
-}
-
-.fs-help > button {
-  display: grid;
-  width: 36px;
-  height: 44px;
-  padding: 0;
-  place-items: center;
-  color: var(--fs-muted);
-  background: transparent;
-  border: 0;
-  font-family: var(--fs-mono);
-  font-size: 0.72rem;
-  font-weight: 650;
-  cursor: help;
-  transition: color 160ms ease-out;
-}
-
-.fs-help > button::before {
-  display: grid;
-  width: 1.25rem;
-  height: 1.25rem;
-  place-items: center;
-  border: 1px solid var(--fs-line);
-  border-radius: 50%;
-  content: "?";
-}
-
-.fs-help > button:hover,
-.fs-help > button:focus-visible {
-  color: var(--fs-accent);
-}
-
-.fs-help > button:focus-visible {
-  outline: 2px solid var(--fs-accent);
-  outline-offset: -3px;
-  border-radius: var(--fs-radius);
-}
-
-.fs-help-popover {
-  position: absolute;
-  z-index: 40;
-  right: 0;
-  bottom: calc(100% - 0.2rem);
-  width: min(20rem, calc(100vw - 2rem));
-  padding: 0.75rem 0.8rem;
-  color: var(--fs-ink);
-  background: var(--fs-bg-elevated);
-  border: 1px solid var(--fs-line);
-  border-radius: calc(var(--fs-radius) + 2px);
-  box-shadow: 0 10px 28px color-mix(in srgb, var(--fs-ink) 16%, transparent);
-  font-size: 0.78rem;
-  line-height: 1.45;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(4px);
-  visibility: hidden;
-  transition:
-    opacity 140ms ease-out,
-    transform 140ms ease-out;
-}
-
-.fs-help-popover strong,
-.fs-help-popover span {
-  display: block;
-}
-
-.fs-help-popover strong {
-  margin-bottom: 0.2rem;
-  font-size: 0.82rem;
-}
-
-.fs-help-popover span {
-  color: var(--fs-muted);
-}
-
-.fs-help-popover a {
-  display: inline-block;
-  margin-top: 0.45rem;
-  font-size: 0.74rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.fs-help:hover .fs-help-popover,
-.fs-help:focus-within .fs-help-popover {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-  visibility: visible;
 }
 
 .fs-actions {
@@ -754,6 +675,18 @@ a {
 .fs-banner-danger {
   background: var(--fs-danger-bg);
   color: var(--fs-danger);
+}
+
+.fs-banner-contact {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.fs-banner-contact a {
+  color: inherit;
+  font-weight: 600;
 }
 
 .fs-progress {
@@ -1153,6 +1086,17 @@ a {
     margin-top: 0.25rem;
   }
 
+  .fs-route-tools {
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .fs-route-tools p {
+    margin-top: 0;
+  }
+
   .fs-primary {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.55rem;
@@ -1213,20 +1157,6 @@ a {
     white-space: normal;
   }
 
-  .fs-help-popover {
-    position: fixed;
-    right: 1rem;
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    left: 1rem;
-    width: auto;
-    transform: translateY(0.35rem);
-  }
-
-  .fs-help:hover .fs-help-popover,
-  .fs-help:focus-within .fs-help-popover {
-    transform: translateY(0);
-  }
-
   .fs-actions {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -1247,7 +1177,6 @@ a {
 
 @media (pointer: coarse) {
   .fs-swap,
-  .fs-help > button,
   .fs-btn {
     min-height: 48px;
   }
@@ -1334,7 +1263,7 @@ a {
 }
 
 @media (max-width: 360px) {
-  .fs-loc {
+  .fs-loc.has-custom-airport {
     grid-template-columns: minmax(0, 1fr) 4rem;
   }
 
@@ -1349,8 +1278,6 @@ a {
   .fs-field select,
   .fs-swap,
   .fs-check,
-  .fs-help > button,
-  .fs-help-popover,
   .fs-btn,
   .fs-result,
   .fs-result-arrow,

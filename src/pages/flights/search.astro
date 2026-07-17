@@ -71,7 +71,18 @@ const defaultStart = new Date().toISOString().slice(0, 10);
         <section class="fs-form-section" aria-labelledby="fs-route-heading">
           <header class="fs-section-heading">
             <h2 id="fs-route-heading">Route and dates</h2>
-            <p>Choose an airport group or enter a specific IATA code.</p>
+            <div class="fs-route-tools">
+              <p>Choose an airport group or enter a specific IATA code.</p>
+              <label class="fs-check fs-custom-airports">
+                <input
+                  id="fs-custom-airports"
+                  type="checkbox"
+                  aria-controls="fs-origin-iata fs-dest-iata"
+                  aria-expanded="false"
+                />
+                <span>Enter airport codes</span>
+              </label>
+            </div>
           </header>
 
           <div class="fs-primary">
@@ -87,6 +98,7 @@ const defaultStart = new Date().toISOString().slice(0, 10);
                   aria-label="Origin IATA override"
                   autocomplete="off"
                   spellcheck="false"
+                  hidden
                 />
               </div>
             </div>
@@ -105,6 +117,7 @@ const defaultStart = new Date().toISOString().slice(0, 10);
                   aria-label="Destination IATA override"
                   autocomplete="off"
                   spellcheck="false"
+                  hidden
                 />
               </div>
             </div>
@@ -198,32 +211,6 @@ const defaultStart = new Date().toISOString().slice(0, 10);
                 <input id="fs-flexible-trip-length" type="checkbox" />
                 <span>± 5 days</span>
               </label>
-            </div>
-            <div class="fs-check-help">
-              <label class="fs-check">
-                <input id="fs-deep" type="checkbox" />
-                <span>Deep search</span>
-              </label>
-              <div class="fs-help">
-                <button
-                  type="button"
-                  aria-label="What deep search does"
-                  aria-describedby="fs-deep-help"
-                ></button>
-                <div class="fs-help-popover" id="fs-deep-help" role="tooltip">
-                  <strong>More complete, but slower.</strong>
-                  <span>
-                    Waits for Google Flights to load fully so results more closely
-                    match the browser. It does not widen dates or airports or make
-                    extra search calls.
-                  </span>
-                  <a
-                    href="https://serpapi.com/google-flights-api"
-                    target="_blank"
-                    rel="noopener noreferrer">SerpApi docs ↗</a
-                  >
-                </div>
-              </div>
             </div>
           </div>
 

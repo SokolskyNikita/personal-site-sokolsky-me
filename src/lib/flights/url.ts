@@ -22,7 +22,7 @@ export const DEFAULT_FORM = {
   days: 7,
   maxStops: 1 as MaxStops,
   maxTotalHours: 24 as MaxTotalHours,
-  deepSearch: true,
+  deepSearch: false,
   topN: 4,
   currency: "USD",
   gl: "us",
@@ -119,7 +119,6 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
   params.set("currency", form.currency);
   params.set("gl", form.gl);
   params.set("hl", form.hl);
-  params.set("deepSearch", form.deepSearch ? "1" : "0");
   return params;
 }
 

@@ -1,4 +1,4 @@
-import { CABIN_TO_TRAVEL_CLASS, maxStopsToSerpApiStops } from "./cabin";
+import { CABIN_TO_TRAVEL_CLASS, maxStopsToSearchApiStops } from "./cabin";
 import { classifySeat, extractLegroom } from "./classifier";
 import { ROUND_TRIP_CANDIDATES_PER_STEP } from "./constants";
 import { airportLabel } from "./locations";
@@ -11,10 +11,16 @@ import type {
   Segment,
 } from "./types";
 
-type SerpAirport = { name?: string; id?: string; time?: string };
-type SerpFlight = {
-  departure_airport?: SerpAirport;
-  arrival_airport?: SerpAirport;
+type SearchApiAirport = {
+  name?: string;
+  id?: string;
+  date?: string;
+  time?: string;
+};
+
+type SearchApiFlight = {
+  departure_airport?: SearchApiAirport;
+  arrival_airport?: SearchApiAirport;
   duration?: number;
   airplane?: string;
   airline?: string;
@@ -23,21 +29,27 @@ type SerpFlight = {
   legroom?: string;
   extensions?: string[];
 };
-type SerpLayover = { duration?: number; name?: string; id?: string };
-type SerpItinerary = {
-  flights?: SerpFlight[];
-  layovers?: SerpLayover[];
+
+type SearchApiLayover = { duration?: number; name?: string; id?: string };
+
+type SearchApiItinerary = {
+  flights?: SearchApiFlight[];
+  layovers?: SearchApiLayover[];
   total_duration?: number;
   price?: number;
   type?: string;
   booking_token?: string;
   departure_token?: string;
 };
-type SerpApiResponse = {
-  search_metadata?: { google_flights_url?: string; status?: string };
+
+type SearchApiResponse = {
+  search_metadata?: {
+    request_url?: string;
+    status?: string;
+  };
   search_parameters?: Record<string, unknown>;
-  best_flights?: SerpItinerary[];
-  other_flights?: SerpItinerary[];
+  best_flights?: SearchApiItinerary[];
+  other_flights?: SearchApiItinerary[];
   error?: string;
 };
 
@@ -50,29 +62,29 @@ const TRAVEL_CLASS_TO_CABIN: Record<string, Cabin> = {
   first: "first",
 };
 
-export type SerpApiFetch = (
+export type SearchApiFetch = (
   url: string,
   init?: RequestInit,
 ) => Promise<Response>;
 
-export type SerpApiProviderOptions = {
+export type SearchApiProviderOptions = {
   apiKey: string;
-  fetchImpl?: SerpApiFetch;
+  fetchImpl?: SearchApiFetch;
   baseUrl?: string;
   retryAttempts?: number;
   retryBaseDelayMs?: number;
   requestTimeoutMs?: number;
-  /** Called when an itinerary is dropped for missing price. */
+  /** Called when an itinerary is dropped for malformed provider data. */
   onDebug?: (message: string) => void;
 };
 
-export class SerpApiRequestError extends Error {
+export class SearchApiRequestError extends Error {
   constructor(
     message: string,
     readonly searchesUsed: number,
   ) {
     super(message);
-    this.name = "SerpApiRequestError";
+    this.name = "SearchApiRequestError";
   }
 }
 
@@ -81,7 +93,15 @@ function mapTravelClass(raw?: string): Cabin | undefined {
   return TRAVEL_CLASS_TO_CABIN[raw.toLowerCase()];
 }
 
-function parseSegment(raw: SerpFlight): Segment | null {
+function airportDateTime(airport?: SearchApiAirport): string {
+  if (!airport?.time) return airport?.date ?? "";
+  if (!airport.date || airport.time.startsWith(airport.date)) {
+    return airport.time;
+  }
+  return `${airport.date} ${airport.time}`;
+}
+
+function parseSegment(raw: SearchApiFlight): Segment | null {
   const dep = raw.departure_airport?.id;
   const arr = raw.arrival_airport?.id;
   if (!dep || !arr || !raw.airline || !raw.flight_number) return null;
@@ -97,8 +117,8 @@ function parseSegment(raw: SerpFlight): Segment | null {
     aircraft: raw.airplane,
     departureAirport: dep,
     arrivalAirport: arr,
-    departureTime: raw.departure_airport?.time ?? "",
-    arrivalTime: raw.arrival_airport?.time ?? "",
+    departureTime: airportDateTime(raw.departure_airport),
+    arrivalTime: airportDateTime(raw.arrival_airport),
     durationMinutes: typeof raw.duration === "number" ? raw.duration : 0,
     cabin: mapTravelClass(raw.travel_class),
     amenities,
@@ -110,22 +130,23 @@ function parseSegment(raw: SerpFlight): Segment | null {
 function itineraryId(segments: Segment[], price: number): string {
   const key = segments
     .map(
-      (s) =>
-        `${s.flightNumber}|${s.departureAirport}|${s.arrivalAirport}|${s.departureTime}`,
+      (segment) =>
+        `${segment.flightNumber}|${segment.departureAirport}|${segment.arrivalAirport}|${segment.departureTime}`,
     )
     .join(">");
   return `${key}|${price}`;
 }
 
-function departureDateFromSegments(segments: Segment[], fallback: string): string {
+function departureDateFromSegments(
+  segments: Segment[],
+  fallback: string,
+): string {
   const time = segments[0]?.departureTime;
-  if (time && /^\d{4}-\d{2}-\d{2}/.test(time)) {
-    return time.slice(0, 10);
-  }
+  if (time && /^\d{4}-\d{2}-\d{2}/.test(time)) return time.slice(0, 10);
   return fallback;
 }
 
-export function parseSerpApiResponse(
+export function parseSearchApiResponse(
   data: unknown,
   context: {
     currency: string;
@@ -134,12 +155,11 @@ export function parseSerpApiResponse(
     onDebug?: (message: string) => void;
   },
 ): ItineraryOption[] {
-  const response = data as SerpApiResponse;
+  const response = data as SearchApiResponse;
   const buckets = [
     ...(response.best_flights ?? []),
     ...(response.other_flights ?? []),
   ];
-
   const options: ItineraryOption[] = [];
   const seen = new Set<string>();
 
@@ -165,30 +185,31 @@ export function parseSerpApiResponse(
     if (seen.has(id)) continue;
     seen.add(id);
 
-    const dest = segments[segments.length - 1]!.arrivalAirport;
-    const departureDate = departureDateFromSegments(
-      segments,
-      context.departureDate,
-    );
-
+    const dest = segments.at(-1)!.arrivalAirport;
     options.push({
       id,
       segments,
-      layovers: (raw.layovers ?? []).map((l) => ({
-        airport: l.id ?? "",
-        durationMinutes: typeof l.duration === "number" ? l.duration : 0,
+      layovers: (raw.layovers ?? []).map((layover) => ({
+        airport: layover.id ?? "",
+        durationMinutes:
+          typeof layover.duration === "number" ? layover.duration : 0,
       })),
       totalDurationMinutes:
         typeof raw.total_duration === "number"
           ? raw.total_duration
-          : segments.reduce((sum, s) => sum + s.durationMinutes, 0),
+          : segments.reduce(
+              (sum, segment) => sum + segment.durationMinutes,
+              0,
+            ),
       price: raw.price,
       currency: context.currency,
-      provider: "serpapi",
+      provider: "searchapi",
       googleFlightsUrl:
-        context.googleFlightsUrl ??
-        response.search_metadata?.google_flights_url,
-      departureDate,
+        context.googleFlightsUrl ?? response.search_metadata?.request_url,
+      departureDate: departureDateFromSegments(
+        segments,
+        context.departureDate,
+      ),
       destinationAirport: dest,
       destinationLabel: airportLabel(dest),
       departureToken: raw.departure_token,
@@ -201,10 +222,10 @@ export function parseSerpApiResponse(
   return options;
 }
 
-/** Deduplicate identical itineraries (same segments + price) across batches. */
+/** Deduplicate identical itineraries across airport batches. */
 export function dedupeItineraries(options: ItineraryOption[]): ItineraryOption[] {
   const seen = new Set<string>();
-  const out: ItineraryOption[] = [];
+  const unique: ItineraryOption[] = [];
   for (const option of options) {
     const key = itineraryId(
       [...option.segments, ...(option.returnSegments ?? [])],
@@ -212,9 +233,9 @@ export function dedupeItineraries(options: ItineraryOption[]): ItineraryOption[]
     );
     if (seen.has(key)) continue;
     seen.add(key);
-    out.push(option);
+    unique.push(option);
   }
-  return out;
+  return unique;
 }
 
 function combineRoundTrip(
@@ -222,8 +243,6 @@ function combineRoundTrip(
   inbound: ItineraryOption,
   returnDate: string,
 ): ItineraryOption {
-  const returnSegments = inbound.segments;
-  const returnDurationMinutes = inbound.totalDurationMinutes;
   return {
     ...outbound,
     id: `${outbound.id}::${inbound.id}`,
@@ -231,10 +250,10 @@ function combineRoundTrip(
     googleFlightsUrl: inbound.googleFlightsUrl ?? outbound.googleFlightsUrl,
     bookingToken: inbound.bookingToken,
     departureToken: undefined,
-    returnSegments,
+    returnSegments: inbound.segments,
     returnLayovers: inbound.layovers,
-    returnDurationMinutes,
-    returnDate: departureDateFromSegments(returnSegments, returnDate),
+    returnDurationMinutes: inbound.totalDurationMinutes,
+    returnDate: departureDateFromSegments(inbound.segments, returnDate),
     raw: {
       outbound: outbound.raw,
       return: inbound.raw,
@@ -242,7 +261,7 @@ function combineRoundTrip(
   };
 }
 
-export function buildSerpApiUrl(
+export function buildSearchApiUrl(
   params: {
     departureId: string;
     arrivalId: string;
@@ -252,17 +271,19 @@ export function buildSerpApiUrl(
     currency: string;
     gl: string;
     hl: string;
-    deepSearch?: boolean;
     tripType?: "one_way" | "round_trip";
     returnDate?: string;
     departureToken?: string;
     apiKey: string;
   },
-  baseUrl = "https://serpapi.com/search.json",
+  baseUrl = "https://www.searchapi.io/api/v1/search",
 ): string {
   const url = new URL(baseUrl);
   url.searchParams.set("engine", "google_flights");
-  url.searchParams.set("type", params.tripType === "round_trip" ? "1" : "2");
+  url.searchParams.set(
+    "flight_type",
+    params.tripType === "round_trip" ? "round_trip" : "one_way",
+  );
   url.searchParams.set("departure_id", params.departureId);
   url.searchParams.set("arrival_id", params.arrivalId);
   url.searchParams.set("outbound_date", params.outboundDate);
@@ -272,22 +293,18 @@ export function buildSerpApiUrl(
   if (params.departureToken) {
     url.searchParams.set("departure_token", params.departureToken);
   }
-  url.searchParams.set(
-    "travel_class",
-    String(CABIN_TO_TRAVEL_CLASS[params.cabin]),
-  );
-  url.searchParams.set("stops", String(maxStopsToSerpApiStops(params.maxStops)));
+  url.searchParams.set("travel_class", CABIN_TO_TRAVEL_CLASS[params.cabin]);
+  url.searchParams.set("stops", maxStopsToSearchApiStops(params.maxStops));
   url.searchParams.set("currency", params.currency);
   url.searchParams.set("gl", params.gl);
   url.searchParams.set("hl", params.hl);
   url.searchParams.set("adults", "1");
-  if (params.deepSearch) url.searchParams.set("deep_search", "true");
   url.searchParams.set("api_key", params.apiKey);
   return url.toString();
 }
 
-/** Normalized cache key from request params (excludes api_key). */
-export function serpApiCacheKey(params: {
+/** Provider-versioned cache key. Excludes the API key and ignored legacy flags. */
+export function searchApiCacheKey(params: {
   departureId: string;
   arrivalId: string;
   outboundDate: string;
@@ -296,13 +313,12 @@ export function serpApiCacheKey(params: {
   currency: string;
   gl: string;
   hl: string;
-  deepSearch?: boolean;
   tripType?: "one_way" | "round_trip";
   returnDate?: string;
   topN?: number;
 }): string {
   return [
-    "gf",
+    "searchapi-v1",
     params.departureId,
     params.arrivalId,
     params.outboundDate,
@@ -313,26 +329,36 @@ export function serpApiCacheKey(params: {
     params.currency,
     params.gl,
     params.hl,
-    params.deepSearch ? "deep" : "std",
-    String(params.topN ?? "-"),
+    params.tripType === "round_trip" ? String(params.topN ?? "-") : "-",
   ].join("|");
 }
 
-export class SerpApiProvider implements FlightProvider {
+type SearchStep = {
+  originBatch: string[];
+  destBatch: string[];
+  date: string;
+  cabin: Cabin;
+  maxStops: MaxStops;
+  currency: string;
+  gl: string;
+  hl: string;
+};
+
+export class SearchApiProvider implements FlightProvider {
   private readonly apiKey: string;
-  private readonly fetchImpl: SerpApiFetch;
+  private readonly fetchImpl: SearchApiFetch;
   private readonly baseUrl: string;
   private readonly onDebug?: (message: string) => void;
   private readonly retryAttempts: number;
   private readonly retryBaseDelayMs: number;
   private readonly requestTimeoutMs: number;
 
-  constructor(options: SerpApiProviderOptions) {
+  constructor(options: SearchApiProviderOptions) {
     this.apiKey = options.apiKey;
-    // Wrap global fetch — passing `fetch` unbound throws Illegal invocation on Workers.
     this.fetchImpl =
       options.fetchImpl ?? ((url, init) => globalThis.fetch(url, init));
-    this.baseUrl = options.baseUrl ?? "https://serpapi.com/search.json";
+    this.baseUrl =
+      options.baseUrl ?? "https://www.searchapi.io/api/v1/search";
     this.onDebug = options.onDebug;
     this.retryAttempts = Math.max(1, options.retryAttempts ?? 4);
     this.retryBaseDelayMs = Math.max(0, options.retryBaseDelayMs ?? 750);
@@ -340,7 +366,6 @@ export class SerpApiProvider implements FlightProvider {
   }
 
   async search(spec: LegSearch): Promise<ItineraryOption[]> {
-    // Single-airport convenience path; planner uses searchStep for batches.
     const { options } = await this.searchStep({
       originBatch: [spec.origin],
       destBatch: [spec.dest],
@@ -350,27 +375,16 @@ export class SerpApiProvider implements FlightProvider {
       currency: spec.currency,
       gl: spec.gl,
       hl: spec.hl,
-      deepSearch: spec.deepSearch,
     });
     return options;
   }
 
-  async searchStep(step: {
-    originBatch: string[];
-    destBatch: string[];
-    date: string;
-    cabin: Cabin;
-    maxStops: MaxStops;
-    currency: string;
-    gl: string;
-    hl: string;
-    deepSearch?: boolean;
-  }): Promise<{
+  async searchStep(step: SearchStep): Promise<{
     options: ItineraryOption[];
     raw: unknown;
     searchesUsed: number;
   }> {
-    const url = buildSerpApiUrl(
+    const url = buildSearchApiUrl(
       {
         departureId: step.originBatch.join(","),
         arrivalId: step.destBatch.join(","),
@@ -380,34 +394,28 @@ export class SerpApiProvider implements FlightProvider {
         currency: step.currency,
         gl: step.gl,
         hl: step.hl,
-        deepSearch: step.deepSearch,
         apiKey: this.apiKey,
       },
       this.baseUrl,
     );
-
     const { raw, searchesUsed } = await this.fetchWithRetry(url);
-    const options = parseSerpApiResponse(raw, {
-      currency: step.currency,
-      departureDate: step.date,
-      onDebug: this.onDebug,
-    });
-    return { options, raw, searchesUsed };
+    return {
+      options: parseSearchApiResponse(raw, {
+        currency: step.currency,
+        departureDate: step.date,
+        onDebug: this.onDebug,
+      }),
+      raw,
+      searchesUsed,
+    };
   }
 
-  async searchRoundTripStep(step: {
-    originBatch: string[];
-    destBatch: string[];
-    date: string;
-    returnDate: string;
-    cabin: Cabin;
-    maxStops: MaxStops;
-    currency: string;
-    gl: string;
-    hl: string;
-    deepSearch?: boolean;
-    topN: number;
-  }): Promise<{
+  async searchRoundTripStep(
+    step: SearchStep & {
+      returnDate: string;
+      topN: number;
+    },
+  ): Promise<{
     options: ItineraryOption[];
     raw: unknown;
     searchesUsed: number;
@@ -424,14 +432,14 @@ export class SerpApiProvider implements FlightProvider {
       currency: step.currency,
       gl: step.gl,
       hl: step.hl,
-      deepSearch: step.deepSearch,
       apiKey: this.apiKey,
     };
-    const initialUrl = buildSerpApiUrl(baseParams, this.baseUrl);
-    const initial = await this.fetchWithRetry(initialUrl);
+    const initial = await this.fetchWithRetry(
+      buildSearchApiUrl(baseParams, this.baseUrl),
+    );
     let searchesUsed = initial.searchesUsed;
     let partialFailures = 0;
-    const candidates = parseSerpApiResponse(initial.raw, {
+    const candidates = parseSearchApiResponse(initial.raw, {
       currency: step.currency,
       departureDate: step.date,
       onDebug: this.onDebug,
@@ -452,14 +460,14 @@ export class SerpApiProvider implements FlightProvider {
 
     const options: ItineraryOption[] = [];
     for (const outbound of candidates) {
-      const returnUrl = buildSerpApiUrl(
+      const returnUrl = buildSearchApiUrl(
         { ...baseParams, departureToken: outbound.departureToken },
         this.baseUrl,
       );
       try {
         const inboundResult = await this.fetchWithRetry(returnUrl);
         searchesUsed += inboundResult.searchesUsed;
-        const inboundOptions = parseSerpApiResponse(inboundResult.raw, {
+        const inboundOptions = parseSearchApiResponse(inboundResult.raw, {
           currency: step.currency,
           departureDate: step.returnDate,
           onDebug: this.onDebug,
@@ -470,7 +478,7 @@ export class SerpApiProvider implements FlightProvider {
       } catch (error) {
         partialFailures += 1;
         searchesUsed +=
-          error instanceof SerpApiRequestError ? error.searchesUsed : 0;
+          error instanceof SearchApiRequestError ? error.searchesUsed : 0;
         this.onDebug?.(
           `return-flight lookup failed: ${
             error instanceof Error ? error.message : String(error)
@@ -492,9 +500,8 @@ export class SerpApiProvider implements FlightProvider {
   ): Promise<{ raw: unknown; searchesUsed: number }> {
     let lastError: Error | undefined;
     let searchesUsed = 0;
-    for (let i = 0; i < this.retryAttempts; i++) {
-      const attempt = i + 1;
-      const requestUrl = i === 0 ? url : withoutSerpApiCache(url);
+    for (let index = 0; index < this.retryAttempts; index += 1) {
+      const attempt = index + 1;
       try {
         searchesUsed += 1;
         const controller = new AbortController();
@@ -504,56 +511,57 @@ export class SerpApiProvider implements FlightProvider {
         );
         let response: Response;
         try {
-          response = await this.fetchImpl(requestUrl, {
-            signal: controller.signal,
-          });
+          response = await this.fetchImpl(url, { signal: controller.signal });
         } finally {
           clearTimeout(timer);
         }
 
         if (isRetryableStatus(response.status)) {
-          throw new RetryableSerpApiError(`SerpApi HTTP ${response.status}`);
+          throw new RetryableSearchApiError(
+            `SearchAPI HTTP ${response.status}`,
+          );
         }
-
         if (!response.ok) {
-          throw new Error(`SerpApi HTTP ${response.status}`);
+          throw new Error(`SearchAPI HTTP ${response.status}`);
         }
 
-        const data = (await response.json()) as SerpApiResponse;
+        const data = (await response.json()) as SearchApiResponse;
         if (data.error) {
-          if (isRetryableSerpApiMessage(data.error)) {
-            throw new RetryableSerpApiError(data.error);
+          if (isRetryableSearchApiMessage(data.error)) {
+            throw new RetryableSearchApiError(data.error);
           }
           throw new Error(data.error);
         }
         return { raw: data, searchesUsed };
-      } catch (err) {
-        lastError = err instanceof Error ? err : new Error(String(err));
+      } catch (error) {
+        lastError =
+          error instanceof Error ? error : new Error(String(error));
         const canRetry =
           attempt < this.retryAttempts && isRetryableError(lastError);
         if (!canRetry) break;
 
-        const delay = this.retryBaseDelayMs * 2 ** i;
+        const delay = this.retryBaseDelayMs * 2 ** index;
         this.onDebug?.(
-          `SerpApi attempt ${attempt} failed; retrying in ${delay}ms: ${lastError.message}`,
+          `SearchAPI attempt ${attempt} failed; retrying in ${delay}ms: ${lastError.message}`,
         );
         await sleep(delay);
       }
     }
-    throw new SerpApiRequestError(
-      lastError?.message ?? "SerpApi fetch failed",
+
+    throw new SearchApiRequestError(
+      lastError?.message ?? "SearchAPI fetch failed",
       searchesUsed,
     );
   }
 }
 
-class RetryableSerpApiError extends Error {}
+class RetryableSearchApiError extends Error {}
 
 function isRetryableStatus(status: number): boolean {
   return status === 408 || status === 425 || status === 429 || status >= 500;
 }
 
-function isRetryableSerpApiMessage(message: string): boolean {
+function isRetryableSearchApiMessage(message: string): boolean {
   return /hasn't returned any results|timed? ?out|temporar|try again|unavailable/i.test(
     message,
   );
@@ -561,16 +569,10 @@ function isRetryableSerpApiMessage(message: string): boolean {
 
 function isRetryableError(error: Error): boolean {
   return (
-    error instanceof RetryableSerpApiError ||
+    error instanceof RetryableSearchApiError ||
     error.name === "AbortError" ||
     error instanceof TypeError
   );
-}
-
-function withoutSerpApiCache(url: string): string {
-  const retryUrl = new URL(url);
-  retryUrl.searchParams.set("no_cache", "true");
-  return retryUrl.toString();
 }
 
 function sleep(ms: number): Promise<void> {

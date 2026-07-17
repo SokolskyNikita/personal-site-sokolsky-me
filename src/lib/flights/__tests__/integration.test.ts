@@ -6,7 +6,7 @@ import { groupResults } from "../group";
 import { getSearchMode } from "../modes";
 import { planSearch } from "../planner";
 import { filterByLieFlatPolicy } from "../policy";
-import { parseSerpApiResponse } from "../serpapi";
+import { parseSearchApiResponse } from "../searchapi";
 
 const fixturesDir = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -26,9 +26,9 @@ describe("integration: fake provider through pipeline", () => {
     const raw = JSON.parse(
       readFileSync(join(fixturesDir, "business-eze-jfk.json"), "utf8"),
     );
-    const parsed = parseSerpApiResponse(raw, {
+    const parsed = parseSearchApiResponse(raw, {
       currency: "USD",
-      departureDate: "2026-07-23",
+      departureDate: "2026-08-15",
     });
     const filtered = filterByLieFlatPolicy(
       parsed,
@@ -41,7 +41,7 @@ describe("integration: fake provider through pipeline", () => {
     expect(filtered.length).toBeGreaterThan(0);
 
     const grouped = groupResults(filtered, { groupBy: "date", topN: 2 });
-    expect(grouped["2026-07-23"]).toBeDefined();
+    expect(grouped["2026-08-15"]).toBeDefined();
   });
 
   it("economy mode applies no lie-flat filter", () => {
@@ -51,9 +51,9 @@ describe("integration: fake provider through pipeline", () => {
     const raw = JSON.parse(
       readFileSync(join(fixturesDir, "economy-eze-jfk.json"), "utf8"),
     );
-    const parsed = parseSerpApiResponse(raw, {
+    const parsed = parseSearchApiResponse(raw, {
       currency: "USD",
-      departureDate: "2026-07-23",
+      departureDate: "2026-08-15",
     });
     const filtered = filterByLieFlatPolicy(
       parsed,

@@ -18,11 +18,11 @@ import {
   filterByMaxTotalHours,
 } from "./policy";
 import {
-  parseSerpApiResponse,
-  SerpApiProvider,
-  SerpApiRequestError,
-  serpApiCacheKey,
-} from "./serpapi";
+  parseSearchApiResponse,
+  SearchApiProvider,
+  SearchApiRequestError,
+  searchApiCacheKey,
+} from "./searchapi";
 import {
   LegSearchSchema,
   type ItineraryOption,
@@ -36,7 +36,7 @@ export type FlightEnv = {
     idFromName(name: string): unknown;
     get(id: unknown): { fetch(request: Request): Promise<Response> };
   };
-  SERPAPI_API_KEY?: string;
+  SEARCH_API_IO_KEY?: string;
   FLIGHT_DAILY_BUDGET?: string;
   FLIGHT_CACHE_TTL_SECONDS?: string;
 };
@@ -179,7 +179,7 @@ async function handleQuery(
     return json({ ok: false, error: "invalid_return_date" }, 400);
   }
 
-  // Spec order: cache → budget → rate-limit → SerpApi (cache hits skip the rest).
+  // Spec order: cache → budget → rate-limit → SearchAPI (cache hits skip the rest).
   const cacheKey = stepCacheKey(spec, step);
   const cached = await cacheGet(kv, cacheKey);
   let raw: unknown;
@@ -230,11 +230,11 @@ async function handleQuery(
       });
     }
 
-    if (!env.SERPAPI_API_KEY) {
-      return json({ ok: false, error: "serpapi_key_missing" }, 503);
+    if (!env.SEARCH_API_IO_KEY) {
+      return json({ ok: false, error: "searchapi_key_missing" }, 503);
     }
 
-    const provider = new SerpApiProvider({ apiKey: env.SERPAPI_API_KEY });
+    const provider = new SearchApiProvider({ apiKey: env.SEARCH_API_IO_KEY });
     try {
       const result =
         spec.tripType === "round_trip"
@@ -248,7 +248,6 @@ async function handleQuery(
               currency: spec.currency,
               gl: spec.gl,
               hl: spec.hl,
-              deepSearch: spec.deepSearch,
               topN: spec.topN,
             })
           : await provider.searchStep({
@@ -260,7 +259,6 @@ async function handleQuery(
               currency: spec.currency,
               gl: spec.gl,
               hl: spec.hl,
-              deepSearch: spec.deepSearch,
             });
       raw = result.raw;
       if (
@@ -277,7 +275,7 @@ async function handleQuery(
       await cachePut(kv, cacheKey, JSON.stringify(raw), ttl);
     } catch (err) {
       searchesUsed =
-        err instanceof SerpApiRequestError ? err.searchesUsed : 0;
+        err instanceof SearchApiRequestError ? err.searchesUsed : 0;
       await recordSearchesUsed(env, kv, budgetLimit, searchesUsed);
       return json({
         ok: true,
@@ -293,7 +291,7 @@ async function handleQuery(
 
   const parsedOptions =
     roundTripOptions ??
-    parseSerpApiResponse(raw, {
+    parseSearchApiResponse(raw, {
       currency: spec.currency,
       departureDate: step.date,
     });
@@ -420,7 +418,7 @@ async function consumeDurableRateLimit(
 }
 
 function stepCacheKey(spec: LegSearch, step: PlanStep): string {
-  return serpApiCacheKey({
+  return searchApiCacheKey({
     departureId: step.originBatch.join(","),
     arrivalId: step.destBatch.join(","),
     outboundDate: step.date,
@@ -429,7 +427,6 @@ function stepCacheKey(spec: LegSearch, step: PlanStep): string {
     currency: spec.currency,
     gl: spec.gl,
     hl: spec.hl,
-    deepSearch: spec.deepSearch,
     tripType: spec.tripType,
     returnDate: step.returnDate,
     topN: spec.topN,

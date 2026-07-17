@@ -89,7 +89,7 @@ When moving from temporary `workers.dev` to `sokolsky.me`:
 
 ## flight search (`/flights/search`)
 
-Dense one-way flight finder backed by SerpApi Google Flights. Core logic lives in `src/lib/flights/` (UI-agnostic). API routes are handled by the custom Worker (`POST /api/flights/plan`, `POST /api/flights/query`).
+Dense one-way and round-trip flight finder backed by SearchAPI.io Google Flights. Core logic lives in `src/lib/flights/` (UI-agnostic). API routes are handled by the custom Worker (`POST /api/flights/plan`, `POST /api/flights/query`).
 
 ### secrets and env
 
@@ -97,13 +97,13 @@ Local (gitignored):
 
 ```bash
 cp .dev.vars.example .dev.vars
-# set SERPAPI_API_KEY=...
+# set SEARCH_API_IO_KEY=...
 ```
 
 Production:
 
 ```bash
-npx wrangler secret put SERPAPI_API_KEY
+npx wrangler secret put SEARCH_API_IO_KEY
 ```
 
 ### KV namespace
@@ -134,7 +134,7 @@ npx wrangler dev
 ### extending
 
 - **Add a region**: new entry in `src/lib/flights/locations.ts` (`airports` and/or `refs` to other ids)
-- **Add a provider**: implement `FlightProvider` beside `SerpApiProvider` (do not leak provider field names into the interface)
+- **Add a provider**: implement `FlightProvider` beside `SearchApiProvider` (do not leak provider field names into the interface)
 - **Add a search mode**: new row in `SEARCH_MODES` (`src/lib/flights/modes.ts`)
 
 ### tests

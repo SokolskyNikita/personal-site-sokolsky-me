@@ -3,7 +3,7 @@ import {
   formatDuration,
   formatPrice,
 } from "../../lib/flights/format";
-import { SERPAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
+import { SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
 import { groupResults, orderedGroupKeys } from "../../lib/flights/group";
 import { listRegistryOptions } from "../../lib/flights/resolver";
 import {
@@ -133,6 +133,18 @@ export function mountFlightSearch(root: HTMLElement): void {
     });
   }
 
+  root.querySelector("#fs-custom-airports")?.addEventListener("change", (event) => {
+    const checked = (event.target as HTMLInputElement).checked;
+    syncCustomAirportFields(root, checked);
+    if (checked) {
+      root.querySelector<HTMLInputElement>("#fs-origin-iata")?.focus();
+      return;
+    }
+    setVal(root, "#fs-origin-iata", "");
+    setVal(root, "#fs-dest-iata", "");
+    onFormChanged();
+  });
+
   root.querySelector("#fs-mode")?.addEventListener("change", () => {
     const modeId =
       root.querySelector<HTMLSelectElement>("#fs-mode")?.value ??
@@ -176,6 +188,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       target?.id === "fs-dest-reg" ||
       target?.id === "fs-mode" ||
       target?.id === "fs-round-trip" ||
+      target?.id === "fs-custom-airports" ||
       target?.id === "fs-days"
     ) {
       return;
@@ -370,7 +383,12 @@ export function mountFlightSearch(root: HTMLElement): void {
 
       if (outcome.cacheOnly && !quotaBannerShown) {
         quotaBannerShown = true;
-        banners.innerHTML += `<div class="fs-banner fs-banner-warn">Daily quota reached — cached results only.</div>`;
+        banners.insertAdjacentHTML(
+          "beforeend",
+          outOfCreditBanner(
+            "The site-wide daily search quota was reached — showing cached results only.",
+          ),
+        );
       }
 
       if (
@@ -384,7 +402,9 @@ export function mountFlightSearch(root: HTMLElement): void {
           rateLimitBannerShown = true;
           banners.insertAdjacentHTML(
             "beforeend",
-            `<div class="fs-banner fs-banner-warn">Your daily search limit was reached — dates without cached results are skipped. Try again tomorrow.</div>`,
+            outOfCreditBanner(
+              "Your daily search limit was reached — dates without cached results are skipped.",
+            ),
           );
         }
       }
@@ -482,13 +502,17 @@ export function mountFlightSearch(root: HTMLElement): void {
   });
 }
 
+function outOfCreditBanner(reason: string): string {
+  return `<div class="fs-banner fs-banner-warn">${escapeHtml(reason)} Limits reset daily.<span class="fs-banner-contact">Need larger limits? Email <a href="mailto:sokolx@gmail.com">sokolx@gmail.com</a> or DM <a href="https://x.com/nsokolsky" target="_blank" rel="noopener noreferrer">@nsokolsky</a> on X.</span></div>`;
+}
+
 function renderCostSummary(
   container: HTMLElement,
   searchesUsed: number,
   cacheHits: number,
 ): void {
   const estimatedCost =
-    searchesUsed * SERPAPI_ESTIMATED_COST_PER_SEARCH_USD;
+    searchesUsed * SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD;
   const formattedCost = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -499,9 +523,9 @@ function renderCostSummary(
 
   container.replaceChildren();
   const cost = document.createElement("strong");
-  cost.textContent = `Approx. SerpApi cost: ${formattedCost}`;
+  cost.textContent = `Approx. SearchAPI cost: ${formattedCost}`;
   const detail = document.createTextNode(
-    ` · ${searchesUsed} billable ${searchLabel} · ${cacheHits} cached (free)`,
+    ` · ${searchesUsed} billable ${searchLabel} at $4 / 1,000 · ${cacheHits} cached (free)`,
   );
   container.append(cost, detail);
 }
@@ -787,6 +811,13 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
     setVal(root, "#fs-dest-reg", DEFAULT_FORM.dest);
     setVal(root, "#fs-dest-iata", looksLikeIata(form.dest) ? form.dest : "");
   }
+  const hasCustomAirport =
+    !registryIds.has(form.origin) || !registryIds.has(form.dest);
+  const customAirports = root.querySelector<HTMLInputElement>(
+    "#fs-custom-airports",
+  );
+  if (customAirports) customAirports.checked = hasCustomAirport;
+  syncCustomAirportFields(root, hasCustomAirport);
 
   const matchingMode = SEARCH_MODES.find(
     (m) => m.cabin === form.cabin && m.lieFlatPolicy === form.lieFlatPolicy,
@@ -816,8 +847,6 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
   if (flexibleTripLength) {
     flexibleTripLength.checked = form.flexibleTripLength;
   }
-  const deep = root.querySelector<HTMLInputElement>("#fs-deep");
-  if (deep) deep.checked = form.deepSearch;
   syncTripFields(root, form.tripType);
 
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days");
@@ -897,8 +926,7 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
       ? maxTotalHoursValue
       : base.maxTotalHours,
     topN: Number(root.querySelector<HTMLInputElement>("#fs-topn")?.value) || 2,
-    deepSearch:
-      root.querySelector<HTMLInputElement>("#fs-deep")?.checked ?? false,
+    deepSearch: prev.deepSearch,
   };
 }
 
@@ -908,6 +936,22 @@ function syncTripFields(
 ): void {
   const controls = root.querySelector<HTMLElement>("#fs-trip-controls");
   if (controls) controls.hidden = tripType !== "round_trip";
+}
+
+function syncCustomAirportFields(
+  root: HTMLElement,
+  visible: boolean,
+): void {
+  root
+    .querySelector<HTMLInputElement>("#fs-custom-airports")
+    ?.setAttribute("aria-expanded", String(visible));
+  for (const selector of ["#fs-origin-iata", "#fs-dest-iata"] as const) {
+    const input = root.querySelector<HTMLInputElement>(selector);
+    if (input) input.hidden = !visible;
+  }
+  for (const location of root.querySelectorAll<HTMLElement>(".fs-loc")) {
+    location.classList.toggle("has-custom-airport", visible);
+  }
 }
 
 function syncUrl(form: FormState): void {
