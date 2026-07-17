@@ -7,6 +7,7 @@ import type {
   FlightProvider,
   ItineraryOption,
   LegSearch,
+  MaxStops,
   Segment,
 } from "./types";
 
@@ -247,7 +248,7 @@ export function buildSerpApiUrl(
     arrivalId: string;
     outboundDate: string;
     cabin: Cabin;
-    maxStops: 1 | 2;
+    maxStops: MaxStops;
     currency: string;
     gl: string;
     hl: string;
@@ -291,7 +292,7 @@ export function serpApiCacheKey(params: {
   arrivalId: string;
   outboundDate: string;
   cabin: Cabin;
-  maxStops: 1 | 2;
+  maxStops: MaxStops;
   currency: string;
   gl: string;
   hl: string;
@@ -359,7 +360,7 @@ export class SerpApiProvider implements FlightProvider {
     destBatch: string[];
     date: string;
     cabin: Cabin;
-    maxStops: 1 | 2;
+    maxStops: MaxStops;
     currency: string;
     gl: string;
     hl: string;
@@ -400,7 +401,7 @@ export class SerpApiProvider implements FlightProvider {
     date: string;
     returnDate: string;
     cabin: Cabin;
-    maxStops: 1 | 2;
+    maxStops: MaxStops;
     currency: string;
     gl: string;
     hl: string;

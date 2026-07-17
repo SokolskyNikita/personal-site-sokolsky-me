@@ -2,9 +2,11 @@ import { DEFAULT_SEARCH_MODE_ID, getSearchMode } from "./modes";
 import {
   LegSearchSchema,
   MAX_TOTAL_HOURS_OPTIONS,
+  MaxStopsSchema,
   type Cabin,
   type LegSearch,
   type LieFlatPolicy,
+  type MaxStops,
   type MaxTotalHours,
   type TripType,
 } from "./types";
@@ -17,7 +19,7 @@ export const DEFAULT_FORM = {
   tripType: "one_way" as TripType,
   tripLengthDays: 7,
   days: 7,
-  maxStops: 1 as 1 | 2,
+  maxStops: 1 as MaxStops,
   maxTotalHours: 24 as MaxTotalHours,
   deepSearch: true,
   topN: 4,
@@ -40,7 +42,7 @@ export type FormState = {
   tripLengthDays: number;
   start: string;
   days: number;
-  maxStops: 1 | 2;
+  maxStops: MaxStops;
   maxTotalHours: MaxTotalHours;
   deepSearch: boolean;
   topN: number;
@@ -133,8 +135,12 @@ export function formStateFromSearchParams(
     mode?.lieFlatPolicy ??
     base.lieFlatPolicy;
 
-  const maxStopsRaw = Number(params.get("maxStops") ?? base.maxStops);
-  const maxStops: 1 | 2 = maxStopsRaw === 2 ? 2 : 1;
+  const maxStopsParsed = MaxStopsSchema.safeParse(
+    Number(params.get("maxStops") ?? base.maxStops),
+  );
+  const maxStops: MaxStops = maxStopsParsed.success
+    ? maxStopsParsed.data
+    : base.maxStops;
 
   return {
     origin: params.get("origin") ?? base.origin,

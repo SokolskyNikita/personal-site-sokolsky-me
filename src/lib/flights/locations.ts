@@ -32,6 +32,12 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     label: "London (all airports)",
     airports: ["LHR", "LGW", "STN", "LTN", "LCY", "SEN"],
   },
+  madrid: {
+    id: "madrid",
+    type: "city",
+    label: "Madrid (all airports)",
+    airports: ["MAD"],
+  },
   seattle: {
     id: "seattle",
     type: "city",

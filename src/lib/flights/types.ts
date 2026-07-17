@@ -47,13 +47,21 @@ export const MaxTotalHoursSchema = z.union([
 ]);
 export type MaxTotalHours = z.infer<typeof MaxTotalHoursSchema>;
 
+/** UI max stops: 0 = nonstop, 1 = one stop or fewer, 2 = two stops or fewer. */
+export const MaxStopsSchema = z.union([
+  z.literal(0),
+  z.literal(1),
+  z.literal(2),
+]);
+export type MaxStops = z.infer<typeof MaxStopsSchema>;
+
 export const LegSearchSchema = z.object({
   origin: LocationRefSchema,
   dest: LocationRefSchema,
   tripType: TripTypeSchema.default("one_way"),
   tripLengthDays: z.number().int().min(1).max(30).default(7),
   dateRange: DateRangeSchema,
-  maxStops: z.union([z.literal(1), z.literal(2)]),
+  maxStops: MaxStopsSchema,
   maxTotalHours: MaxTotalHoursSchema.default(24),
   cabin: CabinSchema,
   lieFlatPolicy: LieFlatPolicySchema,

@@ -94,6 +94,18 @@ describe("spec ↔ URL round-trip", () => {
     expect(form.maxTotalHours).toBe(24);
   });
 
+  it("round-trips a 0-stops (nonstop) filter", () => {
+    const form = defaultFormState("2026-07-20");
+    form.maxStops = 0;
+
+    const params = formStateToSearchParams(form);
+    expect(params.get("maxStops")).toBe("0");
+
+    const restored = formStateFromSearchParams(params);
+    expect(restored.maxStops).toBe(0);
+    expect(formStateToLegSearch(restored).maxStops).toBe(0);
+  });
+
   it("accepts an 18-hour itinerary limit", () => {
     const form = formStateFromSearchParams(
       new URLSearchParams({ maxTotalHours: "18" }),

@@ -45,6 +45,10 @@ describe("resolveLocation", () => {
     expect(resolveLocation("prague")).toEqual(["PRG", "VOD"]);
   });
 
+  it("resolves Madrid to Barajas", () => {
+    expect(resolveLocation("madrid")).toEqual(["MAD"]);
+  });
+
   it("resolves gateway registries", () => {
     expect(resolveLocation("usa-gateways")).toHaveLength(35);
     expect(resolveLocation("canada-gateways")).toEqual([

@@ -1,4 +1,4 @@
-import type { Cabin } from "./types";
+import type { Cabin, MaxStops } from "./types";
 
 /** SerpApi google_flights travel_class mapping (verified via serpapi://engines/google_flights). */
 export const CABIN_TO_TRAVEL_CLASS: Record<Cabin, number> = {
@@ -11,10 +11,12 @@ export const CABIN_TO_TRAVEL_CLASS: Record<Cabin, number> = {
 /**
  * SerpApi stops enum (verified via serpapi://engines/google_flights):
  * 0 = any, 1 = nonstop, 2 = 1 stop or fewer, 3 = 2 stops or fewer.
- * UI maxStops 1|2 maps to the matching SerpApi filter.
+ * UI maxStops 0|1|2 maps to SerpApi 1|2|3.
  */
-export function maxStopsToSerpApiStops(maxStops: 1 | 2): 2 | 3 {
-  return maxStops === 1 ? 2 : 3;
+export function maxStopsToSerpApiStops(maxStops: MaxStops): 1 | 2 | 3 {
+  if (maxStops === 0) return 1;
+  if (maxStops === 1) return 2;
+  return 3;
 }
 
 export const CABIN_LABELS: Record<Cabin, string> = {

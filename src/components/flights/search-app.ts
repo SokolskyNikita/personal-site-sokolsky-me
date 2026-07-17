@@ -836,11 +836,13 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
     start:
       root.querySelector<HTMLInputElement>("#fs-start")?.value || base.start,
     days: Number(root.querySelector<HTMLInputElement>("#fs-days")?.value) || 7,
-    maxStops:
-      Number(root.querySelector<HTMLSelectElement>("#fs-max-stops")?.value) ===
-      2
-        ? 2
-        : 1,
+    maxStops: (() => {
+      const raw = Number(
+        root.querySelector<HTMLSelectElement>("#fs-max-stops")?.value,
+      );
+      if (raw === 0 || raw === 2) return raw;
+      return 1;
+    })(),
     maxTotalHours: MAX_TOTAL_HOURS_OPTIONS.includes(maxTotalHoursValue)
       ? maxTotalHoursValue
       : base.maxTotalHours,
