@@ -281,7 +281,9 @@ export function mountFlightSearch(root: HTMLElement): void {
     latestOptions = [];
     latestSpec = null;
     progress.textContent = "";
-    searchSummary.textContent = "Checking cache and daily budget…";
+    searchSummary.textContent = `Checking cache for ${spec.dateRange.days + 1} dates (start date + ${spec.dateRange.days} ${
+      spec.dateRange.days === 1 ? "day" : "days"
+    }) and daily budget…`;
 
     let planData: PlanResponse;
     try {
@@ -323,10 +325,16 @@ export function mountFlightSearch(root: HTMLElement): void {
       return;
     }
 
-    const maxCalls = planData.plan.estimatedMaxCalls;
-    const callLabel = maxCalls === 1 ? "call" : "calls";
-    const qualifier = spec.tripType === "round_trip" ? "up to " : "";
-    searchSummary.textContent = `${qualifier}${maxCalls} ${callLabel} · ${cached} cached steps · ${remaining} daily budget remaining.`;
+    const totalSteps = planData.plan.callCount;
+    if (spec.tripType === "round_trip") {
+      const callLabel = uncached === 1 ? "call" : "calls";
+      const batchLabel = totalSteps === 1 ? "date batch" : "date batches";
+      searchSummary.textContent = `Up to ${uncached} new ${callLabel} · ${cached} cached · ${totalSteps} ${batchLabel} total · ${remaining} daily budget remaining.`;
+    } else {
+      const newLabel = uncached === 1 ? "search" : "searches";
+      const totalLabel = totalSteps === 1 ? "search" : "searches";
+      searchSummary.textContent = `${uncached} new ${newLabel} · ${cached} cached · ${totalSteps} total ${totalLabel} · ${remaining} daily budget remaining.`;
+    }
     setSearchBusy(true, "Searching…");
     showSearchProgress("Searching flights", 0, planData.plan.callCount);
     results.setAttribute("aria-busy", "true");
