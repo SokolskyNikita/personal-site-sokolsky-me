@@ -32,6 +32,6 @@ export const DEFAULT_DAILY_BUDGET = 2_000;
 
 /**
  * Per-IP daily rate limit on /query (uncached SerpApi steps).
- * Caps a single client at ~6 typical Buenos Aires→gateway searches per day.
+ * Caps a single client at ~12 typical Buenos Aires→gateway searches per day.
  */
-export const DEFAULT_RATE_LIMIT_PER_DAY = 200;
+export const DEFAULT_RATE_LIMIT_PER_DAY = 400;

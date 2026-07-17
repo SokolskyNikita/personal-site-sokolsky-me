@@ -350,6 +350,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     const seenIds = new Set<string>();
     const stepErrors: Array<{ stepIndex: number; message: string }> = [];
     let quotaBannerShown = false;
+    let rateLimitBannerShown = false;
     let partialReturnFailures = 0;
     let completedSteps = 0;
 
@@ -379,6 +380,13 @@ export function mountFlightSearch(root: HTMLElement): void {
         const message =
           outcome.message ?? outcome.error ?? "step failed";
         stepErrors.push({ stepIndex: step.stepIndex, message });
+        if (message === "rate_limited" && !rateLimitBannerShown) {
+          rateLimitBannerShown = true;
+          banners.insertAdjacentHTML(
+            "beforeend",
+            `<div class="fs-banner fs-banner-warn">Your daily search limit was reached — dates without cached results are skipped. Try again tomorrow.</div>`,
+          );
+        }
       }
       if (outcome.warning === "partial_return_results") {
         partialReturnFailures += 1;
