@@ -13,8 +13,8 @@ export const MAX_AIRPORTS_PER_BATCH = 10;
  */
 export const ROUND_TRIP_CANDIDATES_PER_STEP = 4;
 
-/** Default KV cache TTL for raw SerpApi JSON (1 hour). */
-export const DEFAULT_CACHE_TTL_SECONDS = 60 * 60;
+/** Default KV cache TTL for raw SerpApi JSON (2 hours). */
+export const DEFAULT_CACHE_TTL_SECONDS = 2 * 60 * 60;
 
 /**
  * Approximate marginal cost using SerpApi's $25 / 1,000-search Starter plan.

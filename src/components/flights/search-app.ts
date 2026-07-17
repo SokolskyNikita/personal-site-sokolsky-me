@@ -578,6 +578,9 @@ function renderResults(
       const seatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
         ? formatLieFlatSegments(option)
         : formatCabinDetail(option);
+      const tripDurationDays = option.returnDate
+        ? differenceInCalendarDays(option.departureDate, option.returnDate)
+        : undefined;
       let returnMarkup = "";
       if (option.returnSegments?.length) {
         const returnOption: ItineraryOption = {
@@ -605,17 +608,22 @@ function renderResults(
           ? formatLieFlatSegments(returnOption)
           : formatCabinDetail(returnOption);
         returnMarkup = `
-          <div class="fs-result-return">
-            <span class="fs-result-leg-label">Return · ${escapeHtml(
-              formatDateHeader(option.returnDate ?? ""),
-            )}</span>
-            <strong>${escapeHtml(returnCarriers)}</strong>
-            <span>${escapeHtml(returnRoute)}</span>
-            <span>${escapeHtml(formatSegmentTimes(option.returnSegments))} · ${escapeHtml(
-              returnSeatDetail,
-            )} · ${escapeHtml(
-              formatStops(returnOption),
-            )} · ${formatDuration(returnOption.totalDurationMinutes)}</span>
+          <div class="fs-result-leg fs-result-leg-return">
+            <div class="fs-result-leg-header">
+              <span class="fs-result-leg-label">Return · ${escapeHtml(
+                formatDateHeader(option.returnDate ?? ""),
+              )}</span>
+              <strong class="fs-result-carrier">${escapeHtml(returnCarriers)}</strong>
+              <span class="fs-result-airports">${escapeHtml(returnRoute)}</span>
+            </div>
+            <div class="fs-result-meta">
+              <span class="fs-result-times">${escapeHtml(
+                formatSegmentTimes(option.returnSegments),
+              )}</span>
+              <span class="fs-seat-detail">${escapeHtml(returnSeatDetail)}</span>
+              <span>${escapeHtml(formatStops(returnOption))}</span>
+              <span>${formatDuration(returnOption.totalDurationMinutes)}</span>
+            </div>
           </div>
         `;
       }
@@ -629,23 +637,28 @@ function renderResults(
           <div class="fs-result-price">
             <strong>${escapeHtml(price)}</strong>
             <span>to ${escapeHtml(dest)}</span>
+            ${
+              tripDurationDays
+                ? `<span class="fs-result-trip-length">${tripDurationDays}-day round trip</span>`
+                : ""
+            }
           </div>
           <div class="fs-result-journey">
-            <div class="fs-result-route">
-              ${
-                option.returnSegments?.length
-                  ? `<span class="fs-result-leg-label">Outbound · ${escapeHtml(
-                      formatDateHeader(option.departureDate),
-                    )}</span>`
-                  : ""
-              }
-              <strong>${escapeHtml(carrierLabel)}</strong>
-              <span>${escapeHtml(route)}</span>
-            </div>
-            <div class="fs-result-meta">
-              <span class="fs-result-times">${escapeHtml(outboundTimes)}</span>
-              <span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>
-              <span>${escapeHtml(stopDetail)}</span>
+            <div class="fs-result-leg">
+              <div class="fs-result-leg-header">
+                ${
+                  option.returnSegments?.length
+                    ? '<span class="fs-result-leg-label">Outbound</span>'
+                    : ""
+                }
+                <strong class="fs-result-carrier">${escapeHtml(carrierLabel)}</strong>
+                <span class="fs-result-airports">${escapeHtml(route)}</span>
+              </div>
+              <div class="fs-result-meta">
+                <span class="fs-result-times">${escapeHtml(outboundTimes)}</span>
+                <span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>
+                <span>${escapeHtml(stopDetail)}</span>
+              </div>
             </div>
             ${returnMarkup}
           </div>
@@ -661,6 +674,14 @@ function renderResults(
   }
   container.innerHTML = html.join("");
   for (const err of errors) container.appendChild(err);
+}
+
+function differenceInCalendarDays(start: string, end: string): number | undefined {
+  const startTime = Date.parse(`${start}T00:00:00Z`);
+  const endTime = Date.parse(`${end}T00:00:00Z`);
+  if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) return undefined;
+  const days = Math.round((endTime - startTime) / 86_400_000);
+  return days > 0 ? days : undefined;
 }
 
 function formatStops(option: ItineraryOption): string {
