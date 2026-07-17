@@ -3,14 +3,14 @@ import venueGeoData from "../../data/fifa-2026-finals-ba-venues.json";
 
 export const prerender = true;
 
-const pageTitle = "Where to watch the 2026 World Cup semis & final in Buenos Aires";
+const pageTitle = "Where to watch Argentina–Spain: 2026 World Cup final in Buenos Aires";
 const pageDescription =
-  "Buenos Aires spots with confirmed World Cup semis and final screening at 16:00 BA time: Plaza Seeber Fan Fest, Locos x el Fútbol, BetWarrior, Cantina Recoleta, and other verified rooms.";
+  "Buenos Aires spots confirmed for the Argentina–Spain World Cup final at 16:00 BA time on Sunday July 19: Plaza Seeber Fan Fest, La Carbonera, Locos x el Fútbol, 1640, and other verified rooms.";
 const themeColorLight = "#fcfaf6";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-const checkedDate = "July 12, 2026";
+const checkedDate = "July 16, 2026";
 const googleMapsApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
@@ -68,19 +68,19 @@ const mapsUrl = (query: string) =>
 
 const matches: Match[] = [
   {
-    label: "France–Spain",
-    date: "Tuesday, July 14",
-    note: "Smaller crowds — walk-in almost anywhere.",
-  },
-  {
-    label: "Argentina–England",
-    date: "Wednesday, July 15",
-    note: "Reserve by Monday.",
-  },
-  {
-    label: "Final",
+    label: "Argentina–Spain",
     date: "Sunday, July 19",
-    note: "Reserve right after the second semifinal.",
+    note: "Final · 16:00 BA · Reserve today.",
+  },
+  {
+    label: "Kickoff",
+    date: "16:00 Buenos Aires",
+    note: "Afternoon only — bars open after 17:00 are out.",
+  },
+  {
+    label: "Plaza Seeber",
+    date: "Sunday, July 19",
+    note: "Free Fan Fest · opens 12:00.",
   },
 ];
 
@@ -89,11 +89,11 @@ const publicVenues: Venue[] = [
     name: "Buenos Aires Fan Fest — Plaza Seeber",
     address: "Av. del Libertador & Av. Sarmiento, Palermo",
     neighborhood: "Palermo",
-    status: "Confirmed Jul 14 / 15 / 18 / 19",
+    status: "Final Sun 19 · 12:00–20:00",
     detail:
-      "Free City Fan Fest opens at 12:00 on Jul 14, 15, 18, and 19. Giant screen; reserve via Boti WhatsApp (“Mundial”). Arrive 12:30–13:00.",
+      "City Fan Fest screens Argentina–Spain at 16:00 on Sunday (open 12:00–20:00). Free; Boti WhatsApp (“Mundial”) for registro. Arrive early.",
     mapsQuery: "Plaza Seeber Av. del Libertador Av. Sarmiento Palermo Buenos Aires",
-    source: "linda.buenosaires.gob.ar",
+    source: "linda.buenosaires.gob.ar · Jul 16",
     highlight: true,
     acceptsReservations: true,
     reservationUrl: "https://wa.me/5491150500147?text=Mundial",
@@ -106,15 +106,15 @@ const indoorBars: Venue[] = [
     name: "Locos x el Fútbol",
     address: "Av. Las Heras 2101, Recoleta",
     neighborhood: "Recoleta",
-    status: "All matches · opens 10:00",
+    status: "Final · opens 10:00",
     detail:
-      "Every WC match from 10:00 on a giant screen plus TVs — covers the 16:00 semis and final. Reserve; the street often closes on Argentina days.",
+      "Giant screen plus TVs from 10:00 — covers the 16:00 final. Reserve; the street often closes on Argentina days.",
     mapsQuery: "Locos x el Futbol Av. Las Heras 2101 Recoleta Buenos Aires",
-    source: "Time Out BA · El Destape",
+    source: "Time Out BA · Locos IG",
     highlight: true,
     acceptsReservations: true,
     reservationUrl: "https://fiweex.com/reservas_portal_bienvenida/ZoN1gA==",
-    instagramUrl: "https://www.instagram.com/p/DaoYsqqClTR/",
+    instagramUrl: "https://www.instagram.com/locosxelfutbolbar/",
   },
   {
     name: "BetWarrior Sport Bar",
@@ -122,7 +122,7 @@ const indoorBars: Venue[] = [
     neighborhood: "Palermo",
     status: "Biggest indoor room",
     detail:
-      "BA’s largest indoor sports bar; the Hipódromo screens the WC on huge displays. Open by early afternoon for 16:00 kickoffs.",
+      "BA’s largest indoor sports bar; the Hipódromo screens the WC on huge displays. Open by early afternoon for the 16:00 final.",
     mapsQuery: "BetWarrior Sport Bar Hipódromo de Palermo Buenos Aires",
     source: "Hipódromo Palermo · Baires Secreta",
     highlight: true,
@@ -132,23 +132,23 @@ const indoorBars: Venue[] = [
     name: "Temple Hollywood",
     address: "Honduras 5602, Palermo Hollywood",
     neighborhood: "Palermo Hollywood",
-    status: "All matches · giant screens",
+    status: "Final · giant screens",
     detail:
-      "Every WC match on giant screens, with food, beer, and tournament promos. Reserve online or by WhatsApp for the 16:00 knockouts.",
+      "WC matches on giant screens, with food, beer, and tournament promos. Reserve online for Argentina–Spain at 16:00.",
     mapsQuery: "Temple Hollywood Honduras 5602 Palermo Buenos Aires",
     source: "Temple Hollywood IG · Temple",
     highlight: true,
     acceptsReservations: true,
     reservationUrl: "https://temple.com.ar/?locationId=11#booking",
-    instagramUrl: "https://www.instagram.com/p/DZLaRMemz9P/",
+    instagramUrl: "https://www.instagram.com/templehollywood/",
   },
   {
     name: "Cantina Recoleta",
     address: "Av. Santa Fe 1430",
     neighborhood: "Recoleta",
-    status: "All matches · 09:00–01:00",
+    status: "Final · 09:00–01:00",
     detail:
-      "Every WC match on three giant screens, 09:00–01:00, with table reservations. Seated meal option for 16:00 games.",
+      "Three giant screens, 09:00–01:00, with table reservations. Seated meal option for the 16:00 final.",
     mapsQuery: "Cantina Recoleta Av. Santa Fe 1430 Buenos Aires",
     source: "Ámbito",
     highlight: true,
@@ -157,12 +157,26 @@ const indoorBars: Venue[] = [
     instagramUrl: "https://www.instagram.com/p/DZiqC6Ly-H7/",
   },
   {
+    name: "La Paz Arriba",
+    address: "Av. Callao 1082, 1st floor",
+    neighborhood: "Recoleta / Congreso",
+    status: "Final confirmed · 16:00",
+    detail:
+      "Cultural bar screening Argentina–Spain on Sunday at 16:00 (seating by arrival order). Reserve via WhatsApp — posted Jul 15.",
+    mapsQuery: "La Paz Arriba Av. Callao 1082 Buenos Aires",
+    source: "La Paz Arriba IG · Jul 15",
+    highlight: true,
+    acceptsReservations: true,
+    reservationUrl: "https://wa.me/5491123597929",
+    instagramUrl: "https://www.instagram.com/reel/Da1LAuwNWX4/",
+  },
+  {
     name: "Triumph Sports Bar",
     address: "Bernardo de Irigoyen 19, Microcentro",
     neighborhood: "Microcentro",
     status: "Near Obelisco · opens early",
     detail:
-      "Screens Argentina knockout matches near Obelisco on multiple large TVs; opens early for 16:00. Watch indoors, walk over after a win.",
+      "Screens Argentina knockouts near Obelisco on multiple large TVs; opens early for 16:00. Watch indoors, walk over after a win.",
     mapsQuery: "Triumph Sports Bar Bernardo de Irigoyen 19 Buenos Aires",
     source: "El Destape · Baires Secreta",
     acceptsReservations: true,
@@ -175,7 +189,7 @@ const indoorBars: Venue[] = [
     neighborhood: "Palermo Soho",
     status: "Opens from 09:00",
     detail:
-      "Open on Argentina match days through the tournament; 8+ screens from 09:00 cover the 16:00 semis and final. Multi-floor Irish pub.",
+      "Open on Argentina match days; 8+ screens from 09:00 cover the 16:00 final. Multi-floor Irish pub.",
     mapsQuery: "Sullivan's Irish Pub Jorge Luis Borges 1702 Palermo Buenos Aires",
     source: "Sullivan's IG · Baires Secreta",
     acceptsReservations: true,
@@ -186,25 +200,67 @@ const indoorBars: Venue[] = [
     name: "La Puerta Roja",
     address: "Chacabuco 733, San Telmo",
     neighborhood: "San Telmo",
-    status: "All matches · from noon",
+    status: "Final · from noon",
     detail:
-      "Every WC match from noon (before 16:00). Big screen in a San Telmo red-door bar; mix of backpackers and locals.",
+      "WC matches from noon (before 16:00). Big screen in a San Telmo red-door bar; mix of backpackers and locals.",
     mapsQuery: "La Puerta Roja Chacabuco 733 San Telmo Buenos Aires",
     source: "Time Out BA",
     acceptsReservations: true,
     reservationUrl: "https://www.instagram.com/puertaroja.santelmo/",
     instagramUrl: "https://www.instagram.com/p/Dap-ZaCjrWF/",
   },
+  {
+    name: "La Carbonera",
+    address: "Carlos Calvo 299, San Telmo",
+    neighborhood: "San Telmo",
+    status: "Final · cinema screen · free entry",
+    detail:
+      "Free Passline entry for Argentina–Spain at 16:00 on the biggest screen in San Telmo (cinema room + sound). Shared tables; food/drink on-site only. Capacity limited — reserve.",
+    mapsQuery: "La Carbonera Carlos Calvo 299 San Telmo Buenos Aires",
+    source: "Passline · La Carbonera IG",
+    highlight: true,
+    acceptsReservations: true,
+    reservationUrl:
+      "https://www.passline.com/eventos/partido-final-de-argentina-en-pantalla-grande-en-la-carbonera-mundial-2026",
+    instagramUrl: "https://www.instagram.com/lacarbonera.santelmo/",
+  },
+  {
+    name: "De Los Cojones Bar",
+    address: "Defensa 550, San Telmo",
+    neighborhood: "San Telmo",
+    status: "Final confirmed · 16:00",
+    detail:
+      "San Telmo bar posting Sunday’s final at 16:00 (IG Jul 16). Reserve by WhatsApp.",
+    mapsQuery: "De Los Cojones Bar Defensa 550 San Telmo Buenos Aires",
+    source: "De Los Cojones IG · Jul 16",
+    acceptsReservations: true,
+    reservationUrl: "https://wa.me/5491130032788",
+    instagramUrl: "https://www.instagram.com/reel/Da3GzX6u3yV/",
+  },
 ];
 
 const neighborhoodSpots: Venue[] = [
   {
+    name: "1640 Café Restó",
+    address: "Honduras 6100 (Dorrego), Palermo — also Pueyrredón 1102, Recoleta",
+    neighborhood: "Palermo",
+    status: "Final confirmed · 16:00",
+    detail:
+      "Giant-screen final Sunday with pizza, beer, and terrace at Honduras & Dorrego; also Recoleta branch. Reserve Palermo WhatsApp.",
+    mapsQuery: "1640 Cafe Resto Honduras 6100 Palermo Buenos Aires",
+    source: "1640 IG · Jul 15",
+    highlight: true,
+    acceptsReservations: true,
+    reservationUrl: "https://wa.me/5491137026745",
+    instagramUrl: "https://www.instagram.com/p/Da1WRWIxj0A/",
+  },
+  {
     name: "La Farola",
     address: "Amenábar 1602, Belgrano (and other CABA branches)",
     neighborhood: "Belgrano",
-    status: "All matches · morning–midnight",
+    status: "Final · morning–midnight",
     detail:
-      "Every WC match from early afternoon; open morning–midnight, so the 16:00 semis and final fit. Amenábar Belgrano flagship.",
+      "WC matches from early afternoon; open morning–midnight, so the 16:00 final fits. Amenábar Belgrano flagship.",
     mapsQuery: "La Farola Amenábar 1602 Belgrano Buenos Aires",
     source: "Time Out BA",
     highlight: true,
@@ -216,9 +272,9 @@ const neighborhoodSpots: Venue[] = [
     name: "Hell's Pizza",
     address: "Humboldt 1654, Palermo (also Devoto and other branches)",
     neighborhood: "Palermo",
-    status: "Argentina · semis and final",
+    status: "Argentina · final Sunday",
     detail:
-      "Projector for every Argentina WC match, including semis and final; salón from about noon. Confirmed for Argentina’s 16:00 games only.",
+      "Projector for Argentina WC matches including the final; salón from about noon. Confirmed for Argentina’s 16:00 kickoffs.",
     mapsQuery: "Hell's Pizza Humboldt 1654 Palermo Buenos Aires",
     source: "3copas · Hell’s IG",
     highlight: true,
@@ -230,9 +286,9 @@ const neighborhoodSpots: Venue[] = [
     name: "Roma del Abasto",
     address: "Anchorena 806, Abasto",
     neighborhood: "Abasto",
-    status: "All matches",
+    status: "Final · midday onward",
     detail:
-      "Every WC match from midday with tournament promos. Classic Abasto bar and pizzeria that covers 16:00 kickoffs.",
+      "WC matches from midday with tournament promos. Classic Abasto bar and pizzeria that covers the 16:00 final.",
     mapsQuery: "Roma del Abasto Anchorena 806 Buenos Aires",
     source: "Time Out BA",
     acceptsReservations: true,
@@ -243,9 +299,9 @@ const neighborhoodSpots: Venue[] = [
     name: "Pizzería Nani",
     address: "Av. Francisco Beiró 4819, Villa Devoto",
     neighborhood: "Villa Devoto",
-    status: "All matches · 20+ screens · from 08:00",
+    status: "Final · 20+ screens · from 08:00",
     detail:
-      "Every WC match in a football room with 20+ screens; opens at 08:00 — easy cover for any 16:00 kickoff.",
+      "Football room with 20+ screens; opens at 08:00 — easy cover for the 16:00 final.",
     mapsQuery: "Pizzería Nani Av. Francisco Beiró 4819 Villa Devoto Buenos Aires",
     source: "Time Out BA",
     acceptsReservations: true,
@@ -256,9 +312,9 @@ const neighborhoodSpots: Venue[] = [
     name: "Bilbao",
     address: "Thames 1795, Palermo",
     neighborhood: "Palermo",
-    status: "WC matches · all day on Argentina dates",
+    status: "Argentina dates · all day",
     detail:
-      "WC matches on screen; all-day service when Argentina plays. Opens at 10:00 — covers the 16:00 semis and final.",
+      "WC matches on screen; all-day service when Argentina plays. Opens at 10:00 — covers the 16:00 final.",
     mapsQuery: "Bilbao Thames 1795 Palermo Buenos Aires",
     source: "La Nación",
     acceptsReservations: true,
@@ -269,9 +325,9 @@ const neighborhoodSpots: Venue[] = [
     name: "Burgio",
     address: "Av. Cabildo 2477, Belgrano",
     neighborhood: "Belgrano",
-    status: "All matches · opens early",
+    status: "Final · opens early",
     detail:
-      "Every WC match on screens; opens early enough for 16:00 kickoffs. Walk-in only — no reservations accepted.",
+      "WC matches on screens; opens early enough for 16:00 (Sun/holidays from 08:00). Walk-in only — no reservations.",
     mapsQuery: "Burgio Av. Cabildo 2477 Belgrano Buenos Aires",
     source: "Time Out BA",
     instagramUrl: "https://www.instagram.com/p/DaoXZm0RODO/",
@@ -282,7 +338,7 @@ const neighborhoodSpots: Venue[] = [
     neighborhood: "Almagro",
     status: "Confirmed WC screening",
     detail:
-      "Proven WC screening this tournament. Confirm the semis and final are still on; character bar, no reservations.",
+      "Proven WC screening this tournament. Confirm Sunday’s final is still on; character bar, no reservations.",
     mapsQuery: "El Banderín Guardia Vieja 3601 Almagro Buenos Aires",
     source: "CEMBA / press",
     instagramUrl: "https://www.instagram.com/p/DZ474_Jxdd3/",
@@ -342,7 +398,7 @@ const structuredData = {
     <meta name="description" content={pageDescription} />
     <meta
       name="subject"
-      content="Where to watch FIFA World Cup 2026 semifinals and final in Buenos Aires"
+      content="Where to watch FIFA World Cup 2026 final Argentina vs Spain in Buenos Aires"
     />
     <meta name="application-name" content={pageTitle} />
     <meta
@@ -355,7 +411,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="FIFA 2026 Buenos Aires, where to watch World Cup final Buenos Aires, Plaza Seeber Fan Fest, Locos x el Fútbol, Argentina England semis bars"
+      content="FIFA 2026 Buenos Aires, where to watch World Cup final Buenos Aires, Argentina Spain final bars, Plaza Seeber Fan Fest, Locos x el Fútbol"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -398,19 +454,18 @@ const structuredData = {
             <p class="eyebrow">Buenos Aires · FIFA 2026</p>
             <h1>{pageTitle}</h1>
             <p class="dek">
-              All three matches kick off at <strong>16:00 (4 p.m.) Buenos Aires time</strong>.
-              This list keeps only places with current confirmation they can host that
-              afternoon kickoff — night-only World Cup plans and bars that open at or after
-              17:00 are out.
+              The final is <strong>Argentina–Spain</strong> on Sunday, July 19 at
+              <strong>16:00 (4 p.m.) Buenos Aires time</strong>. This list keeps only places
+              confirmed for that afternoon kickoff — night-only plans and bars that open at
+              or after 17:00 are out.
             </p>
           </div>
 
           <aside class="kickoff-note" aria-label="Reservation timing">
             <span>Reservation window</span>
-            <strong>Reserve by Monday for Argentina–England.</strong>
+            <strong>Reserve now for Argentina–Spain.</strong>
             <p>
-              For the final, lock something in immediately after the second semifinal.
-              Streaming-at-home options:
+              Final Sunday fills fast after the semis — book today. Streaming-at-home options:
               <a href="/misc/fifa-2026-streaming/">FIFA 2026 streaming guide</a>.
             </p>
           </aside>
@@ -432,8 +487,8 @@ const structuredData = {
           <p class="eyebrow">Official public screening</p>
           <h2 id="public-heading">Plaza Seeber Fan Fest</h2>
           <p>
-            The only City-listed free screen with published dates for July 14, 15, 18, and
-            19. Parque Los Andes is finished and not on the semis and final calendar.
+            City-listed free screen for Argentina–Spain at 16:00 on Sunday, July 19.
+            Parque Los Andes is finished.
           </p>
         </div>
 
@@ -505,7 +560,7 @@ const structuredData = {
           <h2 id="indoor-heading">Open early enough for 16:00</h2>
           <p>
             Each of these has a current World Cup screening claim plus hours that cover
-            an afternoon kickoff.
+            Sunday’s afternoon final.
           </p>
         </div>
 
@@ -575,7 +630,10 @@ const structuredData = {
         <div class="region-heading">
           <p class="eyebrow">Neighborhood spots</p>
           <h2 id="neighborhood-heading">Confirmed porteño rooms</h2>
-          <p>Bars and pizzerias with current World Cup transmission notes and daytime hours.</p>
+          <p>
+            Bars and pizzerias with current World Cup transmission notes and daytime hours
+            for the final.
+          </p>
         </div>
 
         <div class="venue-grid venue-grid--compact">
