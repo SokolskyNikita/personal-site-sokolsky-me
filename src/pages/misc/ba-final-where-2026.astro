@@ -33,10 +33,17 @@ const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 const mapsUrl = (query: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
+const distanceMeters = (prop: Property) => {
+  const match = prop.status.match(/(\d+)\s*m\s+to\s+Obelisk/i);
+  return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+};
+
 const allAvailable = propertyData.availableProperties as Property[];
-const availableWithView = allAvailable.filter(p => p.hasObeliskView);
+const availableWithView = [...allAvailable.filter((p) => p.hasObeliskView)].sort(
+  (a, b) => distanceMeters(a) - distanceMeters(b)
+);
 const availableWithoutView = allAvailable
-  .filter(p => !p.hasObeliskView)
+  .filter((p) => !p.hasObeliskView)
   .sort((a, b) => Number(b.rating) - Number(a.rating));
 
 const structuredData = {
@@ -141,16 +148,25 @@ const structuredData = {
       <section class="region" id="available-properties" aria-labelledby="available-heading">
         <div class="region-heading">
           <p class="eyebrow">Premium options</p>
-          <h2 id="available-heading">Verified available hotels with Obelisk views</h2>
-          <p>
-            These properties are confirmed available for a 1-night stay during the final and offer direct or partial views of the Obelisk. We recommend booking immediately and requesting a <strong>high-floor, front-facing room</strong>.
-          </p>
+          <div class="region-heading-row">
+            <h2 id="available-heading">Verified available hotels with Obelisk views</h2>
+            <div class="sort-toggle" role="group" aria-label="Sort hotels with Obelisk view">
+              <button type="button" class="sort-toggle-btn is-active" data-sort="distance" aria-pressed="true">
+                Sort by distance
+              </button>
+              <button type="button" class="sort-toggle-btn" data-sort="rating" aria-pressed="false">
+                Sort by rating
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="venue-grid">
+        <div class="venue-grid" id="view-hotels-grid">
           {availableWithView.map((prop) => (
             <article
               class:list={["venue-card", prop.highlight && "is-pick", prop.warning && "is-warning"]}
+              data-distance={distanceMeters(prop)}
+              data-rating={Number(prop.rating) || 0}
             >
               <div class="option-topline">
                 <span>{prop.status}</span>
@@ -194,9 +210,6 @@ const structuredData = {
         <div class="region-heading">
           <p class="eyebrow">Nearby alternatives</p>
           <h2 id="other-heading">Other available hotels within 750m (No Obelisk view)</h2>
-          <p>
-            These properties are within walking distance (under 750 meters) of the Obelisk. While they do not offer direct views of the monument from their rooms, they put you right next to the epicenter of the celebrations at a more affordable price point.
-          </p>
         </div>
 
         <div class="venue-grid">
@@ -414,6 +427,63 @@ const structuredData = {
         margin-bottom: 10px;
       }
 
+      .region-heading-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 10px 16px;
+      }
+
+      .region-heading-row h2 {
+        flex: 1 1 16rem;
+        margin: 0;
+      }
+
+      .sort-toggle {
+        display: inline-flex;
+        flex-shrink: 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--paper);
+        overflow: hidden;
+      }
+
+      .sort-toggle-btn {
+        appearance: none;
+        border: 0;
+        margin: 0;
+        padding: 0.45rem 0.75rem;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        transition: background 160ms ease, color 160ms ease;
+      }
+
+      .sort-toggle-btn + .sort-toggle-btn {
+        border-left: 1px solid var(--line);
+      }
+
+      .sort-toggle-btn:hover {
+        color: var(--ink);
+        background: rgb(75 51 25 / 4%);
+      }
+
+      .sort-toggle-btn.is-active {
+        color: var(--ink);
+        background: var(--paper-strong);
+      }
+
+      .sort-toggle-btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+        z-index: 1;
+      }
+
       .venue-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -609,5 +679,42 @@ const structuredData = {
       }
 
     </style>
+
+    <script>
+      const grid = document.getElementById("view-hotels-grid");
+      const toggle = document.querySelector("#available-properties .sort-toggle");
+      if (grid && toggle) {
+        const buttons = [...toggle.querySelectorAll<HTMLButtonElement>(".sort-toggle-btn")];
+
+        const applySort = (mode: "distance" | "rating") => {
+          const cards = [...grid.querySelectorAll<HTMLElement>(".venue-card")];
+          cards.sort((a, b) => {
+            if (mode === "rating") {
+              return (
+                Number(b.dataset.rating || 0) - Number(a.dataset.rating || 0) ||
+                Number(a.dataset.distance || 0) - Number(b.dataset.distance || 0)
+              );
+            }
+            return (
+              Number(a.dataset.distance || 0) - Number(b.dataset.distance || 0) ||
+              Number(b.dataset.rating || 0) - Number(a.dataset.rating || 0)
+            );
+          });
+          for (const card of cards) grid.appendChild(card);
+
+          for (const btn of buttons) {
+            const active = btn.dataset.sort === mode;
+            btn.classList.toggle("is-active", active);
+            btn.setAttribute("aria-pressed", String(active));
+          }
+        };
+
+        toggle.addEventListener("click", (event) => {
+          const btn = (event.target as HTMLElement).closest<HTMLButtonElement>(".sort-toggle-btn");
+          if (!btn?.dataset.sort) return;
+          applySort(btn.dataset.sort as "distance" | "rating");
+        });
+      }
+    </script>
   </body>
 </html>
