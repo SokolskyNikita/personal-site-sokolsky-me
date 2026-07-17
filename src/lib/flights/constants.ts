@@ -25,13 +25,13 @@ export const SERPAPI_ESTIMATED_COST_PER_SEARCH_USD = 25 / 1_000;
 /**
  * Global daily SerpApi call budget.
  * A default Buenos Aires→gateway plan is ~32 live calls at 7 days after the
- * selected date, or ~60 at 14 days after it. 1,000 permits roughly 15–30
+ * selected date, or ~60 at 14 days after it. 2,000 permits roughly 30–60
  * fully uncached typical searches site-wide while capping runaway spend.
  */
-export const DEFAULT_DAILY_BUDGET = 1_000;
+export const DEFAULT_DAILY_BUDGET = 2_000;
 
 /**
  * Per-IP daily rate limit on /query (uncached SerpApi steps).
- * Caps a single client at ~3 typical Buenos Aires→gateway searches per day.
+ * Caps a single client at ~6 typical Buenos Aires→gateway searches per day.
  */
-export const DEFAULT_RATE_LIMIT_PER_DAY = 100;
+export const DEFAULT_RATE_LIMIT_PER_DAY = 200;
