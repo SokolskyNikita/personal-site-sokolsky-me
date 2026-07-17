@@ -22,7 +22,10 @@ const defaultStart = new Date().toISOString().slice(0, 10);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle} · sokolsky.me</title>
     <meta name="description" content={pageDescription} />
@@ -55,61 +58,78 @@ const defaultStart = new Date().toISOString().slice(0, 10);
   </head>
   <body>
     <div class="fs-page" id="fs-app">
-      <div class="fs-top">
-        <h1 class="fs-title">Flight search</h1>
-        <a class="fs-home" href="/">sokolsky.me</a>
-      </div>
-
-      <form class="fs-form" id="fs-form" onsubmit="return false;">
-        <div class="fs-primary">
-          <div class="fs-field fs-field-origin">
-            <label for="fs-origin-reg">Origin</label>
-            <div class="fs-loc">
-              <select id="fs-origin-reg" data-registry aria-label="Origin location"></select>
-              <input
-                id="fs-origin-iata"
-                type="text"
-                maxlength="3"
-                placeholder="IATA"
-                aria-label="Origin IATA override"
-                autocomplete="off"
-                spellcheck="false"
-              />
-            </div>
-          </div>
-
-          <button type="button" class="fs-swap" id="fs-swap" title="Swap origin and destination" aria-label="Swap origin and destination">⇄</button>
-
-          <div class="fs-field fs-field-destination">
-            <label for="fs-dest-reg">Destination</label>
-            <div class="fs-loc">
-              <select id="fs-dest-reg" data-registry aria-label="Destination location"></select>
-              <input
-                id="fs-dest-iata"
-                type="text"
-                maxlength="3"
-                placeholder="IATA"
-                aria-label="Destination IATA override"
-                autocomplete="off"
-                spellcheck="false"
-              />
-            </div>
-          </div>
-
-          <div class="fs-field fs-field-mode">
-            <label for="fs-mode">Cabin and seat</label>
-            <select id="fs-mode"></select>
-          </div>
-
-          <div class="fs-field fs-field-date">
-            <label for="fs-start">Start date</label>
-            <input id="fs-start" type="date" value={defaultStart} />
-          </div>
+      <header class="fs-top">
+        <div class="fs-heading">
+          <span class="fs-eyebrow">Fare explorer</span>
+          <h1 class="fs-title">Flight search</h1>
+          <p>Compare the best itineraries across a flexible date range.</p>
         </div>
+        <a class="fs-home" href="/">sokolsky.me</a>
+      </header>
 
-        <div class="fs-secondary">
+      <form class="fs-form" id="fs-form">
+        <section class="fs-form-section" aria-labelledby="fs-route-heading">
+          <header class="fs-section-heading">
+            <h2 id="fs-route-heading">Route and dates</h2>
+            <p>Choose an airport group or enter a specific IATA code.</p>
+          </header>
+
+          <div class="fs-primary">
+            <div class="fs-field fs-field-origin">
+              <label for="fs-origin-reg">Origin</label>
+              <div class="fs-loc">
+                <select id="fs-origin-reg" data-registry aria-label="Origin location"></select>
+                <input
+                  id="fs-origin-iata"
+                  type="text"
+                  maxlength="3"
+                  placeholder="IATA"
+                  aria-label="Origin IATA override"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+
+            <button type="button" class="fs-swap" id="fs-swap" title="Swap origin and destination" aria-label="Swap origin and destination">⇄</button>
+
+            <div class="fs-field fs-field-destination">
+              <label for="fs-dest-reg">Destination</label>
+              <div class="fs-loc">
+                <select id="fs-dest-reg" data-registry aria-label="Destination location"></select>
+                <input
+                  id="fs-dest-iata"
+                  type="text"
+                  maxlength="3"
+                  placeholder="IATA"
+                  aria-label="Destination IATA override"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+
+            <div class="fs-field fs-field-mode">
+              <label for="fs-mode">Cabin and seat</label>
+              <select id="fs-mode"></select>
+            </div>
+
+            <div class="fs-field fs-field-date">
+              <label for="fs-start">Start date</label>
+              <input id="fs-start" type="date" value={defaultStart} />
+            </div>
+          </div>
+        </section>
+
+        <section class="fs-form-section fs-form-section-options" aria-labelledby="fs-options-heading">
+          <header class="fs-section-heading">
+            <h2 id="fs-options-heading">Search preferences</h2>
+            <p>Fine-tune the balance between speed and choice.</p>
+          </header>
+
+          <div class="fs-secondary">
           <div class="fs-field fs-field-days">
-            <label for="fs-days">Days after start <span><strong id="fs-days-value">{DEFAULT_FORM.days}</strong> <span id="fs-days-unit">days</span></span></label>
+            <label for="fs-days">Date range <span><strong id="fs-days-value">{DEFAULT_FORM.days}</strong> <span id="fs-days-unit">days</span></span></label>
             <input
               id="fs-days"
               type="range"
@@ -148,7 +168,7 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           </div>
 
           <div class="fs-field">
-            <label for="fs-topn">Results / date</label>
+            <label for="fs-topn">Flights per date</label>
             <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
           </div>
 
@@ -157,18 +177,27 @@ const defaultStart = new Date().toISOString().slice(0, 10);
               <input id="fs-round-trip" type="checkbox" />
               <span>Round trip</span>
             </label>
-            <div class="fs-field fs-trip-length" id="fs-trip-length-field" hidden>
-              <label for="fs-trip-length">Trip length</label>
-              <select id="fs-trip-length">
-                {[3, 5, 7, 10, 14, 21, 28, 45, 60, 85].map((days) => (
-                  <option
-                    value={String(days)}
-                    selected={days === DEFAULT_FORM.tripLengthDays}
-                  >
-                    {days} {days === 1 ? "day" : "days"}
-                  </option>
-                ))}
-              </select>
+            <div class="fs-trip-controls" id="fs-trip-controls" hidden>
+              <div class="fs-field fs-trip-length">
+                <label for="fs-trip-length">Trip length</label>
+                <select id="fs-trip-length">
+                  {[3, 5, 7, 10, 14, 21, 28, 45, 60, 85].map((days) => (
+                    <option
+                      value={String(days)}
+                      selected={days === DEFAULT_FORM.tripLengthDays}
+                    >
+                      {days} {days === 1 ? "day" : "days"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <label
+                class="fs-check fs-trip-flex"
+                title="Search return dates up to five days before and after the selected trip length"
+              >
+                <input id="fs-flexible-trip-length" type="checkbox" />
+                <span>± 5 days</span>
+              </label>
             </div>
             <div class="fs-check-help">
               <label class="fs-check">
@@ -199,17 +228,18 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           </div>
 
           <div class="fs-actions">
-            <button type="button" class="fs-btn fs-btn-primary" id="fs-run">Run search</button>
+            <button type="submit" class="fs-btn fs-btn-primary" id="fs-run">Search flights</button>
             <button type="button" class="fs-btn" id="fs-cancel" hidden>
               Cancel
             </button>
           </div>
-        </div>
+          </div>
+        </section>
       </form>
 
       <div class="fs-status" aria-live="polite">
         <p class="fs-search-summary" id="fs-search-summary">
-          Cached results are reused automatically.
+          Ready to search. Cached results are reused automatically.
         </p>
         <div id="fs-banners"></div>
         <p class="fs-progress" id="fs-progress"></p>

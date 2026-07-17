@@ -36,13 +36,28 @@ function addDays(date: string, days: number): string {
   return value.toISOString().slice(0, 10);
 }
 
+function tripLengths(
+  length: number,
+  flexible: boolean,
+): number[] {
+  if (!flexible) return [length];
+  const min = Math.max(1, length - 5);
+  const max = Math.min(85, length + 5);
+  return Array.from({ length: max - min + 1 }, (_, index) => min + index);
+}
+
 /**
  * Pure cross-product planner: origin batches × destination batches × dates.
  * Batching applies to BOTH endpoints. Call count is exact for arbitrary set sizes.
  */
 export function planSearch(
   spec: Pick<LegSearch, "origin" | "dest" | "dateRange"> &
-    Partial<Pick<LegSearch, "tripType" | "tripLengthDays">>,
+    Partial<
+      Pick<
+        LegSearch,
+        "tripType" | "tripLengthDays" | "flexibleTripLength"
+      >
+    >,
   batchSize = MAX_AIRPORTS_PER_BATCH,
 ): QueryPlan {
   const originAirports = resolveLocation(spec.origin);
@@ -51,23 +66,32 @@ export function planSearch(
 
   const originBatches = chunk(originAirports, batchSize);
   const destBatches = chunk(destAirports, batchSize);
+  const returnTripLengths =
+    spec.tripType === "round_trip"
+      ? tripLengths(
+          spec.tripLengthDays ?? 7,
+          spec.flexibleTripLength ?? false,
+        )
+      : [0];
 
   const steps: PlanStep[] = [];
   let stepIndex = 0;
   for (const date of dates) {
-    for (const originBatch of originBatches) {
-      for (const destBatch of destBatches) {
-        steps.push({
-          stepIndex,
-          date,
-          returnDate:
-            spec.tripType === "round_trip"
-              ? addDays(date, spec.tripLengthDays ?? 7)
-              : undefined,
-          originBatch,
-          destBatch,
-        });
-        stepIndex += 1;
+    for (const returnTripLength of returnTripLengths) {
+      for (const originBatch of originBatches) {
+        for (const destBatch of destBatches) {
+          steps.push({
+            stepIndex,
+            date,
+            returnDate:
+              spec.tripType === "round_trip"
+                ? addDays(date, returnTripLength)
+                : undefined,
+            originBatch,
+            destBatch,
+          });
+          stepIndex += 1;
+        }
       }
     }
   }

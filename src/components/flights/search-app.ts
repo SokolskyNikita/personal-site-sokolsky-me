@@ -192,7 +192,8 @@ export function mountFlightSearch(root: HTMLElement): void {
   function invalidateSearch(): void {
     runBtn.disabled = isRunning;
     hideSearchProgress();
-    searchSummary.textContent = "Cached results are reused automatically.";
+    searchSummary.textContent =
+      "Ready to search. Cached results are reused automatically.";
     banners.innerHTML = "";
     progress.textContent = "";
     results.innerHTML = "";
@@ -202,7 +203,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     latestSpec = null;
   }
 
-  function setSearchBusy(busy: boolean, label = "Run search"): void {
+  function setSearchBusy(busy: boolean, label = "Search flights"): void {
     isRunning = busy;
     for (const control of Array.from(formEl.elements)) {
       if (
@@ -262,7 +263,10 @@ export function mountFlightSearch(root: HTMLElement): void {
     progressHideTimer = setTimeout(hideSearchProgress, 900);
   }
 
-  runBtn.addEventListener("click", async () => {
+  formEl.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (isRunning) return;
+
     const controller = new AbortController();
     activeController = controller;
     form = readForm(root, form);
@@ -769,6 +773,12 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
 
   const roundTrip = root.querySelector<HTMLInputElement>("#fs-round-trip");
   if (roundTrip) roundTrip.checked = form.tripType === "round_trip";
+  const flexibleTripLength = root.querySelector<HTMLInputElement>(
+    "#fs-flexible-trip-length",
+  );
+  if (flexibleTripLength) {
+    flexibleTripLength.checked = form.flexibleTripLength;
+  }
   const deep = root.querySelector<HTMLInputElement>("#fs-deep");
   if (deep) deep.checked = form.deepSearch;
   syncTripFields(root, form.tripType);
@@ -833,6 +843,9 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
         ) || base.tripLengthDays,
       ),
     ),
+    flexibleTripLength:
+      root.querySelector<HTMLInputElement>("#fs-flexible-trip-length")
+        ?.checked ?? false,
     start:
       root.querySelector<HTMLInputElement>("#fs-start")?.value || base.start,
     days: Number(root.querySelector<HTMLInputElement>("#fs-days")?.value) || 7,
@@ -856,8 +869,8 @@ function syncTripFields(
   root: HTMLElement,
   tripType: FormState["tripType"],
 ): void {
-  const field = root.querySelector<HTMLElement>("#fs-trip-length-field");
-  if (field) field.hidden = tripType !== "round_trip";
+  const controls = root.querySelector<HTMLElement>("#fs-trip-controls");
+  if (controls) controls.hidden = tripType !== "round_trip";
 }
 
 function syncUrl(form: FormState): void {
@@ -871,6 +884,11 @@ function syncDaysLabel(
   daysValue: HTMLElement,
 ): void {
   daysValue.textContent = daysInput.value;
+  const min = Number(daysInput.min) || 1;
+  const max = Number(daysInput.max) || 14;
+  const value = Number(daysInput.value);
+  const percent = ((value - min) / (max - min)) * 100;
+  daysInput.style.setProperty("--fs-days-percent", `${percent}%`);
   const unit = daysInput.ownerDocument.getElementById("fs-days-unit");
   if (unit) unit.textContent = daysInput.value === "1" ? "day" : "days";
   daysInput.setAttribute("aria-valuenow", daysInput.value);

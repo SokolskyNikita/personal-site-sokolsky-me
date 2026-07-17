@@ -1,20 +1,23 @@
 :root {
-  --fs-bg: #f7f6f3;
-  --fs-bg-elevated: #ffffff;
-  --fs-ink: #1a1a1a;
-  --fs-muted: #5c5c5c;
-  --fs-line: #d9d6cf;
-  --fs-accent: #0b5fff;
-  --fs-accent-ink: #ffffff;
+  --fs-bg: #f5f5f1;
+  --fs-bg-elevated: #fbfbf8;
+  --fs-ink: #18201d;
+  --fs-muted: #64706b;
+  --fs-line: #d7dcd6;
+  --fs-line-strong: #b9c2bc;
+  --fs-accent: #12644b;
+  --fs-accent-hover: #0d513c;
+  --fs-accent-soft: #e6f0eb;
+  --fs-accent-ink: #f8fbf9;
   --fs-warn: #8a4b00;
   --fs-warn-bg: #fff4e0;
   --fs-danger: #9b1c1c;
   --fs-danger-bg: #fdecec;
   --fs-ok: #0f6b3a;
-  --fs-radius: 7px;
+  --fs-radius: 9px;
   --fs-font: "IBM Plex Sans", "Segoe UI", sans-serif;
   --fs-mono: "IBM Plex Mono", ui-monospace, monospace;
-  --fs-max: 1200px;
+  --fs-max: 1280px;
   color-scheme: light;
 }
 
@@ -25,8 +28,11 @@
     --fs-ink: #ecece8;
     --fs-muted: #a3a39a;
     --fs-line: #333832;
-    --fs-accent: #6aa2ff;
-    --fs-accent-ink: #0b1220;
+    --fs-line-strong: #4b554e;
+    --fs-accent: #79d5ae;
+    --fs-accent-hover: #9ae4c4;
+    --fs-accent-soft: #20352b;
+    --fs-accent-ink: #10231b;
     --fs-warn: #ffc266;
     --fs-warn-bg: #3a2a10;
     --fs-danger: #ff8f8f;
@@ -52,9 +58,12 @@ body {
 }
 
 body {
-  background-image:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(11, 95, 255, 0.08), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(15, 107, 58, 0.06), transparent);
+  min-height: 100vh;
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fs-accent) 5%, var(--fs-bg)) 0,
+    var(--fs-bg) 15rem
+  );
 }
 
 a {
@@ -64,18 +73,44 @@ a {
 .fs-page {
   max-width: var(--fs-max);
   margin: 0 auto;
-  padding: clamp(0.85rem, 2vw, 1.35rem) clamp(0.85rem, 2.5vw, 1.5rem) 2.5rem;
+  padding:
+    max(clamp(1.25rem, 3vw, 2.25rem), env(safe-area-inset-top))
+    max(clamp(1rem, 3vw, 2rem), env(safe-area-inset-right))
+    max(3rem, env(safe-area-inset-bottom))
+    max(clamp(1rem, 3vw, 2rem), env(safe-area-inset-left));
 }
 
 .fs-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.8rem;
+  gap: 1.5rem;
+  margin-bottom: clamp(1.25rem, 2.4vw, 2rem);
+}
+
+.fs-heading {
+  min-width: 0;
+}
+
+.fs-eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--fs-accent);
+  font-family: var(--fs-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fs-heading p {
+  margin: 0.4rem 0 0;
+  color: var(--fs-muted);
+  font-size: 0.9rem;
 }
 
 .fs-home {
+  margin-top: 0.1rem;
   font-size: 0.82rem;
   font-weight: 500;
   color: var(--fs-muted);
@@ -95,43 +130,88 @@ a {
 
 .fs-title {
   margin: 0;
-  font-size: clamp(1.35rem, 2vw, 1.55rem);
+  font-size: clamp(1.65rem, 3vw, 2.2rem);
   font-weight: 650;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
 }
 
 .fs-form {
-  padding: 0.85rem;
-  border: 1px solid var(--fs-line);
-  border-radius: var(--fs-radius);
+  overflow: hidden;
+  border: 1px solid var(--fs-line-strong);
+  border-radius: calc(var(--fs-radius) + 3px);
   background: var(--fs-bg-elevated);
-  margin-bottom: 0.7rem;
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--fs-ink) 4%, transparent),
+    0 12px 32px color-mix(in srgb, var(--fs-ink) 5%, transparent);
+  margin-bottom: 1rem;
+}
+
+.fs-form-section {
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.fs-form-section-options {
+  border-top: 1px solid var(--fs-line);
+  background: color-mix(in srgb, var(--fs-bg) 48%, var(--fs-bg-elevated));
+}
+
+.fs-section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.fs-section-heading h2 {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.fs-section-heading p {
+  margin: 0;
+  color: var(--fs-muted);
+  font-size: 0.76rem;
 }
 
 .fs-primary {
   display: grid;
   grid-template-columns:
-    minmax(13rem, 1fr) 44px minmax(13rem, 1fr)
-    minmax(15.5rem, 1.15fr) minmax(9rem, 0.65fr);
+    minmax(13rem, 1.25fr) 44px minmax(13rem, 1.25fr)
+    minmax(14rem, 1fr) minmax(10rem, 0.7fr);
   align-items: end;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .fs-secondary {
   display: grid;
   grid-template-columns:
-    minmax(10rem, 1fr) minmax(7rem, auto) minmax(8rem, auto)
-    minmax(6.5rem, auto) minmax(13rem, auto) auto;
+    minmax(12rem, 1.35fr) minmax(7rem, 0.6fr) minmax(8rem, 0.7fr)
+    minmax(7.5rem, 0.65fr) minmax(13rem, auto) auto;
   align-items: end;
-  gap: 0.55rem 0.75rem;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid color-mix(in srgb, var(--fs-line) 72%, transparent);
+  gap: 0.75rem 1rem;
 }
 
 .fs-trip-length {
   min-width: 7.5rem;
+}
+
+.fs-trip-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.fs-trip-controls[hidden] {
+  display: none;
+}
+
+.fs-trip-flex {
+  min-height: 44px;
 }
 
 .fs-field {
@@ -149,7 +229,7 @@ a {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--fs-muted);
   text-transform: uppercase;
@@ -172,11 +252,58 @@ a {
 
 .fs-field-days input[type="range"] {
   min-height: 44px;
-  padding: 0.8rem 0.1rem;
+  padding: 0;
   border: none;
   background: transparent;
-  accent-color: var(--fs-accent);
   cursor: pointer;
+}
+
+.fs-field-days input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(
+    to right,
+    var(--fs-accent) 0 var(--fs-days-percent, 46%),
+    var(--fs-line) var(--fs-days-percent, 46%) 100%
+  );
+}
+
+.fs-field-days input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  appearance: none;
+  border: 3px solid var(--fs-bg-elevated);
+  border-radius: 50%;
+  background: var(--fs-accent);
+  box-shadow: 0 0 0 1px var(--fs-line-strong);
+}
+
+.fs-field-days input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 99px;
+  background: var(--fs-line);
+}
+
+.fs-field-days input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 99px;
+  background: var(--fs-accent);
+}
+
+.fs-field-days input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: 3px solid var(--fs-bg-elevated);
+  border-radius: 50%;
+  background: var(--fs-accent);
+  box-shadow: 0 0 0 1px var(--fs-line-strong);
+}
+
+.fs-field-days input[type="range"]:focus-visible {
+  outline: 2px solid var(--fs-accent);
+  outline-offset: 2px;
+  border-radius: var(--fs-radius);
 }
 
 #fs-days-value {
@@ -189,20 +316,21 @@ a {
   min-width: 0;
   font: inherit;
   font-size: 0.875rem;
-  padding: 0.48rem 0.58rem;
+  padding: 0.55rem 0.65rem;
   border: 1px solid var(--fs-line);
   border-radius: var(--fs-radius);
-  background: var(--fs-bg);
+  background: var(--fs-bg-elevated);
   color: var(--fs-ink);
   min-height: 44px;
   transition:
     border-color 160ms ease-out,
-    background-color 160ms ease-out;
+    background-color 160ms ease-out,
+    box-shadow 160ms ease-out;
 }
 
 .fs-field input:hover,
 .fs-field select:hover {
-  border-color: color-mix(in srgb, var(--fs-muted) 65%, var(--fs-line));
+  border-color: var(--fs-line-strong);
 }
 
 .fs-field input:focus-visible,
@@ -212,6 +340,7 @@ a {
   outline: 2px solid color-mix(in srgb, var(--fs-accent) 75%, transparent);
   outline-offset: 2px;
   border-color: var(--fs-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fs-accent) 9%, transparent);
 }
 
 .fs-loc {
@@ -237,8 +366,8 @@ a {
   padding: 0;
   border: 1px solid var(--fs-line);
   border-radius: var(--fs-radius);
-  background: var(--fs-bg);
-  color: var(--fs-ink);
+  background: var(--fs-accent-soft);
+  color: var(--fs-accent);
   cursor: pointer;
   font-size: 1.1rem;
   line-height: 1;
@@ -271,7 +400,7 @@ a {
   gap: 0.42rem;
   min-height: 44px;
   font-size: 0.84rem;
-  color: var(--fs-muted);
+  color: var(--fs-ink);
   white-space: nowrap;
   cursor: pointer;
   transition: color 160ms ease-out;
@@ -287,10 +416,43 @@ a {
 }
 
 .fs-check input {
-  width: 1rem;
-  height: 1rem;
+  display: grid;
+  width: 1.1rem;
+  height: 1.1rem;
   margin: 0;
-  accent-color: var(--fs-accent);
+  appearance: none;
+  place-content: center;
+  border: 1px solid var(--fs-line-strong);
+  border-radius: 4px;
+  background: var(--fs-bg-elevated);
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out;
+}
+
+.fs-check input::before {
+  width: 0.58rem;
+  height: 0.58rem;
+  content: "";
+  background: var(--fs-accent-ink);
+  clip-path: polygon(14% 44%, 0 61%, 39% 100%, 100% 18%, 83% 4%, 37% 69%);
+  transform: scale(0);
+  transition: transform 120ms ease-out;
+}
+
+.fs-check input:checked {
+  border-color: var(--fs-accent);
+  background: var(--fs-accent);
+}
+
+.fs-check input:checked::before {
+  transform: scale(1);
+}
+
+.fs-check input:focus-visible {
+  outline: 2px solid var(--fs-accent);
+  outline-offset: 2px;
 }
 
 .fs-check-help {
@@ -406,7 +568,7 @@ a {
   font-size: 0.875rem;
   font-weight: 600;
   min-height: 44px;
-  padding: 0.48rem 0.9rem;
+  padding: 0.55rem 1rem;
   border-radius: var(--fs-radius);
   border: 1px solid var(--fs-line);
   background: var(--fs-bg);
@@ -439,19 +601,20 @@ a {
 }
 
 .fs-btn-primary {
+  min-width: 8.5rem;
   background: var(--fs-accent);
   border-color: var(--fs-accent);
   color: var(--fs-accent-ink);
 }
 
 .fs-btn-primary:not(:disabled):hover {
-  background: color-mix(in srgb, var(--fs-accent) 88%, var(--fs-ink));
-  border-color: color-mix(in srgb, var(--fs-accent) 88%, var(--fs-ink));
+  background: var(--fs-accent-hover);
+  border-color: var(--fs-accent-hover);
 }
 
 .fs-status {
   min-height: 2rem;
-  padding: 0 0.15rem 0.65rem;
+  padding: 0.2rem 0.15rem 0.8rem;
   border-bottom: 1px solid var(--fs-line);
   margin-bottom: 0.8rem;
 }
@@ -472,7 +635,7 @@ a {
 }
 
 .fs-search-summary {
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   color: var(--fs-muted);
   margin: 0;
 }
@@ -867,7 +1030,7 @@ a {
   margin-bottom: 0.2rem;
 }
 
-@media (max-width: 1020px) {
+@media (max-width: 1120px) {
   .fs-primary {
     grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
   }
@@ -881,15 +1044,29 @@ a {
   }
 
   .fs-secondary {
-    grid-template-columns: minmax(0, 1fr) minmax(7rem, auto) minmax(6.5rem, auto);
-  }
-
-  .fs-field-days {
-    grid-column: 1 / -1;
+    grid-template-columns:
+      minmax(12rem, 1.6fr) minmax(7rem, 0.7fr)
+      minmax(8rem, 0.8fr) minmax(7.5rem, 0.7fr);
   }
 
   .fs-toggles {
-    grid-column: 1 / 3;
+    grid-column: 1 / 4;
+  }
+
+  .fs-actions {
+    grid-column: 4;
+  }
+}
+
+@media (max-width: 800px) {
+  .fs-secondary {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .fs-field-days,
+  .fs-toggles,
+  .fs-actions {
+    grid-column: 1 / -1;
   }
 }
 
@@ -900,15 +1077,37 @@ a {
   }
 
   .fs-page {
-    padding: 0.8rem 0.75rem 2rem;
+    padding:
+      max(1rem, env(safe-area-inset-top))
+      max(0.75rem, env(safe-area-inset-right))
+      max(2rem, env(safe-area-inset-bottom))
+      max(0.75rem, env(safe-area-inset-left));
   }
 
   .fs-top {
-    margin-bottom: 0.7rem;
+    margin-bottom: 1.15rem;
   }
 
-  .fs-form {
-    padding: 0.75rem;
+  .fs-heading p {
+    max-width: 18rem;
+    font-size: 0.82rem;
+  }
+
+  .fs-home {
+    margin-top: 0;
+  }
+
+  .fs-form-section {
+    padding: 0.9rem 0.8rem 1rem;
+  }
+
+  .fs-section-heading {
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .fs-section-heading p {
+    margin-top: 0.25rem;
   }
 
   .fs-primary {
@@ -939,8 +1138,6 @@ a {
   .fs-secondary {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.6rem;
-    margin-top: 0.7rem;
-    padding-top: 0.7rem;
   }
 
   .fs-field-days,
@@ -963,7 +1160,7 @@ a {
     align-items: end;
   }
 
-  .fs-trip-length {
+  .fs-trip-controls {
     grid-column: 1 / -1;
   }
 
@@ -988,6 +1185,19 @@ a {
 
   .fs-footer-stats {
     gap: 0.4rem 0.8rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .fs-swap,
+  .fs-help > button,
+  .fs-btn {
+    min-height: 48px;
+  }
+
+  .fs-swap {
+    width: 48px;
+    height: 48px;
   }
 }
 

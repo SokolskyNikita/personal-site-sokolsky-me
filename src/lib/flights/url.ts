@@ -18,6 +18,7 @@ export const DEFAULT_FORM = {
   mode: DEFAULT_SEARCH_MODE_ID,
   tripType: "one_way" as TripType,
   tripLengthDays: 7,
+  flexibleTripLength: false,
   days: 7,
   maxStops: 1 as MaxStops,
   maxTotalHours: 24 as MaxTotalHours,
@@ -40,6 +41,7 @@ export type FormState = {
   lieFlatPolicy: LieFlatPolicy;
   tripType: TripType;
   tripLengthDays: number;
+  flexibleTripLength: boolean;
   start: string;
   days: number;
   maxStops: MaxStops;
@@ -61,6 +63,7 @@ export function defaultFormState(start = todayUtc()): FormState {
     lieFlatPolicy: mode.lieFlatPolicy,
     tripType: DEFAULT_FORM.tripType,
     tripLengthDays: DEFAULT_FORM.tripLengthDays,
+    flexibleTripLength: DEFAULT_FORM.flexibleTripLength,
     start,
     days: DEFAULT_FORM.days,
     maxStops: DEFAULT_FORM.maxStops,
@@ -79,6 +82,7 @@ export function formStateToLegSearch(form: FormState): LegSearch {
     dest: form.dest,
     tripType: form.tripType,
     tripLengthDays: form.tripLengthDays,
+    flexibleTripLength: form.flexibleTripLength,
     dateRange: { start: form.start, days: form.days },
     maxStops: form.maxStops,
     maxTotalHours: form.maxTotalHours,
@@ -105,6 +109,7 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
   if (form.tripType === "round_trip") {
     params.set("tripType", "round_trip");
     params.set("tripLengthDays", String(form.tripLengthDays));
+    if (form.flexibleTripLength) params.set("flexibleTripLength", "1");
   }
   params.set("start", form.start);
   params.set("days", String(form.days));
@@ -156,6 +161,9 @@ export function formStateFromSearchParams(
       85,
       base.tripLengthDays,
     ),
+    flexibleTripLength:
+      params.get("tripType") === "round_trip" &&
+      params.get("flexibleTripLength") === "1",
     start: params.get("start") ?? base.start,
     days: clampInt(params.get("days"), 1, 14, base.days),
     maxStops,
