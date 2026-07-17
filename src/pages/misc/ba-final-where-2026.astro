@@ -24,16 +24,18 @@ type Property = {
   bookingUrl?: string;
   highlight?: boolean;
   warning?: boolean;
+  hasObeliskView?: boolean;
   location?: { lat: number; lng: number };
 };
 
 const mapsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#1a73e8" d="M12 2.2c3.9 0 7.1 3.1 7.1 7 0 5.1-7.1 12.6-7.1 12.6S4.9 14.3 4.9 9.2c0-3.9 3.2-7 7.1-7Z"/><path fill="#34a853" d="M7.2 14.1 12 21.8l4.8-7.7-4.8-2.8-4.8 2.8Z"/><path fill="#fbbc04" d="M4.9 9.2c0 1.8.9 3.5 2.3 4.9l4.8-2.8V2.2c-3.9 0-7.1 3.1-7.1 7Z"/><path fill="#ea4335" d="M19.1 9.2c0 1.8-.9 3.5-2.3 4.9L12 11.3V2.2c3.9 0 7.1 3.1 7.1 7Z"/><circle cx="12" cy="9.3" r="2.45" fill="#fff"/></svg>`;
-const bookingIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 2.75a.75.75 0 0 1 .75.75V5h8.5V3.5a.75.75 0 0 1 1.5 0V5H19a2 2 0 0 1 2 2v12.25A2.75 2.75 0 0 1 18.25 22H5.75A2.75 2.75 0 0 1 3 19.25V7a2 2 0 0 1 2-2h1.25V3.5A.75.75 0 0 1 7 2.75Zm12 7.75H5v8.75c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V10.5ZM5 7v2h14V7a.5.5 0 0 0-.5-.5H5.5A.5.5 0 0 0 5 7Zm4.22 5.22a.75.75 0 0 1 1.06 0l1.47 1.47 3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 0 1 0-1.06Z"/></svg>`;
 
 const mapsUrl = (query: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
-const availableProperties = propertyData.availableProperties as Property[];
+const allAvailable = propertyData.availableProperties as Property[];
+const availableWithView = allAvailable.filter(p => p.hasObeliskView);
+const availableWithoutView = allAvailable.filter(p => !p.hasObeliskView);
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -41,8 +43,8 @@ const structuredData = {
   name: pageTitle,
   description: pageDescription,
   url: canonicalUrl,
-  numberOfItems: availableProperties.length,
-  itemListElement: availableProperties.map((prop, index) => ({
+  numberOfItems: allAvailable.length,
+  itemListElement: allAvailable.map((prop, index) => ({
     "@type": "ListItem",
     position: index + 1,
     item: {
@@ -136,15 +138,15 @@ const structuredData = {
 
       <section class="region" id="available-properties" aria-labelledby="available-heading">
         <div class="region-heading">
-          <p class="eyebrow">Last-minute options</p>
-          <h2 id="available-heading">Verified available hotels (July 19-20)</h2>
+          <p class="eyebrow">Premium options</p>
+          <h2 id="available-heading">Verified available hotels with Obelisk views</h2>
           <p>
-            These properties are confirmed available for a 1-night stay during the final. To get a view of the celebrations or the Obelisk, we recommend booking immediately and requesting a <strong>high-floor, front-facing room</strong>.
+            These properties are confirmed available for a 1-night stay during the final and offer direct or partial views of the Obelisk. We recommend booking immediately and requesting a <strong>high-floor, front-facing room</strong>.
           </p>
         </div>
 
         <div class="venue-grid">
-          {availableProperties.map((prop) => (
+          {availableWithView.map((prop) => (
             <article
               class:list={["venue-card", prop.highlight && "is-pick", prop.warning && "is-warning"]}
             >
@@ -169,27 +171,70 @@ const structuredData = {
                   >
                     <span class="maps-icon" set:html={mapsIcon} />
                   </a>
-                  {prop.bookingUrl && (
-                    <a
-                      class="reservation-link"
-                      href={prop.bookingUrl}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`Book at ${prop.name}`}
-                      title="Book now"
-                    >
-                      <span class="reservation-icon" set:html={bookingIcon} />
-                    </a>
-                  )}
                 </div>
               </div>
               <p class="address">{prop.address}</p>
-              <p class="detail">{prop.detail}</p>
               {prop.rating && (
-                <p class="source-tag">
-                  Rating: {prop.rating}/5.0 ({prop.reviews ?? 0} reviews)
+                <p class="gmaps-rating" aria-label={`Google Maps rating ${prop.rating} out of 5 from ${prop.reviews ?? 0} reviews`}>
+                  <span class="gmaps-rating-star" aria-hidden="true">★</span>
+                  <span class="gmaps-rating-score">{prop.rating}</span>
+                  <span class="gmaps-rating-scale">/5</span>
+                  <span class="gmaps-rating-count">({(prop.reviews ?? 0).toLocaleString("en-US")} reviews)</span>
                 </p>
               )}
+              <p class="detail">{prop.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="region" id="other-properties" aria-labelledby="other-heading">
+        <div class="region-heading">
+          <p class="eyebrow">Nearby alternatives</p>
+          <h2 id="other-heading">Other available hotels within 750m (No Obelisk view)</h2>
+          <p>
+            These properties are within walking distance (under 750 meters) of the Obelisk. While they do not offer direct views of the monument from their rooms, they put you right next to the epicenter of the celebrations at a more affordable price point.
+          </p>
+        </div>
+
+        <div class="venue-grid">
+          {availableWithoutView.map((prop) => (
+            <article
+              class:list={["venue-card", prop.highlight && "is-pick", prop.warning && "is-warning"]}
+            >
+              <div class="option-topline">
+                <span>{prop.status}</span>
+                <strong>{prop.price}</strong>
+              </div>
+              <div class="venue-title-row">
+                <h3>
+                  <a href={prop.bookingUrl ?? mapsUrl(prop.mapsQuery)} target="_blank" rel="noreferrer noopener">
+                    {prop.name}
+                  </a>
+                </h3>
+                <div class="venue-actions">
+                  <a
+                    class="maps-link"
+                    href={mapsUrl(prop.mapsQuery)}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`Open ${prop.name} on Google Maps`}
+                    title="Open in Google Maps"
+                  >
+                    <span class="maps-icon" set:html={mapsIcon} />
+                  </a>
+                </div>
+              </div>
+              <p class="address">{prop.address}</p>
+              {prop.rating && (
+                <p class="gmaps-rating" aria-label={`Google Maps rating ${prop.rating} out of 5 from ${prop.reviews ?? 0} reviews`}>
+                  <span class="gmaps-rating-star" aria-hidden="true">★</span>
+                  <span class="gmaps-rating-score">{prop.rating}</span>
+                  <span class="gmaps-rating-scale">/5</span>
+                  <span class="gmaps-rating-count">({(prop.reviews ?? 0).toLocaleString("en-US")} reviews)</span>
+                </p>
+              )}
+              <p class="detail">{prop.detail}</p>
             </article>
           ))}
         </div>
@@ -454,8 +499,7 @@ const structuredData = {
         padding-top: 0.15rem;
       }
 
-      .maps-link,
-      .reservation-link {
+      .maps-link {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -463,13 +507,11 @@ const structuredData = {
         text-decoration: none;
       }
 
-      .maps-icon,
-      .reservation-icon {
+      .maps-icon {
         display: flex;
       }
 
-      .maps-icon :global(svg),
-      .reservation-icon :global(svg) {
+      .maps-icon :global(svg) {
         width: 1.35rem;
         height: 1.35rem;
       }
@@ -489,17 +531,45 @@ const structuredData = {
         line-height: 1.35;
       }
 
+      .gmaps-rating {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.2rem 0.35rem;
+        margin: 0;
+        color: var(--ink);
+        line-height: 1.2;
+      }
+
+      .gmaps-rating-star {
+        color: #e6a100;
+        font-size: 1.05rem;
+        line-height: 1;
+      }
+
+      .gmaps-rating-score {
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+
+      .gmaps-rating-scale {
+        font-size: 0.85rem;
+        font-weight: 650;
+        color: var(--muted);
+      }
+
+      .gmaps-rating-count {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
       .detail {
         color: var(--muted);
         font-size: 0.9rem;
         line-height: 1.45;
-      }
-
-      .source-tag {
-        color: var(--muted);
-        font-size: 0.78rem;
-        font-weight: 650;
-        letter-spacing: 0.02em;
       }
 
       @media (max-width: 980px) {
