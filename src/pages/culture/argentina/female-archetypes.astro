@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "Cishet female archetypes: Argentina";
 const pageDescription =
-  "A field guide to heterosexual female archetypes circulating through Argentine internet culture, dating apps, television, politics, football and everyday speech.";
+  "A sourced field guide to labels Argentines actually use for heterosexual female archetypes in everyday speech, media, politics and online culture.";
 const themeColorLight = "#fefffd";
 const themeColorDark = "#141614";
 const siteUrl =
@@ -46,8 +46,6 @@ const entryCount = sections.reduce((n, section) => {
   );
   return n + own + nested;
 }, 0);
-
-const wikiTermCount = Object.keys(wikiLinks).length;
 
 function escapeHtml(value: string) {
   return value
@@ -167,7 +165,7 @@ const structuredData = {
         <h1>{pageTitle}</h1>
         <p class="lede" set:html={inlineMd(data.intro)} />
         <p class="meta">
-          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} Wiki
+          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiEntryCount} with Wiki
         </p>
         <p class="quiz-cta">
           <a href="/culture/argentina/male-archetypes">Argentine male companion</a>
