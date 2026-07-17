@@ -33,10 +33,8 @@ type Section = {
 
 const wikiLinks = wikiLinksRaw as Record<string, ExtLink>;
 const sections = data.sections as Section[];
-const footer =
-  typeof (data as { footer?: string }).footer === "string"
-    ? (data as { footer: string }).footer
-    : null;
+const optionalFooter = (data as { footer?: unknown }).footer;
+const footer = typeof optionalFooter === "string" ? optionalFooter : null;
 
 const entryCount = sections.reduce((n, section) => {
   const own = section.items.filter((item) => item.kind === "entry").length;
