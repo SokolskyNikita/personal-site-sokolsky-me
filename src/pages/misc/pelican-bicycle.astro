@@ -107,6 +107,22 @@ const structuredData = {
           <clipPath id="body-clip">
             <ellipse cx="793" cy="439" rx="118" ry="101" />
           </clipPath>
+          <g id="clouds-far-tile">
+            <path d="M90 202c25-45 76-61 116-34 29-58 119-53 143 8 47-17 94 16 95 67H90Z" />
+            <path d="M990 278c18-38 64-53 99-29 31-54 111-42 125 18 45-11 81 22 82 62H955c1-27 13-43 35-51Z" />
+          </g>
+          <g id="clouds-near-tile">
+            <path d="M154 108c21-48 80-70 123-38 39-73 147-58 161 24 57-13 108 28 109 83H113c1-34 14-57 41-69Z" />
+            <path d="M1145 280c26-54 95-71 139-30 41-70 151-53 163 31 61-13 111 31 112 87h-459c1-41 16-71 45-88Z" />
+          </g>
+          <path
+            id="back-grass-tile"
+            d="M0 661v-34l12 24 10-61 13 61 18-44 9 45 17-70 10 68 24-48 8 50 25-64 9 63 25-38v48H0Z"
+          />
+          <path
+            id="front-grass-tile"
+            d="M0 900v-38l18 27 9-59 12 58 24-45 4 48 20-70 9 68 31-42 2 45 27-69 8 67 16-52v62H0Z"
+          />
         </defs>
 
         <rect width="1600" height="900" fill="url(#sky)" />
@@ -114,13 +130,12 @@ const structuredData = {
         <circle cx="1275" cy="170" r="62" fill="#f8d56a" />
 
         <g class="clouds clouds--far" fill="#e8f3e9" opacity=".72">
-          <path d="M-150 202c25-45 76-61 116-34 29-58 119-53 143 8 47-17 94 16 95 67h-354Z" />
-          <path d="M990 278c18-38 64-53 99-29 31-54 111-42 125 18 45-11 81 22 82 62H955c1-27 13-43 35-51Z" />
-          <path d="M1630 134c22-44 76-60 114-31 30-61 121-54 143 10 49-18 99 15 99 68h-386c0-25 10-40 30-47Z" />
+          <use href="#clouds-far-tile" />
+          <use href="#clouds-far-tile" x="1600" />
         </g>
         <g class="clouds clouds--near" fill="#f4f6df" opacity=".9">
-          <path d="M154 108c21-48 80-70 123-38 39-73 147-58 161 24 57-13 108 28 109 83H113c1-34 14-57 41-69Z" />
-          <path d="M1470 280c26-54 95-71 139-30 41-70 151-53 163 31 61-13 111 31 112 87h-459c1-41 16-71 45-88Z" />
+          <use href="#clouds-near-tile" />
+          <use href="#clouds-near-tile" x="1600" />
         </g>
 
         <path
@@ -138,7 +153,17 @@ const structuredData = {
         />
 
         <g class="grass grass--back" fill="#8d923e">
-          <path d="M0 661v-48l14 37 12-65 13 64 20-52 7 62 22-73 4 78 28-54 4 57 25-73 8 76 30-43 8 53 22-84 10 79 25-53 8 57 26-72 5 77 31-58 4 63 31-85 7 83 30-55 7 59 22-68 8 73 35-54 2 58 33-80 7 79 28-51 8 52 30-68 5 72 34-57 4 60 30-82 9 82 33-57 4 59 29-74 6 77 33-55 7 59 26-86 8 87 32-58 7 60 27-70 6 73 38-52 2 55 34-81 8 82 30-55 7 58 30-77 6 79 32-55 6 58 32-88 7 89 32-54 8 58 31-76 6 77 31-48 7 51 31-84 8 85 30-54 7 58 29-70 8 72 30-52 8 54 27-87 8 90 36-59 4 61v45Z" />
+          <use href="#back-grass-tile" x="-180" />
+          <use href="#back-grass-tile" />
+          <use href="#back-grass-tile" x="180" />
+          <use href="#back-grass-tile" x="360" />
+          <use href="#back-grass-tile" x="540" />
+          <use href="#back-grass-tile" x="720" />
+          <use href="#back-grass-tile" x="900" />
+          <use href="#back-grass-tile" x="1080" />
+          <use href="#back-grass-tile" x="1260" />
+          <use href="#back-grass-tile" x="1440" />
+          <use href="#back-grass-tile" x="1620" />
         </g>
 
         <rect y="652" width="1600" height="248" fill="url(#road)" />
@@ -266,11 +291,21 @@ const structuredData = {
         </g>
 
         <g class="grass grass--front" fill="#6e752d">
-          <path d="M0 900v-38l18 27 9-59 12 58 24-45 4 48 20-70 9 68 31-42 2 45 27-69 8 67 30-52 7 55 24-78 9 77 28-46 6 48 29-68 7 68 31-51 5 53 34-73 5 72 31-49 8 51 29-79 8 78 31-47 7 49 27-67 8 66 35-50 4 52 31-75 8 73 31-49 7 51 29-70 7 69 34-48 5 50 31-80 8 78 32-47 7 50 28-69 8 68 32-43 6 46 34-78 7 76 31-47 8 49 29-67 7 66 33-47 6 50 31-78 8 76 32-48 7 51 29-68 8 67 32-45 6 48 33-76 7 74 32-47 7 50 30-69 7 68 31-43 7 45 31-78 8 76 32-47 7 49 29-67 8 66 33-44 5 46 33-75 7 73 30-45 8 48 27-66 10 65 32-45 6 47 32-76 8 75 32-48 7 49 30-67 8 66 33-45 6 47 31-76 8 75 31-48 7 50 31-68 7 66 33-43 6 45 31-78 8 77 32-48 7 49 30-67 8 66 32-44 6 46 32-76 8 75 32-47 7 49 29-67 8 66 34-45 5 47v38Z" />
+          <use href="#front-grass-tile" x="-180" />
+          <use href="#front-grass-tile" />
+          <use href="#front-grass-tile" x="180" />
+          <use href="#front-grass-tile" x="360" />
+          <use href="#front-grass-tile" x="540" />
+          <use href="#front-grass-tile" x="720" />
+          <use href="#front-grass-tile" x="900" />
+          <use href="#front-grass-tile" x="1080" />
+          <use href="#front-grass-tile" x="1260" />
+          <use href="#front-grass-tile" x="1440" />
+          <use href="#front-grass-tile" x="1620" />
         </g>
       </svg>
 
-      <p class="motion-note" aria-hidden="true">PEDALING SOMEWHERE</p>
+      <p class="motion-note" aria-hidden="true">PELICAN ON A BICYCLE</p>
     </main>
 
     <style>
@@ -302,34 +337,34 @@ const structuredData = {
       }
 
       .clouds--far {
-        animation: scenery-pass 30s linear infinite;
+        animation: scenery-pass 32.64s linear infinite;
       }
 
       .clouds--near {
-        animation: scenery-pass 19s linear infinite;
+        animation: scenery-pass 21.76s linear infinite;
       }
 
       .road-marks {
-        animation: road-pass 1.1s linear infinite;
+        animation: road-pass 1.36s linear infinite;
       }
 
       .grass--back {
-        animation: grass-pass 3.5s linear infinite;
+        animation: grass-pass 2.72s linear infinite;
       }
 
       .grass--front {
-        animation: grass-pass 1.8s linear infinite;
+        animation: grass-pass 1.36s linear infinite;
       }
 
       .rider {
         transform-origin: 800px 670px;
         transform: translateX(var(--rider-shift-x, 0px)) scale(var(--rider-scale, 1));
-        animation: rider-bob 520ms ease-in-out infinite alternate;
+        animation: rider-bob 680ms ease-in-out infinite alternate;
       }
 
       .rider-shadow {
         transform-origin: center;
-        animation: shadow-pulse 520ms ease-in-out infinite alternate;
+        animation: shadow-pulse 680ms ease-in-out infinite alternate;
       }
 
       .wheel {
@@ -348,25 +383,25 @@ const structuredData = {
       .wing {
         transform-box: view-box;
         transform-origin: 800px 405px;
-        animation: feather-ruffle 780ms ease-in-out infinite alternate;
+        animation: feather-ruffle 1.36s ease-in-out infinite alternate;
       }
 
       .front-wing {
         transform-box: view-box;
         transform-origin: 850px 405px;
-        animation: steer 1.4s ease-in-out infinite alternate;
+        animation: steer 2.72s ease-in-out infinite alternate;
       }
 
       .tail {
         transform-box: view-box;
         transform-origin: 700px 455px;
-        animation: tail-flutter 410ms ease-in-out infinite alternate;
+        animation: tail-flutter 680ms ease-in-out infinite alternate;
       }
 
       .lower-beak {
         transform-box: view-box;
         transform-origin: 930px 276px;
-        animation: beak-chatter 2.8s ease-in-out infinite;
+        animation: beak-chatter 5.44s ease-in-out infinite;
       }
 
       .motion-note {
