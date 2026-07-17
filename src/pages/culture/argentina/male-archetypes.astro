@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "Cishet male archetypes: Argentina";
 const pageDescription =
-  "A field guide to heterosexual male archetypes currently in circulation on the Argentine web and in everyday Argentine life.";
+  "A sourced field guide to labels Argentines actually use for heterosexual male archetypes in everyday speech, media, politics and online culture.";
 const themeColorLight = "#fefffd";
 const themeColorDark = "#141614";
 const siteUrl =
@@ -33,6 +33,10 @@ type Section = {
 
 const wikiLinks = wikiLinksRaw as Record<string, ExtLink>;
 const sections = data.sections as Section[];
+const footer =
+  typeof (data as { footer?: string }).footer === "string"
+    ? (data as { footer: string }).footer
+    : null;
 
 const entryCount = sections.reduce((n, section) => {
   const own = section.items.filter((item) => item.kind === "entry").length;
@@ -42,8 +46,6 @@ const entryCount = sections.reduce((n, section) => {
   );
   return n + own + nested;
 }, 0);
-
-const wikiTermCount = Object.keys(wikiLinks).length;
 
 function escapeHtml(value: string) {
   return value
@@ -162,7 +164,7 @@ const structuredData = {
         <h1>{pageTitle}</h1>
         <p class="lede" set:html={inlineMd(data.intro)} />
         <p class="meta">
-          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiTermCount} Wiki
+          <span data-meta-count>{entryCount} entries</span> · {sections.length} sections · {wikiEntryCount} with Wiki
         </p>
         <p class="quiz-cta">
           <a href="/culture/argentina/female-archetypes">Argentine female companion</a>
@@ -276,6 +278,8 @@ const structuredData = {
           );
         })
       }
+
+      {footer && <p class="footer-note" set:html={inlineMd(footer)} />}
     </main>
 
     <script
@@ -668,6 +672,17 @@ const structuredData = {
     font-size: 0.82rem;
     font-style: italic;
     line-height: 1.45;
+  }
+
+  .footer-note {
+    margin: clamp(1.5rem, 4vw, 2.25rem) 0 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--rule);
+    color: var(--soft);
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.45;
+    max-width: 52rem;
   }
 
   a {
