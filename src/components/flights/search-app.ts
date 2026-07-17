@@ -825,7 +825,7 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
       ? "round_trip"
       : "one_way",
     tripLengthDays: Math.min(
-      30,
+      85,
       Math.max(
         1,
         Number(

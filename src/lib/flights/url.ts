@@ -153,7 +153,7 @@ export function formStateFromSearchParams(
     tripLengthDays: clampInt(
       params.get("tripLengthDays"),
       1,
-      30,
+      85,
       base.tripLengthDays,
     ),
     start: params.get("start") ?? base.start,

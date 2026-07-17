@@ -59,7 +59,7 @@ export const LegSearchSchema = z.object({
   origin: LocationRefSchema,
   dest: LocationRefSchema,
   tripType: TripTypeSchema.default("one_way"),
-  tripLengthDays: z.number().int().min(1).max(30).default(7),
+  tripLengthDays: z.number().int().min(1).max(85).default(7),
   dateRange: DateRangeSchema,
   maxStops: MaxStopsSchema,
   maxTotalHours: MaxTotalHoursSchema.default(24),
