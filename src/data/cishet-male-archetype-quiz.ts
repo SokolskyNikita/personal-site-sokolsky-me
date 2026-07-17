@@ -237,6 +237,17 @@ function mappedOpt(
 const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
   Saturday: [
     mappedOpt(
+      "Coursework, a shift or errands first. I relax once the week is under control.",
+      {
+        "professional-and-money-men": 2,
+        "normie-default-guys": 2,
+      },
+      [
+        { match: "Corporate drone", w: 1 },
+        { match: "Green-flag", w: 1 },
+      ],
+    ),
+    mappedOpt(
       "Coffee, errands and seeing whoever is around. Nothing becomes a project.",
       {
         "normie-default-guys": 3,
@@ -261,6 +272,17 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
     ),
   ],
   "Friday night": [
+    mappedOpt(
+      "Recovering from class or work with takeout, a show and maybe a roommate or friend.",
+      {
+        "normie-default-guys": 3,
+        "life-stage-and-domestic-men": 1,
+      },
+      [
+        { match: "Chill guy", w: 2 },
+        { match: "High-tier normie", w: 1 },
+      ],
+    ),
     mappedOpt(
       "A quiet night alone. I cook, read or watch something and go to bed early.",
       {
@@ -299,6 +321,17 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
   ],
   Money: [
     mappedOpt(
+      "Tuition, debt, rent and savings come first. I am still trying to get established.",
+      {
+        "professional-and-money-men": 3,
+        "normie-default-guys": 2,
+      },
+      [
+        { match: "Corporate drone", w: 1 },
+        { match: "Boglehead", w: 1 },
+      ],
+    ),
+    mappedOpt(
       "Automate the savings, buy boring funds and stop checking.",
       {
         "professional-and-money-men": 4,
@@ -318,6 +351,17 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
     ),
   ],
   Dating: [
+    mappedOpt(
+      "I have little experience, use apps only occasionally or do not have a repeated pattern yet.",
+      {
+        "dating-app-personas-and-behaviors": 2,
+        "normie-default-guys": 3,
+      },
+      [
+        { match: "Chill guy", w: 1 },
+        { match: "Green-flag", w: 1 },
+      ],
+    ),
     mappedOpt(
       "I am married or in a long-term relationship. Apps are not part of my life.",
       {
@@ -371,6 +415,14 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
   ],
   Feed: [
     mappedOpt(
+      "Friends, humor, school or career posts, and whatever the algorithm serves me.",
+      {
+        "normie-default-guys": 3,
+        "professional-and-money-men": 1,
+      },
+      [{ match: "High-tier normie", w: 2 }],
+    ),
+    mappedOpt(
       "News and politics, including people arguing about both.",
       {
         "political-and-ideological-men": 4,
@@ -384,6 +436,17 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
     ),
   ],
   Clothes: [
+    mappedOpt(
+      "Practical clothes for class, a shift, errands or a long day on my feet.",
+      {
+        "normie-default-guys": 3,
+        "professional-and-money-men": 1,
+      },
+      [
+        { match: "High-tier normie", w: 1 },
+        { match: "Clean boy", w: 1 },
+      ],
+    ),
     mappedOpt(
       "Jeans, T-shirt, hoodie. It is basically the same rotation every week.",
       { "normie-default-guys": 4 },
@@ -450,6 +513,18 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
   ],
   Work: [
     mappedOpt(
+      "I am still studying, training or starting out. I want useful work, stability and room to grow.",
+      {
+        "professional-and-money-men": 3,
+        "think-boys-and-intellectual-capital-men": 1,
+        "normie-default-guys": 1,
+      },
+      [
+        { match: "Corporate drone", w: 2 },
+        { match: "Green-flag", w: 1 },
+      ],
+    ),
+    mappedOpt(
       "Teaching, care or public service. The useful part is working with people.",
       {
         "professional-and-money-men": 2,
@@ -469,6 +544,17 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
     ),
   ],
   Friends: [
+    mappedOpt(
+      "We study, run errands, eat at home or hang out between other commitments.",
+      {
+        "normie-default-guys": 3,
+        "emotional-soft-boys": 1,
+      },
+      [
+        { match: "High-tier normie", w: 1 },
+        { match: "Green-flag", w: 1 },
+      ],
+    ),
     mappedOpt(
       "One or two close friends. We can talk honestly without turning it into a group event.",
       { "emotional-soft-boys": 4 },
@@ -555,6 +641,14 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
   ],
   Food: [
     mappedOpt(
+      "I balance cost, convenience and feeling decent through a busy day.",
+      {
+        "normie-default-guys": 3,
+        "wellness-longevity-and-optimization-men": 1,
+      },
+      [{ match: "Meal-prep", w: 1 }],
+    ),
+    mappedOpt(
       "I like cooking and will lose an afternoon to one recipe.",
       { "food-drink-and-domestic-hobby-men": 4 },
       [
@@ -571,6 +665,14 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
     ),
   ],
   Home: [
+    mappedOpt(
+      "I live with family or roommates, so my own room or corner is the part that feels like me.",
+      {
+        "normie-default-guys": 3,
+        "life-stage-and-domestic-men": 1,
+      },
+      [{ match: "High-tier normie", w: 1 }],
+    ),
     mappedOpt(
       "Clean and ordinary. I want to find my keys and sit down without moving anything.",
       {
@@ -693,6 +795,17 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
   ],
   Travel: [
     mappedOpt(
+      "Something affordable that fits around school or work, with a good mix of rest and things to do.",
+      {
+        "normie-default-guys": 3,
+        "professional-and-money-men": 1,
+      },
+      [
+        { match: "Chill guy", w: 1 },
+        { match: "High-tier normie", w: 1 },
+      ],
+    ),
+    mappedOpt(
       "A resort or cruise. I want the decisions made before I arrive.",
       {
         "normie-default-guys": 3,
@@ -781,6 +894,15 @@ const SUPPLEMENTAL_OPTIONS: Record<string, QuizOption[]> = {
     ),
   ],
   Reputation: [
+    mappedOpt(
+      "“Busy, dependable and still there when somebody actually needs him.”",
+      {
+        "professional-and-money-men": 2,
+        "life-stage-and-domestic-men": 2,
+        "emotional-soft-boys": 1,
+      },
+      [{ match: "Green-flag", w: 3 }],
+    ),
     mappedOpt(
       "“Dependable. Quiet life, shows up every time.”",
       {
@@ -1936,7 +2058,7 @@ export function scoreAnswers(answerIndexes: (number | number[])[]): MatchResult[
       specificMaxes[i] > 0
         ? specificScores[i] / (specificMaxes[i] + 4)
         : 0;
-    const fit = baseFit * 0.65 + specificFit * 0.35;
+    const fit = baseFit * 0.25 + specificFit * 0.75;
     const matchPct =
       Math.round(1000 * fit) / 10;
     const specificScore = specificScores[i];

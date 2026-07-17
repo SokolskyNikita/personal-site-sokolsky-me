@@ -153,8 +153,8 @@ const structuredData = {
         kymLinks,
       }}
     >
-      const STORE_KEY = "cishet-archetype-quiz-v2";
-      const LEGACY_STORE_KEY = "cishet-archetype-quiz-v1";
+      const STORE_KEY = "cishet-male-archetype-quiz-v3";
+      const QUIZ_VERSION = "3";
       const TELEMETRY_ENDPOINT = "/api/cishet-archetypes/result";
       const QUIZ_ID = "cishet-male-archetypes";
       const TOP_N = 5;
@@ -192,9 +192,7 @@ const structuredData = {
 
       function loadLocal() {
         try {
-          const raw =
-            localStorage.getItem(STORE_KEY) ||
-            localStorage.getItem(LEGACY_STORE_KEY);
+          const raw = localStorage.getItem(STORE_KEY);
           if (!raw) return false;
           const data = JSON.parse(raw);
           if (!Array.isArray(data.answers) || data.answers.length !== DECK.length) return false;
@@ -377,7 +375,9 @@ const structuredData = {
               ? specificScores[i] /
                 (specificMaxes[i] + SPECIFIC_EVIDENCE_PRIOR)
               : 0;
-          const fit = baseFit * 0.65 + specificFit * 0.35;
+          // Broad sections keep adjacent labels plausible, but explicit answer-to-label
+          // mappings do most of the work so a generic lifestyle choice cannot dominate.
+          const fit = baseFit * 0.25 + specificFit * 0.75;
           const matchPct =
             Math.round(1000 * fit) / 10;
           const specificScore = specificScores[i];
@@ -563,7 +563,7 @@ const structuredData = {
           top
             .map((r, i) => `${i + 1}. ${r.matchPct}% — ${r.archetype.terms}`)
             .join("\n") +
-          `\n${location.origin}/tests/cishet-male-archetypes?r=${encodeAnswers()}`
+          `\n${location.origin}/tests/cishet-male-archetypes?v=${QUIZ_VERSION}&r=${encodeAnswers()}`
         );
       }
 
@@ -608,6 +608,7 @@ const structuredData = {
           selection.some((optionIndex) => !DECK[questionIndex].opts[optionIndex].skip)
         ).length;
         const url = new URL(location.href);
+        url.searchParams.set("v", QUIZ_VERSION);
         url.searchParams.set("r", encodeAnswers());
         history.replaceState(null, "", url);
 
@@ -674,6 +675,7 @@ const structuredData = {
       function retake() {
         const url = new URL(location.href);
         url.searchParams.delete("r");
+        url.searchParams.delete("v");
         history.replaceState(null, "", url);
         startQuiz(false);
       }
@@ -686,6 +688,7 @@ const structuredData = {
 
       document.getElementById("copy-link")?.addEventListener("click", async () => {
         const url = new URL(location.href);
+        url.searchParams.set("v", QUIZ_VERSION);
         url.searchParams.set("r", encodeAnswers());
         try {
           await navigator.clipboard.writeText(url.toString());
@@ -732,7 +735,9 @@ const structuredData = {
 
       // boot
       const params = new URLSearchParams(location.search);
-      const shared = decodeAnswers(params.get("r") || "");
+      const shared = params.get("v") === QUIZ_VERSION
+        ? decodeAnswers(params.get("r") || "")
+        : null;
       if (shared && shared.every((selection) => selection.length > 0)) {
         state.answers = shared;
         state.finished = true;

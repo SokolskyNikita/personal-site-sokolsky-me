@@ -180,6 +180,7 @@ function question(topic: string, q: string, choices: Choice[]): QuizQuestion {
 export const DECK: QuizQuestion[] = [
   question("Saturday morning", "Which of these are usually part of a free Saturday morning?", [
     ["Nothing in particular. I sleep in and decide later.", "neutral", ["Chill girl", "Basic", ["\"My Year of Rest and Relaxation\" girl", 1]]],
+    ["Catch up on coursework, a shift or errands before I can relax.", "neutral", ["Corporate girlie", "That girl", "Recovering people-pleaser"]],
     ["Text friends and make a brunch or shopping plan.", "social", ["Brunch girl", "City girl", "Girl's girl", "Main-character girl"]],
     ["Do groceries, laundry or something another person is counting on.", "domestic", ["Soccer mom", "Cool aunt", "Wifey"]],
     ["See the person I am dating or check whether they have texted.", "romantic", ["Good-morning texter", "Anxious queen", "Girlfriend material"]],
@@ -192,6 +193,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Friday night", "If nobody else gets a vote, how do you spend Friday night?", [
     ["At home with no plan. I may watch something and go to bed.", "neutral", ["Chill girl", "Basic", ["\"My Year of Rest and Relaxation\" girl", 1]]],
+    ["Recovering from the week with takeout, a show and maybe a roommate or friend.", "neutral", ["Chill girl", "Girl's girl", "Corporate girlie"]],
     ["At dinner, a bar or a party with a group.", "social", ["City girl", "Sorority girl", "Hot mess"]],
     ["At home with my partner, relatives, children or pets.", "domestic", ["Dog mom", "Cat lady", "Wifey"]],
     ["On a date or talking to someone I want to date.", "romantic", ["Dating-to-marry girl", "Situationship girl", "Delulu"]],
@@ -203,6 +205,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Everyday clothes", "What do you wear on an ordinary day when you are not dressing for work?", [
     ["Jeans or leggings and a plain top. I do not think about it much.", "neutral", ["Basic", "Chill girl"]],
+    ["Practical clothes for class, a placement, errands or a long day on my feet.", "neutral", ["Corporate girlie", "That girl", "Clean girl"]],
     ["A current, recognizable outfit that works for lunch or drinks.", "social", ["City girl", "Sorority girl", "VSCO girl", "Jersey girl", "ABG", ["Southern belle", 0.75]]],
     ["Something washable, comfortable and easy to move in.", "domestic", ["Soccer mom", "Dog mom", "Cool aunt"]],
     ["Something soft, fitted or date-ready.", "romantic", ["Soft girl", "Coquette", "Girlfriend material", "Balletcore", "Twee"]],
@@ -214,6 +217,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Beauty routine", "Which best describes your hair, makeup and skincare routine on a normal weekday?", [
     ["Almost none.", "neutral", ["Chill girl", "Basic"]],
+    ["It changes with my schedule: quick on busy days, more effort when I have time.", "neutral", ["Basic", "Clean girl", "Corporate girlie"]],
     ["Ten to twenty minutes. I use familiar products and stop there.", "social", ["Basic", "Becky", "Valley girl"]],
     ["As little as possible because other tasks come first.", "domestic", ["Soccer mom", "Boy mom", "Dog mom"]],
     ["Enough to look good for a partner or a date.", "romantic", ["Girlfriend material", "Princess-treatment girl", "Black cat girlfriend"]],
@@ -225,6 +229,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Health habits", "Which statement best describes your current health routine?", [
     ["I have no routine beyond basic meals, sleep and appointments.", "neutral", ["Basic", "Chill girl", ["\"My Year of Rest and Relaxation\" girl", 0.75]]],
+    ["I am trying to fit decent meals, sleep and movement around school or work.", "neutral", ["That girl", "Corporate girlie", "Recovering people-pleaser"]],
     ["I exercise or eat well when friends make it social.", "social", ["That girl", "City girl"]],
     ["I plan meals and appointments around the needs of my household.", "domestic", ["Soccer mom", "Crunchy mom", "Almond mom"]],
     ["A partner and I share meals, walks or workouts.", "romantic", ["Girlfriend material", "Wifey"]],
@@ -236,6 +241,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Work", "What do you want most from paid work?", [
     ["I am not working, or I only want steady pay and clear hours.", "neutral", ["Corporate girlie", "Chill girl"]],
+    ["I am still studying, training or starting out; I want useful work, stability and room to grow.", "neutral", [["Corporate girlie", 3], "Girlboss", "Recovering people-pleaser"]],
     ["People, status and a reason to be out in the world.", "social", ["Girlboss", "City girl", "Queen bee"]],
     ["Enough security and flexibility to care for a household.", "domestic", ["Tradwife", "Stay-at-home girlfriend", "Dependa"]],
     ["A schedule that leaves room for my relationship and future family.", "romantic", ["Dating-to-marry girl", "Wifey"]],
@@ -247,6 +253,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Extra money", "You receive $500 that you do not need for bills. What are you most likely to do with it?", [
     ["Save it or leave it in my account.", "neutral", ["Basic", "Corporate girlie"]],
+    ["Put it toward tuition, debt, work supplies or another near-term goal.", "neutral", [["Corporate girlie", 3], "That girl"]],
     ["Use it for dinners, drinks or a weekend with friends.", "social", ["City girl", "Brunch girl", "Hot mess"]],
     ["Buy something for my home, family, children or pets.", "domestic", ["Dog mom", "Plant mom", "Soccer mom"]],
     ["Spend it on a date, gift or trip with my partner.", "romantic", ["Princess-treatment girl", "Wifey", "Travel girl"]],
@@ -258,6 +265,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Dating apps", "If you were single and using a dating app, how would you use it?", [
     ["I would not use one or would delete it quickly.", "neutral", ["\"Never on here\" girl", "Chill girl"]],
+    ["I would use it occasionally, but school, work and friends would still take priority.", "neutral", ["Chill girl", "Basic", "Girlfriend material"]],
     ["I would match casually and see who seems fun in person.", "social", ["Travel girl", "Brunch girl", "\"Make me laugh\" girl"]],
     ["I would screen for someone who wants marriage and family.", "domestic", ["Dating-to-marry girl", "Wife material", "Checklist dater"]],
     ["I would message often and get attached before meeting.", "romantic", ["Pen-pal dater", "Anxious queen", "Delulu"]],
@@ -269,6 +277,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Dating pattern", "Which pattern have you followed most often while dating?", [
     ["I have little dating experience or no repeated pattern.", "neutral", ["Chill girl", "Basic"]],
+    ["My relationships have varied enough that none of these is a pattern.", "neutral", ["Chill girl", "Girlfriend material"]],
     ["I keep several options open until one relationship becomes serious.", "social", ["Roster girl", "Bencher", "Cushioner", "Roacher", "Monkey-brancher", "Side chick"]],
     ["I move toward sharing a home, money or daily tasks very quickly.", "domestic", ["Hobosexual", "Stay-at-home girlfriend", "Wifey"]],
     ["I become intense quickly and talk about a future together.", "romantic", ["Love bomber", "Future faker", "Overly attached girlfriend"]],
@@ -280,6 +289,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Conflict", "A close friend tells you that you hurt her. What do you do first?", [
     ["Ask what happened, apologize if I agree and keep the talk short.", "neutral", ["Chill girl", "Girl's girl", ["Southern belle", 1]]],
+    ["Listen, own my part and ask what she needs before deciding how to respond.", "neutral", [["Girl's girl", 3], "Recovering people-pleaser", "Healing girlie"]],
     ["Call another friend before I reply.", "social", ["Group-chat dater", "Queen bee", "Drama queen", "Karen", "Mean girl", "Alpha female"]],
     ["Ask what practical change would fix the problem.", "domestic", ["Wifey", "Recovering people-pleaser"]],
     ["Worry that the friendship is ending and send a long reply.", "romantic", ["Anxious queen", "Overly attached girlfriend"]],
@@ -291,6 +301,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Close friends", "What do you do most often with your closest female friends?", [
     ["I do not have close female friends, or we only talk now and then.", "neutral", ["Chill girl", "Basic"]],
+    ["We study, run errands, eat at home or hang out between other commitments.", "neutral", [["Girl's girl", 3], "Corporate girlie", "Chill girl"]],
     ["We go out, gossip and organize group plans.", "social", ["Girl's girl", "Queen bee", "Brunch girl", ["Southern belle", 1]]],
     ["We help with children, pets, errands, meals or moving.", "domestic", ["Cool aunt", "Girl mom", "Dog mom"]],
     ["We discuss dating and relationships in detail.", "romantic", ["Group-chat dater", "Anxious queen", "\"If he wanted to, he would\" girl"]],
@@ -302,6 +313,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Social feed", "What takes up the largest share of your main social-media feed?", [
     ["People I know and a mix of ordinary popular posts.", "neutral", ["Basic", "NPC girl"]],
+    ["Friends, humor, school or career posts, and whatever the algorithm serves me.", "neutral", ["Basic", "Corporate girlie", "Girl's girl"]],
     ["Friends, parties, restaurants, celebrities and gossip.", "social", ["City girl", "Valley girl", "It girl"]],
     ["Homes, children, pets, food and local issues.", "domestic", ["Momfluencer", "Dog mom", "Sad beige mom"]],
     ["Dating advice, relationship stories and attractive couples.", "romantic", ["Relationship-content girl", "Dating-to-marry girl", "Delulu"]],
@@ -313,6 +325,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Reading and watching", "What do you choose most often when you have two hours alone?", [
     ["A familiar show, a popular movie or nothing at all.", "neutral", ["Basic", "Chill girl", ["\"My Year of Rest and Relaxation\" girl", 1]]],
+    ["Whatever helps me switch off after class or work: a show, short videos or a podcast.", "neutral", ["Chill girl", "Corporate girlie", "Basic"]],
     ["A reality show, celebrity interview or comedy friends are discussing.", "social", ["Valley girl", "Drama queen", "City girl"]],
     ["A home, food, parenting or relationship program.", "domestic", ["Momfluencer", "Tradwife", "Wine mom"]],
     ["A romance, dating show or story about a difficult couple.", "romantic", ["Delulu", "Situationship girl", "Fleabag girl", "Girl written by a man", "Golden retriever girlfriend"]],
@@ -324,6 +337,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Being a fan", "When you really like an artist, team, series or public figure, what do you do?", [
     ["I enjoy the work and do nothing else.", "neutral", ["Basic", "Chill girl"]],
+    ["I follow updates, send things to friends and go to an event if it fits my budget.", "neutral", ["Concert girlie", "Girl's girl", "Fangirl"]],
     ["I go with friends when there is a concert, game or event.", "social", ["Concert girlie", "WAG", "Puck bunny"]],
     ["I make it a family tradition or buy things for the household.", "domestic", ["Disney adult", "Girl mom"]],
     ["I develop a crush and follow the person's relationships.", "romantic", ["Groupie", "Rockstar girlfriend", "WAG", "Dommy mommy"]],
@@ -335,6 +349,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Night out", "When you go out at night, which setting do you choose most often?", [
     ["I rarely go out at night.", "neutral", ["Chill girl", "Basic", ["\"My Year of Rest and Relaxation\" girl", 1]]],
+    ["A casual restaurant, friend's place or local bar where we can actually talk.", "neutral", ["Girl's girl", "Chill girl", "Brunch girl"]],
     ["A busy bar, birthday party or popular club.", "social", ["City girl", "Hot mess", "Sorority girl", "Florida woman", "Essex girl", "Chavette", "Roadman gyaldem", "Eshay girl", "Hot Cheeto girl", "Ratchet"]],
     ["Dinner near home with relatives or a partner.", "domestic", ["Wine mom", "Wifey", "Soccer mom"]],
     ["A date where we can talk.", "romantic", ["Dating-to-marry girl", "Girlfriend material"]],
@@ -346,6 +361,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Home", "Which description is closest to your current living space?", [
     ["Mostly functional. I bought what I needed and stopped.", "neutral", ["Basic", "Chill girl"]],
+    ["I live with family or roommates, so my own room or corner is the part that feels like me.", "neutral", ["Basic", "Girl's girl", "Corporate girlie"]],
     ["Ready for friends to drop by, with drinks and extra seating.", "social", ["City girl", "Brunch girl"]],
     ["Set up around cooking, children, pets, plants or household routines.", "domestic", ["Plant mom", "Dog mom", "Soccer mom"]],
     ["Shared with a partner or arranged with a future partner in mind.", "romantic", ["Stay-at-home girlfriend", "Wifey", "Tradwife"]],
@@ -357,6 +373,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Caregiving", "When another person depends on you, what are you most likely to do?", [
     ["Help with the immediate problem, then return to my own plans.", "neutral", ["Chill girl", "Cool aunt"]],
+    ["Stay calm, listen, and handle the next useful step without taking over.", "neutral", [["Cool aunt", 3], "Girl's girl", "Recovering people-pleaser"]],
     ["Bring in other people and make sure nobody is left alone.", "social", ["Girl's girl", "Cool aunt", ["Southern belle", 1]]],
     ["Take charge of meals, schedules, transport and follow-up.", "domestic", ["Soccer mom", "Tiger mom", "Wifey", "Dance mom", "Pageant mom", "Sports mom"]],
     ["Check in often and need reassurance that they are all right.", "romantic", ["Overly attached girlfriend", "Anxious queen", "Good-morning texter"]],
@@ -368,6 +385,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Belief", "Which statement is closest to what you actually believe?", [
     ["I am not religious or spiritual.", "neutral", ["Basic", "Chill girl"]],
+    ["I am still working it out and do not organize my daily life around one belief system.", "neutral", ["Chill girl", "Basic", "Healing girlie"]],
     ["I follow the customs I grew up with without thinking about them much.", "social", [["Southern belle", 3], "Christian girl autumn"]],
     ["Religion is tied to family, marriage and how a home should run.", "domestic", ["Tradwife", "TradCath e-girl"]],
     ["I use astrology or compatibility ideas when I date.", "romantic", ["Astrology screener", "Love-language girl"]],
@@ -379,6 +397,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Politics", "Which political material do you read or watch most often?", [
     ["Almost none.", "neutral", ["Chill girl", "Basic"]],
+    ["Headlines and practical issues that affect school, work, health care or my area.", "neutral", ["Corporate girlie", "Girlboss", "Basic"]],
     ["Mainstream news and posts shared by people I know.", "social", ["Resistance lib wine mom", "Girlboss"]],
     ["Schools, taxes, food, safety and policies that affect a household.", "domestic", ["MAHA mom", "Soccer mom", "Tradwife"]],
     ["Arguments about sex, marriage and what men or women owe each other.", "romantic", ["FDS woman", "High-value woman coach", "TERF"]],
@@ -390,6 +409,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Advice", "What do friends ask you for help with most often?", [
     ["Nothing in particular.", "neutral", ["Chill girl", "Basic"]],
+    ["School, work, health questions or getting through a stressful week.", "neutral", [["Girl's girl", 3], "Corporate girlie", "Recovering people-pleaser"]],
     ["Plans, introductions and what is happening this weekend.", "social", ["Girl's girl", "City girl", "Queen bee", ["Southern belle", 1]]],
     ["Meals, children, pets, errands or keeping a household running.", "domestic", ["Soccer mom", "Cool aunt", "Dog mom"]],
     ["Texts, dates, breakups and whether someone is serious.", "romantic", ["Group-chat dater", "\"If he wanted to, he would\" girl", "Dating-to-marry girl"]],
@@ -401,6 +421,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Travel", "When you plan a trip for yourself, what matters most?", [
     ["Price, ease and a comfortable place to sleep.", "neutral", ["Basic", "Chill girl"]],
+    ["Fitting it around school or work and getting a good mix of rest, food and things to do.", "neutral", ["Travel girl", "Corporate girlie", "That girl"]],
     ["Going with friends and having restaurants or bars nearby.", "social", ["Travel girl", "City girl", "Brunch girl"]],
     ["A plan that works for my partner, relatives, children or pets.", "domestic", ["Soccer mom", "Girl mom", "Dog mom"]],
     ["Time alone with a partner and a room that feels special.", "romantic", ["Princess-treatment girl", "Girlfriend material", "Soft-launcher"]],
@@ -412,6 +433,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Texting", "Which pattern appears most often in your text messages?", [
     ["Short replies when there is something practical to say.", "neutral", ["Chill girl", "Basic"]],
+    ["A mix of check-ins, plans, school or work questions, memes and late replies.", "neutral", ["Girl's girl", "Corporate girlie", "Chill girl"]],
     ["Several group chats with jokes, gossip and plans.", "social", ["Girl's girl", "Queen bee", "Brunch girl"]],
     ["Reminders, check-ins, lists and family logistics.", "domestic", ["Soccer mom", "Girl mom", "Wifey"]],
     ["Good-morning texts, long updates and frequent reassurance.", "romantic", ["Good-morning texter", "Anxious queen", "Overly attached girlfriend"]],
@@ -423,6 +445,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Food", "How do you decide what to eat on a normal day?", [
     ["I eat what is easy and available.", "neutral", ["Basic", "Chill girl"]],
+    ["I try to balance cost, convenience and feeling decent through a busy day.", "neutral", ["Corporate girlie", "That girl", "Basic"]],
     ["I choose a place friends want to try.", "social", ["Brunch girl", "City girl", "Foodie caller"]],
     ["I cook or order something that works for everyone at home.", "domestic", ["Tradwife", "Wine mom", "Soccer mom"]],
     ["I choose somewhere that works for a date.", "romantic", ["Foodie caller", "Princess-treatment girl"]],
@@ -434,6 +457,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Interests", "What happens when you become interested in something new?", [
     ["I try it once or twice. Most interests stay casual.", "neutral", ["Basic", "Chill girl"]],
+    ["I look it up, try it when I have time and tell a friend if I think they would like it.", "neutral", ["Girl's girl", "Hyperfixation girlie", "Chill girl"]],
     ["I invite friends and turn it into a group plan.", "social", ["Girl's girl", "Concert girlie"]],
     ["I find a practical use for it at home.", "domestic", ["Plant mom", "Momfluencer", "Dog mom"]],
     ["I share it with the person I am dating.", "romantic", ["Girlfriend material", "Relationship-content girl"]],
@@ -445,6 +469,7 @@ export const DECK: QuizQuestion[] = [
   ]),
   question("Reputation", "Which sentence would your closest friend be most likely to use about you?", [
     ["'She is easygoing and does not make everything her identity.'", "neutral", ["Chill girl", "Basic"]],
+    ["'She is dependable, busy and still makes time when somebody needs her.'", "neutral", [["Girl's girl", 3], "Corporate girlie", "Recovering people-pleaser"]],
     ["'She knows everyone and can get a group out of the house.'", "social", ["Girl's girl", "City girl", "Queen bee"]],
     ["'She has snacks, a charger and a plan for getting everyone home.'", "domestic", ["Soccer mom", "Cool aunt", "Wifey"]],
     ["'She can turn one text from a man into a two-hour meeting.'", "romantic", ["Group-chat dater", "Anxious queen", "Delulu"]],
