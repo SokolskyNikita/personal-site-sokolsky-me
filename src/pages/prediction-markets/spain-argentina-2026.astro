@@ -131,6 +131,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           spain: number | null;
           argentina: number | null;
           providerCount: number;
+          liveProviderCount: number;
+          staleProviderCount: number;
         };
         history: HistoryPoint[];
       };
@@ -309,10 +311,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             minute: "2-digit",
             second: "2-digit",
           });
-          feedLabel.textContent =
-            data.consensus.providerCount > 0
-              ? `${data.consensus.providerCount} sources · ${updated}`
-              : "Reconnecting";
+          if (data.consensus.staleProviderCount > 0) {
+            feedLabel.textContent =
+              `${data.consensus.liveProviderCount} live · ` +
+              `${data.consensus.staleProviderCount} delayed · ${updated}`;
+          } else {
+            feedLabel.textContent =
+              data.consensus.liveProviderCount > 0
+                ? `${data.consensus.liveProviderCount} sources · ${updated}`
+                : "Reconnecting";
+          }
         }
         const chartCurrentTime = byId("chart-current-time");
         if (chartCurrentTime) {
@@ -325,7 +333,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         }
         byId("feed-status")?.classList.toggle(
           "is-partial",
-          data.consensus.providerCount < 2,
+          data.consensus.liveProviderCount < 2 ||
+            data.consensus.staleProviderCount > 0,
         );
       }
 

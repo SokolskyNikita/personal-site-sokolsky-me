@@ -2,7 +2,11 @@ export const SPAIN_ARGENTINA_ODDS_PATH =
   "/api/prediction-markets/spain-argentina-2026";
 
 const CACHE_MS = 4_000;
-const REQUEST_TIMEOUT_MS = 4_000;
+const REQUEST_TIMEOUT_MS = 2_500;
+const OPTIONAL_REQUEST_TIMEOUT_MS = 1_200;
+const MAX_FETCH_ATTEMPTS = 2;
+const RETRY_BASE_DELAY_MS = 100;
+const STALE_PROVIDER_MS = 2 * 60 * 1_000;
 const REAL_MONEY_WEIGHT = 5;
 const PLAY_MONEY_WEIGHT = 1;
 const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
@@ -18,7 +22,7 @@ export type ProviderOdds = {
   argentina: number | null;
   volume: number | null;
   volumeUnit: "USD" | "MANA";
-  status: "live" | "unavailable";
+  status: "live" | "stale" | "unavailable";
   message?: string;
 };
 
@@ -31,6 +35,8 @@ export type SpainArgentinaOddsResponse = {
     spain: number | null;
     argentina: number | null;
     providerCount: number;
+    liveProviderCount: number;
+    staleProviderCount: number;
     totalWeight: number;
   };
   history: {
@@ -53,6 +59,10 @@ let historyCache:
       promise: Promise<SpainArgentinaOddsResponse["history"]>;
     }
   | undefined;
+const lastGoodProviders = new Map<
+  ProviderOdds["id"],
+  { odds: ProviderOdds; receivedAt: number }
+>();
 
 export async function handleSpainArgentinaOdds(
   request: Request,
@@ -110,7 +120,7 @@ async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
 
   const normalized = providers.flatMap((provider) => {
     if (
-      provider.status !== "live" ||
+      provider.status === "unavailable" ||
       provider.spain === null ||
       provider.argentina === null
     ) {
@@ -131,6 +141,12 @@ async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
   });
 
   const providerCount = normalized.length;
+  const liveProviderCount = providers.filter(
+    (provider) => provider.status === "live",
+  ).length;
+  const staleProviderCount = providers.filter(
+    (provider) => provider.status === "stale",
+  ).length;
   const totalWeight = normalized.reduce((sum, item) => sum + item.weight, 0);
   const spain =
     totalWeight === 0
@@ -146,7 +162,14 @@ async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
     generatedAt: new Date().toISOString(),
     matchStartsAt: "2026-07-19T19:00:00Z",
     refreshAfterMs: 5_000,
-    consensus: { spain, argentina, providerCount, totalWeight },
+    consensus: {
+      spain,
+      argentina,
+      providerCount,
+      liveProviderCount,
+      staleProviderCount,
+      totalWeight,
+    },
     history,
     providers,
   };
@@ -155,10 +178,14 @@ async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
 function getKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {
   const now = Date.now();
   if (!historyCache || historyCache.expiresAt <= now) {
+    const promise = loadKalshiHistory();
     historyCache = {
       expiresAt: now + 60_000,
-      promise: loadKalshiHistory(),
+      promise,
     };
+    void promise.catch(() => {
+      if (historyCache?.promise === promise) historyCache = undefined;
+    });
   }
   return historyCache.promise;
 }
@@ -173,7 +200,7 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
   const query = `start_ts=${start}&end_ts=${end}&period_interval=1`;
   const base =
     "https://external-api.kalshi.com/trade-api/v2/series/KXMENWORLDCUP/markets";
-  const [spainData, argentinaData] = await Promise.all([
+  const [spainResult, argentinaResult] = await Promise.allSettled([
     fetchJson<Record<string, unknown>>(
       `${base}/KXMENWORLDCUP-26-ES/candlesticks?${query}`,
     ),
@@ -181,44 +208,79 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
       `${base}/KXMENWORLDCUP-26-AR/candlesticks?${query}`,
     ),
   ]);
-  const argentinaByTime = new Map(
-    asRecords(argentinaData.candlesticks).map((candle) => [
-      numberValue(candle.end_period_ts),
-      candleClose(candle),
-    ]),
+  if (spainResult.status === "rejected" && argentinaResult.status === "rejected") {
+    throw new AggregateError(
+      [spainResult.reason, argentinaResult.reason],
+      "Kalshi history feeds unavailable",
+    );
+  }
+
+  const spainByTime =
+    spainResult.status === "fulfilled"
+      ? candlesByTimestamp(spainResult.value)
+      : new Map<number, number>();
+  const argentinaByTime =
+    argentinaResult.status === "fulfilled"
+      ? candlesByTimestamp(argentinaResult.value)
+      : new Map<number, number>();
+  const timestamps = [...new Set([...spainByTime.keys(), ...argentinaByTime.keys()])].sort(
+    (a, b) => a - b,
   );
 
-  return asRecords(spainData.candlesticks).flatMap((candle) => {
-    const timestamp = numberValue(candle.end_period_ts);
-    const spain = candleClose(candle);
-    const argentina = timestamp === null ? null : argentinaByTime.get(timestamp);
-    if (
-      timestamp === null ||
-      spain === null ||
-      argentina === null ||
-      argentina === undefined
-    ) {
-      return [];
-    }
+  return timestamps.flatMap((timestamp) => {
+    const rawSpain = spainByTime.get(timestamp);
+    const rawArgentina = argentinaByTime.get(timestamp);
+    if (rawSpain === undefined && rawArgentina === undefined) return [];
+    const spain =
+      rawSpain ?? (rawArgentina === undefined ? undefined : 1 - rawArgentina);
+    const argentina =
+      rawArgentina ?? (rawSpain === undefined ? undefined : 1 - rawSpain);
+    if (spain === undefined || argentina === undefined) return [];
+    const total = spain + argentina;
+    if (!Number.isFinite(total) || total <= 0) return [];
     return [
       {
         at: new Date(timestamp * 1_000).toISOString(),
-        spain: clampProbability(spain),
-        argentina: clampProbability(argentina),
+        spain: clampProbability(spain / total),
+        argentina: clampProbability(argentina / total),
       },
     ];
   });
 }
 
+function candlesByTimestamp(data: Record<string, unknown>): Map<number, number> {
+  return new Map(
+    asRecords(data.candlesticks).flatMap((candle) => {
+      const timestamp = numberValue(candle.end_period_ts);
+      const close = candleClose(candle);
+      return timestamp === null || close === null ? [] : [[timestamp, close] as const];
+    }),
+  );
+}
+
 function candleClose(candle: Record<string, unknown>): number | null {
-  return numberValue(asRecord(candle.price).close_dollars);
+  return probabilityValue(asRecord(candle.price).close_dollars);
 }
 
 function settledProvider(
   result: PromiseSettledResult<ProviderOdds>,
   fallback: Pick<ProviderOdds, "id" | "name" | "href" | "volumeUnit">,
 ): ProviderOdds {
-  if (result.status === "fulfilled") return result.value;
+  if (result.status === "fulfilled") {
+    lastGoodProviders.set(result.value.id, {
+      odds: result.value,
+      receivedAt: Date.now(),
+    });
+    return result.value;
+  }
+  const previous = lastGoodProviders.get(fallback.id);
+  if (previous && Date.now() - previous.receivedAt <= STALE_PROVIDER_MS) {
+    return {
+      ...previous.odds,
+      status: "stale",
+      message: "Using the most recent successful quote",
+    };
+  }
   return {
     ...fallback,
     spain: null,
@@ -230,11 +292,21 @@ function settledProvider(
 }
 
 async function loadKalshi(): Promise<ProviderOdds> {
-  const data = await fetchJson<Record<string, unknown>>(
-    "https://external-api.kalshi.com/trade-api/v2/events/KXMENWORLDCUP-26?with_nested_markets=true",
-  );
-  const event = asRecord(data.event);
-  const markets = asRecords(event.markets);
+  let markets: Record<string, unknown>[] = [];
+  try {
+    const eventData = await fetchJson<Record<string, unknown>>(
+      "https://external-api.kalshi.com/trade-api/v2/events/KXMENWORLDCUP-26?with_nested_markets=true",
+    );
+    markets = asRecords(asRecord(eventData.event).markets);
+  } catch {
+    // Fall through to Kalshi's direct market listing endpoint.
+  }
+  if (!markets.length) {
+    const marketsData = await fetchJson<Record<string, unknown>>(
+      "https://external-api.kalshi.com/trade-api/v2/markets?event_ticker=KXMENWORLDCUP-26&limit=1000",
+    );
+    markets = asRecords(marketsData.markets);
+  }
   const spain = findKalshiMarket(markets, "spain");
   const argentina = findKalshiMarket(markets, "argentina");
 
@@ -265,19 +337,16 @@ function findKalshiMarket(
 }
 
 function kalshiPrice(market: Record<string, unknown>): number {
-  const bid = numberValue(market.yes_bid_dollars);
-  const ask = numberValue(market.yes_ask_dollars);
+  const bid = probabilityValue(market.yes_bid_dollars);
+  const ask = probabilityValue(market.yes_ask_dollars);
   if (bid !== null && ask !== null) return clampProbability((bid + ask) / 2);
-  const last = numberValue(market.last_price_dollars);
+  const last = probabilityValue(market.last_price_dollars);
   if (last === null) throw new Error("Kalshi market price missing");
   return clampProbability(last);
 }
 
 async function loadPolymarket(): Promise<ProviderOdds> {
-  const data = await fetchJson<unknown>(
-    "https://gamma-api.polymarket.com/events?slug=world-cup-winner",
-  );
-  const event = asRecords(data)[0] ?? asRecord(data);
+  const event = await loadPolymarketEvent();
   const markets = asRecords(event.markets);
   const spain = findPolymarketMarket(markets, "spain");
   const argentina = findPolymarketMarket(markets, "argentina");
@@ -295,6 +364,27 @@ async function loadPolymarket(): Promise<ProviderOdds> {
     volumeUnit: "USD",
     status: "live",
   };
+}
+
+async function loadPolymarketEvent(): Promise<Record<string, unknown>> {
+  const urls = [
+    "https://gamma-api.polymarket.com/events/slug/world-cup-winner",
+    "https://gamma-api.polymarket.com/events?slug=world-cup-winner",
+  ];
+  let lastError: unknown;
+  for (const url of urls) {
+    try {
+      const data = await fetchJson<unknown>(url);
+      const event = asRecords(data)[0] ?? asRecord(data);
+      if (asRecords(event.markets).length) return event;
+      lastError = new Error("Polymarket event has no markets");
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Polymarket event unavailable");
 }
 
 function findPolymarketMarket(
@@ -321,8 +411,16 @@ function polymarketPrice(market: Record<string, unknown>): number {
   const outcomes = parseStringArray(market.outcomes);
   const prices = parseNumberArray(market.outcomePrices);
   const yesIndex = outcomes.findIndex((outcome) => outcome.toLowerCase() === "yes");
-  const price = prices[yesIndex >= 0 ? yesIndex : 0] ?? numberValue(market.lastTradePrice);
-  if (price === null || price === undefined) {
+  const outcomePrice = prices[yesIndex >= 0 ? yesIndex : 0];
+  const bid = probabilityValue(market.bestBid);
+  const ask = probabilityValue(market.bestAsk);
+  const midpoint =
+    bid !== null && ask !== null ? clampProbability((bid + ask) / 2) : null;
+  const price =
+    probabilityValue(outcomePrice) ??
+    midpoint ??
+    probabilityValue(market.lastTradePrice);
+  if (price === null) {
     throw new Error("Polymarket market price missing");
   }
   return clampProbability(price);
@@ -336,7 +434,11 @@ async function loadManifold(): Promise<ProviderOdds> {
     ),
     fetchJson<Record<string, unknown>>(
       `https://api.manifold.markets/v0/market/${marketId}/prob`,
-    ),
+      {
+        attempts: 1,
+        timeoutMs: OPTIONAL_REQUEST_TIMEOUT_MS,
+      },
+    ).catch((): Record<string, unknown> => ({})),
   ]);
   const answers = asRecords(market.answers);
   const answerProbs = asRecord(probabilities.answerProbs);
@@ -365,24 +467,67 @@ function manifoldPrice(
   );
   if (!answer) throw new Error(`Manifold ${team} answer not found`);
   const id = stringValue(answer.id);
-  const price = numberValue(probabilities[id]) ?? numberValue(answer.probability);
+  const price =
+    probabilityValue(probabilities[id]) ?? probabilityValue(answer.probability);
   if (price === null) throw new Error("Manifold answer probability missing");
   return clampProbability(price);
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    const response = await fetch(url, {
-      headers: { Accept: "application/json" },
-      signal: controller.signal,
-    });
-    if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
-    return (await response.json()) as T;
-  } finally {
-    clearTimeout(timeout);
+type FetchJsonOptions = {
+  attempts?: number;
+  timeoutMs?: number;
+};
+
+class UpstreamHttpError extends Error {
+  constructor(readonly status: number) {
+    super(`Upstream returned ${status}`);
   }
+}
+
+async function fetchJson<T>(
+  url: string,
+  options: FetchJsonOptions = {},
+): Promise<T> {
+  const attempts = Math.max(1, options.attempts ?? MAX_FETCH_ATTEMPTS);
+  const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new UpstreamHttpError(response.status);
+      return (await response.json()) as T;
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 >= attempts || !isRetryableFetchError(error)) throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+    await delay(RETRY_BASE_DELAY_MS * 2 ** attempt);
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Upstream request failed");
+}
+
+function isRetryableFetchError(error: unknown): boolean {
+  if (!(error instanceof UpstreamHttpError)) return true;
+  return (
+    error.status === 408 ||
+    error.status === 425 ||
+    error.status === 429 ||
+    error.status >= 500
+  );
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -407,6 +552,11 @@ function numberValue(value: unknown): number | null {
         ? Number(value)
         : Number.NaN;
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function probabilityValue(value: unknown): number | null {
+  const parsed = numberValue(value);
+  return parsed !== null && parsed >= 0 && parsed <= 1 ? parsed : null;
 }
 
 function parseStringArray(value: unknown): string[] {
