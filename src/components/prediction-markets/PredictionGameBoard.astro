@@ -12,6 +12,13 @@ const serializedGame = JSON.stringify(game)
   .replace(/\u2029/g, "\\u2029");
 const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const archiveTip = game.archive ? game.staticHistory.at(-1) : undefined;
+const archivedTeamA = archiveTip
+  ? String(Math.round(archiveTip.spain * 100))
+  : "—";
+const archivedTeamB = archiveTip
+  ? String(100 - Number(archivedTeamA))
+  : "—";
 ---
 
 <!doctype html>
@@ -43,9 +50,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <header class="chrome">
         <p class="kicker">{game.competition} · weighted odds</p>
         <div class="live-tools">
-          <div class="feed-status" id="feed-status" role="status" aria-live="polite">
+          <div class={`feed-status${game.archive ? " is-archived" : ""}`} id="feed-status" role="status" aria-live="polite">
             <span class="pulse" aria-hidden="true"></span>
-            <span id="feed-label">Live</span>
+            <span id="feed-label">{game.archive ? "Final" : "Live"}</span>
           </div>
           <button type="button" id="fullscreen-button" aria-label="Enter full screen">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -60,8 +67,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <strong
             id="consensus-team-a"
             role="status"
-            aria-label={`${game.teams.a.name} probability, waiting for feed`}
-            aria-live="polite">—</strong>
+            aria-label={archiveTip
+              ? `${game.teams.a.name} final probability ${archivedTeamA}%`
+              : `${game.teams.a.name} probability, waiting for feed`}
+            aria-live="polite">{archivedTeamA}</strong>
           <div class="team-meta">
             <div
               class="flag"
@@ -74,8 +83,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         </article>
 
         <div class="clock" aria-hidden="true">
-          <p id="match-phase">Kickoff</p>
-          <time id="match-clock" datetime={game.kickoffISO}>—</time>
+          <p id="match-phase">{game.archive ? "Final" : "Kickoff"}</p>
+          <time id="match-clock" datetime={game.archive?.endedAtISO ?? game.kickoffISO}>
+            {game.archive
+              ? `${game.archive.finalScore.a} – ${game.archive.finalScore.b}`
+              : "—"}
+          </time>
           <p class="score" id="match-score" hidden>0 – 0</p>
           <div class="provider-strip" id="provider-strip"></div>
         </div>
@@ -84,8 +97,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <strong
             id="consensus-team-b"
             role="status"
-            aria-label={`${game.teams.b.name} probability, waiting for feed`}
-            aria-live="polite">—</strong>
+            aria-label={archiveTip
+              ? `${game.teams.b.name} final probability ${archivedTeamB}%`
+              : `${game.teams.b.name} probability, waiting for feed`}
+            aria-live="polite">{archivedTeamB}</strong>
           <div class="team-meta">
             <span>{game.teams.b.name}</span>
             <div
@@ -132,7 +147,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </div>
           <div class="chart-time" aria-hidden="true">
             <span id="chart-kickoff-time">Kickoff</span>
-            <span id="chart-current-time">Now</span>
+            <span id="chart-current-time">{game.archive ? "Final" : "Now"}</span>
           </div>
         </div>
       </section>
@@ -160,11 +175,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         };
         chartBreaks: Array<{ startISO: string; endISO: string }>;
         staticHistory: HistoryPoint[];
+        archive?: {
+          endedAtISO: string;
+          finalLabel: string;
+          finalScore: { a: number; b: number };
+        };
       };
       type MatchClock = {
         phase: "pre" | "live" | "halftime" | "final";
         label: string;
-        source: "espn" | "schedule";
+        source: "espn" | "schedule" | "archive";
         score?: { spain: number; argentina: number };
       };
       type ProviderOdds = {
@@ -233,15 +253,28 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const MATCH_STARTS_AT = Date.parse(GAME.kickoffISO);
       const MATCH_WINDOW_MS = GAME.pollingWindowHours * 60 * 60 * 1_000;
       const MATCH_ENDS_AT = MATCH_STARTS_AT + MATCH_WINDOW_MS;
+      const ARCHIVE_ENDS_AT = GAME.archive
+        ? Date.parse(GAME.archive.endedAtISO)
+        : null;
 
       // Static Kalshi candles baked at build time — painted before the live feed.
       const history: HistoryPoint[] = validHistory(GAME.staticHistory);
       let timer: number | undefined;
       let fetching = false;
-      let stopped = false;
+      let stopped = Boolean(GAME.archive);
       let chartMin = 0.35;
       let chartMax = 0.65;
-      let matchClock: MatchClock | null = null;
+      let matchClock: MatchClock | null = GAME.archive
+        ? {
+            phase: "final",
+            label: GAME.archive.finalLabel,
+            source: "archive",
+            score: {
+              spain: GAME.archive.finalScore.a,
+              argentina: GAME.archive.finalScore.b,
+            },
+          }
+        : null;
       let latestProviders: ProviderOdds[] = [];
 
       const byId = (id: string) => document.getElementById(id);
@@ -313,7 +346,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const endAt = Math.max(
           MATCH_STARTS_AT + 60_000,
           Date.parse(points.at(-1)?.at ?? ""),
-          Math.min(Date.now(), MATCH_ENDS_AT),
+          ARCHIVE_ENDS_AT ?? Math.min(Date.now(), MATCH_ENDS_AT),
         );
         return points
           .map((point, index) => {
@@ -365,7 +398,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const endAt = Math.max(
           MATCH_STARTS_AT + 60_000,
           Date.parse(last.at),
-          Math.min(Date.now(), MATCH_ENDS_AT),
+          ARCHIVE_ENDS_AT ?? Math.min(Date.now(), MATCH_ENDS_AT),
         );
         const cx = chartX(Date.parse(last.at), endAt);
         (
@@ -717,10 +750,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       }
 
       updateMatchPhase();
-      window.setInterval(() => {
-        updateMatchPhase();
-        if (latestProviders.length) renderProviderStrip();
-      }, 1_000);
+      if (!GAME.archive) {
+        window.setInterval(() => {
+          updateMatchPhase();
+          if (latestProviders.length) renderProviderStrip();
+        }, 1_000);
+      }
       if (history.length) {
         updateChart();
         // Paint last-known odds from the baked seed so the board is never
@@ -735,7 +770,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           setOdds("consensus-team-b", teamBPercent, GAME.teams.b.name);
         }
       }
-      refresh();
+      if (!GAME.archive) refresh();
     </script>
 
     <style>
@@ -864,6 +899,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       .feed-status.is-down .pulse {
         background: oklch(55% 0.19 28);
         box-shadow: 0 0 0 5px oklch(55% 0.19 28 / 16%);
+        animation: none;
+      }
+
+      .feed-status.is-archived .pulse {
+        background: var(--muted);
+        box-shadow: 0 0 0 5px color-mix(in oklch, var(--muted) 16%, transparent);
         animation: none;
       }
 

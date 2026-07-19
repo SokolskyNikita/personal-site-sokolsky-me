@@ -20,6 +20,15 @@ export type PredictionTeamConfig = {
   manifoldLabel: string;
 };
 
+export type PredictionGameArchive = {
+  endedAtISO: string;
+  finalLabel: string;
+  finalScore: {
+    a: number;
+    b: number;
+  };
+};
+
 export type PredictionGameConfig = {
   slug: string;
   competition: string;
@@ -60,14 +69,15 @@ export type PredictionGameConfig = {
     endISO: string;
   }>;
   staticHistory: PredictionHistoryPoint[];
+  archive?: PredictionGameArchive;
 };
 
 export const spainArgentina2026: PredictionGameConfig = {
   slug: "spain-argentina-2026",
   competition: "World Cup final",
-  pageTitle: "Spain vs. Argentina · live odds",
+  pageTitle: "Spain 1–0 Argentina · final prediction odds",
   description:
-    "Weighted championship probabilities for the 2026 World Cup final, refreshed every five seconds.",
+    "Archived prediction-market probabilities from Spain's 1–0 extra-time win over Argentina in the 2026 World Cup final.",
   kickoffISO: "2026-07-19T19:00:00Z",
   pollingWindowHours: 4,
   refreshIntervalMs: 5_000,
@@ -142,6 +152,14 @@ export const spainArgentina2026: PredictionGameConfig = {
   ],
   staticHistory:
     spainArgentinaHistory as PredictionGameConfig["staticHistory"],
+  archive: {
+    endedAtISO: "2026-07-19T22:05:00.000Z",
+    finalLabel: "After extra time",
+    finalScore: {
+      a: 1,
+      b: 0,
+    },
+  },
 };
 
 export const predictionGames: readonly PredictionGameConfig[] = [

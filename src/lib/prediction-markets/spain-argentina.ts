@@ -61,7 +61,7 @@ export type ProviderOdds = {
 export type MatchClock = {
   phase: "pre" | "live" | "halftime" | "final";
   label: string;
-  source: "espn" | "schedule";
+  source: "espn" | "schedule" | "archive";
   score?: { spain: number; argentina: number };
 };
 
@@ -143,12 +143,21 @@ export async function handlePredictionMarketOdds(
     );
   }
 
+  if (game.archive) {
+    return Response.json(archivedOddsResponse(game), {
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400, immutable",
+        "Content-Type": "application/json; charset=utf-8",
+      },
+    });
+  }
+
   const now = Date.now();
   let cached = responseCaches.get(game.slug);
   if (!cached || cached.expiresAt <= now) {
     cached = {
       expiresAt: now + CACHE_MS,
-      promise: loadOdds(game, env),
+      promise: loadPredictionMarketOdds(game, env),
     };
     responseCaches.set(game.slug, cached);
   }
@@ -164,7 +173,42 @@ export async function handlePredictionMarketOdds(
 
 export const handleSpainArgentinaOdds = handlePredictionMarketOdds;
 
-async function loadOdds(
+function archivedOddsResponse(
+  game: PredictionGameConfig,
+): PredictionMarketOddsResponse {
+  const archive = game.archive;
+  if (!archive) {
+    throw new Error(`Game ${game.slug} is not archived`);
+  }
+  const tip = game.staticHistory.at(-1);
+  return {
+    ok: Boolean(tip),
+    generatedAt: archive.endedAtISO,
+    matchStartsAt: game.kickoffISO,
+    refreshAfterMs: 0,
+    matchClock: {
+      phase: "final",
+      label: archive.finalLabel,
+      source: "archive",
+      score: {
+        spain: archive.finalScore.a,
+        argentina: archive.finalScore.b,
+      },
+    },
+    consensus: {
+      spain: tip?.spain ?? null,
+      argentina: tip?.argentina ?? null,
+      providerCount: 0,
+      liveProviderCount: 0,
+      staleProviderCount: 0,
+      totalWeight: 0,
+    },
+    history: game.staticHistory,
+    providers: [],
+  };
+}
+
+export async function loadPredictionMarketOdds(
   game: PredictionGameConfig,
   env: PredictionMarketOddsEnv,
 ): Promise<SpainArgentinaOddsResponse> {

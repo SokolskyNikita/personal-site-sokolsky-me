@@ -27,6 +27,13 @@ const espnMatchClock = () =>
     },
   });
 
+async function loadLiveOdds() {
+  const [{ loadPredictionMarketOdds }, { spainArgentina2026 }] =
+    await Promise.all([import("../spain-argentina"), import("../games")]);
+  const { archive: _archive, ...liveGame } = spainArgentina2026;
+  return loadPredictionMarketOdds(liveGame, {});
+}
+
 describe("Spain vs. Argentina prediction market feed", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -47,6 +54,36 @@ describe("Spain vs. Argentina prediction market feed", () => {
       ok: false,
       error: "game_not_found",
     });
+  });
+
+  it("serves the frozen final archive without contacting providers", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const { handlePredictionMarketOdds } = await import("../spain-argentina");
+    const response = await handlePredictionMarketOdds(
+      new Request("https://sokolsky.me/api/prediction-markets/spain-argentina-2026"),
+    );
+    const body = await response.json();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(response.headers.get("Cache-Control")).toContain("immutable");
+    expect(body).toMatchObject({
+      ok: true,
+      generatedAt: "2026-07-19T22:05:00.000Z",
+      refreshAfterMs: 0,
+      matchClock: {
+        phase: "final",
+        label: "After extra time",
+        source: "archive",
+        score: { spain: 1, argentina: 0 },
+      },
+      consensus: {
+        spain: 0.999,
+        argentina: 0.001,
+        liveProviderCount: 0,
+      },
+    });
+    expect(body.history).toHaveLength(186);
+    expect(body.providers).toEqual([]);
   });
 
   it("normalizes all three championship markets into one response", async () => {
@@ -141,13 +178,7 @@ describe("Spain vs. Argentina prediction market feed", () => {
       return new Response(null, { status: 404 });
     });
 
-    const { handleSpainArgentinaOdds } = await import("../spain-argentina");
-    const response = await handleSpainArgentinaOdds(
-      new Request("https://sokolsky.me/api/prediction-markets/spain-argentina-2026"),
-    );
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
+    const body = await loadLiveOdds();
     expect(body).toMatchObject({
       ok: true,
       matchStartsAt: "2026-07-19T19:00:00Z",
@@ -265,13 +296,8 @@ describe("Spain vs. Argentina prediction market feed", () => {
       return new Response(null, { status: 404 });
     });
 
-    const { handleSpainArgentinaOdds } = await import("../spain-argentina");
-    const response = await handleSpainArgentinaOdds(
-      new Request("https://sokolsky.me/api/prediction-markets/spain-argentina-2026"),
-    );
-    const body = await response.json();
+    const body = await loadLiveOdds();
 
-    expect(response.status).toBe(200);
     expect(kalshiEventAttempts).toBeGreaterThanOrEqual(2);
     expect(body.consensus).toMatchObject({
       providerCount: 3,
@@ -367,17 +393,11 @@ describe("Spain vs. Argentina prediction market feed", () => {
       return new Response(null, { status: 404 });
     });
 
-    const { handleSpainArgentinaOdds } = await import("../spain-argentina");
-    await handleSpainArgentinaOdds(
-      new Request("https://sokolsky.me/api/prediction-markets/spain-argentina-2026"),
-    );
+    await loadLiveOdds();
 
     failing = true;
     now += 5_000;
-    const response = await handleSpainArgentinaOdds(
-      new Request("https://sokolsky.me/api/prediction-markets/spain-argentina-2026"),
-    );
-    const body = await response.json();
+    const body = await loadLiveOdds();
 
     expect(body.ok).toBe(true);
     expect(body.consensus).toMatchObject({
@@ -399,13 +419,8 @@ describe("Spain vs. Argentina prediction market feed", () => {
       new Response(null, { status: 503 }),
     );
 
-    const { handleSpainArgentinaOdds } = await import("../spain-argentina");
-    const response = await handleSpainArgentinaOdds(
-      new Request("https://sokolsky.me/api/prediction-markets/spain-argentina-2026"),
-    );
-    const body = await response.json();
+    const body = await loadLiveOdds();
 
-    expect(response.status).toBe(200);
     expect(body).toMatchObject({
       ok: false,
       consensus: {
