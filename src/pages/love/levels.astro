@@ -410,13 +410,14 @@ const structuredData = {
   }
 
   .locale-bar {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.35rem;
     margin: 0 0 0.7rem;
   }
 
   .locale-btn {
+    width: 100%;
     appearance: none;
     border: 1px solid var(--line);
     background: var(--chip);
@@ -428,6 +429,7 @@ const structuredData = {
     line-height: 1.2;
     cursor: pointer;
     min-height: 2rem;
+    text-align: center;
   }
 
   .locale-btn .locale-full {
@@ -441,11 +443,29 @@ const structuredData = {
   }
 
   @media (min-width: 420px) {
+    .locale-bar {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .locale-btn {
+      padding-inline: 0.35rem;
+      font-size: 0.72rem;
+    }
+
     .locale-btn .locale-short {
       display: none;
     }
     .locale-btn .locale-full {
       display: inline;
+    }
+  }
+
+  @media (min-width: 760px) {
+    .locale-bar {
+      width: min(48rem, calc(100vw - 1.7rem));
+      margin-left: 50%;
+      transform: translateX(-50%);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
