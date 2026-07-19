@@ -36,6 +36,19 @@ describe("Spain vs. Argentina prediction market feed", () => {
     vi.restoreAllMocks();
   });
 
+  it("returns 404 for an unconfigured game slug", async () => {
+    const { handlePredictionMarketOdds } = await import("../spain-argentina");
+    const response = await handlePredictionMarketOdds(
+      new Request("https://sokolsky.me/api/prediction-markets/not-a-game"),
+    );
+
+    expect(response.status).toBe(404);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "game_not_found",
+    });
+  });
+
   it("normalizes all three championship markets into one response", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const url = String(input);

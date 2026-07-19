@@ -1,0 +1,27 @@
+---
+import PredictionGameBoard from "../../components/prediction-markets/PredictionGameBoard.astro";
+import {
+  predictionGames,
+  spainArgentina2026,
+  type PredictionGameConfig,
+} from "../../lib/prediction-markets/games";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return predictionGames
+    .filter((game) => game.slug !== spainArgentina2026.slug)
+    .map((game) => ({
+      params: { slug: game.slug },
+      props: { game },
+    }));
+}
+
+interface Props {
+  game: PredictionGameConfig;
+}
+
+const { game } = Astro.props;
+---
+
+<PredictionGameBoard game={game} />

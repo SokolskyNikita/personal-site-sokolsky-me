@@ -4,9 +4,9 @@ import {
   type FlightEnv,
 } from "./lib/flights/api";
 import {
-  handleSpainArgentinaOdds,
-  SPAIN_ARGENTINA_ODDS_PATH,
-} from "./lib/prediction-markets/spain-argentina";
+  handlePredictionMarketOdds,
+  isPredictionMarketOddsPath,
+} from "./lib/prediction-markets";
 export { FlightQuotaCoordinator } from "./lib/flights/quota-do";
 
 export interface Env extends FlightEnv {
@@ -116,8 +116,8 @@ export default {
       return handleFlightApi(request, env, url);
     }
 
-    if (url.pathname === SPAIN_ARGENTINA_ODDS_PATH) {
-      return handleSpainArgentinaOdds(request, env);
+    if (isPredictionMarketOddsPath(url.pathname)) {
+      return handlePredictionMarketOdds(request, env);
     }
 
     if (isPrivatePath(url.pathname)) {

@@ -1,10 +1,13 @@
-// Static Kalshi candles snapshotted from kickoff to the latest refresh.
-// Live/KV history merges on top so the chart stays filled if upstream
-// candlesticks flake out.
-import staticHistorySeed from "../../data/spain-argentina-kalshi-history-seed.json";
+import {
+  getPredictionGame,
+  predictionGameApiPath,
+  spainArgentina2026,
+  type PredictionGameConfig,
+} from "./games";
 
-export const SPAIN_ARGENTINA_ODDS_PATH =
-  "/api/prediction-markets/spain-argentina-2026";
+export const SPAIN_ARGENTINA_ODDS_PATH = predictionGameApiPath(
+  spainArgentina2026,
+);
 
 const CACHE_MS = 4_000;
 const REQUEST_TIMEOUT_MS = 2_500;
@@ -14,20 +17,20 @@ const MAX_FETCH_ATTEMPTS = 2;
 const RETRY_BASE_DELAY_MS = 100;
 const STALE_PROVIDER_MS = 2 * 60 * 1_000;
 const STALE_HISTORY_MS = 10 * 60 * 1_000;
-const REAL_MONEY_WEIGHT = 5;
-const PLAY_MONEY_WEIGHT = 1;
-const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
-const MATCH_ENDS_AT_MS = MATCH_STARTS_AT_MS + 4 * 60 * 60 * 1_000;
 const HALF_LENGTH_MS = 45 * 60 * 1_000;
 const HALFTIME_LENGTH_MS = 15 * 60 * 1_000;
-const HISTORY_KV_KEY = "pm:spain-argentina-2026:kalshi-history";
 const HISTORY_KV_TTL_SECONDS = 6 * 60 * 60;
-const ESPN_EVENT_ID = "760517";
-const ESPN_SUMMARY_URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${ESPN_EVENT_ID}`;
 const KALSHI_API_HOSTS = [
   "https://api.elections.kalshi.com",
   "https://external-api.kalshi.com",
 ] as const;
+
+const matchStartsAt = (game: PredictionGameConfig) =>
+  Date.parse(game.kickoffISO);
+const matchEndsAt = (game: PredictionGameConfig) =>
+  matchStartsAt(game) + game.pollingWindowHours * 60 * 60 * 1_000;
+const historyKvKey = (game: PredictionGameConfig) =>
+  `pm:${game.slug}:kalshi-history`;
 
 type OddsKv = {
   get(key: string): Promise<string | null>;
@@ -38,11 +41,9 @@ type OddsKv = {
   ): Promise<void>;
 };
 
-export type SpainArgentinaOddsEnv = {
+export type PredictionMarketOddsEnv = {
   FLIGHT_CACHE?: OddsKv;
 };
-
-type Team = "spain" | "argentina";
 
 export type ProviderOdds = {
   id: "kalshi" | "polymarket" | "manifold";
@@ -64,7 +65,7 @@ export type MatchClock = {
   score?: { spain: number; argentina: number };
 };
 
-export type SpainArgentinaOddsResponse = {
+export type PredictionMarketOddsResponse = {
   ok: boolean;
   generatedAt: string;
   matchStartsAt: string;
@@ -86,38 +87,45 @@ export type SpainArgentinaOddsResponse = {
   providers: ProviderOdds[];
 };
 
-let cached:
-  | {
-      expiresAt: number;
-      promise: Promise<SpainArgentinaOddsResponse>;
-    }
-  | undefined;
-let historyCache:
-  | {
-      expiresAt: number;
-      promise: Promise<SpainArgentinaOddsResponse["history"]>;
-    }
-  | undefined;
+/** @deprecated Use PredictionMarketOddsResponse for new game integrations. */
+export type SpainArgentinaOddsResponse = PredictionMarketOddsResponse;
+
+const responseCaches = new Map<
+  string,
+  { expiresAt: number; promise: Promise<SpainArgentinaOddsResponse> }
+>();
+const historyCaches = new Map<
+  string,
+  {
+    expiresAt: number;
+    promise: Promise<SpainArgentinaOddsResponse["history"]>;
+  }
+>();
 const lastGoodProviders = new Map<
-  ProviderOdds["id"],
+  string,
   { odds: ProviderOdds; receivedAt: number }
 >();
-let lastGoodHistory:
-  | {
-      points: SpainArgentinaOddsResponse["history"];
-      receivedAt: number;
-    }
-  | undefined;
-let lastGoodMatchClock:
-  | {
-      clock: MatchClock;
-      receivedAt: number;
-    }
-  | undefined;
+const lastGoodHistories = new Map<
+  string,
+  { points: SpainArgentinaOddsResponse["history"]; receivedAt: number }
+>();
+const lastGoodMatchClocks = new Map<
+  string,
+  { clock: MatchClock; receivedAt: number }
+>();
 
-export async function handleSpainArgentinaOdds(
+export function isPredictionMarketOddsPath(pathname: string): boolean {
+  const slug = pathname.slice("/api/prediction-markets/".length);
+  return (
+    pathname.startsWith("/api/prediction-markets/") &&
+    slug.length > 0 &&
+    !slug.includes("/")
+  );
+}
+
+export async function handlePredictionMarketOdds(
   request: Request,
-  env: SpainArgentinaOddsEnv = {},
+  env: PredictionMarketOddsEnv = {},
 ): Promise<Response> {
   if (request.method !== "GET") {
     return Response.json(
@@ -126,12 +134,23 @@ export async function handleSpainArgentinaOdds(
     );
   }
 
+  const slug = new URL(request.url).pathname.split("/").filter(Boolean).at(-1);
+  const game = slug ? getPredictionGame(slug) : undefined;
+  if (!game) {
+    return Response.json(
+      { ok: false, error: "game_not_found" },
+      { status: 404 },
+    );
+  }
+
   const now = Date.now();
+  let cached = responseCaches.get(game.slug);
   if (!cached || cached.expiresAt <= now) {
     cached = {
       expiresAt: now + CACHE_MS,
-      promise: loadOdds(env),
+      promise: loadOdds(game, env),
     };
+    responseCaches.set(game.slug, cached);
   }
 
   const body = await cached.promise;
@@ -143,47 +162,55 @@ export async function handleSpainArgentinaOdds(
   });
 }
 
+export const handleSpainArgentinaOdds = handlePredictionMarketOdds;
+
 async function loadOdds(
-  env: SpainArgentinaOddsEnv,
+  game: PredictionGameConfig,
+  env: PredictionMarketOddsEnv,
 ): Promise<SpainArgentinaOddsResponse> {
   const [results, historyResult, storedHistory, matchClock] = await Promise.all([
-    Promise.allSettled([loadKalshi(), loadPolymarket(), loadManifold()]),
-    getKalshiHistory()
+    Promise.allSettled([
+      loadKalshi(game),
+      loadPolymarket(game),
+      loadManifold(game),
+    ]),
+    getKalshiHistory(game)
       .then((points) => ({ ok: true as const, points }))
       .catch((error) => ({
         ok: false as const,
         points: [] as SpainArgentinaOddsResponse["history"],
         error: error instanceof Error ? error.message : "history_unavailable",
       })),
-    readStoredHistory(env.FLIGHT_CACHE),
-    loadMatchClock(),
+    readStoredHistory(game, env.FLIGHT_CACHE, historyKvKey(game)),
+    loadMatchClock(game),
   ]);
+  const lastGoodHistory = lastGoodHistories.get(game.slug);
   const fallbackHistory =
     lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS
       ? lastGoodHistory.points
       : [];
   const seed =
-    Date.now() >= MATCH_STARTS_AT_MS
-      ? (staticHistorySeed as SpainArgentinaOddsResponse["history"])
+    Date.now() >= matchStartsAt(game)
+      ? (game.staticHistory as SpainArgentinaOddsResponse["history"])
       : [];
 
   const providers: ProviderOdds[] = [
-    settledProvider(results[0], {
+    settledProvider(game, results[0], {
       id: "kalshi",
       name: "Kalshi",
-      href: "https://kalshi.com/markets/kxmenworldcup/mens-world-cup-winner/kxmenworldcup-26",
+      href: game.providers.kalshi.href,
       volumeUnit: "USD",
     }),
-    settledProvider(results[1], {
+    settledProvider(game, results[1], {
       id: "polymarket",
       name: "Polymarket",
-      href: "https://polymarket.com/event/world-cup-winner",
+      href: game.providers.polymarket.href,
       volumeUnit: "USD",
     }),
-    settledProvider(results[2], {
+    settledProvider(game, results[2], {
       id: "manifold",
       name: "Manifold",
-      href: "https://manifold.markets/ManifoldSports/esp-vs-arg-world-cup-26",
+      href: game.providers.manifold.href,
       volumeUnit: "MANA",
     }),
   ];
@@ -204,8 +231,8 @@ async function loadOdds(
         argentina: provider.argentina / total,
         weight:
           provider.id === "manifold"
-            ? PLAY_MONEY_WEIGHT
-            : REAL_MONEY_WEIGHT,
+            ? game.weights.playMoney
+            : game.weights.realMoney,
       },
     ];
   });
@@ -247,6 +274,7 @@ async function loadOdds(
       : [];
 
   const history = mergeHistoryPoints(
+    game,
     seed,
     storedHistory,
     fallbackHistory,
@@ -254,15 +282,18 @@ async function loadOdds(
     liveKalshiPoint,
   );
   if (history.length) {
-    lastGoodHistory = { points: history, receivedAt: Date.now() };
-    void persistHistory(env.FLIGHT_CACHE, history);
+    lastGoodHistories.set(game.slug, {
+      points: history,
+      receivedAt: Date.now(),
+    });
+    void persistHistory(env.FLIGHT_CACHE, historyKvKey(game), history);
   }
 
   return {
     ok: providerCount > 0,
     generatedAt,
-    matchStartsAt: "2026-07-19T19:00:00Z",
-    refreshAfterMs: 5_000,
+    matchStartsAt: game.kickoffISO,
+    refreshAfterMs: game.refreshIntervalMs,
     matchClock,
     consensus: {
       spain,
@@ -277,9 +308,14 @@ async function loadOdds(
   };
 }
 
-async function loadMatchClock(): Promise<MatchClock> {
+async function loadMatchClock(
+  game: PredictionGameConfig,
+): Promise<MatchClock> {
+  const summaryUrl =
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/` +
+    `${game.espn.league}/summary?event=${game.espn.eventId}`;
   try {
-    const data = await fetchJson<Record<string, unknown>>(ESPN_SUMMARY_URL, {
+    const data = await fetchJson<Record<string, unknown>>(summaryUrl, {
       attempts: 1,
       timeoutMs: 2_000,
     });
@@ -295,25 +331,30 @@ async function loadMatchClock(): Promise<MatchClock> {
       stringValue(type.statusPrimary);
     const clock = matchClockFromEspn(name, state, displayClock);
     if (clock) {
-      const score = scoreFromEspn(asRecords(competition.competitors));
+      const score = scoreFromEspn(game, asRecords(competition.competitors));
       if (score) clock.score = score;
-      lastGoodMatchClock = { clock, receivedAt: Date.now() };
+      lastGoodMatchClocks.set(game.slug, {
+        clock,
+        receivedAt: Date.now(),
+      });
       return clock;
     }
   } catch {
     // Fall through to cached / schedule clock.
   }
 
+  const lastGoodMatchClock = lastGoodMatchClocks.get(game.slug);
   if (
     lastGoodMatchClock &&
     Date.now() - lastGoodMatchClock.receivedAt <= STALE_PROVIDER_MS
   ) {
     return lastGoodMatchClock.clock;
   }
-  return scheduleMatchClock(Date.now());
+  return scheduleMatchClock(game, Date.now());
 }
 
 function scoreFromEspn(
+  game: PredictionGameConfig,
   competitors: Record<string, unknown>[],
 ): { spain: number; argentina: number } | null {
   let spain: number | undefined;
@@ -324,8 +365,8 @@ function scoreFromEspn(
     ).toUpperCase();
     const score = Number.parseInt(stringValue(competitor.score), 10);
     if (!Number.isFinite(score)) continue;
-    if (abbreviation === "ESP") spain = score;
-    if (abbreviation === "ARG") argentina = score;
+    if (abbreviation === game.teams.a.abbreviation.toUpperCase()) spain = score;
+    if (abbreviation === game.teams.b.abbreviation.toUpperCase()) argentina = score;
   }
   if (spain === undefined || argentina === undefined) return null;
   return { spain, argentina };
@@ -379,15 +420,20 @@ function normalizeMatchMinuteLabel(raw: string): string {
   return trimmed;
 }
 
-function scheduleMatchClock(now: number): MatchClock {
-  if (now < MATCH_STARTS_AT_MS) {
-    return { phase: "pre", label: "4:00 PM", source: "schedule" };
+function scheduleMatchClock(
+  game: PredictionGameConfig,
+  now: number,
+): MatchClock {
+  const startsAt = matchStartsAt(game);
+  const endsAt = matchEndsAt(game);
+  if (now < startsAt) {
+    return { phase: "pre", label: "Kickoff", source: "schedule" };
   }
-  if (now >= MATCH_ENDS_AT_MS) {
+  if (now >= endsAt) {
     return { phase: "final", label: "Full time", source: "schedule" };
   }
 
-  const elapsed = now - MATCH_STARTS_AT_MS;
+  const elapsed = now - startsAt;
   if (elapsed < HALF_LENGTH_MS) {
     return {
       phase: "live",
@@ -425,44 +471,53 @@ function scheduleMatchClock(now: number): MatchClock {
     const minute = Math.min(120, 106 + Math.floor(extraSecondElapsed / 60_000));
     return { phase: "live", label: `${minute}'`, source: "schedule" };
   }
-  if (now < MATCH_ENDS_AT_MS - 30 * 60_000) {
+  if (now < endsAt - 30 * 60_000) {
     return { phase: "live", label: "PENS", source: "schedule" };
   }
 
   return { phase: "final", label: "Full time", source: "schedule" };
 }
 
-function getKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {
+function getKalshiHistory(
+  game: PredictionGameConfig,
+): Promise<SpainArgentinaOddsResponse["history"]> {
   const now = Date.now();
+  let historyCache = historyCaches.get(game.slug);
   if (!historyCache || historyCache.expiresAt <= now) {
-    const promise = loadKalshiHistory();
+    const promise = loadKalshiHistory(game);
     historyCache = {
       expiresAt: now + 30_000,
       promise,
     };
+    historyCaches.set(game.slug, historyCache);
     void promise.then(
       (points) => {
         if (points.length) {
-          lastGoodHistory = { points, receivedAt: Date.now() };
+          lastGoodHistories.set(game.slug, {
+            points,
+            receivedAt: Date.now(),
+          });
         } else if (historyCache?.promise === promise) {
-          historyCache = undefined;
+          historyCaches.delete(game.slug);
         }
       },
       () => {
-        if (historyCache?.promise === promise) historyCache = undefined;
+        if (historyCache?.promise === promise) historyCaches.delete(game.slug);
       },
     );
   }
   return historyCache.promise;
 }
 
-async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {
+async function loadKalshiHistory(
+  game: PredictionGameConfig,
+): Promise<SpainArgentinaOddsResponse["history"]> {
   const boundedNow = Math.min(
-    Math.max(Date.now(), MATCH_STARTS_AT_MS),
-    MATCH_ENDS_AT_MS,
+    Math.max(Date.now(), matchStartsAt(game)),
+    matchEndsAt(game),
   );
   const end = Math.floor(boundedNow / 1_000);
-  const start = Math.floor(MATCH_STARTS_AT_MS / 1_000);
+  const start = Math.floor(matchStartsAt(game) / 1_000);
   // Prefer coarse candles first (small payload), then 1-minute detail.
   // Skip period_interval=5 — Kalshi currently returns 400 for that value.
   const intervals = [60, 1] as const;
@@ -472,6 +527,7 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
     for (const periodInterval of intervals) {
       try {
         const points = await loadKalshiHistoryFromHost(
+          game,
           host,
           start,
           end,
@@ -484,6 +540,7 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
     }
   }
 
+  const lastGoodHistory = lastGoodHistories.get(game.slug);
   if (lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS) {
     return lastGoodHistory.points;
   }
@@ -493,24 +550,27 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
 }
 
 async function loadKalshiHistoryFromHost(
+  game: PredictionGameConfig,
   host: string,
   start: number,
   end: number,
   periodInterval: number,
 ): Promise<SpainArgentinaOddsResponse["history"]> {
   const query = `start_ts=${start}&end_ts=${end}&period_interval=${periodInterval}`;
-  const base = `${host}/trade-api/v2/series/KXMENWORLDCUP/markets`;
+  const base =
+    `${host}/trade-api/v2/series/` +
+    `${game.providers.kalshi.seriesTicker}/markets`;
   const fetchOptions = {
     attempts: 1,
     timeoutMs: HISTORY_REQUEST_TIMEOUT_MS,
   };
   const [spainResult, argentinaResult] = await Promise.allSettled([
     fetchJson<Record<string, unknown>>(
-      `${base}/KXMENWORLDCUP-26-ES/candlesticks?${query}`,
+      `${base}/${game.teams.a.kalshiTicker}/candlesticks?${query}`,
       fetchOptions,
     ),
     fetchJson<Record<string, unknown>>(
-      `${base}/KXMENWORLDCUP-26-AR/candlesticks?${query}`,
+      `${base}/${game.teams.b.kalshiTicker}/candlesticks?${query}`,
       fetchOptions,
     ),
   ]);
@@ -573,18 +633,20 @@ function candleClose(candle: Record<string, unknown>): number | null {
 }
 
 function settledProvider(
+  game: PredictionGameConfig,
   result: PromiseSettledResult<ProviderOdds>,
   fallback: Pick<ProviderOdds, "id" | "name" | "href" | "volumeUnit">,
 ): ProviderOdds {
+  const cacheKey = `${game.slug}:${fallback.id}`;
   if (result.status === "fulfilled") {
     const receivedAt = Date.now();
-    lastGoodProviders.set(result.value.id, {
+    lastGoodProviders.set(cacheKey, {
       odds: result.value,
       receivedAt,
     });
     return { ...result.value, updatedAt: new Date(receivedAt).toISOString() };
   }
-  const previous = lastGoodProviders.get(fallback.id);
+  const previous = lastGoodProviders.get(cacheKey);
   if (previous && Date.now() - previous.receivedAt <= STALE_PROVIDER_MS) {
     return {
       ...previous.odds,
@@ -603,13 +665,16 @@ function settledProvider(
   };
 }
 
-async function loadKalshi(): Promise<ProviderOdds> {
+async function loadKalshi(
+  game: PredictionGameConfig,
+): Promise<ProviderOdds> {
   let markets: Record<string, unknown>[] = [];
   let lastError: unknown;
   for (const host of KALSHI_API_HOSTS) {
     try {
       const eventData = await fetchJson<Record<string, unknown>>(
-        `${host}/trade-api/v2/events/KXMENWORLDCUP-26?with_nested_markets=true`,
+        `${host}/trade-api/v2/events/${game.providers.kalshi.eventTicker}` +
+          `?with_nested_markets=true`,
       );
       markets = asRecords(asRecord(eventData.event).markets);
       if (markets.length) break;
@@ -621,7 +686,8 @@ async function loadKalshi(): Promise<ProviderOdds> {
     for (const host of KALSHI_API_HOSTS) {
       try {
         const marketsData = await fetchJson<Record<string, unknown>>(
-          `${host}/trade-api/v2/markets?event_ticker=KXMENWORLDCUP-26&limit=1000`,
+          `${host}/trade-api/v2/markets?event_ticker=` +
+            `${game.providers.kalshi.eventTicker}&limit=1000`,
         );
         markets = asRecords(marketsData.markets);
         if (markets.length) break;
@@ -635,13 +701,13 @@ async function loadKalshi(): Promise<ProviderOdds> {
       ? lastError
       : new Error("Kalshi markets unavailable");
   }
-  const spain = findKalshiMarket(markets, "spain");
-  const argentina = findKalshiMarket(markets, "argentina");
+  const spain = findKalshiMarket(markets, game.teams.a);
+  const argentina = findKalshiMarket(markets, game.teams.b);
 
   return {
     id: "kalshi",
     name: "Kalshi",
-    href: "https://kalshi.com/markets/kxmenworldcup/mens-world-cup-winner/kxmenworldcup-26",
+    href: game.providers.kalshi.href,
     spain: kalshiPrice(spain),
     argentina: kalshiPrice(argentina),
     volume: sumNumbers([spain.volume_fp, argentina.volume_fp]),
@@ -652,15 +718,17 @@ async function loadKalshi(): Promise<ProviderOdds> {
 
 function findKalshiMarket(
   markets: Record<string, unknown>[],
-  team: Team,
+  team: PredictionGameConfig["teams"]["a"],
 ): Record<string, unknown> {
-  const code = team === "spain" ? "-ES" : "-AR";
   const market = markets.find((item) => {
     const ticker = stringValue(item.ticker).toUpperCase();
     const label = `${stringValue(item.yes_sub_title)} ${stringValue(item.title)}`;
-    return ticker.endsWith(code) || label.toLowerCase().includes(team);
+    return (
+      ticker === team.kalshiTicker.toUpperCase() ||
+      label.toLowerCase().includes(team.kalshiLabel.toLowerCase())
+    );
   });
-  if (!market) throw new Error(`Kalshi ${team} market not found`);
+  if (!market) throw new Error(`Kalshi ${team.name} market not found`);
   return market;
 }
 
@@ -673,11 +741,13 @@ function kalshiPrice(market: Record<string, unknown>): number {
   return clampProbability(last);
 }
 
-async function loadPolymarket(): Promise<ProviderOdds> {
-  const event = await loadPolymarketEvent();
+async function loadPolymarket(
+  game: PredictionGameConfig,
+): Promise<ProviderOdds> {
+  const event = await loadPolymarketEvent(game);
   const markets = asRecords(event.markets);
-  const spain = findPolymarketMarket(markets, "spain");
-  const argentina = findPolymarketMarket(markets, "argentina");
+  const spain = findPolymarketMarket(markets, game.teams.a);
+  const argentina = findPolymarketMarket(markets, game.teams.b);
   const [spainPrice, argentinaPrice] = await Promise.all([
     loadPolymarketLivePrice(spain),
     loadPolymarketLivePrice(argentina),
@@ -686,7 +756,7 @@ async function loadPolymarket(): Promise<ProviderOdds> {
   return {
     id: "polymarket",
     name: "Polymarket",
-    href: "https://polymarket.com/event/world-cup-winner",
+    href: game.providers.polymarket.href,
     spain: spainPrice,
     argentina: argentinaPrice,
     volume: sumNumbers([
@@ -698,10 +768,13 @@ async function loadPolymarket(): Promise<ProviderOdds> {
   };
 }
 
-async function loadPolymarketEvent(): Promise<Record<string, unknown>> {
+async function loadPolymarketEvent(
+  game: PredictionGameConfig,
+): Promise<Record<string, unknown>> {
+  const eventSlug = encodeURIComponent(game.providers.polymarket.eventSlug);
   const urls = [
-    "https://gamma-api.polymarket.com/events/slug/world-cup-winner",
-    "https://gamma-api.polymarket.com/events?slug=world-cup-winner",
+    `https://gamma-api.polymarket.com/events/slug/${eventSlug}`,
+    `https://gamma-api.polymarket.com/events?slug=${eventSlug}`,
   ];
   let lastError: unknown;
   for (const url of urls) {
@@ -721,7 +794,7 @@ async function loadPolymarketEvent(): Promise<Record<string, unknown>> {
 
 function findPolymarketMarket(
   markets: Record<string, unknown>[],
-  team: Team,
+  team: PredictionGameConfig["teams"]["a"],
 ): Record<string, unknown> {
   const market = markets.find((item) => {
     const label = [
@@ -733,9 +806,9 @@ function findPolymarketMarket(
       .map(stringValue)
       .join(" ")
       .toLowerCase();
-    return label.includes(team);
+    return label.includes(team.polymarketLabel.toLowerCase());
   });
-  if (!market) throw new Error(`Polymarket ${team} market not found`);
+  if (!market) throw new Error(`Polymarket ${team.name} market not found`);
   return market;
 }
 
@@ -759,8 +832,10 @@ async function loadPolymarketLivePrice(
   return clampProbability(midpoint);
 }
 
-async function loadManifold(): Promise<ProviderOdds> {
-  const marketId = "20ACq555CE";
+async function loadManifold(
+  game: PredictionGameConfig,
+): Promise<ProviderOdds> {
+  const marketId = game.providers.manifold.marketId;
   const [market, probabilities] = await Promise.all([
     fetchJson<Record<string, unknown>>(
       `https://api.manifold.markets/v0/market/${marketId}`,
@@ -779,9 +854,9 @@ async function loadManifold(): Promise<ProviderOdds> {
   return {
     id: "manifold",
     name: "Manifold",
-    href: "https://manifold.markets/ManifoldSports/esp-vs-arg-world-cup-26",
-    spain: manifoldPrice(answers, answerProbs, "spain"),
-    argentina: manifoldPrice(answers, answerProbs, "argentina"),
+    href: game.providers.manifold.href,
+    spain: manifoldPrice(answers, answerProbs, game.teams.a),
+    argentina: manifoldPrice(answers, answerProbs, game.teams.b),
     volume: numberValue(market.volume),
     volumeUnit: "MANA",
     status: "live",
@@ -791,14 +866,14 @@ async function loadManifold(): Promise<ProviderOdds> {
 function manifoldPrice(
   answers: Record<string, unknown>[],
   probabilities: Record<string, unknown>,
-  team: Team,
+  team: PredictionGameConfig["teams"]["a"],
 ): number {
   const answer = answers.find((item) =>
     `${stringValue(item.text)} ${stringValue(item.shortText)}`
       .toLowerCase()
-      .includes(team),
+      .includes(team.manifoldLabel.toLowerCase()),
   );
-  if (!answer) throw new Error(`Manifold ${team} answer not found`);
+  if (!answer) throw new Error(`Manifold ${team.name} answer not found`);
   const id = stringValue(answer.id);
   const price =
     probabilityValue(probabilities[id]) ?? probabilityValue(answer.probability);
@@ -864,16 +939,19 @@ function delay(ms: number): Promise<void> {
 }
 
 function mergeHistoryPoints(
+  game: PredictionGameConfig,
   ...series: SpainArgentinaOddsResponse["history"][]
 ): SpainArgentinaOddsResponse["history"] {
+  const startsAt = matchStartsAt(game);
+  const endsAt = matchEndsAt(game);
   const merged = new Map<string, SpainArgentinaOddsResponse["history"][number]>();
   for (const points of series) {
     for (const point of points) {
       const timestamp = Date.parse(point.at);
       if (
         !Number.isFinite(timestamp) ||
-        timestamp < MATCH_STARTS_AT_MS ||
-        timestamp > MATCH_ENDS_AT_MS ||
+        timestamp < startsAt ||
+        timestamp > endsAt ||
         !Number.isFinite(point.spain) ||
         !Number.isFinite(point.argentina)
       ) {
@@ -892,15 +970,18 @@ function mergeHistoryPoints(
 }
 
 async function readStoredHistory(
+  game: PredictionGameConfig,
   kv: OddsKv | undefined,
+  key: string,
 ): Promise<SpainArgentinaOddsResponse["history"]> {
   if (!kv) return [];
   try {
-    const raw = await kv.get(HISTORY_KV_KEY);
+    const raw = await kv.get(key);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
     return mergeHistoryPoints(
+      game,
       parsed.flatMap((item) => {
         const point = asRecord(item);
         const spain = numberValue(point.spain);
@@ -917,11 +998,12 @@ async function readStoredHistory(
 
 async function persistHistory(
   kv: OddsKv | undefined,
+  key: string,
   points: SpainArgentinaOddsResponse["history"],
 ): Promise<void> {
   if (!kv || !points.length) return;
   try {
-    await kv.put(HISTORY_KV_KEY, JSON.stringify(points), {
+    await kv.put(key, JSON.stringify(points), {
       expirationTtl: HISTORY_KV_TTL_SECONDS,
     });
   } catch {

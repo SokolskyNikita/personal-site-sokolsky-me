@@ -1,0 +1,1179 @@
+---
+import type { PredictionGameConfig } from "../../lib/prediction-markets/games";
+
+interface Props {
+  game: PredictionGameConfig;
+}
+
+const { game } = Astro.props;
+const serializedGame = JSON.stringify(game)
+  .replace(/</g, "\\u003c")
+  .replace(/\u2028/g, "\\u2028")
+  .replace(/\u2029/g, "\\u2029");
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{game.pageTitle}</title>
+    <meta name="description" content={game.description} />
+    <meta name="theme-color" content="#f7f5ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#211d17" media="(prefers-color-scheme: dark)" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,650&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main
+      class="board"
+      id="odds-board"
+      style={`--team-a-source: ${game.teams.a.color}; --team-a-soft-source: ${game.teams.a.softColor}; --team-b-source: ${game.teams.b.color}; --team-b-soft-source: ${game.teams.b.softColor};`}
+    >
+      <header class="chrome">
+        <p class="kicker">{game.competition} · weighted odds</p>
+        <div class="live-tools">
+          <div class="feed-status" id="feed-status" role="status" aria-live="polite">
+            <span class="pulse" aria-hidden="true"></span>
+            <span id="feed-label">Live</span>
+          </div>
+          <button type="button" id="fullscreen-button" aria-label="Enter full screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="odds" aria-label="Weighted championship probabilities">
+        <article class="team team-a">
+          <strong
+            id="consensus-team-a"
+            role="status"
+            aria-label={`${game.teams.a.name} probability, waiting for feed`}
+            aria-live="polite">—</strong>
+          <div class="team-meta">
+            <div
+              class="flag"
+              role="img"
+              aria-label={game.teams.a.name}
+              style={`background: ${game.teams.a.flagCss};`}
+            ></div>
+            <span>{game.teams.a.name}</span>
+          </div>
+        </article>
+
+        <div class="clock" aria-hidden="true">
+          <p id="match-phase">Kickoff</p>
+          <time id="match-clock" datetime={game.kickoffISO}>—</time>
+          <p class="score" id="match-score" hidden>0 – 0</p>
+          <div class="provider-strip" id="provider-strip"></div>
+        </div>
+
+        <article class="team team-b">
+          <strong
+            id="consensus-team-b"
+            role="status"
+            aria-label={`${game.teams.b.name} probability, waiting for feed`}
+            aria-live="polite">—</strong>
+          <div class="team-meta">
+            <span>{game.teams.b.name}</span>
+            <div
+              class="flag"
+              role="img"
+              aria-label={game.teams.b.name}
+              style={`background: ${game.teams.b.flagCss};`}
+            ></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="chart-panel" aria-label="Kalshi odds since kickoff">
+        <div class="chart-meta">
+          <p>Kalshi trend · since kickoff</p>
+          <div class="legend" aria-hidden="true">
+            <span class="legend-team-a">{game.teams.a.name}</span>
+            <span class="legend-team-b">{game.teams.b.name}</span>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <svg
+            id="history-chart"
+            class="history-chart"
+            viewBox="0 0 800 220"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Kalshi championship odds since kickoff"
+          >
+            <g class="grid">
+              <line x1="0" x2="792" y1="36" y2="36"></line>
+              <line x1="0" x2="792" y1="110" y2="110"></line>
+              <line x1="0" x2="792" y1="184" y2="184"></line>
+            </g>
+            <path id="team-a-line" class="chart-line team-a-line" d=""></path>
+            <path id="team-b-line" class="chart-line team-b-line" d=""></path>
+            <circle id="team-a-dot" class="chart-dot team-a-dot" cx="0" cy="0" r="7"></circle>
+            <circle id="team-b-dot" class="chart-dot team-b-dot" cx="0" cy="0" r="7"></circle>
+          </svg>
+          <div class="chart-scale" aria-hidden="true">
+            <span id="chart-max">65%</span>
+            <span id="chart-mid">50%</span>
+            <span id="chart-min">35%</span>
+          </div>
+          <div class="chart-time" aria-hidden="true">
+            <span id="chart-kickoff-time">Kickoff</span>
+            <span id="chart-current-time">Now</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script
+      type="application/json"
+      id="prediction-game-config"
+      set:html={serializedGame}
+    ></script>
+
+    <script>
+      const MAX_HISTORY = 500;
+      const CHART_WIDTH = 792;
+
+      type HistoryPoint = { at: string; spain: number; argentina: number };
+      type BrowserGameConfig = {
+        slug: string;
+        kickoffISO: string;
+        pollingWindowHours: number;
+        refreshIntervalMs: number;
+        teams: {
+          a: { name: string };
+          b: { name: string };
+        };
+        chartBreaks: Array<{ startISO: string; endISO: string }>;
+        staticHistory: HistoryPoint[];
+      };
+      type MatchClock = {
+        phase: "pre" | "live" | "halftime" | "final";
+        label: string;
+        source: "espn" | "schedule";
+        score?: { spain: number; argentina: number };
+      };
+      type ProviderOdds = {
+        id: string;
+        name: string;
+        spain: number | null;
+        argentina: number | null;
+        status: "live" | "stale" | "unavailable";
+        updatedAt?: string;
+      };
+      type OddsResponse = {
+        generatedAt: string;
+        matchClock?: MatchClock;
+        consensus: {
+          spain: number | null;
+          argentina: number | null;
+          providerCount: number;
+          liveProviderCount: number;
+          staleProviderCount: number;
+        };
+        history: HistoryPoint[];
+        providers?: ProviderOdds[];
+      };
+
+      function readGameConfig(): BrowserGameConfig {
+        const node = document.getElementById("prediction-game-config");
+        if (!(node instanceof HTMLScriptElement) || !node.textContent) {
+          throw new Error("Prediction game configuration is missing");
+        }
+        const parsed: unknown = JSON.parse(node.textContent);
+        if (!parsed || typeof parsed !== "object") {
+          throw new Error("Prediction game configuration is invalid");
+        }
+        return parsed as BrowserGameConfig;
+      }
+
+      function validHistory(points: unknown): HistoryPoint[] {
+        if (!Array.isArray(points)) return [];
+        try {
+          return points.flatMap((item) => {
+            if (!item || typeof item !== "object") return [];
+            const point = item as Record<string, unknown>;
+            if (
+              typeof point.at !== "string" ||
+              typeof point.spain !== "number" ||
+              typeof point.argentina !== "number"
+            ) {
+              return [];
+            }
+            return [
+              {
+                at: point.at,
+                spain: point.spain,
+                argentina: point.argentina,
+              },
+            ];
+          });
+        } catch {
+          return [];
+        }
+      }
+
+      const GAME = readGameConfig();
+      const ENDPOINT = `/api/prediction-markets/${encodeURIComponent(GAME.slug)}`;
+      const REFRESH_INTERVAL_MS = GAME.refreshIntervalMs;
+      const MATCH_STARTS_AT = Date.parse(GAME.kickoffISO);
+      const MATCH_WINDOW_MS = GAME.pollingWindowHours * 60 * 60 * 1_000;
+      const MATCH_ENDS_AT = MATCH_STARTS_AT + MATCH_WINDOW_MS;
+
+      // Static Kalshi candles baked at build time — painted before the live feed.
+      const history: HistoryPoint[] = validHistory(GAME.staticHistory);
+      let timer: number | undefined;
+      let fetching = false;
+      let stopped = false;
+      let chartMin = 0.35;
+      let chartMax = 0.65;
+      let matchClock: MatchClock | null = null;
+      let latestProviders: ProviderOdds[] = [];
+
+      const byId = (id: string) => document.getElementById(id);
+
+      // Render schedule times in the viewer's local timezone (task: no
+      // hardcoded time strings).
+      const localTime = (timestamp: number) =>
+        new Intl.DateTimeFormat(undefined, {
+          hour: "numeric",
+          minute: "2-digit",
+        }).format(new Date(timestamp));
+      const KICKOFF_LABEL = localTime(MATCH_STARTS_AT);
+      {
+        const kickoffSpan = byId("chart-kickoff-time");
+        if (kickoffSpan) kickoffSpan.textContent = `Kickoff · ${KICKOFF_LABEL}`;
+      }
+
+      function consensusPercentages(spain: number | null, argentina: number | null) {
+        if (typeof spain === "number") {
+          const roundedSpain = Math.min(100, Math.max(0, Math.round(spain * 100)));
+          return [String(roundedSpain), String(100 - roundedSpain)] as const;
+        }
+        if (typeof argentina === "number") {
+          const roundedArgentina = Math.min(100, Math.max(0, Math.round(argentina * 100)));
+          return [String(100 - roundedArgentina), String(roundedArgentina)] as const;
+        }
+        return ["—", "—"] as const;
+      }
+
+      function setOdds(id: string, value: string, team: string) {
+        const element = byId(id);
+        if (!element || element.textContent === value) return;
+        element.textContent = value;
+        element.setAttribute("aria-label", `${team} ${value}%`);
+        element.classList.remove("changed");
+        void element.offsetWidth;
+        element.classList.add("changed");
+      }
+
+      function chartY(value: number) {
+        const clamped = Math.min(chartMax, Math.max(chartMin, value));
+        return 184 - ((clamped - chartMin) / (chartMax - chartMin)) * 148;
+      }
+
+      // Collapse every observed non-playing interval so horizontal distance
+      // represents match action rather than wall-clock time.
+      const CHART_BREAKS = GAME.chartBreaks.map(({ startISO, endISO }) => [
+        Date.parse(startISO),
+        Date.parse(endISO),
+      ] as const);
+
+      function chartTime(timestamp: number) {
+        return CHART_BREAKS.reduce((adjusted, [start, end]) => {
+          const elapsedBreak = Math.min(
+            Math.max(timestamp - start, 0),
+            end - start,
+          );
+          return adjusted - elapsedBreak;
+        }, timestamp);
+      }
+
+      function chartX(timestamp: number, endAt: number) {
+        const span = Math.max(60_000, chartTime(endAt) - MATCH_STARTS_AT);
+        return ((chartTime(timestamp) - MATCH_STARTS_AT) / span) * CHART_WIDTH;
+      }
+
+      function chartPath(points: HistoryPoint[], key: "spain" | "argentina") {
+        if (!points.length) return "";
+        const endAt = Math.max(
+          MATCH_STARTS_AT + 60_000,
+          Date.parse(points.at(-1)?.at ?? ""),
+          Math.min(Date.now(), MATCH_ENDS_AT),
+        );
+        return points
+          .map((point, index) => {
+            const x = chartX(Date.parse(point.at), endAt);
+            return `${index ? "L" : "M"} ${x.toFixed(1)} ${chartY(point[key]).toFixed(1)}`;
+          })
+          .join(" ");
+      }
+
+      function updateChartScale() {
+        const values = history.flatMap((point) => [point.spain, point.argentina]);
+        if (!values.length) return;
+        const observedMin = Math.min(...values);
+        const observedMax = Math.max(...values);
+        // Pad the domain ±3pp (clamped to [2%, 98%]) so lines never ride the
+        // top/bottom gridlines, while never narrower than a 12-point window.
+        chartMin = Math.max(0.02, observedMin - 0.03);
+        chartMax = Math.min(0.98, observedMax + 0.03);
+        const deficit = 0.12 - (chartMax - chartMin);
+        if (deficit > 0) {
+          chartMin = Math.max(0.02, chartMin - deficit / 2);
+          chartMax = Math.min(0.98, chartMin + 0.12);
+          chartMin = Math.max(0.02, chartMax - 0.12);
+        }
+
+        (
+          [
+            ["chart-max", chartMax],
+            ["chart-mid", (chartMax + chartMin) / 2],
+            ["chart-min", chartMin],
+          ] as const
+        ).forEach(([id, value]) => {
+          const label = byId(id);
+          if (label) label.textContent = `${Math.round(value * 100)}%`;
+        });
+      }
+
+      function updateChart() {
+        const teamALine = byId("team-a-line");
+        const teamBLine = byId("team-b-line");
+        if (!(teamALine instanceof SVGPathElement) || !(teamBLine instanceof SVGPathElement)) {
+          return;
+        }
+        updateChartScale();
+        teamALine.setAttribute("d", chartPath(history, "spain"));
+        teamBLine.setAttribute("d", chartPath(history, "argentina"));
+        const last = history.at(-1);
+        if (!last) return;
+        const endAt = Math.max(
+          MATCH_STARTS_AT + 60_000,
+          Date.parse(last.at),
+          Math.min(Date.now(), MATCH_ENDS_AT),
+        );
+        const cx = chartX(Date.parse(last.at), endAt);
+        (
+          [
+            ["team-a-dot", last.spain],
+            ["team-b-dot", last.argentina],
+          ] as const
+        ).forEach(([id, value]) => {
+          const dot = byId(id);
+          if (!(dot instanceof SVGCircleElement)) return;
+          dot.setAttribute("cx", String(cx));
+          dot.setAttribute("cy", String(chartY(value)));
+        });
+      }
+
+      function isPastMatchWindow() {
+        return Date.now() >= MATCH_ENDS_AT;
+      }
+
+      function markFeedStopped() {
+        stopped = true;
+        const feedLabel = byId("feed-label");
+        if (feedLabel) feedLabel.textContent = "Stopped";
+        byId("feed-status")?.classList.add("is-partial");
+        if (timer !== undefined) {
+          clearTimeout(timer);
+          timer = undefined;
+        }
+      }
+
+      function applyMatchClock(next: MatchClock) {
+        const phase = byId("match-phase");
+        const clock = byId("match-clock");
+        const clockWrap = phase?.closest(".clock");
+        if (!phase || !clock) return;
+
+        const score = byId("match-score");
+        if (score && next.score) {
+          score.hidden = false;
+          score.textContent = `${next.score.spain} – ${next.score.argentina}`;
+        }
+
+        if (next.phase === "pre") {
+          const remaining = MATCH_STARTS_AT - Date.now();
+          if (remaining > 0) {
+            const totalSeconds = Math.ceil(remaining / 1_000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            phase.textContent = "Starts in";
+            clock.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+          } else {
+            phase.textContent = "Kickoff";
+            clock.textContent = KICKOFF_LABEL;
+          }
+          clockWrap?.classList.remove("is-live");
+          return;
+        }
+
+        if (next.phase === "halftime") {
+          phase.textContent = "Half time";
+          clock.textContent = "HT";
+          clockWrap?.classList.remove("is-live");
+          return;
+        }
+
+        if (next.phase === "final") {
+          phase.textContent = "Final";
+          clock.textContent =
+            next.score
+              ? `${next.score.spain} – ${next.score.argentina}`
+              : next.label || "Full time";
+          if (score) score.hidden = true;
+          clockWrap?.classList.remove("is-live");
+          clockWrap?.classList.add("is-final");
+          return;
+        }
+
+        phase.textContent = "Live";
+        clock.textContent = next.label;
+        clockWrap?.classList.add("is-live");
+      }
+
+      function updateMatchPhase() {
+        if (matchClock) {
+          applyMatchClock(matchClock);
+          return;
+        }
+        const remaining = MATCH_STARTS_AT - Date.now();
+        if (remaining > 0) {
+          applyMatchClock({ phase: "pre", label: KICKOFF_LABEL, source: "schedule" });
+        } else if (isPastMatchWindow()) {
+          applyMatchClock({
+            phase: "final",
+            label: "Full time",
+            source: "schedule",
+          });
+        } else {
+          // Prefer schedule-aware football minutes over naive wall-clock elapsed.
+          const elapsed = Date.now() - MATCH_STARTS_AT;
+          const half = 45 * 60_000;
+          const breakMs = 15 * 60_000;
+          if (elapsed < half) {
+            applyMatchClock({
+              phase: "live",
+              label: `${Math.floor(elapsed / 60_000)}'`,
+              source: "schedule",
+            });
+          } else if (elapsed < half + breakMs) {
+            applyMatchClock({
+              phase: "halftime",
+              label: "HT",
+              source: "schedule",
+            });
+          } else {
+            // Schedule-only ladder mirroring the server fallback: regulation
+            // (with stoppage), extra time up to 120', then penalties.
+            const secondHalf = elapsed - half - breakMs;
+            const extraHalf = 15 * 60_000;
+            const extraBreak = 5 * 60_000;
+            let label: string;
+            if (secondHalf < half + 10 * 60_000) {
+              const minute = 45 + Math.floor(secondHalf / 60_000);
+              label = minute > 90 ? `90+${minute - 90}'` : `${minute}'`;
+            } else {
+              const extra = secondHalf - half - 10 * 60_000;
+              if (extra < extraHalf + extraBreak) {
+                label = `${Math.min(105, 91 + Math.floor(extra / 60_000))}'`;
+              } else if (extra < 2 * (extraHalf + extraBreak)) {
+                const et2 = extra - extraHalf - extraBreak;
+                label = `${Math.min(120, 106 + Math.floor(et2 / 60_000))}'`;
+              } else {
+                label = "PENS";
+              }
+            }
+            applyMatchClock({ phase: "live", label, source: "schedule" });
+          }
+        }
+      }
+
+      function renderProviderStrip() {
+        const strip = byId("provider-strip");
+        if (!strip) return;
+        const now = Date.now();
+        strip.replaceChildren(
+          ...latestProviders.map((provider) => {
+            const row = document.createElement("span");
+            row.className = `provider provider-${provider.status}`;
+            const odds =
+              typeof provider.spain === "number" &&
+              typeof provider.argentina === "number"
+                ? `${Math.round((provider.spain / (provider.spain + provider.argentina)) * 100)}–${Math.round((provider.argentina / (provider.spain + provider.argentina)) * 100)}`
+                : "—";
+            const updatedAt = provider.updatedAt
+              ? Date.parse(provider.updatedAt)
+              : Number.NaN;
+            const age = Number.isFinite(updatedAt)
+              ? `${Math.max(0, Math.round((now - updatedAt) / 1_000))}s`
+              : "·";
+            row.textContent = `${provider.name} ${odds} · ${age}`;
+            return row;
+          }),
+        );
+      }
+
+      function render(data: OddsResponse) {
+        if (data.matchClock) {
+          matchClock = data.matchClock;
+          applyMatchClock(matchClock);
+        }
+        if (Array.isArray(data.providers)) {
+          latestProviders = data.providers;
+          renderProviderStrip();
+        }
+
+        const [teamAPercent, teamBPercent] = consensusPercentages(
+          data.consensus.spain,
+          data.consensus.argentina,
+        );
+        setOdds("consensus-team-a", teamAPercent, GAME.teams.a.name);
+        setOdds("consensus-team-b", teamBPercent, GAME.teams.b.name);
+
+        const merged = new Map(history.map((point) => [point.at, point]));
+        // Prefer server history when present; keep prior client history if a
+        // refresh returns an empty series so the chart does not collapse.
+        if (data.history.length) {
+          merged.clear();
+          data.history.forEach((point) => {
+            const timestamp = Date.parse(point.at);
+            if (timestamp >= MATCH_STARTS_AT && timestamp <= MATCH_ENDS_AT) {
+              merged.set(point.at, point);
+            }
+          });
+        }
+        if (
+          Date.parse(data.generatedAt) <= MATCH_ENDS_AT &&
+          typeof data.consensus.spain === "number" &&
+          typeof data.consensus.argentina === "number"
+        ) {
+          merged.set(data.generatedAt, {
+            at: data.generatedAt,
+            spain: data.consensus.spain,
+            argentina: data.consensus.argentina,
+          });
+        }
+        history.splice(
+          0,
+          history.length,
+          ...[...merged.values()]
+            .filter((point) => {
+              const timestamp = Date.parse(point.at);
+              return timestamp >= MATCH_STARTS_AT && timestamp <= MATCH_ENDS_AT;
+            })
+            .sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
+            .slice(-MAX_HISTORY),
+        );
+        if (history.length) updateChart();
+
+        const feedLabel = byId("feed-label");
+        if (feedLabel) {
+          const updated = new Date(data.generatedAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+          if (data.consensus.staleProviderCount > 0) {
+            feedLabel.textContent =
+              `${data.consensus.liveProviderCount} live · ` +
+              `${data.consensus.staleProviderCount} delayed · ${updated}`;
+          } else {
+            feedLabel.textContent =
+              data.consensus.liveProviderCount > 0
+                ? `${data.consensus.liveProviderCount} sources · ${updated}`
+                : "Reconnecting";
+          }
+        }
+        const chartCurrentTime = byId("chart-current-time");
+        if (chartCurrentTime) {
+          chartCurrentTime.textContent = isPastMatchWindow()
+            ? `Cutoff · ${localTime(MATCH_ENDS_AT)}`
+            : new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+        }
+        const feedStatus = byId("feed-status");
+        feedStatus?.classList.toggle(
+          "is-partial",
+          data.consensus.liveProviderCount < 2 ||
+            data.consensus.staleProviderCount > 0,
+        );
+        feedStatus?.classList.toggle(
+          "is-down",
+          data.consensus.liveProviderCount === 0,
+        );
+
+        // Full-time settlement: once ESPN confirms the final whistle, stop
+        // polling and leave the board as an intentional archive.
+        if (data.matchClock?.phase === "final" && data.matchClock.source === "espn") {
+          markFeedStopped();
+          if (feedLabel) feedLabel.textContent = "Final";
+        }
+      }
+
+      const FETCH_TIMEOUT_MS = 8_000;
+      const MAX_BACKOFF_MS = 40_000;
+      let consecutiveFailures = 0;
+
+      function showReconnecting() {
+        if (isPastMatchWindow()) return;
+        const feedLabel = byId("feed-label");
+        if (feedLabel) {
+          feedLabel.textContent = navigator.onLine === false ? "Offline" : "Reconnecting";
+        }
+        byId("feed-status")?.classList.add("is-partial");
+      }
+
+      async function refresh() {
+        if (fetching || document.hidden || stopped) return;
+        const startedAt = performance.now();
+        fetching = true;
+        let failed = false;
+        try {
+          // Abort hung requests so flaky wifi can't stall the polling loop.
+          const response = await fetch(ENDPOINT, {
+            headers: { Accept: "application/json" },
+            cache: "no-store",
+            signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+          });
+          if (!response.ok) throw new Error(`Feed returned ${response.status}`);
+          render(await response.json());
+          consecutiveFailures = 0;
+        } catch {
+          failed = true;
+          consecutiveFailures += 1;
+          showReconnecting();
+        } finally {
+          fetching = false;
+          if (timer !== undefined) clearTimeout(timer);
+          if (isPastMatchWindow()) {
+            markFeedStopped();
+            return;
+          }
+          // Back off while the network is bad; snap back to 5s once healthy.
+          const backoff = failed
+            ? Math.min(
+                MAX_BACKOFF_MS,
+                REFRESH_INTERVAL_MS * 2 ** Math.min(3, consecutiveFailures - 1),
+              )
+            : REFRESH_INTERVAL_MS;
+          const elapsed = performance.now() - startedAt;
+          timer = window.setTimeout(refresh, Math.max(250, backoff - elapsed));
+        }
+      }
+
+      window.addEventListener("online", () => {
+        consecutiveFailures = 0;
+        if (!stopped && !isPastMatchWindow()) refresh();
+      });
+
+      window.addEventListener("offline", showReconnecting);
+
+      byId("fullscreen-button")?.addEventListener("click", async () => {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else {
+            await document.documentElement.requestFullscreen();
+          }
+        } catch {
+          const button = byId("fullscreen-button");
+          if (button instanceof HTMLButtonElement) button.hidden = true;
+        }
+      });
+
+      document.addEventListener("fullscreenchange", () => {
+        byId("fullscreen-button")?.setAttribute(
+          "aria-label",
+          document.fullscreenElement ? "Exit full screen" : "Enter full screen",
+        );
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && !stopped && !isPastMatchWindow()) refresh();
+      });
+
+      if (!document.fullscreenEnabled) {
+        const button = byId("fullscreen-button");
+        if (button instanceof HTMLButtonElement) button.hidden = true;
+      }
+
+      updateMatchPhase();
+      window.setInterval(() => {
+        updateMatchPhase();
+        if (latestProviders.length) renderProviderStrip();
+      }, 1_000);
+      if (history.length) {
+        updateChart();
+        // Paint last-known odds from the baked seed so the board is never
+        // blank, even if the live feed can't be reached at all.
+        const seedTip = history.at(-1);
+        if (seedTip) {
+          const [teamAPercent, teamBPercent] = consensusPercentages(
+            seedTip.spain,
+            seedTip.argentina,
+          );
+          setOdds("consensus-team-a", teamAPercent, GAME.teams.a.name);
+          setOdds("consensus-team-b", teamBPercent, GAME.teams.b.name);
+        }
+      }
+      refresh();
+    </script>
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --paper: oklch(97.1% 0.01 88);
+        --ink: oklch(18% 0.02 67);
+        --muted: oklch(48% 0.02 70);
+        --line: oklch(84% 0.02 78);
+        --live: oklch(55% 0.14 145);
+      }
+
+      /* Dark warm palette for watching next to a TV in a dim room. */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: oklch(21% 0.015 75);
+          --ink: oklch(93% 0.012 85);
+          --muted: oklch(66% 0.02 78);
+          --line: oklch(34% 0.02 75);
+          --live: oklch(70% 0.14 145);
+        }
+
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: var(--paper);
+      }
+
+      body {
+        color: var(--ink);
+        font-family: "Archivo", sans-serif;
+        overflow: hidden;
+        overscroll-behavior: none;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .board {
+        --team-a: var(--team-a-source);
+        --team-a-soft: var(--team-a-soft-source);
+        --team-b: var(--team-b-source);
+        --team-b-soft: var(--team-b-soft-source);
+        height: 100dvh;
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr);
+        padding:
+          max(14px, env(safe-area-inset-top))
+          max(28px, env(safe-area-inset-right))
+          max(16px, env(safe-area-inset-bottom))
+          max(28px, env(safe-area-inset-left));
+        background:
+          linear-gradient(90deg, color-mix(in oklch, var(--team-a-soft) 28%, transparent), transparent 18%),
+          linear-gradient(270deg, color-mix(in oklch, var(--team-b-soft) 32%, transparent), transparent 18%),
+          var(--paper);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .board {
+          --team-a: oklch(from var(--team-a-source) calc(l + 0.2) calc(c - 0.01) calc(h + 2));
+          --team-a-soft: oklch(from var(--team-a-soft-source) calc(l - 0.6) calc(c + 0.005) calc(h - 2));
+          --team-b: oklch(from var(--team-b-source) calc(l + 0.14) c h);
+          --team-b-soft: oklch(from var(--team-b-soft-source) calc(l - 0.61) c calc(h + 3));
+        }
+      }
+
+      .chrome {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 44px;
+      }
+
+      .kicker,
+      .chart-meta p,
+      .team span,
+      .clock p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .live-tools {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .feed-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--live);
+        box-shadow: 0 0 0 5px color-mix(in oklch, var(--live) 16%, transparent);
+        animation: breathe 2s ease-in-out infinite;
+      }
+
+      .feed-status.is-partial .pulse {
+        background: oklch(66% 0.15 75);
+        box-shadow: 0 0 0 5px oklch(66% 0.15 75 / 16%);
+      }
+
+      .feed-status.is-down .pulse {
+        background: oklch(55% 0.19 28);
+        box-shadow: 0 0 0 5px oklch(55% 0.19 28 / 16%);
+        animation: none;
+      }
+
+      #fullscreen-button {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: color-mix(in oklch, var(--paper) 84%, white);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      #fullscreen-button:hover {
+        border-color: var(--muted);
+      }
+
+      #fullscreen-button:focus-visible {
+        outline: 3px solid color-mix(in oklch, var(--team-b) 45%, transparent);
+        outline-offset: 3px;
+      }
+
+      #fullscreen-button svg {
+        width: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      .odds {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        gap: clamp(16px, 2.5vw, 32px);
+        padding: 4px 0 2px;
+      }
+
+      .team {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .team.team-b {
+        align-items: flex-end;
+        text-align: right;
+      }
+
+      .team-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .flag {
+        width: 32px;
+        aspect-ratio: 1.48;
+        flex: none;
+        border-radius: 3px;
+        box-shadow: 0 0 0 1px oklch(30% 0.02 60 / 14%);
+      }
+
+      .team strong {
+        font-family: "Newsreader", serif;
+        font-size: clamp(6.48rem, 11.4vw, 10.2rem);
+        font-optical-sizing: auto;
+        font-weight: 650;
+        letter-spacing: -0.085em;
+        line-height: 0.78;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
+      }
+
+      .team strong::after {
+        margin-left: 0.04em;
+        font-family: "Archivo", sans-serif;
+        font-size: 0.18em;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        vertical-align: 0.72em;
+        content: "%";
+        opacity: 0.88;
+      }
+
+      .team.team-a strong {
+        color: var(--team-a);
+      }
+
+      .team.team-b strong {
+        color: var(--team-b);
+      }
+
+      .team span {
+        letter-spacing: 0.08em;
+      }
+
+      .changed {
+        animation: price-change 450ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .clock {
+        display: grid;
+        justify-items: center;
+        gap: 4px;
+        padding-bottom: 0.7rem;
+        text-align: center;
+      }
+
+      .clock.is-live p {
+        color: var(--live);
+      }
+
+      .clock p {
+        font-size: 0.9rem;
+      }
+
+      .clock time {
+        color: var(--ink);
+        font-family: "Newsreader", serif;
+        font-optical-sizing: auto;
+        font-size: clamp(1.7rem, 2.5vw, 2.15rem);
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
+        letter-spacing: -0.02em;
+      }
+
+      .score {
+        margin: 0;
+        color: var(--muted);
+        font-family: "Newsreader", serif;
+        font-size: 1.05rem;
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.04em;
+      }
+
+      .clock.is-final time {
+        color: var(--ink);
+      }
+
+      .provider-strip {
+        display: grid;
+        gap: 1px;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .provider-stale {
+        opacity: 0.72;
+      }
+
+      .provider-unavailable {
+        opacity: 0.45;
+        text-decoration: line-through;
+      }
+
+      .chart-panel {
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 10px;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+
+      .chart-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .legend {
+        display: flex;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      .legend span::before {
+        display: inline-block;
+        width: 18px;
+        height: 3px;
+        margin: 0 6px 2px 0;
+        border-radius: 99px;
+        content: "";
+      }
+
+      .legend-team-a::before {
+        background: var(--team-a);
+      }
+
+      .legend-team-b::before {
+        background: var(--team-b);
+      }
+
+      .chart-wrap {
+        position: relative;
+        min-height: 0;
+        height: 100%;
+        padding: 0 40px 22px 0;
+      }
+
+      .history-chart {
+        width: 100%;
+        height: 100%;
+        min-height: 280px;
+        overflow: visible;
+      }
+
+      .grid line {
+        stroke: var(--line);
+        stroke-dasharray: 2 7;
+        stroke-width: 1;
+      }
+
+      .chart-line {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 5.5;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .team-a-line {
+        stroke: var(--team-a);
+      }
+
+      .team-a-dot {
+        fill: var(--team-a);
+        stroke: var(--team-a);
+      }
+
+      .team-b-line {
+        stroke: var(--team-b);
+      }
+
+      .team-b-dot {
+        fill: var(--team-b);
+        stroke: var(--team-b);
+      }
+
+      .chart-dot {
+        stroke: var(--paper);
+        stroke-width: 3;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .chart-scale {
+        position: absolute;
+        top: 16%;
+        right: 0;
+        bottom: 16%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-variant-numeric: tabular-nums;
+        pointer-events: none;
+      }
+
+      .chart-time {
+        position: absolute;
+        right: 36px;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-variant-numeric: tabular-nums;
+        pointer-events: none;
+      }
+
+      @keyframes breathe {
+        50% {
+          transform: scale(0.76);
+          opacity: 0.68;
+        }
+      }
+
+      @keyframes price-change {
+        from {
+          opacity: 0.3;
+          transform: translateY(0.06em);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>
