@@ -53,10 +53,21 @@ const gdpSeries = {
   ppp: pppGdpPerCapita
 };
 
+const medianNetMonthlyIncome = [
+  [1990, 980], [1991, 980], [1992, 1139], [1993, 1222], [1994, 1247],
+  [1995, 1193], [1996, 1125], [1997, 1103], [1998, 1074], [1999, 988],
+  [2000, 926], [2001, 848], [2002, 251], [2003, 312], [2004, 330],
+  [2005, 383], [2006, 435], [2007, 521], [2008, 630], [2009, 641],
+  [2010, 752], [2011, 842], [2012, 776], [2013, 637], [2014, 565],
+  [2015, 608], [2016, 890], [2017, 931], [2018, 676], [2019, 493],
+  [2020, 270], [2021, 283], [2022, 288], [2023, 260], [2024, 382],
+  [2025, 582], [2026, 625]
+] as const;
+
 const chart = {
   width: 760,
   height: 390,
-  left: 62,
+  left: 88,
   right: 20,
   top: 48,
   bottom: 48,
@@ -76,6 +87,20 @@ const linePath = currentDollarGdpPerCapita
 const areaPath = `${linePath} L ${xForYear(2025).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} L ${xForYear(1990).toFixed(1)} ${(chart.top + plotHeight).toFixed(1)} Z`;
 const xTicks = [1990, 2000, 2010, 2020, 2025];
 const yTicks = [0, 4000, 8000, 12000, 16000];
+
+const incomeChart = { ...chart, max: 1400 };
+const xForIncomeYear = (year: number) =>
+  incomeChart.left + ((year - 1990) / (2026 - 1990)) * plotWidth;
+const yForIncome = (value: number) =>
+  incomeChart.top + plotHeight - (value / incomeChart.max) * plotHeight;
+const incomeLinePath = medianNetMonthlyIncome
+  .map(([year, value], index) =>
+    `${index === 0 ? "M" : "L"} ${xForIncomeYear(year).toFixed(1)} ${yForIncome(value).toFixed(1)}`
+  )
+  .join(" ");
+const incomeAreaPath = `${incomeLinePath} L ${xForIncomeYear(2026).toFixed(1)} ${(incomeChart.top + plotHeight).toFixed(1)} L ${xForIncomeYear(1990).toFixed(1)} ${(incomeChart.top + plotHeight).toFixed(1)} Z`;
+const incomeXTicks = [1990, 2000, 2010, 2020, 2026];
+const incomeYTicks = [0, 350, 700, 1050, 1400];
 ---
 
 <!doctype html>
@@ -274,6 +299,112 @@ const yTicks = [0, 4000, 8000, 12000, 16000];
               Current dollars show the exchange-rate value; PPP adjusts for local prices. Neither series is inflation-adjusted over time.
             </p>
             <script type="application/json" data-gdp-data set:html={JSON.stringify(gdpSeries)}></script>
+          </figure>
+
+          <figure class="gdp-chart income-chart" data-income-chart>
+            <div class="chart-heading">
+              <div>
+                <p class="chart-kicker">What workers took home</p>
+                <h3>Median monthly net income</h3>
+              </div>
+            </div>
+            <div class="chart-meta">
+              <p class="chart-unit">1990–2026 · constant 2026 US dollars per month</p>
+              <p class="chart-status"><span aria-hidden="true"></span>After tax · inflation adjusted</p>
+            </div>
+            <div class="chart-stage">
+              <div class="chart-readout" aria-live="polite" aria-atomic="true">
+                <span class="readout-year" data-income-readout-year>2026</span>
+                <strong data-income-readout-value>$625</strong>
+                <span class="readout-note">Median monthly net income</span>
+              </div>
+              <svg
+                viewBox={`0 0 ${incomeChart.width} ${incomeChart.height}`}
+                role="img"
+                tabindex="0"
+                aria-labelledby="income-chart-title income-chart-desc"
+                data-income-chart-svg
+              >
+                <title id="income-chart-title">Interactive chart of median net monthly income in Argentina, 1990 to 2026</title>
+                <desc id="income-chart-desc">Annual median monthly income after tax, expressed in constant 2026 US dollars. Move across or click the plot, or use the year slider and arrow keys, to inspect annual values.</desc>
+                <defs>
+                  <linearGradient id="income-area" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--chart-line)" stop-opacity="0.22"></stop>
+                    <stop offset="100%" stop-color="var(--chart-line)" stop-opacity="0"></stop>
+                  </linearGradient>
+                </defs>
+
+                <g>
+                  {incomeYTicks.map((tick) => (
+                    <g>
+                      <line
+                        class="grid-line"
+                        x1={incomeChart.left}
+                        x2={incomeChart.width - incomeChart.right}
+                        y1={yForIncome(tick)}
+                        y2={yForIncome(tick)}
+                      ></line>
+                      <text
+                        class="axis-label axis-label-y"
+                        x={incomeChart.left - 12}
+                        y={yForIncome(tick) + 4}
+                        text-anchor="end"
+                      >${tick.toLocaleString("en-US")}</text>
+                    </g>
+                  ))}
+                </g>
+
+                {incomeXTicks.map((tick) => (
+                  <text
+                    class="axis-label"
+                    x={xForIncomeYear(tick)}
+                    y={incomeChart.height - 17}
+                    text-anchor={tick === 1990 ? "start" : tick === 2026 ? "end" : "middle"}
+                  >{tick}</text>
+                ))}
+
+                <path class="chart-area" d={incomeAreaPath}></path>
+                <path class="chart-line" d={incomeLinePath}></path>
+                <g class="chart-points">
+                  {medianNetMonthlyIncome.map(([year, value]) => (
+                    <circle cx={xForIncomeYear(year)} cy={yForIncome(value)} r="2.2"></circle>
+                  ))}
+                </g>
+                <line
+                  class="chart-crosshair"
+                  x1={xForIncomeYear(2026)}
+                  x2={xForIncomeYear(2026)}
+                  y1={incomeChart.top}
+                  y2={incomeChart.top + plotHeight}
+                  data-income-chart-crosshair
+                ></line>
+                <circle
+                  class="chart-selection"
+                  cx={xForIncomeYear(2026)}
+                  cy={yForIncome(625)}
+                  r="5"
+                  data-income-chart-selection
+                ></circle>
+                <rect
+                  class="chart-hit-area"
+                  x={incomeChart.left}
+                  y={incomeChart.top}
+                  width={plotWidth}
+                  height={plotHeight}
+                  data-income-chart-hit-area
+                ></rect>
+              </svg>
+            </div>
+            <label class="year-scrubber">
+              <span>Year</span>
+              <input type="range" min="1990" max="2026" value="2026" step="1" data-income-year-scrubber />
+              <output data-income-year-output>2026</output>
+            </label>
+            <figcaption class="chart-caption">
+              <span>Monthly median income after tax, adjusted so every year is comparable in 2026 US dollars.</span>
+            </figcaption>
+            <p class="chart-source">Data: supplied historical income series.</p>
+            <script type="application/json" data-income-data set:html={JSON.stringify(medianNetMonthlyIncome)}></script>
           </figure>
         </section>
 
@@ -772,7 +903,7 @@ const yTicks = [0, 4000, 8000, 12000, 16000];
   const dimensions = {
     width: 760,
     height: 390,
-    left: 62,
+    left: 88,
     right: 20,
     top: 48,
     bottom: 48
@@ -955,6 +1086,91 @@ const yTicks = [0, 4000, 8000, 12000, 16000];
 
     renderMetric();
   });
+
+  const incomeChart = document.querySelector<HTMLElement>("[data-income-chart]");
+  if (incomeChart) {
+    const dataNode = incomeChart.querySelector<HTMLScriptElement>("[data-income-data]");
+    const svg = incomeChart.querySelector<SVGSVGElement>("[data-income-chart-svg]");
+    const hitArea = incomeChart.querySelector<SVGRectElement>("[data-income-chart-hit-area]");
+    const crosshair = incomeChart.querySelector<SVGLineElement>("[data-income-chart-crosshair]");
+    const selection = incomeChart.querySelector<SVGCircleElement>("[data-income-chart-selection]");
+    const scrubber = incomeChart.querySelector<HTMLInputElement>("[data-income-year-scrubber]");
+    const yearOutput = incomeChart.querySelector<HTMLOutputElement>("[data-income-year-output]");
+    const readoutYear = incomeChart.querySelector<HTMLElement>("[data-income-readout-year]");
+    const readoutValue = incomeChart.querySelector<HTMLElement>("[data-income-readout-value]");
+
+    if (
+      dataNode && svg && hitArea && crosshair && selection && scrubber &&
+      yearOutput && readoutYear && readoutValue
+    ) {
+      const values = JSON.parse(dataNode.textContent || "[]") as [number, number][];
+      const startYear = 1990;
+      const endYear = 2026;
+      const max = 1400;
+      let pinnedYear = endYear;
+
+      const incomeXForYear = (year: number) =>
+        dimensions.left + ((year - startYear) / (endYear - startYear)) * plotWidth;
+      const incomeYForValue = (value: number) =>
+        dimensions.top + plotHeight - (value / max) * plotHeight;
+
+      const renderIncomeSelection = (year: number) => {
+        const point = values.find(([pointYear]) => pointYear === year);
+        if (!point) return;
+
+        const [, value] = point;
+        const x = incomeXForYear(year);
+        crosshair.setAttribute("x1", String(x));
+        crosshair.setAttribute("x2", String(x));
+        selection.setAttribute("cx", String(x));
+        selection.setAttribute("cy", String(incomeYForValue(value)));
+        scrubber.value = String(year);
+        yearOutput.value = String(year);
+        readoutYear.textContent = String(year);
+        readoutValue.textContent = formatValue(value);
+        svg.setAttribute(
+          "aria-label",
+          `${year}: ${formatValue(value)} per month, median net income in constant 2026 US dollars.`
+        );
+      };
+
+      const incomeYearFromPointer = (event: PointerEvent) => {
+        const bounds = svg.getBoundingClientRect();
+        const svgX = ((event.clientX - bounds.left) / bounds.width) * dimensions.width;
+        return Math.min(endYear, Math.max(startYear, Math.round(
+          startYear + ((svgX - dimensions.left) / plotWidth) * (endYear - startYear)
+        )));
+      };
+
+      hitArea.addEventListener("pointermove", (event) =>
+        renderIncomeSelection(incomeYearFromPointer(event))
+      );
+      hitArea.addEventListener("pointerleave", () => renderIncomeSelection(pinnedYear));
+      hitArea.addEventListener("click", (event) => {
+        pinnedYear = incomeYearFromPointer(event);
+        renderIncomeSelection(pinnedYear);
+      });
+
+      scrubber.addEventListener("input", () => {
+        pinnedYear = Number(scrubber.value);
+        renderIncomeSelection(pinnedYear);
+      });
+
+      svg.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        if (event.key === "Home") pinnedYear = startYear;
+        else if (event.key === "End") pinnedYear = endYear;
+        else pinnedYear = Math.min(
+          endYear,
+          Math.max(startYear, pinnedYear + (event.key === "ArrowRight" ? 1 : -1))
+        );
+        renderIncomeSelection(pinnedYear);
+      });
+
+      renderIncomeSelection(pinnedYear);
+    }
+  }
 </script>
 
 <style>
@@ -1402,6 +1618,10 @@ const yTicks = [0, 4000, 8000, 12000, 16000];
     fill: url("#gdp-area");
   }
 
+  .income-chart .chart-area {
+    fill: url("#income-area");
+  }
+
   .chart-line {
     fill: none;
     stroke: var(--chart-line);
@@ -1613,6 +1833,10 @@ const yTicks = [0, 4000, 8000, 12000, 16000];
       width: 100%;
     }
 
+    .chart-toggle button {
+      min-height: 44px;
+    }
+
     .chart-meta {
       align-items: flex-start;
       flex-direction: column;
@@ -1620,31 +1844,48 @@ const yTicks = [0, 4000, 8000, 12000, 16000];
     }
 
     .chart-readout {
-      top: 3rem;
-      left: 3.35rem;
-      min-width: 7.8rem;
-      padding: 0.42rem 0.5rem 0.48rem;
+      position: relative;
+      top: auto;
+      left: auto;
+      grid-template-columns: auto auto minmax(0, 1fr);
+      align-items: baseline;
+      gap: 0.35rem 0.55rem;
+      width: 100%;
+      min-width: 0;
+      margin: 0.65rem 0 0.35rem;
+      padding: 0 0 0.55rem;
+      border: 0;
+      border-bottom: 1px solid var(--rule);
+      background: transparent;
+      box-shadow: none;
     }
 
     .chart-readout strong {
-      font-size: 0.92rem;
+      margin-top: 0;
+      font-size: 1rem;
     }
 
     .readout-note {
-      max-width: 18ch;
-      font-size: 0.56rem;
+      max-width: none;
+      margin-top: 0;
+      font-size: 0.62rem;
+      text-align: right;
     }
 
     .warning-label {
-      font-size: 9px;
+      font-size: 26px;
     }
 
     .axis-label {
-      font-size: 13px;
+      font-size: 28px;
     }
 
     .year-scrubber {
-      margin-top: 0.15rem;
+      margin-top: 0.1rem;
+    }
+
+    .year-scrubber input {
+      min-height: 44px;
     }
 
     .chart-caption {
