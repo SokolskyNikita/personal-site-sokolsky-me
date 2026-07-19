@@ -218,9 +218,23 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return 184 - ((clamped - chartMin) / (chartMax - chartMin)) * 148;
       }
 
+      // Halftime break (first-half whistle → second-half kickoff, incl. the
+      // halftime show). Collapsed on the x-axis so the trend reads as pure
+      // match time.
+      const HALFTIME_GAP_START = Date.parse("2026-07-19T19:55:00Z");
+      const HALFTIME_GAP_END = Date.parse("2026-07-19T20:23:00Z");
+
+      function chartTime(timestamp: number) {
+        if (timestamp <= HALFTIME_GAP_START) return timestamp;
+        if (timestamp >= HALFTIME_GAP_END) {
+          return timestamp - (HALFTIME_GAP_END - HALFTIME_GAP_START);
+        }
+        return HALFTIME_GAP_START;
+      }
+
       function chartX(timestamp: number, endAt: number) {
-        const span = Math.max(60_000, endAt - MATCH_STARTS_AT);
-        return ((timestamp - MATCH_STARTS_AT) / span) * CHART_WIDTH;
+        const span = Math.max(60_000, chartTime(endAt) - MATCH_STARTS_AT);
+        return ((chartTime(timestamp) - MATCH_STARTS_AT) / span) * CHART_WIDTH;
       }
 
       function chartPath(points: HistoryPoint[], key: "spain" | "argentina") {
