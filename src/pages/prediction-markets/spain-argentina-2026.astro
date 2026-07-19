@@ -245,18 +245,22 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         return 184 - ((clamped - chartMin) / (chartMax - chartMin)) * 148;
       }
 
-      // Halftime break (first-half whistle → second-half kickoff, incl. the
-      // halftime show). Collapsed on the x-axis so the trend reads as pure
-      // match time.
-      const HALFTIME_GAP_START = Date.parse("2026-07-19T19:55:00Z");
-      const HALFTIME_GAP_END = Date.parse("2026-07-19T20:23:00Z");
+      // Collapse every observed non-playing interval so horizontal distance
+      // represents match action rather than wall-clock time.
+      const CHART_BREAKS = [
+        [Date.parse("2026-07-19T19:55:00Z"), Date.parse("2026-07-19T20:23:00Z")],
+        [Date.parse("2026-07-19T21:15:00Z"), Date.parse("2026-07-19T21:23:00Z")],
+        [Date.parse("2026-07-19T21:41:00Z"), Date.parse("2026-07-19T21:43:00Z")],
+      ] as const;
 
       function chartTime(timestamp: number) {
-        if (timestamp <= HALFTIME_GAP_START) return timestamp;
-        if (timestamp >= HALFTIME_GAP_END) {
-          return timestamp - (HALFTIME_GAP_END - HALFTIME_GAP_START);
-        }
-        return HALFTIME_GAP_START;
+        return CHART_BREAKS.reduce((adjusted, [start, end]) => {
+          const elapsedBreak = Math.min(
+            Math.max(timestamp - start, 0),
+            end - start,
+          );
+          return adjusted - elapsedBreak;
+        }, timestamp);
       }
 
       function chartX(timestamp: number, endAt: number) {
