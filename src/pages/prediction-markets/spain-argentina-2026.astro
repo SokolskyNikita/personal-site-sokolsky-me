@@ -302,6 +302,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       function updateMatchPhase() {
         const phase = byId("match-phase");
         const clock = byId("match-clock");
+        const clockWrap = phase?.closest(".clock");
         if (!phase || !clock) return;
         const remaining = MATCH_STARTS_AT - Date.now();
         if (remaining > 0) {
@@ -310,13 +311,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           const seconds = totalSeconds % 60;
           phase.textContent = "Starts in";
           clock.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+          clockWrap?.classList.remove("is-live");
         } else if (!isPastMatchWindow()) {
           const elapsedMinutes = Math.floor((Date.now() - MATCH_STARTS_AT) / 60_000);
           phase.textContent = "Live";
           clock.textContent = `${elapsedMinutes}'`;
+          clockWrap?.classList.add("is-live");
         } else {
           phase.textContent = "Final";
           clock.textContent = "Full time";
+          clockWrap?.classList.remove("is-live");
         }
       }
 
@@ -494,6 +498,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         color: var(--ink);
         font-family: "Archivo", sans-serif;
         overflow: hidden;
+        overscroll-behavior: none;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
       }
 
       button {
@@ -504,7 +511,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         height: 100dvh;
         display: grid;
         grid-template-rows: auto auto minmax(0, 1fr);
-        padding: 18px 36px 22px;
+        padding:
+          max(14px, env(safe-area-inset-top))
+          max(28px, env(safe-area-inset-right))
+          max(16px, env(safe-area-inset-bottom))
+          max(28px, env(safe-area-inset-left));
         background:
           linear-gradient(90deg, color-mix(in oklch, var(--spain-soft) 28%, transparent), transparent 18%),
           linear-gradient(270deg, color-mix(in oklch, var(--argentina-soft) 32%, transparent), transparent 18%),
@@ -516,6 +527,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
+        min-height: 44px;
       }
 
       .kicker,
@@ -593,14 +605,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         display: grid;
         grid-template-columns: 1fr auto 1fr;
         align-items: end;
-        gap: 28px;
-        padding: 6px 0 4px;
+        gap: clamp(16px, 2.5vw, 32px);
+        padding: 4px 0 2px;
       }
 
       .team {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
         min-width: 0;
       }
 
@@ -612,14 +624,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       .team-meta {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
       }
 
       .flag {
-        width: 34px;
+        width: 32px;
         aspect-ratio: 1.48;
         flex: none;
-        border-radius: 4px;
+        border-radius: 3px;
         box-shadow: 0 0 0 1px oklch(30% 0.02 60 / 14%);
       }
 
@@ -633,21 +645,24 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       .team strong {
         font-family: "Newsreader", serif;
-        font-size: clamp(5.4rem, 9.5vw, 8.5rem);
+        font-size: clamp(6.48rem, 11.4vw, 10.2rem);
+        font-optical-sizing: auto;
         font-weight: 650;
-        letter-spacing: -0.09em;
-        line-height: 0.8;
+        letter-spacing: -0.085em;
+        line-height: 0.78;
         font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
       }
 
       .team strong::after {
-        margin-left: 0.06em;
+        margin-left: 0.04em;
         font-family: "Archivo", sans-serif;
-        font-size: 0.2em;
-        font-weight: 600;
-        letter-spacing: 0;
-        vertical-align: top;
+        font-size: 0.18em;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        vertical-align: 0.72em;
         content: "%";
+        opacity: 0.88;
       }
 
       .team.spain strong {
@@ -669,26 +684,33 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       .clock {
         display: grid;
         justify-items: center;
-        gap: 2px;
-        padding-bottom: 0.55rem;
+        gap: 4px;
+        padding-bottom: 0.7rem;
         text-align: center;
+      }
+
+      .clock.is-live p {
+        color: var(--live);
       }
 
       .clock time {
         color: var(--ink);
         font-family: "Newsreader", serif;
-        font-size: 1.5rem;
+        font-optical-sizing: auto;
+        font-size: clamp(1.35rem, 2vw, 1.7rem);
         font-weight: 650;
         font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
+        letter-spacing: -0.02em;
       }
 
       .chart-panel {
         min-height: 0;
         display: grid;
         grid-template-rows: auto minmax(0, 1fr);
-        gap: 8px;
+        gap: 10px;
         border-top: 1px solid var(--line);
-        padding-top: 12px;
+        padding-top: 14px;
       }
 
       .chart-meta {
@@ -770,6 +792,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       }
 
       .chart-dot {
+        stroke: var(--paper);
+        stroke-width: 3;
         vector-effect: non-scaling-stroke;
       }
 
