@@ -678,13 +678,17 @@ async function loadPolymarket(): Promise<ProviderOdds> {
   const markets = asRecords(event.markets);
   const spain = findPolymarketMarket(markets, "spain");
   const argentina = findPolymarketMarket(markets, "argentina");
+  const [spainPrice, argentinaPrice] = await Promise.all([
+    loadPolymarketLivePrice(spain),
+    loadPolymarketLivePrice(argentina),
+  ]);
 
   return {
     id: "polymarket",
     name: "Polymarket",
     href: "https://polymarket.com/event/world-cup-winner",
-    spain: polymarketPrice(spain),
-    argentina: polymarketPrice(argentina),
+    spain: spainPrice,
+    argentina: argentinaPrice,
     volume: sumNumbers([
       spain.volumeNum ?? spain.volume,
       argentina.volumeNum ?? argentina.volume,
@@ -735,23 +739,24 @@ function findPolymarketMarket(
   return market;
 }
 
-function polymarketPrice(market: Record<string, unknown>): number {
+async function loadPolymarketLivePrice(
+  market: Record<string, unknown>,
+): Promise<number> {
   const outcomes = parseStringArray(market.outcomes);
-  const prices = parseNumberArray(market.outcomePrices);
   const yesIndex = outcomes.findIndex((outcome) => outcome.toLowerCase() === "yes");
-  const outcomePrice = prices[yesIndex >= 0 ? yesIndex : 0];
-  const bid = probabilityValue(market.bestBid);
-  const ask = probabilityValue(market.bestAsk);
-  const midpoint =
-    bid !== null && ask !== null ? clampProbability((bid + ask) / 2) : null;
-  const price =
-    probabilityValue(outcomePrice) ??
-    midpoint ??
-    probabilityValue(market.lastTradePrice);
-  if (price === null) {
-    throw new Error("Polymarket market price missing");
-  }
-  return clampProbability(price);
+  const tokenIds = parseStringArray(market.clobTokenIds);
+  const tokenId = tokenIds[yesIndex >= 0 ? yesIndex : 0];
+  if (!tokenId) throw new Error("Polymarket YES token missing");
+
+  // Gamma's outcomePrices can lag several minutes during high-volume play.
+  // The CLOB midpoint is derived from the current executable order book.
+  const quote = await fetchJson<Record<string, unknown>>(
+    `https://clob.polymarket.com/midpoint?token_id=${encodeURIComponent(tokenId)}`,
+    { attempts: 1, timeoutMs: OPTIONAL_REQUEST_TIMEOUT_MS },
+  );
+  const midpoint = probabilityValue(quote.mid);
+  if (midpoint === null) throw new Error("Polymarket live midpoint missing");
+  return clampProbability(midpoint);
 }
 
 async function loadManifold(): Promise<ProviderOdds> {
@@ -958,21 +963,6 @@ function parseStringArray(value: unknown): string[] {
   if (typeof value !== "string") return [];
   try {
     return parseStringArray(JSON.parse(value));
-  } catch {
-    return [];
-  }
-}
-
-function parseNumberArray(value: unknown): number[] {
-  if (Array.isArray(value)) {
-    return value.flatMap((item) => {
-      const parsed = numberValue(item);
-      return parsed === null ? [] : [parsed];
-    });
-  }
-  if (typeof value !== "string") return [];
-  try {
-    return parseNumberArray(JSON.parse(value));
   } catch {
     return [];
   }

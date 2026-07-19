@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const json = (body: unknown) => Response.json(body);
+const clobMidpoint = (url: string, spain: number) =>
+  json({
+    mid: String(
+      url.includes("spainYes") ? spain : Number((1 - spain).toFixed(6)),
+    ),
+  });
 
 const espnMatchClock = () =>
   json({
@@ -73,6 +79,10 @@ describe("Spain vs. Argentina prediction market feed", () => {
         });
       }
 
+      if (url.includes("clob.polymarket.com")) {
+        return clobMidpoint(url, 0.6);
+      }
+
       if (url.includes("gamma-api.polymarket.com")) {
         return json([
           {
@@ -80,13 +90,15 @@ describe("Spain vs. Argentina prediction market feed", () => {
               {
                 groupItemTitle: "Spain",
                 outcomes: '["Yes","No"]',
-                outcomePrices: '["0.60","0.40"]',
+                outcomePrices: '["0.12","0.88"]',
+                clobTokenIds: '["spainYes","spainNo"]',
                 volumeNum: 100,
               },
               {
                 groupItemTitle: "Argentina",
                 outcomes: '["Yes","No"]',
-                outcomePrices: '["0.40","0.60"]',
+                outcomePrices: '["0.88","0.12"]',
+                clobTokenIds: '["argentinaYes","argentinaNo"]',
                 volumeNum: 80,
               },
             ],
@@ -207,15 +219,21 @@ describe("Spain vs. Argentina prediction market feed", () => {
                 groupItemTitle: "Spain",
                 outcomes: '["Yes","No"]',
                 outcomePrices: '["0.59","0.41"]',
+                clobTokenIds: '["spainYes","spainNo"]',
               },
               {
                 groupItemTitle: "Argentina",
                 outcomes: '["Yes","No"]',
                 outcomePrices: '["0.41","0.59"]',
+                clobTokenIds: '["argentinaYes","argentinaNo"]',
               },
             ],
           },
         ]);
+      }
+
+      if (url.includes("clob.polymarket.com")) {
+        return clobMidpoint(url, 0.59);
       }
 
       if (url.endsWith("/prob")) {
@@ -306,14 +324,19 @@ describe("Spain vs. Argentina prediction market feed", () => {
               groupItemTitle: "Spain",
               outcomes: ["Yes", "No"],
               outcomePrices: [0.59, 0.41],
+              clobTokenIds: ["spainYes", "spainNo"],
             },
             {
               groupItemTitle: "Argentina",
               outcomes: ["Yes", "No"],
               outcomePrices: [0.41, 0.59],
+              clobTokenIds: ["argentinaYes", "argentinaNo"],
             },
           ],
         });
+      }
+      if (url.includes("clob.polymarket.com")) {
+        return clobMidpoint(url, 0.59);
       }
       if (url.endsWith("/prob")) {
         return json({
