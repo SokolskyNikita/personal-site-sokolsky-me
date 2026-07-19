@@ -118,19 +118,20 @@ const incomeAreaPath = `${incomeLinePath} L ${xForIncomeYear(2026).toFixed(1)} $
 const incomeXTicks = [1990, 2000, 2010, 2020, 2026];
 const incomeYTicks = [0, 350, 700, 1050, 1400];
 
-const propertyChart = { ...chart, max: 5000 };
+const propertyChart = { ...chart, min: 1250, max: 5000 };
 const propertyPlotWidth = plotWidth;
 const xForPropertyYear = (year: number) =>
   propertyChart.left + ((year - 1990) / (2026 - 1990)) * propertyPlotWidth;
 const yForBuyPrice = (value: number) =>
-  propertyChart.top + plotHeight - (value / propertyChart.max) * plotHeight;
+  propertyChart.top + plotHeight -
+  ((value - propertyChart.min) / (propertyChart.max - propertyChart.min)) * plotHeight;
 const propertyBuyPath = recoletaPropertyPrices
   .map(([year, buy], index) =>
     `${index === 0 ? "M" : "L"} ${xForPropertyYear(year).toFixed(1)} ${yForBuyPrice(buy).toFixed(1)}`
   )
   .join(" ");
 const propertyXTicks = [1990, 2000, 2010, 2020, 2026];
-const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
+const propertyBuyTicks = [1250, 2500, 3750, 5000];
 ---
 
 <!doctype html>
@@ -884,11 +885,17 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
             <div class="chart-heading">
               <div>
                 <p class="chart-kicker">Recoleta housing</p>
-                <h3>Buy and rent prices per square meter</h3>
+                <h3 data-property-title>Buy and rent prices per square meter</h3>
               </div>
-              <div class="chart-toggle" aria-label="Property price type">
-                <button type="button" data-property-metric="buy" aria-pressed="true">Buy</button>
-                <button type="button" data-property-metric="rent" aria-pressed="false">Rent</button>
+              <div class="property-controls">
+                <div class="chart-toggle" aria-label="Property price type">
+                  <button type="button" data-property-metric="buy" aria-pressed="true">Buy</button>
+                  <button type="button" data-property-metric="rent" aria-pressed="false">Rent</button>
+                </div>
+                <div class="chart-toggle property-basis-toggle" aria-label="Property price comparison">
+                  <button type="button" data-property-basis="usd" aria-pressed="true">2026 USD</button>
+                  <button type="button" data-property-basis="relative" aria-pressed="false">Relative to income</button>
+                </div>
               </div>
             </div>
             <div class="chart-meta">
@@ -977,10 +984,17 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
               <output data-property-year-output>2026</output>
             </label>
             <figcaption class="chart-caption">
-              <span>Switch between purchase prices per m² and monthly rent per m². Both series are inflation-adjusted to 2026 dollars.</span>
+              <span data-property-caption>Switch between purchase prices per m² and monthly rent per m². Both series are inflation-adjusted to 2026 dollars.</span>
             </figcaption>
-            <p class="chart-source">Data: supplied historical Recoleta property-price series.</p>
-            <script type="application/json" data-property-data set:html={JSON.stringify(recoletaPropertyPrices)}></script>
+            <p class="chart-source">Data: supplied historical Recoleta property-price and median-income series.</p>
+            <script
+              type="application/json"
+              data-property-data
+              set:html={JSON.stringify({
+                prices: recoletaPropertyPrices,
+                income: medianNetMonthlyIncome
+              })}
+            ></script>
           </figure>
 
           <p>
@@ -1323,42 +1337,29 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
     const readoutValue = propertyChart.querySelector<HTMLElement>("[data-property-readout-value]");
     const readoutNote = propertyChart.querySelector<HTMLElement>("[data-property-readout-note]");
     const unit = propertyChart.querySelector<HTMLElement>("[data-property-unit]");
-    const buttons = propertyChart.querySelectorAll<HTMLButtonElement>("[data-property-metric]");
+    const title = propertyChart.querySelector<HTMLElement>("[data-property-title]");
+    const caption = propertyChart.querySelector<HTMLElement>("[data-property-caption]");
+    const metricButtons =
+      propertyChart.querySelectorAll<HTMLButtonElement>("[data-property-metric]");
+    const basisButtons =
+      propertyChart.querySelectorAll<HTMLButtonElement>("[data-property-basis]");
 
     if (
       dataNode && svg && hitArea && line && points && crosshair && selection &&
       yAxis && scrubber && yearOutput && readoutYear && readoutValue &&
-      readoutNote && unit
+      readoutNote && unit && title && caption
     ) {
-      const values = JSON.parse(dataNode.textContent || "[]") as [number, number, number][];
+      const data = JSON.parse(dataNode.textContent || "{}") as {
+        prices: [number, number, number][];
+        income: [number, number][];
+      };
+      const values = data.prices;
+      const incomeByYear = new Map(data.income);
       const startYear = 1990;
       const endYear = 2026;
       const left = 88;
       const right = 20;
       const propertyPlotWidth = dimensions.width - left - right;
-      const config = {
-        buy: {
-          index: 1,
-          max: 5000,
-          ticks: [0, 1250, 2500, 3750, 5000],
-          unit: "1990–2026 · buy price in constant 2026 USD/m²",
-          note: "Buy · per m²"
-        },
-        rent: {
-          index: 2,
-          max: 20,
-          ticks: [0, 5, 10, 15, 20],
-          unit: "1990–2026 · monthly rent in constant 2026 USD/m²",
-          note: "Rent · per m²/month"
-        }
-      } as const;
-      let metric: "buy" | "rent" = "buy";
-      let pinnedYear = endYear;
-
-      const propertyXForYear = (year: number) =>
-        left + ((year - startYear) / (endYear - startYear)) * propertyPlotWidth;
-      const propertyYForValue = (value: number, max: number) =>
-        dimensions.top + plotHeight - (value / max) * plotHeight;
       const formatRent = (value: number) =>
         new Intl.NumberFormat("en-US", {
           style: "currency",
@@ -1366,74 +1367,160 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         }).format(value);
-      const formatPropertyValue = (value: number) =>
-        metric === "buy" ? formatValue(value) : formatRent(value);
+      const formatPercent = (value: number) =>
+        `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value)}%`;
+      const formatYears = (value: number) =>
+        `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value)} years`;
+      const config = {
+        "usd-buy": {
+          min: 1250,
+          max: 5000,
+          ticks: [1250, 2500, 3750, 5000],
+          getValue: (buy: number, _rent: number, _income: number) => buy,
+          formatValue,
+          formatTick: (value: number) => `$${value.toLocaleString("en-US")}`,
+          title: "Buy and rent prices per square meter",
+          unit: "1990–2026 · buy price in constant 2026 USD/m²",
+          note: "Buy · per m²",
+          caption: "Purchase prices per m², inflation-adjusted to 2026 dollars.",
+          ariaUnit: "purchase price per square meter in constant 2026 US dollars"
+        },
+        "usd-rent": {
+          min: 5,
+          max: 20,
+          ticks: [5, 10, 15, 20],
+          getValue: (_buy: number, rent: number, _income: number) => rent,
+          formatValue: formatRent,
+          formatTick: (value: number) => `$${value}`,
+          title: "Buy and rent prices per square meter",
+          unit: "1990–2026 · monthly rent in constant 2026 USD/m²",
+          note: "Rent · per m²/month",
+          caption: "Monthly rent per m², inflation-adjusted to 2026 dollars.",
+          ariaUnit: "monthly rent per square meter in constant 2026 US dollars"
+        },
+        "relative-buy": {
+          min: 0,
+          max: 60,
+          ticks: [0, 20, 40, 60],
+          getValue: (buy: number, _rent: number, income: number) =>
+            (buy * 50) / (income * 12),
+          formatValue: formatYears,
+          formatTick: (value: number) => `${value}y`,
+          title: "Years of median income needed to buy 50 m²",
+          unit: "1990–2026 · 50 m² purchase ÷ annual median net income",
+          note: "50 m² home · years of income",
+          caption: "Years of median net income needed to buy a 50 m² Recoleta property, assuming every dollar of income went toward the purchase.",
+          ariaUnit: "years of median net income needed to buy a 50 square meter property"
+        },
+        "relative-rent": {
+          min: 50,
+          max: 200,
+          ticks: [50, 100, 150, 200],
+          getValue: (_buy: number, rent: number, income: number) =>
+            (rent * 50 * 100) / income,
+          formatValue: formatPercent,
+          formatTick: (value: number) => `${value}%`,
+          title: "Share of median income needed to rent 50 m²",
+          unit: "1990–2026 · 50 m² monthly rent ÷ median monthly net income",
+          note: "50 m² rent · share of income",
+          caption: "Share of median monthly net income consumed by one month of renting 50 m² in Recoleta. 100% means the entire monthly income.",
+          ariaUnit: "percent of median monthly net income needed to rent a 50 square meter property"
+        }
+      } as const;
+      let metric: "buy" | "rent" = "buy";
+      let basis: "usd" | "relative" = "usd";
+      let pinnedYear = endYear;
+
+      const propertyXForYear = (year: number) =>
+        left + ((year - startYear) / (endYear - startYear)) * propertyPlotWidth;
+      const propertyYForValue = (value: number, min: number, max: number) =>
+        dimensions.top + plotHeight - ((value - min) / (max - min)) * plotHeight;
+      type PropertyMode = keyof typeof config;
+      const getConfig = () => config[`${basis}-${metric}` as PropertyMode];
+      const getPropertyValue = (
+        point: [number, number, number],
+        modeConfig: (typeof config)[PropertyMode]
+      ) => {
+        const [year, buy, rent] = point;
+        const income = incomeByYear.get(year);
+        return income === undefined ? null : modeConfig.getValue(buy, rent, income);
+      };
 
       const renderPropertySelection = (year: number) => {
         const point = values.find(([pointYear]) => pointYear === year);
         if (!point) return;
 
-        const value = point[config[metric].index];
+        const modeConfig = getConfig();
+        const value = getPropertyValue(point, modeConfig);
+        if (value === null) return;
         const x = propertyXForYear(year);
         crosshair.setAttribute("x1", String(x));
         crosshair.setAttribute("x2", String(x));
         selection.setAttribute("cx", String(x));
-        selection.setAttribute("cy", String(propertyYForValue(value, config[metric].max)));
+        selection.setAttribute(
+          "cy",
+          String(propertyYForValue(value, modeConfig.min, modeConfig.max))
+        );
         scrubber.value = String(year);
         yearOutput.value = String(year);
         readoutYear.textContent = String(year);
-        readoutValue.textContent = formatPropertyValue(value);
-        readoutNote.textContent = config[metric].note;
+        readoutValue.textContent = modeConfig.formatValue(value);
+        readoutNote.textContent = modeConfig.note;
         svg.setAttribute(
           "aria-label",
-          `${year}: ${formatPropertyValue(value)} ${
-            metric === "buy" ? "purchase price per square meter" : "monthly rent per square meter"
-          }, in constant 2026 US dollars.`
+          `${year}: ${modeConfig.formatValue(value)}, ${modeConfig.ariaUnit}.`
         );
       };
 
       const renderPropertyMetric = () => {
-        const { index, max, ticks } = config[metric];
-        const metricValues = values.map(
-          ([year, buy, rent]) => [year, index === 1 ? buy : rent] as [number, number]
-        );
+        const modeConfig = getConfig();
+        const { min, max, ticks } = modeConfig;
+        const metricValues = values.flatMap((point) => {
+          const value = getPropertyValue(point, modeConfig);
+          return value === null ? [] : [[point[0], value] as [number, number]];
+        });
         const path = metricValues.map(([year, value], pointIndex) =>
-          `${pointIndex === 0 ? "M" : "L"} ${propertyXForYear(year).toFixed(1)} ${propertyYForValue(value, max).toFixed(1)}`
+          `${pointIndex === 0 ? "M" : "L"} ${propertyXForYear(year).toFixed(1)} ${propertyYForValue(value, min, max).toFixed(1)}`
         ).join(" ");
         line.setAttribute("d", path);
 
         points.replaceChildren(...metricValues.map(([year, value]) => {
           const point = document.createElementNS(svgNamespace, "circle");
           point.setAttribute("cx", String(propertyXForYear(year)));
-          point.setAttribute("cy", String(propertyYForValue(value, max)));
+          point.setAttribute("cy", String(propertyYForValue(value, min, max)));
           point.setAttribute("r", "2.2");
           return point;
         }));
 
         Array.from(yAxis.children).forEach((tickNode, index) => {
           const value = ticks[index];
-          const y = propertyYForValue(value, max);
+          const y = propertyYForValue(value, min, max);
           tickNode.querySelector("line")?.setAttribute("y1", String(y));
           tickNode.querySelector("line")?.setAttribute("y2", String(y));
           const label = tickNode.querySelector("text");
           if (label) {
             label.setAttribute("y", String(y + 4));
-            label.textContent = value === 0
-              ? "$0"
-              : metric === "buy"
-                ? `$${value.toLocaleString("en-US")}`
-                : `$${value}`;
+            label.textContent = modeConfig.formatTick(value);
           }
         });
 
-        buttons.forEach((button) =>
+        metricButtons.forEach((button) =>
           button.setAttribute(
             "aria-pressed",
             String(button.dataset.propertyMetric === metric)
           )
         );
-        unit.textContent = config[metric].unit;
+        basisButtons.forEach((button) =>
+          button.setAttribute(
+            "aria-pressed",
+            String(button.dataset.propertyBasis === basis)
+          )
+        );
+        title.textContent = modeConfig.title;
+        unit.textContent = modeConfig.unit;
+        caption.textContent = modeConfig.caption;
         propertyChart.dataset.activeMetric = metric;
+        propertyChart.dataset.activeBasis = basis;
         renderPropertySelection(pinnedYear);
       };
 
@@ -1445,9 +1532,15 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
         )));
       };
 
-      buttons.forEach((button) => {
+      metricButtons.forEach((button) => {
         button.addEventListener("click", () => {
           metric = button.dataset.propertyMetric === "rent" ? "rent" : "buy";
+          renderPropertyMetric();
+        });
+      });
+      basisButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          basis = button.dataset.propertyBasis === "relative" ? "relative" : "usd";
           renderPropertyMetric();
         });
       });
@@ -1818,6 +1911,16 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
     background: var(--bg);
   }
 
+  .property-controls {
+    flex: 0 0 auto;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .property-controls .chart-toggle {
+    width: 100%;
+  }
+
   .chart-toggle button {
     min-height: 2.2rem;
     padding: 0.35rem 0.7rem;
@@ -1866,6 +1969,12 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
     background: color-mix(in srgb, var(--paper) 94%, transparent);
     box-shadow: 0 0.35rem 1.2rem color-mix(in srgb, var(--text) 8%, transparent);
     pointer-events: none;
+  }
+
+  .income-chart .chart-readout,
+  .property-chart .chart-readout {
+    top: auto;
+    bottom: 3.25rem;
   }
 
   .readout-year {
@@ -2189,6 +2298,7 @@ const propertyBuyTicks = [0, 1250, 2500, 3750, 5000];
     .chart-readout {
       position: relative;
       top: auto;
+      bottom: auto;
       left: auto;
       grid-template-columns: auto auto minmax(0, 1fr);
       align-items: baseline;
