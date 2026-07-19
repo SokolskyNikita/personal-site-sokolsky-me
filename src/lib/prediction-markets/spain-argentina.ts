@@ -1,6 +1,7 @@
-// Static Kalshi candles for the first half (kickoff → 45'). Live/KV history
-// merges on top so the chart stays filled if upstream candlesticks flake out.
-import firstHalfHistorySeed from "../../data/spain-argentina-kalshi-history-seed.json";
+// Static Kalshi candles snapshotted from kickoff to the latest refresh.
+// Live/KV history merges on top so the chart stays filled if upstream
+// candlesticks flake out.
+import staticHistorySeed from "../../data/spain-argentina-kalshi-history-seed.json";
 
 export const SPAIN_ARGENTINA_ODDS_PATH =
   "/api/prediction-markets/spain-argentina-2026";
@@ -16,7 +17,6 @@ const STALE_HISTORY_MS = 10 * 60 * 1_000;
 const REAL_MONEY_WEIGHT = 5;
 const PLAY_MONEY_WEIGHT = 1;
 const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
-const FIRST_HALF_ENDS_AT_MS = MATCH_STARTS_AT_MS + 45 * 60 * 1_000;
 const MATCH_ENDS_AT_MS = MATCH_STARTS_AT_MS + 4 * 60 * 60 * 1_000;
 const HALF_LENGTH_MS = 45 * 60 * 1_000;
 const HALFTIME_LENGTH_MS = 15 * 60 * 1_000;
@@ -162,9 +162,7 @@ async function loadOdds(
       : [];
   const seed =
     Date.now() >= MATCH_STARTS_AT_MS
-      ? (firstHalfHistorySeed as SpainArgentinaOddsResponse["history"]).filter(
-          (point) => Date.parse(point.at) <= FIRST_HALF_ENDS_AT_MS,
-        )
+      ? (staticHistorySeed as SpainArgentinaOddsResponse["history"])
       : [];
 
   const providers: ProviderOdds[] = [

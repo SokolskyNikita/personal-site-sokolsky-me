@@ -1,5 +1,5 @@
 ---
-import firstHalfHistory from "../../data/spain-argentina-kalshi-history-seed.json";
+import staticHistorySeed from "../../data/spain-argentina-kalshi-history-seed.json";
 
 export const prerender = true;
 
@@ -119,8 +119,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
     <script
       type="application/json"
-      id="first-half-history"
-      set:html={JSON.stringify(firstHalfHistory)}
+      id="static-history-seed"
+      set:html={JSON.stringify(staticHistorySeed)}
     ></script>
 
     <script>
@@ -152,7 +152,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       };
 
       function readSeededHistory(): HistoryPoint[] {
-        const node = document.getElementById("first-half-history");
+        const node = document.getElementById("static-history-seed");
         if (!(node instanceof HTMLScriptElement) || !node.textContent) return [];
         try {
           const parsed: unknown = JSON.parse(node.textContent);
@@ -180,7 +180,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         }
       }
 
-      // Static first-half (0'–45') Kalshi candles — painted before the live feed.
+      // Static Kalshi candles baked at build time — painted before the live feed.
       const history: HistoryPoint[] = readSeededHistory();
       let timer: number | undefined;
       let fetching = false;
