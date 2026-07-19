@@ -110,13 +110,12 @@ describe("Spain vs. Argentina prediction market feed", () => {
         providerCount: 3,
         totalWeight: 11,
       },
-      history: [
-        {
-          at: "2026-07-19T19:00:00.000Z",
-          spain: 0.58,
-          argentina: 0.42,
-        },
-      ],
+    });
+    expect(body.history.length).toBeGreaterThan(0);
+    expect(body.history[0]).toMatchObject({
+      at: "2026-07-19T19:00:00.000Z",
+      spain: 0.58,
+      argentina: 0.42,
     });
     expect(body.consensus.spain).toBeCloseTo(0.58409);
     expect(body.consensus.argentina).toBeCloseTo(0.41591);
@@ -220,13 +219,12 @@ describe("Spain vs. Argentina prediction market feed", () => {
       liveProviderCount: 3,
       staleProviderCount: 0,
     });
-    expect(body.history).toEqual([
-      {
-        at: "2026-07-19T19:00:00.000Z",
-        spain: 0.5800000000000001,
-        argentina: 0.42,
-      },
-    ]);
+    expect(body.history.length).toBeGreaterThan(0);
+    expect(body.history[0]).toMatchObject({
+      at: "2026-07-19T19:00:00.000Z",
+      spain: 0.5800000000000001,
+      argentina: 0.42,
+    });
     expect(body.providers).toMatchObject([
       { id: "kalshi", status: "live", spain: 0.58, argentina: 0.42 },
       { id: "polymarket", status: "live", spain: 0.59, argentina: 0.41 },
@@ -352,7 +350,12 @@ describe("Spain vs. Argentina prediction market feed", () => {
         staleProviderCount: 0,
         totalWeight: 0,
       },
-      history: [],
+    });
+    // During the match window, a baked Kalshi seed keeps the chart populated
+    // even when every live upstream is down.
+    expect(body.history.length).toBeGreaterThan(0);
+    expect(body.history[0]).toMatchObject({
+      at: "2026-07-19T19:00:00.000Z",
     });
     expect(body.providers).toEqual(
       expect.arrayContaining([

@@ -117,7 +117,7 @@ export default {
     }
 
     if (url.pathname === SPAIN_ARGENTINA_ODDS_PATH) {
-      return handleSpainArgentinaOdds(request);
+      return handleSpainArgentinaOdds(request, env);
     }
 
     if (isPrivatePath(url.pathname)) {

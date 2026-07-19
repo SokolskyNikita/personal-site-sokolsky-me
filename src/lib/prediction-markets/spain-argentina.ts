@@ -1,9 +1,11 @@
+import historySeed from "../../data/spain-argentina-kalshi-history-seed.json";
+
 export const SPAIN_ARGENTINA_ODDS_PATH =
   "/api/prediction-markets/spain-argentina-2026";
 
 const CACHE_MS = 4_000;
 const REQUEST_TIMEOUT_MS = 2_500;
-const HISTORY_REQUEST_TIMEOUT_MS = 5_000;
+const HISTORY_REQUEST_TIMEOUT_MS = 8_000;
 const OPTIONAL_REQUEST_TIMEOUT_MS = 1_200;
 const MAX_FETCH_ATTEMPTS = 2;
 const RETRY_BASE_DELAY_MS = 100;
@@ -13,10 +15,25 @@ const REAL_MONEY_WEIGHT = 5;
 const PLAY_MONEY_WEIGHT = 1;
 const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
 const MATCH_ENDS_AT_MS = MATCH_STARTS_AT_MS + 4 * 60 * 60 * 1_000;
+const HISTORY_KV_KEY = "pm:spain-argentina-2026:kalshi-history";
+const HISTORY_KV_TTL_SECONDS = 6 * 60 * 60;
 const KALSHI_API_HOSTS = [
   "https://api.elections.kalshi.com",
   "https://external-api.kalshi.com",
 ] as const;
+
+type OddsKv = {
+  get(key: string): Promise<string | null>;
+  put(
+    key: string,
+    value: string,
+    options?: { expirationTtl?: number },
+  ): Promise<void>;
+};
+
+export type SpainArgentinaOddsEnv = {
+  FLIGHT_CACHE?: OddsKv;
+};
 
 type Team = "spain" | "argentina";
 
@@ -78,6 +95,7 @@ let lastGoodHistory:
 
 export async function handleSpainArgentinaOdds(
   request: Request,
+  env: SpainArgentinaOddsEnv = {},
 ): Promise<Response> {
   if (request.method !== "GET") {
     return Response.json(
@@ -90,7 +108,7 @@ export async function handleSpainArgentinaOdds(
   if (!cached || cached.expiresAt <= now) {
     cached = {
       expiresAt: now + CACHE_MS,
-      promise: loadOdds(),
+      promise: loadOdds(env),
     };
   }
 
@@ -103,19 +121,28 @@ export async function handleSpainArgentinaOdds(
   });
 }
 
-async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
-  const [results, historyResult] = await Promise.all([
+async function loadOdds(
+  env: SpainArgentinaOddsEnv,
+): Promise<SpainArgentinaOddsResponse> {
+  const [results, historyResult, storedHistory] = await Promise.all([
     Promise.allSettled([loadKalshi(), loadPolymarket(), loadManifold()]),
     getKalshiHistory()
       .then((points) => ({ ok: true as const, points }))
-      .catch(() => ({ ok: false as const, points: [] as SpainArgentinaOddsResponse["history"] })),
+      .catch((error) => ({
+        ok: false as const,
+        points: [] as SpainArgentinaOddsResponse["history"],
+        error: error instanceof Error ? error.message : "history_unavailable",
+      })),
+    readStoredHistory(env.FLIGHT_CACHE),
   ]);
-  const history =
-    historyResult.points.length > 0
-      ? historyResult.points
-      : lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS
-        ? lastGoodHistory.points
-        : [];
+  const fallbackHistory =
+    lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS
+      ? lastGoodHistory.points
+      : [];
+  const seed =
+    Date.now() >= MATCH_STARTS_AT_MS
+      ? (historySeed as SpainArgentinaOddsResponse["history"])
+      : [];
 
   const providers: ProviderOdds[] = [
     settledProvider(results[0], {
@@ -176,10 +203,41 @@ async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
           0,
         ) / totalWeight;
   const argentina = spain === null ? null : 1 - spain;
+  const generatedAt = new Date().toISOString();
+  const kalshi = providers.find((provider) => provider.id === "kalshi");
+  const liveKalshiPoint =
+    kalshi &&
+    kalshi.status !== "unavailable" &&
+    typeof kalshi.spain === "number" &&
+    typeof kalshi.argentina === "number"
+      ? [
+          {
+            at: generatedAt,
+            spain: clampProbability(
+              kalshi.spain / (kalshi.spain + kalshi.argentina),
+            ),
+            argentina: clampProbability(
+              kalshi.argentina / (kalshi.spain + kalshi.argentina),
+            ),
+          },
+        ]
+      : [];
+
+  const history = mergeHistoryPoints(
+    seed,
+    storedHistory,
+    fallbackHistory,
+    historyResult.points,
+    liveKalshiPoint,
+  );
+  if (history.length) {
+    lastGoodHistory = { points: history, receivedAt: Date.now() };
+    void persistHistory(env.FLIGHT_CACHE, history);
+  }
 
   return {
     ok: providerCount > 0,
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     matchStartsAt: "2026-07-19T19:00:00Z",
     refreshAfterMs: 5_000,
     consensus: {
@@ -226,13 +284,20 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
   );
   const end = Math.floor(boundedNow / 1_000);
   const start = Math.floor(MATCH_STARTS_AT_MS / 1_000);
-  const intervals = [1, 5, 60] as const;
+  // Prefer coarse candles first (small payload), then 1-minute detail.
+  // Skip period_interval=5 — Kalshi currently returns 400 for that value.
+  const intervals = [60, 1] as const;
   let lastError: unknown;
 
   for (const host of KALSHI_API_HOSTS) {
     for (const periodInterval of intervals) {
       try {
-        const points = await loadKalshiHistoryFromHost(host, start, end, periodInterval);
+        const points = await loadKalshiHistoryFromHost(
+          host,
+          start,
+          end,
+          periodInterval,
+        );
         if (points.length) return points;
       } catch (error) {
         lastError = error;
@@ -257,7 +322,7 @@ async function loadKalshiHistoryFromHost(
   const query = `start_ts=${start}&end_ts=${end}&period_interval=${periodInterval}`;
   const base = `${host}/trade-api/v2/series/KXMENWORLDCUP/markets`;
   const fetchOptions = {
-    attempts: 2,
+    attempts: 1,
     timeoutMs: HISTORY_REQUEST_TIMEOUT_MS,
   };
   const [spainResult, argentinaResult] = await Promise.allSettled([
@@ -610,6 +675,72 @@ function isRetryableFetchError(error: unknown): boolean {
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function mergeHistoryPoints(
+  ...series: SpainArgentinaOddsResponse["history"][]
+): SpainArgentinaOddsResponse["history"] {
+  const merged = new Map<string, SpainArgentinaOddsResponse["history"][number]>();
+  for (const points of series) {
+    for (const point of points) {
+      const timestamp = Date.parse(point.at);
+      if (
+        !Number.isFinite(timestamp) ||
+        timestamp < MATCH_STARTS_AT_MS ||
+        timestamp > MATCH_ENDS_AT_MS ||
+        !Number.isFinite(point.spain) ||
+        !Number.isFinite(point.argentina)
+      ) {
+        continue;
+      }
+      merged.set(point.at, {
+        at: point.at,
+        spain: clampProbability(point.spain),
+        argentina: clampProbability(point.argentina),
+      });
+    }
+  }
+  return [...merged.values()].sort(
+    (left, right) => Date.parse(left.at) - Date.parse(right.at),
+  );
+}
+
+async function readStoredHistory(
+  kv: OddsKv | undefined,
+): Promise<SpainArgentinaOddsResponse["history"]> {
+  if (!kv) return [];
+  try {
+    const raw = await kv.get(HISTORY_KV_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return mergeHistoryPoints(
+      parsed.flatMap((item) => {
+        const point = asRecord(item);
+        const spain = numberValue(point.spain);
+        const argentina = numberValue(point.argentina);
+        const at = stringValue(point.at);
+        if (!at || spain === null || argentina === null) return [];
+        return [{ at, spain, argentina }];
+      }),
+    );
+  } catch {
+    return [];
+  }
+}
+
+async function persistHistory(
+  kv: OddsKv | undefined,
+  points: SpainArgentinaOddsResponse["history"],
+): Promise<void> {
+  if (!kv || !points.length) return;
+  try {
+    await kv.put(HISTORY_KV_KEY, JSON.stringify(points), {
+      expirationTtl: HISTORY_KV_TTL_SECONDS,
+    });
+  } catch {
+    // Best-effort persistence for chart continuity.
+  }
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
