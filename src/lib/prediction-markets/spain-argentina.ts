@@ -53,6 +53,7 @@ export type ProviderOdds = {
   volume: number | null;
   volumeUnit: "USD" | "MANA";
   status: "live" | "stale" | "unavailable";
+  updatedAt?: string;
   message?: string;
 };
 
@@ -529,17 +530,19 @@ function settledProvider(
   fallback: Pick<ProviderOdds, "id" | "name" | "href" | "volumeUnit">,
 ): ProviderOdds {
   if (result.status === "fulfilled") {
+    const receivedAt = Date.now();
     lastGoodProviders.set(result.value.id, {
       odds: result.value,
-      receivedAt: Date.now(),
+      receivedAt,
     });
-    return result.value;
+    return { ...result.value, updatedAt: new Date(receivedAt).toISOString() };
   }
   const previous = lastGoodProviders.get(fallback.id);
   if (previous && Date.now() - previous.receivedAt <= STALE_PROVIDER_MS) {
     return {
       ...previous.odds,
       status: "stale",
+      updatedAt: new Date(previous.receivedAt).toISOString(),
       message: "Using the most recent successful quote",
     };
   }
