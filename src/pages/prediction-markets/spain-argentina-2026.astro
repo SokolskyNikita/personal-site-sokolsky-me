@@ -16,7 +16,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="theme-color" content="#f3f0e8" />
+    <meta name="theme-color" content="#f7f5ef" />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -48,6 +48,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <article class="team spain">
           <strong
             id="consensus-spain"
+            role="status"
             aria-label="Spain probability, waiting for feed"
             aria-live="polite">—</strong>
           <div class="team-meta">
@@ -64,6 +65,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <article class="team argentina">
           <strong
             id="consensus-argentina"
+            role="status"
             aria-label="Argentina probability, waiting for feed"
             aria-live="polite">—</strong>
           <div class="team-meta">
@@ -73,9 +75,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         </article>
       </section>
 
-      <section class="chart-panel" aria-label="Odds since kickoff">
+      <section class="chart-panel" aria-label="Kalshi odds since kickoff">
         <div class="chart-meta">
-          <p>Since kickoff</p>
+          <p>Kalshi trend · since kickoff</p>
           <div class="legend" aria-hidden="true">
             <span class="legend-spain">Spain</span>
             <span class="legend-argentina">Argentina</span>
@@ -88,7 +90,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             viewBox="0 0 800 220"
             preserveAspectRatio="none"
             role="img"
-            aria-label="Championship odds since kickoff"
+            aria-label="Kalshi championship odds since kickoff"
           >
             <g class="grid">
               <line x1="0" x2="792" y1="36" y2="36"></line>
@@ -101,9 +103,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <circle id="argentina-dot" class="chart-dot argentina-dot" cx="0" cy="0" r="5"></circle>
           </svg>
           <div class="chart-scale" aria-hidden="true">
-            <span id="chart-max">65</span>
-            <span id="chart-mid">50</span>
-            <span id="chart-min">35</span>
+            <span id="chart-max">65%</span>
+            <span id="chart-mid">50%</span>
+            <span id="chart-min">35%</span>
+          </div>
+          <div class="chart-time" aria-hidden="true">
+            <span>Kickoff · 4:00 PM</span>
+            <span id="chart-current-time">Now</span>
           </div>
         </div>
       </section>
@@ -137,8 +143,18 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       let chartMax = 0.65;
 
       const byId = (id: string) => document.getElementById(id);
-      const rawPercent = (value: number | null) =>
-        typeof value === "number" ? String(Math.round(value * 100)) : "—";
+
+      function consensusPercentages(spain: number | null, argentina: number | null) {
+        if (typeof spain === "number") {
+          const roundedSpain = Math.min(100, Math.max(0, Math.round(spain * 100)));
+          return [String(roundedSpain), String(100 - roundedSpain)] as const;
+        }
+        if (typeof argentina === "number") {
+          const roundedArgentina = Math.min(100, Math.max(0, Math.round(argentina * 100)));
+          return [String(100 - roundedArgentina), String(roundedArgentina)] as const;
+        }
+        return ["—", "—"] as const;
+      }
 
       function setOdds(id: string, value: string, team: string) {
         const element = byId(id);
@@ -188,7 +204,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           ] as const
         ).forEach(([id, value]) => {
           const label = byId(id);
-          if (label) label.textContent = String(Math.round(value * 100));
+          if (label) label.textContent = `${Math.round(value * 100)}%`;
         });
       }
 
@@ -248,14 +264,22 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       }
 
       function render(data: OddsResponse) {
-        setOdds("consensus-spain", rawPercent(data.consensus.spain), "Spain");
-        setOdds("consensus-argentina", rawPercent(data.consensus.argentina), "Argentina");
+        const [spainPercent, argentinaPercent] = consensusPercentages(
+          data.consensus.spain,
+          data.consensus.argentina,
+        );
+        setOdds("consensus-spain", spainPercent, "Spain");
+        setOdds("consensus-argentina", argentinaPercent, "Argentina");
 
         const merged = new Map(history.map((point) => [point.at, point]));
         data.history.forEach((point) => {
-          if (Date.parse(point.at) >= MATCH_STARTS_AT) merged.set(point.at, point);
+          const timestamp = Date.parse(point.at);
+          if (timestamp >= MATCH_STARTS_AT && timestamp <= MATCH_ENDS_AT) {
+            merged.set(point.at, point);
+          }
         });
         if (
+          Date.parse(data.generatedAt) <= MATCH_ENDS_AT &&
           typeof data.consensus.spain === "number" &&
           typeof data.consensus.argentina === "number"
         ) {
@@ -269,7 +293,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           0,
           history.length,
           ...[...merged.values()]
-            .filter((point) => Date.parse(point.at) >= MATCH_STARTS_AT)
+            .filter((point) => {
+              const timestamp = Date.parse(point.at);
+              return timestamp >= MATCH_STARTS_AT && timestamp <= MATCH_ENDS_AT;
+            })
             .sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
             .slice(-MAX_HISTORY),
         );
@@ -277,10 +304,24 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         const feedLabel = byId("feed-label");
         if (feedLabel) {
+          const updated = new Date(data.generatedAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
           feedLabel.textContent =
             data.consensus.providerCount > 0
-              ? `${data.consensus.providerCount} sources`
+              ? `${data.consensus.providerCount} sources · ${updated}`
               : "Reconnecting";
+        }
+        const chartCurrentTime = byId("chart-current-time");
+        if (chartCurrentTime) {
+          chartCurrentTime.textContent = isPastMatchWindow()
+            ? "Cutoff · 8:00 PM"
+            : new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
         }
         byId("feed-status")?.classList.toggle(
           "is-partial",
@@ -333,6 +374,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         }
       });
 
+      document.addEventListener("fullscreenchange", () => {
+        byId("fullscreen-button")?.setAttribute(
+          "aria-label",
+          document.fullscreenElement ? "Exit full screen" : "Enter full screen",
+        );
+      });
+
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden && !stopped && !isPastMatchWindow()) refresh();
       });
@@ -350,7 +398,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     <style>
       :root {
         color-scheme: light;
-        --paper: oklch(95.8% 0.014 88);
+        --paper: oklch(97.1% 0.01 88);
         --ink: oklch(18% 0.02 67);
         --muted: oklch(48% 0.02 70);
         --line: oklch(84% 0.02 78);
@@ -444,8 +492,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       #fullscreen-button {
         display: grid;
         place-items: center;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border: 1px solid var(--line);
         border-radius: 999px;
         background: color-mix(in oklch, var(--paper) 84%, white);
@@ -455,6 +503,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       #fullscreen-button:hover {
         border-color: var(--muted);
+      }
+
+      #fullscreen-button:focus-visible {
+        outline: 3px solid color-mix(in oklch, var(--argentina) 45%, transparent);
+        outline-offset: 3px;
       }
 
       #fullscreen-button svg {
@@ -515,6 +568,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         letter-spacing: -0.09em;
         line-height: 0.78;
         font-variant-numeric: tabular-nums;
+      }
+
+      .team strong::after {
+        margin-left: 0.06em;
+        font-family: "Archivo", sans-serif;
+        font-size: 0.2em;
+        font-weight: 600;
+        letter-spacing: 0;
+        vertical-align: top;
+        content: "%";
       }
 
       .team.spain strong {
@@ -617,16 +680,22 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         transition: d 280ms ease-out;
       }
 
-      .spain-line,
-      .spain-dot {
+      .spain-line {
         stroke: var(--spain);
-        fill: var(--spain);
       }
 
-      .argentina-line,
-      .argentina-dot {
+      .spain-dot {
+        fill: var(--spain);
+        stroke: var(--spain);
+      }
+
+      .argentina-line {
         stroke: var(--argentina);
+      }
+
+      .argentina-dot {
         fill: var(--argentina);
+        stroke: var(--argentina);
       }
 
       .chart-dot {
@@ -635,14 +704,27 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       .chart-scale {
         position: absolute;
-        top: 0;
+        top: 16%;
         right: 0;
-        bottom: 8px;
+        bottom: 16%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         color: var(--muted);
         font-size: 0.7rem;
+        font-variant-numeric: tabular-nums;
+        pointer-events: none;
+      }
+
+      .chart-time {
+        position: absolute;
+        right: 36px;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.68rem;
         font-variant-numeric: tabular-nums;
         pointer-events: none;
       }

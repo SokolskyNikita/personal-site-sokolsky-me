@@ -5,6 +5,8 @@ const CACHE_MS = 4_000;
 const REQUEST_TIMEOUT_MS = 4_000;
 const REAL_MONEY_WEIGHT = 5;
 const PLAY_MONEY_WEIGHT = 1;
+const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
+const MATCH_ENDS_AT_MS = MATCH_STARTS_AT_MS + 4 * 60 * 60 * 1_000;
 
 type Team = "spain" | "argentina";
 
@@ -161,10 +163,12 @@ function getKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {
   return historyCache.promise;
 }
 
-const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
-
 async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {
-  const end = Math.floor(Date.now() / 1_000);
+  const boundedNow = Math.min(
+    Math.max(Date.now(), MATCH_STARTS_AT_MS),
+    MATCH_ENDS_AT_MS,
+  );
+  const end = Math.floor(boundedNow / 1_000);
   const start = Math.floor(MATCH_STARTS_AT_MS / 1_000);
   const query = `start_ts=${start}&end_ts=${end}&period_interval=1`;
   const base =
