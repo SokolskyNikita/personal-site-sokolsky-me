@@ -18,7 +18,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="theme-color" content="#f7f5ef" />
+    <meta name="theme-color" content="#f7f5ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#211d17" media="(prefers-color-scheme: dark)" />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -62,6 +63,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <div class="clock" aria-hidden="true">
           <p id="match-phase">Kickoff</p>
           <time id="match-clock" datetime="2026-07-19T19:00:00Z">4:00 PM</time>
+          <p class="score" id="match-score" hidden>0 – 0</p>
           <div class="provider-strip" id="provider-strip"></div>
         </div>
 
@@ -111,7 +113,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <span id="chart-min">35%</span>
           </div>
           <div class="chart-time" aria-hidden="true">
-            <span>Kickoff · 4:00 PM</span>
+            <span id="chart-kickoff-time">Kickoff</span>
             <span id="chart-current-time">Now</span>
           </div>
         </div>
@@ -138,6 +140,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         phase: "pre" | "live" | "halftime" | "final";
         label: string;
         source: "espn" | "schedule";
+        score?: { spain: number; argentina: number };
       };
       type ProviderOdds = {
         id: string;
@@ -201,6 +204,19 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       let latestProviders: ProviderOdds[] = [];
 
       const byId = (id: string) => document.getElementById(id);
+
+      // Render schedule times in the viewer's local timezone (task: no
+      // hardcoded time strings).
+      const localTime = (timestamp: number) =>
+        new Intl.DateTimeFormat(undefined, {
+          hour: "numeric",
+          minute: "2-digit",
+        }).format(new Date(timestamp));
+      const KICKOFF_LABEL = localTime(MATCH_STARTS_AT);
+      {
+        const kickoffSpan = byId("chart-kickoff-time");
+        if (kickoffSpan) kickoffSpan.textContent = `Kickoff · ${KICKOFF_LABEL}`;
+      }
 
       function consensusPercentages(spain: number | null, argentina: number | null) {
         if (typeof spain === "number") {
@@ -268,13 +284,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         if (!values.length) return;
         const observedMin = Math.min(...values);
         const observedMax = Math.max(...values);
-        // Hug the data tightly so small odds moves read as visible swings:
-        // ~1.5 points of padding, never narrower than a 12-point window.
-        const span = Math.min(1, Math.max(0.12, observedMax - observedMin + 0.03));
-        const center = (observedMin + observedMax) / 2;
-        chartMin = Math.max(0, center - span / 2);
-        chartMax = Math.min(1, chartMin + span);
-        chartMin = Math.max(0, chartMax - span);
+        // Pad the domain ±3pp (clamped to [2%, 98%]) so lines never ride the
+        // top/bottom gridlines, while never narrower than a 12-point window.
+        chartMin = Math.max(0.02, observedMin - 0.03);
+        chartMax = Math.min(0.98, observedMax + 0.03);
+        const deficit = 0.12 - (chartMax - chartMin);
+        if (deficit > 0) {
+          chartMin = Math.max(0.02, chartMin - deficit / 2);
+          chartMax = Math.min(0.98, chartMin + 0.12);
+          chartMin = Math.max(0.02, chartMax - 0.12);
+        }
 
         (
           [
@@ -339,6 +358,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const clockWrap = phase?.closest(".clock");
         if (!phase || !clock) return;
 
+        const score = byId("match-score");
+        if (score && next.score) {
+          score.hidden = false;
+          score.textContent = `${next.score.spain} – ${next.score.argentina}`;
+        }
+
         if (next.phase === "pre") {
           const remaining = MATCH_STARTS_AT - Date.now();
           if (remaining > 0) {
@@ -349,7 +374,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             clock.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
           } else {
             phase.textContent = "Kickoff";
-            clock.textContent = next.label;
+            clock.textContent = KICKOFF_LABEL;
           }
           clockWrap?.classList.remove("is-live");
           return;
@@ -364,8 +389,13 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
         if (next.phase === "final") {
           phase.textContent = "Final";
-          clock.textContent = next.label || "Full time";
+          clock.textContent =
+            next.score
+              ? `${next.score.spain} – ${next.score.argentina}`
+              : next.label || "Full time";
+          if (score) score.hidden = true;
           clockWrap?.classList.remove("is-live");
+          clockWrap?.classList.add("is-final");
           return;
         }
 
@@ -406,15 +436,27 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               source: "schedule",
             });
           } else {
-            const minute = Math.min(
-              105,
-              45 + Math.floor((elapsed - half - breakMs) / 60_000),
-            );
-            applyMatchClock({
-              phase: "live",
-              label: `${minute}'`,
-              source: "schedule",
-            });
+            // Schedule-only ladder mirroring the server fallback: regulation
+            // (with stoppage), extra time up to 120', then penalties.
+            const secondHalf = elapsed - half - breakMs;
+            const extraHalf = 15 * 60_000;
+            const extraBreak = 5 * 60_000;
+            let label: string;
+            if (secondHalf < half + 10 * 60_000) {
+              const minute = 45 + Math.floor(secondHalf / 60_000);
+              label = minute > 90 ? `90+${minute - 90}'` : `${minute}'`;
+            } else {
+              const extra = secondHalf - half - 10 * 60_000;
+              if (extra < extraHalf + extraBreak) {
+                label = `${Math.min(105, 91 + Math.floor(extra / 60_000))}'`;
+              } else if (extra < 2 * (extraHalf + extraBreak)) {
+                const et2 = extra - extraHalf - extraBreak;
+                label = `${Math.min(120, 106 + Math.floor(et2 / 60_000))}'`;
+              } else {
+                label = "PENS";
+              }
+            }
+            applyMatchClock({ phase: "live", label, source: "schedule" });
           }
         }
       }
@@ -518,17 +560,29 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         const chartCurrentTime = byId("chart-current-time");
         if (chartCurrentTime) {
           chartCurrentTime.textContent = isPastMatchWindow()
-            ? "Cutoff · 8:00 PM"
+            ? `Cutoff · ${localTime(MATCH_ENDS_AT)}`
             : new Date().toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               });
         }
-        byId("feed-status")?.classList.toggle(
+        const feedStatus = byId("feed-status");
+        feedStatus?.classList.toggle(
           "is-partial",
           data.consensus.liveProviderCount < 2 ||
             data.consensus.staleProviderCount > 0,
         );
+        feedStatus?.classList.toggle(
+          "is-down",
+          data.consensus.liveProviderCount === 0,
+        );
+
+        // Full-time settlement: once ESPN confirms the final whistle, stop
+        // polling and leave the board as an intentional archive.
+        if (data.matchClock?.phase === "final" && data.matchClock.source === "espn") {
+          markFeedStopped();
+          if (feedLabel) feedLabel.textContent = "Final";
+        }
       }
 
       const FETCH_TIMEOUT_MS = 8_000;
@@ -642,7 +696,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: light dark;
         --paper: oklch(97.1% 0.01 88);
         --ink: oklch(18% 0.02 67);
         --muted: oklch(48% 0.02 70);
@@ -652,6 +706,21 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         --argentina: oklch(58% 0.1 225);
         --argentina-soft: oklch(91% 0.035 225);
         --live: oklch(55% 0.14 145);
+      }
+
+      /* Dark warm palette for watching next to a TV in a dim room. */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: oklch(21% 0.015 75);
+          --ink: oklch(93% 0.012 85);
+          --muted: oklch(66% 0.02 78);
+          --line: oklch(34% 0.02 75);
+          --spain: oklch(66% 0.17 27);
+          --spain-soft: oklch(30% 0.05 28);
+          --argentina: oklch(72% 0.1 225);
+          --argentina-soft: oklch(30% 0.035 228);
+          --live: oklch(70% 0.14 145);
+        }
       }
 
       * {
@@ -740,6 +809,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       .feed-status.is-partial .pulse {
         background: oklch(66% 0.15 75);
         box-shadow: 0 0 0 5px oklch(66% 0.15 75 / 16%);
+      }
+
+      .feed-status.is-down .pulse {
+        background: oklch(55% 0.19 28);
+        box-shadow: 0 0 0 5px oklch(55% 0.19 28 / 16%);
+        animation: none;
       }
 
       #fullscreen-button {
@@ -877,6 +952,20 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         font-variant-numeric: tabular-nums;
         font-feature-settings: "tnum" 1;
         letter-spacing: -0.02em;
+      }
+
+      .score {
+        margin: 0;
+        color: var(--muted);
+        font-family: "Newsreader", serif;
+        font-size: 1.05rem;
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.04em;
+      }
+
+      .clock.is-final time {
+        color: var(--ink);
       }
 
       .provider-strip {

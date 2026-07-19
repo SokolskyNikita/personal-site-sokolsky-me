@@ -61,6 +61,7 @@ export type MatchClock = {
   phase: "pre" | "live" | "halftime" | "final";
   label: string;
   source: "espn" | "schedule";
+  score?: { spain: number; argentina: number };
 };
 
 export type SpainArgentinaOddsResponse = {
@@ -294,6 +295,8 @@ async function loadMatchClock(): Promise<MatchClock> {
       stringValue(type.statusPrimary);
     const clock = matchClockFromEspn(name, state, displayClock);
     if (clock) {
+      const score = scoreFromEspn(asRecords(competition.competitors));
+      if (score) clock.score = score;
       lastGoodMatchClock = { clock, receivedAt: Date.now() };
       return clock;
     }
@@ -308,6 +311,24 @@ async function loadMatchClock(): Promise<MatchClock> {
     return lastGoodMatchClock.clock;
   }
   return scheduleMatchClock(Date.now());
+}
+
+function scoreFromEspn(
+  competitors: Record<string, unknown>[],
+): { spain: number; argentina: number } | null {
+  let spain: number | undefined;
+  let argentina: number | undefined;
+  for (const competitor of competitors) {
+    const abbreviation = stringValue(
+      asRecord(competitor.team).abbreviation,
+    ).toUpperCase();
+    const score = Number.parseInt(stringValue(competitor.score), 10);
+    if (!Number.isFinite(score)) continue;
+    if (abbreviation === "ESP") spain = score;
+    if (abbreviation === "ARG") argentina = score;
+  }
+  if (spain === undefined || argentina === undefined) return null;
+  return { spain, argentina };
 }
 
 function matchClockFromEspn(
@@ -329,6 +350,12 @@ function matchClockFromEspn(
   ) {
     return { phase: "final", label: "Full time", source: "espn" };
   }
+  if (
+    state === "in" &&
+    (statusName.includes("SHOOTOUT") || statusName.includes("PENALT"))
+  ) {
+    return { phase: "live", label: "PENS", source: "espn" };
+  }
   if (statusName.includes("SCHEDULED") || state === "pre") {
     return { phase: "pre", label: "4:00 PM", source: "espn" };
   }
@@ -342,6 +369,9 @@ function matchClockFromEspn(
 function normalizeMatchMinuteLabel(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return "Live";
+  // ESPN renders stoppage as "90'+6'"; collapse to the usual "90+6'".
+  const stoppage = trimmed.match(/^(\d+)'\+(\d+)'?$/);
+  if (stoppage) return `${stoppage[1]}+${stoppage[2]}'`;
   if (/^\d+\+$/.test(trimmed)) return `${trimmed}'`;
   if (/^\d+\+\d+$/.test(trimmed)) return `${trimmed}'`;
   if (/^\d+$/.test(trimmed)) return `${trimmed}'`;
@@ -369,17 +399,34 @@ function scheduleMatchClock(now: number): MatchClock {
     return { phase: "halftime", label: "HT", source: "schedule" };
   }
 
+  // Regulation second half (incl. up to ~10' stoppage).
   const secondHalfElapsed = elapsed - HALF_LENGTH_MS - HALFTIME_LENGTH_MS;
-  if (secondHalfElapsed < HALF_LENGTH_MS + 15 * 60_000) {
-    const minute = Math.min(
-      90 + 15,
-      45 + Math.floor(secondHalfElapsed / 60_000),
-    );
+  if (secondHalfElapsed < HALF_LENGTH_MS + 10 * 60_000) {
+    const minute = 45 + Math.floor(secondHalfElapsed / 60_000);
     return {
       phase: "live",
-      label: `${minute}'`,
+      label: minute > 90 ? `90+${minute - 90}'` : `${minute}'`,
       source: "schedule",
     };
+  }
+
+  // Without a live feed we can't know if the game went to extra time, so the
+  // fallback keeps a conservative "extra time / penalties" ladder instead of
+  // declaring full time early.
+  const extraElapsed = secondHalfElapsed - HALF_LENGTH_MS - 10 * 60_000;
+  const EXTRA_HALF_MS = 15 * 60_000;
+  const EXTRA_BREAK_MS = 5 * 60_000;
+  if (extraElapsed < EXTRA_HALF_MS + EXTRA_BREAK_MS) {
+    const minute = Math.min(105, 91 + Math.floor(extraElapsed / 60_000));
+    return { phase: "live", label: `${minute}'`, source: "schedule" };
+  }
+  const extraSecondElapsed = extraElapsed - EXTRA_HALF_MS - EXTRA_BREAK_MS;
+  if (extraSecondElapsed < EXTRA_HALF_MS + EXTRA_BREAK_MS) {
+    const minute = Math.min(120, 106 + Math.floor(extraSecondElapsed / 60_000));
+    return { phase: "live", label: `${minute}'`, source: "schedule" };
+  }
+  if (now < MATCH_ENDS_AT_MS - 30 * 60_000) {
+    return { phase: "live", label: "PENS", source: "schedule" };
   }
 
   return { phase: "final", label: "Full time", source: "schedule" };
