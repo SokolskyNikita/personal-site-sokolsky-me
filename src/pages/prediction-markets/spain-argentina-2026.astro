@@ -243,7 +243,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         if (!values.length) return;
         const observedMin = Math.min(...values);
         const observedMax = Math.max(...values);
-        const span = Math.min(1, Math.max(0.22, observedMax - observedMin + 0.08));
+        // Hug the data tightly so small odds moves read as visible swings:
+        // ~1.5 points of padding, never narrower than a 12-point window.
+        const span = Math.min(1, Math.max(0.12, observedMax - observedMin + 0.03));
         const center = (observedMin + observedMax) / 2;
         chartMin = Math.max(0, center - span / 2);
         chartMax = Math.min(1, chartMin + span);
