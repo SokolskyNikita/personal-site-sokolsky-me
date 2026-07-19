@@ -18,8 +18,12 @@ const PLAY_MONEY_WEIGHT = 1;
 const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
 const FIRST_HALF_ENDS_AT_MS = MATCH_STARTS_AT_MS + 45 * 60 * 1_000;
 const MATCH_ENDS_AT_MS = MATCH_STARTS_AT_MS + 4 * 60 * 60 * 1_000;
+const HALF_LENGTH_MS = 45 * 60 * 1_000;
+const HALFTIME_LENGTH_MS = 15 * 60 * 1_000;
 const HISTORY_KV_KEY = "pm:spain-argentina-2026:kalshi-history";
 const HISTORY_KV_TTL_SECONDS = 6 * 60 * 60;
+const ESPN_EVENT_ID = "760517";
+const ESPN_SUMMARY_URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${ESPN_EVENT_ID}`;
 const KALSHI_API_HOSTS = [
   "https://api.elections.kalshi.com",
   "https://external-api.kalshi.com",
@@ -52,11 +56,18 @@ export type ProviderOdds = {
   message?: string;
 };
 
+export type MatchClock = {
+  phase: "pre" | "live" | "halftime" | "final";
+  label: string;
+  source: "espn" | "schedule";
+};
+
 export type SpainArgentinaOddsResponse = {
   ok: boolean;
   generatedAt: string;
   matchStartsAt: string;
   refreshAfterMs: number;
+  matchClock: MatchClock;
   consensus: {
     spain: number | null;
     argentina: number | null;
@@ -95,6 +106,12 @@ let lastGoodHistory:
       receivedAt: number;
     }
   | undefined;
+let lastGoodMatchClock:
+  | {
+      clock: MatchClock;
+      receivedAt: number;
+    }
+  | undefined;
 
 export async function handleSpainArgentinaOdds(
   request: Request,
@@ -127,7 +144,7 @@ export async function handleSpainArgentinaOdds(
 async function loadOdds(
   env: SpainArgentinaOddsEnv,
 ): Promise<SpainArgentinaOddsResponse> {
-  const [results, historyResult, storedHistory] = await Promise.all([
+  const [results, historyResult, storedHistory, matchClock] = await Promise.all([
     Promise.allSettled([loadKalshi(), loadPolymarket(), loadManifold()]),
     getKalshiHistory()
       .then((points) => ({ ok: true as const, points }))
@@ -137,6 +154,7 @@ async function loadOdds(
         error: error instanceof Error ? error.message : "history_unavailable",
       })),
     readStoredHistory(env.FLIGHT_CACHE),
+    loadMatchClock(),
   ]);
   const fallbackHistory =
     lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS
@@ -245,6 +263,7 @@ async function loadOdds(
     generatedAt,
     matchStartsAt: "2026-07-19T19:00:00Z",
     refreshAfterMs: 5_000,
+    matchClock,
     consensus: {
       spain,
       argentina,
@@ -256,6 +275,115 @@ async function loadOdds(
     history,
     providers,
   };
+}
+
+async function loadMatchClock(): Promise<MatchClock> {
+  try {
+    const data = await fetchJson<Record<string, unknown>>(ESPN_SUMMARY_URL, {
+      attempts: 1,
+      timeoutMs: 2_000,
+    });
+    const competition = asRecords(asRecord(data.header).competitions)[0] ?? {};
+    const status = asRecord(competition.status);
+    const type = asRecord(status.type);
+    const name = stringValue(type.name).toUpperCase();
+    const state = stringValue(type.state).toLowerCase();
+    const displayClock =
+      stringValue(status.displayClock) ||
+      stringValue(type.shortDetail) ||
+      stringValue(type.detail) ||
+      stringValue(type.statusPrimary);
+    const clock = matchClockFromEspn(name, state, displayClock);
+    if (clock) {
+      lastGoodMatchClock = { clock, receivedAt: Date.now() };
+      return clock;
+    }
+  } catch {
+    // Fall through to cached / schedule clock.
+  }
+
+  if (
+    lastGoodMatchClock &&
+    Date.now() - lastGoodMatchClock.receivedAt <= STALE_PROVIDER_MS
+  ) {
+    return lastGoodMatchClock.clock;
+  }
+  return scheduleMatchClock(Date.now());
+}
+
+function matchClockFromEspn(
+  statusName: string,
+  state: string,
+  displayClock: string,
+): MatchClock | null {
+  if (
+    statusName.includes("HALFTIME") ||
+    displayClock.toUpperCase() === "HT" ||
+    displayClock.toUpperCase() === "HALF"
+  ) {
+    return { phase: "halftime", label: "HT", source: "espn" };
+  }
+  if (
+    statusName.includes("FINAL") ||
+    statusName.includes("FULL_TIME") ||
+    state === "post"
+  ) {
+    return { phase: "final", label: "Full time", source: "espn" };
+  }
+  if (statusName.includes("SCHEDULED") || state === "pre") {
+    return { phase: "pre", label: "4:00 PM", source: "espn" };
+  }
+  if (state === "in" || statusName.includes("HALF") || statusName.includes("EXTRA")) {
+    const label = normalizeMatchMinuteLabel(displayClock);
+    return { phase: "live", label, source: "espn" };
+  }
+  return null;
+}
+
+function normalizeMatchMinuteLabel(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "Live";
+  if (/^\d+\+$/.test(trimmed)) return `${trimmed}'`;
+  if (/^\d+\+\d+$/.test(trimmed)) return `${trimmed}'`;
+  if (/^\d+$/.test(trimmed)) return `${trimmed}'`;
+  if (/^\d+'$/.test(trimmed) || /^\d+\+\d+'$/.test(trimmed)) return trimmed;
+  return trimmed;
+}
+
+function scheduleMatchClock(now: number): MatchClock {
+  if (now < MATCH_STARTS_AT_MS) {
+    return { phase: "pre", label: "4:00 PM", source: "schedule" };
+  }
+  if (now >= MATCH_ENDS_AT_MS) {
+    return { phase: "final", label: "Full time", source: "schedule" };
+  }
+
+  const elapsed = now - MATCH_STARTS_AT_MS;
+  if (elapsed < HALF_LENGTH_MS) {
+    return {
+      phase: "live",
+      label: `${Math.floor(elapsed / 60_000)}'`,
+      source: "schedule",
+    };
+  }
+  if (elapsed < HALF_LENGTH_MS + HALFTIME_LENGTH_MS) {
+    return { phase: "halftime", label: "HT", source: "schedule" };
+  }
+
+  const secondHalfElapsed = elapsed - HALF_LENGTH_MS - HALFTIME_LENGTH_MS;
+  if (secondHalfElapsed < HALF_LENGTH_MS + 15 * 60_000) {
+    const minute = Math.min(
+      90 + 15,
+      45 + Math.floor(secondHalfElapsed / 60_000),
+    );
+    return {
+      phase: "live",
+      label: `${minute}'`,
+      source: "schedule",
+    };
+  }
+
+  return { phase: "final", label: "Full time", source: "schedule" };
 }
 
 function getKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {

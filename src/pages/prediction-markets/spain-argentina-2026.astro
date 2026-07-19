@@ -133,8 +133,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       const CHART_WIDTH = 792;
 
       type HistoryPoint = { at: string; spain: number; argentina: number };
+      type MatchClock = {
+        phase: "pre" | "live" | "halftime" | "final";
+        label: string;
+        source: "espn" | "schedule";
+      };
       type OddsResponse = {
         generatedAt: string;
+        matchClock?: MatchClock;
         consensus: {
           spain: number | null;
           argentina: number | null;
@@ -181,6 +187,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       let stopped = false;
       let chartMin = 0.35;
       let chartMax = 0.65;
+      let matchClock: MatchClock | null = null;
 
       const byId = (id: string) => document.getElementById(id);
 
@@ -299,32 +306,98 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         }
       }
 
-      function updateMatchPhase() {
+      function applyMatchClock(next: MatchClock) {
         const phase = byId("match-phase");
         const clock = byId("match-clock");
         const clockWrap = phase?.closest(".clock");
         if (!phase || !clock) return;
+
+        if (next.phase === "pre") {
+          const remaining = MATCH_STARTS_AT - Date.now();
+          if (remaining > 0) {
+            const totalSeconds = Math.ceil(remaining / 1_000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            phase.textContent = "Starts in";
+            clock.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+          } else {
+            phase.textContent = "Kickoff";
+            clock.textContent = next.label;
+          }
+          clockWrap?.classList.remove("is-live");
+          return;
+        }
+
+        if (next.phase === "halftime") {
+          phase.textContent = "Half time";
+          clock.textContent = "HT";
+          clockWrap?.classList.remove("is-live");
+          return;
+        }
+
+        if (next.phase === "final") {
+          phase.textContent = "Final";
+          clock.textContent = next.label || "Full time";
+          clockWrap?.classList.remove("is-live");
+          return;
+        }
+
+        phase.textContent = "Live";
+        clock.textContent = next.label;
+        clockWrap?.classList.add("is-live");
+      }
+
+      function updateMatchPhase() {
+        if (matchClock) {
+          applyMatchClock(matchClock);
+          return;
+        }
         const remaining = MATCH_STARTS_AT - Date.now();
         if (remaining > 0) {
-          const totalSeconds = Math.ceil(remaining / 1_000);
-          const minutes = Math.floor(totalSeconds / 60);
-          const seconds = totalSeconds % 60;
-          phase.textContent = "Starts in";
-          clock.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-          clockWrap?.classList.remove("is-live");
-        } else if (!isPastMatchWindow()) {
-          const elapsedMinutes = Math.floor((Date.now() - MATCH_STARTS_AT) / 60_000);
-          phase.textContent = "Live";
-          clock.textContent = `${elapsedMinutes}'`;
-          clockWrap?.classList.add("is-live");
+          applyMatchClock({ phase: "pre", label: "4:00 PM", source: "schedule" });
+        } else if (isPastMatchWindow()) {
+          applyMatchClock({
+            phase: "final",
+            label: "Full time",
+            source: "schedule",
+          });
         } else {
-          phase.textContent = "Final";
-          clock.textContent = "Full time";
-          clockWrap?.classList.remove("is-live");
+          // Prefer schedule-aware football minutes over naive wall-clock elapsed.
+          const elapsed = Date.now() - MATCH_STARTS_AT;
+          const half = 45 * 60_000;
+          const breakMs = 15 * 60_000;
+          if (elapsed < half) {
+            applyMatchClock({
+              phase: "live",
+              label: `${Math.floor(elapsed / 60_000)}'`,
+              source: "schedule",
+            });
+          } else if (elapsed < half + breakMs) {
+            applyMatchClock({
+              phase: "halftime",
+              label: "HT",
+              source: "schedule",
+            });
+          } else {
+            const minute = Math.min(
+              105,
+              45 + Math.floor((elapsed - half - breakMs) / 60_000),
+            );
+            applyMatchClock({
+              phase: "live",
+              label: `${minute}'`,
+              source: "schedule",
+            });
+          }
         }
       }
 
       function render(data: OddsResponse) {
+        if (data.matchClock) {
+          matchClock = data.matchClock;
+          applyMatchClock(matchClock);
+        }
+
         const [spainPercent, argentinaPercent] = consensusPercentages(
           data.consensus.spain,
           data.consensus.argentina,

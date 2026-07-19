@@ -2,6 +2,25 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const json = (body: unknown) => Response.json(body);
 
+const espnMatchClock = () =>
+  json({
+    header: {
+      competitions: [
+        {
+          status: {
+            displayClock: "48'",
+            period: 2,
+            type: {
+              name: "STATUS_SECOND_HALF",
+              state: "in",
+              shortDetail: "48'",
+            },
+          },
+        },
+      ],
+    },
+  });
+
 describe("Spain vs. Argentina prediction market feed", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -14,6 +33,8 @@ describe("Spain vs. Argentina prediction market feed", () => {
   it("normalizes all three championship markets into one response", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const url = String(input);
+
+      if (url.includes("espn.com")) return espnMatchClock();
 
       if (url.includes("/candlesticks")) {
         const isSpain = url.includes("-ES/");
@@ -111,6 +132,11 @@ describe("Spain vs. Argentina prediction market feed", () => {
         totalWeight: 11,
       },
     });
+    expect(body.matchClock).toMatchObject({
+      phase: "live",
+      label: "48'",
+      source: "espn",
+    });
     expect(body.history.length).toBeGreaterThan(0);
     expect(body.history[0]).toMatchObject({
       at: "2026-07-19T19:00:00.000Z",
@@ -130,6 +156,8 @@ describe("Spain vs. Argentina prediction market feed", () => {
     let kalshiEventAttempts = 0;
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const url = String(input);
+
+      if (url.includes("espn.com")) return espnMatchClock();
 
       if (url.includes("/candlesticks")) {
         if (url.includes("-ES/")) return new Response(null, { status: 503 });
@@ -239,6 +267,8 @@ describe("Spain vs. Argentina prediction market feed", () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const url = String(input);
       if (failing) return new Response(null, { status: 503 });
+
+      if (url.includes("espn.com")) return espnMatchClock();
 
       if (url.includes("/candlesticks")) {
         const isSpain = url.includes("-ES/");
