@@ -1,0 +1,675 @@
+---
+export const prerender = true;
+
+const pageTitle = "Spain vs. Argentina · live odds";
+const pageDescription =
+  "Weighted championship probabilities for the 2026 World Cup final, refreshed every five seconds.";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content="#f3f0e8" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,650&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="board" id="odds-board">
+      <header class="chrome">
+        <p class="kicker">World Cup final · weighted odds</p>
+        <div class="live-tools">
+          <div class="feed-status" id="feed-status" role="status" aria-live="polite">
+            <span class="pulse" aria-hidden="true"></span>
+            <span id="feed-label">Live</span>
+          </div>
+          <button type="button" id="fullscreen-button" aria-label="Enter full screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="odds" aria-label="Weighted championship probabilities">
+        <article class="team spain">
+          <strong
+            id="consensus-spain"
+            aria-label="Spain probability, waiting for feed"
+            aria-live="polite">—</strong>
+          <div class="team-meta">
+            <div class="flag spain-flag" role="img" aria-label="Spain"></div>
+            <span>Spain</span>
+          </div>
+        </article>
+
+        <div class="clock" aria-hidden="true">
+          <p id="match-phase">Kickoff</p>
+          <time datetime="2026-07-19T19:00:00Z">4:00 PM ART</time>
+        </div>
+
+        <article class="team argentina">
+          <strong
+            id="consensus-argentina"
+            aria-label="Argentina probability, waiting for feed"
+            aria-live="polite">—</strong>
+          <div class="team-meta">
+            <span>Argentina</span>
+            <div class="flag argentina-flag" role="img" aria-label="Argentina"></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="chart-panel" aria-label="Odds since kickoff">
+        <div class="chart-meta">
+          <p>Since kickoff</p>
+          <div class="legend" aria-hidden="true">
+            <span class="legend-spain">Spain</span>
+            <span class="legend-argentina">Argentina</span>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <svg
+            id="history-chart"
+            class="history-chart"
+            viewBox="0 0 800 220"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Championship odds since kickoff"
+          >
+            <g class="grid">
+              <line x1="0" x2="792" y1="36" y2="36"></line>
+              <line x1="0" x2="792" y1="110" y2="110"></line>
+              <line x1="0" x2="792" y1="184" y2="184"></line>
+            </g>
+            <path id="spain-line" class="chart-line spain-line" d=""></path>
+            <path id="argentina-line" class="chart-line argentina-line" d=""></path>
+            <circle id="spain-dot" class="chart-dot spain-dot" cx="0" cy="0" r="5"></circle>
+            <circle id="argentina-dot" class="chart-dot argentina-dot" cx="0" cy="0" r="5"></circle>
+          </svg>
+          <div class="chart-scale" aria-hidden="true">
+            <span id="chart-max">65</span>
+            <span id="chart-mid">50</span>
+            <span id="chart-min">35</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const ENDPOINT = "/api/prediction-markets/spain-argentina-2026";
+      const MAX_HISTORY = 500;
+      const REFRESH_INTERVAL_MS = 5_000;
+      const MATCH_STARTS_AT = Date.parse("2026-07-19T19:00:00Z");
+      const MATCH_WINDOW_MS = 4 * 60 * 60 * 1_000;
+      const MATCH_ENDS_AT = MATCH_STARTS_AT + MATCH_WINDOW_MS;
+      const CHART_WIDTH = 792;
+
+      type HistoryPoint = { at: string; spain: number; argentina: number };
+      type OddsResponse = {
+        generatedAt: string;
+        consensus: {
+          spain: number | null;
+          argentina: number | null;
+          providerCount: number;
+        };
+        history: HistoryPoint[];
+      };
+
+      const history: HistoryPoint[] = [];
+      let timer: number | undefined;
+      let fetching = false;
+      let stopped = false;
+      let chartMin = 0.35;
+      let chartMax = 0.65;
+
+      const byId = (id: string) => document.getElementById(id);
+      const rawPercent = (value: number | null) =>
+        typeof value === "number" ? String(Math.round(value * 100)) : "—";
+
+      function setOdds(id: string, value: string, team: string) {
+        const element = byId(id);
+        if (!element || element.textContent === value) return;
+        element.textContent = value;
+        element.setAttribute("aria-label", `${team} ${value}%`);
+        element.classList.remove("changed");
+        void element.offsetWidth;
+        element.classList.add("changed");
+      }
+
+      function chartY(value: number) {
+        const clamped = Math.min(chartMax, Math.max(chartMin, value));
+        return 184 - ((clamped - chartMin) / (chartMax - chartMin)) * 148;
+      }
+
+      function chartPath(points: HistoryPoint[], key: "spain" | "argentina") {
+        if (!points.length) return "";
+        const x = (index: number) =>
+          points.length === 1
+            ? CHART_WIDTH
+            : (index / (points.length - 1)) * CHART_WIDTH;
+        return points
+          .map(
+            (point, index) =>
+              `${index ? "L" : "M"} ${x(index).toFixed(1)} ${chartY(point[key]).toFixed(1)}`,
+          )
+          .join(" ");
+      }
+
+      function updateChartScale() {
+        const values = history.flatMap((point) => [point.spain, point.argentina]);
+        if (!values.length) return;
+        const observedMin = Math.min(...values);
+        const observedMax = Math.max(...values);
+        const span = Math.min(1, Math.max(0.22, observedMax - observedMin + 0.08));
+        const center = (observedMin + observedMax) / 2;
+        chartMin = Math.max(0, center - span / 2);
+        chartMax = Math.min(1, chartMin + span);
+        chartMin = Math.max(0, chartMax - span);
+
+        (
+          [
+            ["chart-max", chartMax],
+            ["chart-mid", (chartMax + chartMin) / 2],
+            ["chart-min", chartMin],
+          ] as const
+        ).forEach(([id, value]) => {
+          const label = byId(id);
+          if (label) label.textContent = String(Math.round(value * 100));
+        });
+      }
+
+      function updateChart() {
+        const spainLine = byId("spain-line");
+        const argentinaLine = byId("argentina-line");
+        if (!(spainLine instanceof SVGPathElement) || !(argentinaLine instanceof SVGPathElement)) {
+          return;
+        }
+        updateChartScale();
+        spainLine.setAttribute("d", chartPath(history, "spain"));
+        argentinaLine.setAttribute("d", chartPath(history, "argentina"));
+        const last = history.at(-1);
+        if (!last) return;
+        (
+          [
+            ["spain-dot", last.spain],
+            ["argentina-dot", last.argentina],
+          ] as const
+        ).forEach(([id, value]) => {
+          const dot = byId(id);
+          if (!(dot instanceof SVGCircleElement)) return;
+          dot.setAttribute("cx", String(CHART_WIDTH));
+          dot.setAttribute("cy", String(chartY(value)));
+        });
+      }
+
+      function isPastMatchWindow() {
+        return Date.now() >= MATCH_ENDS_AT;
+      }
+
+      function markFeedStopped() {
+        stopped = true;
+        const feedLabel = byId("feed-label");
+        if (feedLabel) feedLabel.textContent = "Stopped";
+        byId("feed-status")?.classList.add("is-partial");
+        if (timer !== undefined) {
+          clearTimeout(timer);
+          timer = undefined;
+        }
+      }
+
+      function updateMatchPhase() {
+        const phase = byId("match-phase");
+        if (!phase) return;
+        const remaining = MATCH_STARTS_AT - Date.now();
+        if (remaining > 0) {
+          const totalSeconds = Math.ceil(remaining / 1_000);
+          const minutes = Math.floor(totalSeconds / 60);
+          const seconds = totalSeconds % 60;
+          phase.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        } else if (!isPastMatchWindow()) {
+          phase.textContent = "Live";
+        } else {
+          phase.textContent = "Final";
+        }
+      }
+
+      function render(data: OddsResponse) {
+        setOdds("consensus-spain", rawPercent(data.consensus.spain), "Spain");
+        setOdds("consensus-argentina", rawPercent(data.consensus.argentina), "Argentina");
+
+        const merged = new Map(history.map((point) => [point.at, point]));
+        data.history.forEach((point) => {
+          if (Date.parse(point.at) >= MATCH_STARTS_AT) merged.set(point.at, point);
+        });
+        if (
+          typeof data.consensus.spain === "number" &&
+          typeof data.consensus.argentina === "number"
+        ) {
+          merged.set(data.generatedAt, {
+            at: data.generatedAt,
+            spain: data.consensus.spain,
+            argentina: data.consensus.argentina,
+          });
+        }
+        history.splice(
+          0,
+          history.length,
+          ...[...merged.values()]
+            .filter((point) => Date.parse(point.at) >= MATCH_STARTS_AT)
+            .sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
+            .slice(-MAX_HISTORY),
+        );
+        if (history.length) updateChart();
+
+        const feedLabel = byId("feed-label");
+        if (feedLabel) {
+          feedLabel.textContent =
+            data.consensus.providerCount > 0
+              ? `${data.consensus.providerCount} sources`
+              : "Reconnecting";
+        }
+        byId("feed-status")?.classList.toggle(
+          "is-partial",
+          data.consensus.providerCount < 2,
+        );
+      }
+
+      async function refresh() {
+        if (fetching || document.hidden || stopped) return;
+        const startedAt = performance.now();
+        fetching = true;
+        try {
+          const response = await fetch(ENDPOINT, {
+            headers: { Accept: "application/json" },
+            cache: "no-store",
+          });
+          if (!response.ok) throw new Error(`Feed returned ${response.status}`);
+          render(await response.json());
+        } catch {
+          if (!isPastMatchWindow()) {
+            const feedLabel = byId("feed-label");
+            if (feedLabel) feedLabel.textContent = "Reconnecting";
+            byId("feed-status")?.classList.add("is-partial");
+          }
+        } finally {
+          fetching = false;
+          if (timer !== undefined) clearTimeout(timer);
+          if (isPastMatchWindow()) {
+            markFeedStopped();
+            return;
+          }
+          const elapsed = performance.now() - startedAt;
+          timer = window.setTimeout(
+            refresh,
+            Math.max(250, REFRESH_INTERVAL_MS - elapsed),
+          );
+        }
+      }
+
+      byId("fullscreen-button")?.addEventListener("click", async () => {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else {
+            await document.documentElement.requestFullscreen();
+          }
+        } catch {
+          const button = byId("fullscreen-button");
+          if (button instanceof HTMLButtonElement) button.hidden = true;
+        }
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && !stopped && !isPastMatchWindow()) refresh();
+      });
+
+      if (!document.fullscreenEnabled) {
+        const button = byId("fullscreen-button");
+        if (button instanceof HTMLButtonElement) button.hidden = true;
+      }
+
+      updateMatchPhase();
+      window.setInterval(updateMatchPhase, 1_000);
+      refresh();
+    </script>
+
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: oklch(95.8% 0.014 88);
+        --ink: oklch(18% 0.02 67);
+        --muted: oklch(48% 0.02 70);
+        --line: oklch(84% 0.02 78);
+        --spain: oklch(46% 0.18 25);
+        --spain-soft: oklch(90% 0.045 30);
+        --argentina: oklch(58% 0.1 225);
+        --argentina-soft: oklch(91% 0.035 225);
+        --live: oklch(55% 0.14 145);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: var(--paper);
+      }
+
+      body {
+        color: var(--ink);
+        font-family: "Archivo", sans-serif;
+        overflow: hidden;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .board {
+        height: 100dvh;
+        display: grid;
+        grid-template-rows: auto auto minmax(0, 1fr);
+        padding: 28px 40px 32px;
+        background:
+          linear-gradient(90deg, color-mix(in oklch, var(--spain-soft) 40%, transparent), transparent 22%),
+          linear-gradient(270deg, color-mix(in oklch, var(--argentina-soft) 45%, transparent), transparent 22%),
+          var(--paper);
+      }
+
+      .chrome {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .kicker,
+      .chart-meta p,
+      .team span,
+      .clock p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .live-tools {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .feed-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--live);
+        box-shadow: 0 0 0 5px color-mix(in oklch, var(--live) 16%, transparent);
+        animation: breathe 2s ease-in-out infinite;
+      }
+
+      .feed-status.is-partial .pulse {
+        background: oklch(66% 0.15 75);
+        box-shadow: 0 0 0 5px oklch(66% 0.15 75 / 16%);
+      }
+
+      #fullscreen-button {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: color-mix(in oklch, var(--paper) 84%, white);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      #fullscreen-button:hover {
+        border-color: var(--muted);
+      }
+
+      #fullscreen-button svg {
+        width: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      .odds {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        gap: 40px;
+        padding: 12px 0 8px;
+      }
+
+      .team {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .team.argentina {
+        align-items: flex-end;
+        text-align: right;
+      }
+
+      .team-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .flag {
+        width: 42px;
+        aspect-ratio: 1.48;
+        flex: none;
+        border-radius: 5px;
+        box-shadow: 0 0 0 1px oklch(30% 0.02 60 / 14%);
+      }
+
+      .spain-flag {
+        background: linear-gradient(#a51f28 0 25%, #f4c644 25% 75%, #a51f28 75%);
+      }
+
+      .argentina-flag {
+        background: linear-gradient(#70b7db 0 33%, #f8f6ec 33% 66%, #70b7db 66%);
+      }
+
+      .team strong {
+        font-family: "Newsreader", serif;
+        font-size: clamp(7.5rem, 15vw, 13rem);
+        font-weight: 650;
+        letter-spacing: -0.09em;
+        line-height: 0.78;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .team.spain strong {
+        color: var(--spain);
+      }
+
+      .team.argentina strong {
+        color: var(--argentina);
+      }
+
+      .team span {
+        letter-spacing: 0.08em;
+      }
+
+      .changed {
+        animation: price-change 450ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .clock {
+        display: grid;
+        justify-items: center;
+        gap: 4px;
+        padding-bottom: 1.1rem;
+        text-align: center;
+      }
+
+      .clock time {
+        color: var(--ink);
+        font-family: "Newsreader", serif;
+        font-size: 1.35rem;
+        font-weight: 650;
+      }
+
+      .chart-panel {
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 10px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+      }
+
+      .chart-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .legend {
+        display: flex;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      .legend span::before {
+        display: inline-block;
+        width: 18px;
+        height: 3px;
+        margin: 0 6px 2px 0;
+        border-radius: 99px;
+        content: "";
+      }
+
+      .legend-spain::before {
+        background: var(--spain);
+      }
+
+      .legend-argentina::before {
+        background: var(--argentina);
+      }
+
+      .chart-wrap {
+        position: relative;
+        min-height: 0;
+        height: 100%;
+        padding-right: 36px;
+      }
+
+      .history-chart {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .grid line {
+        stroke: var(--line);
+        stroke-dasharray: 2 7;
+        stroke-width: 1;
+      }
+
+      .chart-line {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 4.5;
+        vector-effect: non-scaling-stroke;
+        transition: d 280ms ease-out;
+      }
+
+      .spain-line,
+      .spain-dot {
+        stroke: var(--spain);
+        fill: var(--spain);
+      }
+
+      .argentina-line,
+      .argentina-dot {
+        stroke: var(--argentina);
+        fill: var(--argentina);
+      }
+
+      .chart-dot {
+        vector-effect: non-scaling-stroke;
+      }
+
+      .chart-scale {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-variant-numeric: tabular-nums;
+        pointer-events: none;
+      }
+
+      @keyframes breathe {
+        50% {
+          transform: scale(0.76);
+          opacity: 0.68;
+        }
+      }
+
+      @keyframes price-change {
+        from {
+          opacity: 0.3;
+          transform: translateY(0.06em);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>
