@@ -1413,9 +1413,9 @@ const propertyBuyTicks = [1250, 2500, 3750, 5000];
           ariaUnit: "years of median net income needed to buy a 50 square meter property"
         },
         "relative-rent": {
-          min: 50,
-          max: 200,
-          ticks: [50, 100, 150, 200],
+          min: 0,
+          max: 210,
+          ticks: [0, 70, 140, 210],
           getValue: (_buy: number, rent: number, income: number) =>
             (rent * 50 * 100) / income,
           formatValue: formatPercent,
@@ -1977,6 +1977,11 @@ const propertyBuyTicks = [1250, 2500, 3750, 5000];
     bottom: 3.25rem;
   }
 
+  .property-chart[data-active-basis="relative"] .chart-readout {
+    top: 3.8rem;
+    bottom: auto;
+  }
+
   .readout-year {
     color: var(--muted);
     font-size: 0.67rem;
@@ -2311,6 +2316,11 @@ const propertyBuyTicks = [1250, 2500, 3750, 5000];
       border-bottom: 1px solid var(--rule);
       background: transparent;
       box-shadow: none;
+    }
+
+    .property-chart[data-active-basis="relative"] .chart-readout {
+      top: auto;
+      bottom: auto;
     }
 
     .chart-readout strong {
