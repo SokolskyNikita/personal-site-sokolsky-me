@@ -477,23 +477,38 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         );
       }
 
+      const FETCH_TIMEOUT_MS = 8_000;
+      const MAX_BACKOFF_MS = 40_000;
+      let consecutiveFailures = 0;
+
+      function showReconnecting() {
+        if (isPastMatchWindow()) return;
+        const feedLabel = byId("feed-label");
+        if (feedLabel) {
+          feedLabel.textContent = navigator.onLine === false ? "Offline" : "Reconnecting";
+        }
+        byId("feed-status")?.classList.add("is-partial");
+      }
+
       async function refresh() {
         if (fetching || document.hidden || stopped) return;
         const startedAt = performance.now();
         fetching = true;
+        let failed = false;
         try {
+          // Abort hung requests so flaky wifi can't stall the polling loop.
           const response = await fetch(ENDPOINT, {
             headers: { Accept: "application/json" },
             cache: "no-store",
+            signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
           });
           if (!response.ok) throw new Error(`Feed returned ${response.status}`);
           render(await response.json());
+          consecutiveFailures = 0;
         } catch {
-          if (!isPastMatchWindow()) {
-            const feedLabel = byId("feed-label");
-            if (feedLabel) feedLabel.textContent = "Reconnecting";
-            byId("feed-status")?.classList.add("is-partial");
-          }
+          failed = true;
+          consecutiveFailures += 1;
+          showReconnecting();
         } finally {
           fetching = false;
           if (timer !== undefined) clearTimeout(timer);
@@ -501,13 +516,24 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             markFeedStopped();
             return;
           }
+          // Back off while the network is bad; snap back to 5s once healthy.
+          const backoff = failed
+            ? Math.min(
+                MAX_BACKOFF_MS,
+                REFRESH_INTERVAL_MS * 2 ** Math.min(3, consecutiveFailures - 1),
+              )
+            : REFRESH_INTERVAL_MS;
           const elapsed = performance.now() - startedAt;
-          timer = window.setTimeout(
-            refresh,
-            Math.max(250, REFRESH_INTERVAL_MS - elapsed),
-          );
+          timer = window.setTimeout(refresh, Math.max(250, backoff - elapsed));
         }
       }
+
+      window.addEventListener("online", () => {
+        consecutiveFailures = 0;
+        if (!stopped && !isPastMatchWindow()) refresh();
+      });
+
+      window.addEventListener("offline", showReconnecting);
 
       byId("fullscreen-button")?.addEventListener("click", async () => {
         try {
@@ -540,7 +566,20 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       updateMatchPhase();
       window.setInterval(updateMatchPhase, 1_000);
-      if (history.length) updateChart();
+      if (history.length) {
+        updateChart();
+        // Paint last-known odds from the baked seed so the board is never
+        // blank, even if the live feed can't be reached at all.
+        const seedTip = history.at(-1);
+        if (seedTip) {
+          const [spainPercent, argentinaPercent] = consensusPercentages(
+            seedTip.spain,
+            seedTip.argentina,
+          );
+          setOdds("consensus-spain", spainPercent, "Spain");
+          setOdds("consensus-argentina", argentinaPercent, "Argentina");
+        }
+      }
       refresh();
     </script>
 
