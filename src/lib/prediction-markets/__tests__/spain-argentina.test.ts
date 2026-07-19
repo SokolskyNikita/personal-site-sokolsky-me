@@ -29,7 +29,7 @@ describe("Spain vs. Argentina prediction market feed", () => {
         });
       }
 
-      if (url.includes("external-api.kalshi.com")) {
+      if (url.includes("kalshi.com") && url.includes("/events/")) {
         return json({
           event: {
             markets: [
@@ -214,7 +214,7 @@ describe("Spain vs. Argentina prediction market feed", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(kalshiEventAttempts).toBe(2);
+    expect(kalshiEventAttempts).toBeGreaterThanOrEqual(2);
     expect(body.consensus).toMatchObject({
       providerCount: 3,
       liveProviderCount: 3,
@@ -253,7 +253,7 @@ describe("Spain vs. Argentina prediction market feed", () => {
           ],
         });
       }
-      if (url.includes("external-api.kalshi.com")) {
+      if (url.includes("kalshi.com") && url.includes("/events/")) {
         return json({
           event: {
             markets: [

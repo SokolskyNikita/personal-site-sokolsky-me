@@ -3,14 +3,20 @@ export const SPAIN_ARGENTINA_ODDS_PATH =
 
 const CACHE_MS = 4_000;
 const REQUEST_TIMEOUT_MS = 2_500;
+const HISTORY_REQUEST_TIMEOUT_MS = 5_000;
 const OPTIONAL_REQUEST_TIMEOUT_MS = 1_200;
 const MAX_FETCH_ATTEMPTS = 2;
 const RETRY_BASE_DELAY_MS = 100;
 const STALE_PROVIDER_MS = 2 * 60 * 1_000;
+const STALE_HISTORY_MS = 10 * 60 * 1_000;
 const REAL_MONEY_WEIGHT = 5;
 const PLAY_MONEY_WEIGHT = 1;
 const MATCH_STARTS_AT_MS = Date.parse("2026-07-19T19:00:00Z");
 const MATCH_ENDS_AT_MS = MATCH_STARTS_AT_MS + 4 * 60 * 60 * 1_000;
+const KALSHI_API_HOSTS = [
+  "https://api.elections.kalshi.com",
+  "https://external-api.kalshi.com",
+] as const;
 
 type Team = "spain" | "argentina";
 
@@ -63,6 +69,12 @@ const lastGoodProviders = new Map<
   ProviderOdds["id"],
   { odds: ProviderOdds; receivedAt: number }
 >();
+let lastGoodHistory:
+  | {
+      points: SpainArgentinaOddsResponse["history"];
+      receivedAt: number;
+    }
+  | undefined;
 
 export async function handleSpainArgentinaOdds(
   request: Request,
@@ -92,10 +104,18 @@ export async function handleSpainArgentinaOdds(
 }
 
 async function loadOdds(): Promise<SpainArgentinaOddsResponse> {
-  const [results, history] = await Promise.all([
+  const [results, historyResult] = await Promise.all([
     Promise.allSettled([loadKalshi(), loadPolymarket(), loadManifold()]),
-    getKalshiHistory().catch(() => []),
+    getKalshiHistory()
+      .then((points) => ({ ok: true as const, points }))
+      .catch(() => ({ ok: false as const, points: [] as SpainArgentinaOddsResponse["history"] })),
   ]);
+  const history =
+    historyResult.points.length > 0
+      ? historyResult.points
+      : lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS
+        ? lastGoodHistory.points
+        : [];
 
   const providers: ProviderOdds[] = [
     settledProvider(results[0], {
@@ -180,12 +200,21 @@ function getKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"]> {
   if (!historyCache || historyCache.expiresAt <= now) {
     const promise = loadKalshiHistory();
     historyCache = {
-      expiresAt: now + 60_000,
+      expiresAt: now + 30_000,
       promise,
     };
-    void promise.catch(() => {
-      if (historyCache?.promise === promise) historyCache = undefined;
-    });
+    void promise.then(
+      (points) => {
+        if (points.length) {
+          lastGoodHistory = { points, receivedAt: Date.now() };
+        } else if (historyCache?.promise === promise) {
+          historyCache = undefined;
+        }
+      },
+      () => {
+        if (historyCache?.promise === promise) historyCache = undefined;
+      },
+    );
   }
   return historyCache.promise;
 }
@@ -197,15 +226,48 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
   );
   const end = Math.floor(boundedNow / 1_000);
   const start = Math.floor(MATCH_STARTS_AT_MS / 1_000);
-  const query = `start_ts=${start}&end_ts=${end}&period_interval=1`;
-  const base =
-    "https://external-api.kalshi.com/trade-api/v2/series/KXMENWORLDCUP/markets";
+  const intervals = [1, 5, 60] as const;
+  let lastError: unknown;
+
+  for (const host of KALSHI_API_HOSTS) {
+    for (const periodInterval of intervals) {
+      try {
+        const points = await loadKalshiHistoryFromHost(host, start, end, periodInterval);
+        if (points.length) return points;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+  }
+
+  if (lastGoodHistory && Date.now() - lastGoodHistory.receivedAt <= STALE_HISTORY_MS) {
+    return lastGoodHistory.points;
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Kalshi history feeds unavailable");
+}
+
+async function loadKalshiHistoryFromHost(
+  host: string,
+  start: number,
+  end: number,
+  periodInterval: number,
+): Promise<SpainArgentinaOddsResponse["history"]> {
+  const query = `start_ts=${start}&end_ts=${end}&period_interval=${periodInterval}`;
+  const base = `${host}/trade-api/v2/series/KXMENWORLDCUP/markets`;
+  const fetchOptions = {
+    attempts: 2,
+    timeoutMs: HISTORY_REQUEST_TIMEOUT_MS,
+  };
   const [spainResult, argentinaResult] = await Promise.allSettled([
     fetchJson<Record<string, unknown>>(
       `${base}/KXMENWORLDCUP-26-ES/candlesticks?${query}`,
+      fetchOptions,
     ),
     fetchJson<Record<string, unknown>>(
       `${base}/KXMENWORLDCUP-26-AR/candlesticks?${query}`,
+      fetchOptions,
     ),
   ]);
   if (spainResult.status === "rejected" && argentinaResult.status === "rejected") {
@@ -223,9 +285,9 @@ async function loadKalshiHistory(): Promise<SpainArgentinaOddsResponse["history"
     argentinaResult.status === "fulfilled"
       ? candlesByTimestamp(argentinaResult.value)
       : new Map<number, number>();
-  const timestamps = [...new Set([...spainByTime.keys(), ...argentinaByTime.keys()])].sort(
-    (a, b) => a - b,
-  );
+  const timestamps = [
+    ...new Set([...spainByTime.keys(), ...argentinaByTime.keys()]),
+  ].sort((a, b) => a - b);
 
   return timestamps.flatMap((timestamp) => {
     const rawSpain = spainByTime.get(timestamp);
@@ -259,7 +321,11 @@ function candlesByTimestamp(data: Record<string, unknown>): Map<number, number> 
 }
 
 function candleClose(candle: Record<string, unknown>): number | null {
-  return probabilityValue(asRecord(candle.price).close_dollars);
+  return (
+    probabilityValue(asRecord(candle.price).close_dollars) ??
+    probabilityValue(asRecord(candle.yes_bid).close_dollars) ??
+    probabilityValue(asRecord(candle.yes_ask).close_dollars)
+  );
 }
 
 function settledProvider(
@@ -293,19 +359,35 @@ function settledProvider(
 
 async function loadKalshi(): Promise<ProviderOdds> {
   let markets: Record<string, unknown>[] = [];
-  try {
-    const eventData = await fetchJson<Record<string, unknown>>(
-      "https://external-api.kalshi.com/trade-api/v2/events/KXMENWORLDCUP-26?with_nested_markets=true",
-    );
-    markets = asRecords(asRecord(eventData.event).markets);
-  } catch {
-    // Fall through to Kalshi's direct market listing endpoint.
+  let lastError: unknown;
+  for (const host of KALSHI_API_HOSTS) {
+    try {
+      const eventData = await fetchJson<Record<string, unknown>>(
+        `${host}/trade-api/v2/events/KXMENWORLDCUP-26?with_nested_markets=true`,
+      );
+      markets = asRecords(asRecord(eventData.event).markets);
+      if (markets.length) break;
+    } catch (error) {
+      lastError = error;
+    }
   }
   if (!markets.length) {
-    const marketsData = await fetchJson<Record<string, unknown>>(
-      "https://external-api.kalshi.com/trade-api/v2/markets?event_ticker=KXMENWORLDCUP-26&limit=1000",
-    );
-    markets = asRecords(marketsData.markets);
+    for (const host of KALSHI_API_HOSTS) {
+      try {
+        const marketsData = await fetchJson<Record<string, unknown>>(
+          `${host}/trade-api/v2/markets?event_ticker=KXMENWORLDCUP-26&limit=1000`,
+        );
+        markets = asRecords(marketsData.markets);
+        if (markets.length) break;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+  }
+  if (!markets.length) {
+    throw lastError instanceof Error
+      ? lastError
+      : new Error("Kalshi markets unavailable");
   }
   const spain = findKalshiMarket(markets, "spain");
   const argentina = findKalshiMarket(markets, "argentina");
