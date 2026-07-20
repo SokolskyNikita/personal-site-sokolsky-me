@@ -28,8 +28,11 @@ const collator = new Intl.Collator("en", {
   numeric: true,
 });
 const maxRentalListingsPerBuilding = 5;
+// Blocklist: invalid rooms, or listings with no actual availability.
 const removedAirbnbUrls = new Set([
   "https://www.airbnb.com/rooms/656743268056255662",
+  "https://www.airbnb.com/rooms/1288805621562372941", // invalid link
+  "https://www.airbnb.com/rooms/994341725704812280", // Quartier Dorrego — no availability; do not re-add
 ]);
 const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
   zencity: [
@@ -43,9 +46,11 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
     { title: "Excellent apartment in ZenCity", url: "https://www.airbnb.com/rooms/31435345" },
     { title: "Puerto Madero Master Suite", url: "https://www.airbnb.com/rooms/861641134108166999" },
     { title: "Tango Madero in Zencity", url: "https://www.airbnb.com/rooms/590499102277612233" },
+    { title: "Luxury apartment in Zencity complex", url: "https://www.airbnb.com/rooms/1719162009855927602" },
   ],
   "los-molinos": [
     { title: "Nice apartment at Faena Los Molinos", url: "https://www.airbnb.com/rooms/3646087" },
+    { title: "Molinos Faena Puerto Madero", url: "https://www.airbnb.com/rooms/32814057" },
   ],
   "torres-del-yacht": [
     { title: "Stunning 24th Floor, City View", url: "https://www.airbnb.com/rooms/673114264166332546" },
@@ -56,6 +61,9 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
     { title: "Stunning 38th Floor, River View", url: "https://www.airbnb.com/rooms/53180962" },
     { title: "Stunning 24th Floor, River View", url: "https://www.airbnb.com/rooms/947230659000127671" },
     { title: "Stunning 28th Floor, City View", url: "https://www.airbnb.com/rooms/1551487973214644634" },
+    { title: "Stunning 24th Floor, City View (114)", url: "https://www.airbnb.com/rooms/54294067" },
+    { title: "Stunning 40th Floor, City View", url: "https://www.airbnb.com/rooms/53951284" },
+    { title: "42nd floor overlooking Women's Bridge", url: "https://www.airbnb.com/rooms/1292058868524131666" },
   ],
   "quartier-del-bajo": [
     { title: "Quartier del Bajo Encanto Urbano", url: "https://www.airbnb.com/rooms/1389450788414636587" },
@@ -70,6 +78,10 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
     { title: "Charming Studio on the 33rd floor", url: "https://www.airbnb.com/rooms/1585580794461554725" },
     { title: "Studio in Quartier del Bajo", url: "https://www.airbnb.com/rooms/1507933865999984724" },
     { title: "Luxury New Apartment, River City Views", url: "https://www.airbnb.com/rooms/1269486838668052699" },
+    { title: "Luxury apartments with river views", url: "https://www.airbnb.com/rooms/1351694215917297291" },
+    { title: "Incredible apartment on the 34th floor", url: "https://www.airbnb.com/rooms/1348890232857474435" },
+    { title: "Incredible river and city view", url: "https://www.airbnb.com/rooms/1488347550735083430" },
+    { title: "Unparalleled elegance in Puerto Madero", url: "https://www.airbnb.com/rooms/1351728314764494493" },
   ],
   "concepcion-palermo": [
     { title: "Concepcion Live 3 Environments", url: "https://www.airbnb.com/rooms/1115909330621489519" },
@@ -82,6 +94,10 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
     { title: "Concepcion Live Luxury and Relax", url: "https://www.airbnb.com/rooms/1089273958150446717" },
     { title: "Concepcion Live Full Amenities", url: "https://www.airbnb.com/rooms/1457272999402733205" },
     { title: "Concepcion Live 100m2 Premium Resort Style", url: "https://www.airbnb.com/rooms/1632074186239845415" },
+    { title: "Concepcion Live 1 room with pool and spa", url: "https://www.airbnb.com/rooms/1633995686660686687" },
+    { title: "Concepcion Live residential apartment", url: "https://www.airbnb.com/rooms/1705734047973603712" },
+    { title: "Concepcion Live 2 Amb Toilette Gym Spa", url: "https://www.airbnb.com/rooms/1115867437708717151" },
+    { title: "Luxury Gym and Spa Concepcion Live", url: "https://www.airbnb.com/rooms/1425729575647563001" },
   ],
   "la-musa-stars": [
     { title: "Modern and Exclusive Apartment in Palermo", url: "https://www.airbnb.com/rooms/915894322589984117" },
@@ -102,19 +118,13 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
     { title: "Palmera Crespo, an urban oasis", url: "https://www.airbnb.com/rooms/894416011985380163" },
     { title: "MateHost Palmera Crespo 314", url: "https://www.airbnb.com/rooms/1052250386495230889" },
   ],
-  "acevedo-716": [
-    { title: "Apart Hotel Acevedo716 - 3B", url: "https://www.airbnb.com/rooms/621594957406953393" },
-    { title: "Apart Hotel Acevedo716 - 5B", url: "https://www.airbnb.com/rooms/622643662106454933" },
-  ],
   "quartier-dorrego": [
     { title: "Quartier Dorrego - Luxury Palermo Hollywood", url: "https://www.airbnb.com/rooms/29883146" },
     { title: "Quartier Dorrego 208", url: "https://www.airbnb.com/rooms/48932837" },
     { title: "Departamento Quartier Dorrego with 500 Mbps Wi-Fi", url: "https://www.airbnb.com/rooms/912713951214050993" },
     { title: "Luxury studio in Quartier Dorrego", url: "https://www.airbnb.com/rooms/43354684" },
     { title: "Bright 2BR in Quartier Dorrego", url: "https://www.airbnb.com/rooms/44642389" },
-    { title: "Apartment in Quartier Dorrego", url: "https://www.airbnb.com/rooms/1288805621562372941" },
     { title: "Modern loft in Quartier Dorrego", url: "https://www.airbnb.com/rooms/851288960139331181" },
-    { title: "Bright apartment in Palermo Hollywood", url: "https://www.airbnb.com/rooms/994341725704812280" },
     { title: "Studio with indoor pool and sauna", url: "https://www.airbnb.com/rooms/1239048757043936112" },
     { title: "2 ambientes in Quartier Dorrego", url: "https://www.airbnb.com/rooms/673312152931609752" },
     { title: "Quartier Dorrego with pool, gym and balcony", url: "https://www.airbnb.com/rooms/41436065" },
@@ -131,6 +141,9 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
   ],
   "quartier-polo": [
     { title: "Modern 1BR in Las Canitas", url: "https://www.airbnb.com/rooms/53426163" },
+    { title: "Quartier del Polo full amenities", url: "https://www.airbnb.com/rooms/1528471509048830370" },
+    { title: "Apart Quartier del Polo", url: "https://www.airbnb.com/rooms/1000672076016078707" },
+    { title: "Modern apartment in Quartier del Polo", url: "https://www.airbnb.com/rooms/30399566" },
   ],
   "oro-tower": [
     { title: "Luxury Oro Tower Palermo Soho", url: "https://www.airbnb.com/rooms/14841384" },
@@ -139,16 +152,58 @@ const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
   ],
   "torre-vista-botanico": [
     { title: "Luxury Palermo: Botanical View", url: "https://www.airbnb.com/rooms/695641805444114038" },
+    { title: "Magnificent Vista Botanico apartment", url: "https://www.airbnb.com/rooms/959694623245607916" },
   ],
-  "quo-zapata": [
-    { title: "Studio Full Amenities 214 ZP Quo Zapata", url: "https://www.airbnb.com/rooms/1570228650408831612" },
-    { title: "Quo Zapata 2-room apartment", url: "https://www.airbnb.com/rooms/1445031229108246727" },
-    { title: "2 rooms Quo Zapata", url: "https://www.airbnb.com/rooms/1704579923437287472" },
-    { title: "Espacio Zapata Full Amenities", url: "https://www.airbnb.com/rooms/1230656623206710559" },
-    { title: "Studio with full amenities in Palermo", url: "https://www.airbnb.com/rooms/1197181121450264992" },
-    { title: "Amazing flat with Quo Zapata amenities", url: "https://www.airbnb.com/rooms/1219723340971803670" },
+  "live-hotel-nicaragua-6045": [
+    { title: "Live Hotel Palermo Hollywood 2BR with parking", url: "https://www.airbnb.com/rooms/781197078845893066" },
+    { title: "A Balcony in the Sky Live Hotel Palermo", url: "https://www.airbnb.com/rooms/316228" },
+    { title: "Live Hotel Palermo Hollywood 1BR with parking", url: "https://www.airbnb.com/rooms/31707058" },
+    { title: "Palermo Hollywood Live Hotel Condo", url: "https://www.airbnb.com/rooms/427283" },
+    { title: "Live Hotel 2 bedroom luxury", url: "https://www.airbnb.com/rooms/947431" },
+    { title: "Studio inside Live Hotel", url: "https://www.airbnb.com/rooms/9545869" },
+    { title: "Topfloor penthouse Live Hotel", url: "https://www.airbnb.com/rooms/734129" },
+    { title: "Live Hotel unique 1BR private terrace penthouse", url: "https://www.airbnb.com/rooms/51520930" },
+    { title: "Palermo Hollywood luxury amenities Live Hotel", url: "https://www.airbnb.com/rooms/811676060803190638" },
+  ],
+  "torre-palermo-uno": [
+    { title: "Modern studio in Torre Palermo Uno", url: "https://www.airbnb.com/rooms/676168230958824751" },
+    { title: "Full studio Torre Palermo Uno", url: "https://www.airbnb.com/rooms/35412938" },
+    { title: "Sky Loft Ale Palermo Uno", url: "https://www.airbnb.com/rooms/768027516670234868" },
+    { title: "Palermo Uno Sky Soho 2BR", url: "https://www.airbnb.com/rooms/42657844" },
+    { title: "Palermo View Studio at Palermo Uno Tower", url: "https://www.airbnb.com/rooms/129932" },
+    { title: "Amazing apt with view Palermo Uno tower", url: "https://www.airbnb.com/rooms/1625638987672920795" },
+    { title: "Palermo luxury studio Palermo Uno", url: "https://www.airbnb.com/rooms/1234889504250556693" },
+    { title: "Panorama loft 2 bedrooms stunning view", url: "https://www.airbnb.com/rooms/52301284" },
+  ],
+  "deco-recoleta": [
+    { title: "Deco Recoleta studio by Armani 706", url: "https://www.airbnb.com/rooms/924817153442906736" },
+    { title: "Deco Recoleta studio by Armani 319", url: "https://www.airbnb.com/rooms/807210375299130484" },
+    { title: "Deco Recoleta suite by Armani 1307", url: "https://www.airbnb.com/rooms/1041520772348090890" },
+    { title: "Exclusive studio Deco Recoleta gym pool spa", url: "https://www.airbnb.com/rooms/1094149855541489777" },
+    { title: "Deco Armani Recoleta 2 amb gym pool spa", url: "https://www.airbnb.com/rooms/913101900931988246" },
+    { title: "Deco Recoleta studio by Armani 408", url: "https://www.airbnb.com/rooms/1100392949165480817" },
+    { title: "Luxury apartment Deco Recoleta gym pool spa", url: "https://www.airbnb.com/rooms/840792337776290735" },
+    { title: "Apartment Deco Recoleta Armani", url: "https://www.airbnb.com/rooms/896539744494710509" },
+    { title: "Deco Recoleta deluxe loft by Armani 420", url: "https://www.airbnb.com/rooms/981139105255188904" },
+    { title: "Luxury Deco Recoleta Armani with spa", url: "https://www.airbnb.com/rooms/937846064902369433" },
+    { title: "Deco Recoleta penthouse suite by Armani 1405", url: "https://www.airbnb.com/rooms/961028815578059578" },
+    { title: "Deco Recoleta by Armani", url: "https://www.airbnb.com/rooms/903069276663378977" },
+    { title: "Deco Recoleta studio by Armani 306", url: "https://www.airbnb.com/rooms/1041553401349908006" },
+    { title: "Beautiful loft with terrace Armani Deco Recoleta", url: "https://www.airbnb.com/rooms/878249738379384776" },
+  ],
+  "astor-nunez": [
+    { title: "Unique 2BR with views and amenities", url: "https://www.airbnb.com/rooms/20652100" },
+    { title: "Luxury executive apartment with free parking", url: "https://www.airbnb.com/rooms/21091278" },
+    { title: "Premium 2BR apartment with amenities", url: "https://www.airbnb.com/rooms/34382227" },
+    { title: "Amazing city and river view high floor", url: "https://www.airbnb.com/rooms/21199689" },
+  ],
+  "alvear-icon-residences": [
+    { title: "Exclusive property in 5-star Alvear Icon Hotel", url: "https://www.airbnb.com/rooms/1512556120455366525" },
+    { title: "Luxury 5-star Alvear Icon residence", url: "https://www.airbnb.com/rooms/1599444258163888225" },
+    { title: "Iconic residence in Puerto Madero Alvear Icon", url: "https://www.airbnb.com/rooms/1274846645819365805" },
   ],
 };
+
 const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
   "los-molinos": [
     {
@@ -184,14 +239,6 @@ const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
       signature: "green-haus-la-pampa-4200-instagram",
     },
 ],
-  "acevedo-716": [
-    {
-      source: "Acevedo 716",
-      title: "Acevedo 716 apart hotel direct booking",
-      url: "http://www.acevedo716.com/",
-      signature: "acevedo-716-direct-booking",
-    },
-  ],
   "edificio-kavanagh": [
     {
       source: "Roomix",
@@ -558,38 +605,6 @@ const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
       signature: "torre-bella-2amb-onebrokers",
     },
 ],
-  "quo-zapata": [
-    {
-      source: "Argenprop",
-      title: "Torre Quo Zapata monoambiente full amenities",
-      url: "https://www.argenprop.com/22402584--departamento-en-alquiler-en-palermo-1-ambiente--19200052",
-      signature: "quo-zapata-monoambiente-argenprop-19200052",
-    },
-    {
-      source: "Kuper Propiedades",
-      title: "Alquiler departamento 2 ambientes QUO Zapata",
-      url: "https://www.kuperpropiedades.com/inmueble/departamento-alquiler-2-ambientes-colegiales-capital-federal-buenos-aires-lp821692",
-      signature: "quo-zapata-2amb-kuper",
-    },
-    {
-      source: "Sambra Propiedades",
-      title: "Zapata al 300 departamento 2 ambientes amoblado",
-      url: "https://www.sambra-propiedades.com.ar/p/6302040-Departamento-en-Alquiler-temporario-en-Palermo-Zapata--al-300-Departamento-2-Ambientes-Belgrano-Amoblado-y-Equipado.-Full-Amenities.",
-      signature: "quo-zapata-2amb-usd950",
-    },
-    {
-      source: "Argenprop",
-      title: "Departamento a estrenar para alquiler en Colegiales",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-colegiales-2-ambientes--19448504",
-      signature: "quo-zapata-2amb-argenprop",
-    },
-    {
-      source: "Roomix",
-      title: "Quo Zapata Full Amenities",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-belgrano-40e1e8fe",
-      signature: "quo-zapata-2amb-roomix-40e1e8fe",
-    },
-  ],
   "el-faro-towers": [
     {
       source: "Mercado Libre Inmuebles",
@@ -716,20 +731,6 @@ const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
       title: "Le Parc Figueroa Alcorta venta y alquiler",
       url: "https://www.sabellapropiedades.com.ar/departamento-en-venta-y-alquiler-en-palermo-ficha-js15210",
       signature: "le-parc-figueroa-alcorta-sabella",
-    },
-],
-  "juan-francisco-segui-3600": [
-    {
-      source: "Argenprop",
-      title: "Departamento en alquiler Palermo Chico 2 ambientes",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-chico-2-ambientes--19849165",
-      signature: "jf-segui-3600-2amb-argenprop",
-    },
-      {
-      source: "RE/MAX",
-      title: "Alquiler departamento dos ambientes en Palermo",
-      url: "https://www.remax.com.ar/listings/alquiler-departamento-dos-ambientes-en-palermo-2",
-      signature: "juan-francisco-segui-2amb-remax",
     },
 ],
   "demaria-4700": [
