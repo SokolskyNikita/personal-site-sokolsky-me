@@ -1,5 +1,6 @@
 ---
 import pageData from "../../data/apartments-buenos-aires.json";
+import listingsData from "../../data/apartments-buenos-aires-listings.json";
 
 export const prerender = true;
 
@@ -12,9 +13,12 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Building = (typeof pageData.buildings)[number];
+type AirbnbSize = "studio" | "1br" | "2br" | "3br" | "4br" | "5br+";
 type AirbnbListing = {
   title: string;
   url: string;
+  size?: AirbnbSize;
+  bedrooms?: number;
 };
 type RentalListing = {
   source: string;
@@ -27,1233 +31,22 @@ const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
-const maxRentalListingsPerBuilding = 5;
-// Blocklist: invalid rooms, or listings with no actual availability.
-const removedAirbnbUrls = new Set([
-  "https://www.airbnb.com/rooms/656743268056255662",
-  "https://www.airbnb.com/rooms/1288805621562372941", // invalid link
-  "https://www.airbnb.com/rooms/994341725704812280", // Quartier Dorrego — no availability; do not re-add
-]);
-const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
-  zencity: [
-    { title: "Apartment in Puerto Madero - Zencity - 23rd Floor", url: "https://www.airbnb.com/rooms/674033937301855180" },
-    { title: "New, modern and sunny in luxury ZenCity", url: "https://www.airbnb.com/rooms/33679023" },
-    { title: "Studio located in Zencity of Puerto Madero", url: "https://www.airbnb.com/rooms/52950672" },
-    { title: "Luxury apartment in Puerto Madero", url: "https://www.airbnb.com/rooms/920964685047064984" },
-    { title: "Apartment with spa in Dique I Puerto Madero", url: "https://www.airbnb.com/rooms/16244175" },
-    { title: "Cozy apartment in Zencity", url: "https://www.airbnb.com/rooms/1442094323807650307" },
-    { title: "Puerto Madero - Zencity Complex", url: "https://www.airbnb.com/rooms/35092977" },
-    { title: "Excellent apartment in ZenCity", url: "https://www.airbnb.com/rooms/31435345" },
-    { title: "Puerto Madero Master Suite", url: "https://www.airbnb.com/rooms/861641134108166999" },
-    { title: "Tango Madero in Zencity", url: "https://www.airbnb.com/rooms/590499102277612233" },
-    { title: "Luxury apartment in Zencity complex", url: "https://www.airbnb.com/rooms/1719162009855927602" },
-  ],
-  "los-molinos": [
-    { title: "Nice apartment at Faena Los Molinos", url: "https://www.airbnb.com/rooms/3646087" },
-    { title: "Molinos Faena Puerto Madero", url: "https://www.airbnb.com/rooms/32814057" },
-  ],
-  "torres-del-yacht": [
-    { title: "Stunning 24th Floor, City View", url: "https://www.airbnb.com/rooms/673114264166332546" },
-    { title: "Luxury apartment in Torres del Yacht", url: "https://www.airbnb.com/rooms/795165174840516184" },
-    { title: "Apartment in Puerto Madero by Madero Rentals", url: "https://www.airbnb.com/rooms/831831089338611939" },
-    { title: "Puerto Madero Yacht Towers", url: "https://www.airbnb.com/rooms/53719486" },
-    { title: "Magnificent view, Puerto Madero 39th floor", url: "https://www.airbnb.com/rooms/13015811" },
-    { title: "Stunning 38th Floor, River View", url: "https://www.airbnb.com/rooms/53180962" },
-    { title: "Stunning 24th Floor, River View", url: "https://www.airbnb.com/rooms/947230659000127671" },
-    { title: "Stunning 28th Floor, City View", url: "https://www.airbnb.com/rooms/1551487973214644634" },
-    { title: "Stunning 24th Floor, City View (114)", url: "https://www.airbnb.com/rooms/54294067" },
-    { title: "Stunning 40th Floor, City View", url: "https://www.airbnb.com/rooms/53951284" },
-    { title: "42nd floor overlooking Women's Bridge", url: "https://www.airbnb.com/rooms/1292058868524131666" },
-  ],
-  "quartier-del-bajo": [
-    { title: "Quartier del Bajo Encanto Urbano", url: "https://www.airbnb.com/rooms/1389450788414636587" },
-    { title: "Luxury New Apartment, City Views", url: "https://www.airbnb.com/rooms/1260210944105503874" },
-    { title: "Exclusive New Apartment with River and City Views", url: "https://www.airbnb.com/rooms/1260751265065252770" },
-    { title: "Exclusive New Building with River and City Views", url: "https://www.airbnb.com/rooms/1261510810085396936" },
-    { title: "Premium Experience Apartment with River Views", url: "https://www.airbnb.com/rooms/1260868911274309550" },
-    { title: "Sophisticated Living in Puerto Madero", url: "https://www.airbnb.com/rooms/1351750349488662629" },
-    { title: "Luxury apartment in Quartier del Bajo", url: "https://www.airbnb.com/rooms/1505802767273579112" },
-    { title: "Downtown District, 29th Floor", url: "https://www.airbnb.com/rooms/1672457992257033977" },
-    { title: "Premium high-floor apartment, river and city", url: "https://www.airbnb.com/rooms/1621748216371643959" },
-    { title: "Charming Studio on the 33rd floor", url: "https://www.airbnb.com/rooms/1585580794461554725" },
-    { title: "Studio in Quartier del Bajo", url: "https://www.airbnb.com/rooms/1507933865999984724" },
-    { title: "Luxury New Apartment, River City Views", url: "https://www.airbnb.com/rooms/1269486838668052699" },
-    { title: "Luxury apartments with river views", url: "https://www.airbnb.com/rooms/1351694215917297291" },
-    { title: "Incredible apartment on the 34th floor", url: "https://www.airbnb.com/rooms/1348890232857474435" },
-    { title: "Incredible river and city view", url: "https://www.airbnb.com/rooms/1488347550735083430" },
-    { title: "Unparalleled elegance in Puerto Madero", url: "https://www.airbnb.com/rooms/1351728314764494493" },
-  ],
-  "concepcion-palermo": [
-    { title: "Concepcion Live 3 Environments", url: "https://www.airbnb.com/rooms/1115909330621489519" },
-    { title: "Concepcion Live luxury pool and gym", url: "https://www.airbnb.com/rooms/1333253360501657887" },
-    { title: "Concepcion Live Buenos Aires", url: "https://www.airbnb.com/rooms/1319014660778465530" },
-    { title: "Concepcion Live 2 Amb + Toilette", url: "https://www.airbnb.com/rooms/1115876190702549193" },
-    { title: "Lujoso depto en Concepcion Live", url: "https://www.airbnb.com/rooms/1457429687126707081" },
-    { title: "Concepcion Live luxury in Palermo", url: "https://www.airbnb.com/rooms/1547365926159165389" },
-    { title: "Premium Gym and Spa, Concepcion Live", url: "https://www.airbnb.com/rooms/1500262254096690801" },
-    { title: "Concepcion Live Luxury and Relax", url: "https://www.airbnb.com/rooms/1089273958150446717" },
-    { title: "Concepcion Live Full Amenities", url: "https://www.airbnb.com/rooms/1457272999402733205" },
-    { title: "Concepcion Live 100m2 Premium Resort Style", url: "https://www.airbnb.com/rooms/1632074186239845415" },
-    { title: "Concepcion Live 1 room with pool and spa", url: "https://www.airbnb.com/rooms/1633995686660686687" },
-    { title: "Concepcion Live residential apartment", url: "https://www.airbnb.com/rooms/1705734047973603712" },
-    { title: "Concepcion Live 2 Amb Toilette Gym Spa", url: "https://www.airbnb.com/rooms/1115867437708717151" },
-    { title: "Luxury Gym and Spa Concepcion Live", url: "https://www.airbnb.com/rooms/1425729575647563001" },
-  ],
-  "la-musa-stars": [
-    { title: "Modern and Exclusive Apartment in Palermo", url: "https://www.airbnb.com/rooms/915894322589984117" },
-    { title: "Cozy Apartment with Pool, Gym and Parking", url: "https://www.airbnb.com/rooms/1173342773304914353" },
-    { title: "Premium apartment in La Musa Stars", url: "https://www.airbnb.com/rooms/25400289" },
-  ],
-  "jardines-del-libertador": [
-    { title: "Libert Gardens Heated Pool + 2BR", url: "https://www.airbnb.com/rooms/602107963905123924" },
-    { title: "Apartment with spa, pool and gym in Nunez", url: "https://www.airbnb.com/rooms/1065856057282732909" },
-    { title: "Libert Gardens Sunny 2BR", url: "https://www.airbnb.com/rooms/771142883295151930" },
-  ],
-  "green-haus": [
-    { title: "New apartment with amenities in DoHo Belgrano", url: "https://www.airbnb.com/rooms/1674317858751080207" },
-  ],
-  "palmera-crespo": [
-    { title: "Palmera Crespo Confort Location", url: "https://www.airbnb.com/rooms/909237803427880994" },
-    { title: "MateHost Palmera Crespo 902", url: "https://www.airbnb.com/rooms/803478984346793244" },
-    { title: "Palmera Crespo, an urban oasis", url: "https://www.airbnb.com/rooms/894416011985380163" },
-    { title: "MateHost Palmera Crespo 314", url: "https://www.airbnb.com/rooms/1052250386495230889" },
-  ],
-  "quartier-dorrego": [
-    { title: "Quartier Dorrego - Luxury Palermo Hollywood", url: "https://www.airbnb.com/rooms/29883146" },
-    { title: "Quartier Dorrego 208", url: "https://www.airbnb.com/rooms/48932837" },
-    { title: "Departamento Quartier Dorrego with 500 Mbps Wi-Fi", url: "https://www.airbnb.com/rooms/912713951214050993" },
-    { title: "Luxury studio in Quartier Dorrego", url: "https://www.airbnb.com/rooms/43354684" },
-    { title: "Bright 2BR in Quartier Dorrego", url: "https://www.airbnb.com/rooms/44642389" },
-    { title: "Modern loft in Quartier Dorrego", url: "https://www.airbnb.com/rooms/851288960139331181" },
-    { title: "Studio with indoor pool and sauna", url: "https://www.airbnb.com/rooms/1239048757043936112" },
-    { title: "2 ambientes in Quartier Dorrego", url: "https://www.airbnb.com/rooms/673312152931609752" },
-    { title: "Quartier Dorrego with pool, gym and balcony", url: "https://www.airbnb.com/rooms/41436065" },
-    { title: "2BR with pool and gym in Palermo Hollywood", url: "https://www.airbnb.com/rooms/598573018763151620" },
-    { title: "Newly renovated 1BR in luxury tower", url: "https://www.airbnb.com/rooms/1528463419702903084" },
-    { title: "Dorrego Palermo Hollywood with parking", url: "https://www.airbnb.com/rooms/33644779" },
-    { title: "Practical apartment with 2 pools", url: "https://www.airbnb.com/rooms/40109648" },
-    { title: "Dorrego Palermo Hollywood", url: "https://www.airbnb.com/rooms/37808323" },
-  ],
-  "quo-swim": [
-    { title: "Suite Rotchers Palermo Hollywood", url: "https://www.airbnb.com/rooms/1506640346471362068" },
-    { title: "Palermo view with pool and gym", url: "https://www.airbnb.com/rooms/1190919327737160088" },
-    { title: "Luminous flat in Quo Swim", url: "https://www.airbnb.com/rooms/788400641714050992" },
-  ],
-  "quartier-polo": [
-    { title: "Modern 1BR in Las Canitas", url: "https://www.airbnb.com/rooms/53426163" },
-    { title: "Quartier del Polo full amenities", url: "https://www.airbnb.com/rooms/1528471509048830370" },
-    { title: "Apart Quartier del Polo", url: "https://www.airbnb.com/rooms/1000672076016078707" },
-    { title: "Modern apartment in Quartier del Polo", url: "https://www.airbnb.com/rooms/30399566" },
-  ],
-  "oro-tower": [
-    { title: "Luxury Oro Tower Palermo Soho", url: "https://www.airbnb.com/rooms/14841384" },
-    { title: "2 bedroom apartment at Oro 2200", url: "https://www.airbnb.com/rooms/1620397193482844575" },
-    { title: "MOT Rentals + Oro 2200", url: "https://www.airbnb.com/rooms/29038326" },
-  ],
-  "torre-vista-botanico": [
-    { title: "Luxury Palermo: Botanical View", url: "https://www.airbnb.com/rooms/695641805444114038" },
-    { title: "Magnificent Vista Botanico apartment", url: "https://www.airbnb.com/rooms/959694623245607916" },
-  ],
-  "live-hotel-nicaragua-6045": [
-    { title: "Live Hotel Palermo Hollywood 2BR with parking", url: "https://www.airbnb.com/rooms/781197078845893066" },
-    { title: "A Balcony in the Sky Live Hotel Palermo", url: "https://www.airbnb.com/rooms/316228" },
-    { title: "Live Hotel Palermo Hollywood 1BR with parking", url: "https://www.airbnb.com/rooms/31707058" },
-    { title: "Palermo Hollywood Live Hotel Condo", url: "https://www.airbnb.com/rooms/427283" },
-    { title: "Live Hotel 2 bedroom luxury", url: "https://www.airbnb.com/rooms/947431" },
-    { title: "Studio inside Live Hotel", url: "https://www.airbnb.com/rooms/9545869" },
-    { title: "Topfloor penthouse Live Hotel", url: "https://www.airbnb.com/rooms/734129" },
-    { title: "Live Hotel unique 1BR private terrace penthouse", url: "https://www.airbnb.com/rooms/51520930" },
-    { title: "Palermo Hollywood luxury amenities Live Hotel", url: "https://www.airbnb.com/rooms/811676060803190638" },
-  ],
-  "torre-palermo-uno": [
-    { title: "Modern studio in Torre Palermo Uno", url: "https://www.airbnb.com/rooms/676168230958824751" },
-    { title: "Full studio Torre Palermo Uno", url: "https://www.airbnb.com/rooms/35412938" },
-    { title: "Sky Loft Ale Palermo Uno", url: "https://www.airbnb.com/rooms/768027516670234868" },
-    { title: "Palermo Uno Sky Soho 2BR", url: "https://www.airbnb.com/rooms/42657844" },
-    { title: "Palermo View Studio at Palermo Uno Tower", url: "https://www.airbnb.com/rooms/129932" },
-    { title: "Amazing apt with view Palermo Uno tower", url: "https://www.airbnb.com/rooms/1625638987672920795" },
-    { title: "Palermo luxury studio Palermo Uno", url: "https://www.airbnb.com/rooms/1234889504250556693" },
-    { title: "Panorama loft 2 bedrooms stunning view", url: "https://www.airbnb.com/rooms/52301284" },
-  ],
-  "deco-recoleta": [
-    { title: "Deco Recoleta studio by Armani 706", url: "https://www.airbnb.com/rooms/924817153442906736" },
-    { title: "Deco Recoleta studio by Armani 319", url: "https://www.airbnb.com/rooms/807210375299130484" },
-    { title: "Deco Recoleta suite by Armani 1307", url: "https://www.airbnb.com/rooms/1041520772348090890" },
-    { title: "Exclusive studio Deco Recoleta gym pool spa", url: "https://www.airbnb.com/rooms/1094149855541489777" },
-    { title: "Deco Armani Recoleta 2 amb gym pool spa", url: "https://www.airbnb.com/rooms/913101900931988246" },
-    { title: "Deco Recoleta studio by Armani 408", url: "https://www.airbnb.com/rooms/1100392949165480817" },
-    { title: "Luxury apartment Deco Recoleta gym pool spa", url: "https://www.airbnb.com/rooms/840792337776290735" },
-    { title: "Apartment Deco Recoleta Armani", url: "https://www.airbnb.com/rooms/896539744494710509" },
-    { title: "Deco Recoleta deluxe loft by Armani 420", url: "https://www.airbnb.com/rooms/981139105255188904" },
-    { title: "Luxury Deco Recoleta Armani with spa", url: "https://www.airbnb.com/rooms/937846064902369433" },
-    { title: "Deco Recoleta penthouse suite by Armani 1405", url: "https://www.airbnb.com/rooms/961028815578059578" },
-    { title: "Deco Recoleta by Armani", url: "https://www.airbnb.com/rooms/903069276663378977" },
-    { title: "Deco Recoleta studio by Armani 306", url: "https://www.airbnb.com/rooms/1041553401349908006" },
-    { title: "Beautiful loft with terrace Armani Deco Recoleta", url: "https://www.airbnb.com/rooms/878249738379384776" },
-  ],
-  "astor-nunez": [
-    { title: "Unique 2BR with views and amenities", url: "https://www.airbnb.com/rooms/20652100" },
-    { title: "Luxury executive apartment with free parking", url: "https://www.airbnb.com/rooms/21091278" },
-    { title: "Premium 2BR apartment with amenities", url: "https://www.airbnb.com/rooms/34382227" },
-    { title: "Amazing city and river view high floor", url: "https://www.airbnb.com/rooms/21199689" },
-  ],
-  "alvear-icon-residences": [
-    { title: "Exclusive property in 5-star Alvear Icon Hotel", url: "https://www.airbnb.com/rooms/1512556120455366525" },
-    { title: "Luxury 5-star Alvear Icon residence", url: "https://www.airbnb.com/rooms/1599444258163888225" },
-    { title: "Iconic residence in Puerto Madero Alvear Icon", url: "https://www.airbnb.com/rooms/1274846645819365805" },
-  ],
-};
-
-const additionalRentalListingsByBuilding: Record<string, RentalListing[]> = {
-  "los-molinos": [
-    {
-      source: "Roomix",
-      title: "Los Molinos de Faena - alquiler 2 dormitorios",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-29046cb6",
-      signature: "los-molinos-faena-3amb-160m2-roomix",
-    },
-      {
-      source: "Zonaprop",
-      title: "Departamento 3 ambientes en Los Molinos Faena",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-departamento-3-ambientes-en-alquiler-puerto-madero-59423294.html",
-      signature: "los-molinos-3amb-zonaprop",
-    },
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Los Molinos de Faena alquiler 2 dormitorios",
-      url: "https://departamento.mercadolibre.com.ar/MLA-3443235602-los-molinos-de-faena-alquiler-2-dormitorios--_JM",
-      signature: "los-molinos-faena-2dorm-ml",
-    },
-],
-  "green-haus": [
-    {
-      source: "Inmoup",
-      title: "2 ambientes con cochera en complejo Green Haus",
-      url: "https://inmoup.com.ar/311508-grupo-mega-rivada/inmuebles/41/ficha/departamento-en-alquiler-en-la-pampa-al-4200",
-      signature: "green-haus-2amb-cochera-inmoup",
-    },
-      {
-      source: "Instagram",
-      title: "Green Haus La Pampa 4200 monoambiente",
-      url: "https://www.instagram.com/p/DHL7aAyMVoA/",
-      signature: "green-haus-la-pampa-4200-instagram",
-    },
-],
-  "edificio-kavanagh": [
-    {
-      source: "Roomix",
-      title: "Edificio Kavanagh apartment rental in Retiro",
-      url: "https://roomix.ai/propiedad/departamento-5-ambientes-retiro-75902a38",
-      signature: "kavanagh-5amb-florida-1065-roomix",
-    },
-  ],
-  "deco-recoleta": [
-    {
-      source: "HotelVIP",
-      title: "Incredible Studio Luxe Tower D902",
-      url: "https://hotelvip.com.ar/hotel/incredible-studio-luxe-tower-d902/",
-      signature: "deco-recoleta-studio-d902-hotelvip",
-    },
-    {
-      source: "Situar",
-      title: "Deco Armani Recoleta 2 ambientes amoblado",
-      url: "https://situar.com/propiedad/departamento-2-ambientes-amoblado-con-balcon-full-amenities-torre-deco-armani-recoleta--4457899",
-      signature: "deco-recoleta-2amb-situar",
-    },
-    {
-      source: "Roomix",
-      title: "Armani Deco Recoleta monoambiente amoblado",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-recoleta-c8ba9164",
-      signature: "deco-recoleta-monoambiente-roomix-c8ba9164",
-    },
-      {
-      source: "Roomix",
-      title: "Deco Recoleta by Armani monoambiente",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-recoleta-9295e05e",
-      signature: "deco-recoleta-monoambiente-roomix",
-    },
-],
-  "lumiere-urbano": [
-    {
-      source: "Zonaprop",
-      title: "Exclusivo 2 amb luz y confort amenities full",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-exclusivo-2-amb-luz-y-confort-categoria-amenities-full-58513845.html",
-      signature: "lumiere-urbano-2amb-45m2-ars1400000",
-    },
-      {
-      source: "RE/MAX",
-      title: "Lumiere Urbano 2 ambientes",
-      url: "https://www.remax.com.ar/listings/alquiler-2-amb-torre-exclusiva",
-      signature: "lumiere-urbano-2amb-remax",
-    },
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Lumiere Urbano 2 ambientes a estrenar",
-      url: "https://departamento.mercadolibre.com.ar/MLA-3484878814-lumiere-urbano-almagro-departamento-en-alquiler-a-estrenar-2-ambientes-_JM",
-      signature: "lumiere-urbano-2amb-ml",
-    },
-],
-  "depampa-bajo-belgrano": [
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "2 amb DePampa emprendimiento único full amenities",
-      url: "https://departamento.mercadolibre.com.ar/MLA-3252597432-2-amb-depampa-emprendimiento-unico-full-amenities-_JM",
-      signature: "depampa-2amb-42m2-usd1150",
-    },
-      {
-      source: "Roomix",
-      title: "DePampa Bajo Belgrano 2 ambientes",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-belgrano-chico-6fe4bb51",
-      signature: "depampa-2amb-roomix",
-    },
-],
-  zencity: [
-    {
-      source: "Roomix",
-      title: "Departamento 3 ambientes en alquiler temporal - Zencity Puerto Madero",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-3f117911",
-      signature: "zencity-3amb-usd5000",
-    },
-    {
-      source: "Lanven",
-      title: "Alquiler departamento 2 ambientes Zencity Puerto Madero",
-      url: "https://lanven.com.ar/ficha-propiedad.php?id=6660071",
-      signature: "zencity-2amb-lanven",
-    },
-    {
-      source: "Coldwell Banker",
-      title: "Departamento 2 ambientes con cochera Zencity Puerto Madero",
-      url: "https://coldwellbanker.com.ar/propiedad/departamento-en-alquiler-2-ambientes-cochera-zencity-puerto-madero--4469336",
-      signature: "zencity-2amb-cochera-coldwell-banker",
-    },
-    {
-      source: "Raíces Puerto Madero",
-      title: "Dos ambientes reformados Edificio Zen City con muebles y cochera",
-      url: "https://raicespm.com.ar/propiedad/alquiler-puerto-madero-dos-ambientes-reformados-edificio-zen-city-con-muebles-y-cochera",
-      signature: "zencity-2amb-raices-puerto-madero",
-    },
-  ],
-  "sls-puerto-madero": [
-    {
-      source: "Madero Realty",
-      title: "SLS Puerto Madero - 4 ambientes - 255 m2 - amoblado",
-      url: "https://www.maderorealty.com/p/4031848-Departamento-en-Alquiler-Venta-en-Puerto-Madero-SLS-Puerto-Madero---4-ambientes---255m2---amoblado",
-      signature: "sls-4amb-255m2-usd10000",
-    },
-      {
-      source: "Roomix",
-      title: "SLS Puerto Madero 4 ambientes amoblado",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-puerto-madero-22dc01ce",
-      signature: "sls-puerto-madero-4amb-roomix",
-    },
-],
-  "torres-del-yacht": [
-    {
-      source: "Argenprop",
-      title: "Dpto 2 amb en alquiler amoblado en Torres del Yacht",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--19447918",
-      signature: "torres-yacht-2amb-70m2-usd1800",
-    },
-    {
-      source: "Situar",
-      title: "Torres del Yacht Club alquiler departamento 2 amb",
-      url: "https://situar.com/propiedad/torres-del-yacht-club-alquiler-departamento-2-amb-en-puerto-madero--4659102",
-      signature: "torres-yacht-2amb-77m2-usd2800",
-    },
-    {
-      source: "Inmobalear",
-      title: "Torres del Yacht amoblado y equipado piso alto",
-      url: "https://inmobalear.com.ar/propiedad/torres-del-yacht-amoblado-y-equipado-piso-alto-1-cochera--4331720",
-      signature: "torres-yacht-2amb-70m2-usd2400",
-    },
-    {
-      source: "Roomix",
-      title: "Alquiler departamento con muebles Torres del Yacht",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-d6ae5576",
-      signature: "torres-yacht-2amb-roomix-d6ae5576",
-    },
-  ],
-  "quartier-del-bajo": [
-    {
-      source: "Zonaprop",
-      title: "Departamento en Quartier del Bajo",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-quartier-del-bajo-57610513.html",
-      signature: "quartier-bajo-zonaprop-57610513",
-    },
-    {
-      source: "Unité Quartier",
-      title: "Excelente tres ambientes en alquiler con cochera",
-      url: "https://unitequartier.com/propiedad/excelente-tres-ambientes-en-alquiler-con-cochera-quartier-del-bajo-torre-1-sector-rio--4661190",
-      signature: "quartier-bajo-3amb-unite-4661190",
-    },
-    {
-      source: "Selectia",
-      title: "Departamento unificado 3 ambientes en Quartier del Bajo",
-      url: "https://selectia.net.ar/propiedad/alquiler-departamento-unificado-3-ambientes-cochera-y-amenities-en-quartier-del-bajo-puerto-madero--4361771",
-      signature: "quartier-bajo-3amb-selectia-4361771",
-    },
-    {
-      source: "RE/MAX",
-      title: "Depto monoambiente alquiler Quartier del Bajo",
-      url: "https://www.remax.com.ar/listings/depto-monoambiente-alquiler-quartier-del-bajo",
-      signature: "quartier-bajo-mono-35m2-ars1000000",
-    },
-  ],
-  "concepcion-palermo": [
-    {
-      source: "Roomix",
-      title: "Concepción Palermo 3 ambientes amoblado",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-f223d319",
-      signature: "concepcion-palermo-3amb-roomix-f223d319",
-    },
-    {
-      source: "Grupo Hoggax",
-      title: "Concepción Palermo 3 ambientes amoblado",
-      url: "https://www.propiedades.hoggax.com/p/6436073-Departamento-en--en-Palermo-Concepci%C3%B3n-Arenal-2989,-Palermo-Hollywood",
-      signature: "concepcion-palermo-3amb-hoggax",
-    },
-    {
-      source: "RE/MAX",
-      title: "Alquiler Concepción Live 2 ambientes",
-      url: "https://www.remax.com.ar/listings/alquiler-concepcion-live-2-amb",
-      signature: "concepcion-live-2amb-remax-current",
-    },
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Alquiler Concepción Live 2 ambientes",
-      url: "https://departamento.mercadolibre.com.ar/MLA-1843581925-alquiler-concepcion-live-2-amb-_JM",
-      signature: "concepcion-live-2amb-ml-1843581925",
-    },
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Alquiler departamento 2 ambientes, toilette y cochera - Concepción Live",
-      url: "https://departamento.mercadolibre.com.ar/MLA-1774809775-alquiler-departamento-2-ambientes-toilette-y-cochera-concepcion-live-palermo-full-amenities-_JM",
-      signature: "concepcion-live-2amb-ml",
-    },
-    {
-      source: "Argenprop",
-      title: "Concepción Live diseño, lujo y confort",
-      url: "https://www.argenprop.com/departamento-en-alquiler-temporal-en-colegiales-2-ambientes--18250792",
-      signature: "concepcion-live-2amb-53m2-usd2650",
-    },
-  ],
-  "la-musa-stars": [
-    {
-      source: "Selectia",
-      title: "Alquiler 3 ambientes al frente - Musa Star",
-      url: "https://selectia.net.ar/propiedad/alquiler-3-ambientes-al-frente-full-amenities-totalmente-remodelado-musa-star-colegiales--4363569",
-      signature: "la-musa-stars-3amb-89m2-usd1500",
-    },
-      {
-      source: "Roomix",
-      title: "Monoambiente en La Musa Stars Colegiales",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-colegiales-fc32d7a7",
-      signature: "la-musa-stars-monoambiente-roomix",
-    },
-],
-  "jardines-del-libertador": [
-    {
-      source: "Roomix",
-      title: "Jardines del Libertador alquiler amoblado temporario",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-nez-441ca435",
-      signature: "jardines-libertador-2amb-55m2-usd980",
-    },
-      {
-      source: "Grillo",
-      title: "Jardines del Libertador 2 ambientes",
-      url: "https://www.grillo.ar/jardines-60-5b",
-      signature: "jardines-del-libertador-2amb-grillo",
-    },
-],
-  "palmera-crespo": [
-    {
-      source: "Roomix",
-      title: "Departamento 4 ambientes en alquiler - Palmera Crespo",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-villa-crespo-41a8722f",
-      signature: "palmera-crespo-4amb-110m2-usd1800",
-    },
-    {
-      source: "RE/MAX",
-      title: "Alquiler monoambiente Palmera Crespo amenities",
-      url: "https://www.remax.com.ar/listings/alquiler-3p-monoambiente-palmera-crespo-amenities",
-      signature: "palmera-crespo-mono-38m2-ars750000",
-    },
-    {
-      source: "Lanven",
-      title: "Palmera Crespo 4 ambientes - Villa Crespo",
-      url: "https://lanven.com.ar/propiedad-4343418-PALMERA-CRESPO-4-ambientes---Villa-Crespo",
-      signature: "palmera-crespo-4amb-100m2-usd1400",
-    },
-  ],
-  "quartier-dorrego": [
-    {
-      source: "Roomix",
-      title: "Excelente unidad en Quartier Dorrego",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-ddad9616",
-      signature: "quartier-dorrego-2amb-usd1000-ddad9616",
-    },
-    {
-      source: "Roomix",
-      title: "Departamento 2 ambientes en Quartier Dorrego",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-5bfaa60a",
-      signature: "quartier-dorrego-2amb-usd1000-5bfaa60a",
-    },
-    {
-      source: "Roomix",
-      title: "2 ambientes amoblado temporario en Quartier Dorrego",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-eade0b2a",
-      signature: "quartier-dorrego-2amb-temp-usd1050-eade0b2a",
-    },
-    {
-      source: "Roomix",
-      title: "2 ambientes full amenities Quartier Dorrego",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-359679f7",
-      signature: "quartier-dorrego-2amb-usd1450-359679f7",
-    },
-    {
-      source: "Argenprop",
-      title: "Quartier Dorrego 2 ambientes con cochera",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-2-ambientes--19961060",
-      signature: "quartier-dorrego-2amb-argenprop-19961060",
-    },
-  ],
-  "quo-swim": [
-    {
-      source: "RE/MAX",
-      title: "Alquiler departamento 2 ambientes Palermo Piscinas",
-      url: "https://www.remax.com.ar/listings/alquiler-departamento-2-ambientes-palermo-piscinas-1",
-      signature: "quo-swim-2amb-remax",
-    },
-    {
-      source: "Roomix",
-      title: "Alquiler departamento 2 ambientes amoblado - Quo Swim",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-09c5ccdb",
-      signature: "quo-swim-2amb-roomix",
-    },
-  ],
-  "quartier-polo": [
-    {
-      source: "Selectia",
-      title: "Alquiler departamento 2 ambientes amoblado - Quartier del Polo",
-      url: "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-amoblado-cochera-y-amenities-quartier-del-polo--4666365",
-      signature: "quartier-polo-2amb-50m2-usd1000",
-    },
-    {
-      source: "Evoluer",
-      title: "Alquiler departamento 2 ambientes con cochera - Quartier del Polo",
-      url: "https://evoluer.com.ar/propiedad/alquiler-departamento-2-ambientes-con-cochera-y-amenities-quartier-del-polo--4659019",
-      signature: "quartier-polo-2amb-50m2-usd900",
-    },
-    {
-      source: "Evoluer",
-      title: "Quartier del Polo 2 ambientes amoblado con cochera",
-      url: "https://evoluer.com.ar/propiedad/alquiler-departamento-2-ambientes-amoblado-cochera-y-amenities-quartier-del-polo--4666294",
-      signature: "quartier-polo-2amb-evoluer-4666294",
-    },
-    {
-      source: "Roomix",
-      title: "Quartier del Polo 2 ambientes Las Cañitas cochera",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-las-caitas-bcc1d80d",
-      signature: "quartier-polo-2amb-roomix-bcc1d80d",
-    },
-  ],
-  "oro-tower": [
-    {
-      source: "Roomix",
-      title: "Alquiler temporal monoambiente en Torre Oro Tower",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-soho-fd72a08f",
-      signature: "oro-tower-mono-45m2-ars950000",
-    },
-      {
-      source: "Roomix",
-      title: "Oro Tower monoambiente Palermo Soho",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-soho-2e175180",
-      signature: "oro-tower-monoambiente-roomix",
-    },
-],
-  "astor-palermo": [
-    {
-      source: "Fauro Propiedades",
-      title: "Torre Astor Palermo - piso 26",
-      url: "https://fauropropiedades.com.ar/propiedad/disponibilidad-02072026-torre-astor-palermo-piso-26--4575181",
-      signature: "astor-palermo-piso26",
-    },
-    {
-      source: "Fauro Propiedades",
-      title: "Torre Astor Palermo 3 ambientes piso 26E",
-      url: "https://fauropropiedades.com.ar/propiedad/disponibilidad-01062026--4575168",
-      signature: "astor-palermo-piso26e-fauro",
-    },
-    {
-      source: "Argenprop",
-      title: "Torre Astor Palermo 3 ambientes piso alto",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-3-ambientes--19897035",
-      signature: "astor-palermo-3amb-argenprop-19897035",
-    },
-    {
-      source: "Argenprop",
-      title: "Alquiler anual 2 ambientes en Astor Palermo",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-viejo-2-ambientes--18374070",
-      signature: "astor-palermo-2amb-usd1400",
-    },
-  ],
-  "torre-bella": [
-    {
-      source: "One Brokers",
-      title: "Torre Bella by Bellini 2 ambientes",
-      url: "https://www.onebrokers.com.ar/p/8084320-Departamento-en-Alquiler-en-Palermo-Soho-Guatemala--al-5100",
-      signature: "torre-bella-2amb-onebrokers",
-    },
-],
-  "el-faro-towers": [
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "El Faro Towers Puerto Madero, Azucena Villaflor 669",
-      url: "https://departamento.mercadolibre.com.ar/MLA-1838098295-el-faro-towers-puerto-madero-azucena-villaflor-669-_JM",
-      signature: "el-faro-towers-azucena-villaflor-669-ml",
-    },
-      {
-      source: "Roomix",
-      title: "Torre El Faro 4 ambientes en Puerto Madero",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-puerto-madero-8c42f773",
-      signature: "el-faro-4amb-roomix",
-    },
-],
-  "le-parc-puerto-madero": [
-    {
-      source: "Roomix",
-      title: "Departamento 3 ambientes Le Parc Puerto Madero",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-b429d848",
-      signature: "le-parc-puerto-madero-3amb-roomix",
-    },
-      {
-      source: "Mudafy",
-      title: "Le Parc Puerto Madero 3 ambientes amoblado",
-      url: "https://mudafy.com.ar/departamentos/le-parc-puerto-madero-boulevard-azucena-villaflor-400-departamento-en-alquiler-956051",
-      signature: "le-parc-puerto-madero-3amb-mudafy",
-    },
-],
-  "forum-puerto-madero": [
-    {
-      source: "Raíces Puerto Madero",
-      title: "Alquiler 3 ambientes Edificio Forum Puerto Madero",
-      url: "https://raicespm.com.ar/propiedad/alquiler-3-ambientes-edificio-forum-puerto-madero/",
-      signature: "forum-puerto-madero-3amb-raices",
-    },
-      {
-      source: "Situar",
-      title: "Departamento en alquiler temporario Forum Puerto Madero",
-      url: "https://situar.com/propiedad/departamento-en-alquiler-temporario-forum-puerto-madero--4338351",
-      signature: "forum-puerto-madero-3amb-situar",
-    },
-],
-  "the-link-towers": [
-    {
-      source: "Madero Realty",
-      title: "The Link Tower 3 ambientes, 140 m2",
-      url: "https://www.maderorealty.com/p/7983070-Departamento-en-Alquiler-en-Puerto-Madero-The-link-Tower---3-ambientes----140-m2---Puerto-Madero--equipado-a-full",
-      signature: "the-link-towers-3amb-140m2-madero-realty",
-    },
-      {
-      source: "Roomix",
-      title: "Penthouse 2 ambientes The Link Towers",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-13f39420",
-      signature: "the-link-towers-2amb-roomix",
-    },
-],
-  "madero-center": [
-    {
-      source: "Tizado",
-      title: "Madero Center departamento en alquiler",
-      url: "https://www.tizado.com/obras/madero-center-puerto-madero-capital-federal-buenos-aires-e1142",
-      signature: "madero-center-tizado",
-    },
-],
-  "alvear-tower": [
-    {
-      source: "Aires Home",
-      title: "Alvear Tower 2 ambientes amoblado",
-      url: "https://aireshome.com.ar/departamento-en-alquiler-temporario-en-puerto-madero-ficha-gga444",
-      signature: "alvear-tower-2amb-aireshome",
-    },
-      {
-      source: "Madero Realty",
-      title: "Alvear Tower 3 ambientes con dependencia",
-      url: "https://www.maderorealty.com/p/8170454-Departamento-en-Alquiler-en-Puerto-Madero-Alvear-Tower---3-ambientes-+-dependencia---152m2",
-      signature: "alvear-tower-3amb-maderorealty",
-    },
-],
-  "lumiere-puerto-madero": [
-    {
-      source: "Roomix",
-      title: "Alquiler temporal departamento 2 ambientes en Lumiere",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-3778a46d",
-      signature: "lumiere-puerto-madero-2amb-roomix",
-    },
-      {
-      source: "Gimenez Inmuebles",
-      title: "Lumiere Boulevard Puerto Madero 2 ambientes",
-      url: "https://gimenezinmuebles.com.ar/propiedad/alquilerventa-departamento-puerto-madero-lumiere-boulevard-2-ambientes--4403353",
-      signature: "lumiere-puerto-madero-2amb-gimenez",
-    },
-],
-  "torre-nic-baez-600": [
-    {
-      source: "MercadoProp",
-      title: "Alquiler temporario 1 dormitorio en Torre NIC",
-      url: "https://www.mercadoprop.net/ar/departamentos/alquiler-temporario-departamento-1-dormitorio-palermo-111854",
-      signature: "torre-nic-baez-600-1dorm-mercadoprop",
-    },
-  ],
-  "live-hotel-nicaragua-6045": [
-    {
-      source: "Quality Homes Buenos Aires",
-      title: "Excelente depto amoblado 3 amb Live Hotel con vista",
-      url: "https://www.qualityhomesbuenosaires.com/es/property/excelente-depto-amoblado-3-amb-live-hotel-con-vista/",
-      signature: "live-hotel-3amb-quality-homes",
-    },
-      {
-      source: "Landing",
-      title: "Live Hotel Palermo Hollywood monoambiente",
-      url: "https://www.landing.com.ar/8065098/Alquiler-Departamento-Monoambiente-Live-Hotel-Palermo-Hollywood",
-      signature: "live-hotel-monoambiente-landing",
-    },
-],
-  "le-parc-figueroa-alcorta": [
-    {
-      source: "Agustina Cancel",
-      title: "Departamento en alquiler en Le Parc Figueroa Alcorta",
-      url: "https://www.agustinacancel.com.ar/p/8153726-Departamento-en-Alquiler-en-Palermo-Chico-Figueroa-Alcorta--al-3500",
-      signature: "le-parc-figueroa-alcorta-agustina-cancel",
-    },
-      {
-      source: "Sabella Propiedades",
-      title: "Le Parc Figueroa Alcorta venta y alquiler",
-      url: "https://www.sabellapropiedades.com.ar/departamento-en-venta-y-alquiler-en-palermo-ficha-js15210",
-      signature: "le-parc-figueroa-alcorta-sabella",
-    },
-],
-  "demaria-4700": [
-    {
-      source: "Inmuebles Clarín",
-      title: "Alquiler departamento Demaría 4700",
-      url: "https://www.inmuebles.clarin.com/departamento-en-alquiler-en-palermo--19368671",
-      signature: "demaria-4700-clarin",
-    },
-],
-  "gorriti-3600": [
-    {
-      source: "Argenprop",
-      title: "Gorriti 3600 2 ambientes amoblado",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-2-ambientes--19835702",
-      signature: "gorriti-3600-2amb-argenprop-19835702",
-    },
-    {
-      source: "Argenprop",
-      title: "Alquiler departamento 2 ambientes amoblado en Palermo",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-2-ambientes--19485241",
-      signature: "gorriti-3600-2amb-argenprop",
-    },
-      {
-      source: "RE/MAX",
-      title: "Gorriti 3600 Palermo 3 ambientes con amenities",
-      url: "https://www.remax.com.ar/listings/alquiler-palermo-3-ambientes-amenities-piscina",
-      signature: "gorriti-3600-3amb-remax",
-    },
-],
-  "casa-del-angel": [
-    {
-      source: "Argenprop",
-      title: "Departamento en alquiler Belgrano Barrancas 3 ambientes",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-barrancas-3-ambientes--19324684",
-      signature: "casa-del-angel-3amb-argenprop",
-    },
-      {
-      source: "IZR",
-      title: "Arcos y Sucre Casa del Ángel alquiler",
-      url: "https://www.izr.com.ar/propiedades-alquiler-arcos-y-sucre-casa-del-angel-6780789",
-      signature: "casa-del-angel-izr",
-    },
-],
-  "maior-barrancas": [
-    {
-      source: "Zipcode Propiedades",
-      title: "Torre Maior Barrancas 3 ambientes amoblado",
-      url: "https://propiedades.zipcode.com.ar/propiedad/alquiler-departamento-belgrano-3-ambientes-amoblado-y-equipado-cochera-amenities--4658477",
-      signature: "maior-barrancas-3amb-zipcode",
-    },
-      {
-      source: "Roomix",
-      title: "Torre Maior Barrancas 3 ambientes",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-belgrano-c-19253edd",
-      signature: "maior-barrancas-3amb-roomix",
-    },
-],
-  "chateau-libertador": [
-    {
-      source: "WY Propiedades",
-      title: "Chateau Libertador departamento venta-alquiler",
-      url: "https://www.wypropiedades.com.ar/p/2066286-Departamento-en-Venta-Alquiler-en-Nu%C3%B1ez-Chateau-Libertador---Av.-Libertador-7050",
-      signature: "chateau-libertador-wy-alquiler",
-    },
-      {
-      source: "Instagram",
-      title: "Chateau Libertador 5 ambientes en alquiler",
-      url: "https://www.instagram.com/p/DWCWgC7EVL0/",
-      signature: "chateau-libertador-5amb-instagram",
-    },
-],
-  "casa-ho": [
-    {
-      source: "Roomix",
-      title: "Casa HO 2 ambientes al frente con balcón y parrilla",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-villa-urquiza-46bbc136",
-      signature: "casa-ho-2amb-roomix-46bbc136",
-    },
-      {
-      source: "Roomix",
-      title: "Casa HO 2 ambientes en Villa Urquiza",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-villa-urquiza-83967d0f",
-      signature: "casa-ho-2amb-roomix-83967d0f",
-    },
-],
-  "torre-las-plazas": [
-    {
-      source: "Roomix",
-      title: "Torre Las Plazas 2 ambientes full amenities",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-villa-urquiza-bcdaeea7",
-      signature: "torre-las-plazas-2amb-roomix",
-    },
-      {
-      source: "Zonaprop",
-      title: "Torre Las Plazas 2 ambientes Villa Urquiza",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-villa-urquiza-depto-dos-ambi-en-alquiler-edificio-56935483.html",
-      signature: "torre-las-plazas-2amb-zonaprop",
-    },
-],
-  "torres-caballito-nuevo": [
-    {
-      source: "Lepore",
-      title: "Alquiler 3 amb Caballito Torres Caballito Nuevo",
-      url: "https://lepore.com.ar/propiedad/alquiler-3-amb-caballito--4614368",
-      signature: "torres-caballito-nuevo-3amb-lepore",
-    },
-      {
-      source: "Lepore",
-      title: "Torres Caballito Nuevo 3 ambientes",
-      url: "https://lepore.com.ar/propiedad/departamento-en-alquiler-caballito-3-ambientes--4658610",
-      signature: "torres-caballito-nuevo-3amb-lepore-4658610",
-    },
-],
-  "row-hidalgo": [
-    {
-      source: "Rentola",
-      title: "ROW Hidalgo 2 ambientes Caballito",
-      url: "https://rentola.ar/listings/departamento-en-alquiler-en-caballito-capital-federal-p5a8d96",
-      signature: "row-hidalgo-2amb-rentola",
-    },
-],
-  "dome-green-soho": [
-    {
-      source: "Zonaprop",
-      title: "DOME Green Soho 2 ambientes con balcón",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-con-balcon-en-dome-green-soho-59514740.html",
-      signature: "dome-green-soho-2amb-zonaprop-59514740",
-    },
-    {
-      source: "Argenprop",
-      title: "DOME Green Soho 3 amb en piso alto con cochera",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-viejo-3-ambientes--19874055",
-      signature: "dome-green-soho-3amb-argenprop",
-    },
-      {
-      source: "Roomix",
-      title: "DOME Green Soho 3 ambientes piso alto",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-viejo-0754ff6b",
-      signature: "dome-green-soho-3amb-roomix",
-    },
-],
-  "torre-deco-palermo-nuevo": [
-    {
-      source: "RE/MAX",
-      title: "Torre Deco 2 ambientes con cochera y amenities",
-      url: "https://www.remax.com.ar/listings/torre-deco-2-ambientes-cochera-y-amenities-palermo",
-      signature: "torre-deco-palermo-nuevo-2amb-remax",
-    },
-      {
-      source: "Roomix",
-      title: "Torre Decó Palermo Nuevo 2 ambientes",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-nuevo-b070eb52",
-      signature: "torre-deco-palermo-nuevo-2amb-roomix",
-    },
-],
-  "palacio-bellini": [
-    {
-      source: "Franchino",
-      title: "Tres dormitorios en alquiler - Palacio Bellini",
-      url: "https://www.franchino.com.ar/propiedades/palacio-bellini-departamento-botanico-alquiler",
-      signature: "palacio-bellini-3dorm-franchino",
-    },
-      {
-      source: "Facebook",
-      title: "Palacio Bellini 2 ambientes en alquiler",
-      url: "https://www.facebook.com/muvprop/posts/palacio-bellini-alquiler-rep%C3%BAblica-%C3%A1rabe-siria-3065-excelente-departamento-de-2-/1420025391473077/",
-      signature: "palacio-bellini-2amb-facebook",
-    },
-],
-  "town-house-soho-ii": [
-    {
-      source: "Roomix",
-      title: "Town House Soho II 4 ambientes con dependencia",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-palermo-soho-7571ba23",
-      signature: "town-house-soho-ii-4amb-roomix",
-    },
-      {
-      source: "Zonaprop",
-      title: "Town House Soho II 3 ambientes",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/teclapin-town-house-soho-ii-hermoso-3-ambientes-en-torre-de-58810406.html",
-      signature: "town-house-soho-ii-3amb-zonaprop",
-    },
-],
-  "torre-lumiere-palermo": [
-    {
-      source: "Roomix",
-      title: "Torre Lumiere Palermo 2 ambientes",
-      url: "https://roomix.ai/propiedad/oficina-comercial-2-ambientes-palermo-viejo-a8cc164b",
-      signature: "torre-lumiere-palermo-2amb-roomix",
-    },
-      {
-      source: "Facebook",
-      title: "Torre Lumiere Palermo 2 ambientes temporario",
-      url: "https://www.facebook.com/repettonegociosinmobiliarios/posts/alquiler-temporario-2-ambconcepcion-arenal-2400-torre-lumiere-palermo-no-precisa/539719458189721/",
-      signature: "torre-lumiere-palermo-2amb-facebook",
-    },
-],
-  "torre-palermo-uno": [
-    {
-      source: "My Lovely Apart",
-      title: "Departamento 2 habitaciones Torre Palermo Uno",
-      url: "https://mylovelyapart.com/es/properties/panoramic-soho-2-bedroom-in-palermo-uno-3/",
-      signature: "torre-palermo-uno-2br-mylovelyapart-3",
-    },
-      {
-      source: "Sedani Propiedades",
-      title: "Torre Palermo Uno monoambiente",
-      url: "https://www.sedanipropiedades.com.ar/sedani-1484",
-      signature: "torre-palermo-uno-sedani-1484",
-    },
-],
-  "torre-sinclair": [
-    {
-      source: "Selectia",
-      title: "4 amb Torre Sinclair full amenities alquiler",
-      url: "https://selectia.net.ar/propiedad/4-amb-torre-sinclair-full-amenities-alquiler--4621274",
-      signature: "torre-sinclair-4amb-selectia",
-    },
-],
-  "torre-nic-hollywood": [
-    {
-      source: "Zonaprop",
-      title: "Departamento 2 ambientes Torre NIC Hollywood",
-      url: "https://www.zonaprop.com.ar/propiedades/clasificado/teclapin-departamento-2-ambientes.-nicaragua-al-5500-56965410.html",
-      signature: "torre-nic-hollywood-2amb-zonaprop",
-    },
-      {
-      source: "Argenprop",
-      title: "Torre Nic Hollywood 2 ambientes",
-      url: "https://www.argenprop.com/departamento-en-alquiler-temporal-en-palermo-hollywood-2-ambientes--19471670",
-      signature: "torre-nic-hollywood-2amb-argenprop",
-    },
-],
-  "torre-promenade": [
-    {
-      source: "Roomix",
-      title: "Torre Promenade 3 amb con cochera",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-b3ae645f",
-      signature: "torre-promenade-3amb-roomix",
-    },
-      {
-      source: "Alternativa Prop",
-      title: "Torre Promenade 2 ambientes temporario",
-      url: "https://www.alternativaprop.com/venta-1970122-guemes-al-3300-entre-coronel-diaz-y-anasagasti",
-      signature: "torre-promenade-2amb-alternativa",
-    },
-],
-  "solar-soho": [
-    {
-      source: "Argenprop",
-      title: "Solar Soho 3 ambientes esquinero con cochera",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-soho-3-ambientes--19911581",
-      signature: "solar-soho-3amb-argenprop",
-    },
-      {
-      source: "Properati",
-      title: "Solar Soho 3 ambientes con cochera",
-      url: "https://www.properati.com.ar/s/palermo-soho/departamento/alquiler/dormitorios:2/2",
-      signature: "solar-soho-3amb-properati",
-    },
-],
-  "be-plaza": [
-    {
-      source: "RE/MAX",
-      title: "Depto alquiler 2 amb Cañitas Edificio Be Plaza",
-      url: "https://www.remax.com.ar/420051363-185",
-      signature: "be-plaza-2amb-remax",
-    },
-      {
-      source: "Roomix",
-      title: "Be Plaza monoambiente full amenities",
-      url: "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-4e99c379",
-      signature: "be-plaza-monoambiente-roomix",
-    },
-],
-  "torre-bellini-palermo-chico": [
-    {
-      source: "Argenprop",
-      title: "Alquiler departamento 2 dormitorios Torre Bellini",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-palermo-chico-4-ambientes--19477251",
-      signature: "torre-bellini-4amb-argenprop",
-    },
-      {
-      source: "Mercado Libre Inmuebles",
-      title: "Torre Bellini 2 ambientes amoblado con cochera",
-      url: "https://departamento.mercadolibre.com.ar/MLA-3535847042-alquiler-2-ambientes-amoblado-c-cochera-en-palermo-chico-torre-bellini-_JM",
-      signature: "torre-bellini-2amb-ml",
-    },
-],
-  "boulevard-san-isidro-vilela": [
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Alquiler Núñez dúplex 2 amb Boulevard San Isidro",
-      url: "https://departamento.mercadolibre.com.ar/MLA-1864491053-alquiler-nunez-duplex-2amb-terraza-privada-jacuzzi-parrilla-full-amenities-_JM",
-      signature: "boulevard-san-isidro-2amb-ml",
-    },
-      {
-      source: "Argenprop",
-      title: "Boulevard San Isidro duplex 2 ambientes",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-nunez-2-ambientes--19943518",
-      signature: "boulevard-san-isidro-2amb-argenprop",
-    },
-    {
-      source: "Facebook",
-      title: "Boulevard San Isidro 2 ambientes temporario",
-      url: "https://www.facebook.com/groups/686962916310807/posts/1319673713039721/",
-      signature: "boulevard-san-isidro-2amb-facebook",
-    },
-],
-  "torres-renoir": [
-    {
-      source: "Roomix",
-      title: "Alquiler 3 ambientes Torre Renoir",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-17c6718e",
-      signature: "torres-renoir-3amb-roomix",
-    },
-      {
-      source: "Madero Realty",
-      title: "Torre Renoir 2 cuatro ambientes amoblado",
-      url: "https://www.maderorealty.com/p/4230672-Departamento-en-Venta-Alquiler-en-Puerto-Madero--Torre-Renoir-2----4-Ambientes-Amoblado---194-m2-",
-      signature: "torres-renoir-4amb-maderorealty",
-    },
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Torre Renoir 3 ambientes Puerto Madero",
-      url: "https://departamento.mercadolibre.com.ar/MLA-1824929457-alquiler-3-ambientes-torre-renoir-p-madero-tipologia-ave-_JM",
-      signature: "torres-renoir-3amb-ml",
-    },
-],
-  "mulieris-towers": [
-    {
-      source: "RE/MAX",
-      title: "Alquiler 3 amb dependencia Mulieris Puerto Madero",
-      url: "https://www.remax.com.ar/listings/alquiler-3-amb-dependencia-mulieris-puerto-madero",
-      signature: "mulieris-3amb-remax",
-    },
-      {
-      source: "Instagram",
-      title: "Torre Mulieris Puerto Madero 4 ambientes",
-      url: "https://www.instagram.com/reel/DUZB-zeETnT/",
-      signature: "mulieris-towers-4amb-instagram",
-    },
-],
-  "madero-plaza": [
-    {
-      source: "Argenprop",
-      title: "Alquiler 3 ambientes Madero Plaza",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-3-ambientes--18695315",
-      signature: "madero-plaza-3amb-argenprop",
-    },
-      {
-      source: "Roomix",
-      title: "Madero Plaza 3 ambientes temporario",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-8519bf09",
-      signature: "madero-plaza-3amb-roomix",
-    },
-],
-  "alvear-icon-residences": [
-    {
-      source: "Roomix",
-      title: "Alquiler Alvear Icon Residences 3 ambientes amoblado",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-puerto-madero-7645c7f7",
-      signature: "alvear-icon-3amb-roomix",
-    },
-      {
-      source: "Argenprop",
-      title: "Alvear Icon Residences 3 ambientes",
-      url: "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-3-ambientes--19919034",
-      signature: "alvear-icon-3amb-argenprop",
-    },
-],
-  "huergo-475": [
-    {
-      source: "RE/MAX",
-      title: "Alquiler dpto 3 ambientes Puerto Madero a estrenar",
-      url: "https://www.remax.com.ar/420621202-21",
-      signature: "huergo-475-3amb-remax",
-    },
-      {
-      source: "Abattedaga",
-      title: "Huergo 475 2 ambientes a estrenar",
-      url: "https://abattedaga.com/ficha.php?ficha=AYM1265",
-      signature: "huergo-475-2amb-abattedaga",
-    },
-],
-  "torre-dorrego": [
-    {
-      source: "Roomix",
-      title: "Torre Dorrego 4 ambientes Las Cañitas",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-las-caitas-05303568",
-      signature: "torre-dorrego-4amb-roomix-05303568",
-    },
-],
-  "torres-de-montaneses": [
-    {
-      source: "Argenprop",
-      title: "Torres de Montañeses 2 ambientes con cochera",
-      url: "https://www.argenprop.com/departamento-en-alquiler-temporal-en-nunez-2-ambientes--19618666",
-      signature: "torres-montaneses-2amb-argenprop",
-    },
-],
-  "weik-belgrano": [
-    {
-      source: "Tesler Propiedades",
-      title: "Departamento Weik Belgrano alquiler piso alto",
-      url: "https://teslerpropiedades.com/emprendimientos/weik-belgrano/",
-      signature: "weik-belgrano-piso-alto-tesler",
-    },
-      {
-      source: "Roomix",
-      title: "Weik Belgrano 4 ambientes",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-belgrano-c177689b",
-      signature: "weik-belgrano-4amb-roomix",
-    },
-],
-  "torre-bulnes": [
-    {
-      source: "Jumo Inmobiliaria",
-      title: "Excelente departamento de 2 ambientes en Torre Bulnes",
-      url: "https://jumoinmobiliaria.com.ar/detail/5808836",
-      signature: "torre-bulnes-2amb-jumo",
-    },
-      {
-      source: "Memudoya",
-      title: "Torre Bulnes duplex 3 dormitorios",
-      url: "https://www.memudoya.com/propiedad/alquiler-de-duplex-en-palermo-chico-capital-federal-7677-254701/699fd5f1de0869a9d41574f4d3adf257",
-      signature: "torre-bulnes-duplex-memudoya",
-    },
-],
-  "torre-ruggieri": [
-    {
-      source: "Roomix",
-      title: "Alquiler dos ambientes Torre Ruggieri con muebles y cochera",
-      url: "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-chico-24075345",
-      signature: "torre-ruggieri-2amb-roomix",
-    },
-      {
-      source: "Roomix",
-      title: "Torre Ruggieri 3 ambientes",
-      url: "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-chico-ead04b58",
-      signature: "torre-ruggieri-3amb-roomix",
-    },
-],
-  "quantum-bellini": [
-    {
-      source: "Evoluer",
-      title: "Alquiler departamento 3 ambientes Quantum Bellini Núñez",
-      url: "https://evoluer.com.ar/propiedad/alquiler-departamento-3-ambientes-cochera-y-amenities-quantum-bellini-nunez--4660253",
-      signature: "quantum-bellini-3amb-evoluer",
-    },
-      {
-      source: "Selectia",
-      title: "Quantum Bellini 3 ambientes con cochera",
-      url: "https://selectia.net.ar/propiedad/alquiler-departamento-3-ambientes-cochera-y-amenities-quantum-bellini-nunez--4660266",
-      signature: "quantum-bellini-3amb-selectia",
-    },
-],
-  "libertador-336": [
-    {
-      source: "Mercado Libre Inmuebles",
-      title: "Alquiler departamento Torre Av Libertador 336 piso 28",
-      url: "https://departamento.mercadolibre.com.ar/MLA-3224371786-alquiler-departamento-4-suites-y-dep-torre-av-libertador-336-2-coch-piso-28-_JM",
-      signature: "libertador-336-4suites-ml",
-    },
-      {
-      source: "BuscadorProp",
-      title: "Torre Libertador 336 con amenities y cocheras",
-      url: "https://www.buscadorprop.com.ar/propiedad/585561-torre-libertador-336-c-amenities-y-2-coch",
-      signature: "libertador-336-buscadorprop",
-    },
-],
-  "libertador-380": [
-    {
-      source: "Roomix",
-      title: "Departamento en Libertador 380 Retiro",
-      url: "https://roomix.ai/propiedad/departamento-4-ambientes-retiro-d2283df8",
-      signature: "libertador-380-4amb-roomix",
-    },
-      {
-      source: "Mercado Libre Inmuebles",
-      title: "Libertador 380 departamento 2 ambientes",
-      url: "https://inmuebles.mercadolibre.com.ar/departamentos/alquiler/capital-federal/retiro/dueno-directo/",
-      signature: "libertador-380-ml-retiro",
-    },
-],
-  "libertador-4444": [
-    {
-      source: "Lexinton",
-      title: "Torre Libertador 4444 piso alto alquiler",
-      url: "https://lexinton.com.ar/propiedades/7608693-libertador-al-4400",
-      signature: "libertador-4444-lexinton",
-    },
-      {
-      source: "Instagram",
-      title: "Libertador 4444 venta o alquiler",
-      url: "https://www.instagram.com/p/DZzW2XuzkAk/",
-      signature: "libertador-4444-instagram",
-    },
-],
-  "astor-nunez": [
-    {
-      source: "Argenprop",
-      title: "Pico al 2300 Torre Astor Núñez alquiler temporal",
-      url: "https://www.argenprop.com/departamento-en-alquiler-temporal-en-nunez-3-ambientes--17585515",
-      signature: "astor-nunez-3amb-argenprop",
-    },
-      {
-      source: "Gírgola Propiedades",
-      title: "Astor Núñez departamento en alquiler",
-      url: "https://www.girgola.com.ar/propiedad/212387_departamento-en-alquiler-en-nunez-con-cochera/",
-      signature: "astor-nunez-girgola",
-    },
-],
-  "torres-de-gelly": [
-    {
-      source: "Mudafy",
-      title: "Departamento en alquiler Torres de Gelly",
-      url: "https://mudafy.com.ar/departamentos/jeronimo-salguero-3031-departamento-en-alquiler-205851",
-      signature: "torres-de-gelly-mudafy-205851",
-    },
-],
-};
+const maxRentalListingsPerBuilding = listingsData.maxRentalListingsPerBuilding;
+const removedAirbnbUrls = new Set(listingsData.removedAirbnbUrls);
+const additionalAirbnbListingsByBuilding = listingsData.additionalAirbnbListingsByBuilding as Record<
+  string,
+  AirbnbListing[]
+>;
+const additionalRentalListingsByBuilding = listingsData.additionalRentalListingsByBuilding as Record<
+  string,
+  RentalListing[]
+>;
+const airbnbSizesByUrl = (
+  "airbnbSizesByUrl" in listingsData
+    ? (listingsData as { airbnbSizesByUrl?: Record<string, { size: AirbnbSize; bedrooms: number }> })
+        .airbnbSizesByUrl
+    : undefined
+) ?? {};
 const getNeighborhoodGroup = (zone: string) => {
   const normalizedZone = zone.toLowerCase();
 
@@ -1292,6 +85,42 @@ const neighborhoodOptions = [...neighborhoodCounts.entries()]
       countB - countA || collator.compare(nameA, nameB),
   )
   .map(([name, count]) => ({ name, count }));
+const airbnbSizeRank: Record<AirbnbSize, number> = {
+  studio: 0,
+  "1br": 1,
+  "2br": 2,
+  "3br": 3,
+  "4br": 4,
+  "5br+": 5,
+};
+const formatAirbnbSize = (size?: AirbnbSize) => {
+  switch (size) {
+    case "studio":
+      return "Studio";
+    case "1br":
+      return "1BR";
+    case "2br":
+      return "2BR";
+    case "3br":
+      return "3BR";
+    case "4br":
+      return "4BR";
+    case "5br+":
+      return "5BR+";
+    default:
+      return null;
+  }
+};
+const withAirbnbSize = (listing: AirbnbListing): AirbnbListing => {
+  if (listing.size != null && listing.bedrooms != null) return listing;
+  const known = airbnbSizesByUrl[listing.url];
+  if (!known) return listing;
+  return {
+    ...listing,
+    size: listing.size ?? known.size,
+    bedrooms: listing.bedrooms ?? known.bedrooms,
+  };
+};
 const getAirbnbListings = (building: Building) => {
   const listingMap = new Map<string, AirbnbListing>();
 
@@ -1300,20 +129,43 @@ const getAirbnbListings = (building: Building) => {
     building.airbnb.url &&
     !removedAirbnbUrls.has(building.airbnb.url)
   ) {
-    listingMap.set(building.airbnb.url, {
-      title: building.airbnb.evidence || `${building.name} Airbnb listing`,
-      url: building.airbnb.url,
-    });
+    listingMap.set(
+      building.airbnb.url,
+      withAirbnbSize({
+        title: building.airbnb.evidence || `${building.name} Airbnb listing`,
+        url: building.airbnb.url,
+      }),
+    );
   }
 
   for (const listing of additionalAirbnbListingsByBuilding[building.id] ?? []) {
-    if (!removedAirbnbUrls.has(listing.url)) listingMap.set(listing.url, listing);
+    if (removedAirbnbUrls.has(listing.url)) continue;
+    const existing = listingMap.get(listing.url);
+    listingMap.set(
+      listing.url,
+      withAirbnbSize({
+        ...existing,
+        ...listing,
+        title: listing.title || existing?.title || `${building.name} Airbnb listing`,
+      }),
+    );
   }
 
-  return [...listingMap.values()].map((listing, index, listings) => ({
-    ...listing,
-    label: listings.length === 1 ? "Airbnb" : `Airbnb ${index + 1}`,
-  }));
+  return [...listingMap.values()]
+    .map((listing) => ({
+      ...listing,
+      source: "Airbnb" as const,
+      sizeLabel: formatAirbnbSize(listing.size),
+    }))
+    .sort((first, second) => {
+      const firstRank = first.size ? airbnbSizeRank[first.size] : 99;
+      const secondRank = second.size ? airbnbSizeRank[second.size] : 99;
+      if (firstRank !== secondRank) return firstRank - secondRank;
+      const firstBeds = first.bedrooms ?? 99;
+      const secondBeds = second.bedrooms ?? 99;
+      if (firstBeds !== secondBeds) return firstBeds - secondBeds;
+      return collator.compare(first.title, second.title);
+    });
 };
 const isDirectRentalUrl = (url: string) => {
   if (!url || url.includes("airbnb.com")) return false;
@@ -1357,12 +209,14 @@ const getRentalListings = (building: Building) => {
     addListing(listing);
   }
 
-  return [...listingMap.values()]
-    .slice(0, maxRentalListingsPerBuilding)
-    .map((listing, index, listings) => ({
-      ...listing,
-      label: listings.length === 1 ? "Rental ad" : `Rental ${index + 1}`,
-    }));
+  return [...listingMap.values()].slice(0, maxRentalListingsPerBuilding);
+};
+
+const maxVisibleAirbnbListings = 5;
+const truncateListingTitle = (title: string, maxLength = 72) => {
+  const cleaned = title.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= maxLength) return cleaned;
+  return `${cleaned.slice(0, maxLength - 1).trimEnd()}…`;
 };
 const priceSortedBuildings = [...buildings].sort((first, second) =>
   first.longTermRentUsd.amount - second.longTermRentUsd.amount ||
@@ -1643,38 +497,111 @@ const structuredData = {
                   <span class="maps-icon" set:html={mapsIcon} />
                   Map
                 </a>
-                {building.airbnbListings.length > 0 ? (
-                  <div class="link-row airbnb-link-row" aria-label={`${building.name} Airbnb links`}>
-                    {building.airbnbListings.map((listing) => (
-                      <a
-                        href={listing.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={`Open ${listing.label} listing for ${building.name}`}
-                        title={listing.title}
-                      >
-                        {listing.label}
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
-                {building.rentalListings.length > 0 ? (
-                  <div class="link-row rental-link-row" aria-label={`${building.name} rental links`}>
-                    {building.rentalListings.map((listing) => (
-                      <a
-                        href={listing.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={`Open ${listing.label} for ${building.name}`}
-                        title={`${listing.source}: ${listing.title}`}
-                      >
-                        {listing.label}
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
               </div>
             </div>
+            {building.airbnbListings.length > 0 || building.rentalListings.length > 0 ? (
+              <div class="building-listings">
+                {building.airbnbListings.length > 0 ? (
+                  <section
+                    class="listing-group listing-group-airbnb"
+                    aria-label={`Airbnb stays in ${building.name}`}
+                  >
+                    <header class="listing-group-header">
+                      <h3>Airbnb stays</h3>
+                      <p class="listing-count">
+                        {building.airbnbListings.length === 1
+                          ? "1 listing"
+                          : `${building.airbnbListings.length} listings`}
+                      </p>
+                    </header>
+                    <ul class="listing-list">
+                      {building.airbnbListings.slice(0, maxVisibleAirbnbListings).map((listing) => (
+                        <li>
+                          <a
+                            class="listing-link"
+                            href={listing.url}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            title={listing.sizeLabel ? `${listing.sizeLabel} · ${listing.title}` : listing.title}
+                          >
+                            {listing.sizeLabel ? (
+                              <span class="listing-source listing-size">{listing.sizeLabel}</span>
+                            ) : (
+                              <span class="listing-source">Airbnb</span>
+                            )}
+                            <span class="listing-title">{truncateListingTitle(listing.title)}</span>
+                            <span class="listing-action" aria-hidden="true">Open</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                    {building.airbnbListings.length > maxVisibleAirbnbListings ? (
+                      <details class="listing-more">
+                        <summary>
+                          Show {building.airbnbListings.length - maxVisibleAirbnbListings} more Airbnb
+                          {building.airbnbListings.length - maxVisibleAirbnbListings === 1
+                            ? " listing"
+                            : " listings"}
+                        </summary>
+                        <ul class="listing-list">
+                          {building.airbnbListings.slice(maxVisibleAirbnbListings).map((listing) => (
+                            <li>
+                              <a
+                                class="listing-link"
+                                href={listing.url}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                                title={listing.sizeLabel ? `${listing.sizeLabel} · ${listing.title}` : listing.title}
+                              >
+                                {listing.sizeLabel ? (
+                                  <span class="listing-source listing-size">{listing.sizeLabel}</span>
+                                ) : (
+                                  <span class="listing-source">Airbnb</span>
+                                )}
+                                <span class="listing-title">{truncateListingTitle(listing.title)}</span>
+                                <span class="listing-action" aria-hidden="true">Open</span>
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    ) : null}
+                  </section>
+                ) : null}
+                {building.rentalListings.length > 0 ? (
+                  <section
+                    class="listing-group listing-group-rentals"
+                    aria-label={`Long-term rentals in ${building.name}`}
+                  >
+                    <header class="listing-group-header">
+                      <h3>Long-term rentals</h3>
+                      <p class="listing-count">
+                        {building.rentalListings.length === 1
+                          ? "1 ad"
+                          : `${building.rentalListings.length} ads`}
+                      </p>
+                    </header>
+                    <ul class="listing-list">
+                      {building.rentalListings.map((listing) => (
+                        <li>
+                          <a
+                            class="listing-link"
+                            href={listing.url}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            title={`${listing.source}: ${listing.title}`}
+                          >
+                            <span class="listing-source">{listing.source}</span>
+                            <span class="listing-title">{truncateListingTitle(listing.title)}</span>
+                            <span class="listing-action" aria-hidden="true">Open</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+              </div>
+            ) : null}
           </article>
         ))}
       </section>
@@ -1973,18 +900,24 @@ const structuredData = {
       });
 
       marker.addListener("click", () => {
-        const airbnbLinks = building.airbnbListings.length > 0
-          ? `<br>${building.airbnbListings.map((listing) =>
-            `<a href="${escapeHtml(listing.url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(listing.label)}</a>`
-          ).join(" · ")}`
-          : "";
-        const rentalLinks = building.rentalListings.length > 0
-          ? `<br>${building.rentalListings.map((listing) =>
-            `<a href="${escapeHtml(listing.url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(listing.label)}</a>`
-          ).join(" · ")}`
-          : "";
+        const renderListingLinks = (listings, heading) => {
+          if (!listings.length) return "";
+          const items = listings.slice(0, 3).map((listing) => {
+            const sizePrefix = listing.sizeLabel ? `${listing.sizeLabel} · ` : "";
+            const label = listing.source && heading !== "Airbnb stays"
+              ? `${listing.source}: ${listing.title}`
+              : `${sizePrefix}${listing.title}`;
+            const shortLabel = label.length > 52 ? `${label.slice(0, 51)}…` : label;
+            return `<li><a href="${escapeHtml(listing.url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(shortLabel)}</a></li>`;
+          }).join("");
+          const more =
+            listings.length > 3
+              ? `<li>${listings.length - 3} more in the list below</li>`
+              : "";
+          return `<div style="margin-top:0.45rem"><strong>${escapeHtml(heading)}</strong><ul style="margin:0.25rem 0 0;padding-left:1.1rem">${items}${more}</ul></div>`;
+        };
         infoWindow.setContent(
-          `<strong>${escapeHtml(building.name)}</strong><br>${escapeHtml(building.zone)} · ${escapeHtml(building.address)}<br><a href="${escapeHtml(building.mapUrl)}" target="_blank" rel="noreferrer noopener">Open map</a>${airbnbLinks}${rentalLinks}`,
+          `<strong>${escapeHtml(building.name)}</strong><br>${escapeHtml(building.zone)} · ${escapeHtml(building.address)}<br><a href="${escapeHtml(building.mapUrl)}" target="_blank" rel="noreferrer noopener">Open map</a>${renderListingLinks(building.airbnbListings, "Airbnb stays")}${renderListingLinks(building.rentalListings, "Long-term rentals")}`,
         );
         infoWindow.open(apartmentMap, marker);
       });
@@ -2285,6 +1218,9 @@ const structuredData = {
   .building-card {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 24rem);
+    grid-template-areas:
+      "main side"
+      "listings listings";
     gap: clamp(0.75rem, 2vw, 1.25rem);
     padding: clamp(0.85rem, 1.8vw, 1.15rem);
   }
@@ -2298,6 +1234,18 @@ const structuredData = {
     background:
       linear-gradient(135deg, color-mix(in srgb, var(--gold-soft), transparent 42%), transparent 42%),
       var(--surface);
+  }
+
+  .building-main {
+    grid-area: main;
+  }
+
+  .building-side {
+    grid-area: side;
+  }
+
+  .building-listings {
+    grid-area: listings;
   }
 
   .building-main,
@@ -2353,8 +1301,7 @@ const structuredData = {
     font-size: 1rem;
   }
 
-  .building-tags,
-  .link-row {
+  .building-tags {
     display: flex;
     min-width: 0;
     flex-wrap: wrap;
@@ -2375,13 +1322,8 @@ const structuredData = {
     align-items: stretch;
   }
 
-  .building-links .link-row {
-    padding-top: 0.5rem;
-    border-top: 1px solid color-mix(in srgb, var(--border), transparent 35%);
-  }
-
   .building-tags span,
-  .building-links a {
+  .map-link {
     width: max-content;
     max-width: 100%;
     border: 1px solid var(--border);
@@ -2393,17 +1335,186 @@ const structuredData = {
     padding: 0.38rem 0.65rem;
   }
 
-  .airbnb-link-row,
-  .rental-link-row {
-    width: 100%;
-  }
-
   .building-tags span {
+    width: fit-content;
     overflow-wrap: anywhere;
   }
 
-  .building-tags span {
-    width: fit-content;
+  .building-listings {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    min-width: 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 20%);
+  }
+
+  .building-listings:has(.listing-group:only-child) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listing-group {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+    align-content: start;
+  }
+
+  .listing-group-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .listing-group-header h3 {
+    margin: 0;
+    color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .listing-count {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .listing-list {
+    display: grid;
+    gap: 0.28rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .listing-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.55rem;
+    align-items: center;
+    min-height: 2.55rem;
+    padding: 0.48rem 0.65rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--surface-soft), transparent 35%);
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      background 160ms ease,
+      border-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .listing-link:hover {
+    border-color: color-mix(in srgb, var(--border), transparent 15%);
+    background: var(--surface-soft);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .listing-link:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .listing-group-airbnb .listing-source {
+    background: color-mix(in srgb, var(--gold-soft), var(--surface) 25%);
+    color: color-mix(in srgb, var(--text), var(--gold) 35%);
+  }
+
+  .listing-group-rentals .listing-source {
+    background: color-mix(in srgb, var(--accent-soft), var(--surface) 20%);
+    color: color-mix(in srgb, var(--text), var(--accent) 45%);
+  }
+
+  .listing-source {
+    width: max-content;
+    max-width: 7.5rem;
+    overflow: hidden;
+    border-radius: 999px;
+    padding: 0.22rem 0.5rem;
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .listing-size {
+    min-width: 2.6rem;
+    max-width: none;
+    justify-self: start;
+    text-align: center;
+  }
+
+  .listing-title {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .listing-action {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .listing-more {
+    margin: 0;
+  }
+
+  .listing-more summary {
+    width: max-content;
+    margin: 0.15rem 0 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 750;
+    list-style: none;
+  }
+
+  .listing-more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .listing-more summary:hover,
+  .listing-more summary:focus-visible {
+    color: var(--text);
+  }
+
+  .listing-more[open] summary {
+    margin-bottom: 0.35rem;
+  }
+
+  .listing-more .listing-list {
+    margin-top: 0.15rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .listing-link {
+      transition: none;
+    }
+
+    .listing-link:hover {
+      transform: none;
+    }
   }
 
   .rent-estimate,
@@ -2456,7 +1567,7 @@ const structuredData = {
     font-size: 0.58rem;
   }
 
-  .building-links a {
+  .map-link {
     display: inline-flex;
     align-items: center;
     gap: 0.38rem;
@@ -2505,9 +1616,16 @@ const structuredData = {
   }
 
   @media (max-width: 860px) {
-    .page-header,
+    .page-header {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .building-card {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "main"
+        "side"
+        "listings";
     }
 
     .page {
@@ -2581,11 +1699,11 @@ const structuredData = {
     }
 
     .building-side {
+      display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas:
         "rent rent"
-        "address address"
-        "links links";
+        "address links";
       gap: 0.5rem 0.7rem;
       align-items: center;
       padding-top: 0.72rem;
@@ -2618,14 +1736,49 @@ const structuredData = {
 
     .building-links {
       grid-area: links;
-      gap: 0.32rem;
+      justify-items: end;
     }
 
-    .building-links a {
-      min-width: 4.5rem;
-      justify-content: center;
+    .map-link {
+      min-height: 2.2rem;
       font-size: 0.75rem;
-      padding: 0.34rem 0.52rem;
+      padding: 0.34rem 0.7rem;
+    }
+
+    .building-listings {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.85rem;
+      padding-top: 0.75rem;
+    }
+
+    .listing-group-header h3 {
+      font-size: 1rem;
+    }
+
+    .listing-link {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.4rem 0.55rem;
+      min-height: 0;
+      padding: 0.55rem 0.6rem;
+    }
+
+    .listing-source {
+      grid-column: 1;
+      max-width: 100%;
+    }
+
+    .listing-action {
+      display: none;
+    }
+
+    .listing-title {
+      grid-column: 1 / -1;
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      font-size: 0.88rem;
     }
 
     .map-section {
@@ -2645,6 +1798,18 @@ const structuredData = {
 
     .area-estimate {
       min-width: 0;
+    }
+
+    .building-side {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "rent"
+        "address"
+        "links";
+    }
+
+    .building-links {
+      justify-items: start;
     }
   }
 </style>
