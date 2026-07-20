@@ -17,11 +17,18 @@ const updatedDate = new Intl.DateTimeFormat("en-US", {
 
 type MedifeStatus = "yes" | "verify" | "private";
 
+type BookingLink = {
+  label: string;
+  href: string;
+};
+
 type Pulmonologist = {
   rank: number;
   name: string;
   url: string;
-  where: string;
+  location: string;
+  bookingLead: string;
+  bookingLinks: BookingLink[];
   notes: string;
   medifeLabel: string;
   medifeStatus: MedifeStatus;
@@ -32,7 +39,15 @@ const doctors: Pulmonologist[] = [
     rank: 1,
     name: "Víctor Daniel Pascansky",
     url: "https://www.sanatoriofinochietto.com/Servicios/Neumonologia",
-    where: "Sanatorio Finochietto; own office at Av. Acoyte 25, Caballito",
+    location: "Sanatorio Finochietto; own office at Av. Acoyte 25, Caballito",
+    bookingLead: "Finochietto online turnos (search Pascansky / Neumonología) or WhatsApp.",
+    bookingLinks: [
+      { label: "Turnos online", href: "https://turnos.sanatoriofinochietto.com/" },
+      {
+        label: "WhatsApp",
+        href: "https://wa.me/5491140622222?text=Hola,%20quiero%20sacar%20un%20turno",
+      },
+    ],
     notes:
       "Heads the pulmonology service at Medifé's own sanatorio, runs its clinical and teaching program on airway disease",
     medifeLabel: "Yes — listed in Medifé Bronce and Plata cartillas (Acoyte 25)",
@@ -42,7 +57,15 @@ const doctors: Pulmonologist[] = [
     rank: 2,
     name: "Silvia Quadrelli",
     url: "https://sitio.sg.com.ar/especialidades/neumonologia/",
-    where: "Sanatorio Güemes (service lead); previously also Hospital Británico",
+    location: "Sanatorio Güemes (service lead); previously also Hospital Británico",
+    bookingLead: "Güemes patient portal or WhatsApp bot (Güemi); confirm she still takes new patients.",
+    bookingLinks: [
+      { label: "Portal / turnos", href: "https://sitio.sg.com.ar/turnos/" },
+      {
+        label: "WhatsApp",
+        href: "https://api.whatsapp.com/send/?phone=%2B5491138545300&text=%C2%A1Hola%21&type=phone_number&app_absent=0",
+      },
+    ],
     notes:
       "National/international fibrosis and interventional pulmonology reference; UBA specialist-training leadership; 100+ scientific papers; confirm current booking path (some listings lag)",
     medifeLabel: "Yes via Güemes — Medifé Asociación Civil listed; confirm plan and address",
@@ -52,7 +75,15 @@ const doctors: Pulmonologist[] = [
     rank: 3,
     name: "Eduardo Rubén Guzmán",
     url: "https://dreduardoguzman.com.ar/",
-    where: "Céspedes 2646, Colegiales",
+    location: "Céspedes 2646, Colegiales",
+    bookingLead: "TopDoctors online booking, or WhatsApp for Colegiales consultorio.",
+    bookingLinks: [
+      {
+        label: "TopDoctors",
+        href: "https://www.topdoctors.com.ar/doctor/eduardo-ruben-guzman/",
+      },
+      { label: "WhatsApp", href: "https://wa.me/5491166855559" },
+    ],
     notes:
       "Pulmonology plus allergy and immunology, 5.0 rating across ~147 reviews, US-trained, speaks English",
     medifeLabel: "Yes — listed in Medifé Bronce and Plata cartillas; TopDoctors lists Medifé",
@@ -62,7 +93,15 @@ const doctors: Pulmonologist[] = [
     rank: 4,
     name: "Alejandro Videla",
     url: "https://www.hospitalaustral.edu.ar/medicos/alejandro-videla/",
-    where: "Hospital Universitario Austral (Pilar) — chief of pulmonology",
+    location: "Hospital Universitario Austral (Pilar) — chief of pulmonology",
+    bookingLead: "Austral patient portal / turnos, or WhatsApp from his profile page.",
+    bookingLinks: [
+      {
+        label: "Solicitar turno",
+        href: "https://www.hospitalaustral.edu.ar/solicitar-turno/",
+      },
+      { label: "WhatsApp", href: "https://wa.me/5491126801720" },
+    ],
     notes:
       "Chief of pulmonary medicine at Austral; past president of the Asociación Argentina de Medicina Respiratoria; infections, tobacco and sleep research",
     medifeLabel: "Yes via Austral — Medifé Plata reported for Austral access; confirm plan",
@@ -72,7 +111,14 @@ const doctors: Pulmonologist[] = [
     rank: 5,
     name: "David Peña",
     url: "https://www.neumonologia.com/",
-    where: "Av. Cabildo 2847 3° 302, Belgrano; also Nordelta",
+    location: "Av. Cabildo 2847 3° 302, Belgrano; also Nordelta",
+    bookingLead: "Private-only. Book online on Doctoralia (Belgrano or Nordelta).",
+    bookingLinks: [
+      {
+        label: "Doctoralia",
+        href: "https://www.doctoraliar.com/david-pena/neumonologo/capital-federal#address-id=103601&is-online-only=false&filters%5Bspecializations%5D%5B%5D=44",
+      },
+    ],
     notes:
       "Very high patient-review volume (~442 on Doctoralia), UBA-recertified, international pulmonary-hypertension master’s; private-only by design",
     medifeLabel: "Private only — does not take prepagas/obras sociales",
@@ -82,7 +128,18 @@ const doctors: Pulmonologist[] = [
     rank: 6,
     name: "Hernán Ariel Iannella",
     url: "https://www.doctoraliar.com/hernan-ariel-iannella/neumonologo/capital-federal",
-    where: "Sanatorio Otamendi, Recoleta",
+    location: "Sanatorio Otamendi, Recoleta",
+    bookingLead: "Otamendi neumonología / solicitar turno, or Doctoralia profile.",
+    bookingLinks: [
+      {
+        label: "Otamendi",
+        href: "https://www.otamendi.com.ar/especialidades/consultorios-externos/neumonologia/",
+      },
+      {
+        label: "Doctoralia",
+        href: "https://www.doctoraliar.com/hernan-ariel-iannella/neumonologo/capital-federal",
+      },
+    ],
     notes: "Adult asthma, bronchospasm and full respiratory function testing",
     medifeLabel:
       "Yes via Otamendi — Oro, Plata and Platinum (not named in Bronce cartilla)",
@@ -92,7 +149,14 @@ const doctors: Pulmonologist[] = [
     rank: 7,
     name: "Carlos Alberto Nigro",
     url: "https://www.hospitalaleman.org.ar/nuestro-hospital/servicios-medicos/neumonologia/",
-    where: "Hospital Alemán",
+    location: "Hospital Alemán",
+    bookingLead: "Hospital Alemán turnos (portal/phone 4827-7000, option turnos).",
+    bookingLinks: [
+      {
+        label: "Solicitar turno",
+        href: "https://www.hospitalaleman.org.ar/pacientes/solicitar-un-turno/",
+      },
+    ],
     notes:
       "Head of the pulmonology service at one of the city's top private hospitals",
     medifeLabel: "Yes via Hospital Alemán — Medifé Oro and above",
@@ -102,7 +166,18 @@ const doctors: Pulmonologist[] = [
     rank: 8,
     name: "Jorge Cáneva",
     url: "https://www.fundacionfavaloro.org/plantel-de-neumonologia/",
-    where: "Fundación Favaloro",
+    location: "Fundación Favaloro",
+    bookingLead: "Favaloro central turnos (011) 4378-1200/1300/1400 or patient portal.",
+    bookingLinks: [
+      {
+        label: "Portal turnos",
+        href: "https://portalweb.fundacionfavaloro.org/",
+      },
+      {
+        label: "Service page",
+        href: "https://www.fundacionfavaloro.org/neumonologia-3/",
+      },
+    ],
     notes:
       "Head of pulmonology, access to advanced cardiopulmonary exercise testing (ergoespirometría)",
     medifeLabel:
@@ -113,7 +188,15 @@ const doctors: Pulmonologist[] = [
     rank: 9,
     name: "Martín Bosio",
     url: "https://www.topdoctors.com.ar/doctor/martin-bosio/",
-    where: "Hospital Británico; private office Bucarelli 2121 5B",
+    location: "Hospital Británico; private office Bucarelli 2121 5B",
+    bookingLead: "TopDoctors, or private office WhatsApp (Bucarelli).",
+    bookingLinks: [
+      {
+        label: "TopDoctors",
+        href: "https://www.topdoctors.com.ar/doctor/martin-bosio/",
+      },
+      { label: "WhatsApp", href: "https://wa.me/5491123281712" },
+    ],
     notes:
       "Británico staff for asthma and pulmonary hypertension; department lead for pulmonary hypertension / thromboembolic disease",
     medifeLabel: "Likely via Británico — Medifé listed among Británico prepagas; confirm plan",
@@ -123,7 +206,14 @@ const doctors: Pulmonologist[] = [
     rank: 10,
     name: "Fernando Ricardo Galíndez",
     url: "https://drfernandogalindez.com/",
-    where: "Private consultorio (CABA); teaching role at Hospital Ferrer",
+    location: "Private consultorio (CABA); teaching role at Hospital Ferrer",
+    bookingLead: "Book online via TopDoctors (site points there).",
+    bookingLinks: [
+      {
+        label: "TopDoctors",
+        href: "https://www.topdoctors.com.ar/doctor/fernando-ricardo-galindez/",
+      },
+    ],
     notes:
       "TopDoctors-featured clinician with long bronchoscopy/EPOC/asthma experience; heads teaching unit at Hospital Ferrer",
     medifeLabel: "Private only (TopDoctors)",
@@ -133,7 +223,18 @@ const doctors: Pulmonologist[] = [
     rank: 11,
     name: "Pablo Rodríguez",
     url: "https://drpablorodriguez.com/",
-    where: "CEMIC, Finochietto and a private office in Belgrano",
+    location: "CEMIC, Finochietto and a private office in Belgrano",
+    bookingLead: "Private office via TopDoctors; institutional sites via CEMIC/Finochietto portals.",
+    bookingLinks: [
+      {
+        label: "TopDoctors",
+        href: "https://www.topdoctors.com.ar/doctor/pablo-rodriguez/",
+      },
+      {
+        label: "Finochietto turnos",
+        href: "https://turnos.sanatoriofinochietto.com/",
+      },
+    ],
     notes:
       "5.0 rating across ~85 reviews, former head of pulmonology at CEMIC",
     medifeLabel:
@@ -144,7 +245,14 @@ const doctors: Pulmonologist[] = [
     rank: 12,
     name: "Juan Facundo Nogueira",
     url: "https://www.topdoctors.com.ar/doctor/juan-facundo-nogueira/",
-    where: "Hospital de Clínicas, Finochietto, Otamendi",
+    location: "Hospital de Clínicas, Finochietto, Otamendi",
+    bookingLead: "Private consult via TopDoctors (often WhatsApp from that profile).",
+    bookingLinks: [
+      {
+        label: "TopDoctors",
+        href: "https://www.topdoctors.com.ar/doctor/juan-facundo-nogueira/",
+      },
+    ],
     notes:
       "Strong academic profile, though his subspecialty leans toward sleep medicine",
     medifeLabel: "Private only (TopDoctors); not in Medifé Bronce/Plata cartillas",
@@ -172,7 +280,7 @@ const structuredData = {
       url: doctor.url,
       medicalSpecialty: "Pulmonary Disease",
       description: doctor.notes,
-      address: doctor.where,
+      address: doctor.location,
     },
   })),
 };
@@ -267,7 +375,7 @@ const structuredData = {
         <div class="doctor-row doctor-head" aria-hidden="true">
           <span>Rank</span>
           <span>Doctor</span>
-          <span>Where</span>
+          <span>How to book</span>
           <span>Notes</span>
           <span>Medifé</span>
         </div>
@@ -286,7 +394,27 @@ const structuredData = {
                   {doctor.name}
                 </a>
               </h2>
-              <p class="where">{doctor.where}</p>
+              <div class="booking">
+                <p class="booking-lead">{doctor.bookingLead}</p>
+                {
+                  doctor.bookingLinks.length > 0 && (
+                    <p class="booking-links">
+                      {doctor.bookingLinks.map((link, index) => (
+                        <>
+                          {index > 0 && <span class="booking-sep"> · </span>}
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                          >
+                            {link.label}
+                          </a>
+                        </>
+                      ))}
+                    </p>
+                  )
+                }
+              </div>
               <p class="notes">{doctor.notes}</p>
               <p
                 class:list={[
@@ -652,11 +780,32 @@ const structuredData = {
     text-decoration-thickness: 1px;
   }
 
-  .where,
+  .booking,
   .notes {
     color: var(--text-muted);
     font-size: 0.84rem;
     line-height: 1.35;
+  }
+
+  .booking {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .booking-lead,
+  .booking-links {
+    margin: 0;
+  }
+
+  .booking-links a {
+    font-weight: 700;
+    color: var(--link);
+    text-decoration-thickness: 1px;
+  }
+
+  .booking-sep {
+    color: var(--text-muted);
+    font-weight: 500;
   }
 
   .medife {
@@ -711,7 +860,7 @@ const structuredData = {
       grid-template-columns: auto 1fr;
       grid-template-areas:
         "rank name"
-        "where where"
+        "booking booking"
         "notes notes"
         "medife medife";
       gap: 0.12rem 0.5rem;
@@ -742,8 +891,8 @@ const structuredData = {
       line-height: 1.25;
     }
 
-    .where {
-      grid-area: where;
+    .booking {
+      grid-area: booking;
       margin-top: 0.1rem;
       font-size: 0.82rem;
     }
