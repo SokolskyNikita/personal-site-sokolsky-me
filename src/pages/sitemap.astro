@@ -4,7 +4,7 @@ export const prerender = true;
 /**
  * HTML sitemap for search-engine and AI crawlers.
  * Auto-indexes all public Astro pages from the filesystem.
- * Excludes private/*, self, 404, and TrackedRedirect stubs.
+ * Excludes private/*, self, 404, dynamic [param] routes, and TrackedRedirect stubs.
  */
 const pageSources = import.meta.glob<string>(
   ["./**/*.{astro,md,mdx}", "!./private/**"],
@@ -80,6 +80,8 @@ const filePathToRoute = (filePath: string): string | null => {
 
   if (excludedExactPaths.has(route)) return null;
   if (route === "/private/" || route.startsWith("/private/")) return null;
+  // Skip dynamic routes like [slug] / [...slug] — they are not real pages.
+  if (/\[[^\]]+\]/.test(route)) return null;
 
   return route;
 };
