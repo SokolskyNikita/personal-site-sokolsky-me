@@ -237,7 +237,7 @@ const getRentalListings = (building: Building) => {
     if (removedRentalUrls.has(listing.url)) return;
 
     const enriched = withRentalMeta(listing);
-    if (!enriched.size) return;
+    if (!enriched.size || enriched.priceUsdMonthly == null) return;
     const signature = getRentalSignature(enriched);
     if (signatures.has(signature) || listingMap.has(enriched.url)) return;
 
@@ -1311,7 +1311,7 @@ const structuredData = {
 
   .building-card {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(17rem, 24rem);
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 20rem);
     grid-template-areas:
       "main side"
       "listings listings";
@@ -1348,6 +1348,15 @@ const structuredData = {
     min-width: 0;
     align-content: start;
     gap: 0.65rem;
+  }
+
+  .building-side {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rent rent"
+      "address links";
+    gap: 0.5rem 0.7rem;
+    align-items: center;
   }
 
   .building-title-row {
@@ -1390,6 +1399,10 @@ const structuredData = {
     color: var(--text-muted);
   }
 
+  .address {
+    grid-area: address;
+  }
+
   .building-description {
     max-width: 43rem;
     font-size: 1rem;
@@ -1404,13 +1417,15 @@ const structuredData = {
 
   .building-links {
     display: grid;
+    grid-area: links;
     min-width: 0;
     gap: 0.45rem;
-    justify-items: start;
+    justify-items: end;
   }
 
   .building-metrics {
     display: grid;
+    grid-area: rent;
     grid-template-columns: minmax(0, 1fr) max-content;
     gap: 0.45rem;
     align-items: stretch;
@@ -1445,6 +1460,11 @@ const structuredData = {
 
   .building-listings:has(.listing-group:only-child) {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .building-listings:has(.listing-group:only-child)
+    .listing-list:has(li:nth-child(2)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .listing-group {
@@ -1781,7 +1801,8 @@ const structuredData = {
     }
 
     .filter-dropdown {
-      width: 100%;
+      width: auto;
+      flex: 1 1 12rem;
     }
 
     .building-list {
@@ -1879,6 +1900,11 @@ const structuredData = {
       padding-top: 0.75rem;
     }
 
+    .building-listings:has(.listing-group:only-child)
+      .listing-list:has(li:nth-child(2)) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .listing-group-header h3 {
       font-size: 1rem;
     }
@@ -1891,11 +1917,10 @@ const structuredData = {
     }
 
     .listing-link-rental {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: auto minmax(0, 1fr);
     }
 
     .listing-meta {
-      grid-column: 1 / -1;
       flex-wrap: wrap;
     }
 
@@ -1905,7 +1930,6 @@ const structuredData = {
     }
 
     .listing-title {
-      grid-column: 1 / -1;
       white-space: normal;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -1924,25 +1948,4 @@ const structuredData = {
     }
   }
 
-  @media (max-width: 420px) {
-    .building-metrics {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .area-estimate {
-      min-width: 0;
-    }
-
-    .building-side {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        "rent"
-        "address"
-        "links";
-    }
-
-    .building-links {
-      justify-items: start;
-    }
-  }
 </style>
