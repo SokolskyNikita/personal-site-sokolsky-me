@@ -20,6 +20,7 @@ type MedifeStatus = "yes" | "verify" | "private";
 type Pulmonologist = {
   rank: number;
   name: string;
+  url: string;
   where: string;
   notes: string;
   medifeLabel: string;
@@ -30,64 +31,123 @@ const doctors: Pulmonologist[] = [
   {
     rank: 1,
     name: "Víctor Daniel Pascansky",
+    url: "https://www.sanatoriofinochietto.com/Servicios/Neumonologia",
     where: "Sanatorio Finochietto; own office at Av. Acoyte 25, Caballito",
     notes:
       "Heads the pulmonology service at Medifé's own sanatorio, runs its clinical and teaching program on airway disease",
-    medifeLabel: "Yes, all plans including Bronce",
+    medifeLabel: "Yes — listed in Medifé Bronce and Plata cartillas (Acoyte 25)",
     medifeStatus: "yes",
   },
   {
     rank: 2,
-    name: "Eduardo Rubén Guzmán",
-    where: "Céspedes 2646, Colegiales",
+    name: "Silvia Quadrelli",
+    url: "https://sitio.sg.com.ar/especialidades/neumonologia/",
+    where: "Sanatorio Güemes (service lead); previously also Hospital Británico",
     notes:
-      "Pulmonology plus allergy and immunology, 5.0 rating across ~147 reviews, US-trained, speaks English",
-    medifeLabel: "Yes, all plans including Bronce",
+      "National/international fibrosis and interventional pulmonology reference; UBA specialist-training leadership; 100+ scientific papers; confirm current booking path (some listings lag)",
+    medifeLabel: "Yes via Güemes — Medifé Asociación Civil listed; confirm plan and address",
     medifeStatus: "yes",
   },
   {
     rank: 3,
-    name: "Hernán Ariel Iannella",
-    where: "Sanatorio Otamendi, Recoleta",
-    notes: "Adult asthma, bronchospasm and full respiratory function testing",
-    medifeLabel: "Yes, Oro, Plata and Platinum only",
+    name: "Eduardo Rubén Guzmán",
+    url: "https://dreduardoguzman.com.ar/",
+    where: "Céspedes 2646, Colegiales",
+    notes:
+      "Pulmonology plus allergy and immunology, 5.0 rating across ~147 reviews, US-trained, speaks English",
+    medifeLabel: "Yes — listed in Medifé Bronce and Plata cartillas; TopDoctors lists Medifé",
     medifeStatus: "yes",
   },
   {
     rank: 4,
-    name: "Carlos Alberto Nigro",
-    where: "Hospital Alemán",
+    name: "Alejandro Videla",
+    url: "https://www.hospitalaustral.edu.ar/medicos/alejandro-videla/",
+    where: "Hospital Universitario Austral (Pilar) — chief of pulmonology",
     notes:
-      "Head of the pulmonology service at one of the city's top private hospitals",
-    medifeLabel: "Verify by plan",
-    medifeStatus: "verify",
+      "Chief of pulmonary medicine at Austral; past president of the Asociación Argentina de Medicina Respiratoria; infections, tobacco and sleep research",
+    medifeLabel: "Yes via Austral — Medifé Plata reported for Austral access; confirm plan",
+    medifeStatus: "yes",
   },
   {
     rank: 5,
-    name: "Jorge Cáneva",
-    where: "Fundación Favaloro",
+    name: "David Peña",
+    url: "https://www.neumonologia.com/",
+    where: "Av. Cabildo 2847 3° 302, Belgrano; also Nordelta",
     notes:
-      "Head of pulmonology, access to advanced cardiopulmonary exercise testing (ergoespirometría)",
-    medifeLabel: "Verify by plan",
-    medifeStatus: "verify",
+      "Very high patient-review volume (~442 on Doctoralia), UBA-recertified, international pulmonary-hypertension master’s; private-only by design",
+    medifeLabel: "Private only — does not take prepagas/obras sociales",
+    medifeStatus: "private",
   },
   {
     rank: 6,
+    name: "Hernán Ariel Iannella",
+    url: "https://www.doctoraliar.com/hernan-ariel-iannella/neumonologo/capital-federal",
+    where: "Sanatorio Otamendi, Recoleta",
+    notes: "Adult asthma, bronchospasm and full respiratory function testing",
+    medifeLabel:
+      "Yes via Otamendi — Oro, Plata and Platinum (not named in Bronce cartilla)",
+    medifeStatus: "yes",
+  },
+  {
+    rank: 7,
+    name: "Carlos Alberto Nigro",
+    url: "https://www.hospitalaleman.org.ar/nuestro-hospital/servicios-medicos/neumonologia/",
+    where: "Hospital Alemán",
+    notes:
+      "Head of the pulmonology service at one of the city's top private hospitals",
+    medifeLabel: "Yes via Hospital Alemán — Medifé Oro and above",
+    medifeStatus: "yes",
+  },
+  {
+    rank: 8,
+    name: "Jorge Cáneva",
+    url: "https://www.fundacionfavaloro.org/plantel-de-neumonologia/",
+    where: "Fundación Favaloro",
+    notes:
+      "Head of pulmonology, access to advanced cardiopulmonary exercise testing (ergoespirometría)",
+    medifeLabel:
+      "Yes via Favaloro — Medifé network lists Favaloro; confirm your plan",
+    medifeStatus: "yes",
+  },
+  {
+    rank: 9,
+    name: "Martín Bosio",
+    url: "https://www.topdoctors.com.ar/doctor/martin-bosio/",
+    where: "Hospital Británico; private office Bucarelli 2121 5B",
+    notes:
+      "Británico staff for asthma and pulmonary hypertension; department lead for pulmonary hypertension / thromboembolic disease",
+    medifeLabel: "Likely via Británico — Medifé listed among Británico prepagas; confirm plan",
+    medifeStatus: "yes",
+  },
+  {
+    rank: 10,
+    name: "Fernando Ricardo Galíndez",
+    url: "https://drfernandogalindez.com/",
+    where: "Private consultorio (CABA); teaching role at Hospital Ferrer",
+    notes:
+      "TopDoctors-featured clinician with long bronchoscopy/EPOC/asthma experience; heads teaching unit at Hospital Ferrer",
+    medifeLabel: "Private only (TopDoctors)",
+    medifeStatus: "private",
+  },
+  {
+    rank: 11,
     name: "Pablo Rodríguez",
+    url: "https://drpablorodriguez.com/",
     where: "CEMIC, Finochietto and a private office in Belgrano",
     notes:
       "5.0 rating across ~85 reviews, former head of pulmonology at CEMIC",
     medifeLabel:
-      "Private pay at his office, possibly covered via CEMIC or Finochietto",
+      "Private at office (TopDoctors); CEMIC/Finochietto are Medifé prestadores — confirm there",
     medifeStatus: "private",
   },
   {
-    rank: 7,
+    rank: 12,
     name: "Juan Facundo Nogueira",
+    url: "https://www.topdoctors.com.ar/doctor/juan-facundo-nogueira/",
     where: "Hospital de Clínicas, Finochietto, Otamendi",
     notes:
       "Strong academic profile, though his subspecialty leans toward sleep medicine",
-    medifeLabel: "Private pay at his office",
+    medifeLabel: "Private only (TopDoctors); not in Medifé Bronce/Plata cartillas",
     medifeStatus: "private",
   },
 ];
@@ -109,6 +169,7 @@ const structuredData = {
     item: {
       "@type": "Physician",
       name: doctor.name,
+      url: doctor.url,
       medicalSpecialty: "Pulmonary Disease",
       description: doctor.notes,
       address: doctor.where,
@@ -220,7 +281,11 @@ const structuredData = {
               <p class="rank" aria-label={`Rank ${doctor.rank}`}>
                 {doctor.rank}
               </p>
-              <h2 class="doctor-name">{doctor.name}</h2>
+              <h2 class="doctor-name">
+                <a href={doctor.url} target="_blank" rel="noreferrer noopener">
+                  {doctor.name}
+                </a>
+              </h2>
               <p class="where">{doctor.where}</p>
               <p class="notes">{doctor.notes}</p>
               <p
@@ -580,6 +645,11 @@ const structuredData = {
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.3;
+  }
+
+  .doctor-name a {
+    color: inherit;
+    text-decoration-thickness: 1px;
   }
 
   .where,
