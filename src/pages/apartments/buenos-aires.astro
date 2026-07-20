@@ -25,6 +25,20 @@ type RentalListing = {
   title: string;
   url: string;
   signature?: string;
+  size?: AirbnbSize;
+  bedrooms?: number;
+  priceUsdMonthly?: number;
+  rentUsd?: number;
+  expensesUsd?: number;
+  expensesIncluded?: boolean;
+};
+type RentalMeta = {
+  size?: AirbnbSize;
+  bedrooms?: number;
+  priceUsdMonthly?: number;
+  rentUsd?: number;
+  expensesUsd?: number;
+  expensesIncluded?: boolean;
 };
 const buildings = pageData.buildings;
 const collator = new Intl.Collator("en", {
@@ -33,6 +47,11 @@ const collator = new Intl.Collator("en", {
 });
 const maxRentalListingsPerBuilding = listingsData.maxRentalListingsPerBuilding;
 const removedAirbnbUrls = new Set(listingsData.removedAirbnbUrls);
+const removedRentalUrls = new Set(
+  ("removedRentalUrls" in listingsData
+    ? (listingsData as { removedRentalUrls?: string[] }).removedRentalUrls
+    : undefined) ?? [],
+);
 const additionalAirbnbListingsByBuilding = listingsData.additionalAirbnbListingsByBuilding as Record<
   string,
   AirbnbListing[]
@@ -45,6 +64,11 @@ const airbnbSizesByUrl = (
   "airbnbSizesByUrl" in listingsData
     ? (listingsData as { airbnbSizesByUrl?: Record<string, { size: AirbnbSize; bedrooms: number }> })
         .airbnbSizesByUrl
+    : undefined
+) ?? {};
+const rentalMetaByUrl = (
+  "rentalMetaByUrl" in listingsData
+    ? (listingsData as { rentalMetaByUrl?: Record<string, RentalMeta> }).rentalMetaByUrl
     : undefined
 ) ?? {};
 const getNeighborhoodGroup = (zone: string) => {
@@ -152,6 +176,7 @@ const getAirbnbListings = (building: Building) => {
   }
 
   return [...listingMap.values()]
+    .filter((listing) => Boolean(listing.size))
     .map((listing) => ({
       ...listing,
       source: "Airbnb" as const,
@@ -183,17 +208,41 @@ const getRentalSignature = (listing: RentalListing) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+const formatRentUsd = (amount?: number) => {
+  if (amount == null || !Number.isFinite(amount)) return null;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+const withRentalMeta = (listing: RentalListing): RentalListing => {
+  const known = rentalMetaByUrl[listing.url];
+  if (!known) return listing;
+  return {
+    ...listing,
+    size: listing.size ?? known.size,
+    bedrooms: listing.bedrooms ?? known.bedrooms,
+    priceUsdMonthly: listing.priceUsdMonthly ?? known.priceUsdMonthly,
+    rentUsd: listing.rentUsd ?? known.rentUsd,
+    expensesUsd: listing.expensesUsd ?? known.expensesUsd,
+    expensesIncluded: listing.expensesIncluded ?? known.expensesIncluded,
+  };
+};
 const getRentalListings = (building: Building) => {
   const listingMap = new Map<string, RentalListing>();
   const signatures = new Set<string>();
   const addListing = (listing: RentalListing | null | undefined) => {
     if (!listing?.url || !isDirectRentalUrl(listing.url)) return;
+    if (removedRentalUrls.has(listing.url)) return;
 
-    const signature = getRentalSignature(listing);
-    if (signatures.has(signature) || listingMap.has(listing.url)) return;
+    const enriched = withRentalMeta(listing);
+    if (!enriched.size) return;
+    const signature = getRentalSignature(enriched);
+    if (signatures.has(signature) || listingMap.has(enriched.url)) return;
 
     signatures.add(signature);
-    listingMap.set(listing.url, listing);
+    listingMap.set(enriched.url, enriched);
   };
 
   addListing(building.localRentalAd);
@@ -209,7 +258,25 @@ const getRentalListings = (building: Building) => {
     addListing(listing);
   }
 
-  return [...listingMap.values()].slice(0, maxRentalListingsPerBuilding);
+  return [...listingMap.values()]
+    .map((listing) => ({
+      ...listing,
+      sizeLabel: formatAirbnbSize(listing.size),
+      priceLabel: formatRentUsd(listing.priceUsdMonthly),
+    }))
+    .sort((first, second) => {
+      const firstRank = first.size ? airbnbSizeRank[first.size] : 99;
+      const secondRank = second.size ? airbnbSizeRank[second.size] : 99;
+      if (firstRank !== secondRank) return firstRank - secondRank;
+      const firstBeds = first.bedrooms ?? 99;
+      const secondBeds = second.bedrooms ?? 99;
+      if (firstBeds !== secondBeds) return firstBeds - secondBeds;
+      const firstPrice = first.priceUsdMonthly ?? Number.POSITIVE_INFINITY;
+      const secondPrice = second.priceUsdMonthly ?? Number.POSITIVE_INFINITY;
+      if (firstPrice !== secondPrice) return firstPrice - secondPrice;
+      return collator.compare(first.title, second.title);
+    })
+    .slice(0, maxRentalListingsPerBuilding);
 };
 
 const maxVisibleAirbnbListings = 5;
@@ -411,6 +478,8 @@ const structuredData = {
             <option value="price-desc">Price, desc</option>
             <option value="area-desc">Area of a 2BR</option>
             <option value="price-per-sqm-asc">$$$ per square meter</option>
+            <option value="airbnb-count-desc">Number of Airbnbs</option>
+            <option value="rental-count-desc">Number of long-term rentals</option>
           </select>
         </label>
         <fieldset class="area-unit-toggle" aria-label="Area unit">
@@ -439,6 +508,8 @@ const structuredData = {
             data-rent-amount={building.longTermRentUsd.amount}
             data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
             data-price-per-sqm={building.pricePerTwoBedroomSquareMeter}
+            data-airbnb-count={building.airbnbListings.length}
+            data-rental-count={building.rentalListings.length}
           >
             <div class="building-main">
               <div class="building-title-row">
@@ -585,13 +656,30 @@ const structuredData = {
                       {building.rentalListings.map((listing) => (
                         <li>
                           <a
-                            class="listing-link"
+                            class={`listing-link listing-link-rental${listing.priceLabel ? "" : " is-unpriced"}`}
                             href={listing.url}
                             target="_blank"
                             rel="noreferrer noopener"
-                            title={`${listing.source}: ${listing.title}`}
+                            title={[
+                              listing.sizeLabel,
+                              listing.priceLabel
+                                ? `${listing.priceLabel}/mo${listing.expensesIncluded === false ? " incl. expenses" : ""}`
+                                : null,
+                              `${listing.source}: ${listing.title}`,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
                           >
-                            <span class="listing-source">{listing.source}</span>
+                            <span class="listing-meta">
+                              {listing.sizeLabel ? (
+                                <span class="listing-source listing-size">{listing.sizeLabel}</span>
+                              ) : (
+                                <span class="listing-source">{listing.source}</span>
+                              )}
+                              {listing.priceLabel ? (
+                                <span class="listing-price">{listing.priceLabel}</span>
+                              ) : null}
+                            </span>
                             <span class="listing-title">{truncateListingTitle(listing.title)}</span>
                             <span class="listing-action" aria-hidden="true">Open</span>
                           </a>
@@ -747,6 +835,10 @@ const structuredData = {
     const secondArea = numericDatasetValue(secondRow, "twoBedroomArea");
     const firstPricePerSqm = numericDatasetValue(firstRow, "pricePerSqm");
     const secondPricePerSqm = numericDatasetValue(secondRow, "pricePerSqm");
+    const firstAirbnbCount = numericDatasetValue(firstRow, "airbnbCount");
+    const secondAirbnbCount = numericDatasetValue(secondRow, "airbnbCount");
+    const firstRentalCount = numericDatasetValue(firstRow, "rentalCount");
+    const secondRentalCount = numericDatasetValue(secondRow, "rentalCount");
 
     const primarySort =
       sortValue === "price-desc"
@@ -755,7 +847,11 @@ const structuredData = {
           ? secondArea - firstArea
           : sortValue === "price-per-sqm-asc"
             ? firstPricePerSqm - secondPricePerSqm
-            : firstRent - secondRent;
+            : sortValue === "airbnb-count-desc"
+              ? secondAirbnbCount - firstAirbnbCount
+              : sortValue === "rental-count-desc"
+                ? secondRentalCount - firstRentalCount
+                : firstRent - secondRent;
 
     return primarySort || compareRowsByName(firstRow, secondRow);
   };
@@ -903,11 +999,12 @@ const structuredData = {
         const renderListingLinks = (listings, heading) => {
           if (!listings.length) return "";
           const items = listings.slice(0, 3).map((listing) => {
-            const sizePrefix = listing.sizeLabel ? `${listing.sizeLabel} · ` : "";
-            const label = listing.source && heading !== "Airbnb stays"
-              ? `${listing.source}: ${listing.title}`
-              : `${sizePrefix}${listing.title}`;
-            const shortLabel = label.length > 52 ? `${label.slice(0, 51)}…` : label;
+            const bits = [];
+            if (listing.sizeLabel) bits.push(listing.sizeLabel);
+            if (listing.priceLabel) bits.push(listing.priceLabel);
+            const prefix = bits.length ? `${bits.join(" · ")} · ` : "";
+            const label = `${prefix}${listing.title}`;
+            const shortLabel = label.length > 56 ? `${label.slice(0, 55)}…` : label;
             return `<li><a href="${escapeHtml(listing.url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(shortLabel)}</a></li>`;
           }).join("");
           const more =
@@ -1413,6 +1510,32 @@ const structuredData = {
       transform 160ms ease;
   }
 
+  .listing-link-rental {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .listing-meta {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 0.28rem;
+    align-items: center;
+  }
+
+  .listing-price {
+    width: max-content;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 8%);
+    border: 1px solid color-mix(in srgb, var(--border), transparent 10%);
+    color: var(--text);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    padding: 0.22rem 0.48rem;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
   .listing-link:hover {
     border-color: color-mix(in srgb, var(--border), transparent 15%);
     background: var(--surface-soft);
@@ -1760,6 +1883,15 @@ const structuredData = {
       gap: 0.4rem 0.55rem;
       min-height: 0;
       padding: 0.55rem 0.6rem;
+    }
+
+    .listing-link-rental {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .listing-meta {
+      grid-column: 1 / -1;
+      flex-wrap: wrap;
     }
 
     .listing-source {

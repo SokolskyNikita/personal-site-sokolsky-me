@@ -46,15 +46,12 @@ const sephoraSearch = (query: string): Link => ({
 const priceByName: Record<string, PriceInfo> = {
   "Irene Bermejo moisturiser": {
     abroadUsd: "~US$48 Argentina",
-    note: "not domestically sold in the US",
   },
   "Bioderma Hydrabio Creme Rich / Creme Riche": {
     abroadUsd: "~US$21-23 UK/EU",
-    note: "Bioderma US has Hydrabio RICH, but BD/regular search showed it out of stock",
   },
   "Bioderma Hydrabio Creme Rich Moisturising Care": {
     abroadUsd: "~US$21-23 UK/EU",
-    note: "Bioderma US has Hydrabio RICH, but BD/regular search showed it out of stock",
   },
   "Mixsoon Bifida Cream": {
     localUsd: "~US$24-30",
@@ -119,12 +116,10 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Jumiso Snail EX Ultimate Barrier Facial Cream": {
     abroadUsd: "~US$12-20 KR",
-    note: "older Snail EX name is mostly out of stock/no longer available in US search results",
   },
   "Jumiso Snail Mucin 88 + Peptide Cream": {
     localUsd: "~US$21-25",
     abroadUsd: "~US$12-20 KR",
-    note: "current official Jumiso USA replacement for the older Snail EX cream",
   },
   "COSRX Advanced Snail 96 Mucin Power Essence": {
     localUsd: "~US$18-25",
@@ -188,11 +183,9 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "La Roche-Posay Effaclar Gel Purifiant Micro-Peeling": {
     abroadUsd: "~US$18-25 EU",
-    note: "US uses Effaclar Medicated Gel Cleanser as the closest domestic salicylic cleanser",
   },
   "La Roche-Posay Lait Demaquillant / Toleriane Dermo-Cleanser": {
     abroadUsd: "~US$8-18 EU",
-    note: "US substitute is Toleriane Hydrating Gentle Cleanser, not the same milky cleanser",
   },
   "La Roche-Posay Toleriane Hydrating Gentle Cleanser": {
     localUsd: "~US$16",
@@ -282,10 +275,8 @@ const priceByName: Record<string, PriceInfo> = {
     localUsd: "~US$15",
   },
   "Irene Bermejo Retinoico 0.05%": {
-    note: "not domestically sold in the US",
   },
   "Irene Bermejo Retinoico 0.025%": {
-    note: "not domestically sold in the US",
   },
   "Cosmética Argentina Ácido Retinoico 0.05%": {
     abroadUsd: "~US$34 Argentina",
@@ -293,7 +284,6 @@ const priceByName: Record<string, PriceInfo> = {
   "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
     localUsd: "~US$12-18",
     abroadUsd: "~US$8-12 Japan",
-    note: "Canmake USA sells the US-compliant Mermaid Skin Gel package with UV/SPF wording removed",
   },
   "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
     localUsd: "~US$12-18",
@@ -373,11 +363,6 @@ const localMarkupPercent = (price?: PriceInfo) => {
 
 const formatMarkup = (value: number) => `${value > 0 ? "+" : ""}${value}%`;
 
-const localMarkup = (price?: PriceInfo) => {
-  const markup = localMarkupPercent(price);
-  return markup === undefined ? undefined : `local markup: ${formatMarkup(markup)} vs abroad`;
-};
-
 const median = (values: number[]) => {
   if (values.length === 0) return undefined;
 
@@ -388,23 +373,16 @@ const median = (values: number[]) => {
     : sorted[middle];
 };
 
-const priceParts = (price?: PriceInfo, sourcePrice?: PriceInfo) =>
-  [
-    price?.localUsd && `US: ${price.localUsd}`,
-    price?.abroadUsd && `abroad: ${price.abroadUsd}`,
-    sourcePrice?.abroadUsd && `OG abroad: ${sourcePrice.abroadUsd}`,
-    price?.note,
-  ].filter(Boolean) as string[];
-
-const directPriceParts = (name: string) => {
-  const price = getPrice(name);
-  return [...priceParts(price), localMarkup(price)].filter(Boolean) as string[];
+const priceParts = (price?: PriceInfo) => {
+  const markup = localMarkupPercent(price);
+  return [price?.localUsd, markup === undefined ? undefined : formatMarkup(markup)].filter(
+    Boolean,
+  ) as string[];
 };
 
-const sourcePriceParts = (name: string) => {
-  const price = getPrice(name);
-  return [price?.abroadUsd && `OG abroad: ${price.abroadUsd}`, price?.note].filter(Boolean) as string[];
-};
+const directPriceParts = (name: string) => priceParts(getPrice(name));
+
+const sourcePriceParts = (name: string) => priceParts(getPrice(name));
 
 const highMarkupAlternatives: Record<string, RankedMatch[]> = {
   "Canmake Mermaid Skin Gel UV SPF50+ PA++++": [
@@ -1260,7 +1238,7 @@ export type AriMatchMarketData = {
   formatMarkup: (value: number) => string;
   directPriceParts: (name: string) => string[];
   sourcePriceParts: (name: string) => string[];
-  pricePartsByName: (name: string, sourceName: string) => string[];
+  pricePartsByName: (name: string, _sourceName?: string) => string[];
   highMarkupAlternativesFor: (name: string) => RankedMatch[];
 };
 
@@ -1274,6 +1252,6 @@ export const usaMarketData: AriMatchMarketData = {
   formatMarkup,
   directPriceParts,
   sourcePriceParts,
-  pricePartsByName: (name, sourceName) => priceParts(getPrice(name), getPrice(sourceName)),
+  pricePartsByName: (name) => priceParts(getPrice(name)),
   highMarkupAlternativesFor,
 };

@@ -55,7 +55,6 @@ const farmacitySearch = (query: string): Link => ({
 const priceByName: Record<string, PriceInfo> = {
   "Irene Bermejo moisturiser": {
     arUsd: "~US$48",
-    note: "current Liss Extreme proxy; old jar price not public",
   },
   "Bioderma Hydrabio Creme Rich / Creme Riche": {
     abroadUsd: "~US$21-23 UK/EU",
@@ -121,7 +120,6 @@ const priceByName: Record<string, PriceInfo> = {
   "Laneige Cica Sleeping Mask": {
     arUsd: "~US$198 / 60 ml eq",
     abroadUsd: "~US$34 / 60 ml US",
-    note: "Clama listing is 10 ml: US$33 list; cash pickup is about US$20 (= ~US$120 / 60 ml eq)",
   },
   "Jumiso Snail EX Ultimate Barrier Facial Cream": {
     abroadUsd: "~US$12-20 KR/US",
@@ -133,7 +131,6 @@ const priceByName: Record<string, PriceInfo> = {
   "Sulwhasoo Concentrated Ginseng Renewing Cream": {
     arUsd: "~US$840 / 60 ml eq",
     abroadUsd: "~US$260 / 60 ml US",
-    note: "Argentina price found for 5 ml mini: ~US$70; normalized to 60 ml for markup",
   },
   "Dr. Althea 345 Relief Cream": {
     arUsd: "~US$42",
@@ -141,7 +138,6 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Tatcha The Dewy Skin Cream": {
     abroadUsd: "~US$72 US",
-    note: "Koko page found, but BD still did not expose a local price",
   },
   "La Roche-Posay Effaclar Mat": {
     arUsd: "~US$42-43",
@@ -165,7 +161,6 @@ const priceByName: Record<string, PriceInfo> = {
   "Briotech Topical HOCl 2 oz": {
     arUsd: "~US$59",
     abroadUsd: "~US$14-18 US",
-    note: "ML snippet exposed pre-tax price only",
   },
   "La Roche-Posay Agua Termal": {
     arUsd: "~US$31",
@@ -180,7 +175,6 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Cleanex Gel de Ducha Body Wash": {
     arUsd: "~US$15",
-    note: "local Argentina 250 g body wash; public listing describes 2% salicylic acid",
   },
   "SOME BY MI AHA.BHA.PHA 30 Days Miracle Clear Body Cleanser": {
     arUsd: "~US$40",
@@ -226,11 +220,9 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Dream On Vitamin C + Niacinamide + Tranexamic Acid Serum": {
     arUsd: "~US$23",
-    note: "Argentina-only local product",
   },
   "Murad Deep Relief Acne Treatment": {
     abroadUsd: "~US$45 US",
-    note: "ML screenshot shows international import: about US$100 plus about US$21 import taxes, not counted as domestic",
   },
   "COSRX BHA Blackhead Power Liquid": {
     arUsd: "~US$40",
@@ -255,10 +247,8 @@ const priceByName: Record<string, PriceInfo> = {
     abroadUsd: "~US$18-21 Germany rx",
   },
   "Irene Bermejo Retinoico 0.05%": {
-    note: "clinic price not public",
   },
   "Irene Bermejo Retinoico 0.025%": {
-    note: "clinic price not public",
   },
   "Cosmética Argentina Ácido Retinoico 0.05%": {
     arUsd: "~US$34",
@@ -266,7 +256,6 @@ const priceByName: Record<string, PriceInfo> = {
   "Canmake Mermaid Skin Gel UV SPF50+ PA++++": {
     arUsd: "~US$85",
     abroadUsd: "~US$8-12 Japan",
-    note: "current ML exact listing says the delivery estimate includes 35 days to have the product ready, so not counted as domestic direct stock",
   },
   "Bioré UV Aqua Rich Watery Essence SPF50+ PA++++": {
     arUsd: "~US$63",
@@ -294,11 +283,9 @@ const priceByName: Record<string, PriceInfo> = {
   "Isntree Hyaluronic Acid Watery Sun Gel SPF50+ PA++++": {
     arUsd: "~US$45-48",
     abroadUsd: "~US$15-22 KR/US",
-    note: "Mullab page shows ARS 68k-71.5k; text and schema disagree on stock, so verify before buying",
   },
   "Dermaglos Emulsion Corporal Hidratacion + Regeneracion": {
     arUsd: "~US$14-19",
-    note: "Argentina local product",
   },
   "Biotherm Eau d'Energie body moisturiser": {
     abroadUsd: "~US$25-35 EU",
@@ -313,7 +300,6 @@ const priceByName: Record<string, PriceInfo> = {
   },
   "Natura Ekos Castanha hand cream": {
     arUsd: "~US$12",
-    note: "Argentina local product",
   },
 };
 
@@ -325,15 +311,6 @@ const midpointUsd = (value?: string) => {
 
   const numbers = [match[1], match[2]].filter(Boolean).map(Number);
   return numbers.reduce((total, number) => total + number, 0) / numbers.length;
-};
-
-const localMarkup = (price?: PriceInfo) => {
-  const localPrice = midpointUsd(price?.arUsd);
-  const abroadPrice = midpointUsd(price?.abroadUsd);
-  if (!localPrice || !abroadPrice) return undefined;
-
-  const markup = localMarkupPercent(price);
-  return markup === undefined ? undefined : `local markup: ${formatMarkup(markup)} vs abroad`;
 };
 
 const localMarkupPercent = (price?: PriceInfo) => {
@@ -356,23 +333,16 @@ const median = (values: number[]) => {
 
 const formatMarkup = (value: number) => `${value > 0 ? "+" : ""}${value}%`;
 
-const priceParts = (price?: PriceInfo, sourcePrice?: PriceInfo) =>
-  [
-    price?.arUsd && `local: ${price.arUsd}`,
-    price?.abroadUsd && `abroad: ${price.abroadUsd}`,
-    sourcePrice?.abroadUsd && `OG abroad: ${sourcePrice.abroadUsd}`,
-    price?.note,
-  ].filter(Boolean) as string[];
-
-const directPriceParts = (name: string) => {
-  const price = getPrice(name);
-  return [...priceParts(price), localMarkup(price)].filter(Boolean) as string[];
+const priceParts = (price?: PriceInfo) => {
+  const markup = localMarkupPercent(price);
+  return [price?.arUsd, markup === undefined ? undefined : formatMarkup(markup)].filter(
+    Boolean,
+  ) as string[];
 };
 
-const sourcePriceParts = (name: string) => {
-  const price = getPrice(name);
-  return [price?.abroadUsd && `OG abroad: ${price.abroadUsd}`, price?.note].filter(Boolean) as string[];
-};
+const directPriceParts = (name: string) => priceParts(getPrice(name));
+
+const sourcePriceParts = (name: string) => priceParts(getPrice(name));
 
 const highMarkupAlternatives: Record<string, RankedMatch[]> = {
   "Laneige Cica Sleeping Mask": [
@@ -1577,7 +1547,7 @@ const matches: ProductMatch[] = [
         ],
       },
     ],
-    note: "Ari: ideal when she needs extra moisture after moisturiser; not heavy, good for humid climate. The exact ML listing says delivery includes 35 days to have the product ready, so it is not counted as domestic direct stock.",
+    note: "Ari: ideal when she needs extra moisture after moisturiser; not heavy, good for humid climate.",
   },
   {
     group: "Sunscreens",
@@ -1763,7 +1733,7 @@ const argentinaMarketData: AriMatchMarketData = {
   formatMarkup,
   directPriceParts,
   sourcePriceParts,
-  pricePartsByName: (name, sourceName) => priceParts(getPrice(name), getPrice(sourceName)),
+  pricePartsByName: (name) => priceParts(getPrice(name)),
   highMarkupAlternativesFor,
 };
 ---
