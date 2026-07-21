@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { LOCATION_REGISTRY } from "../locations";
+import { ANYWHERE_LOCATION_ID, LOCATION_REGISTRY } from "../locations";
 import {
   LocationResolveError,
+  assertValidLocationPair,
+  isAnywhereToAnywhere,
   isRawIata,
   normalizeLocationRef,
   resolveLocation,
@@ -47,6 +49,29 @@ describe("resolveLocation", () => {
 
   it("resolves Madrid to Barajas", () => {
     expect(resolveLocation("madrid")).toEqual(["MAD"]);
+  });
+
+  it("resolves Anywhere to the top 100 airports by passenger traffic", () => {
+    const airports = resolveLocation(ANYWHERE_LOCATION_ID);
+    expect(airports).toHaveLength(100);
+    expect(new Set(airports).size).toBe(100);
+    expect(airports[0]).toBe("ATL");
+    expect(airports).toContain("DXB");
+    expect(airports).toContain("AUH");
+  });
+
+  it("rejects Anywhere to Anywhere but allows Anywhere on one side", () => {
+    expect(isAnywhereToAnywhere("anywhere", "anywhere")).toBe(true);
+    expect(isAnywhereToAnywhere("anywhere", "usa-gateways")).toBe(false);
+    expect(() => assertValidLocationPair("anywhere", "anywhere")).toThrow(
+      LocationResolveError,
+    );
+    expect(() =>
+      assertValidLocationPair("anywhere", "buenos-aires"),
+    ).not.toThrow();
+    expect(() =>
+      assertValidLocationPair("buenos-aires", "anywhere"),
+    ).not.toThrow();
   });
 
   it("resolves gateway registries", () => {

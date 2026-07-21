@@ -189,9 +189,16 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
     },
 
     async listByCityScore(cityId, limit = 100) {
+      // Omit raw_json — warm index must stay under ~500ms.
       const { results } = await db
         .prepare(
-          `SELECT * FROM properties WHERE city_id = ? AND (gates_json = '[]' OR gates_json IS NULL)
+          `SELECT token, city_id, name, lat, lng, hotel_class, brand_tier,
+                  rating, reviews, low_star_share, worst_category, worst_category_neg,
+                  ta_rating, ta_reviews, ta_rank, ta_total, whitelist,
+                  facts_json, amenities_json, breakdown_json, histogram_json,
+                  score, subscores_json, gates_json, scoring_version, provider, enriched_at
+           FROM properties
+           WHERE city_id = ? AND (gates_json = '[]' OR gates_json IS NULL)
            ORDER BY score DESC LIMIT ?`,
         )
         .bind(cityId, limit)

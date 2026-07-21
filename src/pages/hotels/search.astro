@@ -1,0 +1,245 @@
+---
+import "../../styles/flights-search.css";
+import "../../styles/hotels-search.css";
+import { DEFAULT_HOTEL_FORM } from "../../lib/hotels/url";
+
+export const prerender = true;
+
+const pageTitle = "Hotel comfort search";
+const pageDescription =
+  "Find hotels with market-transferable comfort evidence — modern rooms, quiet sleep, working HVAC — not just local star averages.";
+const themeColorLight = "#f7f6f3";
+const themeColorDark = "#121412";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;650&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="fs-page" id="hs-app">
+      <header class="fs-top">
+        <div class="fs-heading">
+          <span class="fs-eyebrow">Comfort index</span>
+          <h1 class="fs-title">Hotel search</h1>
+          <p>
+            Rank hotels by transferable comfort evidence, not local guest-mix
+            star averages.
+          </p>
+        </div>
+        <a class="fs-home" href="/">sokolsky.me</a>
+      </header>
+
+      <form class="fs-form" id="hs-form">
+        <section class="fs-form-section" aria-labelledby="hs-where-heading">
+          <header class="fs-section-heading">
+            <h2 id="hs-where-heading">Where &amp; when</h2>
+            <p>City preset, free text, or neighborhood box. Quality index is date-agnostic; prices come later.</p>
+          </header>
+          <div class="fs-primary">
+            <div class="fs-field">
+              <label for="hs-city">City</label>
+              <select id="hs-city"></select>
+            </div>
+            <div class="fs-field">
+              <label for="hs-q">Free text</label>
+              <input
+                id="hs-q"
+                type="text"
+                placeholder="e.g. Lisbon"
+                autocomplete="off"
+              />
+            </div>
+            <div class="fs-field">
+              <label for="hs-neighborhood">Neighborhood</label>
+              <select id="hs-neighborhood"></select>
+            </div>
+          </div>
+        </section>
+
+        <section class="fs-form-section" aria-labelledby="hs-comfort-heading">
+          <header class="fs-section-heading">
+            <h2 id="hs-comfort-heading">Comfort profile</h2>
+            <p>Minimum score and how unknown amenities are treated.</p>
+          </header>
+          <div class="fs-secondary">
+            <div class="fs-field fs-field-days">
+              <label for="hs-min-comfort"
+                >Min comfort <span
+                  ><strong id="hs-comfort-value"
+                    >{DEFAULT_HOTEL_FORM.minComfort}</strong
+                  ></span
+                ></label
+              >
+              <input
+                id="hs-min-comfort"
+                type="range"
+                min="0"
+                max="80"
+                value={String(DEFAULT_HOTEL_FORM.minComfort)}
+              />
+            </div>
+            <div class="fs-field">
+              <label for="hs-strictness">Evidence strictness</label>
+              <select id="hs-strictness">
+                <option value="confirmed_or_unknown" selected
+                  >Confirmed or unknown (default)</option
+                >
+                <option value="confirmed_only">Confirmed only</option>
+              </select>
+            </div>
+            <div class="fs-field">
+              <label for="hs-sort">Sort</label>
+              <select id="hs-sort">
+                <option value="comfort" selected>Comfort</option>
+                <option value="rating">Rating</option>
+                <option value="reviews">Reviews</option>
+                <option value="unknowns">Fewest unknowns</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="fs-form-section" aria-labelledby="hs-hard-heading">
+          <header class="fs-section-heading">
+            <h2 id="hs-hard-heading">Hard requirements</h2>
+            <p>Filter on fact status — absence is unknown, never false.</p>
+          </header>
+          <div class="fs-secondary">
+            <div class="fs-toggles">
+              <label class="fs-check">
+                <input id="hs-require-ac" type="checkbox" />
+                <span>Require AC</span>
+              </label>
+              <label class="fs-check">
+                <input id="hs-require-elevator" type="checkbox" />
+                <span>Require elevator</span>
+              </label>
+              <label class="fs-check">
+                <input id="hs-require-desk" type="checkbox" />
+                <span>24h desk</span>
+              </label>
+              <label class="fs-check">
+                <input id="hs-branded-only" type="checkbox" />
+                <span>Branded only</span>
+              </label>
+            </div>
+            <div class="fs-field">
+              <label for="hs-min-reviews">Min reviews</label>
+              <select id="hs-min-reviews">
+                <option value="200" selected>200</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+              </select>
+            </div>
+            <div class="fs-field">
+              <label for="hs-budget-max">Max $/night</label>
+              <input
+                id="hs-budget-max"
+                type="number"
+                min="0"
+                step="10"
+                placeholder="optional"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="fs-form-section fs-form-section-options"
+          aria-labelledby="hs-depth-heading"
+        >
+          <header class="fs-section-heading">
+            <h2 id="hs-depth-heading">Search depth</h2>
+            <p>Most-reviewed pages to sweep (highest-rating adds up to 2).</p>
+          </header>
+          <div class="fs-secondary">
+            <div class="fs-field">
+              <label for="hs-scan-pages">Scan pages</label>
+              <input
+                id="hs-scan-pages"
+                type="number"
+                min="1"
+                max="4"
+                value={String(DEFAULT_HOTEL_FORM.scanPages)}
+              />
+            </div>
+            <div class="fs-actions">
+              <button type="submit" class="fs-btn fs-btn-primary" id="hs-run"
+                >Search hotels</button
+              >
+              <button type="button" class="fs-btn" id="hs-cancel" hidden
+                >Cancel</button
+              >
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <div class="fs-status" aria-live="polite">
+        <p class="fs-search-summary" id="hs-search-summary">
+          Ready. Warm cities load from D1; scans confirm credits first.
+        </p>
+        <div id="hs-banners"></div>
+        <p class="fs-progress" id="hs-progress"></p>
+      </div>
+      <div id="hs-results" aria-live="polite"></div>
+      <p class="fs-trust-note">
+        Amenities feeds are incomplete — unknown is not false. Ratings are
+        Bayesian-smoothed vs the city mean.
+      </p>
+      <div class="fs-footer-stats" id="hs-footer"></div>
+
+      <div class="fs-search-progress" id="hs-search-progress" hidden>
+        <div class="fs-search-progress-copy">
+          <strong id="hs-search-progress-label">Preparing</strong>
+        </div>
+        <div
+          class="fs-search-progress-track"
+          role="progressbar"
+          aria-label="Hotel search progress"
+        >
+          <span id="hs-search-progress-fill"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      import { mountHotelSearch } from "../../components/hotels/search-app";
+      const root = document.getElementById("hs-app");
+      if (root) mountHotelSearch(root);
+    </script>
+  </body>
+</html>

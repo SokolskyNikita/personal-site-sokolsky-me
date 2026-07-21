@@ -112,6 +112,8 @@ async function handleScan(
     q?: string;
     bbox?: [number, number, number, number];
     force?: boolean;
+    mostReviewedPages?: number;
+    highestRatingPages?: number;
   } = {};
   try {
     body = (await request.json()) as typeof body;
@@ -119,7 +121,12 @@ async function handleScan(
     body = {};
   }
 
-  const citySlug = body.citySlug ?? url.searchParams.get("city") ?? "buenos-aires";
+  const q = body.q?.trim();
+  const citySlug =
+    body.citySlug ??
+    url.searchParams.get("city") ??
+    (q ? q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : null) ??
+    "buenos-aires";
   const db = env.hotels_index
     ? createD1HotelsRepository(env.hotels_index)
     : undefined;
@@ -136,14 +143,29 @@ async function handleScan(
       return json({ ok: false, error: "searchapi_key_missing" }, 503);
     }
 
+    const t0 = Date.now();
     const result = await runCityScan({
       citySlug,
       provider,
       db,
       force: body.force,
-      q: body.q,
+      q: q || undefined,
       bbox: body.bbox,
+      mostReviewedPages: body.mostReviewedPages,
+      highestRatingPages: body.highestRatingPages,
     });
+    const kept = result.all
+      .filter((s) => !s.gatedOut)
+      .sort((a, b) => b.score - a.score);
+    const demoted = result.all
+      .filter(
+        (s) =>
+          !s.gatedOut &&
+          (s.property.rating ?? 0) >= 4.4 &&
+          s.subscores.plantPenalty >= 5,
+      )
+      .sort((a, b) => b.subscores.plantPenalty - a.subscores.plantPenalty)
+      .slice(0, 5);
 
     return json({
       ok: true,
@@ -155,6 +177,9 @@ async function handleScan(
       cityMeanRating: result.cityMeanRating,
       scoringVersion: result.scoringVersion,
       top10: summarizeTop(result.top10),
+      properties: summarizeTop(kept.slice(0, 60)),
+      demoted: summarizeTop(demoted),
+      durationMs: Date.now() - t0,
       ops: scanOpsStats(result),
     });
   } catch (e) {
@@ -188,27 +213,45 @@ async function handleIndex(
   if (!city) {
     return json({ ok: true, city: citySlug, properties: [], neverScanned: true });
   }
+  const t0 = Date.now();
   const rows = await db.listByCityScore(city.id, 100);
   return json({
     ok: true,
     city: citySlug,
     meanRating: city.mean_rating,
     scannedAt: city.scanned_at,
-    properties: rows.map((r) => ({
-      token: r.token,
-      name: r.name,
-      score: r.score,
-      rating: r.rating,
-      reviews: r.reviews,
-      hotelClass: r.hotel_class,
-      brandTier: r.brand_tier,
-      lowStarShare: r.low_star_share,
-      worstCategory: r.worst_category,
-      worstCategoryNeg: r.worst_category_neg,
-      facts: r.facts_json ? JSON.parse(r.facts_json) : null,
-      subscores: r.subscores_json ? JSON.parse(r.subscores_json) : null,
-      scoringVersion: r.scoring_version,
-    })),
+    durationMs: Date.now() - t0,
+    properties: rows.map((r) => {
+      const facts = r.facts_json ? JSON.parse(r.facts_json) : null;
+      const subscores = r.subscores_json ? JSON.parse(r.subscores_json) : null;
+      return {
+        token: r.token,
+        name: r.name,
+        score: r.score,
+        rating: r.rating,
+        reviews: r.reviews,
+        hotelClass: r.hotel_class,
+        brandTier: r.brand_tier,
+        lowStarShare: r.low_star_share,
+        worstCategory: r.worst_category,
+        worstCategoryNeg: r.worst_category_neg,
+        plantPenalty: subscores?.plantPenalty ?? 0,
+        facts: {
+          hasAC: facts?.hasAC?.status ?? "unknown",
+          hasElevator: facts?.hasElevator?.status ?? "unknown",
+          hasWifi: facts?.hasWifi?.status ?? "unknown",
+          frontDesk24h: facts?.frontDesk24h?.status ?? "unknown",
+        },
+        factsFull: facts,
+        subscores,
+        googleHotelsUrl: null as string | null,
+        lat: r.lat,
+        lng: r.lng,
+        scoringVersion: r.scoring_version,
+        gatedOut: false,
+        gates: [],
+      };
+    }),
   });
 }
 

@@ -5,7 +5,10 @@ import {
 } from "../../lib/flights/format";
 import { SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
 import { groupResults, orderedGroupKeys } from "../../lib/flights/group";
-import { listRegistryOptions } from "../../lib/flights/resolver";
+import {
+  isAnywhereToAnywhere,
+  listRegistryOptions,
+} from "../../lib/flights/resolver";
 import {
   SEARCH_MODES,
   getSearchMode,
@@ -202,12 +205,23 @@ export function mountFlightSearch(root: HTMLElement): void {
     invalidateSearch();
   }
 
+  function routeBlockedMessage(state: FormState): string | null {
+    if (isAnywhereToAnywhere(state.origin, state.dest)) {
+      return "Anywhere to Anywhere is not supported. Choose a specific origin or destination.";
+    }
+    return null;
+  }
+
   function invalidateSearch(): void {
-    runBtn.disabled = isRunning;
+    const blocked = routeBlockedMessage(form);
+    runBtn.disabled = isRunning || Boolean(blocked);
     hideSearchProgress();
-    searchSummary.textContent =
-      "Ready to search. Cached results are reused automatically.";
-    banners.innerHTML = "";
+    searchSummary.textContent = blocked
+      ? blocked
+      : "Ready to search. Cached results are reused automatically.";
+    banners.innerHTML = blocked
+      ? `<div class="fs-banner fs-banner-warn">${escapeHtml(blocked)}</div>`
+      : "";
     progress.textContent = "";
     results.innerHTML = "";
     footer.innerHTML = "";
@@ -215,6 +229,9 @@ export function mountFlightSearch(root: HTMLElement): void {
     latestOptions = [];
     latestSpec = null;
   }
+
+  // Honor route rules for URL-prefilled Anywhere→Anywhere (and clear stale UI).
+  invalidateSearch();
 
   function setSearchBusy(busy: boolean, label = "Search flights"): void {
     isRunning = busy;
@@ -230,7 +247,11 @@ export function mountFlightSearch(root: HTMLElement): void {
     cancelBtn.hidden = !busy;
     runBtn.textContent = label;
     if (busy) runBtn.setAttribute("aria-busy", "true");
-    else runBtn.removeAttribute("aria-busy");
+    else {
+      runBtn.removeAttribute("aria-busy");
+      // Keep Search disabled if the current route is Anywhere→Anywhere.
+      runBtn.disabled = Boolean(routeBlockedMessage(form));
+    }
   }
 
   cancelBtn.addEventListener("click", () => {
@@ -280,9 +301,15 @@ export function mountFlightSearch(root: HTMLElement): void {
     event.preventDefault();
     if (isRunning) return;
 
+    form = readForm(root, form);
+    const blocked = routeBlockedMessage(form);
+    if (blocked) {
+      invalidateSearch();
+      return;
+    }
+
     const controller = new AbortController();
     activeController = controller;
-    form = readForm(root, form);
     const spec = formStateToLegSearch(form);
     syncUrl(form);
     setSearchBusy(true, "Checking…");

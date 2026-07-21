@@ -17,6 +17,7 @@ import {
   filterByDirectionalLieFlatPolicy,
   filterByMaxTotalHours,
 } from "./policy";
+import { assertValidLocationPair } from "./resolver";
 import {
   parseSearchApiResponse,
   SearchApiProvider,
@@ -87,6 +88,18 @@ async function handlePlan(
   }
 
   const spec = specResult.data;
+  try {
+    assertValidLocationPair(spec.origin, spec.dest);
+  } catch (err) {
+    return json(
+      {
+        ok: false,
+        error: "invalid_route",
+        message: err instanceof Error ? err.message : String(err),
+      },
+      400,
+    );
+  }
   let plan;
   try {
     plan = planSearch(spec);
@@ -164,6 +177,18 @@ async function handleQuery(
     );
   }
   const spec = specResult.data;
+  try {
+    assertValidLocationPair(spec.origin, spec.dest);
+  } catch (err) {
+    return json(
+      {
+        ok: false,
+        error: "invalid_route",
+        message: err instanceof Error ? err.message : String(err),
+      },
+      400,
+    );
+  }
 
   const step = body.step as PlanStep | undefined;
   if (

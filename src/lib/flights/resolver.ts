@@ -1,4 +1,4 @@
-import { LOCATION_REGISTRY } from "./locations";
+import { ANYWHERE_LOCATION_ID, LOCATION_REGISTRY } from "./locations";
 import type { LocationRef } from "./types";
 
 const IATA_RE = /^[A-Z]{3}$/;
@@ -19,6 +19,32 @@ export class LocationResolveError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "LocationResolveError";
+  }
+}
+
+/** True when both endpoints resolve to the Anywhere registry entry. */
+export function isAnywhereToAnywhere(
+  origin: LocationRef,
+  dest: LocationRef,
+): boolean {
+  return (
+    normalizeLocationRef(origin) === ANYWHERE_LOCATION_ID &&
+    normalizeLocationRef(dest) === ANYWHERE_LOCATION_ID
+  );
+}
+
+/**
+ * Reject Anywhere→Anywhere before planning. One side may be Anywhere;
+ * both sides may not.
+ */
+export function assertValidLocationPair(
+  origin: LocationRef,
+  dest: LocationRef,
+): void {
+  if (isAnywhereToAnywhere(origin, dest)) {
+    throw new LocationResolveError(
+      "Anywhere to Anywhere searches are not supported. Choose a specific origin or destination.",
+    );
   }
 }
 

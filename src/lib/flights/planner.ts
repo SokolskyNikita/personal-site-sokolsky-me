@@ -2,7 +2,7 @@ import {
   MAX_AIRPORTS_PER_BATCH,
   ROUND_TRIP_CANDIDATES_PER_STEP,
 } from "./constants";
-import { resolveLocation } from "./resolver";
+import { assertValidLocationPair, resolveLocation } from "./resolver";
 import type { LegSearch, PlanStep, QueryPlan } from "./types";
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -60,6 +60,7 @@ export function planSearch(
     >,
   batchSize = MAX_AIRPORTS_PER_BATCH,
 ): QueryPlan {
+  assertValidLocationPair(spec.origin, spec.dest);
   const originAirports = resolveLocation(spec.origin);
   const destAirports = resolveLocation(spec.dest);
   const dates = enumerateDates(spec.dateRange.start, spec.dateRange.days);

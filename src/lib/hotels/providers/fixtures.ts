@@ -1,6 +1,7 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import mostReviewedP1 from "../../../../fixtures/hotels/ba-most-reviewed-p1.json";
+import mostReviewedP2 from "../../../../fixtures/hotels/ba-most-reviewed-p2.json";
+import highestRatingP1 from "../../../../fixtures/hotels/ba-highest-rating-p1.json";
+import propertyFourSeasons from "../../../../fixtures/hotels/property-fourseasons.json";
 import type {
   GetPropertyQuery,
   HotelDataProvider,
@@ -10,11 +11,6 @@ import type {
   SearchApiListProperty,
   SearchApiPropertyDetails,
 } from "./types";
-
-const FIXTURE_DIR = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "../../../../fixtures/hotels",
-);
 
 type ListFixture = {
   search_metadata?: { id?: string; request_url?: string };
@@ -31,10 +27,6 @@ type PropertyFixture = {
   property?: SearchApiPropertyDetails;
 };
 
-function loadJson<T>(name: string): T {
-  return JSON.parse(readFileSync(join(FIXTURE_DIR, name), "utf8")) as T;
-}
-
 function toListPage(data: ListFixture): HotelListPage {
   return {
     properties: data.properties ?? [],
@@ -50,8 +42,7 @@ function toListPage(data: ListFixture): HotelListPage {
 }
 
 /**
- * Replays committed fixtures. Ignores live network.
- * Maps sort_by + page token to fixture files for BA MVP.
+ * Replays committed fixtures. No filesystem — safe for Workers + Vitest.
  */
 export class FixtureProvider implements HotelDataProvider {
   readonly creditsUsed = 0;
@@ -69,17 +60,18 @@ export class FixtureProvider implements HotelDataProvider {
           raw: { properties: [], pagination: {} },
         };
       }
-      const page = toListPage(loadJson("ba-highest-rating-p1.json"));
-      // Only one highest-rating fixture page — stop pagination.
-      return { ...page, pagination: { ...page.pagination, nextPageToken: undefined } };
+      const page = toListPage(highestRatingP1 as ListFixture);
+      return {
+        ...page,
+        pagination: { ...page.pagination, nextPageToken: undefined },
+      };
     }
     if (sort === "most_reviewed") {
       if (!pageToken) {
-        return toListPage(loadJson("ba-most-reviewed-p1.json"));
+        return toListPage(mostReviewedP1 as ListFixture);
       }
-      // p1 next_page_token is CBI=; anything else → end of fixture corpus
       if (pageToken === "CBI=") {
-        return toListPage(loadJson("ba-most-reviewed-p2.json"));
+        return toListPage(mostReviewedP2 as ListFixture);
       }
       return {
         properties: [],
@@ -87,17 +79,15 @@ export class FixtureProvider implements HotelDataProvider {
         raw: { properties: [], pagination: {} },
       };
     }
-    // relevance / lowest_price → reuse most_reviewed p1
-    return toListPage(loadJson("ba-most-reviewed-p1.json"));
+    return toListPage(mostReviewedP1 as ListFixture);
   }
 
   async getProperty(query: GetPropertyQuery): Promise<HotelPropertyPage> {
-    const data = loadJson<PropertyFixture>("property-fourseasons.json");
+    const data = propertyFourSeasons as PropertyFixture;
     const property = data.property;
     if (!property?.property_token) {
       throw new Error("fixture_property_missing");
     }
-    // Return fixture regardless of token — only one full property fixture.
     return {
       property: {
         ...property,

@@ -4,6 +4,7 @@ import {
   DEFAULT_RATE_LIMIT_PER_DAY,
   MAX_AIRPORTS_PER_BATCH,
 } from "../constants";
+import { LocationResolveError } from "../resolver";
 import { planSearch } from "../planner";
 import { DEFAULT_FORM } from "../url";
 
@@ -139,5 +140,26 @@ describe("planSearch", () => {
     expect(DEFAULT_RATE_LIMIT_PER_DAY).toBe(400);
     expect(DEFAULT_DAILY_BUDGET).toBe(2_000);
     expect(DEFAULT_DAILY_BUDGET).toBeGreaterThanOrEqual(plan.callCount * 4);
+  });
+
+  it("plans Anywhere against a concrete endpoint", () => {
+    const plan = planSearch({
+      origin: "buenos-aires",
+      dest: "anywhere",
+      dateRange: { start: "2026-08-01", days: 0 },
+    });
+    expect(plan.originAirports).toHaveLength(2);
+    expect(plan.destAirports).toHaveLength(100);
+    expect(plan.callCount).toBe(10);
+  });
+
+  it("rejects Anywhere to Anywhere", () => {
+    expect(() =>
+      planSearch({
+        origin: "anywhere",
+        dest: "anywhere",
+        dateRange: { start: "2026-08-01", days: 0 },
+      }),
+    ).toThrow(LocationResolveError);
   });
 });
