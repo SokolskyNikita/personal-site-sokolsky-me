@@ -65,6 +65,32 @@ const buildingsWithPilates = new Set([
   "torre-promenade",
   "torre-vista-botanico",
 ]);
+const buildingsWithCinema = new Set([
+  "alvear-tower",
+  "astor-palermo",
+  "casa-ho",
+  "chateau-puerto-madero",
+  "forum-puerto-madero",
+  "harbour-residences",
+  "la-musa-stars",
+  "madero-center",
+  "maior-barrancas",
+  "quartier-boulevard",
+  "quartier-dorrego",
+  "quartier-polo",
+  "torre-bellini-palermo-chico",
+  "torre-bulnes",
+  "torre-deco-palermo-nuevo",
+  "torre-deco-segui",
+  "torre-las-plazas",
+  "torre-liberateur",
+  "torre-palermo-uno",
+  "torre-promenade",
+  "torre-quantum-palermo",
+  "torre-ruggieri",
+  "torres-de-montaneses",
+  "yoo-nordelta",
+]);
 const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
@@ -363,6 +389,7 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
+    hasCinema: buildingsWithCinema.has(building.id),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
     pricePerTwoBedroomSquareMeter: building.longTermRentUsd.amount / building.approxTwoBedroomAreaSqm.amount,
     lowestAirbnbPriceUsd: getLowestListingPriceUsd(airbnbListings),
@@ -393,6 +420,7 @@ const apartmentMapData = buildings.map((building) => {
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
+    hasCinema: buildingsWithCinema.has(building.id),
     hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     airbnbListings,
     rentalListings,
@@ -530,6 +558,10 @@ const structuredData = {
                 <input id="pilates-only" type="checkbox" autocomplete="off" />
                 <span>Pilates</span>
               </label>
+              <label for="cinema-only">
+                <input id="cinema-only" type="checkbox" autocomplete="off" />
+                <span>Has cinema</span>
+              </label>
             </div>
           </fieldset>
         </div>
@@ -584,6 +616,7 @@ const structuredData = {
             data-twenty-plus-floors={building.has20PlusFloors}
             data-built-since-2016={building.isBuiltSince2016}
             data-has-pilates={building.hasPilates}
+            data-has-cinema={building.hasCinema}
             data-neighborhood={building.filterNeighborhood}
             data-rent-amount={building.longTermRentUsd.amount}
             data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
@@ -878,6 +911,7 @@ const structuredData = {
   const twentyPlusFloorsOnlyToggle = document.querySelector("#twenty-plus-floors-only");
   const builtSince2016OnlyToggle = document.querySelector("#built-since-2016-only");
   const pilatesOnlyToggle = document.querySelector("#pilates-only");
+  const cinemaOnlyToggle = document.querySelector("#cinema-only");
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const buildingSort = document.querySelector("#building-sort");
   const buildingList = document.querySelector(".building-list");
@@ -907,6 +941,7 @@ const structuredData = {
     twentyPlusFloorsOnly: Boolean(twentyPlusFloorsOnlyToggle?.checked),
     builtSince2016Only: Boolean(builtSince2016OnlyToggle?.checked),
     pilatesOnly: Boolean(pilatesOnlyToggle?.checked),
+    cinemaOnly: Boolean(cinemaOnlyToggle?.checked),
   });
 
   const matchesCheckboxFilters = (building, filters) =>
@@ -914,7 +949,8 @@ const structuredData = {
     (!filters.multipleOffersOnly || building.hasMultipleRentalOffers) &&
     (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
     (!filters.builtSince2016Only || building.isBuiltSince2016) &&
-    (!filters.pilatesOnly || building.hasPilates);
+    (!filters.pilatesOnly || building.hasPilates) &&
+    (!filters.cinemaOnly || building.hasCinema);
 
   const formatAreaLabel = (areaSqm, unit) => {
     const amount = unit === "sqft" ? Math.round(areaSqm * 10.7639) : Math.round(areaSqm);
@@ -1177,6 +1213,7 @@ const structuredData = {
   twentyPlusFloorsOnlyToggle?.addEventListener("change", applyFilters);
   builtSince2016OnlyToggle?.addEventListener("change", applyFilters);
   pilatesOnlyToggle?.addEventListener("change", applyFilters);
+  cinemaOnlyToggle?.addEventListener("change", applyFilters);
   neighborhoodFilter?.addEventListener("change", applyFilters);
   buildingSort?.addEventListener("change", applyFilters);
   for (const input of areaUnitInputs) {

@@ -24,7 +24,10 @@
     "lastUsableInventoryAdd": "Added Palmera Caballito, Quartier Boulevard, Torres Alto Palermo, Forum Alcorta, Torres Aisenson and Oceana Puerto Madero on 2026-07-21 after BrightData verification of priced long-term rental inventory with extractable size. Skipped Torre Camps (no live priced rental/Airbnb), Harbour Tower (sale/en pozo only), and Osten Tower II (under construction / no priced rental inventory).",
     "lastListingGapFill": "2026-07-21 BrightData gap-fill for buildings added in prior ~24h: added priced long-term rentals for Faena Residences, Quartier Boulevard (×2), Oceana, Art María, Torres River View, Torres Alto Palermo, Palmera Caballito, Harbour Residences, and Forum Alcorta (×3). Airbnb candidates without extractable monthly USD were not added.",
     "blacklistRule": "Buildings listed in blacklistedBuildings must never be re-added to buildings[], even if priced rental or Airbnb inventory is found. Match by id, name, or aliases.",
-    "lastBlacklist": "Removed Torres Alto Palermo (torres-alto-palermo) on 2026-07-21 and blacklisted it as not luxury enough."
+    "lastBlacklist": "Removed Torres Alto Palermo (torres-alto-palermo) on 2026-07-21 and blacklisted it as not luxury enough.",
+    "lastRequestedInventoryAdd": "Added L'Avenue Libertador, Torre Libérateur and Human Abasto Towers on 2026-07-21 after BrightData verified live long-term rentals with extractable monthly pricing and unit size. Excluded Osten Tower, Osten Tower II, Udaondo, Aura Núñez, Sky Upgrade and DOME Torre Arcos because no live exact-building Airbnb or direct long-term rental with extractable price and size survived verification.",
+    "ageBlacklistRule": "Buildings constructed in the 1980s or 1990s must not be added to buildings[]. Decó Recoleta is an explicit exception and must remain.",
+    "lastAgeBlacklist": "Removed and blacklisted Quartier de Oro, Libertador 336, Libertador 380, Libertador 4444, Torres Aisenson and Le Parc Figueroa Alcorta on 2026-07-21. Le Parc was included because its construction spans the 1990s–2000s. Kept Decó Recoleta by explicit exception."
   },
   "buildings": [
     {
@@ -899,62 +902,6 @@
         "source": "Existing rental evidence / Roomix",
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-d77c40e0",
         "summary": "The direct Live Hotel evidence was a 2-room unit; a compact Palermo Hollywood 2BR is estimated at about 70 m2."
-      }
-    },
-    {
-      "id": "le-parc-figueroa-alcorta",
-      "name": "Le Parc Figueroa Alcorta",
-      "aliases": [
-        "Le Parc Palermo",
-        "Le Parc Palermo / Figueroa Alcorta"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo Chico",
-      "built": "1990s-2000s",
-      "address": "Le Parc Figueroa Alcorta",
-      "fullAddress": "Le Parc Figueroa Alcorta, C1425 Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJi2cEOWW1vJURi2kYxShR_14",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Le%20Parc%20Figueroa%20Alcorta%2C%20C1425%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJi2cEOWW1vJURi2kYxShR_14",
-      "location": {
-        "lat": -34.5755771,
-        "lng": -58.4049865
-      },
-      "availability": "Rental evidence found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-sin-muebles-le-parc-figueroa-alcorta-palermo-59319648.html",
-        "note": "Active long-term rental listing verified 2026-07-20",
-        "checkedAt": "2026-07-20",
-        "source": "Zonaprop"
-      },
-      "description": "Palermo Chico tower complex near Figueroa Alcorta and the parks.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Le Parc Figueroa Alcorta sin muebles",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-sin-muebles-le-parc-figueroa-alcorta-palermo-59319648.html",
-        "checkedAt": "2026-07-20"
-      },
-      "longTermRentUsd": {
-        "amount": 2500,
-        "basis": "normalized from larger luxury rentals",
-        "confidence": "low",
-        "source": "Web search / Roomix / Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-palermo-chico-con-pileta.html",
-        "summary": "Direct 1BR inventory was sparse; estimate is normalized from Palermo Chico and Le Parc rental snippets."
-      },
-      "floorsAboveGround": 47,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 213,
-        "basis": "direct 3-room / 2-bedroom sale listing and market-report evidence",
-        "confidence": "medium-high",
-        "source": "BrightData Google / Infobae / Orwel / Zonaprop snippets",
-        "sourceUrl": "https://www.infobae.com/economia/2023/12/30/premium-y-multifaceticos-estos-son-los-6-departamentos-de-tres-ambientes-mas-costosos-de-caba/",
-        "summary": "Fresh searches found Le Parc Figueroa Alcorta 3-room / 2-bedroom evidence at 213 m2 and sale-search snippets around 239 m2; the prior 170 m2 low-confidence extrapolation was too small for this tower's large 2BR format."
       }
     },
     {
@@ -4122,220 +4069,6 @@
       }
     },
     {
-      "id": "quartier-de-oro",
-      "name": "Quartier de Oro",
-      "aliases": [
-        "Quartier Oro"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo Nuevo",
-      "built": "1999",
-      "address": "Av. Cerviño 4500",
-      "fullAddress": "Av. Cerviño 4500, C1425GMN Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Cervi%C3%B1o%204500%2C%20Palermo%2C%20Buenos%20Aires%2C%20Argentina",
-      "location": {
-        "lat": -34.5760255,
-        "lng": -58.4211851
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-palermo-nuevo-alquiler-torre-58856695.html",
-        "note": "Active long-term rental listing verified 2026-07-20",
-        "checkedAt": "2026-07-20",
-        "source": "Zonaprop"
-      },
-      "description": "Palermo Nuevo tower on Cerviño, with high-floor views toward the Botanical Garden and Ecoparque.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Quartier de Oro Palermo Nuevo alquiler",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-palermo-nuevo-alquiler-torre-58856695.html",
-        "checkedAt": "2026-07-20"
-      },
-      "longTermRentUsd": {
-        "amount": 1500,
-        "confidence": "medium",
-        "basis": "extrapolated 1BR estimate from active 4-room listing and Palermo Nuevo 2-room comps",
-        "summary": "The active Quartier de Oro page is a 4-room furnished unit at USD 3,200; Palermo Nuevo 1BR tower comps point to roughly USD 1,500 for apples-to-apples comparison."
-      },
-      "floorsAboveGround": 33,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 120,
-        "basis": "extrapolated from active 4-room Quartier de Oro evidence",
-        "confidence": "medium-low",
-        "source": "Existing rental evidence / Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-palermo-nuevo-alquiler-torre-58856695.html",
-        "summary": "The active Quartier de Oro page was a 4-room furnished unit; a 2BR estimate is normalized to around 120 m2."
-      }
-    },
-    {
-      "id": "libertador-336",
-      "name": "Libertador 336",
-      "aliases": [
-        "Torre Libertador 336"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Retiro",
-      "built": "1995",
-      "address": "Av. del Libertador 336",
-      "fullAddress": "Av. del Libertador 336, C1001ABR Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%20336%2C%20Retiro%2C%20Buenos%20Aires%2C%20Argentina",
-      "location": {
-        "lat": -34.591114,
-        "lng": -58.3785267
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-retiro-piso-alto-full-amenities-59459635.html",
-        "note": "Active long-term rental listing verified 2026-07-20",
-        "checkedAt": "2026-07-20",
-        "source": "Zonaprop"
-      },
-      "description": "Retiro residential tower on Libertador, with large apartments, river views and sports amenities.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler departamento Retiro Libertador 336",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-retiro-piso-alto-full-amenities-59459635.html",
-        "checkedAt": "2026-07-20"
-      },
-      "longTermRentUsd": {
-        "amount": 1800,
-        "confidence": "medium-low",
-        "basis": "extrapolated 1BR estimate from large-unit tower listing and Retiro 2-room comps",
-        "summary": "Libertador 336 inventory is dominated by very large upper-floor units; Retiro premium 1BR comps range roughly USD 1,300-2,000, so this uses USD 1,800."
-      },
-      "floorsAboveGround": 34,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 130,
-        "basis": "extrapolated from large-unit Retiro tower evidence",
-        "confidence": "low",
-        "source": "Existing rental evidence / Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-4-ambientes-retiro-f22eaf07",
-        "summary": "Libertador 336 inventory is dominated by large upper-floor units; a 2BR estimate is about 130 m2."
-      }
-    },
-    {
-      "id": "libertador-380",
-      "name": "Libertador 380",
-      "aliases": [
-        "Torre Libertador 380"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Retiro",
-      "built": "1985",
-      "address": "Av. del Libertador 380",
-      "fullAddress": "Av. del Libertador 380, C1054AAQ Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%20380%2C%20Retiro%2C%20Buenos%20Aires%2C%20Argentina",
-      "location": {
-        "lat": -34.5904998,
-        "lng": -58.3791887
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
-      },
-      "rentalEvidence": {
-        "url": "https://roomix.ai/propiedad/departamento-4-ambientes-retiro-d2283df8",
-        "note": "Active long-term rental listing verified 2026-07-20",
-        "checkedAt": "2026-07-20",
-        "source": "Roomix"
-      },
-      "description": "Retiro high-rise at Libertador and Suipacha, with large apartments and shared sports amenities.",
-      "localRentalAd": {
-        "source": "Roomix",
-        "title": "Departamento en Libertador 380 Retiro",
-        "url": "https://roomix.ai/propiedad/departamento-4-ambientes-retiro-d2283df8",
-        "checkedAt": "2026-07-20"
-      },
-      "longTermRentUsd": {
-        "amount": 2000,
-        "basis": "direct rental/sale listing",
-        "confidence": "high",
-        "source": "BrightData scrape / Roberto Plorutti Inmuebles",
-        "sourceUrl": "https://robertoploruttiinmuebles.com/propiedad/585327",
-        "summary": "Direct Libertador 380 page showed USD 2,000 for rent."
-      },
-      "floorsAboveGround": 36,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 85,
-        "basis": "direct 3-room / 2-bedroom sale listing evidence",
-        "confidence": "medium-high",
-        "source": "BrightData Google / Zonaprop sale snippets",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-retiro-q-av-del-libertador.html",
-        "summary": "Libertador 380 sale snippets showed a 3 ambientes Retiro apartment at 85 m2, replacing the larger-unit extrapolation."
-      }
-    },
-    {
-      "id": "libertador-4444",
-      "name": "Libertador 4444",
-      "aliases": [
-        "Torre Central Libertador 4444"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Las Cañitas",
-      "built": "1994",
-      "address": "Av. del Libertador 4444",
-      "fullAddress": "Av. del Libertador 4444, C1426BXN Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%204444%2C%20Palermo%2C%20Buenos%20Aires%2C%20Argentina",
-      "location": {
-        "lat": -34.57008,
-        "lng": -58.42662
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a rental page; no exact Airbnb listing was used."
-      },
-      "rentalEvidence": {
-        "url": "https://roomix.ai/propiedad/departamento-4-ambientes-las-caitas-43836579",
-        "note": "Active long-term rental listing verified 2026-07-20",
-        "checkedAt": "2026-07-20",
-        "source": "Roomix"
-      },
-      "description": "Large Las Cañitas residential tower on Libertador, with oversized apartments and skyline views.",
-      "localRentalAd": {
-        "source": "Roomix",
-        "title": "Libertador 4444 4 ambientes alquiler",
-        "url": "https://roomix.ai/propiedad/departamento-4-ambientes-las-caitas-43836579",
-        "checkedAt": "2026-07-20"
-      },
-      "longTermRentUsd": {
-        "amount": 1700,
-        "confidence": "medium-low",
-        "basis": "extrapolated 1BR estimate from oversized rental page and Las Canitas 2-room comps",
-        "summary": "The active Libertador 4444 page is a 406 m2 apartment at USD 7,000; nearby 1BR Las Canitas tower comps support a normalized estimate around USD 1,700."
-      },
-      "floorsAboveGround": 45,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 160,
-        "basis": "extrapolated from oversized 406 m2 Libertador 4444 evidence",
-        "confidence": "low",
-        "source": "Existing rental evidence / Rentola",
-        "sourceUrl": "https://rentola.ar/listings/departamento-en-libertador-4444-p1ef6b1",
-        "summary": "The active Libertador 4444 page was a 406 m2 apartment; a standard 2BR in this tower is estimated around 160 m2."
-      }
-    },
-    {
       "id": "astor-nunez",
       "name": "Astor Núñez",
       "aliases": [
@@ -5123,63 +4856,6 @@
       }
     },
     {
-      "id": "torres-aisenson",
-      "name": "Torres Aisenson",
-      "aliases": [
-        "Torre Aisenson",
-        "Torres Aisenson Belgrano",
-        "Torre Aisenson Villanueva"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Belgrano C",
-      "built": "1980s",
-      "address": "Villanueva 1200",
-      "fullAddress": "Villanueva 1200, Belgrano C, Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Villanueva%201200%2C%20Belgrano%2C%20Buenos%20Aires",
-      "location": {
-        "lat": -34.5666694,
-        "lng": -58.4414227
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-piso-en-alquiler-en-torre-aisenson-para-diplomaticos!-59507263.html",
-        "note": "Active long-term rental listing verified 2026-07-21 (diplomat clause)",
-        "checkedAt": "2026-07-21",
-        "source": "Zonaprop"
-      },
-      "description": "Tall Belgrano C Aisenson tower with heated pool, gym, sauna and tennis court; live inventory is large full-floor apartments.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Piso en alquiler Torre Aisenson",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-piso-en-alquiler-en-torre-aisenson-para-diplomaticos!-59507263.html",
-        "checkedAt": "2026-07-21"
-      },
-      "longTermRentUsd": {
-        "amount": 3000,
-        "basis": "direct large full-floor listing",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-piso-en-alquiler-en-torre-aisenson-para-diplomaticos!-59507263.html",
-        "summary": "Live Zonaprop full-floor listing showed USD 3,000 rent plus ARS 1,500,000 expensas for a 290 m2 unit."
-      },
-      "floorsAboveGround": 32,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 120,
-        "basis": "extrapolated; Belgrano Aisenson stock is large-floor only",
-        "confidence": "low",
-        "source": "Zonaprop Belgrano Aisenson sales",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-q-aisenson.html",
-        "summary": "Belgrano Torres Aisenson sales are almost entirely full floors (~200–300 m²). No true 3-ambiente stock found there; 120 m² is a notional 2BR comparison, not a measured unit in this tower."
-      }
-    },
-    {
       "id": "oceana-puerto-madero",
       "name": "Oceana Puerto Madero",
       "aliases": [
@@ -5235,6 +4911,177 @@
         "sourceUrl": "https://inmuebles.mercadolibre.com.ar/capital-federal/puerto-madero/oceana-puerto-madero",
         "summary": "Oceana Puerto Madero 3-ambientes sales commonly list ~126–128 m² (larger ~155 m² examples also appear); using 126 m²."
       }
+    },
+    {
+      "id": "l-avenue-libertador",
+      "name": "L'Avenue Libertador",
+      "aliases": [
+        "L Avenue Libertador",
+        "L´Avenue Libertador",
+        "L'Avenue Zaha Hadid"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Palermo Nuevo",
+      "built": "2026",
+      "address": "Av. del Libertador 3858",
+      "fullAddress": "Av. del Libertador 3858, Palermo, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%203858%2C%20Palermo%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.5720137,
+        "lng": -58.4225233
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact-building Airbnb with extractable monthly or weekly USD pricing was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://departamento.mercadolibre.com.ar/MLA-1889393981-alquiler-en-lavenue-libertador-exclusivo-departamento-a-estrenar-arquitectura-de-zaha-hadid-_JM",
+        "note": "Live long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Mercado Libre"
+      },
+      "description": "Zaha Hadid Architects' 36-floor Palermo landmark, with indoor/outdoor pool, spa, gym, rooftop lounge, valet parking and concierge-level services.",
+      "localRentalAd": {
+        "source": "Mercado Libre",
+        "title": "Alquiler en L'Avenue Libertador | Arquitectura de Zaha Hadid",
+        "url": "https://departamento.mercadolibre.com.ar/MLA-1889393981-alquiler-en-lavenue-libertador-exclusivo-departamento-a-estrenar-arquitectura-de-zaha-hadid-_JM",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 9000,
+        "basis": "direct 4-room / 3-bedroom listing",
+        "confidence": "high",
+        "source": "Mercado Libre",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1889393981-alquiler-en-lavenue-libertador-exclusivo-departamento-a-estrenar-arquitectura-de-zaha-hadid-_JM",
+        "summary": "Live Mercado Libre listing showed USD 9,000 monthly rent for a 220 m², 3-bedroom apartment."
+      },
+      "floorsAboveGround": 36,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 172,
+        "basis": "direct 3-room / 2-bedroom sales listing",
+        "confidence": "medium",
+        "source": "Inmuebles Clarín / Argenprop",
+        "sourceUrl": "https://www.inmuebles.clarin.com/departamento-en-venta-en-palermo-chico-3-ambientes--15609676",
+        "summary": "A L'Avenue 3-ambientes listing showed 172 m² and 2 bedrooms; other 2-bedroom configurations can be substantially larger."
+      }
+    },
+    {
+      "id": "torre-liberateur",
+      "name": "Torre Libérateur",
+      "aliases": [
+        "Torre Liberateur",
+        "Edificio Liberateur",
+        "Libérateur Belgrano"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Belgrano C",
+      "built": "2020",
+      "address": "Av. del Libertador 5750",
+      "fullAddress": "Av. del Libertador 5750, Belgrano, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%205750%2C%20Belgrano%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.5591004,
+        "lng": -58.4459294
+      },
+      "availability": "Rental ads found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact-building Airbnb with extractable monthly or weekly USD pricing was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-cochera-opcional-59634553.html",
+        "note": "Live long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Modern mixed-use Belgrano tower at Libertador and Sucre with indoor pool, gym, spa, sauna, business spaces and a dedicated microcinema.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler 2 ambientes en Belgrano, cochera opcional",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-cochera-opcional-59634553.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 1000,
+        "basis": "direct 2-room / 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-cochera-opcional-59634553.html",
+        "summary": "Live Zonaprop listing showed USD 1,000 rent plus ARS 400,000 expensas (~USD 267 at ARS 1,500) for a 55 m², 1-bedroom apartment."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "interpolated from direct 1-bedroom and 3-bedroom rentals",
+        "confidence": "medium",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-4-ambientes-con-dependencia-y-cochera-en-59470516.html",
+        "summary": "Current Libérateur rentals show 55 m² for 1BR and 114 m² for 3BR; approximately 90 m² is a reasonable 2BR comparison."
+      }
+    },
+    {
+      "id": "human-abasto-towers",
+      "name": "Human Abasto Towers",
+      "aliases": [
+        "Human Abasto",
+        "Human Abasto Tower",
+        "Human Abasto Apartments & Wellness Club"
+      ],
+      "officialWebsiteUrl": "https://www.irsa.com.ar/portfolio/human/",
+      "zone": "Abasto / Balvanera",
+      "built": "2026",
+      "address": "Lavalle 3220",
+      "fullAddress": "Lavalle 3220, Abasto, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Lavalle%203220%2C%20Abasto%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.6020206,
+        "lng": -58.4115593
+      },
+      "availability": "Rental ad found; Airbnb found but unpriced",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb found but monthly USD not extracted",
+        "url": "https://www.airbnb.com/rooms/1684815688902914683",
+        "evidence": "An exact Human Abasto Towers Airbnb was found, but BrightData did not expose monthly or weekly USD pricing, so it was not added as priced inventory."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-human-abasto-departamento-de-2-ambientes-en-alquiler.-59616930.html",
+        "note": "Live ARS-priced long-term rental listing verified 2026-07-21 (converted at ARS 1,500/USD)",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Two 28-floor residential towers beside Shopping Abasto, with extensive sports and wellness amenities including pools, spa, tennis, basketball, football, coworking and a dedicated microcinema.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Human Abasto departamento de 2 ambientes en alquiler",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-human-abasto-departamento-de-2-ambientes-en-alquiler.-59616930.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 667,
+        "basis": "direct 2-room / 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-human-abasto-departamento-de-2-ambientes-en-alquiler.-59616930.html",
+        "summary": "Live Zonaprop listing showed ARS 1,000,000 monthly rent (~USD 667 at ARS 1,500) for a 61 m², 1-bedroom apartment; expensas were not stated."
+      },
+      "floorsAboveGround": 28,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 82,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-abasto-3-ambientes-a-estrenar.html",
+        "summary": "Human Abasto Towers 3-ambientes listings repeatedly show 82 m² total with 2 bedrooms."
+      }
     }
   ],
   "blacklistedBuildings": [
@@ -5253,6 +5100,81 @@
         "Parque Las Heras"
       ],
       "reason": "Not luxury enough for this inventory.",
+      "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "quartier-de-oro",
+      "name": "Quartier de Oro",
+      "aliases": [
+        "Quartier Oro"
+      ],
+      "addressHints": [
+        "Av. Cerviño 4500"
+      ],
+      "reason": "Constructed in 1999; excluded by the 1980s/1990s inventory age rule.",
+      "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "libertador-336",
+      "name": "Libertador 336",
+      "aliases": [
+        "Torre Libertador 336"
+      ],
+      "addressHints": [
+        "Av. del Libertador 336"
+      ],
+      "reason": "Constructed in 1995; excluded by the 1980s/1990s inventory age rule.",
+      "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "libertador-380",
+      "name": "Libertador 380",
+      "aliases": [
+        "Torre Libertador 380"
+      ],
+      "addressHints": [
+        "Av. del Libertador 380"
+      ],
+      "reason": "Constructed in 1985; excluded by the 1980s/1990s inventory age rule.",
+      "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "libertador-4444",
+      "name": "Libertador 4444",
+      "aliases": [
+        "Torre Central Libertador 4444"
+      ],
+      "addressHints": [
+        "Av. del Libertador 4444"
+      ],
+      "reason": "Constructed in 1994; excluded by the 1980s/1990s inventory age rule.",
+      "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "torres-aisenson",
+      "name": "Torres Aisenson",
+      "aliases": [
+        "Torre Aisenson",
+        "Torres Aisenson Belgrano",
+        "Torre Aisenson Villanueva"
+      ],
+      "addressHints": [
+        "Villanueva 1200"
+      ],
+      "reason": "Constructed in 1980s; excluded by the 1980s/1990s inventory age rule.",
+      "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "le-parc-figueroa-alcorta",
+      "name": "Le Parc Figueroa Alcorta",
+      "aliases": [
+        "Le Parc Palermo",
+        "Le Parc Palermo / Figueroa Alcorta"
+      ],
+      "addressHints": [
+        "Le Parc Figueroa Alcorta"
+      ],
+      "reason": "Construction spans 1990s-2000s; excluded by the 1980s/1990s inventory age rule.",
       "blacklistedAt": "2026-07-21"
     }
   ]
