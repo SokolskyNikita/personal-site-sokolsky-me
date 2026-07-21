@@ -197,8 +197,45 @@ const withAirbnbMeta = (listing: AirbnbListing): AirbnbListing => {
     priceSource: listing.priceSource ?? knownPrice?.source ?? null,
   };
 };
+/** Pull the real listing name out of research-note evidence ("Airbnb result titled …"). */
+const refineAirbnbListingTitle = (raw: string | null | undefined, fallback: string) => {
+  const text = String(raw ?? "").replace(/\s+/g, " ").trim();
+  if (!text) return fallback;
+
+  const quoted =
+    text.match(/(?:result|listing)\s+(?:is\s+)?titled\s+[""]([^""]+)[""]/i) ||
+    text.match(/Exact-building Airbnb\s+[""]([^""]+)[""]/i) ||
+    text.match(/\bAirbnb\s+[""]([^""]+)[""]/i);
+  if (quoted?.[1]) {
+    const title = quoted[1].trim().replace(/[.]+$/g, "");
+    if (title.length >= 3) return title;
+  }
+
+  const unquoted = text.match(/(?:result|listing)\s+(?:is\s+)?titled\s+(.+?)(?:\.|$)/i);
+  if (unquoted?.[1]) {
+    const title = unquoted[1]
+      .trim()
+      .replace(/^[""]|[""]$/g, "")
+      .replace(/[.]+$/g, "")
+      .replace(/\s+(?:names|states|lists|describes|priced at)\b.*$/i, "")
+      .trim();
+    if (title.length >= 3 && !/^no\b/i.test(title)) return title;
+  }
+
+  if (
+    /^(?:no exact|previous airbnb|the \d|the inclusion|exact airbnb searches|airbnb searches)\b/i.test(
+      text,
+    ) ||
+    (/\bairbnb\b/i.test(text) && /(?:titled|result|exact-building)/i.test(text))
+  ) {
+    return fallback;
+  }
+
+  return text;
+};
 const getAirbnbListings = (building: Building) => {
   const listingMap = new Map<string, AirbnbListing>();
+  const fallbackTitle = `${building.name} listing`;
 
   if (
     building.airbnb.confirmed &&
@@ -208,7 +245,7 @@ const getAirbnbListings = (building: Building) => {
     listingMap.set(
       building.airbnb.url,
       withAirbnbMeta({
-        title: building.airbnb.evidence || `${building.name} Airbnb listing`,
+        title: refineAirbnbListingTitle(building.airbnb.evidence, fallbackTitle),
         url: building.airbnb.url,
       }),
     );
@@ -217,12 +254,13 @@ const getAirbnbListings = (building: Building) => {
   for (const listing of additionalAirbnbListingsByBuilding[building.id] ?? []) {
     if (removedAirbnbUrls.has(listing.url)) continue;
     const existing = listingMap.get(listing.url);
+    const rawTitle = listing.title || existing?.title || fallbackTitle;
     listingMap.set(
       listing.url,
       withAirbnbMeta({
         ...existing,
         ...listing,
-        title: listing.title || existing?.title || `${building.name} Airbnb listing`,
+        title: refineAirbnbListingTitle(rawTitle, fallbackTitle),
       }),
     );
   }
