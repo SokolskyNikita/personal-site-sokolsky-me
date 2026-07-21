@@ -9,7 +9,7 @@ import {
   groupResults,
   orderedGroupKeys,
 } from "../../lib/flights/group";
-import { airportLabel } from "../../lib/flights/locations";
+import { airportCity, airportLabel } from "../../lib/flights/locations";
 import {
   defaultCityGroupSide,
   isAnywhereToAnywhere,
@@ -532,7 +532,11 @@ export function mountFlightSearch(root: HTMLElement): void {
         showResults(allOptions, spec);
       }
 
-      progress.textContent = `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`;
+      progress.textContent = formatSearchProgress(
+        `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`,
+        allOptions,
+        currentCitySide(),
+      );
       showSearchProgress(
         "Searching flights",
         completedSteps,
@@ -601,9 +605,13 @@ export function mountFlightSearch(root: HTMLElement): void {
       URL.revokeObjectURL(a.href);
     });
 
-    progress.textContent = wasCancelled
-      ? `Cancelled after ${completedSteps} of ${planData.plan.callCount} batches. Partial results are shown.`
-      : `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`;
+    progress.textContent = formatSearchProgress(
+      wasCancelled
+        ? `Cancelled after ${completedSteps} of ${planData.plan.callCount} batches. Partial results are shown.`
+        : `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`,
+      allOptions,
+      currentCitySide(),
+    );
     renderCostSummary(searchSummary, stats.callsMade, stats.cacheHits);
     results.removeAttribute("aria-busy");
     if (wasCancelled) hideSearchProgress();
@@ -614,6 +622,34 @@ export function mountFlightSearch(root: HTMLElement): void {
 
 function outOfCreditBanner(reason: string): string {
   return `<div class="fs-banner fs-banner-warn">${escapeHtml(reason)} Limits reset daily.<span class="fs-banner-contact">Need larger limits? Email <a href="mailto:sokolx@gmail.com">sokolx@gmail.com</a> or DM <a href="https://x.com/nsokolsky" target="_blank" rel="noopener noreferrer">@nsokolsky</a> on X.</span></div>`;
+}
+
+function optionCity(option: ItineraryOption, side: CityGroupSide): string {
+  if (side === "departure") {
+    const code = option.segments[0]?.departureAirport ?? "unknown";
+    return option.originCity ?? airportCity(code);
+  }
+  return option.destinationCity ?? airportCity(option.destinationAirport);
+}
+
+function countDistinctCities(
+  options: ItineraryOption[],
+  side: CityGroupSide,
+): number {
+  const cities = new Set<string>();
+  for (const option of options) cities.add(optionCity(option, side));
+  return cities.size;
+}
+
+/** Append "Cities found" when more than two distinct cities appear in results. */
+function formatSearchProgress(
+  base: string,
+  options: ItineraryOption[],
+  side: CityGroupSide,
+): string {
+  const cities = countDistinctCities(options, side);
+  if (cities <= 2) return base;
+  return `${base} · Cities found: ${cities}`;
 }
 
 function renderCostSummary(
