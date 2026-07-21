@@ -20,7 +20,8 @@
     "lastAirbnbUrlNormalization": "On 2026-06-30, Airbnb URLs were normalized to the https://www.airbnb.com host while preserving room paths and query strings.",
     "lastTallBuildingAudit": "On 2026-06-30, SkyscraperPage and Skyscraper Center were used to audit Buenos Aires residential buildings with 29 or more floors. Missing buildings were added only when BrightData search/scrape found a direct active rental or Airbnb page.",
     "floorCountSource": "Floor counts were added on 2026-06-30 from SkyscraperPage Buenos Aires index, targeted BrightData Google searches, and direct listing/developer snippets. Null means no reliable total floor count or 20+ floor evidence was found during the audit.",
-    "lastTwoBedroomAreaAudit": "On 2026-07-01, Buenos Aires buildings with stored 2-bedroom / 3-ambiente estimates of 133 m2 or higher were rechecked against additional sales-listing search results. Representative estimates were adjusted when the previous value over-weighted terrace-heavy, largest-format, or extrapolated evidence; entries without stronger building-specific 2BR sale evidence were left unchanged."
+    "lastTwoBedroomAreaAudit": "On 2026-07-01, Buenos Aires buildings with stored 2-bedroom / 3-ambiente estimates of 133 m2 or higher were rechecked against additional sales-listing search results. Representative estimates were adjusted when the previous value over-weighted terrace-heavy, largest-format, or extrapolated evidence; entries without stronger building-specific 2BR sale evidence were left unchanged.",
+    "lastUsableInventoryAdd": "Added 7 luxury buildings with priced Airbnb and/or long-term rental inventory on 2026-07-20: Faena Residences, Harbour Residences, Torres River View, Torres El Mirador, Art María, Palacio Estrugamou, YOO Nordelta. Coordinates from Google Places/Geocoding."
   },
   "buildings": [
     {
@@ -4444,6 +4445,397 @@
         "source": "BrightData Google / Zonaprop sale snippets",
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-semipiso-venta-palermo-q-salguero.html",
         "summary": "Torres de Gelly sale snippets showed a 3 ambientes plus service unit around 102 m2, replacing the low-confidence 130 m2 extrapolation."
+      }
+    },
+    {
+      "id": "faena-residences",
+      "name": "Faena Residences",
+      "aliases": [
+        "El Porteño",
+        "Faena Hotel & Residences",
+        "Faena Residences Puerto Madero"
+      ],
+      "officialWebsiteUrl": "https://www.faena.com/buenos-aires",
+      "zone": "Puerto Madero",
+      "built": "2004",
+      "address": "Petrona Eyle 450",
+      "fullAddress": "Petrona Eyle 450, C1107 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJgdJHDdc0o5URk4m46PR8Ypg",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Petrona%20Eyle%20450%2C%20C1107%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJgdJHDdc0o5URk4m46PR8Ypg",
+      "location": {
+        "lat": -34.6146176,
+        "lng": -58.3614014
+      },
+      "availability": "Airbnb found; rental estimate from Airbnb monthly",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1037624108593687742",
+        "evidence": "Airbnb listing titled Studio at Hotel Faena Residences in Puerto Madero."
+      },
+      "rentalEvidence": {
+        "url": "",
+        "note": "Inventory via Airbnb monthly; no separate long-term ad attached 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "Airbnb"
+      },
+      "description": "Philippe Starck–designed Faena Hotel residences (El Porteño) on the Dique 2 waterfront, with hotel amenities and river views.",
+      "localRentalAd": null,
+      "longTermRentUsd": {
+        "amount": 3645,
+        "basis": "Airbnb monthly studio quote",
+        "confidence": "high",
+        "source": "Airbnb",
+        "sourceUrl": "https://www.airbnb.com/rooms/1037624108593687742",
+        "summary": "Studio at Faena Residences showed about USD 3,645 for a monthly stay."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "extrapolated from Faena Residences studio/1BR listing evidence",
+        "confidence": "low",
+        "source": "Airbnb / Puerto Madero branded-residence comparables",
+        "sourceUrl": "https://www.airbnb.com/rooms/1037624108593687742",
+        "summary": "Direct 2BR area evidence was sparse; studio/1BR Faena inventory supports an approximate 90 m2 2BR."
+      }
+    },
+    {
+      "id": "harbour-residences",
+      "name": "Harbour Residences",
+      "aliases": [
+        "Madero Harbour Residences",
+        "Harbour Residences Puerto Madero"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Puerto Madero",
+      "built": "2010s",
+      "address": "Lola Mora 457",
+      "fullAddress": "Lola Mora 457, C1107 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJwbz_gdo0o5URJTNDyFvkheY",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Lola%20Mora%20457%2C%20C1107%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJwbz_gdo0o5URJTNDyFvkheY",
+      "location": {
+        "lat": -34.6191338,
+        "lng": -58.3604457
+      },
+      "availability": "Rental ad found; Airbnb not confirmed",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing with clear size and monthly price was attached on 2026-07-20."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-puerto-madero-1-amb-con-cochera-harbour-59579222.html",
+        "note": "Active temporary rental listing verified 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "Zonaprop"
+      },
+      "description": "Residential tower in the Madero Harbour complex on Dique 1, with pool, gym and contemporary amenities.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler Puerto Madero 1 amb con cochera Harbour Residences",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-puerto-madero-1-amb-con-cochera-harbour-59579222.html",
+        "checkedAt": "2026-07-20"
+      },
+      "longTermRentUsd": {
+        "amount": 1500,
+        "basis": "direct studio / 1-ambiente listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-puerto-madero-1-amb-con-cochera-harbour-59579222.html",
+        "summary": "Harbour Residences studio/1-ambiente temporary rental listed at USD 1,500."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "extrapolated from Harbour Residences studio listing sizes",
+        "confidence": "low",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-puerto-madero-1-amb-con-cochera-harbour-59579222.html",
+        "summary": "Studio evidence around 44–51 m2; approximate 2BR around 85 m2 for the tower."
+      }
+    },
+    {
+      "id": "torres-river-view",
+      "name": "Torres River View",
+      "aliases": [
+        "River View Puerto Madero",
+        "Torre River View"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Puerto Madero",
+      "built": "2010s",
+      "address": "Juana Manso 740",
+      "fullAddress": "Juana Manso 740, C1107 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJK2GjpQA1o5URCkPobBXL9Sw",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juana%20Manso%20740%2C%20C1107%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJK2GjpQA1o5URCkPobBXL9Sw",
+      "location": {
+        "lat": -34.6061937,
+        "lng": -58.3628217
+      },
+      "availability": "Rental ad found; Airbnb not confirmed",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing naming Torres River View was attached on 2026-07-20."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-con-muebles-river-view-puerto-58782484.html",
+        "note": "Active long-term rental listing verified 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "Zonaprop"
+      },
+      "description": "Twin luxury towers on Juana Manso with river-facing units and full amenities.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler departamento con muebles River View Puerto Madero",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-con-muebles-river-view-puerto-58782484.html",
+        "checkedAt": "2026-07-20"
+      },
+      "longTermRentUsd": {
+        "amount": 2300,
+        "basis": "direct 3-room / 2-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-con-muebles-river-view-puerto-58782484.html",
+        "summary": "Furnished 3-ambiente River View rental listed at USD 2,300."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 112,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-con-muebles-river-view-puerto-58782484.html",
+        "summary": "River View 3-ambiente listing showed about 112 m2 total."
+      }
+    },
+    {
+      "id": "torres-el-mirador",
+      "name": "Torres El Mirador",
+      "aliases": [
+        "El Mirador de Puerto Madero",
+        "Torres El Mirador de Puerto Madero"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Puerto Madero",
+      "built": "2000s",
+      "address": "Juana Manso 1100",
+      "fullAddress": "Juana Manso 1100, C1107 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJcenlVig1o5UR_EsjkKu3xiE",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juana%20Manso%201100%2C%20C1107%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJcenlVig1o5UR_EsjkKu3xiE",
+      "location": {
+        "lat": -34.6095471,
+        "lng": -58.3624937
+      },
+      "availability": "Rental ad found; Airbnb not confirmed",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing naming Torres El Mirador was attached on 2026-07-20."
+      },
+      "rentalEvidence": {
+        "url": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-puerto-madero-1-ambiente--19802539",
+        "note": "Active temporary rental listing verified 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "Argenprop"
+      },
+      "description": "Puerto Madero towers on Juana Manso with premium amenities and city/river outlooks.",
+      "localRentalAd": {
+        "source": "Argenprop",
+        "title": "Alquiler temporal 2 ambientes El Mirador Puerto Madero",
+        "url": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-puerto-madero-1-ambiente--19802539",
+        "checkedAt": "2026-07-20"
+      },
+      "longTermRentUsd": {
+        "amount": 1800,
+        "basis": "direct temporary 2-room listing",
+        "confidence": "high",
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-puerto-madero-1-ambiente--19802539",
+        "summary": "Temporary 2-ambiente El Mirador listing at Juana Manso 1100 showed USD 1,800."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 95,
+        "basis": "extrapolated from 2-ambiente El Mirador temporary listing",
+        "confidence": "medium-low",
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-puerto-madero-1-ambiente--19802539",
+        "summary": "1BR/2-ambiente evidence around 65–70 m2; approximate 2BR near 95 m2."
+      }
+    },
+    {
+      "id": "art-maria",
+      "name": "Art María",
+      "aliases": [
+        "Torres Art María",
+        "Art Maria",
+        "Torre Art María"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Puerto Madero",
+      "built": "2010s",
+      "address": "Camila O'Gorman 375",
+      "fullAddress": "Camila O'Gorman 375, C1107 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJhyiMHtA0o5URC8smsRsxiUA",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Camila%20O%27Gorman%20375%2C%20C1107%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJhyiMHtA0o5URC8smsRsxiUA",
+      "location": {
+        "lat": -34.621692,
+        "lng": -58.3615235
+      },
+      "availability": "Rental ad found; Airbnb not confirmed",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing naming Art María was attached on 2026-07-20."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
+        "note": "Active long-term rental listing verified 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "Zonaprop"
+      },
+      "description": "Twin sustainable towers on Camila O'Gorman in Dique 1, with pools and full amenities.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler monoambiente Art María Puerto Madero",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
+        "checkedAt": "2026-07-20"
+      },
+      "longTermRentUsd": {
+        "amount": 1200,
+        "basis": "direct studio / 1-ambiente listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
+        "summary": "Art María monoambiente rental listed at USD 1,200 plus expenses."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "extrapolated from Art María studio listing evidence",
+        "confidence": "low",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
+        "summary": "Studio evidence around 44 m2; approximate 2BR near 90 m2 for the complex."
+      }
+    },
+    {
+      "id": "palacio-estrugamou",
+      "name": "Palacio Estrugamou",
+      "aliases": [
+        "Petit Estrugamou",
+        "Estrugamou Building",
+        "Edificio Estrugamou"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Retiro",
+      "built": "1929",
+      "address": "Esmeralda 1319",
+      "fullAddress": "Esmeralda 1319, C1062 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJddRvo7bKvJURsY-w5azd2II",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Esmeralda%201319%2C%20C1062%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJddRvo7bKvJURsY-w5azd2II",
+      "location": {
+        "lat": -34.592623,
+        "lng": -58.37842
+      },
+      "availability": "Rental ad found; Airbnb not confirmed",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing naming Palacio Estrugamou was attached on 2026-07-20."
+      },
+      "rentalEvidence": {
+        "url": "https://www.remax.com.ar/listings/departamento-clasico-en-edificio-estrugamou",
+        "note": "Active long-term rental listing verified 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "RE/MAX"
+      },
+      "description": "Historic French-academic palace apartments near Plaza San Martín, with grand floorplates and classic detailing.",
+      "localRentalAd": {
+        "source": "RE/MAX",
+        "title": "Departamento clásico en edificio Estrugamou",
+        "url": "https://www.remax.com.ar/listings/departamento-clasico-en-edificio-estrugamou",
+        "checkedAt": "2026-07-20"
+      },
+      "longTermRentUsd": {
+        "amount": 2650,
+        "basis": "direct 3-bedroom / 6-ambiente listing",
+        "confidence": "high",
+        "source": "RE/MAX",
+        "sourceUrl": "https://www.remax.com.ar/listings/departamento-clasico-en-edificio-estrugamou",
+        "summary": "Petit Estrugamou / Estrugamou classic apartment listed at about USD 2,650 per month."
+      },
+      "floorsAboveGround": 7,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 150,
+        "basis": "extrapolated from large Estrugamou classic floorplates",
+        "confidence": "medium-low",
+        "source": "RE/MAX / Argenprop",
+        "sourceUrl": "https://www.remax.com.ar/listings/departamento-clasico-en-edificio-estrugamou",
+        "summary": "Listings showed ~153–280 m2 for 3–6 ambiente units; a smaller classic 2BR is estimated near 150 m2."
+      }
+    },
+    {
+      "id": "yoo-nordelta",
+      "name": "YOO Nordelta",
+      "aliases": [
+        "Nordelta Yoo",
+        "Yoo by Philippe Starck",
+        "YOO 2 Nordelta"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Nordelta / Tigre",
+      "built": "2010s",
+      "address": "Av. del Golf 625",
+      "fullAddress": "Av. del Golf 625, B1648 Tigre, Provincia de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJP86cU3KkvJURjk0CMRrSL5w",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Golf%20625%2C%20B1648%20Tigre%2C%20Provincia%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJP86cU3KkvJURjk0CMRrSL5w",
+      "location": {
+        "lat": -34.403897,
+        "lng": -58.6491803
+      },
+      "availability": "Airbnb found; rental ad found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/21758066",
+        "evidence": "Airbnb listing titled Yoo Nordelta P Starck with indoor swimming / cinema amenities."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-nordelta-en-alquiler-en-yoo-59415015.html",
+        "note": "Active furnished rental listing verified 2026-07-20",
+        "checkedAt": "2026-07-20",
+        "source": "Zonaprop"
+      },
+      "description": "Philippe Starck–branded residences inside Nordelta, with lake/golf views and resort-style amenities outside CABA.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Departamento en Nordelta en alquiler en Yoo",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-nordelta-en-alquiler-en-yoo-59415015.html",
+        "checkedAt": "2026-07-20"
+      },
+      "longTermRentUsd": {
+        "amount": 2400,
+        "basis": "direct furnished 3-room / 2-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-nordelta-en-alquiler-en-yoo-59415015.html",
+        "summary": "Furnished YOO Nordelta 3-ambiente rental listed at USD 2,400."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 95,
+        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-nordelta-en-alquiler-en-yoo-59415015.html",
+        "summary": "YOO Nordelta 3-ambiente listing showed about 95 m2 covered plus balcony."
       }
     }
   ]

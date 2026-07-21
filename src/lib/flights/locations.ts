@@ -184,13 +184,13 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   "san-francisco": {
     id: "san-francisco",
     type: "city",
-    label: "SF (all airports)",
+    label: "San Francisco (all airports)",
     airports: ["SFO", "OAK", "SJC"],
   },
   "new-york": {
     id: "new-york",
     type: "city",
-    label: "NYC (all airports)",
+    label: "New York City (all airports)",
     airports: ["JFK", "LGA", "EWR"],
   },
   tashkent: {
@@ -258,7 +258,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   "uk-ireland-gateways": {
     id: "uk-ireland-gateways",
     type: "region",
-    label: "UK/Ireland gateways",
+    label: "United Kingdom and Ireland gateways",
     // Combined top 10 by 2024 passenger traffic.
     airports: [
       "LHR",
@@ -276,7 +276,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   "schengen-eu-gateways": {
     id: "schengen-eu-gateways",
     type: "region",
-    label: "Schengen/EU gateways",
+    label: "Schengen and EU gateways",
     // Top 40 Schengen-area airports by 2024 passenger traffic.
     airports: [
       "CDG",
@@ -331,7 +331,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   "south-america-gateways": {
     id: "south-america-gateways",
     type: "continent",
-    label: "South American gateways",
+    label: "South America gateways",
     // Top 15 South American airports by 2024 passenger traffic.
     airports: [
       "GRU",
@@ -379,6 +379,29 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
       "FNC",
     ],
   },
+  "sub-saharan-africa-gateways": {
+    id: "sub-saharan-africa-gateways",
+    type: "region",
+    label: "Sub-Saharan Africa gateways",
+    // Top 15 Sub-Saharan African airports by 2024 passenger traffic.
+    airports: [
+      "JNB",
+      "ADD",
+      "CPT",
+      "NBO",
+      "LOS",
+      "ABV",
+      "DUR",
+      "MRU",
+      "ACC",
+      "DSS",
+      "DAR",
+      "LAD",
+      "RUN",
+      "ABJ",
+      "EBB",
+    ],
+  },
   "east-asia-gateways": {
     id: "east-asia-gateways",
     type: "region",
@@ -405,7 +428,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   "oceania-gateways": {
     id: "oceania-gateways",
     type: "region",
-    label: "Oceania (Australia+NZ) gateways",
+    label: "Oceania (Australia and New Zealand) gateways",
     // Combined top 10 Australian and New Zealand airports by 2024 passenger traffic.
     airports: [
       "SYD",
@@ -423,7 +446,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   vietnam: {
     id: "vietnam",
     type: "country",
-    label: "Vietnam",
+    label: "Vietnam gateways",
     // Top 6 Vietnamese airports by 2024 passenger traffic.
     airports: ["SGN", "HAN", "DAD", "CXR", "PQC", "HPH"],
   },
@@ -639,6 +662,14 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   ABV: "Abuja",
   DUR: "Durban",
   FNC: "Madeira",
+  MRU: "Mauritius",
+  ACC: "Accra",
+  DSS: "Dakar",
+  DAR: "Dar es Salaam",
+  LAD: "Luanda",
+  RUN: "Saint-Denis",
+  ABJ: "Abidjan",
+  EBB: "Entebbe",
   SVO: "Moscow",
   DME: "Moscow",
   VKO: "Moscow",

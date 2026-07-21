@@ -103,8 +103,14 @@ export function resolveLocation(ref: LocationRef): string[] {
 }
 
 export function listRegistryOptions(): Array<{ id: string; label: string }> {
-  return Object.values(LOCATION_REGISTRY).map((entry) => ({
-    id: entry.id,
-    label: entry.label,
-  }));
+  return Object.values(LOCATION_REGISTRY)
+    .sort((a, b) => {
+      const aGroup = a.type === "city" ? 1 : 0;
+      const bGroup = b.type === "city" ? 1 : 0;
+      return aGroup - bGroup || a.label.localeCompare(b.label, "en");
+    })
+    .map((entry) => ({
+      id: entry.id,
+      label: entry.label,
+    }));
 }

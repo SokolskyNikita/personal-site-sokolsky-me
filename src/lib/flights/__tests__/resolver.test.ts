@@ -5,6 +5,7 @@ import {
   assertValidLocationPair,
   isAnywhereToAnywhere,
   isRawIata,
+  listRegistryOptions,
   normalizeLocationRef,
   resolveLocation,
 } from "../resolver";
@@ -126,6 +127,23 @@ describe("resolveLocation", () => {
       "DUR",
       "FNC",
     ]);
+    expect(resolveLocation("sub-saharan-africa-gateways")).toEqual([
+      "JNB",
+      "ADD",
+      "CPT",
+      "NBO",
+      "LOS",
+      "ABV",
+      "DUR",
+      "MRU",
+      "ACC",
+      "DSS",
+      "DAR",
+      "LAD",
+      "RUN",
+      "ABJ",
+      "EBB",
+    ]);
     expect(resolveLocation("east-asia-gateways")).toEqual([
       "HND",
       "PVG",
@@ -232,5 +250,36 @@ describe("IATA helpers", () => {
     expect(normalizeLocationRef("schengen-eu-gateways")).toBe(
       "schengen-eu-gateways",
     );
+  });
+});
+
+describe("registry options", () => {
+  it("lists alphabetized gateways before alphabetized cities", () => {
+    expect(listRegistryOptions().map(({ id, label }) => [id, label])).toEqual([
+      ["africa-gateways", "Africa gateways"],
+      ["anywhere", "Anywhere (top 125 airports)"],
+      ["canada-gateways", "Canada gateways"],
+      ["east-asia-gateways", "East Asia gateways"],
+      ["germany-gateways", "Germany gateways"],
+      ["mexico-gateways", "Mexico gateways"],
+      [
+        "oceania-gateways",
+        "Oceania (Australia and New Zealand) gateways",
+      ],
+      ["schengen-eu-gateways", "Schengen and EU gateways"],
+      ["south-america-gateways", "South America gateways"],
+      ["sub-saharan-africa-gateways", "Sub-Saharan Africa gateways"],
+      ["uk-ireland-gateways", "United Kingdom and Ireland gateways"],
+      ["usa-gateways", "USA gateways"],
+      ["vietnam", "Vietnam gateways"],
+      ["buenos-aires", "Buenos Aires (all airports)"],
+      ["london", "London (all airports)"],
+      ["madrid", "Madrid (all airports)"],
+      ["new-york", "New York City (all airports)"],
+      ["prague", "Prague (all airports)"],
+      ["san-francisco", "San Francisco (all airports)"],
+      ["seattle", "Seattle (all airports)"],
+      ["tashkent", "Tashkent (all airports)"],
+    ]);
   });
 });
