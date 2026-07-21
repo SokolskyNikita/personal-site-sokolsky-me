@@ -65,16 +65,6 @@ const buildingsWithPilates = new Set([
   "torre-promenade",
   "torre-vista-botanico",
 ]);
-const buildingsWithPadel = new Set([
-  "torres-alto-palermo",
-]);
-const buildingsWithTennis = new Set([
-  "forum-alcorta",
-  "mirabilia-palermo",
-  "quartier-boulevard",
-  "torre-promenade",
-  "torres-aisenson",
-]);
 const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
@@ -373,8 +363,6 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
-    hasPadel: buildingsWithPadel.has(building.id),
-    hasTennis: buildingsWithTennis.has(building.id),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
     pricePerTwoBedroomSquareMeter: building.longTermRentUsd.amount / building.approxTwoBedroomAreaSqm.amount,
     lowestAirbnbPriceUsd: getLowestListingPriceUsd(airbnbListings),
@@ -405,8 +393,6 @@ const apartmentMapData = buildings.map((building) => {
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
-    hasPadel: buildingsWithPadel.has(building.id),
-    hasTennis: buildingsWithTennis.has(building.id),
     hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     airbnbListings,
     rentalListings,
@@ -515,72 +501,77 @@ const structuredData = {
       </header>
 
       <section class="toolbar" aria-label="Apartment controls">
-        <fieldset class="availability-toggle">
-          <legend>Show</legend>
-          <label for="airbnb-only">
-            <input id="airbnb-only" type="checkbox" autocomplete="off" />
-            <span>Has Airbnb</span>
+        <div class="toolbar-row toolbar-filters">
+          <fieldset class="filter-chip-group">
+            <legend>Inventory</legend>
+            <div class="chip-row">
+              <label for="airbnb-only">
+                <input id="airbnb-only" type="checkbox" autocomplete="off" />
+                <span>Airbnb</span>
+              </label>
+              <label for="multiple-offers-only">
+                <input id="multiple-offers-only" type="checkbox" autocomplete="off" />
+                <span>2+ listings</span>
+              </label>
+              <label for="twenty-plus-floors-only">
+                <input id="twenty-plus-floors-only" type="checkbox" autocomplete="off" />
+                <span>20+ floors</span>
+              </label>
+              <label for="built-since-2016-only">
+                <input id="built-since-2016-only" type="checkbox" autocomplete="off" />
+                <span>Since 2016</span>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset class="filter-chip-group">
+            <legend>Amenities</legend>
+            <div class="chip-row">
+              <label for="pilates-only">
+                <input id="pilates-only" type="checkbox" autocomplete="off" />
+                <span>Pilates</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+        <div class="toolbar-row toolbar-controls">
+          <label class="filter-dropdown" for="neighborhood-filter">
+            <span>Neighborhood</span>
+            <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
+              <option value="" data-label="All">All ({buildings.length})</option>
+              {neighborhoodOptions.map((option) => (
+                <option value={option.name} data-label={option.name}>{option.name} ({option.count})</option>
+              ))}
+            </select>
           </label>
-          <label for="multiple-offers-only">
-            <input id="multiple-offers-only" type="checkbox" autocomplete="off" />
-            <span>2+ Airbnb or 2+ rental links</span>
+          <label class="filter-dropdown sort-dropdown" for="building-sort">
+            <span>Sort by</span>
+            <select id="building-sort" name="sort" autocomplete="off">
+              <option value="price-asc">Price, asc</option>
+              <option value="price-desc">Price, desc</option>
+              <option value="listed-rental-price-asc">Listed rental price, asc</option>
+              <option value="listed-rental-price-desc">Listed rental price, desc</option>
+              <option value="listed-airbnb-price-asc">Listed Airbnb price, asc</option>
+              <option value="listed-airbnb-price-desc">Listed Airbnb price, desc</option>
+              <option value="area-desc">Area of a 2BR</option>
+              <option value="price-per-sqm-asc">$$$ per square meter</option>
+              <option value="airbnb-count-desc">Number of Airbnbs</option>
+              <option value="rental-count-desc">Number of long-term rentals</option>
+            </select>
           </label>
-          <label for="twenty-plus-floors-only">
-            <input id="twenty-plus-floors-only" type="checkbox" autocomplete="off" />
-            <span>20+ floors</span>
-          </label>
-          <label for="built-since-2016-only">
-            <input id="built-since-2016-only" type="checkbox" autocomplete="off" />
-            <span>Built since 2016</span>
-          </label>
-          <label for="pilates-only">
-            <input id="pilates-only" type="checkbox" autocomplete="off" />
-            <span>Has pilates</span>
-          </label>
-          <label for="padel-only">
-            <input id="padel-only" type="checkbox" autocomplete="off" />
-            <span>Has padel</span>
-          </label>
-          <label for="tennis-only">
-            <input id="tennis-only" type="checkbox" autocomplete="off" />
-            <span>Has tennis</span>
-          </label>
-        </fieldset>
-        <label class="filter-dropdown" for="neighborhood-filter">
-          <span>Neighborhood</span>
-          <select id="neighborhood-filter" name="neighborhood" autocomplete="off">
-            <option value="" data-label="All">All ({buildings.length})</option>
-            {neighborhoodOptions.map((option) => (
-              <option value={option.name} data-label={option.name}>{option.name} ({option.count})</option>
-            ))}
-          </select>
-        </label>
-        <label class="filter-dropdown sort-dropdown" for="building-sort">
-          <span>Sort by</span>
-          <select id="building-sort" name="sort" autocomplete="off">
-            <option value="price-asc">Price, asc</option>
-            <option value="price-desc">Price, desc</option>
-            <option value="listed-rental-price-asc">Listed rental price, asc</option>
-            <option value="listed-rental-price-desc">Listed rental price, desc</option>
-            <option value="listed-airbnb-price-asc">Listed Airbnb price, asc</option>
-            <option value="listed-airbnb-price-desc">Listed Airbnb price, desc</option>
-            <option value="area-desc">Area of a 2BR</option>
-            <option value="price-per-sqm-asc">$$$ per square meter</option>
-            <option value="airbnb-count-desc">Number of Airbnbs</option>
-            <option value="rental-count-desc">Number of long-term rentals</option>
-          </select>
-        </label>
-        <fieldset class="area-unit-toggle" aria-label="Area unit">
-          <legend>Area unit</legend>
-          <label>
-            <input type="radio" name="area-unit" value="sqm" autocomplete="off" checked />
-            <span>m²</span>
-          </label>
-          <label>
-            <input type="radio" name="area-unit" value="sqft" autocomplete="off" />
-            <span>ft²</span>
-          </label>
-        </fieldset>
+          <fieldset class="area-unit-toggle" aria-label="Area unit">
+            <legend>Area unit</legend>
+            <div class="unit-row">
+              <label>
+                <input type="radio" name="area-unit" value="sqm" autocomplete="off" checked />
+                <span>m²</span>
+              </label>
+              <label>
+                <input type="radio" name="area-unit" value="sqft" autocomplete="off" />
+                <span>ft²</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
       </section>
 
       <section class="building-list" aria-label="Buenos Aires high-rise apartment buildings">
@@ -593,8 +584,6 @@ const structuredData = {
             data-twenty-plus-floors={building.has20PlusFloors}
             data-built-since-2016={building.isBuiltSince2016}
             data-has-pilates={building.hasPilates}
-            data-has-padel={building.hasPadel}
-            data-has-tennis={building.hasTennis}
             data-neighborhood={building.filterNeighborhood}
             data-rent-amount={building.longTermRentUsd.amount}
             data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
@@ -889,8 +878,6 @@ const structuredData = {
   const twentyPlusFloorsOnlyToggle = document.querySelector("#twenty-plus-floors-only");
   const builtSince2016OnlyToggle = document.querySelector("#built-since-2016-only");
   const pilatesOnlyToggle = document.querySelector("#pilates-only");
-  const padelOnlyToggle = document.querySelector("#padel-only");
-  const tennisOnlyToggle = document.querySelector("#tennis-only");
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const buildingSort = document.querySelector("#building-sort");
   const buildingList = document.querySelector(".building-list");
@@ -920,8 +907,6 @@ const structuredData = {
     twentyPlusFloorsOnly: Boolean(twentyPlusFloorsOnlyToggle?.checked),
     builtSince2016Only: Boolean(builtSince2016OnlyToggle?.checked),
     pilatesOnly: Boolean(pilatesOnlyToggle?.checked),
-    padelOnly: Boolean(padelOnlyToggle?.checked),
-    tennisOnly: Boolean(tennisOnlyToggle?.checked),
   });
 
   const matchesCheckboxFilters = (building, filters) =>
@@ -929,9 +914,7 @@ const structuredData = {
     (!filters.multipleOffersOnly || building.hasMultipleRentalOffers) &&
     (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
     (!filters.builtSince2016Only || building.isBuiltSince2016) &&
-    (!filters.pilatesOnly || building.hasPilates) &&
-    (!filters.padelOnly || building.hasPadel) &&
-    (!filters.tennisOnly || building.hasTennis);
+    (!filters.pilatesOnly || building.hasPilates);
 
   const formatAreaLabel = (areaSqm, unit) => {
     const amount = unit === "sqft" ? Math.round(areaSqm * 10.7639) : Math.round(areaSqm);
@@ -1194,8 +1177,6 @@ const structuredData = {
   twentyPlusFloorsOnlyToggle?.addEventListener("change", applyFilters);
   builtSince2016OnlyToggle?.addEventListener("change", applyFilters);
   pilatesOnlyToggle?.addEventListener("change", applyFilters);
-  padelOnlyToggle?.addEventListener("change", applyFilters);
-  tennisOnlyToggle?.addEventListener("change", applyFilters);
   neighborhoodFilter?.addEventListener("change", applyFilters);
   buildingSort?.addEventListener("change", applyFilters);
   for (const input of areaUnitInputs) {
@@ -1347,69 +1328,81 @@ const structuredData = {
   }
 
   .toolbar {
+    display: grid;
+    gap: 0.95rem;
+    margin-bottom: 0.8rem;
+    padding: 0.95rem 1.05rem 1.05rem;
+  }
+
+  .toolbar-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.8rem;
-    padding: 0.65rem;
+    gap: 0.85rem 1.15rem;
+    align-items: end;
   }
 
-  .availability-toggle,
-  .area-unit-toggle {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.38rem;
-    align-items: center;
+  .toolbar-filters {
+    align-items: start;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 15%);
+  }
+
+  .toolbar-controls {
+    justify-content: flex-start;
+  }
+
+  .filter-chip-group {
+    display: grid;
+    flex: 1 1 16rem;
+    gap: 0.45rem;
     margin: 0;
-    padding: 0.42rem 0.58rem;
-    border: 1px solid var(--border);
-    border-radius: 0.95rem;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
 
   .area-unit-toggle {
-    gap: 0.25rem;
-    padding: 0.35rem;
+    display: grid;
+    flex: 0 0 auto;
+    gap: 0.32rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
 
-  .availability-toggle legend,
-  .area-unit-toggle legend {
-    margin: 0 0.25rem;
+  .chip-row,
+  .unit-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .unit-row {
+    min-height: 2.5rem;
+    padding: 0.2rem;
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: var(--surface-soft);
+  }
+
+  .filter-chip-group legend,
+  .area-unit-toggle legend,
+  .filter-dropdown > span {
+    float: none;
+    width: auto;
+    margin: 0;
     padding: 0;
     color: var(--text-muted);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 850;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  .area-unit-toggle legend {
-    padding-inline: 0.35rem 0.15rem;
-  }
-
-  .availability-toggle input {
-    width: 1rem;
-    height: 1rem;
-    margin: 0;
-    accent-color: var(--accent);
-  }
-
-  .availability-toggle label,
-  .area-unit-toggle label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    color: var(--text);
-    cursor: pointer;
-    font-size: 0.86rem;
-    font-weight: 750;
-  }
-
-  .area-unit-toggle label {
-    gap: 0;
-  }
-
+  .filter-chip-group input,
   .area-unit-toggle input {
     position: absolute;
     width: 1px;
@@ -1418,18 +1411,57 @@ const structuredData = {
     pointer-events: none;
   }
 
-  .area-unit-toggle span {
-    border-radius: 999px;
-    color: var(--text-muted);
-    line-height: 1;
-    padding: 0.5rem 0.58rem;
+  .filter-chip-group label,
+  .area-unit-toggle label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    cursor: pointer;
   }
 
+  .filter-chip-group span,
+  .area-unit-toggle span {
+    border: 1px solid color-mix(in srgb, var(--border), transparent 5%);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface-soft), transparent 20%);
+    color: var(--text);
+    line-height: 1;
+    padding: 0.52rem 0.82rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    transition:
+      background 140ms ease,
+      color 140ms ease,
+      border-color 140ms ease,
+      box-shadow 140ms ease;
+  }
+
+  .area-unit-toggle span {
+    border-color: transparent;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.5rem 0.72rem;
+  }
+
+  .filter-chip-group label:hover span {
+    border-color: color-mix(in srgb, var(--accent), transparent 70%);
+    background: color-mix(in srgb, var(--surface), transparent 10%);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--text), transparent 92%);
+  }
+
+  .area-unit-toggle label:hover span {
+    color: var(--text);
+  }
+
+  .filter-chip-group input:checked + span,
   .area-unit-toggle input:checked + span {
+    border-color: color-mix(in srgb, var(--accent), transparent 45%);
     background: var(--accent);
     color: var(--surface);
+    box-shadow: none;
   }
 
+  .filter-chip-group input:focus-visible + span,
   .area-unit-toggle input:focus-visible + span {
     outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
     outline-offset: 2px;
@@ -1437,25 +1469,23 @@ const structuredData = {
 
   .filter-dropdown {
     display: grid;
-    width: min(100%, 18rem);
-    gap: 0.28rem;
-    color: var(--text-muted);
-    font-size: 0.72rem;
-    font-weight: 850;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    flex: 1 1 13.5rem;
+    width: min(100%, 17rem);
+    max-width: 20rem;
+    gap: 0.32rem;
   }
 
   .sort-dropdown {
+    flex: 1 1 12.5rem;
     width: min(100%, 15.5rem);
   }
 
   .filter-dropdown select {
     width: 100%;
-    min-height: 2.35rem;
+    min-height: 2.5rem;
     padding: 0 2.5rem 0 0.9rem;
     border: 1px solid var(--border);
-    border-radius: 0.85rem;
+    border-radius: 0.9rem;
     appearance: none;
     background:
       linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
@@ -1979,14 +2009,34 @@ const structuredData = {
       line-height: 1.45;
     }
 
-    .availability-toggle {
+    .toolbar {
+      padding: 0.8rem;
+      gap: 0.8rem;
+    }
+
+    .toolbar-filters,
+    .toolbar-controls {
+      gap: 0.7rem;
+    }
+
+    .toolbar-filters {
+      padding-bottom: 0.75rem;
+    }
+
+    .filter-chip-group,
+    .area-unit-toggle {
       width: 100%;
-      border-radius: 1rem;
+    }
+
+    .filter-chip-group span {
+      padding: 0.48rem 0.72rem;
+      font-size: 0.8rem;
     }
 
     .filter-dropdown {
       width: auto;
       flex: 1 1 12rem;
+      max-width: none;
     }
 
     .building-list {

@@ -22,7 +22,9 @@
     "floorCountSource": "Floor counts were added on 2026-06-30 from SkyscraperPage Buenos Aires index, targeted BrightData Google searches, and direct listing/developer snippets. Null means no reliable total floor count or 20+ floor evidence was found during the audit.",
     "lastTwoBedroomAreaAudit": "Re-checked approxTwoBedroomAreaSqm for buildings added in the prior ~24h using BrightData past-sales evidence (2026-07-21). Revised Palmera Caballito 55→73, Quartier Boulevard 80→90, Oceana 110→126, Almarena/Distrito Quartier 70→115, Harbour Residences 85→110, Art María 90→120, Faena Residences 90→156, Palacio Estrugamou 150→162, Torres El Mirador 95→100, Torres River View 112→122. Confirmed Forum Alcorta 120, Alto Palermo 110, MilAires 75, YOO Nordelta 95. Torres Aisenson Belgrano kept 120 as a notional 2BR (tower sales are full-floor ~200–300 m² only).",
     "lastUsableInventoryAdd": "Added Palmera Caballito, Quartier Boulevard, Torres Alto Palermo, Forum Alcorta, Torres Aisenson and Oceana Puerto Madero on 2026-07-21 after BrightData verification of priced long-term rental inventory with extractable size. Skipped Torre Camps (no live priced rental/Airbnb), Harbour Tower (sale/en pozo only), and Osten Tower II (under construction / no priced rental inventory).",
-    "lastListingGapFill": "2026-07-21 BrightData gap-fill for buildings added in prior ~24h: added priced long-term rentals for Faena Residences, Quartier Boulevard (×2), Oceana, Art María, Torres River View, Torres Alto Palermo, Palmera Caballito, Harbour Residences, and Forum Alcorta (×3). Airbnb candidates without extractable monthly USD were not added."
+    "lastListingGapFill": "2026-07-21 BrightData gap-fill for buildings added in prior ~24h: added priced long-term rentals for Faena Residences, Quartier Boulevard (×2), Oceana, Art María, Torres River View, Torres Alto Palermo, Palmera Caballito, Harbour Residences, and Forum Alcorta (×3). Airbnb candidates without extractable monthly USD were not added.",
+    "blacklistRule": "Buildings listed in blacklistedBuildings must never be re-added to buildings[], even if priced rental or Airbnb inventory is found. Match by id, name, or aliases.",
+    "lastBlacklist": "Removed Torres Alto Palermo (torres-alto-palermo) on 2026-07-21 and blacklisted it as not luxury enough."
   },
   "buildings": [
     {
@@ -4862,25 +4864,25 @@
         "evidence": "No exact active Airbnb listing was found in BrightData searches on 2026-07-21."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-alquiler-2-amb-con-patio-milaires-villa-devoto-59116381.html",
-        "note": "Active long-term rental listing verified 2026-07-21",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-luminoso-mono-en-milaires-villa-59387157.html",
+        "note": "Active ARS-priced long-term rental listing verified 2026-07-21 (converted at ARS 1,500/USD)",
         "checkedAt": "2026-07-21",
         "source": "Zonaprop"
       },
       "description": "Ecipsa low-rise oasis complex in Villa Devoto with club amenities including yoga/pilates studio, indoor pool, gym, coworking and kids areas.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Depto Alquiler 2 Amb con Patio Milaires",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-alquiler-2-amb-con-patio-milaires-villa-devoto-59116381.html",
+        "title": "Dueño directo monoambiente luminoso Milaires",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-luminoso-mono-en-milaires-villa-59387157.html",
         "checkedAt": "2026-07-21"
       },
       "longTermRentUsd": {
-        "amount": 1000,
-        "basis": "direct 2-room / 1-bedroom listing",
+        "amount": 733,
+        "basis": "direct studio / 1-ambiente listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-alquiler-2-amb-con-patio-milaires-villa-devoto-59116381.html",
-        "summary": "Live Zonaprop 2-ambientes listing showed USD 1,000 rent plus ARS 390,000 expensas (~USD 260 at ARS 1,500)."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-luminoso-mono-en-milaires-villa-59387157.html",
+        "summary": "Live Zonaprop studio listing showed ARS 1,100,000 rent plus ARS 220,000 expensas (~USD 733 + USD 147 at ARS 1,500). A 2-ambientes USD 1,000 listing is also active."
       },
       "floorsAboveGround": 5,
       "approxTwoBedroomAreaSqm": {
@@ -4977,25 +4979,25 @@
         "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-en-torre-palmera-parque-59384871.html",
-        "note": "Active long-term rental listing verified 2026-07-21",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-monoambiente-divisible-palmera-caballito-59360855.html",
+        "note": "Active ARS-priced long-term rental listing verified 2026-07-21 (converted at ARS 1,500/USD)",
         "checkedAt": "2026-07-21",
         "source": "Zonaprop"
       },
       "description": "Portland tower on Doblas with club-style amenities including indoor/outdoor pools, spa, gym and a fútbol 5 court.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler monoambiente Torre Palmera Caballito",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-en-torre-palmera-parque-59384871.html",
+        "title": "Alquiler monoambiente divisible Palmera Caballito",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-monoambiente-divisible-palmera-caballito-59360855.html",
         "checkedAt": "2026-07-21"
       },
       "longTermRentUsd": {
-        "amount": 550,
+        "amount": 500,
         "basis": "direct studio / 1-ambiente listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-en-torre-palmera-parque-59384871.html",
-        "summary": "Live Zonaprop studio listing showed USD 550 rent plus ARS 150,000 expensas."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-monoambiente-divisible-palmera-caballito-59360855.html",
+        "summary": "Live Zonaprop studio listing showed ARS 750,000 rent plus ARS 222,000 expensas (~USD 500 + USD 148 at ARS 1,500)."
       },
       "floorsAboveGround": 24,
       "approxTwoBedroomAreaSqm": {
@@ -5061,63 +5063,6 @@
         "source": "Zonaprop sales search",
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-hollywood-q-quartier-boulevard.html",
         "summary": "Active Quartier Boulevard sales for 3 ambientes showed about 81–92 m² total; using ~90 m² as the typical 2BR size."
-      }
-    },
-    {
-      "id": "torres-alto-palermo",
-      "name": "Torres Alto Palermo",
-      "aliases": [
-        "Alto Palermo Park",
-        "Alto Palermo Plaza",
-        "Torre Alto Palermo Park"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo / Alto Palermo",
-      "built": "1990s",
-      "address": "Juncal 3280",
-      "fullAddress": "Juncal 3280, Palermo, Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juncal%203280%2C%20Palermo%2C%20Buenos%20Aires",
-      "location": {
-        "lat": -34.58563056,
-        "lng": -58.41063333
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-semipiso-en-torre-alto-palermo-park-vistas-56834924.html",
-        "note": "Active long-term rental listing verified 2026-07-21",
-        "checkedAt": "2026-07-21",
-        "source": "Zonaprop"
-      },
-      "description": "Twin 1990s towers facing Parque Las Heras with pool, dual gyms, and covered squash and pádel courts.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Semipiso Torre Alto Palermo Park",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-semipiso-en-torre-alto-palermo-park-vistas-56834924.html",
-        "checkedAt": "2026-07-21"
-      },
-      "longTermRentUsd": {
-        "amount": 3000,
-        "basis": "direct large 5-room / 3-bedroom listing",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-semipiso-en-torre-alto-palermo-park-vistas-56834924.html",
-        "summary": "Live Zonaprop 5-ambientes listing showed USD 3,000 rent plus ARS 600,000 expensas for a 185 m2 unit."
-      },
-      "floorsAboveGround": 35,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 110,
-        "basis": "direct 3-room / 2-bedroom sales listing",
-        "confidence": "high",
-        "source": "Mercado Libre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1614047203-departamento-en-venta-en-torre-alto-palermo-3-ambientescochera-amenities-premium-vista-abierta-_JM",
-        "summary": "Torre Alto Palermo 3-ambientes sale listed 110 m² total / covered, matching the prior estimate."
       }
     },
     {
@@ -5290,6 +5235,25 @@
         "sourceUrl": "https://inmuebles.mercadolibre.com.ar/capital-federal/puerto-madero/oceana-puerto-madero",
         "summary": "Oceana Puerto Madero 3-ambientes sales commonly list ~126–128 m² (larger ~155 m² examples also appear); using 126 m²."
       }
+    }
+  ],
+  "blacklistedBuildings": [
+    {
+      "id": "torres-alto-palermo",
+      "name": "Torres Alto Palermo",
+      "aliases": [
+        "Alto Palermo Park",
+        "Alto Palermo Plaza",
+        "Torre Alto Palermo Park",
+        "Torres Alto Palermo"
+      ],
+      "addressHints": [
+        "Juncal 3280",
+        "Juncal y Bulnes",
+        "Parque Las Heras"
+      ],
+      "reason": "Not luxury enough for this inventory.",
+      "blacklistedAt": "2026-07-21"
     }
   ]
 }
