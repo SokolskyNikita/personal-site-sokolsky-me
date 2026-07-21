@@ -202,4 +202,24 @@ describe("groupCheapestByCityAndDate", () => {
     );
     expect(byRate.map((g) => g.city)).toEqual(["Madrid", "Santiago"]);
   });
+
+  it("sorts cities by great-circle distance ascending", () => {
+    const options = [
+      makeOption("mad", 400, "2026-07-20", "MAD", "EZE"),
+      makeOption("scl", 500, "2026-07-20", "SCL", "EZE"),
+      makeOption("jfk", 300, "2026-07-20", "JFK", "EZE"),
+    ];
+
+    const grouped = groupCheapestByCityAndDate(
+      options,
+      "date",
+      "distance",
+      "arrival",
+    );
+    expect(grouped.map((g) => g.city)).toEqual([
+      "Santiago",
+      "New York",
+      "Madrid",
+    ]);
+  });
 });

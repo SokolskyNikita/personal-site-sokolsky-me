@@ -169,7 +169,11 @@ export type GroupBy = "date" | "destination" | "origin";
 
 export type DateGroupSort = "date" | "cheapest_day";
 
-export type CityGroupSort = "alpha" | "cheapest_city" | "price_per_distance";
+export type CityGroupSort =
+  | "alpha"
+  | "cheapest_city"
+  | "price_per_distance"
+  | "distance";
 
 export type CityGroupSide = "departure" | "arrival";
 

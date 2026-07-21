@@ -105,8 +105,8 @@ function cityFloorPrice(dates: Array<{ option: ItineraryOption }>): number {
   return cityFloorOption(dates)?.price ?? Number.POSITIVE_INFINITY;
 }
 
-/** Cheapest fare ÷ great-circle km for that itinerary's OD airports. */
-function cityPricePerKm(dates: Array<{ option: ItineraryOption }>): number {
+/** Great-circle km for the city's cheapest itinerary OD pair. */
+function cityDistanceKm(dates: Array<{ option: ItineraryOption }>): number {
   const option = cityFloorOption(dates);
   if (!option) return Number.POSITIVE_INFINITY;
   const origin = option.segments[0]?.departureAirport;
@@ -114,6 +114,15 @@ function cityPricePerKm(dates: Array<{ option: ItineraryOption }>): number {
   if (!origin || !dest) return Number.POSITIVE_INFINITY;
   const km = airportDistanceKm(origin, dest);
   if (km === null || km <= 0) return Number.POSITIVE_INFINITY;
+  return km;
+}
+
+/** Cheapest fare ÷ great-circle km for that itinerary's OD airports. */
+function cityPricePerKm(dates: Array<{ option: ItineraryOption }>): number {
+  const option = cityFloorOption(dates);
+  if (!option) return Number.POSITIVE_INFINITY;
+  const km = cityDistanceKm(dates);
+  if (!Number.isFinite(km)) return Number.POSITIVE_INFINITY;
   return option.price / km;
 }
 
@@ -166,6 +175,13 @@ export function groupCheapestByCityAndDate(
 
   if (citySort === "alpha") {
     groups.sort((a, b) => a.city.localeCompare(b.city));
+  } else if (citySort === "distance") {
+    groups.sort(
+      (a, b) =>
+        cityDistanceKm(a.dates) - cityDistanceKm(b.dates) ||
+        cityFloorPrice(a.dates) - cityFloorPrice(b.dates) ||
+        a.city.localeCompare(b.city),
+    );
   } else if (citySort === "price_per_distance") {
     groups.sort(
       (a, b) =>
