@@ -76,12 +76,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </p>
           </header>
           <div class="fs-primary">
-            <div class="fs-field">
+            <div class="fs-field hs-field-city">
               <label for="hs-city">City</label>
               <select id="hs-city"></select>
+              <label class="fs-check hs-other-city-toggle">
+                <input id="hs-other-city" type="checkbox" />
+                <span>Other city</span>
+              </label>
             </div>
-            <div class="fs-field">
-              <label for="hs-q">Other city <span>overrides the list</span></label>
+            <div class="fs-field hs-field-q" id="hs-q-wrap" hidden>
+              <label for="hs-q">City name</label>
               <input
                 id="hs-q"
                 type="text"
@@ -89,19 +93,19 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 autocomplete="off"
               />
             </div>
-            <div class="fs-field">
+            <div class="fs-field hs-field-neighborhood">
               <label for="hs-neighborhood">Neighborhood</label>
               <select id="hs-neighborhood"></select>
             </div>
-            <div class="fs-field">
+            <div class="fs-field hs-field-checkin">
               <label for="hs-checkin-start">Check-in</label>
               <input id="hs-checkin-start" type="date" />
             </div>
-            <div class="fs-field">
+            <div class="fs-field hs-field-checkout">
               <label for="hs-checkout">Check-out</label>
               <input id="hs-checkout" type="date" />
             </div>
-            <div class="fs-field">
+            <div class="fs-field hs-field-adults">
               <label for="hs-adults">Adults</label>
               <input
                 id="hs-adults"

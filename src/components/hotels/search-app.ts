@@ -171,7 +171,16 @@ export function mountHotelSearch(root: HTMLElement): void {
   const citySelect = root.querySelector<HTMLSelectElement>("#hs-city")!;
   const neighborhoodSelect =
     root.querySelector<HTMLSelectElement>("#hs-neighborhood")!;
+  const neighborhoodField = root.querySelector<HTMLElement>(
+    ".hs-field-neighborhood",
+  );
   const qInput = root.querySelector<HTMLInputElement>("#hs-q")!;
+  const qWrap = root.querySelector<HTMLElement>("#hs-q-wrap");
+  const otherCityCheck =
+    root.querySelector<HTMLInputElement>("#hs-other-city")!;
+  const primaryFields = root.querySelector<HTMLElement>(
+    ".hs-section-where .fs-primary",
+  );
   const creditHint = root.querySelector<HTMLElement>("#hs-credit-hint");
 
   populateCities(citySelect);
@@ -211,13 +220,21 @@ export function mountHotelSearch(root: HTMLElement): void {
   formEl.addEventListener("change", (event) => {
     const targetId = (event.target as HTMLElement | null)?.id ?? "";
     normalizeRanges(root, targetId);
-    form = readForm(root);
-    if (targetId === "hs-city" && form.city) {
-      // Picking a listed city takes over from any free-text city.
+    if (targetId === "hs-other-city") {
+      if (otherCityCheck.checked) {
+        qInput.focus();
+      } else {
+        qInput.value = "";
+        if (!citySelect.value) citySelect.value = DEFAULT_HOTEL_FORM.city;
+      }
+    }
+    if (targetId === "hs-city" && citySelect.value) {
+      // Picking a listed city turns off free-text mode.
+      otherCityCheck.checked = false;
       qInput.value = "";
-      form = readForm(root);
     }
     syncCityMode();
+    form = readForm(root);
     if (!form.q) {
       populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
     }
@@ -244,16 +261,20 @@ export function mountHotelSearch(root: HTMLElement): void {
   });
 
   function syncCityMode(): void {
-    const hasQ = qInput.value.trim().length > 0;
-    if (hasQ) {
-      citySelect.value = "";
+    const other = otherCityCheck.checked;
+    if (qWrap) qWrap.hidden = !other;
+    citySelect.disabled = other;
+    primaryFields?.classList.toggle("is-other-city", other);
+    if (other) {
       neighborhoodSelect.value = "";
       neighborhoodSelect.disabled = true;
+      if (neighborhoodField) neighborhoodField.hidden = true;
       neighborhoodSelect.title =
         "Neighborhood filters are only available for listed cities.";
     } else {
       if (!citySelect.value) citySelect.value = DEFAULT_HOTEL_FORM.city;
       neighborhoodSelect.disabled = false;
+      if (neighborhoodField) neighborhoodField.hidden = false;
       neighborhoodSelect.title = "";
     }
   }
@@ -565,6 +586,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
     cancelBtn.hidden = !busy;
     runBtn.textContent = label;
+    if (!busy) syncCityMode();
   }
 
   function showProgress(label: string): void {
@@ -619,10 +641,6 @@ function populateCities(select: HTMLSelectElement): void {
     opt.textContent = c.display;
     select.append(opt);
   }
-  const custom = document.createElement("option");
-  custom.value = "";
-  custom.textContent = "Other (use free text)";
-  select.append(custom);
 }
 
 function populateNeighborhoods(
@@ -647,6 +665,7 @@ function populateNeighborhoods(
 function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   setSelect(root, "#hs-city", form.city);
   setVal(root, "#hs-q", form.q);
+  setCheck(root, "#hs-other-city", Boolean(form.q.trim()));
   setSelect(root, "#hs-neighborhood", form.neighborhood);
   setVal(root, "#hs-checkin-start", form.checkInStart);
   // Legacy URLs carry checkInEnd + nights ranges; collapse to one stay.
@@ -687,9 +706,13 @@ function readForm(root: HTMLElement): HotelFormState {
   const checkOut =
     root.querySelector<HTMLInputElement>("#hs-checkout")?.value ?? "";
   const nights = nightsBetween(checkIn, checkOut) ?? 2;
+  const otherCity = !!root.querySelector<HTMLInputElement>("#hs-other-city")
+    ?.checked;
+  const qRaw =
+    root.querySelector<HTMLInputElement>("#hs-q")?.value.trim() ?? "";
   return {
     city: city || DEFAULT_HOTEL_FORM.city,
-    q: root.querySelector<HTMLInputElement>("#hs-q")?.value.trim() ?? "",
+    q: otherCity ? qRaw : "",
     neighborhood:
       root.querySelector<HTMLSelectElement>("#hs-neighborhood")?.value ?? "",
     checkInStart: checkIn,

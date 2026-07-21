@@ -53,16 +53,32 @@
   grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
-#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(1),
-#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(2),
-#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(3) {
+#hs-app .hs-section-where .hs-field-city,
+#hs-app .hs-section-where .hs-field-neighborhood {
+  grid-column: span 6;
+}
+
+#hs-app .hs-section-where .fs-primary.is-other-city .hs-field-city,
+#hs-app .hs-section-where .fs-primary.is-other-city .hs-field-q {
+  grid-column: span 6;
+}
+
+#hs-app .hs-section-where .hs-field-checkin,
+#hs-app .hs-section-where .hs-field-checkout,
+#hs-app .hs-section-where .hs-field-adults {
   grid-column: span 4;
 }
 
-#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(4),
-#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(5),
-#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(6) {
-  grid-column: span 4;
+#hs-app .hs-other-city-toggle {
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+#hs-app .hs-section-where .fs-field[hidden] {
+  display: none;
 }
 
 #hs-app .hs-run-row {
@@ -343,19 +359,17 @@
     gap: 0.55rem;
   }
 
-  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(1),
-  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(2),
-  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(3) {
+  #hs-app .hs-section-where .hs-field-city,
+  #hs-app .hs-section-where .hs-field-neighborhood,
+  #hs-app .hs-section-where .fs-primary.is-other-city .hs-field-city,
+  #hs-app .hs-section-where .fs-primary.is-other-city .hs-field-q,
+  #hs-app .hs-section-where .hs-field-adults {
     grid-column: span 6;
   }
 
-  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(4),
-  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(5) {
+  #hs-app .hs-section-where .hs-field-checkin,
+  #hs-app .hs-section-where .hs-field-checkout {
     grid-column: span 3;
-  }
-
-  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(6) {
-    grid-column: span 6;
   }
 
   #hs-app .hs-run-row {
