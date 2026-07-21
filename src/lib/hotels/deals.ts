@@ -51,6 +51,16 @@ export function fitLogPrice(samples: PricedComfort[]): {
   return { a, b };
 }
 
+/**
+ * Fraction of expected price saved (positive = under / cheaper).
+ * `(expected - actual) / expected` — never the multiplicative
+ * `expected/actual - 1`, which blows up to "400% under" for bargains.
+ */
+function dealPctFromExpected(expectedUsd: number, nightlyUsd: number): number {
+  if (!(expectedUsd > 0) || !(nightlyUsd > 0)) return 0;
+  return (expectedUsd - nightlyUsd) / expectedUsd;
+}
+
 export function computeDeals(samples: PricedComfort[]): DealResult[] {
   const fit = fitLogPrice(samples);
   if (!fit) {
@@ -68,13 +78,13 @@ export function computeDeals(samples: PricedComfort[]): DealResult[] {
           ? ratios[mid]!
           : (ratios[mid - 1]! + ratios[mid]!) / 2;
     return scored.map((s) => {
-      const ratio = s.comfort / s.nightlyUsd;
-      const dealPct = medianRatio > 0 ? ratio / medianRatio - 1 : 0;
+      const expectedUsd =
+        medianRatio > 0 ? s.comfort / medianRatio : s.nightlyUsd;
       return {
         token: s.token,
         nightlyUsd: s.nightlyUsd,
-        expectedUsd: s.nightlyUsd * (1 + dealPct),
-        dealPct,
+        expectedUsd,
+        dealPct: dealPctFromExpected(expectedUsd, s.nightlyUsd),
         method: "fallback" as const,
       };
     });
@@ -83,12 +93,11 @@ export function computeDeals(samples: PricedComfort[]): DealResult[] {
     .filter((s) => s.comfort >= DEAL_MIN_SCORE && s.nightlyUsd > 0)
     .map((s) => {
       const expectedUsd = Math.exp(fit.a + fit.b * s.comfort);
-      const dealPct = expectedUsd / s.nightlyUsd - 1;
       return {
         token: s.token,
         nightlyUsd: s.nightlyUsd,
         expectedUsd,
-        dealPct,
+        dealPct: dealPctFromExpected(expectedUsd, s.nightlyUsd),
         method: "fit" as const,
       };
     });

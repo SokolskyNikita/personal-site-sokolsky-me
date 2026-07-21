@@ -7,6 +7,7 @@ import {
   slugifyCity,
   type HotelFormState,
 } from "../../lib/hotels/url";
+import { SCAN_PAGES_MOST_REVIEWED } from "../../lib/hotels/constants";
 
 type FactStatus = "confirmed" | "inferred" | "unknown" | "conflicting";
 
@@ -165,7 +166,6 @@ export function mountHotelSearch(root: HTMLElement): void {
   const runBtn = root.querySelector<HTMLButtonElement>("#hs-run")!;
   const rankingBtn = root.querySelector<HTMLButtonElement>("#hs-ranking")!;
   const cancelBtn = root.querySelector<HTMLButtonElement>("#hs-cancel")!;
-  const comfortValue = root.querySelector<HTMLElement>("#hs-comfort-value")!;
   const progressDock = root.querySelector<HTMLElement>("#hs-search-progress")!;
   const progressTrack = root.querySelector<HTMLElement>(
     "#hs-search-progress-track",
@@ -212,7 +212,6 @@ export function mountHotelSearch(root: HTMLElement): void {
   let latestMeta: Record<string, unknown> = {};
   applyFormToDom(root, form);
   populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
-  syncComfortLabel(root, comfortValue);
   syncCityMode();
   syncCreditHint();
   syncSortOptions();
@@ -220,7 +219,6 @@ export function mountHotelSearch(root: HTMLElement): void {
   // Controls that only filter/sort already-loaded rows. Changing them never
   // costs credits and should update the table instantly.
   const refineIds = new Set([
-    "hs-min-comfort",
     "hs-sort",
     "hs-strictness",
     "hs-require-ac",
@@ -252,7 +250,6 @@ export function mountHotelSearch(root: HTMLElement): void {
       populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
     }
     syncUrl(form);
-    syncComfortLabel(root, comfortValue);
     syncCreditHint();
     syncSortOptions();
     if (refineIds.has(targetId)) {
@@ -261,15 +258,6 @@ export function mountHotelSearch(root: HTMLElement): void {
         renderTable(results, visible, form);
         renderFooter(footer, visible, latestMeta);
       }
-    }
-  });
-
-  root.querySelector("#hs-min-comfort")?.addEventListener("input", () => {
-    syncComfortLabel(root, comfortValue);
-    form = readForm(root);
-    syncUrl(form);
-    if (latestRows.length) {
-      renderTable(results, filterAndSort(latestRows, form), form);
     }
   });
 
@@ -562,7 +550,7 @@ export function mountHotelSearch(root: HTMLElement): void {
           q,
           bbox,
           force: true,
-          mostReviewedPages: state.scanPages,
+          mostReviewedPages: SCAN_PAGES_MOST_REVIEWED,
           highestRatingPages: 4,
         }),
         signal: controller.signal,
@@ -821,7 +809,7 @@ async function fetchPlan(
   onRetry?: (attempt: number, max: number) => void,
 ): Promise<PlanResponse> {
   const params = new URLSearchParams({ city });
-  if (form) params.set("scanPages", String(form.scanPages));
+  if (form) params.set("scanPages", String(SCAN_PAGES_MOST_REVIEWED));
   if (form?.checkInStart) {
     params.set("checkInStart", form.checkInStart);
     params.set("checkInEnd", form.checkInEnd || form.checkInStart);
@@ -1033,7 +1021,6 @@ function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   // Legacy URLs carry checkInEnd + nights ranges; collapse to one stay.
   setVal(root, "#hs-checkout", form.checkInStart ? checkOutDate(form) : "");
   setVal(root, "#hs-adults", String(form.adults));
-  setVal(root, "#hs-min-comfort", String(form.minComfort));
   setSelect(root, "#hs-strictness", form.strictness);
   setCheck(root, "#hs-require-ac", form.requireAC);
   setCheck(root, "#hs-require-desk", form.requireFrontDesk24h);
@@ -1041,7 +1028,6 @@ function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   setSelect(root, "#hs-min-reviews", String(form.minReviews));
   setVal(root, "#hs-budget-max", form.budgetMax != null ? String(form.budgetMax) : "");
   setSelect(root, "#hs-sort", form.sort);
-  setVal(root, "#hs-scan-pages", String(form.scanPages));
 }
 
 function readForm(root: HTMLElement): HotelFormState {
@@ -1087,9 +1073,6 @@ function readForm(root: HTMLElement): HotelFormState {
     ),
     pinLat: null,
     pinLng: null,
-    minComfort: Number(
-      root.querySelector<HTMLInputElement>("#hs-min-comfort")?.value ?? 0,
-    ),
     strictness:
       root.querySelector<HTMLSelectElement>("#hs-strictness")?.value ===
       "confirmed_only"
@@ -1105,9 +1088,6 @@ function readForm(root: HTMLElement): HotelFormState {
       minReviews === 500 || minReviews === 1000 ? minReviews : 200,
     budgetMax: budgetRaw ? Number(budgetRaw) : null,
     sort,
-    scanPages: Number(
-      root.querySelector<HTMLInputElement>("#hs-scan-pages")?.value ?? 8,
-    ),
   };
 }
 
@@ -1157,6 +1137,19 @@ function hasDates(form: HotelFormState): boolean {
   return Boolean(form.checkInStart);
 }
 
+/** Prefer API total; otherwise nightly × nights for the best stay. */
+function stayTotalUsd(r: HotelRow): number | null {
+  const total = r.total_usd ?? r.bestStay?.totalUsd ?? null;
+  if (total != null && Number.isFinite(total)) return total;
+  const nightly =
+    r.nightly_usd ?? r.nightlyUsd ?? r.bestStay?.nightlyUsd ?? null;
+  const nights = r.bestStay?.nights ?? null;
+  if (nightly != null && nights != null && nights > 0) {
+    return nightly * nights;
+  }
+  return null;
+}
+
 function syncUrl(form: HotelFormState): void {
   const params = formStateToSearchParams(form);
   const qs = params.toString();
@@ -1164,23 +1157,15 @@ function syncUrl(form: HotelFormState): void {
   history.replaceState(null, "", next);
 }
 
-function syncComfortLabel(root: HTMLElement, label: HTMLElement): void {
-  const v = root.querySelector<HTMLInputElement>("#hs-min-comfort")?.value ?? "0";
-  label.textContent = v;
-}
-
 function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
   // Once a price sweep has run, hotels without a found price are dropped.
-  const pricesLoaded = rows.some(
-    (r) => (r.nightly_usd ?? r.nightlyUsd) != null,
-  );
+  const pricesLoaded = rows.some((r) => stayTotalUsd(r) != null);
   let out = rows.filter((r) => {
-    if ((r.score ?? 0) < form.minComfort) return false;
     if ((r.reviews ?? 0) < form.minReviews) return false;
     if (form.brandedOnly && (r.brandTier ?? 0) < 1) return false;
-    const nightly = r.nightly_usd ?? r.nightlyUsd;
-    if (pricesLoaded && nightly == null) return false;
-    if (form.budgetMax != null && nightly != null && nightly > form.budgetMax) {
+    const total = stayTotalUsd(r);
+    if (pricesLoaded && total == null) return false;
+    if (form.budgetMax != null && total != null && total > form.budgetMax) {
       return false;
     }
     if (
@@ -1212,8 +1197,8 @@ function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
       return db - da;
     }
     if (form.sort === "nightly") {
-      const na = a.nightly_usd ?? a.nightlyUsd;
-      const nb = b.nightly_usd ?? b.nightlyUsd;
+      const na = stayTotalUsd(a);
+      const nb = stayTotalUsd(b);
       if (na == null && nb == null) return 0;
       if (na == null) return 1;
       if (nb == null) return -1;
@@ -1242,9 +1227,7 @@ function factOk(
 
 function countUnknown(r: HotelRow): number {
   const f = r.facts ?? {};
-  return [f.hasAC, f.hasWifi, f.frontDesk24h].filter(
-    (s) => s === "unknown",
-  ).length;
+  return [f.hasAC, f.hasWifi].filter((s) => s === "unknown").length;
 }
 
 function renderTable(
@@ -1263,26 +1246,24 @@ function renderTable(
   // Price columns only appear once at least one row has price data,
   // so a dateless search isn't padded with empty "—" columns.
   const hasPrices = rows.some(
-    (r) => (r.nightly_usd ?? r.nightlyUsd) != null || r.deal_pct != null,
+    (r) => stayTotalUsd(r) != null || r.deal_pct != null,
   );
-  const columnCount = hasPrices ? 8 : 6;
+  const columnCount = hasPrices ? 7 : 5;
   const body = rows
     .map((r, i) => {
-      const low =
-        r.lowStarShare != null ? `${(r.lowStarShare * 100).toFixed(1)}%` : "—";
       const plant =
         (r.plantPenalty ?? 0) >= 5
           ? `<span class="hs-chip hs-chip-bad" title="Penalized for room-condition complaints">room issues −${Number(r.plantPenalty).toFixed(0)}</span>`
           : "";
       const facts = factIcons(r);
       const href = datedHotelUrl(r.googleHotelsUrl, form);
-      const nightly = r.nightly_usd ?? r.nightlyUsd;
+      const total = stayTotalUsd(r);
       const stayDates = r.bestStay
         ? formatDateRange(r.bestStay.checkIn, r.bestStay.checkOut)
         : "";
       const deal = r.deal_pct != null ? dealChip(r.deal_pct, r.dealMethod) : "—";
       const priceCells = hasPrices
-        ? `<td class="hs-cell-price hs-cell-num ${nightly == null ? "hs-cell-empty" : ""}">${nightly != null ? `$${Math.round(nightly)}` : "—"}${stayDates ? `<div class="fs-muted">${escapeHtml(stayDates)}</div>` : ""}</td>
+        ? `<td class="hs-cell-price hs-cell-num ${total == null ? "hs-cell-empty" : ""}">${total != null ? `$${Math.round(total)}` : "—"}${stayDates ? `<div class="fs-muted">${escapeHtml(stayDates)}</div>` : ""}</td>
         <td class="hs-cell-deal ${deal === "—" ? "hs-cell-empty" : ""}">${deal}</td>`
         : "";
       return `<tr data-token="${escapeHtml(r.token)}">
@@ -1290,7 +1271,6 @@ function renderTable(
         <td class="hs-cell-score"><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
         <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant}</td>
         <td class="hs-cell-rating hs-cell-num">${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${formatReviewCount(r.reviews)})</span></td>
-        <td class="hs-cell-low hs-cell-num">${low}</td>
         ${priceCells}
         <td class="hs-facts">${facts}</td>
       </tr>
@@ -1301,11 +1281,11 @@ function renderTable(
     .join("");
 
   const priceHead = hasPrices
-    ? `<th class="hs-cell-num">$/night</th><th>Deal</th>`
+    ? `<th class="hs-cell-num">Total stay $</th><th>Deal</th>`
     : "";
   container.innerHTML = `<div class="hs-table-wrap"><table class="hs-table">
     <thead><tr>
-      <th class="hs-cell-rank">#</th><th>Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th><th class="hs-cell-num" title="Share of 1- and 2-star reviews">1–2★</th>${priceHead}<th>Amenities</th>
+      <th class="hs-cell-rank">#</th><th>Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th>${priceHead}<th>Amenities</th>
     </tr></thead>
     <tbody>${body}</tbody>
   </table></div>`;
@@ -1394,7 +1374,6 @@ function factIcons(r: HotelRow): string {
   const map: [string, FactStatus | undefined][] = [
     ["AC", r.facts?.hasAC],
     ["Wi‑Fi", r.facts?.hasWifi],
-    ["Desk", r.facts?.frontDesk24h],
   ];
   for (const [label, status] of map) {
     if (status === "confirmed") parts.push(`<span title="${label} confirmed">✓ ${label}</span>`);
@@ -1472,7 +1451,6 @@ function factLists(r: HotelRow): string {
   const labels: Array<[string, keyof NonNullable<HotelRow["facts"]>]> = [
     ["Air conditioning", "hasAC"],
     ["Wi-Fi", "hasWifi"],
-    ["24-hour front desk", "frontDesk24h"],
   ];
   const groups: Record<string, string[]> = {
     Confirmed: [],

@@ -56,7 +56,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <h1 class="fs-title">Hotel comfort search</h1>
           <p>
             Compare hotels using details from listings and reviews: room
-            condition, noise, air conditioning, elevators and front desk hours.
+            condition, noise, and air conditioning.
           </p>
         </div>
         <a class="fs-home" href="/">sokolsky.me</a>
@@ -120,16 +120,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </div>
           </div>
           <div class="hs-run-row">
-            <div class="fs-field">
-              <label for="hs-scan-pages">Search size</label>
-              <select id="hs-scan-pages">
-                <option value="2">Quick · 2 pages · up to 6 credits</option>
-                <option value="4">Medium · 4 pages · up to 8 credits</option>
-                <option value="8" selected
-                  >Full · 8 pages · up to 12 credits</option
-                >
-              </select>
-            </div>
             <p class="hs-credit-hint" id="hs-credit-hint"></p>
             <div class="fs-actions">
               <button type="submit" class="fs-btn fs-btn-primary" id="hs-run"
@@ -151,32 +141,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         >
           <header class="fs-section-heading">
             <h2 id="hs-refine-heading">Refine results</h2>
-            <p>
-              Free and instant — these update the list below without a new
-              search. Requirements only match hotels with matching data.
-            </p>
           </header>
           <div class="fs-secondary">
-            <div class="fs-field fs-field-days hs-refine-comfort">
-              <label for="hs-min-comfort" class="hs-comfort-label"
-                >Min comfort <strong id="hs-comfort-value"
-                  >{DEFAULT_HOTEL_FORM.minComfort}</strong
-                ></label
-              >
-              <input
-                id="hs-min-comfort"
-                type="range"
-                min="0"
-                max="80"
-                value={String(DEFAULT_HOTEL_FORM.minComfort)}
-              />
-            </div>
             <div class="fs-field">
               <label for="hs-sort">Sort by</label>
               <select id="hs-sort">
                 <option value="comfort" selected>Comfort</option>
                 <option value="deal">Best deal (needs dates)</option>
-                <option value="nightly">$/night</option>
+                <option value="nightly">Total stay $</option>
                 <option value="rating">Rating</option>
                 <option value="reviews">Reviews</option>
                 <option value="unknowns">Fewest unknowns</option>
@@ -214,7 +186,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               </select>
             </div>
             <div class="fs-field">
-              <label for="hs-budget-max">Max $/night</label>
+              <label for="hs-budget-max">Max total stay $</label>
               <input
                 id="hs-budget-max"
                 type="number"

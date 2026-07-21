@@ -11,7 +11,6 @@ describe("hotel URL state", () => {
     expect(state.nightsMin).toBe(2);
     expect(state.nightsMax).toBe(2);
     expect(state.adults).toBe(2);
-    expect(state.scanPages).toBe(8);
   });
 
   it("round-trips dated occupancy state", () => {
@@ -31,7 +30,6 @@ describe("hotel URL state", () => {
       ...DEFAULT_HOTEL_FORM,
       city: "buenos-aires",
       q: "Lisbon",
-      minComfort: 40,
       requireAC: true,
       minReviews: 500 as const,
       sort: "rating" as const,
@@ -39,7 +37,6 @@ describe("hotel URL state", () => {
     const params = formStateToSearchParams(form);
     const back = formStateFromSearchParams(params);
     expect(back.q).toBe("Lisbon");
-    expect(back.minComfort).toBe(40);
     expect(back.requireAC).toBe(true);
     expect(back.minReviews).toBe(500);
     expect(back.sort).toBe("rating");

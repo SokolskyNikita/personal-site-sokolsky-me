@@ -49,7 +49,8 @@ describe("deals", () => {
       { token: "b", comfort: 60, nightlyUsd: 120 },
     ]);
     expect(deals.every((d) => d.method === "fallback")).toBe(true);
-    expect(deals.every((d) => d.dealPct >= -1 && d.dealPct <= 1)).toBe(true);
+    // "% under expected" is at most 100%; overpriced can exceed 100% over.
+    expect(deals.every((d) => d.dealPct <= 1)).toBe(true);
   });
 
   it("fits when sample is large enough", () => {
@@ -60,6 +61,21 @@ describe("deals", () => {
     }));
     expect(fitLogPrice(samples)).not.toBeNull();
     expect(computeDeals(samples)[0]?.method).toBe("fit");
+  });
+
+  it("expresses bargains as percent under expected price, not expected/actual-1", () => {
+    const peers = Array.from({ length: 14 }, (_, i) => ({
+      token: `peer${i}`,
+      comfort: 50,
+      nightlyUsd: 200 + i * 2,
+    }));
+    const steal = { token: "steal", comfort: 50, nightlyUsd: 40 };
+    const deal = computeDeals([...peers, steal]).find((d) => d.token === "steal");
+    expect(deal).toBeDefined();
+    // ~$200 expected vs $40 → ~80% under. The old formula yielded ~400%.
+    expect(deal!.dealPct).toBeGreaterThan(0.7);
+    expect(deal!.dealPct).toBeLessThanOrEqual(1);
+    expect(deal!.expectedUsd).toBeGreaterThan(150);
   });
 
   it("excludes properties below DEAL_MIN_SCORE floor", () => {

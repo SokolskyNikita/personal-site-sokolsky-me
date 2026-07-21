@@ -11,7 +11,6 @@ export type HotelFormState = {
   adults: number;
   pinLat: number | null;
   pinLng: number | null;
-  minComfort: number;
   strictness: "confirmed_only" | "confirmed_or_unknown";
   requireAC: boolean;
   requireFrontDesk24h: boolean;
@@ -26,7 +25,6 @@ export type HotelFormState = {
     | "reviews"
     | "distance"
     | "unknowns";
-  scanPages: number;
 };
 
 export const DEFAULT_HOTEL_FORM: HotelFormState = {
@@ -40,7 +38,6 @@ export const DEFAULT_HOTEL_FORM: HotelFormState = {
   adults: 2,
   pinLat: null,
   pinLng: null,
-  minComfort: 0,
   strictness: "confirmed_or_unknown",
   requireAC: false,
   requireFrontDesk24h: false,
@@ -48,7 +45,6 @@ export const DEFAULT_HOTEL_FORM: HotelFormState = {
   minReviews: 200,
   budgetMax: null,
   sort: "comfort",
-  scanPages: 8,
 };
 
 export function cityOptions(): { slug: string; display: string }[] {
@@ -110,7 +106,6 @@ export function formStateFromSearchParams(
     adults: clampNum(params.get("adults"), 1, 8, 2),
     pinLat: pinLat != null && pinLat !== "" ? Number(pinLat) : null,
     pinLng: pinLng != null && pinLng !== "" ? Number(pinLng) : null,
-    minComfort: clampNum(params.get("minComfort"), 0, 100, 0),
     strictness:
       params.get("strictness") === "confirmed_only"
         ? "confirmed_only"
@@ -121,7 +116,6 @@ export function formStateFromSearchParams(
     minReviews,
     budgetMax: budget != null && budget !== "" ? Number(budget) : null,
     sort,
-    scanPages: clampNum(params.get("scanPages"), 1, 8, 8),
   };
 }
 
@@ -141,7 +135,6 @@ export function formStateToSearchParams(form: HotelFormState): URLSearchParams {
   if (form.adults !== 2) p.set("adults", String(form.adults));
   if (form.pinLat != null) p.set("pinLat", String(form.pinLat));
   if (form.pinLng != null) p.set("pinLng", String(form.pinLng));
-  if (form.minComfort > 0) p.set("minComfort", String(form.minComfort));
   if (form.strictness !== DEFAULT_HOTEL_FORM.strictness) {
     p.set("strictness", form.strictness);
   }
@@ -151,7 +144,6 @@ export function formStateToSearchParams(form: HotelFormState): URLSearchParams {
   if (form.minReviews !== 200) p.set("minReviews", String(form.minReviews));
   if (form.budgetMax != null) p.set("budgetMax", String(form.budgetMax));
   if (form.sort !== "comfort") p.set("sort", form.sort);
-  if (form.scanPages !== 8) p.set("scanPages", String(form.scanPages));
   return p;
 }
 
