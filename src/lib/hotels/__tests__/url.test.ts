@@ -11,7 +11,7 @@ describe("hotel URL state", () => {
     expect(state.nightsMin).toBe(2);
     expect(state.nightsMax).toBe(2);
     expect(state.adults).toBe(2);
-    expect(state.scanPages).toBe(4);
+    expect(state.scanPages).toBe(8);
   });
 
   it("round-trips dated occupancy state", () => {

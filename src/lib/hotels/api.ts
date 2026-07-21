@@ -5,6 +5,8 @@ import {
   PRICE_CACHE_HIT_THRESHOLD,
   PRICE_CACHE_TTL_HOURS,
   PRICE_TOPUP_MAX_CALLS,
+  SCAN_PAGES_HIGHEST_RATING,
+  SCAN_PAGES_MOST_REVIEWED,
   WINDOW_CAP,
 } from "./constants";
 import { createD1HotelsRepository, type HotelsD1 } from "./db";
@@ -106,10 +108,10 @@ async function handlePlan(
 
   // Scan cost: most_reviewed pages + highest_rating pages (enrichment skipped).
   const requestedScanPages = Math.min(
-    4,
-    Math.max(1, Number(url.searchParams.get("scanPages") ?? 4)),
+    SCAN_PAGES_MOST_REVIEWED,
+    Math.max(1, Number(url.searchParams.get("scanPages") ?? SCAN_PAGES_MOST_REVIEWED)),
   );
-  const scanCreditsEstimate = requestedScanPages + 2;
+  const scanCreditsEstimate = requestedScanPages + SCAN_PAGES_HIGHEST_RATING;
 
   const checkInStart = url.searchParams.get("checkInStart");
   const checkInEnd = url.searchParams.get("checkInEnd") ?? checkInStart;

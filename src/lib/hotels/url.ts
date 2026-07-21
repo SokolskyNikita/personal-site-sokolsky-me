@@ -48,7 +48,7 @@ export const DEFAULT_HOTEL_FORM: HotelFormState = {
   minReviews: 200,
   budgetMax: null,
   sort: "comfort",
-  scanPages: 4,
+  scanPages: 8,
 };
 
 export function cityOptions(): { slug: string; display: string }[] {
@@ -121,7 +121,7 @@ export function formStateFromSearchParams(
     minReviews,
     budgetMax: budget != null && budget !== "" ? Number(budget) : null,
     sort,
-    scanPages: clampNum(params.get("scanPages"), 1, 4, 4),
+    scanPages: clampNum(params.get("scanPages"), 1, 8, 8),
   };
 }
 
@@ -151,7 +151,7 @@ export function formStateToSearchParams(form: HotelFormState): URLSearchParams {
   if (form.minReviews !== 200) p.set("minReviews", String(form.minReviews));
   if (form.budgetMax != null) p.set("budgetMax", String(form.budgetMax));
   if (form.sort !== "comfort") p.set("sort", form.sort);
-  if (form.scanPages !== 4) p.set("scanPages", String(form.scanPages));
+  if (form.scanPages !== 8) p.set("scanPages", String(form.scanPages));
   return p;
 }
 

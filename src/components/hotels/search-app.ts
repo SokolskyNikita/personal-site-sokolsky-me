@@ -390,7 +390,7 @@ export function mountHotelSearch(root: HTMLElement): void {
           bbox,
           force: true,
           mostReviewedPages: state.scanPages,
-          highestRatingPages: 2,
+          highestRatingPages: 4,
         }),
         signal: controller.signal,
       });
@@ -721,7 +721,7 @@ function readForm(root: HTMLElement): HotelFormState {
     budgetMax: budgetRaw ? Number(budgetRaw) : null,
     sort,
     scanPages: Number(
-      root.querySelector<HTMLInputElement>("#hs-scan-pages")?.value ?? 4,
+      root.querySelector<HTMLInputElement>("#hs-scan-pages")?.value ?? 8,
     ),
   };
 }

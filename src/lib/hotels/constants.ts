@@ -1,6 +1,6 @@
 export const INDEX_TTL_DAYS = 30;
-export const SCAN_PAGES_MOST_REVIEWED = 4;
-export const SCAN_PAGES_HIGHEST_RATING = 2;
+export const SCAN_PAGES_MOST_REVIEWED = 8;
+export const SCAN_PAGES_HIGHEST_RATING = 4;
 export const MAX_CREDITS_PER_SCAN = 80;
 export const ENRICH_TOP_N = 30;
 export const CITY_MEAN_FALLBACK = 4.2;

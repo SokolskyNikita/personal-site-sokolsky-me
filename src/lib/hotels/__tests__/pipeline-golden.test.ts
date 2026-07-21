@@ -32,8 +32,8 @@ describe("fixture scan pipeline", () => {
       citySlug: "buenos-aires",
       provider,
       db,
-      mostReviewedPages: 4,
-      highestRatingPages: 2,
+      mostReviewedPages: 8,
+      highestRatingPages: 4,
       checkIn: "2026-08-11",
       checkOut: "2026-08-13",
     });
