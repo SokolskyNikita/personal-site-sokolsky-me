@@ -70,9 +70,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <header class="fs-section-heading">
             <h2 id="hs-where-heading">Where &amp; when</h2>
             <p>
-              Uses API credits. Dates are optional — add them to fetch current
-              prices (cached for six hours). You confirm the exact cost before
-              anything runs.
+              Uses API credits — the estimate is shown next to the button.
+              Dates are optional; add them to fetch current prices (cached for
+              six hours).
             </p>
           </header>
           <div class="fs-primary">
@@ -94,34 +94,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <select id="hs-neighborhood"></select>
             </div>
             <div class="fs-field">
-              <label for="hs-checkin-start">Check-in from</label>
+              <label for="hs-checkin-start">Check-in</label>
               <input id="hs-checkin-start" type="date" />
             </div>
             <div class="fs-field">
-              <label for="hs-checkin-end"
-                >Check-in to <span>optional</span></label
-              >
-              <input id="hs-checkin-end" type="date" />
-            </div>
-            <div class="fs-field">
-              <label for="hs-nights-min">Nights min</label>
-              <input
-                id="hs-nights-min"
-                type="number"
-                min="1"
-                max="14"
-                value={String(DEFAULT_HOTEL_FORM.nightsMin)}
-              />
-            </div>
-            <div class="fs-field">
-              <label for="hs-nights-max">Nights max</label>
-              <input
-                id="hs-nights-max"
-                type="number"
-                min="1"
-                max="14"
-                value={String(DEFAULT_HOTEL_FORM.nightsMax)}
-              />
+              <label for="hs-checkout">Check-out</label>
+              <input id="hs-checkout" type="date" />
             </div>
             <div class="fs-field">
               <label for="hs-adults">Adults</label>
@@ -212,10 +190,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 <span>Require AC</span>
               </label>
               <label class="fs-check">
-                <input id="hs-require-elevator" type="checkbox" />
-                <span>Require elevator</span>
-              </label>
-              <label class="fs-check">
                 <input id="hs-require-desk" type="checkbox" />
                 <span>24-hour front desk</span>
               </label>
@@ -248,8 +222,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       <div class="fs-status" aria-live="polite">
         <p class="fs-search-summary" id="hs-search-summary">
-          Ready. Saved results load automatically. You'll see the credit cost
-          before a new search runs.
+          Ready. Saved results load automatically.
         </p>
         <div id="hs-banners"></div>
         <p class="fs-progress" id="hs-progress"></p>

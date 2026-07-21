@@ -53,21 +53,16 @@
   grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
-#hs-app .hs-section-where .fs-field:nth-child(1),
-#hs-app .hs-section-where .fs-field:nth-child(2),
-#hs-app .hs-section-where .fs-field:nth-child(3) {
+#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(1),
+#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(2),
+#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(3) {
   grid-column: span 4;
 }
 
-#hs-app .hs-section-where .fs-field:nth-child(4),
-#hs-app .hs-section-where .fs-field:nth-child(5) {
-  grid-column: span 3;
-}
-
-#hs-app .hs-section-where .fs-field:nth-child(6),
-#hs-app .hs-section-where .fs-field:nth-child(7),
-#hs-app .hs-section-where .fs-field:nth-child(8) {
-  grid-column: span 2;
+#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(4),
+#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(5),
+#hs-app .hs-section-where .fs-primary > .fs-field:nth-child(6) {
+  grid-column: span 4;
 }
 
 #hs-app .hs-run-row {
@@ -138,6 +133,42 @@
   letter-spacing: 0.04em;
   color: var(--fs-muted);
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.hs-cell-rank {
+  color: var(--fs-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.hs-cell-num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.hs-cell-score strong {
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Let the hotel name take all remaining width. */
+.hs-cell-hotel {
+  width: 100%;
+  min-width: 14rem;
+}
+
+.hs-cell-hotel a {
+  font-weight: 600;
+}
+
+.hs-cell-deal {
+  white-space: nowrap;
+}
+
+.hs-cell-price .fs-muted {
+  white-space: nowrap;
 }
 
 .hs-table tbody tr[data-token] {
@@ -329,21 +360,19 @@
     gap: 0.55rem;
   }
 
-  #hs-app .hs-section-where .fs-field:nth-child(1),
-  #hs-app .hs-section-where .fs-field:nth-child(2),
-  #hs-app .hs-section-where .fs-field:nth-child(3) {
+  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(1),
+  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(2),
+  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(3) {
     grid-column: span 6;
   }
 
-  #hs-app .hs-section-where .fs-field:nth-child(4),
-  #hs-app .hs-section-where .fs-field:nth-child(5) {
+  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(4),
+  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(5) {
     grid-column: span 3;
   }
 
-  #hs-app .hs-section-where .fs-field:nth-child(6),
-  #hs-app .hs-section-where .fs-field:nth-child(7),
-  #hs-app .hs-section-where .fs-field:nth-child(8) {
-    grid-column: span 2;
+  #hs-app .hs-section-where .fs-primary > .fs-field:nth-child(6) {
+    grid-column: span 6;
   }
 
   #hs-app .hs-run-row {
@@ -403,8 +432,9 @@
 
   .hs-table tr[data-token] {
     display: grid;
-    grid-template-columns: 2rem minmax(0, 1fr) auto;
-    gap: 0.2rem 0.55rem;
+    grid-template-columns: 1.7rem minmax(0, 1fr) auto;
+    gap: 0.25rem 0.55rem;
+    align-items: baseline;
     margin-bottom: 0.55rem;
     padding: 0.7rem;
     border: 1px solid var(--fs-line);
@@ -417,53 +447,60 @@
     border: 0;
   }
 
-  .hs-table tr[data-token] > td:nth-child(1) {
+  .hs-table tr[data-token] > .hs-cell-rank {
     grid-column: 1;
-    grid-row: 1 / 3;
-    color: var(--fs-muted);
-  }
-
-  .hs-table tr[data-token] > td:nth-child(2) {
-    grid-column: 3;
     grid-row: 1;
   }
 
-  .hs-table tr[data-token] > td:nth-child(3) {
+  .hs-table tr[data-token] > .hs-cell-hotel {
     grid-column: 2;
     grid-row: 1;
+    width: auto;
     min-width: 0;
   }
 
-  .hs-table tr[data-token] > td:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2;
-    font-size: 0.82rem;
-  }
-
-  .hs-table tr[data-token] > td:nth-child(6) {
-    grid-column: 2 / 4;
-  }
-
-  .hs-table tr[data-token] > td:nth-child(10) {
+  .hs-table tr[data-token] > .hs-cell-score {
     grid-column: 3;
-    grid-row: 2;
+    grid-row: 1;
     text-align: right;
   }
 
-  .hs-table tr[data-token] > td:nth-child(11) {
+  /* The table header is hidden on mobile, so label the score. */
+  .hs-table tr[data-token] > .hs-cell-score::after {
+    content: "comfort";
+    display: block;
+    color: var(--fs-muted);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .hs-table tr[data-token] > .hs-cell-rating {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: left;
+    font-size: 0.82rem;
+  }
+
+  .hs-table tr[data-token] > .hs-cell-price {
+    grid-column: 3;
+    grid-row: 2;
+    text-align: right;
+    font-size: 0.82rem;
+  }
+
+  .hs-table tr[data-token] > .hs-cell-low {
+    display: none;
+  }
+
+  .hs-table tr[data-token] > .hs-cell-deal {
     grid-column: 2 / 4;
   }
 
-  .hs-table tr[data-token] > td:nth-child(12) {
+  .hs-table tr[data-token] > .hs-facts {
     grid-column: 2 / 4;
     white-space: normal;
-  }
-
-  .hs-table tr[data-token] > td:nth-child(5),
-  .hs-table tr[data-token] > td:nth-child(7),
-  .hs-table tr[data-token] > td:nth-child(8),
-  .hs-table tr[data-token] > td:nth-child(9) {
-    display: none;
   }
 
   .hs-table tr[data-token] > td.hs-cell-empty {

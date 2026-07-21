@@ -14,7 +14,6 @@ export type HotelFormState = {
   minComfort: number;
   strictness: "confirmed_only" | "confirmed_or_unknown";
   requireAC: boolean;
-  requireElevator: boolean;
   requireFrontDesk24h: boolean;
   brandedOnly: boolean;
   minReviews: 200 | 500 | 1000;
@@ -44,7 +43,6 @@ export const DEFAULT_HOTEL_FORM: HotelFormState = {
   minComfort: 0,
   strictness: "confirmed_or_unknown",
   requireAC: false,
-  requireElevator: false,
   requireFrontDesk24h: false,
   brandedOnly: false,
   minReviews: 200,
@@ -118,7 +116,6 @@ export function formStateFromSearchParams(
         ? "confirmed_only"
         : "confirmed_or_unknown",
     requireAC: params.get("requireAC") === "1",
-    requireElevator: params.get("requireElevator") === "1",
     requireFrontDesk24h: params.get("requireDesk") === "1",
     brandedOnly: params.get("brandedOnly") === "1",
     minReviews,
@@ -149,7 +146,6 @@ export function formStateToSearchParams(form: HotelFormState): URLSearchParams {
     p.set("strictness", form.strictness);
   }
   if (form.requireAC) p.set("requireAC", "1");
-  if (form.requireElevator) p.set("requireElevator", "1");
   if (form.requireFrontDesk24h) p.set("requireDesk", "1");
   if (form.brandedOnly) p.set("brandedOnly", "1");
   if (form.minReviews !== 200) p.set("minReviews", String(form.minReviews));

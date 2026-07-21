@@ -175,8 +175,10 @@ export function mountHotelSearch(root: HTMLElement): void {
   const creditHint = root.querySelector<HTMLElement>("#hs-credit-hint");
 
   populateCities(citySelect);
-  const today = new Date().toISOString().slice(0, 10);
-  for (const sel of ["#hs-checkin-start", "#hs-checkin-end"]) {
+  // Local date, not UTC: same-day check-in must stay selectable in the
+  // evening for timezones behind UTC.
+  const today = localIsoDate();
+  for (const sel of ["#hs-checkin-start", "#hs-checkout"]) {
     const el = root.querySelector<HTMLInputElement>(sel);
     if (el) el.min = today;
   }
@@ -192,7 +194,6 @@ export function mountHotelSearch(root: HTMLElement): void {
   let activeController: AbortController | undefined;
   let latestRows: HotelRow[] = [];
   let latestMeta: Record<string, unknown> = {};
-  let pendingSpendKey: string | null = null;
 
   // Controls that only filter/sort already-loaded rows. Changing them never
   // costs credits and should update the table instantly.
@@ -201,7 +202,6 @@ export function mountHotelSearch(root: HTMLElement): void {
     "hs-sort",
     "hs-strictness",
     "hs-require-ac",
-    "hs-require-elevator",
     "hs-require-desk",
     "hs-branded-only",
     "hs-min-reviews",
@@ -231,10 +231,7 @@ export function mountHotelSearch(root: HTMLElement): void {
         renderTable(results, visible, form);
         renderFooter(footer, visible, latestMeta);
       }
-      return;
     }
-    pendingSpendKey = null;
-    runBtn.textContent = "Search hotels";
   });
 
   root.querySelector("#hs-min-comfort")?.addEventListener("input", () => {
@@ -283,11 +280,9 @@ export function mountHotelSearch(root: HTMLElement): void {
         "No dates set — the search returns hotels without prices.";
       return;
     }
-    const windows = estimateWindows(state);
-    creditHint.textContent =
-      windows <= 1
-        ? "Prices for 1 date combination · up to 1 extra credit."
-        : `Prices for ${windows} date combinations · up to ${windows} extra credits.`;
+    const checkOut = checkOutDate(state);
+    const nights = state.nightsMin;
+    creditHint.textContent = `Prices for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}) · up to 1 extra credit.`;
   }
 
   cancelBtn.addEventListener("click", () => {
@@ -322,7 +317,7 @@ export function mountHotelSearch(root: HTMLElement): void {
         await loadIndex(citySlug);
         if (hasDates(form)) {
           summary.textContent =
-            "Saved hotels loaded. Search to check the price cost before it runs.";
+            "Saved hotels loaded. Search to fetch prices for your dates.";
         }
         return;
       }
@@ -330,14 +325,14 @@ export function mountHotelSearch(root: HTMLElement): void {
         ? `No saved hotels yet. A new search will use about ${plan.costs?.scanCreditsEstimate ?? 6} credits.`
         : "Ready.";
     } catch {
-      summary.textContent = "Ready. Search to check the cost before it runs.";
+      summary.textContent = "Ready.";
     }
   }
 
   async function runSearch(state: HotelFormState): Promise<void> {
     const controller = new AbortController();
     activeController = controller;
-    setBusy(true, "Checking cost…");
+    setBusy(true, "Searching…");
     showProgress("Checking saved results");
     banners.innerHTML = "";
     results.innerHTML = "";
@@ -365,40 +360,11 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
 
     const estimate = plan.costs?.scanCreditsEstimate ?? 6;
-    const priceEstimate = hasDates(state)
-      ? (plan.costs?.priceSweepEstimate ?? estimateWindows(state))
-      : 0;
     const onHand = plan.index?.propertiesOnHand ?? 0;
     const fresh = plan.index?.fresh ?? false;
-    const needsScan = !(onHand > 0 && fresh && !state.q && !bbox);
-    const plannedSpend = (needsScan ? estimate : 0) + priceEstimate;
-    const spendKey = JSON.stringify({
-      citySlug,
-      q,
-      bbox,
-      dates: [
-        state.checkInStart,
-        state.checkInEnd,
-        state.nightsMin,
-        state.nightsMax,
-        state.adults,
-      ],
-      scanPages: state.scanPages,
-      plannedSpend,
-    });
-    if (plannedSpend > 0 && pendingSpendKey !== spendKey) {
-      pendingSpendKey = spendKey;
-      summary.textContent = `This search can use up to ${plannedSpend} credits (${needsScan ? `hotels: about ${estimate}` : "saved hotels"}${priceEstimate ? `; prices: up to ${priceEstimate}` : ""}).`;
-      banners.innerHTML = `<div class="fs-banner">Nothing has been charged yet. Confirm to run the search.</div>`;
-      hideProgress();
-      setBusy(false);
-      runBtn.textContent = `Confirm search (~${plannedSpend} credits)`;
-      return;
-    }
-    pendingSpendKey = null;
 
     if (onHand > 0 && fresh && !state.q && !bbox) {
-      summary.textContent = `Using ${onHand} saved hotels.`;
+      summary.textContent = `Using ${onHand} saved hotel${onHand === 1 ? "" : "s"}.`;
       await loadIndex(citySlug, controller.signal);
       if (hasDates(state)) {
         await loadPrices(citySlug, state, controller.signal);
@@ -531,8 +497,8 @@ export function mountHotelSearch(root: HTMLElement): void {
     signal?: AbortSignal,
   ): Promise<void> {
     if (!hasDates(state)) return;
-    const estimate = `~${Math.min(21, estimateWindows(state))} credits`;
-    summary.textContent = `Checking prices for the selected dates (${estimate}; cached for six hours)…`;
+    summary.textContent =
+      "Checking prices for your dates (~1 credit; cached for six hours)…";
     showProgress("Checking prices");
     const res = await fetch("/api/hotels/prices", {
       method: "POST",
@@ -540,11 +506,12 @@ export function mountHotelSearch(root: HTMLElement): void {
       body: JSON.stringify({
         citySlug,
         checkInStart: state.checkInStart,
-        checkInEnd: state.checkInEnd || state.checkInStart,
+        checkInEnd: state.checkInStart,
         nightsMin: state.nightsMin,
-        nightsMax: Math.max(state.nightsMin, state.nightsMax),
+        nightsMax: state.nightsMin,
         adults: state.adults,
-        topUp: estimateWindows(state) === 1,
+        // Single window → top-up missing top-20 prices is allowed.
+        topUp: true,
         // TA join is optional (+≤5 credits); keep price sweep ≤ window count.
         joinTa: false,
       }),
@@ -673,14 +640,12 @@ function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   setVal(root, "#hs-q", form.q);
   setSelect(root, "#hs-neighborhood", form.neighborhood);
   setVal(root, "#hs-checkin-start", form.checkInStart);
-  setVal(root, "#hs-checkin-end", form.checkInEnd);
-  setVal(root, "#hs-nights-min", String(form.nightsMin));
-  setVal(root, "#hs-nights-max", String(form.nightsMax));
+  // Legacy URLs carry checkInEnd + nights ranges; collapse to one stay.
+  setVal(root, "#hs-checkout", form.checkInStart ? checkOutDate(form) : "");
   setVal(root, "#hs-adults", String(form.adults));
   setVal(root, "#hs-min-comfort", String(form.minComfort));
   setSelect(root, "#hs-strictness", form.strictness);
   setCheck(root, "#hs-require-ac", form.requireAC);
-  setCheck(root, "#hs-require-elevator", form.requireElevator);
   setCheck(root, "#hs-require-desk", form.requireFrontDesk24h);
   setCheck(root, "#hs-branded-only", form.brandedOnly);
   setSelect(root, "#hs-min-reviews", String(form.minReviews));
@@ -708,21 +673,21 @@ function readForm(root: HTMLElement): HotelFormState {
     ? (sortRaw as HotelFormState["sort"])
     : "comfort";
   const budgetRaw = root.querySelector<HTMLInputElement>("#hs-budget-max")?.value;
+  const checkIn =
+    root.querySelector<HTMLInputElement>("#hs-checkin-start")?.value ?? "";
+  const checkOut =
+    root.querySelector<HTMLInputElement>("#hs-checkout")?.value ?? "";
+  const nights = nightsBetween(checkIn, checkOut) ?? 2;
   return {
     city: city || DEFAULT_HOTEL_FORM.city,
     q: root.querySelector<HTMLInputElement>("#hs-q")?.value.trim() ?? "",
     neighborhood:
       root.querySelector<HTMLSelectElement>("#hs-neighborhood")?.value ?? "",
-    checkInStart:
-      root.querySelector<HTMLInputElement>("#hs-checkin-start")?.value ?? "",
-    checkInEnd:
-      root.querySelector<HTMLInputElement>("#hs-checkin-end")?.value ?? "",
-    nightsMin: Number(
-      root.querySelector<HTMLInputElement>("#hs-nights-min")?.value ?? 2,
-    ),
-    nightsMax: Number(
-      root.querySelector<HTMLInputElement>("#hs-nights-max")?.value ?? 2,
-    ),
+    checkInStart: checkIn,
+    // A single check-in date with nights derived from the check-out picker.
+    checkInEnd: checkIn,
+    nightsMin: nights,
+    nightsMax: nights,
     adults: Number(
       root.querySelector<HTMLInputElement>("#hs-adults")?.value ?? 2,
     ),
@@ -737,9 +702,6 @@ function readForm(root: HTMLElement): HotelFormState {
         ? "confirmed_only"
         : "confirmed_or_unknown",
     requireAC: !!root.querySelector<HTMLInputElement>("#hs-require-ac")?.checked,
-    requireElevator: !!root.querySelector<HTMLInputElement>(
-      "#hs-require-elevator",
-    )?.checked,
     requireFrontDesk24h: !!root.querySelector<HTMLInputElement>(
       "#hs-require-desk",
     )?.checked,
@@ -755,37 +717,50 @@ function readForm(root: HTMLElement): HotelFormState {
   };
 }
 
+function localIsoDate(d = new Date()): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function nightsBetween(checkIn: string, checkOut: string): number | null {
+  if (!checkIn || !checkOut) return null;
+  const a = Date.parse(`${checkIn}T00:00:00Z`);
+  const b = Date.parse(`${checkOut}T00:00:00Z`);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+  const nights = Math.round((b - a) / 86400000);
+  return nights >= 1 ? Math.min(14, nights) : null;
+}
+
+function addDaysIso(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function checkOutDate(form: HotelFormState): string {
+  return addDaysIso(form.checkInStart, Math.max(1, form.nightsMin));
+}
+
+/** Keep check-out after check-in; default to a 2-night stay. */
 function normalizeRanges(root: HTMLElement, changedId: string): void {
   const start = root.querySelector<HTMLInputElement>("#hs-checkin-start");
-  const end = root.querySelector<HTMLInputElement>("#hs-checkin-end");
-  if (start && end && end.value && start.value && end.value < start.value) {
-    if (changedId === "hs-checkin-end") start.value = end.value;
-    else end.value = start.value;
+  const end = root.querySelector<HTMLInputElement>("#hs-checkout");
+  if (!start || !end) return;
+  if (start.value && !end.value) {
+    end.value = addDaysIso(start.value, 2);
+    return;
   }
-  const min = root.querySelector<HTMLInputElement>("#hs-nights-min");
-  const max = root.querySelector<HTMLInputElement>("#hs-nights-max");
-  if (min && max && Number(max.value) < Number(min.value)) {
-    if (changedId === "hs-nights-max") min.value = max.value;
-    else max.value = min.value;
+  if (!start.value || !end.value) return;
+  if (end.value <= start.value) {
+    if (changedId === "hs-checkout") start.value = addDaysIso(end.value, -1);
+    else end.value = addDaysIso(start.value, 2);
   }
 }
 
 function hasDates(form: HotelFormState): boolean {
   return Boolean(form.checkInStart);
-}
-
-function estimateWindows(form: HotelFormState): number {
-  const start = form.checkInStart;
-  const end = form.checkInEnd || form.checkInStart;
-  if (!start) return 0;
-  const a = Date.parse(`${start}T00:00:00Z`);
-  const b = Date.parse(`${end}T00:00:00Z`);
-  if (!Number.isFinite(a) || !Number.isFinite(b) || b < a) return 0;
-  const days = Math.floor((b - a) / 86400000) + 1;
-  const minNights = Math.max(1, form.nightsMin);
-  const maxNights = Math.max(minNights, form.nightsMax);
-  const nights = maxNights - minNights + 1;
-  return Math.min(21, days * nights);
 }
 
 function syncUrl(form: HotelFormState): void {
@@ -812,16 +787,6 @@ function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
     if (
       form.requireAC &&
       !factOk(r.facts?.hasAC, r.factValues?.hasAC, form.strictness)
-    ) {
-      return false;
-    }
-    if (
-      form.requireElevator &&
-      !factOk(
-        r.facts?.hasElevator,
-        r.factValues?.hasElevator,
-        form.strictness,
-      )
     ) {
       return false;
     }
@@ -878,7 +843,7 @@ function factOk(
 
 function countUnknown(r: HotelRow): number {
   const f = r.facts ?? {};
-  return [f.hasAC, f.hasElevator, f.hasWifi, f.frontDesk24h].filter(
+  return [f.hasAC, f.hasWifi, f.frontDesk24h].filter(
     (s) => s === "unknown",
   ).length;
 }
@@ -896,55 +861,52 @@ function renderTable(
     container.innerHTML = `<div class="fs-empty"><strong>Set dates for best-deal sort.</strong><span>Pick a check-in range, then search again.</span></div>`;
     return;
   }
+  // Price columns only appear once at least one row has price data,
+  // so a dateless search isn't padded with empty "—" columns.
+  const hasPrices = rows.some(
+    (r) => (r.nightly_usd ?? r.nightlyUsd) != null || r.deal_pct != null,
+  );
+  const columnCount = hasPrices ? 8 : 6;
   const body = rows
     .map((r, i) => {
       const low =
         r.lowStarShare != null ? `${(r.lowStarShare * 100).toFixed(1)}%` : "—";
-      const worst =
-        r.worstCategory && r.worstCategoryNeg != null
-          ? `<span class="hs-chip ${r.worstCategoryNeg >= 0.15 ? "hs-chip-bad" : ""}">${escapeHtml(r.worstCategory)} ${(r.worstCategoryNeg * 100).toFixed(0)}% neg</span>`
-          : "—";
       const plant =
         (r.plantPenalty ?? 0) >= 5
-          ? `<span class="hs-chip hs-chip-bad">plant −${Number(r.plantPenalty).toFixed(0)}</span>`
+          ? `<span class="hs-chip hs-chip-bad" title="Penalized for room-condition complaints">room issues −${Number(r.plantPenalty).toFixed(0)}</span>`
           : "";
       const facts = factIcons(r);
       const href = datedHotelUrl(r.googleHotelsUrl, form);
       const nightly = r.nightly_usd ?? r.nightlyUsd;
       const stayDates = r.bestStay
-        ? `${r.bestStay.checkIn}→${r.bestStay.checkOut}`
+        ? formatDateRange(r.bestStay.checkIn, r.bestStay.checkOut)
         : "";
-      const deal =
-        r.deal_pct != null
-          ? `<span class="hs-chip ${r.deal_pct >= 0.2 ? "hs-chip-good" : ""}">${r.dealMethod === "fallback" ? `${Math.abs(r.deal_pct * 100).toFixed(0)}% ${r.deal_pct >= 0 ? "better" : "worse"} value than the median` : `${Math.abs(r.deal_pct * 100).toFixed(0)}% ${r.deal_pct >= 0 ? "below" : "above"} the expected price`}</span>`
-          : "—";
-      const ta =
-        r.taRating != null
-          ? `${r.taRating.toFixed(1)}${r.concordance && r.concordance !== "unknown" ? ` <span class="fs-muted">${escapeHtml(r.concordance)}</span>` : ""}`
-          : "—";
+      const deal = r.deal_pct != null ? dealChip(r.deal_pct, r.dealMethod) : "—";
+      const priceCells = hasPrices
+        ? `<td class="hs-cell-price hs-cell-num ${nightly == null ? "hs-cell-empty" : ""}">${nightly != null ? `$${Math.round(nightly)}` : "—"}${stayDates ? `<div class="fs-muted">${escapeHtml(stayDates)}</div>` : ""}</td>
+        <td class="hs-cell-deal ${deal === "—" ? "hs-cell-empty" : ""}">${deal}</td>`
+        : "";
       return `<tr data-token="${escapeHtml(r.token)}">
-        <td>${i + 1}</td>
-        <td><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
-        <td><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant} <button type="button" class="hs-row-toggle" aria-expanded="false" aria-label="Show details for ${escapeHtml(r.name)}">Details</button></td>
-        <td>${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${r.reviews ?? 0})</span></td>
-        <td>${low}</td>
-        <td class="${worst === "—" ? "hs-cell-empty" : ""}">${worst}</td>
-        <td>${r.hotelClass ?? "—"}</td>
-        <td>T${r.brandTier ?? 0}</td>
-        <td>${ta}</td>
-        <td class="${nightly == null ? "hs-cell-empty" : ""}">${nightly != null ? `$${Math.round(nightly)}` : "—"}<div class="fs-muted">${escapeHtml(stayDates)}</div></td>
-        <td class="${deal === "—" ? "hs-cell-empty" : ""}">${deal}</td>
+        <td class="hs-cell-rank">${i + 1}</td>
+        <td class="hs-cell-score"><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
+        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant} <button type="button" class="hs-row-toggle" aria-expanded="false" aria-label="Show details for ${escapeHtml(r.name)}">Details</button></td>
+        <td class="hs-cell-rating hs-cell-num">${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${formatReviewCount(r.reviews)})</span></td>
+        <td class="hs-cell-low hs-cell-num">${low}</td>
+        ${priceCells}
         <td class="hs-facts">${facts}</td>
       </tr>
       <tr class="hs-detail" hidden>
-        <td colspan="12">${detailCard(r)}</td>
+        <td colspan="${columnCount}">${detailCard(r)}</td>
       </tr>`;
     })
     .join("");
 
+  const priceHead = hasPrices
+    ? `<th class="hs-cell-num">$/night</th><th>Deal</th>`
+    : "";
   container.innerHTML = `<div class="hs-table-wrap"><table class="hs-table">
     <thead><tr>
-      <th>#</th><th>Comfort</th><th>Hotel</th><th>Rating</th><th>1–2★ %</th><th>Review issue</th><th>Class</th><th>Brand</th><th>Tripadvisor</th><th>$/night</th><th>Deal</th><th>Amenities</th>
+      <th class="hs-cell-rank">#</th><th>Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th><th class="hs-cell-num" title="Share of 1- and 2-star reviews">1–2★</th>${priceHead}<th>Amenities</th>
     </tr></thead>
     <tbody>${body}</tbody>
   </table></div>`;
@@ -975,6 +937,44 @@ function renderTable(
   });
 }
 
+function formatReviewCount(reviews: number | null | undefined): string {
+  return (reviews ?? 0).toLocaleString("en-US");
+}
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+/** "2026-08-10", "2026-08-12" → "Aug 10–12" (or "Aug 30 – Sep 1"). */
+function formatDateRange(checkIn: string, checkOut: string): string {
+  const a = checkIn.split("-").map(Number);
+  const b = checkOut.split("-").map(Number);
+  if (a.length !== 3 || b.length !== 3) return `${checkIn}→${checkOut}`;
+  const [, am, ad] = a as [number, number, number];
+  const [, bm, bd] = b as [number, number, number];
+  const aLabel = `${MONTHS[am - 1]} ${ad}`;
+  return am === bm
+    ? `${aLabel}–${bd}`
+    : `${aLabel} – ${MONTHS[bm - 1]} ${bd}`;
+}
+
+function dealChip(
+  dealPct: number,
+  method: "fit" | "fallback" | null | undefined,
+): string {
+  const pct = `${Math.abs(dealPct * 100).toFixed(0)}%`;
+  const better = dealPct >= 0;
+  const label = better ? `${pct} under` : `${pct} over`;
+  const explanation =
+    method === "fallback"
+      ? `${pct} ${better ? "better" : "worse"} value than the city median`
+      : `${pct} ${better ? "below" : "above"} the price expected for this quality`;
+  const tone =
+    dealPct >= 0.2 ? "hs-chip-good" : dealPct <= -0.15 ? "hs-chip-bad" : "";
+  return `<span class="hs-chip ${tone}" title="${escapeHtml(explanation)}">${label}</span>`;
+}
+
 function datedHotelUrl(
   raw: string | null | undefined,
   form?: HotelFormState,
@@ -1000,7 +1000,6 @@ function factIcons(r: HotelRow): string {
   const map: [string, FactStatus | undefined][] = [
     ["AC", r.facts?.hasAC],
     ["Wi‑Fi", r.facts?.hasWifi],
-    ["Elev", r.facts?.hasElevator],
     ["Desk", r.facts?.frontDesk24h],
   ];
   for (const [label, status] of map) {
@@ -1078,7 +1077,6 @@ function detailCard(r: HotelRow): string {
 function factLists(r: HotelRow): string {
   const labels: Array<[string, keyof NonNullable<HotelRow["facts"]>]> = [
     ["Air conditioning", "hasAC"],
-    ["Elevator", "hasElevator"],
     ["Wi-Fi", "hasWifi"],
     ["24-hour front desk", "frontDesk24h"],
   ];
