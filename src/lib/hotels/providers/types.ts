@@ -168,6 +168,25 @@ export type TripadvisorSearchResult = {
   raw: unknown;
 };
 
+export type ProviderReview = {
+  id: string;
+  title?: string;
+  text: string;
+  rating?: number;
+  date?: string;
+  travel_date?: string;
+  link?: string;
+};
+
+export type TripadvisorReviewsResult = {
+  placeId: string;
+  reviews: ProviderReview[];
+  totalReviews?: number;
+  nextPage?: number;
+  searchId?: string;
+  raw: unknown;
+};
+
 export interface HotelDataProvider {
   listProperties(
     query: ListPropertiesQuery,
@@ -178,4 +197,10 @@ export interface HotelDataProvider {
 
   /** Optional — P2 TA concordance. */
   searchTripadvisor?(q: string): Promise<TripadvisorSearchResult>;
+
+  /** Optional — P3 review-text signals. */
+  getTripadvisorReviews?(
+    placeId: string,
+    page?: number,
+  ): Promise<TripadvisorReviewsResult>;
 }

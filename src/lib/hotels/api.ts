@@ -3,6 +3,7 @@ import {
   INDEX_TTL_DAYS,
   MAX_CREDITS_PER_SCAN,
   PRICE_CACHE_HIT_THRESHOLD,
+  PRICE_TOPUP_MAX_CALLS,
   WINDOW_CAP,
 } from "./constants";
 import { createD1HotelsRepository, type HotelsD1 } from "./db";
@@ -15,6 +16,7 @@ import {
 import { googleHotelsSearchUrl, mapListProperty } from "./mapper";
 import { scoreProperty, SCORING_VERSION } from "./scoring";
 import type { ScanContext } from "./domain";
+import type { PropertyFacts } from "./domain";
 import type { SearchApiListProperty } from "./providers/types";
 import {
   planPriceSweepCredits,
@@ -22,6 +24,11 @@ import {
 } from "./prices";
 import { generateStayWindows } from "./windows";
 import { matchTripadvisor, ratingConcordance } from "./ta";
+import {
+  analyzeHotelReviews,
+  getCachedReviewAnalysis,
+} from "./reviews";
+import { REVIEW_MODEL_VERSION } from "./review-signals";
 
 export type HotelsEnv = {
   hotels_index?: HotelsD1;
@@ -42,7 +49,8 @@ export function isHotelsApiPath(pathname: string): boolean {
     pathname === INDEX_PATH ||
     pathname === RESCORE_PATH ||
     pathname === PRICES_PATH ||
-    pathname.startsWith("/api/hotels/property/")
+    pathname.startsWith("/api/hotels/property/") ||
+    pathname.startsWith("/api/hotels/reviews/")
   );
 }
 
@@ -58,6 +66,9 @@ export async function handleHotelsApi(
   if (url.pathname === PRICES_PATH) return handlePrices(request, env, url);
   if (url.pathname.startsWith("/api/hotels/property/")) {
     return handleProperty(request, env, url);
+  }
+  if (url.pathname.startsWith("/api/hotels/reviews/")) {
+    return handleReviews(request, env, url);
   }
   return json({ ok: false, error: "not_found" }, 404);
 }
@@ -108,7 +119,9 @@ async function handlePlan(
     });
     windowCount = windows.length;
     // Cold estimate: one list call per window (cache may skip some).
-    priceSweepEstimate = planPriceSweepCredits(windows, 0);
+    priceSweepEstimate =
+      planPriceSweepCredits(windows, 0) +
+      (windows.length === 1 ? PRICE_TOPUP_MAX_CALLS : 0);
   }
 
   return json({
@@ -129,6 +142,7 @@ async function handlePlan(
       windowCount,
       windowCap: WINDOW_CAP,
       priceCacheHitThreshold: PRICE_CACHE_HIT_THRESHOLD,
+      singleWindowTopupMax: PRICE_TOPUP_MAX_CALLS,
       maxCreditsPerScan: MAX_CREDITS_PER_SCAN,
       mode: useFixtures(env) ? "fixture" : "live",
     },
@@ -252,6 +266,16 @@ async function handleIndex(
   }
   const t0 = Date.now();
   const rows = await db.listByCityScore(city.id, 100);
+  const reviewRows = await db.listLatestReviewFeatures(
+    rows.map((row) => row.token),
+    REVIEW_MODEL_VERSION,
+  );
+  const reviewsByToken = new Map(
+    reviewRows.map((row) => [
+      row.token,
+      JSON.parse(row.features_json) as unknown,
+    ]),
+  );
   return json({
     ok: true,
     city: citySlug,
@@ -279,7 +303,14 @@ async function handleIndex(
           hasWifi: facts?.hasWifi?.status ?? "unknown",
           frontDesk24h: facts?.frontDesk24h?.status ?? "unknown",
         },
+        factValues: {
+          hasAC: facts?.hasAC?.value ?? null,
+          hasElevator: facts?.hasElevator?.value ?? null,
+          hasWifi: facts?.hasWifi?.value ?? null,
+          frontDesk24h: facts?.frontDesk24h?.value ?? null,
+        },
         factsFull: facts,
+        reviewFeatures: reviewsByToken.get(r.token) ?? null,
         subscores,
         googleHotelsUrl: googleHotelsSearchUrl(
           r.name,
@@ -413,12 +444,59 @@ async function handlePrices(
           taRating: match.rating,
           taReviews: match.reviews,
         });
+        if (row.raw_json) {
+          const mapped = mapListProperty(
+            JSON.parse(row.raw_json) as SearchApiListProperty,
+            {
+              citySlug,
+              cityDisplay: display,
+              provider: row.provider,
+              ta: {
+                rating: match.rating,
+                reviews: match.reviews,
+                rank: row.ta_rank,
+                total: row.ta_total,
+              },
+              whitelist: row.whitelist ? JSON.parse(row.whitelist) : [],
+            },
+          );
+          if (mapped) {
+            const facts = row.facts_json
+              ? (JSON.parse(row.facts_json) as PropertyFacts)
+              : undefined;
+            await db.upsertScored(
+              city.id,
+              scoreProperty(
+                mapped,
+                {
+                  citySlug,
+                  cityMeanRating: city.mean_rating ?? CITY_MEAN_FALLBACK,
+                  checkIn: "",
+                  checkOut: "",
+                  adults,
+                  evidenceStrictness: "confirmed_or_unknown",
+                },
+                facts,
+              ),
+            );
+          }
+        }
         taJoined += 1;
       }
     }
 
     // Merge index identity + price fields for UI.
     const indexRows = await db.listByCityScore(city.id, 100);
+    const reviewRows = await db.listLatestReviewFeatures(
+      indexRows.map((row) => row.token),
+      REVIEW_MODEL_VERSION,
+    );
+    const reviewsByToken = new Map(
+      reviewRows.map((row) => [
+        row.token,
+        JSON.parse(row.features_json) as unknown,
+      ]),
+    );
     const pricedByToken = new Map(sweep.properties.map((p) => [p.token, p]));
     const properties = indexRows.map((r) => {
       const priced = pricedByToken.get(r.token);
@@ -443,6 +521,13 @@ async function handlePrices(
           hasWifi: facts?.hasWifi?.status ?? "unknown",
           frontDesk24h: facts?.frontDesk24h?.status ?? "unknown",
         },
+        factValues: {
+          hasAC: facts?.hasAC?.value ?? null,
+          hasElevator: facts?.hasElevator?.value ?? null,
+          hasWifi: facts?.hasWifi?.value ?? null,
+          frontDesk24h: facts?.frontDesk24h?.value ?? null,
+        },
+        reviewFeatures: reviewsByToken.get(r.token) ?? null,
         subscores,
         lat: r.lat,
         lng: r.lng,
@@ -583,6 +668,75 @@ async function handleProperty(
   }
 }
 
+async function handleReviews(
+  request: Request,
+  env: HotelsEnv,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "GET" && request.method !== "POST") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+  if (!env.hotels_index) {
+    return json({ ok: false, error: "db_unavailable" }, 503);
+  }
+  const token = decodeURIComponent(
+    url.pathname.replace("/api/hotels/reviews/", ""),
+  );
+  if (!token) return json({ ok: false, error: "token_required" }, 400);
+
+  const db = createD1HotelsRepository(env.hotels_index);
+  const property = await db.getPropertyByToken(token);
+  if (!property) return json({ ok: false, error: "property_not_found" }, 404);
+
+  const cached = await getCachedReviewAnalysis(db, token);
+  if (request.method === "GET") {
+    return json({
+      ok: true,
+      cached: cached != null,
+      modelVersion: REVIEW_MODEL_VERSION,
+      analysis: cached,
+      creditsEstimate: cached ? 0 : 2,
+    });
+  }
+
+  const city = await db.getCityById(property.city_id);
+  if (!city) return json({ ok: false, error: "city_not_found" }, 404);
+  if (!liveEnabled(env)) {
+    return json({ ok: false, error: "live_mode_disabled" }, 403);
+  }
+  if (!env.SEARCH_API_IO_KEY) {
+    return json({ ok: false, error: "searchapi_key_missing" }, 503);
+  }
+
+  try {
+    const provider = new SearchApiHotelProvider({
+      apiKey: env.SEARCH_API_IO_KEY,
+      liveMode: true,
+    });
+    const result = await analyzeHotelReviews({
+      property,
+      cityDisplay: city.display,
+      provider,
+      db,
+      force: url.searchParams.get("force") === "1",
+    });
+    return json({
+      ok: true,
+      cached: result.cacheHit,
+      analysis: result,
+      credits_used: result.creditsUsed,
+    });
+  } catch (e) {
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : "review_analysis_failed",
+      },
+      500,
+    );
+  }
+}
+
 async function handleRescore(
   request: Request,
   env: HotelsEnv,
@@ -620,9 +774,19 @@ async function handleRescore(
       citySlug,
       cityDisplay: cityCfg?.display ?? city.display,
       provider: row.provider,
+      ta: {
+        rating: row.ta_rating,
+        reviews: row.ta_reviews,
+        rank: row.ta_rank,
+        total: row.ta_total,
+      },
+      whitelist: row.whitelist ? JSON.parse(row.whitelist) : [],
     });
     if (!mapped) continue;
-    const scored = scoreProperty(mapped, ctx);
+    const existingFacts = row.facts_json
+      ? (JSON.parse(row.facts_json) as PropertyFacts)
+      : undefined;
+    const scored = scoreProperty(mapped, ctx, existingFacts);
     await db.upsertScored(city.id, scored);
     updated += 1;
   }

@@ -1,4 +1,5 @@
 import citiesConfig from "./config/cities.json";
+import whitelistsConfig from "./config/whitelists.json";
 import {
   CITY_MEAN_FALLBACK,
   MAX_CREDITS_PER_SCAN,
@@ -26,6 +27,25 @@ export type CityConfig = {
   gl?: string;
   neighborhoods?: { name: string; bbox: number[] }[];
 };
+
+type WhitelistEntry = {
+  name: string;
+  city: string;
+  memberships: string[];
+};
+
+function whitelistMemberships(name: string, city: string): string[] {
+  const normalize = (value: string) =>
+    value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const targetName = normalize(name);
+  const targetCity = normalize(city);
+  const match = (whitelistsConfig as WhitelistEntry[]).find(
+    (entry) =>
+      normalize(entry.name) === targetName &&
+      normalize(entry.city) === targetCity,
+  );
+  return match?.memberships ?? [];
+}
 
 export function getCityConfig(slug: string): CityConfig | undefined {
   return (citiesConfig as CityConfig[]).find((c) => c.slug === slug);
@@ -169,6 +189,7 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
       checkOut,
       provider: "searchapi",
       observedAt,
+      whitelist: whitelistMemberships(raw.name ?? "", display),
     });
     if (mapped) properties.push(mapped);
   }

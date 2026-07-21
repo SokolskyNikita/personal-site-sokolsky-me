@@ -844,7 +844,6 @@ a {
 }
 
 .fs-result-price strong,
-.fs-result-price span,
 .fs-result-duration strong,
 .fs-result-duration span {
   display: block;
@@ -857,81 +856,133 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
-.fs-result-price span {
-  margin-top: 0.12rem;
+.fs-result-od {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.35rem;
+  margin-top: 0.2rem;
   color: var(--fs-muted);
   font-size: 0.78rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+}
+
+.fs-result-od-arrow {
+  color: color-mix(in srgb, var(--fs-muted) 72%, var(--fs-ink));
+  font-size: 0.72rem;
+}
+
+.fs-result-trip-length {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--fs-accent);
+  font-size: 0.74rem;
+  font-weight: 600;
 }
 
 .fs-result-journey {
   display: grid;
-  gap: 0.65rem;
+  gap: 0.75rem;
   min-width: 0;
 }
 
 .fs-result-leg {
+  display: grid;
+  gap: 0.35rem;
   min-width: 0;
 }
 
 .fs-result-leg-return {
-  padding-top: 0.65rem;
-  border-top: 1px solid color-mix(in srgb, var(--fs-line) 72%, transparent);
-}
-
-.fs-result-leg-header {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.22rem 0.65rem;
-}
-
-.fs-result-carrier {
-  flex: 0 1 auto;
-  overflow: hidden;
-  font-size: 0.9rem;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.fs-result-airports {
-  color: var(--fs-muted);
-  font-family: var(--fs-mono);
-  font-size: 0.73rem;
-  white-space: nowrap;
-}
-
-.fs-result-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.2rem 0.65rem;
-  margin-top: 0.3rem;
-  color: var(--fs-muted);
-  font-size: 0.78rem;
-  line-height: 1.4;
+  padding-top: 0.7rem;
+  border-top: 1px dashed color-mix(in srgb, var(--fs-line) 88%, var(--fs-ink));
 }
 
 .fs-result-leg-label {
   color: var(--fs-accent);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 650;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.fs-result-trip-length {
-  color: var(--fs-accent) !important;
+.fs-result-schedule {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.fs-result-times {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.02rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.fs-result-times time {
+  font-style: normal;
+}
+
+.fs-result-time-sep {
+  flex: 0 0 1.6rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--fs-line-strong) 70%, transparent);
+}
+
+.fs-result-airports {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--fs-muted);
+  font-family: var(--fs-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.fs-result-route-sep {
+  flex: 0 0 1.7rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--fs-line) 90%, transparent);
+}
+
+.fs-result-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  row-gap: 0.12rem;
+  color: var(--fs-muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.fs-result-meta > span:not(:last-child)::after {
+  content: "·";
+  margin: 0 0.5rem;
+  color: color-mix(in srgb, var(--fs-muted) 50%, transparent);
+}
+
+.fs-result-stops {
+  color: var(--fs-ink);
   font-weight: 600;
 }
 
+.fs-result-carrier {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .fs-seat-detail {
-  color: var(--fs-ok);
-  font-weight: 600;
+  color: color-mix(in srgb, var(--fs-ok) 82%, var(--fs-muted));
+}
+
+.fs-result-leg-duration {
+  font-variant-numeric: tabular-nums;
 }
 
 .fs-result-duration {
@@ -1205,20 +1256,11 @@ a {
   }
 
   .fs-result-price strong {
-    display: inline;
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
-  .fs-result-price span {
-    display: inline;
-    margin-left: 0.35rem;
+  .fs-result-od {
     font-size: 0.8rem;
-    white-space: normal;
-  }
-
-  .fs-result-price .fs-result-trip-length {
-    display: block;
-    margin: 0.15rem 0 0;
   }
 
   .fs-result-duration {
@@ -1235,26 +1277,12 @@ a {
     grid-row: 2;
   }
 
-  .fs-result-leg-header {
-    display: block;
+  .fs-result-times {
+    font-size: 0.98rem;
   }
 
-  .fs-result-leg-label {
-    display: block;
-    margin-bottom: 0.18rem;
-  }
-
-  .fs-result-carrier,
-  .fs-result-airports {
+  .fs-result-carrier {
     white-space: normal;
-  }
-
-  .fs-result-airports {
-    margin-left: 0.4rem;
-  }
-
-  .fs-result-meta {
-    margin-top: 0.4rem;
   }
 
   .fs-result-arrow {

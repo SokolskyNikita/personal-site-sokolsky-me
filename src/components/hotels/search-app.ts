@@ -52,6 +52,29 @@ type HotelRow = {
     hasWifi?: FactStatus;
     frontDesk24h?: FactStatus;
   };
+  factValues?: {
+    hasAC?: boolean | null;
+    hasElevator?: boolean | null;
+    hasWifi?: boolean | null;
+    frontDesk24h?: boolean | null;
+  };
+  reviewFeatures?: {
+    modelVersion: string;
+    reviewCount: number;
+    topics: Record<
+      string,
+      {
+        positive: number;
+        negative: number;
+        sampleSize: number;
+        confidence: number;
+        evidence?: Array<{
+          excerpt: string;
+          sentiment: "positive" | "negative";
+        }>;
+      }
+    >;
+  } | null;
   subscores?: Record<string, number | string | null>;
   gatedOut?: boolean;
   gates?: string[];
@@ -391,6 +414,7 @@ export function mountHotelSearch(root: HTMLElement): void {
         nightsMin: state.nightsMin,
         nightsMax: Math.max(state.nightsMin, state.nightsMax),
         adults: state.adults,
+        topUp: estimateWindows(state) === 1,
         // TA join is optional (+≤5 credits); keep price sweep ≤ window count.
         joinTa: false,
       }),
@@ -635,16 +659,29 @@ function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
     if (form.budgetMax != null && nightly != null && nightly > form.budgetMax) {
       return false;
     }
-    if (form.requireAC && !factOk(r.facts?.hasAC, form.strictness)) return false;
+    if (
+      form.requireAC &&
+      !factOk(r.facts?.hasAC, r.factValues?.hasAC, form.strictness)
+    ) {
+      return false;
+    }
     if (
       form.requireElevator &&
-      !factOk(r.facts?.hasElevator, form.strictness)
+      !factOk(
+        r.facts?.hasElevator,
+        r.factValues?.hasElevator,
+        form.strictness,
+      )
     ) {
       return false;
     }
     if (
       form.requireFrontDesk24h &&
-      !factOk(r.facts?.frontDesk24h, form.strictness)
+      !factOk(
+        r.facts?.frontDesk24h,
+        r.factValues?.frontDesk24h,
+        form.strictness,
+      )
     ) {
       return false;
     }
@@ -713,9 +750,11 @@ function haversineKm(
 
 function factOk(
   status: FactStatus | undefined,
+  value: boolean | null | undefined,
   strictness: HotelFormState["strictness"],
 ): boolean {
   if (status === "confirmed") return true;
+  if (status === "inferred") return value === true;
   if (strictness === "confirmed_or_unknown" && status === "unknown") return true;
   return false;
 }
@@ -804,7 +843,10 @@ function renderTable(
       detail.hidden = !detail.hidden;
       if (!detail.hidden) {
         const token = tr.dataset.token;
-        if (token) await expandProperty(detail, token, form);
+        if (token) {
+          bindReviewAnalysis(detail, token);
+          bindPropertyExpand(detail, token, form);
+        }
       }
     });
   });
@@ -820,6 +862,12 @@ function factIcons(r: HotelRow): string {
   ];
   for (const [label, status] of map) {
     if (status === "confirmed") parts.push(`<span title="${label} confirmed">✓ ${label}</span>`);
+    else if (status === "inferred") {
+      parts.push(`<span title="${label} inferred from reviews">≈ ${label}</span>`);
+    }
+    else if (status === "conflicting") {
+      parts.push(`<span class="hs-weak" title="${label} conflicting evidence">± ${label}</span>`);
+    }
     else if (status === "unknown") parts.push(`<span class="hs-unknown" title="${label} unknown">? ${label}</span>`);
     else parts.push(`<span class="hs-weak" title="${label}">△ ${label}</span>`);
   }
@@ -854,9 +902,49 @@ function detailCard(r: HotelRow): string {
     <p>Strong / weak / unknown facts in Facts (✓ · ?). Expand loads offers via google_hotels_property.</p>
     <div class="hs-bars">${bars}</div>
     ${matrix ? `<div class="hs-matrix-wrap"><strong>Date × price</strong>${matrix}</div>` : ""}
-    <div class="hs-expand" data-expand-slot>Click row to load property details…</div>
+    <div class="hs-review-signals" data-review-slot>
+      ${reviewSignalsMarkup(r.reviewFeatures)}
+    </div>
+    <div class="hs-expand" data-expand-slot>
+      <button type="button" class="fs-btn" data-load-property>Load offers &amp; property details (~1 credit)</button>
+    </div>
     ${r.googleHotelsUrl ? `<p><a href="${escapeHtml(r.googleHotelsUrl)}" target="_blank" rel="noopener noreferrer">Open in Google Hotels</a></p>` : ""}
   </div>`;
+}
+
+function reviewSignalsMarkup(
+  features: HotelRow["reviewFeatures"],
+): string {
+  if (!features) {
+    return `<button type="button" class="fs-btn" data-analyze-reviews>Analyze recent reviews (~2 credits)</button>`;
+  }
+  const topics = Object.entries(features.topics)
+    .filter(([, signal]) => signal.sampleSize > 0)
+    .sort((a, b) => b[1].confidence - a[1].confidence)
+    .slice(0, 8)
+    .map(([topic, signal]) => {
+      const tone =
+        signal.negative > signal.positive
+          ? "hs-chip-bad"
+          : signal.positive > signal.negative
+            ? "hs-chip-good"
+            : "";
+      return `<span class="hs-chip ${tone}" title="${signal.sampleSize} review mentions · confidence ${Math.round(signal.confidence * 100)}%">${escapeHtml(topic)} ${signal.positive.toFixed(1)}+/${signal.negative.toFixed(1)}−</span>`;
+    })
+    .join(" ");
+  const evidence = Object.entries(features.topics)
+    .flatMap(([topic, signal]) =>
+      (signal.evidence ?? [])
+        .filter((item) => item.sentiment === "negative")
+        .slice(0, 1)
+        .map(
+          (item) =>
+            `<li><strong>${escapeHtml(topic)}:</strong> “${escapeHtml(item.excerpt)}”</li>`,
+        ),
+    )
+    .slice(0, 5)
+    .join("");
+  return `<p><strong>Review signals</strong> · ${features.reviewCount} recent reviews · ${escapeHtml(features.modelVersion)}</p><div>${topics || "No comfort-topic mentions found."}</div>${evidence ? `<details><summary>Evidence excerpts</summary><ul class="hs-evidence">${evidence}</ul></details>` : ""}`;
 }
 
 async function expandProperty(
@@ -907,6 +995,61 @@ async function expandProperty(
   } catch (e) {
     slot.textContent = `Expand failed: ${e instanceof Error ? e.message : String(e)}`;
   }
+}
+
+function bindPropertyExpand(
+  detailRow: HTMLTableRowElement,
+  token: string,
+  form?: HotelFormState,
+): void {
+  const button =
+    detailRow.querySelector<HTMLButtonElement>("[data-load-property]");
+  if (!button || button.dataset.bound === "1") return;
+  button.dataset.bound = "1";
+  button.addEventListener("click", async (event) => {
+    event.stopPropagation();
+    button.disabled = true;
+    button.textContent = "Loading property…";
+    await expandProperty(detailRow, token, form);
+  });
+}
+
+function bindReviewAnalysis(
+  detailRow: HTMLTableRowElement,
+  token: string,
+): void {
+  const button =
+    detailRow.querySelector<HTMLButtonElement>("[data-analyze-reviews]");
+  const slot = detailRow.querySelector<HTMLElement>("[data-review-slot]");
+  if (!button || !slot || button.dataset.bound === "1") return;
+  button.dataset.bound = "1";
+  button.addEventListener("click", async (event) => {
+    event.stopPropagation();
+    button.disabled = true;
+    button.textContent = "Analyzing reviews…";
+    try {
+      const res = await fetch(
+        `/api/hotels/reviews/${encodeURIComponent(token)}`,
+        { method: "POST" },
+      );
+      const data = (await res.json()) as {
+        ok: boolean;
+        analysis?: { features?: HotelRow["reviewFeatures"] };
+        credits_used?: number;
+        error?: string;
+      };
+      if (!data.ok || !data.analysis?.features) {
+        button.disabled = false;
+        button.textContent = `Analysis failed: ${data.error ?? "unknown"}`;
+        return;
+      }
+      slot.innerHTML = `${reviewSignalsMarkup(data.analysis.features)}<p class="fs-muted">${data.credits_used ?? 0} credits used. Facts updated in the index.</p>`;
+    } catch (error) {
+      button.disabled = false;
+      button.textContent =
+        error instanceof Error ? error.message : "Analysis failed";
+    }
+  });
 }
 
 function renderFooter(

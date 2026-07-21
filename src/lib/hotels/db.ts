@@ -71,6 +71,17 @@ export type PriceCacheRow = {
   fetched_at: number;
 };
 
+export type ReviewFeatureRow = {
+  token: string;
+  corpus_hash: string;
+  model_version: string;
+  provider: string;
+  place_id: string | null;
+  features_json: string;
+  review_count: number;
+  fetched_at: number;
+};
+
 export interface HotelsRepository {
   ensureCity(input: {
     slug: string;
@@ -79,6 +90,7 @@ export interface HotelsRepository {
     gl?: string;
   }): Promise<number>;
   getCityBySlug(slug: string): Promise<CityRow | null>;
+  getCityById(id: number): Promise<CityRow | null>;
   updateCityScan(input: {
     cityId: number;
     meanRating: number;
@@ -88,6 +100,7 @@ export interface HotelsRepository {
   upsertScored(cityId: number, scored: ScoredProperty): Promise<void>;
   listByCityScore(cityId: number, limit?: number): Promise<PropertyRow[]>;
   listRawByCity(cityId: number): Promise<PropertyRow[]>;
+  getPropertyByToken(token: string): Promise<PropertyRow | null>;
   upsertPrice(input: {
     token: string;
     checkIn: string;
@@ -113,6 +126,16 @@ export interface HotelsRepository {
     taRating: number | null;
     taReviews: number | null;
   }): Promise<void>;
+  updateFacts(token: string, factsJson: string): Promise<void>;
+  upsertReviewFeatures(input: ReviewFeatureRow): Promise<void>;
+  getLatestReviewFeatures(
+    token: string,
+    modelVersion: string,
+  ): Promise<ReviewFeatureRow | null>;
+  listLatestReviewFeatures(
+    tokens: string[],
+    modelVersion: string,
+  ): Promise<ReviewFeatureRow[]>;
 }
 
 export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
@@ -143,6 +166,13 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
       return db
         .prepare("SELECT * FROM cities WHERE slug = ?")
         .bind(slug)
+        .first<CityRow>();
+    },
+
+    async getCityById(id) {
+      return db
+        .prepare("SELECT * FROM cities WHERE id = ?")
+        .bind(id)
         .first<CityRow>();
     },
 
@@ -247,6 +277,13 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
       return results;
     },
 
+    async getPropertyByToken(token) {
+      return db
+        .prepare(`SELECT * FROM properties WHERE token = ?`)
+        .bind(token)
+        .first<PropertyRow>();
+    },
+
     async upsertPrice(input) {
       await db
         .prepare(
@@ -307,6 +344,71 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
         .bind(input.taRating, input.taReviews, input.token)
         .run();
     },
+
+    async updateFacts(token, factsJson) {
+      await db
+        .prepare(`UPDATE properties SET facts_json = ? WHERE token = ?`)
+        .bind(factsJson, token)
+        .run();
+    },
+
+    async upsertReviewFeatures(input) {
+      await db
+        .prepare(
+          `INSERT INTO review_features (
+             token, corpus_hash, model_version, provider, place_id,
+             features_json, review_count, fetched_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(token, corpus_hash, model_version) DO UPDATE SET
+             provider=excluded.provider,
+             place_id=excluded.place_id,
+             features_json=excluded.features_json,
+             review_count=excluded.review_count,
+             fetched_at=excluded.fetched_at`,
+        )
+        .bind(
+          input.token,
+          input.corpus_hash,
+          input.model_version,
+          input.provider,
+          input.place_id,
+          input.features_json,
+          input.review_count,
+          input.fetched_at,
+        )
+        .run();
+    },
+
+    async getLatestReviewFeatures(token, modelVersion) {
+      return db
+        .prepare(
+          `SELECT * FROM review_features
+           WHERE token = ? AND model_version = ?
+           ORDER BY fetched_at DESC LIMIT 1`,
+        )
+        .bind(token, modelVersion)
+        .first<ReviewFeatureRow>();
+    },
+
+    async listLatestReviewFeatures(tokens, modelVersion) {
+      if (!tokens.length) return [];
+      const placeholders = tokens.map(() => "?").join(",");
+      const { results } = await db
+        .prepare(
+          `SELECT rf.* FROM review_features rf
+           JOIN (
+             SELECT token, MAX(fetched_at) AS fetched_at
+             FROM review_features
+             WHERE model_version = ? AND token IN (${placeholders})
+             GROUP BY token
+           ) latest
+           ON latest.token = rf.token AND latest.fetched_at = rf.fetched_at
+           WHERE rf.model_version = ?`,
+        )
+        .bind(modelVersion, ...tokens, modelVersion)
+        .all<ReviewFeatureRow>();
+      return results;
+    },
   };
 }
 
@@ -315,20 +417,24 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
   cities: Map<string, CityRow>;
   properties: Map<string, PropertyRow>;
   prices: PriceCacheRow[];
+  reviewFeatures: ReviewFeatureRow[];
 } {
   const cities = new Map<string, CityRow>();
   const properties = new Map<string, PropertyRow>();
   const prices: PriceCacheRow[] = [];
+  const reviewFeatures: ReviewFeatureRow[] = [];
   let nextId = 1;
 
   const repo: HotelsRepository & {
     cities: Map<string, CityRow>;
     properties: Map<string, PropertyRow>;
     prices: PriceCacheRow[];
+    reviewFeatures: ReviewFeatureRow[];
   } = {
     cities,
     properties,
     prices,
+    reviewFeatures,
     async ensureCity(input) {
       const existing = cities.get(input.slug);
       if (existing) return existing.id;
@@ -347,6 +453,9 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
     },
     async getCityBySlug(slug) {
       return cities.get(slug) ?? null;
+    },
+    async getCityById(id) {
+      return [...cities.values()].find((city) => city.id === id) ?? null;
     },
     async updateCityScan(input) {
       for (const c of cities.values()) {
@@ -399,6 +508,9 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
     async listRawByCity(cityId) {
       return [...properties.values()].filter((p) => p.city_id === cityId);
     },
+    async getPropertyByToken(token) {
+      return properties.get(token) ?? null;
+    },
     async upsertPrice(input) {
       const idx = prices.findIndex(
         (p) =>
@@ -447,6 +559,38 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
       if (!row) return;
       row.ta_rating = input.taRating;
       row.ta_reviews = input.taReviews;
+    },
+    async updateFacts(token, factsJson) {
+      const row = properties.get(token);
+      if (row) row.facts_json = factsJson;
+    },
+    async upsertReviewFeatures(input) {
+      const i = reviewFeatures.findIndex(
+        (r) =>
+          r.token === input.token &&
+          r.corpus_hash === input.corpus_hash &&
+          r.model_version === input.model_version,
+      );
+      if (i >= 0) reviewFeatures[i] = input;
+      else reviewFeatures.push(input);
+    },
+    async getLatestReviewFeatures(token, modelVersion) {
+      return (
+        reviewFeatures
+          .filter(
+            (r) => r.token === token && r.model_version === modelVersion,
+          )
+          .sort((a, b) => b.fetched_at - a.fetched_at)[0] ?? null
+      );
+    },
+    async listLatestReviewFeatures(tokens, modelVersion) {
+      const tokenSet = new Set(tokens);
+      const out: ReviewFeatureRow[] = [];
+      for (const token of tokenSet) {
+        const row = await this.getLatestReviewFeatures(token, modelVersion);
+        if (row) out.push(row);
+      }
+      return out;
     },
   };
   return repo;

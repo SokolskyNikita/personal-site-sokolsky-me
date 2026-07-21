@@ -5,6 +5,7 @@ import {
 } from "../../lib/flights/format";
 import { SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
 import { groupResults, orderedGroupKeys } from "../../lib/flights/group";
+import { airportLabel } from "../../lib/flights/locations";
 import {
   isAnywhereToAnywhere,
   listRegistryOptions,
@@ -627,27 +628,17 @@ function renderResults(
         <div class="fs-result-list">
     `);
     for (const option of dateOptions) {
-      const dest = option.destinationLabel ?? option.destinationAirport;
-      const price = formatPrice(option.price, option.currency);
       const firstSegment = option.segments[0]!;
       const lastSegment = option.segments.at(-1)!;
-      const carriers = [...new Set(option.segments.map((segment) => segment.carrier))];
-      const carrierLabel = carriers.join(" + ");
-      const route = option.segments
-        .map((segment, index) =>
-          index === 0
-            ? `${segment.departureAirport} → ${segment.arrivalAirport}`
-            : ` → ${segment.arrivalAirport}`,
-        )
-        .join("");
-      const stopDetail = formatStops(option);
-      const outboundTimes = formatSegmentTimes(option.segments);
-      const seatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
-        ? formatLieFlatSegments(option)
-        : formatCabinDetail(option);
+      const origin = airportLabel(firstSegment.departureAirport);
+      const dest = option.destinationLabel ?? option.destinationAirport;
+      const price = formatPrice(option.price, option.currency);
       const tripDurationDays = option.returnDate
         ? differenceInCalendarDays(option.departureDate, option.returnDate)
         : undefined;
+      const outboundLeg = renderResultLeg(option, spec, {
+        label: option.returnSegments?.length ? "Outbound" : undefined,
+      });
       let returnMarkup = "";
       if (option.returnSegments?.length) {
         const returnOption: ItineraryOption = {
@@ -661,38 +652,11 @@ function renderResults(
               0,
             ),
         };
-        const returnRoute = option.returnSegments
-          .map((segment, index) =>
-            index === 0
-              ? `${segment.departureAirport} → ${segment.arrivalAirport}`
-              : ` → ${segment.arrivalAirport}`,
-          )
-          .join("");
-        const returnCarriers = [
-          ...new Set(option.returnSegments.map((segment) => segment.carrier)),
-        ].join(" + ");
-        const returnSeatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
-          ? formatLieFlatSegments(returnOption)
-          : formatCabinDetail(returnOption);
-        returnMarkup = `
-          <div class="fs-result-leg fs-result-leg-return">
-            <div class="fs-result-leg-header">
-              <span class="fs-result-leg-label">Return · ${escapeHtml(
-                formatDateHeader(option.returnDate ?? ""),
-              )}</span>
-              <strong class="fs-result-carrier">${escapeHtml(returnCarriers)}</strong>
-              <span class="fs-result-airports">${escapeHtml(returnRoute)}</span>
-            </div>
-            <div class="fs-result-meta">
-              <span class="fs-result-times">${escapeHtml(
-                formatSegmentTimes(option.returnSegments),
-              )}</span>
-              <span class="fs-seat-detail">${escapeHtml(returnSeatDetail)}</span>
-              <span>${escapeHtml(formatStops(returnOption))}</span>
-              <span>${formatDuration(returnOption.totalDurationMinutes)}</span>
-            </div>
-          </div>
-        `;
+        returnMarkup = renderResultLeg(returnOption, spec, {
+          label: `Return · ${formatDateHeader(option.returnDate ?? "")}`,
+          extraClass: "fs-result-leg-return",
+          showDuration: true,
+        });
       }
       const tag = option.googleFlightsUrl ? "a" : "div";
       const href = option.googleFlightsUrl
@@ -703,7 +667,11 @@ function renderResults(
         <${tag} class="fs-result${unavailableClass}"${href}>
           <div class="fs-result-price">
             <strong>${escapeHtml(price)}</strong>
-            <span>to ${escapeHtml(dest)}</span>
+            <span class="fs-result-od">
+              <span>${escapeHtml(origin)}</span>
+              <span class="fs-result-od-arrow" aria-hidden="true">→</span>
+              <span>${escapeHtml(dest)}</span>
+            </span>
             ${
               tripDurationDays
                 ? `<span class="fs-result-trip-length">${tripDurationDays}-day round trip</span>`
@@ -711,22 +679,7 @@ function renderResults(
             }
           </div>
           <div class="fs-result-journey">
-            <div class="fs-result-leg">
-              <div class="fs-result-leg-header">
-                ${
-                  option.returnSegments?.length
-                    ? '<span class="fs-result-leg-label">Outbound</span>'
-                    : ""
-                }
-                <strong class="fs-result-carrier">${escapeHtml(carrierLabel)}</strong>
-                <span class="fs-result-airports">${escapeHtml(route)}</span>
-              </div>
-              <div class="fs-result-meta">
-                <span class="fs-result-times">${escapeHtml(outboundTimes)}</span>
-                <span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>
-                <span>${escapeHtml(stopDetail)}</span>
-              </div>
-            </div>
+            ${outboundLeg}
             ${returnMarkup}
           </div>
           <div class="fs-result-duration">
@@ -751,6 +704,72 @@ function differenceInCalendarDays(start: string, end: string): number | undefine
   return days > 0 ? days : undefined;
 }
 
+function renderResultLeg(
+  option: ItineraryOption,
+  spec: LegSearch,
+  opts: {
+    label?: string;
+    extraClass?: string;
+    showDuration?: boolean;
+  } = {},
+): string {
+  const first = option.segments[0]!;
+  const last = option.segments.at(-1)!;
+  const carriers = [...new Set(option.segments.map((segment) => segment.carrier))];
+  const seatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
+    ? formatLieFlatSegments(option)
+    : formatCabinDetail(option);
+  const stopDetail = formatStops(option);
+  const className = ["fs-result-leg", opts.extraClass].filter(Boolean).join(" ");
+  const airportCodes = [
+    first.departureAirport,
+    ...option.segments.map((segment) => segment.arrivalAirport),
+  ];
+  const airportsMarkup = airportCodes
+    .map((code, index) => {
+      const codeHtml = `<span>${escapeHtml(code)}</span>`;
+      if (index === 0) return codeHtml;
+      return `<span class="fs-result-route-sep" aria-hidden="true"></span>${codeHtml}`;
+    })
+    .join("");
+  const metaParts = [
+    `<span class="fs-result-stops">${escapeHtml(stopDetail)}</span>`,
+    `<span class="fs-result-carrier">${escapeHtml(carriers.join(" + "))}</span>`,
+  ];
+  if (seatDetail) {
+    metaParts.push(
+      `<span class="fs-seat-detail">${escapeHtml(seatDetail)}</span>`,
+    );
+  }
+  if (opts.showDuration) {
+    metaParts.push(
+      `<span class="fs-result-leg-duration">${formatDuration(
+        option.totalDurationMinutes,
+      )}</span>`,
+    );
+  }
+  return `
+    <div class="${className}">
+      ${
+        opts.label
+          ? `<span class="fs-result-leg-label">${escapeHtml(opts.label)}</span>`
+          : ""
+      }
+      <div class="fs-result-schedule">
+        <div class="fs-result-times">
+          <time>${escapeHtml(formatClock(first.departureTime))}</time>
+          <span class="fs-result-time-sep" aria-hidden="true"></span>
+          <time>${escapeHtml(formatClock(last.arrivalTime))}</time>
+        </div>
+        <div class="fs-result-airports" aria-label="${escapeAttr(
+          airportCodes.join(" to "),
+        )}">${airportsMarkup}</div>
+      </div>
+      <div class="fs-result-meta">${metaParts.join("")}</div>
+    </div>
+  `;
+}
+
 function formatStops(option: ItineraryOption): string {
   if (option.layovers.length === 0) return "Nonstop";
   const count = option.layovers.length;
@@ -759,15 +778,6 @@ function formatStops(option: ItineraryOption): string {
     .map((layover) => `${layover.airport} ${formatDuration(layover.durationMinutes)}`)
     .join(" · ");
   return `${count} ${label} · ${details}`;
-}
-
-function formatSegmentTimes(
-  segments: ItineraryOption["segments"],
-): string {
-  const first = segments[0];
-  const last = segments.at(-1);
-  if (!first || !last) return "Times unavailable";
-  return `${formatClock(first.departureTime)} → ${formatClock(last.arrivalTime)}`;
 }
 
 function formatClock(value: string): string {
@@ -794,11 +804,15 @@ function formatCabinDetail(option: ItineraryOption): string {
   const longest = option.segments.reduce((current, segment) =>
     segment.durationMinutes > current.durationMinutes ? segment : current,
   );
-  const cabin = longest.cabin?.replace("_", " ") ?? "Cabin unknown";
-  const legroom =
+  const cabin = longest.cabin?.replaceAll("_", " ") ?? "Cabin unknown";
+  const rawLegroom =
     longest.legroom ??
     longest.amenities.find((amenity) => /legroom/i.test(amenity));
-  return legroom ? `${cabin} · ${legroom}` : cabin;
+  if (!rawLegroom) return cabin;
+  const legroom = rawLegroom
+    .replace(/^Seat type\s+/i, "")
+    .replace(/\bLegroom\b/g, "legroom");
+  return `${cabin} · ${legroom}`;
 }
 
 function populateSelects(root: HTMLElement): void {

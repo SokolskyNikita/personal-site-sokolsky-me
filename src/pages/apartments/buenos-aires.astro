@@ -14,11 +14,19 @@ const siteUrl =
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Building = (typeof pageData.buildings)[number];
 type AirbnbSize = "studio" | "1br" | "2br" | "3br" | "4br" | "5br+";
+type AirbnbPriceSource = "monthly" | "weekly_extrapolated" | "monthly_from_stay";
 type AirbnbListing = {
   title: string;
   url: string;
   size?: AirbnbSize;
   bedrooms?: number;
+  priceUsdMonthly?: number | null;
+  priceSource?: AirbnbPriceSource | null;
+};
+type AirbnbPriceMeta = {
+  priceUsdMonthly?: number | null;
+  source?: AirbnbPriceSource | null;
+  status?: string;
 };
 type RentalListing = {
   source: string;
@@ -64,6 +72,11 @@ const airbnbSizesByUrl = (
   "airbnbSizesByUrl" in listingsData
     ? (listingsData as { airbnbSizesByUrl?: Record<string, { size: AirbnbSize; bedrooms: number }> })
         .airbnbSizesByUrl
+    : undefined
+) ?? {};
+const airbnbPricesByUrl = (
+  "airbnbPricesByUrl" in listingsData
+    ? (listingsData as { airbnbPricesByUrl?: Record<string, AirbnbPriceMeta> }).airbnbPricesByUrl
     : undefined
 ) ?? {};
 const rentalMetaByUrl = (

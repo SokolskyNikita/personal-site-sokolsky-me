@@ -100,6 +100,9 @@ Dated **list** returns nightly + total (USD). Basis for all math: **`extracted_p
 6. **Multi-source identity (P4 seam, no code):** mapping table by normalized name + GPS proximity; v1 uses `properties.token` + `provider`.
 7. **Filters unprobed live:** trust docs; post-fetch if needed.
 8. **`freeCancellationSeen`:** from offer `has_free_cancellation===true` when property fetched; else unknown (list has no field).
+10. **Review signals (P3):** `tripadvisor` title+city match → `tripadvisor_reviews` latest 20. Deterministic `topics-v1` classifier covers noise, cleanliness, bathroom, AC, heating, hot water, pressure, mattress, datedness, maintenance, smell, pests, elevators, Wi‑Fi. Recency weight `exp(-ageDays/365)`; cache key `(token, corpus_hash, model_version)`, 30-day freshness; ambiguous TA matches abort.
+11. **Review-derived facts:** AC/elevator/Wi‑Fi remain confirmed when structured evidence exists. Otherwise sufficient positive review evidence becomes `inferred:true`, negative becomes `inferred:false`, mixed becomes `conflicting`; excerpts stay attached to topic signals.
+12. **Spend confirmation:** property details and review analysis are explicit expanded-row buttons (`~1` and `~2` credits). Single-window pricing plans up to 15 property top-ups for ≥80% top-20 coverage; multi-window sweeps disable top-ups and remain one credit/window.
 
 ## Fixtures
 

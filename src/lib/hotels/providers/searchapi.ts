@@ -7,6 +7,7 @@ import type {
   SearchApiListProperty,
   SearchApiPropertyDetails,
   TripadvisorSearchResult,
+  TripadvisorReviewsResult,
 } from "./types";
 
 export type SearchApiFetch = (
@@ -157,6 +158,53 @@ export class SearchApiHotelProvider implements HotelDataProvider {
     };
     return {
       places: data.place_results ?? [],
+      searchId: data.search_metadata?.id,
+      raw: data,
+    };
+  }
+
+  async getTripadvisorReviews(
+    placeId: string,
+    page = 1,
+  ): Promise<TripadvisorReviewsResult> {
+    this.assertLive();
+    const url = new URL(this.baseUrl);
+    url.searchParams.set("engine", "tripadvisor_reviews");
+    url.searchParams.set("place_id", placeId);
+    url.searchParams.set("sort_by", "most_recent");
+    url.searchParams.set("language", "en");
+    url.searchParams.set("translate", "true");
+    url.searchParams.set("num", "20");
+    url.searchParams.set("page", String(page));
+    const data = (await this.fetchJson(url, "tripadvisor_reviews")) as {
+      reviews?: Array<{
+        id?: string | number;
+        title?: string;
+        text?: string;
+        rating?: number;
+        date?: string;
+        travel_date?: string;
+        link?: string;
+      }>;
+      search_information?: { total_reviews?: number };
+      pagination?: { next_page?: number };
+      search_metadata?: { id?: string };
+    };
+    return {
+      placeId,
+      reviews: (data.reviews ?? [])
+        .filter((r) => r.id != null && typeof r.text === "string")
+        .map((r) => ({
+          id: String(r.id),
+          title: r.title,
+          text: r.text!,
+          rating: r.rating,
+          date: r.date,
+          travel_date: r.travel_date,
+          link: r.link,
+        })),
+      totalReviews: data.search_information?.total_reviews,
+      nextPage: data.pagination?.next_page,
       searchId: data.search_metadata?.id,
       raw: data,
     };
