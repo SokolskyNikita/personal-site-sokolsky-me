@@ -611,9 +611,10 @@ a {
 
 .fs-results-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.55rem;
+  gap: 0.55rem 0.85rem;
   width: min(100%, 60rem);
   margin: 0 auto 0.65rem;
   padding: 0 0.15rem;
@@ -623,12 +624,33 @@ a {
   display: none;
 }
 
-.fs-results-toolbar label {
+.fs-results-toolbar > label:not(.fs-check),
+.fs-results-toolbar .fs-city-sort label,
+.fs-results-toolbar .fs-city-side label {
   color: var(--fs-muted);
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.055em;
+}
+
+.fs-results-toolbar .fs-group-city {
+  margin-right: auto;
+  font-size: 0.82rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.fs-results-toolbar .fs-city-sort,
+.fs-results-toolbar .fs-city-side {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.fs-results-toolbar .fs-city-sort[hidden],
+.fs-results-toolbar .fs-city-side[hidden] {
+  display: none;
 }
 
 .fs-results-toolbar select {
@@ -773,8 +795,45 @@ a {
   container-type: inline-size;
 }
 
+.fs-city-group {
+  margin: 0 0 1.85rem;
+}
+
+.fs-city-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.7rem;
+  padding: 0 0.15rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--fs-line) 80%, transparent);
+  padding-bottom: 0.4rem;
+}
+
+.fs-city-heading h2 {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.fs-city-heading > span {
+  color: var(--fs-muted);
+  font-size: 0.74rem;
+  font-family: var(--fs-mono);
+}
+
 .fs-date-group {
   margin: 0 0 1.35rem;
+}
+
+.fs-city-group .fs-date-group-nested {
+  margin: 0 0 0.85rem;
+  padding-left: 0.1rem;
+}
+
+.fs-city-group .fs-date-group-nested:last-child {
+  margin-bottom: 0;
 }
 
 .fs-date-heading {
@@ -786,11 +845,17 @@ a {
   padding: 0 0.15rem;
 }
 
-.fs-date-heading h2 {
+.fs-date-heading h2,
+.fs-date-heading h3 {
   margin: 0;
   font-size: 1.02rem;
   font-weight: 650;
   letter-spacing: -0.01em;
+}
+
+.fs-date-heading h3 {
+  font-size: 0.92rem;
+  font-weight: 600;
 }
 
 .fs-date-heading > span {

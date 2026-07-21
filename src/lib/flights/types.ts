@@ -111,7 +111,11 @@ export const ItineraryOptionSchema = z.object({
   bookingToken: z.string().optional(),
   departureDate: z.string(),
   destinationAirport: z.string(),
+  /** City name derived from the destination airport (multi-airport cities share one label). */
+  destinationCity: z.string().optional(),
   destinationLabel: z.string().optional(),
+  /** City name derived from the first-segment departure airport. */
+  originCity: z.string().optional(),
   returnSegments: z.array(SegmentSchema).min(1).optional(),
   returnLayovers: z.array(LayoverSchema).optional(),
   returnDurationMinutes: z.number().int().nonnegative().optional(),
@@ -164,6 +168,10 @@ export type SearchResult = z.infer<typeof SearchResultSchema>;
 export type GroupBy = "date" | "destination" | "origin";
 
 export type DateGroupSort = "date" | "cheapest_day";
+
+export type CityGroupSort = "alpha" | "cheapest_city";
+
+export type CityGroupSide = "departure" | "arrival";
 
 export type GroupResultsOptions = {
   groupBy: GroupBy;

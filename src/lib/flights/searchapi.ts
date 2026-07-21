@@ -1,7 +1,7 @@
 import { CABIN_TO_TRAVEL_CLASS, maxStopsToSearchApiStops } from "./cabin";
 import { classifySeat, extractLegroom } from "./classifier";
 import { ROUND_TRIP_CANDIDATES_PER_STEP } from "./constants";
-import { airportLabel } from "./locations";
+import { airportCity, airportLabel } from "./locations";
 import type {
   Cabin,
   FlightProvider,
@@ -211,7 +211,9 @@ export function parseSearchApiResponse(
         context.departureDate,
       ),
       destinationAirport: dest,
+      destinationCity: airportCity(dest),
       destinationLabel: airportLabel(dest),
+      originCity: airportCity(segments[0]!.departureAirport),
       departureToken: raw.departure_token,
       bookingToken: raw.booking_token,
       unverified: false,

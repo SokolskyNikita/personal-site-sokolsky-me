@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { groupResults, orderedGroupKeys } from "../group";
+import {
+  groupCheapestByCityAndDate,
+  groupResults,
+  orderedGroupKeys,
+} from "../group";
+import { airportCity } from "../locations";
 import type { ItineraryOption, Segment } from "../types";
 
 function makeOption(
@@ -8,6 +13,7 @@ function makeOption(
   date: string,
   dest: string,
   origin = "EZE",
+  durationMinutes = 480,
 ): ItineraryOption {
   const segment: Segment = {
     carrier: "Test",
@@ -16,7 +22,7 @@ function makeOption(
     arrivalAirport: dest,
     departureTime: `${date}T10:00:00`,
     arrivalTime: `${date}T18:00:00`,
-    durationMinutes: 480,
+    durationMinutes,
     amenities: [],
     seatClassification: "unknown",
   };
@@ -24,12 +30,14 @@ function makeOption(
     id,
     segments: [segment],
     layovers: [],
-    totalDurationMinutes: 480,
+    totalDurationMinutes: durationMinutes,
     price,
     currency: "USD",
     provider: "test",
     departureDate: date,
     destinationAirport: dest,
+    destinationCity: airportCity(dest),
+    originCity: airportCity(origin),
     unverified: false,
   };
 }
@@ -76,5 +84,97 @@ describe("groupResults", () => {
       "2026-07-21",
       "2026-07-20",
     ]);
+  });
+});
+
+describe("groupCheapestByCityAndDate", () => {
+  it("keeps the cheapest flight per arrival city and day", () => {
+    const options = [
+      makeOption("jfk-expensive", 500, "2026-07-20", "JFK"),
+      makeOption("lga-cheap", 400, "2026-07-20", "LGA"),
+      makeOption("jfk-next", 350, "2026-07-21", "JFK"),
+      makeOption("lax", 450, "2026-07-20", "LAX"),
+      makeOption("lax-cheaper", 300, "2026-07-21", "LAX"),
+    ];
+
+    const grouped = groupCheapestByCityAndDate(
+      options,
+      "date",
+      "alpha",
+      "arrival",
+    );
+    expect(grouped.map((g) => g.city)).toEqual(["Los Angeles", "New York"]);
+    expect(grouped[0]!.dates.map((d) => d.option.id)).toEqual([
+      "lax",
+      "lax-cheaper",
+    ]);
+    expect(grouped[1]!.dates.map((d) => d.option.id)).toEqual([
+      "lga-cheap",
+      "jfk-next",
+    ]);
+  });
+
+  it("defaults to cheapest-city order by departure city", () => {
+    const options = [
+      makeOption("bos-20", 500, "2026-07-20", "JFK", "BOS"),
+      makeOption("mia-20", 200, "2026-07-20", "JFK", "MIA"),
+      makeOption("bos-21", 300, "2026-07-21", "JFK", "BOS"),
+    ];
+
+    const grouped = groupCheapestByCityAndDate(options, "date");
+    expect(grouped.map((g) => g.city)).toEqual(["Miami", "Boston"]);
+  });
+
+  it("groups by departure city when requested", () => {
+    const options = [
+      makeOption("from-eze", 400, "2026-07-20", "JFK", "EZE"),
+      makeOption("from-aep", 350, "2026-07-20", "JFK", "AEP"),
+      makeOption("from-gru", 500, "2026-07-20", "JFK", "GRU"),
+    ];
+
+    const grouped = groupCheapestByCityAndDate(
+      options,
+      "date",
+      "alpha",
+      "departure",
+    );
+    expect(grouped.map((g) => g.city)).toEqual(["Buenos Aires", "São Paulo"]);
+    expect(grouped[0]!.dates[0]!.option.id).toBe("from-aep");
+  });
+
+  it("sorts days within each city by cheapest fare", () => {
+    const options = [
+      makeOption("bos-20", 500, "2026-07-20", "BOS"),
+      makeOption("bos-21", 300, "2026-07-21", "BOS"),
+      makeOption("mia-20", 200, "2026-07-20", "MIA"),
+      makeOption("mia-21", 250, "2026-07-21", "MIA"),
+    ];
+
+    const grouped = groupCheapestByCityAndDate(
+      options,
+      "cheapest_day",
+      "alpha",
+      "arrival",
+    );
+    expect(grouped.map((g) => g.city)).toEqual(["Boston", "Miami"]);
+    expect(grouped[0]!.dates.map((d) => d.date)).toEqual([
+      "2026-07-21",
+      "2026-07-20",
+    ]);
+    expect(grouped[1]!.dates.map((d) => d.date)).toEqual([
+      "2026-07-20",
+      "2026-07-21",
+    ]);
+  });
+
+  it("falls back to airport code when city label is unknown", () => {
+    const options = [makeOption("xyz", 100, "2026-07-20", "XYZ")];
+    const grouped = groupCheapestByCityAndDate(
+      options,
+      "date",
+      "cheapest_city",
+      "arrival",
+    );
+    expect(grouped[0]!.city).toBe("XYZ");
   });
 });

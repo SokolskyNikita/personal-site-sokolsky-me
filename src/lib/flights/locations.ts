@@ -690,6 +690,11 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   PTY: "Panama City",
 };
 
+/** City name for an airport code, falling back to the IATA code. */
+export function airportCity(code: string): string {
+  return AIRPORT_CITY_LABELS[code] ?? code;
+}
+
 export function airportLabel(code: string): string {
   const city = AIRPORT_CITY_LABELS[code];
   return city ? `${city} (${code})` : code;

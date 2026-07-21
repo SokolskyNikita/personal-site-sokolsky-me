@@ -4,9 +4,14 @@ import {
   formatPrice,
 } from "../../lib/flights/format";
 import { SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
-import { groupResults, orderedGroupKeys } from "../../lib/flights/group";
+import {
+  groupCheapestByCityAndDate,
+  groupResults,
+  orderedGroupKeys,
+} from "../../lib/flights/group";
 import { airportLabel } from "../../lib/flights/locations";
 import {
+  defaultCityGroupSide,
   isAnywhereToAnywhere,
   listRegistryOptions,
 } from "../../lib/flights/resolver";
@@ -17,6 +22,8 @@ import {
 } from "../../lib/flights/modes";
 import {
   MAX_TOTAL_HOURS_OPTIONS,
+  type CityGroupSide,
+  type CityGroupSort,
   type DateGroupSort,
   type ItineraryOption,
   type LegSearch,
@@ -74,6 +81,11 @@ export function mountFlightSearch(root: HTMLElement): void {
   const daysValue = root.querySelector<HTMLElement>("#fs-days-value")!;
   const resultsToolbar = root.querySelector<HTMLElement>("#fs-results-toolbar")!;
   const sortSelect = root.querySelector<HTMLSelectElement>("#fs-sort")!;
+  const groupCityToggle = root.querySelector<HTMLInputElement>("#fs-group-city")!;
+  const citySideWrap = root.querySelector<HTMLElement>("#fs-city-side-wrap")!;
+  const citySideSelect = root.querySelector<HTMLSelectElement>("#fs-city-side")!;
+  const citySortWrap = root.querySelector<HTMLElement>("#fs-city-sort-wrap")!;
+  const citySortSelect = root.querySelector<HTMLSelectElement>("#fs-city-sort")!;
   const progressDock = root.querySelector<HTMLElement>("#fs-search-progress")!;
   const progressTrack = root.querySelector<HTMLElement>(
     "#fs-search-progress-track",
@@ -101,21 +113,81 @@ export function mountFlightSearch(root: HTMLElement): void {
   let progressHideTimer: ReturnType<typeof setTimeout> | undefined;
   let latestOptions: ItineraryOption[] = [];
   let latestSpec: LegSearch | null = null;
+  let citySideRouteKey = `${form.origin}|${form.dest}`;
+  let citySideManual = false;
 
   function currentSort(): DateGroupSort {
     return sortSelect.value === "cheapest_day" ? "cheapest_day" : "date";
   }
 
+  function currentGroupByCity(): boolean {
+    return groupCityToggle.checked;
+  }
+
+  function currentCitySort(): CityGroupSort {
+    return citySortSelect.value === "alpha" ? "alpha" : "cheapest_city";
+  }
+
+  function currentCitySide(): CityGroupSide {
+    return citySideSelect.value === "arrival" ? "arrival" : "departure";
+  }
+
+  function syncCityGroupControls(): void {
+    const grouped = currentGroupByCity();
+    citySideWrap.hidden = !grouped;
+    citySortWrap.hidden = !grouped;
+  }
+
+  function syncCitySideDefault(): void {
+    const routeKey = `${form.origin}|${form.dest}`;
+    if (routeKey !== citySideRouteKey) {
+      citySideRouteKey = routeKey;
+      citySideManual = false;
+    }
+    if (!citySideManual) {
+      citySideSelect.value = defaultCityGroupSide(form.origin, form.dest);
+    }
+  }
+
+  syncCitySideDefault();
+
   function showResults(options: ItineraryOption[], spec: LegSearch): void {
     latestOptions = options;
     latestSpec = spec;
     resultsToolbar.hidden = options.length === 0;
-    renderResults(results, options, spec, currentSort());
+    syncCitySideDefault();
+    syncCityGroupControls();
+    renderResults(results, options, spec, {
+      sort: currentSort(),
+      groupByCity: currentGroupByCity(),
+      citySort: currentCitySort(),
+      citySide: currentCitySide(),
+    });
   }
 
-  sortSelect.addEventListener("change", () => {
+  function rerenderLatestResults(): void {
     if (!latestSpec || latestOptions.length === 0) return;
-    renderResults(results, latestOptions, latestSpec, currentSort());
+    syncCityGroupControls();
+    renderResults(results, latestOptions, latestSpec, {
+      sort: currentSort(),
+      groupByCity: currentGroupByCity(),
+      citySort: currentCitySort(),
+      citySide: currentCitySide(),
+    });
+  }
+
+  sortSelect.addEventListener("change", rerenderLatestResults);
+  citySortSelect.addEventListener("change", rerenderLatestResults);
+  citySideSelect.addEventListener("change", () => {
+    citySideManual = true;
+    rerenderLatestResults();
+  });
+  groupCityToggle.addEventListener("change", () => {
+    if (groupCityToggle.checked) {
+      citySideManual = false;
+      syncCitySideDefault();
+    }
+    rerenderLatestResults();
   });
 
   // Registry select wins over leftover IATA text.
@@ -182,6 +254,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     form.dest = tmp;
     applyFormToDom(root, form);
     syncUrl(form);
+    syncCitySideDefault();
     invalidateSearch();
   });
 
@@ -204,6 +277,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   function onFormChanged(): void {
     form = readForm(root, form);
     syncUrl(form);
+    syncCitySideDefault();
     invalidateSearch();
   }
 
@@ -611,11 +685,35 @@ function renderResults(
   container: HTMLElement,
   options: ItineraryOption[],
   spec: LegSearch,
-  sort: DateGroupSort = "date",
+  view: {
+    sort?: DateGroupSort;
+    groupByCity?: boolean;
+    citySort?: CityGroupSort;
+    citySide?: CityGroupSide;
+  } = {},
 ): void {
+  const sort = view.sort ?? "date";
+  const errors = [...container.querySelectorAll(".fs-step-error")];
+  const html = view.groupByCity
+    ? renderCityGroupedResults(
+        options,
+        spec,
+        sort,
+        view.citySort ?? "cheapest_city",
+        view.citySide ?? "departure",
+      )
+    : renderDateGroupedResults(options, spec, sort);
+  container.innerHTML = html;
+  for (const err of errors) container.appendChild(err);
+}
+
+function renderDateGroupedResults(
+  options: ItineraryOption[],
+  spec: LegSearch,
+  sort: DateGroupSort,
+): string {
   const grouped = groupResults(options, { groupBy: "date", topN: spec.topN });
   const dates = orderedGroupKeys(grouped, sort);
-  const errors = [...container.querySelectorAll(".fs-step-error")];
   const html: string[] = [];
   for (const date of dates) {
     const dateOptions = grouped[date]!;
@@ -632,74 +730,125 @@ function renderResults(
           <span>${escapeHtml(dayMeta)}</span>
         </header>
         <div class="fs-result-list">
+          ${dateOptions.map((option) => renderResultCard(option, spec)).join("")}
+        </div>
+      </section>
     `);
-    for (const option of dateOptions) {
-      const firstSegment = option.segments[0]!;
-      const lastSegment = option.segments.at(-1)!;
-      const origin = airportLabel(firstSegment.departureAirport);
-      const dest = option.destinationLabel ?? option.destinationAirport;
-      const price = formatPrice(option.price, option.currency);
-      const tripDurationDays = option.returnDate
-        ? differenceInCalendarDays(option.departureDate, option.returnDate)
-        : undefined;
-      const outboundLeg = renderResultLeg(option, spec, {
-        label: option.returnSegments?.length ? "Outbound" : undefined,
-      });
-      let returnMarkup = "";
-      if (option.returnSegments?.length) {
-        const returnOption: ItineraryOption = {
-          ...option,
-          segments: option.returnSegments,
-          layovers: option.returnLayovers ?? [],
-          totalDurationMinutes:
-            option.returnDurationMinutes ??
-            option.returnSegments.reduce(
-              (total, segment) => total + segment.durationMinutes,
-              0,
-            ),
-        };
-        returnMarkup = renderResultLeg(returnOption, spec, {
-          label: `Return · ${formatDateHeader(option.returnDate ?? "")}`,
-          extraClass: "fs-result-leg-return",
-          showDuration: true,
-        });
-      }
-      const tag = option.googleFlightsUrl ? "a" : "div";
-      const href = option.googleFlightsUrl
-        ? ` href="${escapeAttr(option.googleFlightsUrl)}" target="_blank" rel="noopener noreferrer"`
-        : "";
-      const unavailableClass = option.googleFlightsUrl ? "" : " fs-result-unavailable";
+  }
+  return html.join("");
+}
+
+function renderCityGroupedResults(
+  options: ItineraryOption[],
+  spec: LegSearch,
+  sort: DateGroupSort,
+  citySort: CityGroupSort,
+  citySide: CityGroupSide,
+): string {
+  const cities = groupCheapestByCityAndDate(
+    options,
+    sort,
+    citySort,
+    citySide,
+  );
+  const html: string[] = [];
+  for (const cityGroup of cities) {
+    const dayLabel = cityGroup.dates.length === 1 ? "day" : "days";
+    const cheapest = cityGroup.dates.reduce(
+      (best, entry) =>
+        !best || entry.option.price < best.price ? entry.option : best,
+      undefined as ItineraryOption | undefined,
+    );
+    const cityMeta = cheapest
+      ? `${cityGroup.dates.length} ${dayLabel} · from ${formatPrice(cheapest.price, cheapest.currency)}`
+      : `${cityGroup.dates.length} ${dayLabel}`;
+    html.push(`
+      <section class="fs-city-group">
+        <header class="fs-city-heading">
+          <h2>${escapeHtml(cityGroup.city)}</h2>
+          <span>${escapeHtml(cityMeta)}</span>
+        </header>
+    `);
+    for (const { date, option } of cityGroup.dates) {
       html.push(`
-        <${tag} class="fs-result${unavailableClass}"${href}>
-          <div class="fs-result-price">
-            <strong>${escapeHtml(price)}</strong>
-            <span class="fs-result-od">
-              <span>${escapeHtml(origin)}</span>
-              <span class="fs-result-od-arrow" aria-hidden="true">→</span>
-              <span>${escapeHtml(dest)}</span>
-            </span>
-            ${
-              tripDurationDays
-                ? `<span class="fs-result-trip-length">${tripDurationDays}-day round trip</span>`
-                : ""
-            }
+        <section class="fs-date-group fs-date-group-nested">
+          <header class="fs-date-heading">
+            <h3>${formatDateHeader(date)}</h3>
+            <span>${escapeHtml(formatPrice(option.price, option.currency))}</span>
+          </header>
+          <div class="fs-result-list">
+            ${renderResultCard(option, spec)}
           </div>
-          <div class="fs-result-journey">
-            ${outboundLeg}
-            ${returnMarkup}
-          </div>
-          <div class="fs-result-duration">
-            <strong>${formatDuration(option.totalDurationMinutes)}</strong>
-            <span>${escapeHtml(firstSegment.departureAirport)}–${escapeHtml(lastSegment.arrivalAirport)}</span>
-          </div>
-          ${option.googleFlightsUrl ? '<span class="fs-result-arrow" aria-hidden="true">↗</span>' : ""}
-        </${tag}>
+        </section>
       `);
     }
-    html.push("</div></section>");
+    html.push("</section>");
   }
-  container.innerHTML = html.join("");
-  for (const err of errors) container.appendChild(err);
+  return html.join("");
+}
+
+function renderResultCard(option: ItineraryOption, spec: LegSearch): string {
+  const firstSegment = option.segments[0]!;
+  const lastSegment = option.segments.at(-1)!;
+  const origin = airportLabel(firstSegment.departureAirport);
+  const dest = option.destinationLabel ?? option.destinationAirport;
+  const price = formatPrice(option.price, option.currency);
+  const tripDurationDays = option.returnDate
+    ? differenceInCalendarDays(option.departureDate, option.returnDate)
+    : undefined;
+  const outboundLeg = renderResultLeg(option, spec, {
+    label: option.returnSegments?.length ? "Outbound" : undefined,
+  });
+  let returnMarkup = "";
+  if (option.returnSegments?.length) {
+    const returnOption: ItineraryOption = {
+      ...option,
+      segments: option.returnSegments,
+      layovers: option.returnLayovers ?? [],
+      totalDurationMinutes:
+        option.returnDurationMinutes ??
+        option.returnSegments.reduce(
+          (total, segment) => total + segment.durationMinutes,
+          0,
+        ),
+    };
+    returnMarkup = renderResultLeg(returnOption, spec, {
+      label: `Return · ${formatDateHeader(option.returnDate ?? "")}`,
+      extraClass: "fs-result-leg-return",
+      showDuration: true,
+    });
+  }
+  const tag = option.googleFlightsUrl ? "a" : "div";
+  const href = option.googleFlightsUrl
+    ? ` href="${escapeAttr(option.googleFlightsUrl)}" target="_blank" rel="noopener noreferrer"`
+    : "";
+  const unavailableClass = option.googleFlightsUrl ? "" : " fs-result-unavailable";
+  return `
+    <${tag} class="fs-result${unavailableClass}"${href}>
+      <div class="fs-result-price">
+        <strong>${escapeHtml(price)}</strong>
+        <span class="fs-result-od">
+          <span>${escapeHtml(origin)}</span>
+          <span class="fs-result-od-arrow" aria-hidden="true">→</span>
+          <span>${escapeHtml(dest)}</span>
+        </span>
+        ${
+          tripDurationDays
+            ? `<span class="fs-result-trip-length">${tripDurationDays}-day round trip</span>`
+            : ""
+        }
+      </div>
+      <div class="fs-result-journey">
+        ${outboundLeg}
+        ${returnMarkup}
+      </div>
+      <div class="fs-result-duration">
+        <strong>${formatDuration(option.totalDurationMinutes)}</strong>
+        <span>${escapeHtml(firstSegment.departureAirport)}–${escapeHtml(lastSegment.arrivalAirport)}</span>
+      </div>
+      ${option.googleFlightsUrl ? '<span class="fs-result-arrow" aria-hidden="true">↗</span>' : ""}
+    </${tag}>
+  `;
 }
 
 function differenceInCalendarDays(start: string, end: string): number | undefined {

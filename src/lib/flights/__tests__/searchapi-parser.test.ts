@@ -31,6 +31,9 @@ describe("parseSearchApiResponse", () => {
     expect(options.length).toBeGreaterThan(0);
     expect(options[0]).toMatchObject({
       departureDate: "2026-08-15",
+      destinationAirport: "JFK",
+      destinationCity: "New York",
+      originCity: "Buenos Aires",
       googleFlightsUrl:
         "https://www.google.com/travel/flights/search?fixture=business",
       provider: "searchapi",

@@ -236,6 +236,24 @@ const defaultStart = new Date().toISOString().slice(0, 10);
         <p class="fs-progress" id="fs-progress"></p>
       </div>
       <div class="fs-results-toolbar" id="fs-results-toolbar" hidden>
+        <label class="fs-check fs-group-city">
+          <input id="fs-group-city" type="checkbox" />
+          <span>Group by city</span>
+        </label>
+        <div class="fs-city-side" id="fs-city-side-wrap" hidden>
+          <label for="fs-city-side">City side</label>
+          <select id="fs-city-side">
+            <option value="departure" selected>Departure</option>
+            <option value="arrival">Arrival</option>
+          </select>
+        </div>
+        <div class="fs-city-sort" id="fs-city-sort-wrap" hidden>
+          <label for="fs-city-sort">Sort cities</label>
+          <select id="fs-city-sort">
+            <option value="cheapest_city" selected>Cheapest city</option>
+            <option value="alpha">A–Z</option>
+          </select>
+        </div>
         <label for="fs-sort">Sort days</label>
         <select id="fs-sort">
           <option value="date">By date</option>

@@ -3,8 +3,11 @@ import { ANYWHERE_LOCATION_ID, LOCATION_REGISTRY } from "../locations";
 import {
   LocationResolveError,
   assertValidLocationPair,
+  defaultCityGroupSide,
+  isAnywhereOrGateway,
   isAnywhereToAnywhere,
   isRawIata,
+  isSingleCityLocation,
   listRegistryOptions,
   normalizeLocationRef,
   resolveLocation,
@@ -282,5 +285,38 @@ describe("registry options", () => {
       ["seattle", "Seattle (all airports)"],
       ["tashkent", "Tashkent (all airports)"],
     ]);
+  });
+});
+
+describe("city group side defaults", () => {
+  it("detects gateways, Anywhere, and single-city locations", () => {
+    expect(isAnywhereOrGateway("anywhere")).toBe(true);
+    expect(isAnywhereOrGateway("usa-gateways")).toBe(true);
+    expect(isAnywhereOrGateway("vietnam")).toBe(true);
+    expect(isAnywhereOrGateway("buenos-aires")).toBe(false);
+    expect(isAnywhereOrGateway("EZE")).toBe(false);
+
+    expect(isSingleCityLocation("buenos-aires")).toBe(true);
+    expect(isSingleCityLocation("EZE")).toBe(true);
+    expect(isSingleCityLocation("usa-gateways")).toBe(false);
+    expect(isSingleCityLocation("anywhere")).toBe(false);
+  });
+
+  it("defaults to arrival when flying from a city to gateways or Anywhere", () => {
+    expect(defaultCityGroupSide("buenos-aires", "usa-gateways")).toBe(
+      "arrival",
+    );
+    expect(defaultCityGroupSide("EZE", "anywhere")).toBe("arrival");
+  });
+
+  it("defaults to departure otherwise", () => {
+    expect(defaultCityGroupSide("usa-gateways", "buenos-aires")).toBe(
+      "departure",
+    );
+    expect(defaultCityGroupSide("anywhere", "london")).toBe("departure");
+    expect(defaultCityGroupSide("usa-gateways", "schengen-eu-gateways")).toBe(
+      "departure",
+    );
+    expect(defaultCityGroupSide("buenos-aires", "london")).toBe("departure");
   });
 });

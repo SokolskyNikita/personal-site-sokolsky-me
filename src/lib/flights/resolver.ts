@@ -1,5 +1,5 @@
 import { ANYWHERE_LOCATION_ID, LOCATION_REGISTRY } from "./locations";
-import type { LocationRef } from "./types";
+import type { CityGroupSide, LocationRef } from "./types";
 
 const IATA_RE = /^[A-Z]{3}$/;
 
@@ -113,4 +113,35 @@ export function listRegistryOptions(): Array<{ id: string; label: string }> {
       id: entry.id,
       label: entry.label,
     }));
+}
+
+/** True for Anywhere or a multi-airport gateway / region registry entry. */
+export function isAnywhereOrGateway(ref: LocationRef): boolean {
+  const id = normalizeLocationRef(ref);
+  if (id === ANYWHERE_LOCATION_ID) return true;
+  const entry = LOCATION_REGISTRY[id];
+  if (!entry) return false;
+  return entry.type !== "city" && entry.type !== "airport";
+}
+
+/** True for a city registry entry or a raw single-airport IATA code. */
+export function isSingleCityLocation(ref: LocationRef): boolean {
+  const id = normalizeLocationRef(ref);
+  if (isRawIata(id)) return true;
+  return LOCATION_REGISTRY[id]?.type === "city";
+}
+
+/**
+ * Default city-grouping side for results.
+ * Prefer arrival cities when flying from a single city to gateways/Anywhere
+ * (destinations vary); otherwise prefer departure cities.
+ */
+export function defaultCityGroupSide(
+  origin: LocationRef,
+  dest: LocationRef,
+): CityGroupSide {
+  if (isSingleCityLocation(origin) && isAnywhereOrGateway(dest)) {
+    return "arrival";
+  }
+  return "departure";
 }
