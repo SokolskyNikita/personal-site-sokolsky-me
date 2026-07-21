@@ -163,6 +163,7 @@ export function mountHotelSearch(root: HTMLElement): void {
   const results = root.querySelector<HTMLElement>("#hs-results")!;
   const footer = root.querySelector<HTMLElement>("#hs-footer")!;
   const runBtn = root.querySelector<HTMLButtonElement>("#hs-run")!;
+  const rankingBtn = root.querySelector<HTMLButtonElement>("#hs-ranking")!;
   const cancelBtn = root.querySelector<HTMLButtonElement>("#hs-cancel")!;
   const comfortValue = root.querySelector<HTMLElement>("#hs-comfort-value")!;
   const progressDock = root.querySelector<HTMLElement>("#hs-search-progress")!;
@@ -205,17 +206,16 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (el) el.min = today;
   }
   let form = formStateFromSearchParams(new URLSearchParams(location.search));
+  let isRunning = false;
+  let activeController: AbortController | undefined;
+  let latestRows: HotelRow[] = [];
+  let latestMeta: Record<string, unknown> = {};
   applyFormToDom(root, form);
   populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
   syncComfortLabel(root, comfortValue);
   syncCityMode();
   syncCreditHint();
   syncSortOptions();
-
-  let isRunning = false;
-  let activeController: AbortController | undefined;
-  let latestRows: HotelRow[] = [];
-  let latestMeta: Record<string, unknown> = {};
 
   // Controls that only filter/sort already-loaded rows. Changing them never
   // costs credits and should update the table instantly.
@@ -278,6 +278,10 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (qWrap) qWrap.hidden = !other;
     citySelect.disabled = other;
     primaryFields?.classList.toggle("is-other-city", other);
+    rankingBtn.disabled = isRunning || other;
+    rankingBtn.title = other
+      ? "Saved ranking is only available for listed cities. Use Search for other cities."
+      : "Load the saved comfort ranking — free, no scan or prices.";
     if (other) {
       neighborhoodSelect.value = "";
       neighborhoodSelect.disabled = true;
@@ -311,12 +315,12 @@ export function mountHotelSearch(root: HTMLElement): void {
     const state = readForm(root);
     if (!hasDates(state)) {
       creditHint.textContent =
-        "No dates set — the search returns hotels without prices.";
+        "No dates — Search returns hotels without prices. Show ranking is always free.";
       return;
     }
     const checkOut = checkOutDate(state);
     const nights = state.nightsMin;
-    creditHint.textContent = `Prices for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}) · up to 1 extra credit.`;
+    creditHint.textContent = `Search: prices for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}) · up to 1 extra credit. Show ranking skips prices.`;
   }
 
   cancelBtn.addEventListener("click", () => {
@@ -361,6 +365,18 @@ export function mountHotelSearch(root: HTMLElement): void {
     await runSearch(form);
   });
 
+  rankingBtn.addEventListener("click", async () => {
+    if (isRunning) return;
+    form = readForm(root);
+    if (otherCityCheck.checked || form.q.trim()) {
+      summary.textContent =
+        "Saved ranking is only available for listed cities. Clear Other city, or use Search.";
+      return;
+    }
+    syncUrl(form);
+    await showRanking(form);
+  });
+
   function retryHook(label: string) {
     return (attempt: number, max: number) => {
       setSearchProgress(
@@ -373,32 +389,78 @@ export function mountHotelSearch(root: HTMLElement): void {
   }
 
   async function bootstrap(): Promise<void> {
-    summary.textContent = "Loading saved results…";
+    summary.textContent = "Loading saved ranking…";
     const citySlug = resolveCitySlug(form);
     try {
       const plan = await fetchPlan(citySlug, form);
       if (plan.ok && plan.index && plan.index.propertiesOnHand > 0) {
         const stale =
           !plan.index.fresh && plan.index.scannedAt != null
-            ? `<div class="fs-banner fs-banner-warn">These results are ${plan.index.ageDays?.toFixed(0) ?? "?"} days old. Update them for about ${plan.costs?.scanCreditsEstimate ?? 6} credits.</div>`
+            ? `<div class="fs-banner fs-banner-warn">These results are ${plan.index.ageDays?.toFixed(0) ?? "?"} days old. Search to refresh for about ${plan.costs?.scanCreditsEstimate ?? 6} credits.</div>`
             : "";
         banners.innerHTML = stale;
         summary.textContent = `${plan.index.propertiesOnHand} saved hotels. Average rating: ${plan.index.meanRating?.toFixed(2) ?? "—"}.`;
         await loadIndex(citySlug);
         if (hasDates(form)) {
           summary.textContent =
-            "Saved hotels loaded. Search to fetch prices for your dates.";
+            "Comfort ranking loaded. Search to fetch prices for your dates.";
         }
         return;
       }
       summary.textContent = plan.ok
-        ? `No saved hotels yet. A new search will use about ${plan.costs?.scanCreditsEstimate ?? 6} credits.`
+        ? `No saved hotels yet. Search will use about ${plan.costs?.scanCreditsEstimate ?? 6} credits.`
         : "Ready.";
     } catch (err) {
       summary.textContent = navigator.onLine
-        ? `Couldn't load saved hotels (${formatNetworkError(err)}). You can still search.`
-        : "You're offline. Reconnect to load saved hotels or search.";
+        ? `Couldn't load saved ranking (${formatNetworkError(err)}). You can still search.`
+        : "You're offline. Reconnect to load the ranking or search.";
     }
+  }
+
+  async function showRanking(state: HotelFormState): Promise<void> {
+    const controller = new AbortController();
+    activeController = controller;
+    setBusy(true);
+    rankingBtn.textContent = "Loading…";
+    banners.innerHTML = "";
+    progress.textContent = "";
+    setSearchProgress("Loading ranking", 0, 1);
+    summary.textContent = "Loading comfort ranking…";
+
+    const citySlug = resolveCitySlug(state);
+    try {
+      await loadIndex(citySlug, controller.signal);
+    } catch (err) {
+      if (controller.signal.aborted) {
+        summary.textContent = "Cancelled.";
+        hideSearchProgress();
+        setBusy(false);
+        return;
+      }
+      summary.textContent = `Couldn't load ranking: ${formatNetworkError(err)}.`;
+      hideSearchProgress();
+      setBusy(false);
+      return;
+    }
+
+    if (!latestRows.length) {
+      summary.textContent =
+        "No saved ranking for this city yet. Use Search hotels to build one.";
+      hideSearchProgress();
+      setBusy(false);
+      return;
+    }
+
+    const visible = filterAndSort(latestRows, state);
+    renderTable(results, visible, state);
+    renderFooter(footer, visible, latestMeta);
+    const mean =
+      latestMeta.meanRating != null
+        ? ` Average rating: ${Number(latestMeta.meanRating).toFixed(2)}.`
+        : "";
+    summary.textContent = `Comfort ranking · ${visible.length} hotel${visible.length === 1 ? "" : "s"} (no search, no prices).${mean}`;
+    finishSearchProgress();
+    setBusy(false);
   }
 
   async function runSearch(state: HotelFormState): Promise<void> {
@@ -708,7 +770,10 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
     cancelBtn.hidden = !busy;
     runBtn.textContent = label;
-    if (!busy) syncCityMode();
+    if (!busy) {
+      rankingBtn.textContent = "Show ranking";
+      syncCityMode();
+    }
   }
 
   function setSearchProgress(

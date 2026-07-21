@@ -70,9 +70,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <header class="fs-section-heading">
             <h2 id="hs-where-heading">Where &amp; when</h2>
             <p>
-              Uses API credits — the estimate is shown next to the button.
-              Dates are optional; add them to fetch current prices (cached for
-              six hours).
+              Search uses API credits (estimate next to the button). Show
+              ranking loads the saved comfort list for free — no scan, no
+              prices. Dates are optional on Search; add them for current prices
+              (cached for six hours).
             </p>
           </header>
           <div class="fs-primary">
@@ -133,6 +134,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <div class="fs-actions">
               <button type="submit" class="fs-btn fs-btn-primary" id="hs-run"
                 >Search hotels</button
+              >
+              <button type="button" class="fs-btn" id="hs-ranking"
+                >Show ranking</button
               >
               <button type="button" class="fs-btn" id="hs-cancel" hidden
                 >Cancel</button
@@ -225,7 +229,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       <div class="fs-status" aria-live="polite">
         <p class="fs-search-summary" id="hs-search-summary">
-          Ready. Saved results load automatically.
+          Ready. Saved ranking loads automatically.
         </p>
         <div
           class="fs-banner fs-banner-warn"

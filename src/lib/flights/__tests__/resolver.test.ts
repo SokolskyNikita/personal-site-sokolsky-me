@@ -107,25 +107,20 @@ describe("resolveLocation", () => {
     ]);
     expect(resolveLocation("africa-gateways")).toEqual([
       "CAI",
-      "JNB",
       "LPA",
       "TFS",
-      "ADD",
       "CMN",
-      "CPT",
       "HRG",
       "RAK",
       "ALG",
-      "NBO",
       "ACE",
       "TUN",
       "SSH",
       "TFN",
-      "LOS",
       "FUE",
-      "ABV",
-      "DUR",
       "FNC",
+      "AGA",
+      "RMF",
     ]);
     expect(resolveLocation("sub-saharan-africa-gateways")).toEqual([
       "JNB",
@@ -256,7 +251,8 @@ describe("IATA helpers", () => {
 describe("registry options", () => {
   it("lists alphabetized gateways before alphabetized cities", () => {
     expect(listRegistryOptions().map(({ id, label }) => [id, label])).toEqual([
-      ["africa-gateways", "Africa gateways"],
+      ["africa-gateways", "Africa (except sub-Saharan)"],
+      ["sub-saharan-africa-gateways", "Africa (Sub-Saharan)"],
       ["anywhere", "Anywhere (top 125 airports)"],
       ["canada-gateways", "Canada gateways"],
       ["east-asia-gateways", "East Asia gateways"],
@@ -268,7 +264,6 @@ describe("registry options", () => {
       ],
       ["schengen-eu-gateways", "Schengen and EU gateways"],
       ["south-america-gateways", "South America gateways"],
-      ["sub-saharan-africa-gateways", "Sub-Saharan Africa gateways"],
       ["uk-ireland-gateways", "United Kingdom and Ireland gateways"],
       ["usa-gateways", "USA gateways"],
       ["vietnam", "Vietnam gateways"],

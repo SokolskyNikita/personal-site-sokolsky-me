@@ -354,35 +354,32 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   "africa-gateways": {
     id: "africa-gateways",
     type: "continent",
-    label: "Africa gateways",
-    // Top 20 airports in the African region by 2024 passenger traffic.
+    label: "Africa (except sub-Saharan)",
+    // Top 15 non–Sub-Saharan African-region airports by passenger traffic
+    // (Wikipedia Africa rankings: 2024, with #15 from 2025 when the 2024
+    // table ends). Includes North Africa plus Canary Islands and Madeira.
     airports: [
       "CAI",
-      "JNB",
       "LPA",
       "TFS",
-      "ADD",
       "CMN",
-      "CPT",
       "HRG",
       "RAK",
       "ALG",
-      "NBO",
       "ACE",
       "TUN",
       "SSH",
       "TFN",
-      "LOS",
       "FUE",
-      "ABV",
-      "DUR",
       "FNC",
+      "AGA",
+      "RMF",
     ],
   },
   "sub-saharan-africa-gateways": {
     id: "sub-saharan-africa-gateways",
     type: "region",
-    label: "Sub-Saharan Africa gateways",
+    label: "Africa (Sub-Saharan)",
     // Top 15 Sub-Saharan African airports by 2024 passenger traffic.
     airports: [
       "JNB",
@@ -662,6 +659,8 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   ABV: "Abuja",
   DUR: "Durban",
   FNC: "Madeira",
+  AGA: "Agadir",
+  RMF: "Marsa Alam",
   MRU: "Mauritius",
   ACC: "Accra",
   DSS: "Dakar",
