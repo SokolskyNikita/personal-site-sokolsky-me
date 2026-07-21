@@ -63,18 +63,41 @@ export async function handleHotelsApi(
   env: HotelsEnv,
   url: URL,
 ): Promise<Response> {
-  if (url.pathname === PLAN_PATH) return handlePlan(request, env, url);
-  if (url.pathname === SCAN_PATH) return handleScan(request, env, url);
-  if (url.pathname === INDEX_PATH) return handleIndex(request, env, url);
-  if (url.pathname === RESCORE_PATH) return handleRescore(request, env, url);
-  if (url.pathname === PRICES_PATH) return handlePrices(request, env, url);
-  if (url.pathname.startsWith("/api/hotels/property/")) {
-    return handleProperty(request, env, url);
+  try {
+    if (url.pathname === PLAN_PATH) return await handlePlan(request, env, url);
+    if (url.pathname === SCAN_PATH) return await handleScan(request, env, url);
+    if (url.pathname === INDEX_PATH) return await handleIndex(request, env, url);
+    if (url.pathname === RESCORE_PATH) {
+      return await handleRescore(request, env, url);
+    }
+    if (url.pathname === PRICES_PATH) {
+      return await handlePrices(request, env, url);
+    }
+    if (url.pathname.startsWith("/api/hotels/property/")) {
+      return await handleProperty(request, env, url);
+    }
+    if (url.pathname.startsWith("/api/hotels/reviews/")) {
+      return await handleReviews(request, env, url);
+    }
+    return json({ ok: false, error: "not_found" }, 404);
+  } catch (e) {
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : "hotels_api_failed",
+      },
+      500,
+    );
   }
-  if (url.pathname.startsWith("/api/hotels/reviews/")) {
-    return handleReviews(request, env, url);
+}
+
+function safeJsonParse<T>(raw: string | null | undefined, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
   }
-  return json({ ok: false, error: "not_found" }, 404);
 }
 
 function liveEnabled(env: HotelsEnv): boolean {
@@ -331,7 +354,7 @@ async function handleIndex(
   const reviewsByToken = new Map(
     reviewRows.map((row) => [
       row.token,
-      JSON.parse(row.features_json) as unknown,
+      safeJsonParse(row.features_json, null),
     ]),
   );
   return json({
@@ -341,8 +364,11 @@ async function handleIndex(
     scannedAt: city.scanned_at,
     durationMs: Date.now() - t0,
     properties: rows.map((r) => {
-      const facts = r.facts_json ? JSON.parse(r.facts_json) : null;
-      const subscores = r.subscores_json ? JSON.parse(r.subscores_json) : null;
+      const facts = safeJsonParse<PropertyFacts | null>(r.facts_json, null);
+      const subscores = safeJsonParse<Record<string, number> | null>(
+        r.subscores_json,
+        null,
+      );
       return {
         token: r.token,
         name: r.name,
@@ -367,9 +393,8 @@ async function handleIndex(
           hasWifi: facts?.hasWifi?.value ?? null,
           frontDesk24h: facts?.frontDesk24h?.value ?? null,
         },
-        factsFull: facts,
-        breakdown: r.breakdown_json ? JSON.parse(r.breakdown_json) : [],
-        whitelist: r.whitelist ? JSON.parse(r.whitelist) : [],
+        breakdown: safeJsonParse(r.breakdown_json, []),
+        whitelist: safeJsonParse(r.whitelist, []),
         reviewFeatures: reviewsByToken.get(r.token) ?? null,
         subscores,
         googleHotelsUrl: googleHotelsSearchUrl(
@@ -554,14 +579,17 @@ async function handlePrices(
     const reviewsByToken = new Map(
       reviewRows.map((row) => [
         row.token,
-        JSON.parse(row.features_json) as unknown,
+        safeJsonParse(row.features_json, null),
       ]),
     );
     const pricedByToken = new Map(sweep.properties.map((p) => [p.token, p]));
     const properties = indexRows.map((r) => {
       const priced = pricedByToken.get(r.token);
-      const facts = r.facts_json ? JSON.parse(r.facts_json) : null;
-      const subscores = r.subscores_json ? JSON.parse(r.subscores_json) : null;
+      const facts = safeJsonParse<PropertyFacts | null>(r.facts_json, null);
+      const subscores = safeJsonParse<Record<string, number> | null>(
+        r.subscores_json,
+        null,
+      );
       const best = priced?.bestStay ?? null;
       return {
         token: r.token,
@@ -588,8 +616,8 @@ async function handlePrices(
           frontDesk24h: facts?.frontDesk24h?.value ?? null,
         },
         reviewFeatures: reviewsByToken.get(r.token) ?? null,
-        breakdown: r.breakdown_json ? JSON.parse(r.breakdown_json) : [],
-        whitelist: r.whitelist ? JSON.parse(r.whitelist) : [],
+        breakdown: safeJsonParse(r.breakdown_json, []),
+        whitelist: safeJsonParse(r.whitelist, []),
         subscores,
         lat: r.lat,
         lng: r.lng,

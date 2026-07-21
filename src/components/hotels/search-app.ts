@@ -158,6 +158,7 @@ export function mountHotelSearch(root: HTMLElement): void {
   const formEl = root.querySelector<HTMLFormElement>("#hs-form")!;
   const summary = root.querySelector<HTMLElement>("#hs-search-summary")!;
   const banners = root.querySelector<HTMLElement>("#hs-banners")!;
+  const offlineBanner = root.querySelector<HTMLElement>("#hs-offline-banner");
   const progress = root.querySelector<HTMLElement>("#hs-progress")!;
   const results = root.querySelector<HTMLElement>("#hs-results")!;
   const footer = root.querySelector<HTMLElement>("#hs-footer")!;
@@ -165,9 +166,21 @@ export function mountHotelSearch(root: HTMLElement): void {
   const cancelBtn = root.querySelector<HTMLButtonElement>("#hs-cancel")!;
   const comfortValue = root.querySelector<HTMLElement>("#hs-comfort-value")!;
   const progressDock = root.querySelector<HTMLElement>("#hs-search-progress")!;
+  const progressTrack = root.querySelector<HTMLElement>(
+    "#hs-search-progress-track",
+  )!;
+  const progressFill = root.querySelector<HTMLElement>(
+    "#hs-search-progress-fill",
+  )!;
   const progressLabel = root.querySelector<HTMLElement>(
     "#hs-search-progress-label",
   )!;
+  const progressCount = root.querySelector<HTMLElement>(
+    "#hs-search-progress-count",
+  )!;
+  let progressHideTimer: ReturnType<typeof setTimeout> | undefined;
+  let progressCompleted = 0;
+  let progressTotal = 1;
   const citySelect = root.querySelector<HTMLSelectElement>("#hs-city")!;
   const neighborhoodSelect =
     root.querySelector<HTMLSelectElement>("#hs-neighborhood")!;
@@ -312,16 +325,52 @@ export function mountHotelSearch(root: HTMLElement): void {
     progress.textContent = "Cancelling…";
   });
 
+  const syncOfflineBanner = (): void => {
+    if (!offlineBanner) return;
+    offlineBanner.hidden = navigator.onLine;
+  };
+  syncOfflineBanner();
+  window.addEventListener("offline", () => {
+    syncOfflineBanner();
+    if (!isRunning) {
+      summary.textContent =
+        "You're offline. Saved hotels still show; reconnect to search or load prices.";
+    }
+  });
+  window.addEventListener("online", () => {
+    syncOfflineBanner();
+    if (!isRunning) {
+      summary.textContent = "Back online. You can search again.";
+    }
+  });
+
   // Auto-load warm index for shareable URLs / BA default.
   void bootstrap();
 
   formEl.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (isRunning) return;
+    if (!navigator.onLine) {
+      syncOfflineBanner();
+      summary.textContent =
+        "You're offline — reconnect to run a new hotel search.";
+      return;
+    }
     form = readForm(root);
     syncUrl(form);
     await runSearch(form);
   });
+
+  function retryHook(label: string) {
+    return (attempt: number, max: number) => {
+      setSearchProgress(
+        `${label} — retry ${attempt}/${max}`,
+        progressCompleted,
+        progressTotal,
+      );
+      progress.textContent = `Weak connection — retrying ${label.toLowerCase()} (${attempt}/${max})…`;
+    };
+  }
 
   async function bootstrap(): Promise<void> {
     summary.textContent = "Loading saved results…";
@@ -345,8 +394,10 @@ export function mountHotelSearch(root: HTMLElement): void {
       summary.textContent = plan.ok
         ? `No saved hotels yet. A new search will use about ${plan.costs?.scanCreditsEstimate ?? 6} credits.`
         : "Ready.";
-    } catch {
-      summary.textContent = "Ready.";
+    } catch (err) {
+      summary.textContent = navigator.onLine
+        ? `Couldn't load saved hotels (${formatNetworkError(err)}). You can still search.`
+        : "You're offline. Reconnect to load saved hotels or search.";
     }
   }
 
@@ -354,28 +405,39 @@ export function mountHotelSearch(root: HTMLElement): void {
     const controller = new AbortController();
     activeController = controller;
     setBusy(true, "Searching…");
-    showProgress("Checking saved results");
+    // Keep prior results visible until newer data arrives (shitty-wifi friendly).
     banners.innerHTML = "";
-    results.innerHTML = "";
-    footer.innerHTML = "";
     progress.textContent = "";
 
     const citySlug = resolveCitySlug(state);
     const q = state.q.trim() || undefined;
     const bbox = neighborhoodBbox(state);
+    const needsPrices = hasDates(state);
+    const priorRows = latestRows;
+    const priorMeta = latestMeta;
+
+    // Provisional total until we know warm vs cold path after /plan.
+    setSearchProgress("Checking saved results", 0, needsPrices ? 4 : 3);
 
     let plan: PlanResponse;
     try {
-      plan = await fetchPlan(citySlug, state, controller.signal);
+      plan = await fetchPlan(citySlug, state, controller.signal, (a, m) =>
+        retryHook("Checking saved results")(a, m),
+      );
     } catch (err) {
       if (controller.signal.aborted) {
         summary.textContent = "Cancelled.";
-        hideProgress();
+        hideSearchProgress();
         setBusy(false);
         return;
       }
-      summary.textContent = `Couldn't check the search cost: ${err instanceof Error ? err.message : String(err)}`;
-      hideProgress();
+      summary.textContent = `Couldn't reach the server: ${formatNetworkError(err)}. Prior results kept.`;
+      if (priorRows.length) {
+        banners.innerHTML = `<div class="fs-banner fs-banner-warn">Connection problem — showing previous results. Tap Search hotels to retry.</div>`;
+        renderTable(results, filterAndSort(priorRows, state), state);
+        renderFooter(footer, filterAndSort(priorRows, state), priorMeta);
+      }
+      hideSearchProgress();
       setBusy(false);
       return;
     }
@@ -385,24 +447,52 @@ export function mountHotelSearch(root: HTMLElement): void {
     const fresh = plan.index?.fresh ?? false;
 
     if (onHand > 0 && fresh && !state.q && !bbox) {
+      const total = needsPrices ? 3 : 2;
       summary.textContent = `Using ${onHand} saved hotel${onHand === 1 ? "" : "s"}.`;
-      await loadIndex(citySlug, controller.signal);
-      if (hasDates(state)) {
-        await loadPrices(citySlug, state, controller.signal);
+      setSearchProgress("Loading saved hotels", 1, total);
+      try {
+        await loadIndex(citySlug, controller.signal);
+      } catch (err) {
+        if (controller.signal.aborted) {
+          summary.textContent = "Cancelled.";
+          hideSearchProgress();
+          setBusy(false);
+          return;
+        }
+        summary.textContent = `Couldn't load saved hotels: ${formatNetworkError(err)}.`;
+        hideSearchProgress();
+        setBusy(false);
+        return;
       }
-      hideProgress();
+      if (needsPrices) {
+        setSearchProgress("Checking prices", 2, total);
+        try {
+          await loadPrices(citySlug, state, controller.signal);
+        } catch (err) {
+          if (!controller.signal.aborted) {
+            banners.insertAdjacentHTML(
+              "beforeend",
+              `<div class="fs-banner fs-banner-warn">Prices failed (${formatNetworkError(err)}). Hotels are shown without live prices — search again to retry.</div>`,
+            );
+            summary.textContent =
+              "Saved hotels loaded, but prices couldn't be fetched on this connection.";
+          }
+        }
+      }
+      finishSearchProgress();
       setBusy(false);
       return;
     }
 
+    const total = needsPrices ? 4 : 3;
     summary.textContent = `Searching hotels now. Expected cost: about ${estimate} credits${onHand ? `; ${onHand} saved hotels are also available` : ""}.`;
     banners.innerHTML = `<div class="fs-banner">SearchAPI credit limit for this run: ${plan.costs?.maxCreditsPerScan ?? 80}.</div>`;
     setBusy(true, "Searching…");
-    showProgress("Searching hotels");
+    setSearchProgress("Searching hotels", 1, total);
 
     let scan: ScanResponse;
     try {
-      const res = await fetch("/api/hotels/scan", {
+      scan = await fetchJson<ScanResponse>("/api/hotels/scan", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -414,24 +504,36 @@ export function mountHotelSearch(root: HTMLElement): void {
           highestRatingPages: 4,
         }),
         signal: controller.signal,
+        timeoutMs: 150_000,
+        retries: 1,
+        onRetry: (a, m) => retryHook("Searching hotels")(a, m),
       });
-      scan = (await res.json()) as ScanResponse;
     } catch (err) {
       if (controller.signal.aborted) {
         summary.textContent = "Search cancelled.";
-        hideProgress();
+        hideSearchProgress();
         setBusy(false);
         return;
       }
-      summary.textContent = `Search failed: ${err instanceof Error ? err.message : String(err)}`;
-      hideProgress();
+      summary.textContent = `Search failed: ${formatNetworkError(err)}. Prior results kept.`;
+      if (priorRows.length) {
+        banners.insertAdjacentHTML(
+          "beforeend",
+          `<div class="fs-banner fs-banner-warn">Search didn't finish — showing previous results. Tap Search hotels to retry.</div>`,
+        );
+        latestRows = priorRows;
+        latestMeta = priorMeta;
+        renderTable(results, filterAndSort(priorRows, state), state);
+        renderFooter(footer, filterAndSort(priorRows, state), priorMeta);
+      }
+      hideSearchProgress();
       setBusy(false);
       return;
     }
 
     if (!scan.ok) {
       summary.textContent = `Search failed: ${scan.error ?? "unknown"}`;
-      hideProgress();
+      hideSearchProgress();
       setBusy(false);
       return;
     }
@@ -468,26 +570,42 @@ export function mountHotelSearch(root: HTMLElement): void {
       renderTable(results, visible, state);
       renderFooter(footer, visible, latestMeta);
     }
-    hideProgress();
-    setBusy(false);
 
     // Prefer D1 warm path if available after scan. Skip the city-wide index
     // for neighborhood searches so the bbox-filtered scan rows are kept.
+    setSearchProgress("Updating results", 2, total);
     try {
       if (!bbox) {
-        await loadIndex(citySlug);
-      }
-      if (hasDates(state)) {
-        await loadPrices(
-          citySlug,
-          state,
-          undefined,
-          bbox ? new Set(latestRows.map((r) => r.token)) : undefined,
-        );
+        await loadIndex(citySlug, controller.signal);
       }
     } catch {
       /* keep scan payload */
+      banners.insertAdjacentHTML(
+        "beforeend",
+        `<div class="fs-banner fs-banner-warn">Couldn't refresh the saved index — showing this search's results.</div>`,
+      );
     }
+    if (needsPrices) {
+      setSearchProgress("Checking prices", 3, total);
+      try {
+        await loadPrices(
+          citySlug,
+          state,
+          controller.signal,
+          bbox ? new Set(latestRows.map((r) => r.token)) : undefined,
+        );
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          banners.insertAdjacentHTML(
+            "beforeend",
+            `<div class="fs-banner fs-banner-warn">Prices failed (${formatNetworkError(err)}). Hotels are shown without live prices — search again to retry.</div>`,
+          );
+        }
+      }
+    }
+
+    finishSearchProgress();
+    setBusy(false);
   }
 
   async function loadIndex(
@@ -495,11 +613,15 @@ export function mountHotelSearch(root: HTMLElement): void {
     signal?: AbortSignal,
   ): Promise<void> {
     const t0 = performance.now();
-    const res = await fetch(
+    const data = await fetchJson<IndexResponse>(
       `/api/hotels/index?city=${encodeURIComponent(citySlug)}`,
-      { signal },
+      {
+        signal,
+        timeoutMs: 20_000,
+        retries: 2,
+        onRetry: (a, m) => retryHook("Loading saved hotels")(a, m),
+      },
     );
-    const data = (await res.json()) as IndexResponse;
     const clientMs = performance.now() - t0;
     if (!data.ok || data.neverScanned || !data.properties?.length) return;
     latestRows = data.properties;
@@ -527,8 +649,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (!hasDates(state)) return;
     summary.textContent =
       "Checking prices for your dates (~1 credit; cached for six hours)…";
-    showProgress("Checking prices");
-    const res = await fetch("/api/hotels/prices", {
+    const data = await fetchJson<PricesResponse>("/api/hotels/prices", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -544,11 +665,12 @@ export function mountHotelSearch(root: HTMLElement): void {
         joinTa: false,
       }),
       signal,
+      timeoutMs: 90_000,
+      retries: 1,
+      onRetry: (a, m) => retryHook("Checking prices")(a, m),
     });
-    const data = (await res.json()) as PricesResponse;
     if (!data.ok || !data.properties?.length) {
-      summary.textContent = `Couldn't load prices: ${data.error ?? "unknown"}`;
-      return;
+      throw new Error(data.error ?? "No prices returned");
     }
     latestRows = data.properties
       .filter((r) => !onlyTokens || onlyTokens.has(r.token))
@@ -589,15 +711,41 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (!busy) syncCityMode();
   }
 
-  function showProgress(label: string): void {
+  function setSearchProgress(
+    label: string,
+    completed: number,
+    total: number,
+  ): void {
+    if (progressHideTimer) clearTimeout(progressHideTimer);
+    const safeTotal = Math.max(1, total);
+    const safeCompleted = Math.max(0, Math.min(completed, safeTotal));
+    progressCompleted = safeCompleted;
+    progressTotal = safeTotal;
+    const percent = (safeCompleted / safeTotal) * 100;
     progressDock.hidden = false;
-    progressDock.classList.add("is-indeterminate");
+    progressDock.classList.remove("is-indeterminate");
     progressLabel.textContent = label;
+    progressFill.style.transform = `scaleX(${percent / 100})`;
+    progressCount.textContent = `${safeCompleted} of ${safeTotal}`;
+    progressTrack.setAttribute("aria-valuenow", String(Math.round(percent)));
   }
 
-  function hideProgress(): void {
+  function hideSearchProgress(): void {
+    if (progressHideTimer) clearTimeout(progressHideTimer);
     progressDock.hidden = true;
     progressDock.classList.remove("is-indeterminate");
+    progressFill.style.removeProperty("transform");
+    progressCount.textContent = "";
+    progressTrack.removeAttribute("aria-valuenow");
+  }
+
+  function finishSearchProgress(): void {
+    const countText = progressCount.textContent ?? "";
+    const match = /^(\d+)\s+of\s+(\d+)$/.exec(countText);
+    const total = match ? Number(match[2]) : 1;
+    setSearchProgress("Done", total, total);
+    if (progressHideTimer) clearTimeout(progressHideTimer);
+    progressHideTimer = setTimeout(hideSearchProgress, 900);
   }
 }
 
@@ -605,6 +753,7 @@ async function fetchPlan(
   city: string,
   form?: HotelFormState,
   signal?: AbortSignal,
+  onRetry?: (attempt: number, max: number) => void,
 ): Promise<PlanResponse> {
   const params = new URLSearchParams({ city });
   if (form) params.set("scanPages", String(form.scanPages));
@@ -615,8 +764,156 @@ async function fetchPlan(
     params.set("nightsMax", String(form.nightsMax));
     params.set("adults", String(form.adults));
   }
-  const res = await fetch(`/api/hotels/plan?${params}`, { signal });
-  return (await res.json()) as PlanResponse;
+  return fetchJson<PlanResponse>(`/api/hotels/plan?${params}`, {
+    signal,
+    timeoutMs: 15_000,
+    retries: 2,
+    onRetry,
+  });
+}
+
+type FetchJsonOptions = {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string;
+  signal?: AbortSignal;
+  timeoutMs?: number;
+  retries?: number;
+  retryDelayMs?: number;
+  onRetry?: (attempt: number, maxRetries: number, error: unknown) => void;
+};
+
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+    const id = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(id);
+        reject(new DOMException("Aborted", "AbortError"));
+      },
+      { once: true },
+    );
+  });
+}
+
+function isAbortError(error: unknown): boolean {
+  return (
+    (error instanceof DOMException && error.name === "AbortError") ||
+    (error instanceof Error && error.name === "AbortError")
+  );
+}
+
+function isTimeoutError(error: unknown): boolean {
+  return (
+    (error instanceof DOMException && error.name === "TimeoutError") ||
+    (error instanceof Error &&
+      (error.name === "TimeoutError" ||
+        /timed out|timeout/i.test(error.message)))
+  );
+}
+
+function shouldRetryHttpStatus(status: number): boolean {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+function formatNetworkError(error: unknown): string {
+  if (!navigator.onLine) return "you're offline";
+  if (isTimeoutError(error)) return "request timed out";
+  if (error instanceof TypeError) return "network error";
+  if (error instanceof Error && error.message) return error.message;
+  return "connection problem";
+}
+
+async function fetchJson<T>(
+  url: string,
+  opts: FetchJsonOptions = {},
+): Promise<T> {
+  const retries = opts.retries ?? 2;
+  const timeoutMs = opts.timeoutMs ?? 20_000;
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    if (opts.signal?.aborted) {
+      throw new DOMException("Aborted", "AbortError");
+    }
+    if (attempt > 0) {
+      opts.onRetry?.(attempt, retries, lastError);
+      const delay =
+        opts.retryDelayMs ?? Math.min(800 * 2 ** (attempt - 1), 4_000);
+      await sleep(delay, opts.signal);
+    }
+
+    const timeout = new AbortController();
+    const timer = setTimeout(() => {
+      timeout.abort(new DOMException("Timed out", "TimeoutError"));
+    }, timeoutMs);
+
+    const onParentAbort = (): void => {
+      timeout.abort(opts.signal?.reason ?? new DOMException("Aborted", "AbortError"));
+    };
+    if (opts.signal) {
+      if (opts.signal.aborted) onParentAbort();
+      else opts.signal.addEventListener("abort", onParentAbort, { once: true });
+    }
+
+    try {
+      const res = await fetch(url, {
+        method: opts.method,
+        headers: opts.headers,
+        body: opts.body,
+        signal: timeout.signal,
+      });
+      clearTimeout(timer);
+      opts.signal?.removeEventListener("abort", onParentAbort);
+
+      let data: T | undefined;
+      try {
+        data = (await res.json()) as T;
+      } catch {
+        if (!res.ok && shouldRetryHttpStatus(res.status) && attempt < retries) {
+          lastError = new Error(`HTTP ${res.status}`);
+          continue;
+        }
+        throw new Error(
+          res.ok ? "Invalid response from server" : `HTTP ${res.status}`,
+        );
+      }
+
+      if (!res.ok && shouldRetryHttpStatus(res.status) && attempt < retries) {
+        lastError = new Error(
+          (data as { error?: string } | undefined)?.error ??
+            `HTTP ${res.status}`,
+        );
+        continue;
+      }
+      return data;
+    } catch (error) {
+      clearTimeout(timer);
+      opts.signal?.removeEventListener("abort", onParentAbort);
+      lastError = error;
+
+      if (isAbortError(error) && opts.signal?.aborted) throw error;
+
+      const timedOut = isTimeoutError(error) || (isAbortError(error) && !opts.signal?.aborted);
+      if (timedOut) {
+        lastError = new Error("Request timed out — check your connection and try again");
+      }
+
+      const retriable =
+        timedOut ||
+        error instanceof TypeError ||
+        (error instanceof Error && /network|failed to fetch/i.test(error.message));
+      if (attempt < retries && retriable) continue;
+      throw lastError instanceof Error ? lastError : new Error(String(lastError));
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }
 
 function resolveCitySlug(form: HotelFormState): string {
@@ -1198,19 +1495,20 @@ async function expandProperty(
   }
   if (form?.adults) params.set("adults", String(form.adults));
   try {
-    const res = await fetch(
-      `/api/hotels/property/${encodeURIComponent(token)}?${params}`,
-    );
-    const data = (await res.json()) as {
+    const data = await fetchJson<{
       ok: boolean;
       freeCancellationSeen?: boolean;
       address?: string | null;
       offers?: { source?: string; total_price?: { extracted_price?: number } }[];
       topThings?: unknown;
       error?: string;
-    };
+    }>(`/api/hotels/property/${encodeURIComponent(token)}?${params}`, {
+      timeoutMs: 45_000,
+      retries: 2,
+    });
     if (!data.ok) {
-      slot.textContent = `Couldn't load hotel details: ${data.error ?? "unknown"}`;
+      slot.innerHTML = `<p>Couldn't load hotel details: ${escapeHtml(data.error ?? "unknown")}</p><button type="button" class="fs-btn" data-load-property>Retry</button>`;
+      delete slot.dataset.loaded;
       return;
     }
     const offers = (data.offers ?? [])
@@ -1228,7 +1526,8 @@ async function expandProperty(
     `;
     slot.dataset.loaded = "1";
   } catch (e) {
-    slot.textContent = `Couldn't load hotel details: ${e instanceof Error ? e.message : String(e)}`;
+    slot.innerHTML = `<p>Couldn't load hotel details: ${escapeHtml(formatNetworkError(e))}</p><button type="button" class="fs-btn" data-load-property>Retry</button>`;
+    delete slot.dataset.loaded;
   }
 }
 
@@ -1241,12 +1540,22 @@ function bindPropertyExpand(
     detailRow.querySelector<HTMLButtonElement>("[data-load-property]");
   if (!button || button.dataset.bound === "1") return;
   button.dataset.bound = "1";
-  button.addEventListener("click", async (event) => {
+  const run = async (event: Event) => {
     event.stopPropagation();
-    button.disabled = true;
-    button.textContent = "Loading hotel details…";
+    const btn =
+      detailRow.querySelector<HTMLButtonElement>("[data-load-property]");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Loading hotel details…";
+    }
     await expandProperty(detailRow, token, form);
-  });
+    const retry =
+      detailRow.querySelector<HTMLButtonElement>("[data-load-property]");
+    if (retry && retry !== btn) {
+      retry.addEventListener("click", run, { once: true });
+    }
+  };
+  button.addEventListener("click", run);
 }
 
 function bindReviewAnalysis(
@@ -1263,26 +1572,25 @@ function bindReviewAnalysis(
     button.disabled = true;
     button.textContent = "Analyzing reviews…";
     try {
-      const res = await fetch(
-        `/api/hotels/reviews/${encodeURIComponent(token)}`,
-        { method: "POST" },
-      );
-      const data = (await res.json()) as {
+      const data = await fetchJson<{
         ok: boolean;
         analysis?: { features?: HotelRow["reviewFeatures"] };
         credits_used?: number;
         error?: string;
-      };
+      }>(`/api/hotels/reviews/${encodeURIComponent(token)}`, {
+        method: "POST",
+        timeoutMs: 60_000,
+        retries: 1,
+      });
       if (!data.ok || !data.analysis?.features) {
         button.disabled = false;
-        button.textContent = `Analysis failed: ${data.error ?? "unknown"}`;
+        button.textContent = `Retry analysis (${data.error ?? "failed"})`;
         return;
       }
       slot.innerHTML = `${reviewSignalsMarkup(data.analysis.features)}<p class="fs-muted">${data.credits_used ?? 0} credits used. Hotel details updated.</p>`;
     } catch (error) {
       button.disabled = false;
-      button.textContent =
-        error instanceof Error ? error.message : "Analysis failed";
+      button.textContent = `Retry analysis (${formatNetworkError(error)})`;
     }
   });
 }

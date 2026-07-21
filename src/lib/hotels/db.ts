@@ -430,6 +430,20 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
 
     async listLatestReviewFeatures(tokens, modelVersion) {
       if (!tokens.length) return [];
+      // D1 caps bound SQL variables (~100). Query uses 2 fixed binds + tokens.
+      const chunkSize = 90;
+      if (tokens.length > chunkSize) {
+        const out: ReviewFeatureRow[] = [];
+        for (let i = 0; i < tokens.length; i += chunkSize) {
+          out.push(
+            ...(await this.listLatestReviewFeatures(
+              tokens.slice(i, i + chunkSize),
+              modelVersion,
+            )),
+          );
+        }
+        return out;
+      }
       const placeholders = tokens.map(() => "?").join(",");
       const { results } = await db
         .prepare(

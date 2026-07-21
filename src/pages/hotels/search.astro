@@ -76,9 +76,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             </p>
           </header>
           <div class="fs-primary">
-            <div class="fs-field hs-field-city">
-              <label for="hs-city">City</label>
-              <select id="hs-city"></select>
+            <div class="hs-city-block">
+              <div class="fs-field hs-field-city">
+                <label for="hs-city">City</label>
+                <select id="hs-city"></select>
+              </div>
               <label class="fs-check hs-other-city-toggle">
                 <input id="hs-other-city" type="checkbox" />
                 <span>Other city</span>
@@ -152,11 +154,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           </header>
           <div class="fs-secondary">
             <div class="fs-field fs-field-days hs-refine-comfort">
-              <label for="hs-min-comfort"
-                >Min comfort <span
-                  ><strong id="hs-comfort-value"
-                    >{DEFAULT_HOTEL_FORM.minComfort}</strong
-                  ></span
+              <label for="hs-min-comfort" class="hs-comfort-label"
+                >Min comfort <strong id="hs-comfort-value"
+                  >{DEFAULT_HOTEL_FORM.minComfort}</strong
                 ></label
               >
               <input
@@ -227,6 +227,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <p class="fs-search-summary" id="hs-search-summary">
           Ready. Saved results load automatically.
         </p>
+        <div
+          class="fs-banner fs-banner-warn"
+          id="hs-offline-banner"
+          hidden
+        >
+          You're offline. Saved hotels still show; new searches and prices need
+          a connection.
+        </div>
         <div id="hs-banners"></div>
         <p class="fs-progress" id="hs-progress"></p>
       </div>
@@ -240,10 +248,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       <div class="fs-search-progress" id="hs-search-progress" hidden>
         <div class="fs-search-progress-copy">
           <strong id="hs-search-progress-label">Preparing</strong>
+          <span id="hs-search-progress-count"></span>
         </div>
         <div
           class="fs-search-progress-track"
+          id="hs-search-progress-track"
           role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
           aria-label="Hotel search progress"
         >
           <span id="hs-search-progress-fill"></span>

@@ -1647,14 +1647,16 @@ const structuredData = {
   }
 
   .listing-meta {
-    display: inline-flex;
+    display: grid;
     flex-shrink: 0;
+    grid-template-columns: 4.5rem max-content;
     gap: 0.28rem;
     align-items: center;
   }
 
   .listing-price {
     width: max-content;
+    justify-self: start;
     border-radius: 999px;
     background: color-mix(in srgb, var(--surface), transparent 8%);
     border: 1px solid color-mix(in srgb, var(--border), transparent 10%);
@@ -1723,9 +1725,11 @@ const structuredData = {
   }
 
   .listing-size {
-    min-width: 2.6rem;
+    width: 100%;
+    min-width: 0;
     max-width: none;
-    justify-self: start;
+    box-sizing: border-box;
+    justify-self: stretch;
     text-align: center;
   }
 
@@ -1812,6 +1816,8 @@ const structuredData = {
     font-weight: 850;
     letter-spacing: -0.055em;
     line-height: 0.95;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
 
   .area-estimate span:first-child {
@@ -2045,7 +2051,7 @@ const structuredData = {
     }
 
     .listing-meta {
-      flex-wrap: wrap;
+      grid-template-columns: 4.5rem max-content;
     }
 
     .listing-source {
