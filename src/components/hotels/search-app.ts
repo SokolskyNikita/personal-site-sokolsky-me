@@ -1305,7 +1305,6 @@ function detailCard(r: HotelRow, form?: HotelFormState): string {
           )
           .join("")}</tbody></table>`
       : "";
-  const factGroups = factLists(r);
   const breakdown = (r.breakdown ?? [])
     .filter((item) => item.total >= 20)
     .sort((a, b) => (b.negRate ?? 0) - (a.negRate ?? 0))
@@ -1323,7 +1322,6 @@ function detailCard(r: HotelRow, form?: HotelFormState): string {
       ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${r.lat},${r.lng}`)}`
       : null;
   return `<div class="hs-card">
-    <div class="hs-fact-lists">${factGroups}</div>
     <div class="hs-bars">${bars}</div>
     ${breakdown ? `<div class="hs-breakdown"><strong>Review categories</strong><div>${breakdown}</div></div>` : ""}
     ${whitelist ? `<div class="hs-whitelist"><strong>List matches</strong> ${whitelist}</div>` : ""}
@@ -1337,38 +1335,6 @@ function detailCard(r: HotelRow, form?: HotelFormState): string {
     ${mapsUrl ? `<a href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">Open map</a> · ` : ""}
     ${r.googleHotelsUrl ? `<p><a href="${escapeHtml(datedHotelUrl(r.googleHotelsUrl, form))}" target="_blank" rel="noopener noreferrer">Open in Google Hotels</a></p>` : ""}
   </div>`;
-}
-
-function factLists(r: HotelRow): string {
-  const labels: Array<[string, keyof NonNullable<HotelRow["facts"]>]> = [
-    ["Air conditioning", "hasAC"],
-    ["Wi-Fi", "hasWifi"],
-  ];
-  const groups: Record<string, string[]> = {
-    Confirmed: [],
-    Conflicting: [],
-    Unknown: [],
-  };
-  for (const [label, key] of labels) {
-    const status = r.facts?.[key];
-    const value = r.factValues?.[key];
-    if (status === "confirmed" || (status === "inferred" && value === true)) {
-      groups.Confirmed!.push(`${status === "confirmed" ? "✓" : "≈"} ${label}`);
-    } else if (
-      status === "conflicting" ||
-      (status === "inferred" && value === false)
-    ) {
-      groups.Conflicting!.push(`${status === "conflicting" ? "±" : "△"} ${label}`);
-    } else {
-      groups.Unknown!.push(`? ${label}`);
-    }
-  }
-  return Object.entries(groups)
-    .map(
-      ([group, items]) =>
-        `<div><strong>${group}</strong><span>${items.map(escapeHtml).join(" · ") || "—"}</span></div>`,
-    )
-    .join("");
 }
 
 function reviewSignalsMarkup(

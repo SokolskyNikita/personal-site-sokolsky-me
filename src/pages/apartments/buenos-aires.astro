@@ -53,6 +53,18 @@ type RentalMeta = {
   expensesIncluded?: boolean;
 };
 const buildings = pageData.buildings;
+const buildingsWithPilates = new Set([
+  "almarena-puerto-retiro",
+  "concepcion-palermo",
+  "deco-recoleta",
+  "forum-puerto-madero",
+  "lumiere-urbano",
+  "milaires",
+  "quartier-del-bajo",
+  "quantum-bellini",
+  "torre-promenade",
+  "torre-vista-botanico",
+]);
 const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
@@ -350,6 +362,7 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
     has20PlusFloors:
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
+    hasPilates: buildingsWithPilates.has(building.id),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
     pricePerTwoBedroomSquareMeter: building.longTermRentUsd.amount / building.approxTwoBedroomAreaSqm.amount,
     lowestAirbnbPriceUsd: getLowestListingPriceUsd(airbnbListings),
@@ -379,6 +392,7 @@ const apartmentMapData = buildings.map((building) => {
     has20PlusFloors:
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
+    hasPilates: buildingsWithPilates.has(building.id),
     hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     airbnbListings,
     rentalListings,
@@ -505,6 +519,10 @@ const structuredData = {
             <input id="built-since-2016-only" type="checkbox" autocomplete="off" />
             <span>Built since 2016</span>
           </label>
+          <label for="pilates-only">
+            <input id="pilates-only" type="checkbox" autocomplete="off" />
+            <span>Has pilates</span>
+          </label>
         </fieldset>
         <label class="filter-dropdown" for="neighborhood-filter">
           <span>Neighborhood</span>
@@ -552,6 +570,7 @@ const structuredData = {
             data-multiple-offers={building.hasMultipleRentalOffers}
             data-twenty-plus-floors={building.has20PlusFloors}
             data-built-since-2016={building.isBuiltSince2016}
+            data-has-pilates={building.hasPilates}
             data-neighborhood={building.filterNeighborhood}
             data-rent-amount={building.longTermRentUsd.amount}
             data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
@@ -845,6 +864,7 @@ const structuredData = {
   const multipleOffersOnlyToggle = document.querySelector("#multiple-offers-only");
   const twentyPlusFloorsOnlyToggle = document.querySelector("#twenty-plus-floors-only");
   const builtSince2016OnlyToggle = document.querySelector("#built-since-2016-only");
+  const pilatesOnlyToggle = document.querySelector("#pilates-only");
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const buildingSort = document.querySelector("#building-sort");
   const buildingList = document.querySelector(".building-list");
@@ -873,13 +893,15 @@ const structuredData = {
     multipleOffersOnly: Boolean(multipleOffersOnlyToggle?.checked),
     twentyPlusFloorsOnly: Boolean(twentyPlusFloorsOnlyToggle?.checked),
     builtSince2016Only: Boolean(builtSince2016OnlyToggle?.checked),
+    pilatesOnly: Boolean(pilatesOnlyToggle?.checked),
   });
 
   const matchesCheckboxFilters = (building, filters) =>
     (!filters.airbnbOnly || building.airbnbConfirmed) &&
     (!filters.multipleOffersOnly || building.hasMultipleRentalOffers) &&
     (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
-    (!filters.builtSince2016Only || building.isBuiltSince2016);
+    (!filters.builtSince2016Only || building.isBuiltSince2016) &&
+    (!filters.pilatesOnly || building.hasPilates);
 
   const formatAreaLabel = (areaSqm, unit) => {
     const amount = unit === "sqft" ? Math.round(areaSqm * 10.7639) : Math.round(areaSqm);
@@ -1141,6 +1163,7 @@ const structuredData = {
   multipleOffersOnlyToggle?.addEventListener("change", applyFilters);
   twentyPlusFloorsOnlyToggle?.addEventListener("change", applyFilters);
   builtSince2016OnlyToggle?.addEventListener("change", applyFilters);
+  pilatesOnlyToggle?.addEventListener("change", applyFilters);
   neighborhoodFilter?.addEventListener("change", applyFilters);
   buildingSort?.addEventListener("change", applyFilters);
   for (const input of areaUnitInputs) {

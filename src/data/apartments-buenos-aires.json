@@ -21,7 +21,7 @@
     "lastTallBuildingAudit": "On 2026-06-30, SkyscraperPage and Skyscraper Center were used to audit Buenos Aires residential buildings with 29 or more floors. Missing buildings were added only when BrightData search/scrape found a direct active rental or Airbnb page.",
     "floorCountSource": "Floor counts were added on 2026-06-30 from SkyscraperPage Buenos Aires index, targeted BrightData Google searches, and direct listing/developer snippets. Null means no reliable total floor count or 20+ floor evidence was found during the audit.",
     "lastTwoBedroomAreaAudit": "On 2026-07-01, Buenos Aires buildings with stored 2-bedroom / 3-ambiente estimates of 133 m2 or higher were rechecked against additional sales-listing search results. Representative estimates were adjusted when the previous value over-weighted terrace-heavy, largest-format, or extrapolated evidence; entries without stronger building-specific 2BR sale evidence were left unchanged.",
-    "lastUsableInventoryAdd": "Added 7 luxury buildings with priced Airbnb and/or long-term rental inventory on 2026-07-20: Faena Residences, Harbour Residences, Torres River View, Torres El Mirador, Art María, Palacio Estrugamou, YOO Nordelta. Coordinates from Google Places/Geocoding."
+    "lastUsableInventoryAdd": "Added MilAires (Villa Devoto) and Almarena Puerto Retiro / Distrito Quartier on 2026-07-21 after BrightData verification of priced long-term rental and/or Airbnb inventory with extractable size. Skipped Thames 2164 (en pozo, no priced inventory) and Almarena Madero Urbano (hotel-only, no qualifying Airbnb/long-term with USD+size)."
   },
   "buildings": [
     {
@@ -4827,6 +4827,122 @@
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-nordelta-en-alquiler-en-yoo-59415015.html",
         "summary": "YOO Nordelta 3-ambiente listing showed about 95 m2 covered plus balcony."
+      }
+    },
+    {
+      "id": "milaires",
+      "name": "MilAires",
+      "aliases": [
+        "Mil Aires",
+        "MilAires Oasis Urbano",
+        "Oasis Urbano Devoto"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Villa Devoto",
+      "built": "2025",
+      "address": "Av. Salvador María del Carril 5001",
+      "fullAddress": "Av. Salvador María del Carril 5001, Villa Devoto, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Salvador%20Mar%C3%ADa%20del%20Carril%205001%2C%20Villa%20Devoto%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.6073991,
+        "lng": -58.5252727
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-alquiler-2-amb-con-patio-milaires-villa-devoto-59116381.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Ecipsa low-rise oasis complex in Villa Devoto with club amenities including yoga/pilates studio, indoor pool, gym, coworking and kids areas.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Depto Alquiler 2 Amb con Patio Milaires",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-alquiler-2-amb-con-patio-milaires-villa-devoto-59116381.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 1000,
+        "basis": "direct 2-room / 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-alquiler-2-amb-con-patio-milaires-villa-devoto-59116381.html",
+        "summary": "Live Zonaprop 2-ambientes listing showed USD 1,000 rent plus ARS 390,000 expensas (~USD 260 at ARS 1,500)."
+      },
+      "floorsAboveGround": 5,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "developer / press 3-room typology",
+        "confidence": "medium",
+        "source": "Áreas Globales / Ecipsa press",
+        "sourceUrl": "https://ecipsa.com/novedades/milaires-ya-vendio-el-80-en-8-meses-como-es-el-proyecto/",
+        "summary": "Press coverage of MilAires described 3-ambiente units around 75 m2."
+      }
+    },
+    {
+      "id": "almarena-puerto-retiro",
+      "name": "Almarena Puerto Retiro",
+      "aliases": [
+        "Distrito Quartier",
+        "Distrito Quartier Retiro",
+        "Quartier Retiro",
+        "Quartier Retiro Studios",
+        "Almarena Puerto Retiro Affiliated by Meliá"
+      ],
+      "officialWebsiteUrl": "https://distritoquartier.com/site/",
+      "zone": "Retiro / Puerto Retiro",
+      "built": "2020s",
+      "address": "Mayor Arturo Luisoni 2510",
+      "fullAddress": "Mayor Arturo Luisoni 2510, Retiro, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mayor%20Arturo%20Luisoni%202510%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.5838918,
+        "lng": -58.3707557
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1095013758257632294",
+        "evidence": "Airbnb listing titled \"Design Studio in Quartier Retiro Amenities 5 stars\" in the Distrito Quartier complex."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-distrito-quartier-puerto-retiro-59030049.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Argencons mixed-use Distrito Quartier complex beside the Paseo del Bajo, with Melía-affiliated Almarena hotel inventory plus residential lofts/studios sharing wellness amenities including a pilates studio.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Departamento en Distrito Quartier Puerto Retiro",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-distrito-quartier-puerto-retiro-59030049.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 700,
+        "basis": "direct studio / 1-ambiente listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-distrito-quartier-puerto-retiro-59030049.html",
+        "summary": "Live Zonaprop monoambiente listing showed USD 700 rent plus ARS 250,000 expensas (~USD 167 at ARS 1,500)."
+      },
+      "floorsAboveGround": 14,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 70,
+        "basis": "extrapolated from loft / studio inventory",
+        "confidence": "low",
+        "source": "BrightData listing audit / Unitrank",
+        "sourceUrl": "https://unitrank.com/en/ar/buenos-aires/1br-retiro-BfbUOxbHs6Y",
+        "summary": "Active inventory is studio/loft-heavy; larger loft formats around 65 m2 plus mezzanine suggest a rough ~70 m2 2BR comparison."
       }
     }
   ]
