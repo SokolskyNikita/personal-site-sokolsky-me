@@ -346,7 +346,10 @@ async function handleIndex(
     return json({ ok: true, city: citySlug, properties: [], neverScanned: true });
   }
   const t0 = Date.now();
-  const rows = await db.listByCityScore(city.id, 100);
+  // Normal search keeps the payload compact; Show ranking explicitly asks for
+  // every eligible hotel in the saved city index.
+  const limit = url.searchParams.get("full") === "1" ? 500 : 100;
+  const rows = await db.listByCityScore(city.id, limit);
   const reviewRows = await db.listLatestReviewFeatures(
     rows.map((row) => row.token),
     REVIEW_MODEL_VERSION,

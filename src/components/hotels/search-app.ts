@@ -318,9 +318,6 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
   });
 
-  // Auto-load warm index for shareable URLs / BA default.
-  void bootstrap();
-
   formEl.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (isRunning) return;
@@ -358,35 +355,6 @@ export function mountHotelSearch(root: HTMLElement): void {
     };
   }
 
-  async function bootstrap(): Promise<void> {
-    summary.textContent = "Loading saved ranking…";
-    const citySlug = resolveCitySlug(form);
-    try {
-      const plan = await fetchPlan(citySlug, form);
-      if (plan.ok && plan.index && plan.index.propertiesOnHand > 0) {
-        const stale =
-          !plan.index.fresh && plan.index.scannedAt != null
-            ? `<div class="fs-banner fs-banner-warn">These results are ${plan.index.ageDays?.toFixed(0) ?? "?"} days old. Search to refresh for about ${plan.costs?.scanCreditsEstimate ?? 6} credits.</div>`
-            : "";
-        banners.innerHTML = stale;
-        summary.textContent = `${plan.index.propertiesOnHand} saved hotels. Average rating: ${plan.index.meanRating?.toFixed(2) ?? "—"}.`;
-        await loadIndex(citySlug);
-        if (hasDates(form)) {
-          summary.textContent =
-            "Comfort ranking loaded. Search to fetch prices for your dates.";
-        }
-        return;
-      }
-      summary.textContent = plan.ok
-        ? `No saved hotels yet. Search will use about ${plan.costs?.scanCreditsEstimate ?? 6} credits.`
-        : "Ready.";
-    } catch (err) {
-      summary.textContent = navigator.onLine
-        ? `Couldn't load saved ranking (${formatNetworkError(err)}). You can still search.`
-        : "You're offline. Reconnect to load the ranking or search.";
-    }
-  }
-
   async function showRanking(state: HotelFormState): Promise<void> {
     const controller = new AbortController();
     activeController = controller;
@@ -399,7 +367,10 @@ export function mountHotelSearch(root: HTMLElement): void {
 
     const citySlug = resolveCitySlug(state);
     try {
-      await loadIndex(citySlug, controller.signal);
+      await loadIndex(citySlug, controller.signal, {
+        full: true,
+        applyFilters: false,
+      });
     } catch (err) {
       if (controller.signal.aborted) {
         summary.textContent = "Cancelled.";
@@ -421,14 +392,13 @@ export function mountHotelSearch(root: HTMLElement): void {
       return;
     }
 
-    const visible = filterAndSort(latestRows, state);
-    renderTable(results, visible, state);
-    renderFooter(footer, visible, latestMeta);
+    renderTable(results, latestRows, state);
+    renderFooter(footer, latestRows, latestMeta);
     const mean =
       latestMeta.meanRating != null
         ? ` Average rating: ${Number(latestMeta.meanRating).toFixed(2)}.`
         : "";
-    summary.textContent = `Comfort ranking · ${visible.length} hotel${visible.length === 1 ? "" : "s"} (no search, no prices).${mean}`;
+    summary.textContent = `Full comfort ranking · ${latestRows.length} hotel${latestRows.length === 1 ? "" : "s"} (filters ignored; no search or prices).${mean}`;
     finishSearchProgress();
     setBusy(false);
   }
@@ -633,10 +603,13 @@ export function mountHotelSearch(root: HTMLElement): void {
   async function loadIndex(
     citySlug: string,
     signal?: AbortSignal,
+    options: { full?: boolean; applyFilters?: boolean } = {},
   ): Promise<void> {
     const t0 = performance.now();
+    const params = new URLSearchParams({ city: citySlug });
+    if (options.full) params.set("full", "1");
     const data = await fetchJson<IndexResponse>(
-      `/api/hotels/index?city=${encodeURIComponent(citySlug)}`,
+      `/api/hotels/index?${params}`,
       {
         signal,
         timeoutMs: 20_000,
@@ -657,7 +630,10 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (data.durationMs != null && data.durationMs < 500) {
       progress.textContent = `Saved results loaded in ${Math.round(clientMs)} ms.`;
     }
-    const visible = filterAndSort(latestRows, form);
+    const visible =
+      options.applyFilters === false
+        ? latestRows
+        : filterAndSort(latestRows, form);
     renderTable(results, visible, form);
     renderFooter(footer, visible, latestMeta);
   }
