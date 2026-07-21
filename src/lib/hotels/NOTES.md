@@ -96,7 +96,7 @@ Dated **list** returns nightly + total (USD). Basis for all math: **`extracted_p
 3. **Property `hl`:** omit (live wins over docs default `en`).
 4. **Deep link:** q+dates fallback; brand `link` is not GH.
 5. **TA join (P2):** title+city only; no rank in search payload. Ambiguous → null. Opt-in via `joinTa` on `/api/hotels/prices` (default off so a 7-window sweep stays ≤7 credits).
-9. **Price sweep (P2):** one dated `google_hotels` list call per stay window; join by `property_token`; `price_cache` TTL 6h; skip window when ≥`min(12, indexSize)` fresh cache rows exist (nulls count as fetched).
+9. **Price sweep (P2):** one dated `google_hotels` list call per stay window; join by `property_token`; `price_cache` TTL 6h; window marker `__window__:{slug}` skips re-fetch. List pages miss many comfort-ranked hotels → top-up missing top-20 via `google_hotels_property` on the primary window (cap 15).
 6. **Multi-source identity (P4 seam, no code):** mapping table by normalized name + GPS proximity; v1 uses `properties.token` + `provider`.
 7. **Filters unprobed live:** trust docs; post-fetch if needed.
 8. **`freeCancellationSeen`:** from offer `has_free_cancellation===true` when property fetched; else unknown (list has no field).

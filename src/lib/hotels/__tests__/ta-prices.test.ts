@@ -161,11 +161,11 @@ describe("price sweep (fixtures)", () => {
     });
 
     expect(sweep.windows).toHaveLength(1);
-    expect(sweep.liveCalls).toBe(1);
+    expect(sweep.liveCalls).toBeGreaterThanOrEqual(1); // list + optional top-ups
     expect(sweep.pricedCount).toBeGreaterThanOrEqual(1);
     expect(sweep.properties.some((p) => p.bestStay != null)).toBe(true);
 
-    // Second pass should hit cache and skip the list call.
+    // Second pass should hit cache and skip list + top-up.
     const again = await runPriceSweep({
       citySlug: "buenos-aires",
       provider,
@@ -179,5 +179,6 @@ describe("price sweep (fixtures)", () => {
     });
     expect(again.windowsSkippedCache).toBe(1);
     expect(again.liveCalls).toBe(0);
+    expect(again.topupCalls).toBe(0);
   });
 });

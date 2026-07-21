@@ -317,6 +317,7 @@ async function handlePrices(
     nightsMax?: number;
     adults?: number;
     joinTa?: boolean;
+    topUp?: boolean;
   } = {};
   if (request.method === "POST") {
     try {
@@ -366,11 +367,23 @@ async function handlePrices(
     }
 
     const t0 = Date.now();
+    const generatedWindows = generateStayWindows({
+      checkInStart,
+      checkInEnd,
+      nightsMin: Number.isFinite(nightsMin) ? nightsMin : 2,
+      nightsMax: Number.isFinite(nightsMax) ? nightsMax : 2,
+    });
+    const topUp =
+      body.topUp ??
+      (url.searchParams.has("topUp")
+        ? url.searchParams.get("topUp") === "1"
+        : generatedWindows.length === 1);
     const sweep = await runPriceSweep({
       citySlug,
       provider,
       db,
       adults: Number.isFinite(adults) ? adults : 2,
+      topUp,
       windows: {
         checkInStart,
         checkInEnd,
@@ -469,6 +482,7 @@ async function handlePrices(
         cacheHits: sweep.cacheHits,
         liveCalls: sweep.liveCalls,
         windowsSkippedCache: sweep.windowsSkippedCache,
+        topupCalls: sweep.topupCalls,
         windowCount: sweep.windows.length,
         taJoined,
         taCredits,

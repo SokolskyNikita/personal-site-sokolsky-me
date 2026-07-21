@@ -11,6 +11,9 @@ export const WINDOW_CAP = 21;
 export const PRICE_CACHE_TTL_HOURS = 6;
 /** Skip a window list call when this many index tokens already have fresh prices. */
 export const PRICE_CACHE_HIT_THRESHOLD = 12;
+/** After window lists, fill missing top-N prices via google_hotels_property. */
+export const PRICE_TOPUP_TOP_N = 20;
+export const PRICE_TOPUP_MAX_CALLS = 15;
 
 /** Quality-scan stay: nearest Tue→Thu ≥ 21 days out (computed at call time). */
 export function qualityScanDates(now = new Date()): {

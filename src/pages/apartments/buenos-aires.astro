@@ -297,6 +297,17 @@ const isBuiltSince2016 = (built: string) => {
 
   return Math.max(...years) >= 2016;
 };
+const getLowestRentalPriceUsd = (
+  rentalListings: ReturnType<typeof getRentalListings>,
+) => {
+  let lowest: number | null = null;
+  for (const listing of rentalListings) {
+    const price = listing.priceUsdMonthly;
+    if (price == null || !Number.isFinite(price)) continue;
+    if (lowest == null || price < lowest) lowest = price;
+  }
+  return lowest;
+};
 const buildingsWithSort = priceSortedBuildings.map((building: Building, index) => {
   const airbnbListings = getAirbnbListings(building);
   const rentalListings = getRentalListings(building);
@@ -310,6 +321,7 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
     isBuiltSince2016: isBuiltSince2016(building.built),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
     pricePerTwoBedroomSquareMeter: building.longTermRentUsd.amount / building.approxTwoBedroomAreaSqm.amount,
+    lowestRentalPriceUsd: getLowestRentalPriceUsd(rentalListings),
     listPosition: index + 1,
   };
 });
@@ -476,6 +488,8 @@ const structuredData = {
           <select id="building-sort" name="sort" autocomplete="off">
             <option value="price-asc">Price, asc</option>
             <option value="price-desc">Price, desc</option>
+            <option value="listed-rental-price-asc">Listed rental price, asc</option>
+            <option value="listed-rental-price-desc">Listed rental price, desc</option>
             <option value="area-desc">Area of a 2BR</option>
             <option value="price-per-sqm-asc">$$$ per square meter</option>
             <option value="airbnb-count-desc">Number of Airbnbs</option>
@@ -508,6 +522,7 @@ const structuredData = {
             data-rent-amount={building.longTermRentUsd.amount}
             data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
             data-price-per-sqm={building.pricePerTwoBedroomSquareMeter}
+            data-lowest-rental-price={building.lowestRentalPriceUsd ?? ""}
             data-airbnb-count={building.airbnbListings.length}
             data-rental-count={building.rentalListings.length}
           >
@@ -815,6 +830,13 @@ const structuredData = {
     return Number.isFinite(value) ? value : 0;
   };
 
+  const optionalNumericDatasetValue = (row, key) => {
+    const raw = row.dataset[key];
+    if (raw == null || raw === "") return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
+  };
+
   const compareRowsByName = (firstRow, secondRow) => {
     const firstBuilding = buildingById.get(firstRow.dataset.buildingId);
     const secondBuilding = buildingById.get(secondRow.dataset.buildingId);
@@ -822,6 +844,15 @@ const structuredData = {
       numeric: true,
       sensitivity: "base",
     });
+  };
+
+  const compareOptionalPrices = (firstPrice, secondPrice, direction) => {
+    const firstMissing = firstPrice == null;
+    const secondMissing = secondPrice == null;
+    if (firstMissing && secondMissing) return 0;
+    if (firstMissing) return 1;
+    if (secondMissing) return -1;
+    return direction === "desc" ? secondPrice - firstPrice : firstPrice - secondPrice;
   };
 
   const compareRowsBySort = (firstRow, secondRow) => {
@@ -836,19 +867,25 @@ const structuredData = {
     const secondAirbnbCount = numericDatasetValue(secondRow, "airbnbCount");
     const firstRentalCount = numericDatasetValue(firstRow, "rentalCount");
     const secondRentalCount = numericDatasetValue(secondRow, "rentalCount");
+    const firstListedRentalPrice = optionalNumericDatasetValue(firstRow, "lowestRentalPrice");
+    const secondListedRentalPrice = optionalNumericDatasetValue(secondRow, "lowestRentalPrice");
 
     const primarySort =
       sortValue === "price-desc"
         ? secondRent - firstRent
-        : sortValue === "area-desc"
-          ? secondArea - firstArea
-          : sortValue === "price-per-sqm-asc"
-            ? firstPricePerSqm - secondPricePerSqm
-            : sortValue === "airbnb-count-desc"
-              ? secondAirbnbCount - firstAirbnbCount
-              : sortValue === "rental-count-desc"
-                ? secondRentalCount - firstRentalCount
-                : firstRent - secondRent;
+        : sortValue === "listed-rental-price-asc"
+          ? compareOptionalPrices(firstListedRentalPrice, secondListedRentalPrice, "asc")
+          : sortValue === "listed-rental-price-desc"
+            ? compareOptionalPrices(firstListedRentalPrice, secondListedRentalPrice, "desc")
+            : sortValue === "area-desc"
+              ? secondArea - firstArea
+              : sortValue === "price-per-sqm-asc"
+                ? firstPricePerSqm - secondPricePerSqm
+                : sortValue === "airbnb-count-desc"
+                  ? secondAirbnbCount - firstAirbnbCount
+                  : sortValue === "rental-count-desc"
+                    ? secondRentalCount - firstRentalCount
+                    : firstRent - secondRent;
 
     return primarySort || compareRowsByName(firstRow, secondRow);
   };
@@ -1276,7 +1313,7 @@ const structuredData = {
   }
 
   .sort-dropdown {
-    width: min(100%, 13rem);
+    width: min(100%, 15.5rem);
   }
 
   .filter-dropdown select {

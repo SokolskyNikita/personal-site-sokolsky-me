@@ -1,6 +1,8 @@
 import {
   PRICE_CACHE_HIT_THRESHOLD,
   PRICE_CACHE_TTL_HOURS,
+  PRICE_TOPUP_MAX_CALLS,
+  PRICE_TOPUP_TOP_N,
 } from "./constants";
 import { computeDeals, type DealResult } from "./deals";
 import type { HotelsRepository, PropertyRow } from "./db";
@@ -45,6 +47,7 @@ export type PriceSweepResult = {
   cacheHits: number;
   liveCalls: number;
   windowsSkippedCache: number;
+  topupCalls: number;
   pricedCount: number;
   indexSize: number;
 };
@@ -55,9 +58,15 @@ export type PriceSweepInput = {
   db: HotelsRepository;
   windows: WindowGenInput;
   adults?: number;
+  /** Single-window coverage fill; disabled for flexible sweeps to preserve 1 credit/window. */
+  topUp?: boolean;
   /** Cap index rows considered for join / deal set. */
   indexLimit?: number;
 };
+
+function windowCacheToken(citySlug: string): string {
+  return `__window__:${citySlug}`;
+}
 
 export function planPriceSweepCredits(
   windows: StayWindow[],
@@ -83,6 +92,7 @@ export async function runPriceSweep(
       cacheHits: 0,
       liveCalls: 0,
       windowsSkippedCache: 0,
+      topupCalls: 0,
       pricedCount: 0,
       indexSize: 0,
     };
@@ -102,23 +112,28 @@ export async function runPriceSweep(
   let cacheHits = 0;
   let liveCalls = 0;
   let windowsSkippedCache = 0;
+  let topupCalls = 0;
 
   /** token → list of stay prices across windows */
   const byToken = new Map<string, StayPrice[]>();
+  const primaryWindow = windows[0];
 
   for (const w of windows) {
+    const windowMarker = windowCacheToken(input.citySlug);
     const cached = await input.db.listPricesForTokens(
-      tokens,
+      [...tokens, windowMarker],
       w.checkIn,
       w.checkOut,
       fresherThan,
     );
-    const cachedWithPrice = cached.filter((c) => c.nightly_usd != null);
+    const cachedWithPrice = cached.filter(
+      (c) => c.token !== windowMarker && c.nightly_usd != null,
+    );
     cacheHits += cachedWithPrice.length;
 
-    // Fresh rows (incl. null) mean this window was already fetched — don't re-spend.
     const coverTarget = Math.min(PRICE_CACHE_HIT_THRESHOLD, tokens.length);
-    const needLive = cached.length < coverTarget;
+    const windowFetched = cached.some((c) => c.token === windowMarker);
+    const needLive = !windowFetched && cachedWithPrice.length < coverTarget;
     if (!needLive) {
       windowsSkippedCache += 1;
       mergeCached(byToken, cachedWithPrice, w);
@@ -173,18 +188,17 @@ export async function runPriceSweep(
       });
     }
 
-    // Mark index tokens absent from this page so the window won't re-fetch.
-    for (const token of tokens) {
-      if (seen.has(token)) continue;
-      await input.db.upsertPrice({
-        token,
-        checkIn: w.checkIn,
-        checkOut: w.checkOut,
-        nightlyUsd: null,
-        totalUsd: null,
-        fetchedAt: now,
-      });
-    }
+    // Marker so this window is not re-fetched (do NOT null-fill missing index
+    // tokens — absence from one list page ≠ unpriced; top-up handles gaps).
+    await input.db.upsertPrice({
+      token: windowMarker,
+      checkIn: w.checkIn,
+      checkOut: w.checkOut,
+      nightlyUsd: null,
+      totalUsd: null,
+      source: "window_marker",
+      fetchedAt: now,
+    });
 
     for (const c of cachedWithPrice) {
       if (!seen.has(c.token)) {
@@ -195,6 +209,87 @@ export async function runPriceSweep(
           nightlyUsd: c.nightly_usd!,
           totalUsd: c.total_usd,
         });
+      }
+    }
+  }
+
+  // List pages miss many comfort-ranked hotels — top up top-N via property details
+  // on the primary window only (keeps flexible sweeps cheap).
+  if (primaryWindow && input.topUp === true) {
+    const top = index.slice(0, PRICE_TOPUP_TOP_N);
+    for (const row of top) {
+      if (topupCalls >= PRICE_TOPUP_MAX_CALLS) break;
+      if ((byToken.get(row.token) ?? []).length > 0) continue;
+      const cached = await input.db.listPricesForTokens(
+        [row.token],
+        primaryWindow.checkIn,
+        primaryWindow.checkOut,
+        fresherThan,
+      );
+      if (cached.length && cached[0]!.nightly_usd != null) {
+        pushStay(byToken, row.token, {
+          checkIn: primaryWindow.checkIn,
+          checkOut: primaryWindow.checkOut,
+          nights: primaryWindow.nights,
+          nightlyUsd: cached[0]!.nightly_usd,
+          totalUsd: cached[0]!.total_usd,
+        });
+        cacheHits += 1;
+        continue;
+      }
+      // Only trust a null from a prior property top-up; list misses are not final.
+      if (
+        cached.length &&
+        cached[0]!.nightly_usd == null &&
+        cached[0]!.source === "searchapi_property"
+      ) {
+        continue;
+      }
+
+      try {
+        const page = await input.provider.getProperty({
+          propertyToken: row.token,
+          checkIn: primaryWindow.checkIn,
+          checkOut: primaryWindow.checkOut,
+          adults: input.adults ?? 2,
+        });
+        topupCalls += 1;
+        creditsUsed += 1;
+        liveCalls += 1;
+        const nightly = page.property.price_per_night?.extracted_price;
+        const total = page.property.total_price?.extracted_price ?? null;
+        const nightlyUsd =
+          typeof nightly === "number" && nightly > 0 ? nightly : null;
+        await input.db.upsertPrice({
+          token: row.token,
+          checkIn: primaryWindow.checkIn,
+          checkOut: primaryWindow.checkOut,
+          nightlyUsd,
+          totalUsd: typeof total === "number" ? total : null,
+          source: "searchapi_property",
+          fetchedAt: now,
+        });
+        if (nightlyUsd != null) {
+          pushStay(byToken, row.token, {
+            checkIn: primaryWindow.checkIn,
+            checkOut: primaryWindow.checkOut,
+            nights: primaryWindow.nights,
+            nightlyUsd,
+            totalUsd: typeof total === "number" ? total : null,
+          });
+        }
+      } catch {
+        await input.db.upsertPrice({
+          token: row.token,
+          checkIn: primaryWindow.checkIn,
+          checkOut: primaryWindow.checkOut,
+          nightlyUsd: null,
+          totalUsd: null,
+          source: "searchapi_property",
+          fetchedAt: now,
+        });
+        topupCalls += 1;
+        creditsUsed += 1;
       }
     }
   }
@@ -227,6 +322,7 @@ export async function runPriceSweep(
     cacheHits,
     liveCalls,
     windowsSkippedCache,
+    topupCalls,
     pricedCount: properties.filter((p) => p.bestStay != null).length,
     indexSize: index.length,
   };
