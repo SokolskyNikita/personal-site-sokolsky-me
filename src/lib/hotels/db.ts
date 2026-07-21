@@ -99,6 +99,8 @@ export interface HotelsRepository {
     credits: number;
   }): Promise<void>;
   upsertScored(cityId: number, scored: ScoredProperty): Promise<void>;
+  /** Drop all properties for a city (used before force rescan). */
+  clearCityProperties(cityId: number): Promise<void>;
   listByCityScore(cityId: number, limit?: number): Promise<PropertyRow[]>;
   listRawByCity(cityId: number): Promise<PropertyRow[]>;
   getPropertyByToken(token: string): Promise<PropertyRow | null>;
@@ -191,6 +193,13 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
           input.credits,
           input.cityId,
         )
+        .run();
+    },
+
+    async clearCityProperties(cityId) {
+      await db
+        .prepare("DELETE FROM properties WHERE city_id = ?")
+        .bind(cityId)
         .run();
     },
 
@@ -516,6 +525,11 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
           c.scanned_at = input.scannedAt;
           c.credits_last_scan = input.credits;
         }
+      }
+    },
+    async clearCityProperties(cityId) {
+      for (const [token, row] of properties) {
+        if (row.city_id === cityId) properties.delete(token);
       }
     },
     async upsertScored(cityId, scored) {

@@ -34,7 +34,7 @@
   display: grid;
   grid-template-columns: 10rem minmax(0, 1fr);
   align-items: baseline;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.5rem;
 }
 
 #hs-app .fs-section-heading p {
@@ -46,7 +46,7 @@
 #hs-app .fs-primary,
 #hs-app .fs-secondary {
   display: grid;
-  gap: 0.65rem;
+  gap: 0.55rem 0.75rem;
 }
 
 #hs-app .hs-section-where .fs-primary {
@@ -54,9 +54,9 @@
   align-items: start;
 }
 
-#hs-app .hs-section-where .hs-city-block,
-#hs-app .hs-section-where .hs-field-neighborhood {
-  grid-column: span 6;
+/* City + dates + adults share one row; Other city sits under City. */
+#hs-app .hs-section-where .hs-city-block {
+  grid-column: span 3;
 }
 
 /* Other-city mode: stack checkbox + free-text full width (no cramped side-by-side). */
@@ -72,16 +72,15 @@
 #hs-app .hs-section-where .hs-field-checkin,
 #hs-app .hs-section-where .hs-field-checkout,
 #hs-app .hs-section-where .hs-field-adults {
-  grid-column: span 4;
+  grid-column: span 3;
 }
 
 #hs-app .hs-city-block {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.4rem;
+  gap: 0.35rem;
   min-width: 0;
-  margin-bottom: 0.15rem;
 }
 
 #hs-app .hs-section-where .fs-section-heading {
@@ -89,8 +88,9 @@
 }
 
 #hs-app .hs-section-where .fs-section-heading p {
-  margin-top: 0.3rem;
-  max-width: 40rem;
+  margin-top: 0.2rem;
+  max-width: 36rem;
+  line-height: 1.35;
 }
 
 #hs-app .hs-section-refine .fs-section-heading {
@@ -155,9 +155,9 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.65rem 1rem;
-  margin-top: 0.8rem;
-  padding-top: 0.8rem;
+  gap: 0.5rem 0.85rem;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
   border-top: 1px dashed var(--fs-line);
 }
 
@@ -167,20 +167,22 @@
   color: var(--fs-muted);
   font-size: 0.76rem;
   text-align: right;
+  line-height: 1.35;
 }
 
 #hs-app .hs-section-refine .fs-secondary {
-  grid-template-columns: minmax(14rem, 2fr) minmax(10rem, 1fr) minmax(12rem, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: end;
 }
 
 #hs-app .hs-refine-toggles {
-  grid-column: 1;
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.35rem 1rem;
-  min-height: 44px;
+  gap: 0.25rem 1.1rem;
+  min-height: 0;
+  padding-top: 0.1rem;
 }
 
 #hs-app .fs-status,
@@ -342,20 +344,6 @@
   font-size: 0.75rem;
 }
 
-.hs-facts {
-  font-size: 0.78rem;
-  color: var(--fs-muted);
-  white-space: nowrap;
-}
-
-.hs-facts .hs-unknown {
-  color: var(--fs-warn);
-}
-
-.hs-facts .hs-weak {
-  color: var(--fs-danger);
-}
-
 .hs-detail td {
   background: color-mix(in srgb, var(--fs-bg) 70%, var(--fs-bg-elevated));
 }
@@ -431,11 +419,13 @@
 
   #hs-app .hs-section-where .fs-primary {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0.55rem;
+    gap: 0.5rem;
   }
 
-  #hs-app .hs-section-where .hs-city-block,
-  #hs-app .hs-section-where .hs-field-neighborhood,
+  #hs-app .hs-section-where .hs-city-block {
+    grid-column: span 6;
+  }
+
   #hs-app .hs-section-where .hs-field-adults {
     grid-column: span 6;
   }
@@ -453,10 +443,12 @@
   #hs-app .hs-run-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.55rem;
+    gap: 0.45rem;
   }
 
+  /* Don't let the hint flex-grow create a tall empty band above the buttons. */
   #hs-app .hs-credit-hint {
+    flex: 0 1 auto;
     text-align: left;
   }
 
@@ -474,12 +466,9 @@
 
   #hs-app .hs-refine-toggles {
     grid-column: 1 / -1;
-  }
-
-  #hs-app .hs-refine-toggles {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.2rem 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.85rem;
   }
 
   #hs-app .fs-field input,
@@ -565,11 +554,6 @@
 
   .hs-table tr[data-token] > .hs-cell-deal {
     grid-column: 2 / 4;
-  }
-
-  .hs-table tr[data-token] > .hs-facts {
-    grid-column: 2 / 4;
-    white-space: normal;
   }
 
   .hs-table tr[data-token] > td.hs-cell-empty {

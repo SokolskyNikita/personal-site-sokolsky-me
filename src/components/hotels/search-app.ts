@@ -3,7 +3,6 @@ import {
   DEFAULT_HOTEL_FORM,
   formStateFromSearchParams,
   formStateToSearchParams,
-  neighborhoodsFor,
   slugifyCity,
   type HotelFormState,
 } from "../../lib/hotels/url";
@@ -184,11 +183,6 @@ export function mountHotelSearch(root: HTMLElement): void {
   let progressCompleted = 0;
   let progressTotal = 1;
   const citySelect = root.querySelector<HTMLSelectElement>("#hs-city")!;
-  const neighborhoodSelect =
-    root.querySelector<HTMLSelectElement>("#hs-neighborhood")!;
-  const neighborhoodField = root.querySelector<HTMLElement>(
-    ".hs-field-neighborhood",
-  );
   const qInput = root.querySelector<HTMLInputElement>("#hs-q")!;
   const qWrap = root.querySelector<HTMLElement>("#hs-q-wrap");
   const otherCityCheck =
@@ -212,7 +206,6 @@ export function mountHotelSearch(root: HTMLElement): void {
   let latestRows: HotelRow[] = [];
   let latestMeta: Record<string, unknown> = {};
   applyFormToDom(root, form);
-  populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
   syncCityMode();
   syncCreditHint();
   syncSortOptions();
@@ -247,9 +240,6 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
     syncCityMode();
     form = readForm(root);
-    if (!form.q) {
-      populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
-    }
     syncUrl(form);
     syncCreditHint();
     syncSortOptions();
@@ -271,17 +261,8 @@ export function mountHotelSearch(root: HTMLElement): void {
     rankingBtn.title = other
       ? "Saved ranking is only available for listed cities. Use Search for other cities."
       : "Load the saved comfort ranking — free, no scan or prices.";
-    if (other) {
-      neighborhoodSelect.value = "";
-      neighborhoodSelect.disabled = true;
-      if (neighborhoodField) neighborhoodField.hidden = true;
-      neighborhoodSelect.title =
-        "Neighborhood filters are only available for listed cities.";
-    } else {
-      if (!citySelect.value) citySelect.value = DEFAULT_HOTEL_FORM.city;
-      neighborhoodSelect.disabled = false;
-      if (neighborhoodField) neighborhoodField.hidden = false;
-      neighborhoodSelect.title = "";
+    if (!other && !citySelect.value) {
+      citySelect.value = DEFAULT_HOTEL_FORM.city;
     }
   }
 
@@ -462,7 +443,6 @@ export function mountHotelSearch(root: HTMLElement): void {
 
     const citySlug = resolveCitySlug(state);
     const q = state.q.trim() || undefined;
-    const bbox = neighborhoodBbox(state);
     const needsPrices = hasDates(state);
     const priorRows = latestRows;
     const priorMeta = latestMeta;
@@ -497,7 +477,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     const onHand = plan.index?.propertiesOnHand ?? 0;
     const fresh = plan.index?.fresh ?? false;
 
-    if (onHand > 0 && fresh && !state.q && !bbox) {
+    if (onHand > 0 && fresh && !state.q) {
       const total = needsPrices ? 3 : 2;
       summary.textContent = `Using ${onHand} saved hotel${onHand === 1 ? "" : "s"}.`;
       setSearchProgress("Loading saved hotels", 1, total);
@@ -549,7 +529,6 @@ export function mountHotelSearch(root: HTMLElement): void {
         body: JSON.stringify({
           citySlug,
           q,
-          bbox,
           force: true,
           mostReviewedPages: SCAN_PAGES_MOST_REVIEWED,
           highestRatingPages: 4,
@@ -622,13 +601,10 @@ export function mountHotelSearch(root: HTMLElement): void {
       renderFooter(footer, visible, latestMeta);
     }
 
-    // Prefer D1 warm path if available after scan. Skip the city-wide index
-    // for neighborhood searches so the bbox-filtered scan rows are kept.
+    // Prefer D1 warm path if available after scan.
     setSearchProgress("Updating results", 2, total);
     try {
-      if (!bbox) {
-        await loadIndex(citySlug, controller.signal);
-      }
+      await loadIndex(citySlug, controller.signal);
     } catch {
       /* keep scan payload */
       banners.insertAdjacentHTML(
@@ -639,12 +615,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (needsPrices) {
       setSearchProgress("Checking prices", 3, total);
       try {
-        await loadPrices(
-          citySlug,
-          state,
-          controller.signal,
-          bbox ? new Set(latestRows.map((r) => r.token)) : undefined,
-        );
+        await loadPrices(citySlug, state, controller.signal);
       } catch (err) {
         if (!controller.signal.aborted) {
           banners.insertAdjacentHTML(
@@ -975,15 +946,6 @@ function resolveCitySlug(form: HotelFormState): string {
   return form.city || "buenos-aires";
 }
 
-function neighborhoodBbox(
-  form: HotelFormState,
-): [number, number, number, number] | undefined {
-  if (!form.neighborhood) return undefined;
-  const n = neighborhoodsFor(form.city).find((x) => x.name === form.neighborhood);
-  if (!n || n.bbox.length !== 4) return undefined;
-  return n.bbox as [number, number, number, number];
-}
-
 function populateCities(select: HTMLSelectElement): void {
   select.replaceChildren();
   for (const c of cityOptions()) {
@@ -994,30 +956,10 @@ function populateCities(select: HTMLSelectElement): void {
   }
 }
 
-function populateNeighborhoods(
-  select: HTMLSelectElement,
-  citySlug: string,
-  selected: string,
-): void {
-  select.replaceChildren();
-  const all = document.createElement("option");
-  all.value = "";
-  all.textContent = "All neighborhoods";
-  select.append(all);
-  for (const n of neighborhoodsFor(citySlug)) {
-    const opt = document.createElement("option");
-    opt.value = n.name;
-    opt.textContent = n.name;
-    if (n.name === selected) opt.selected = true;
-    select.append(opt);
-  }
-}
-
 function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   setSelect(root, "#hs-city", form.city);
   setVal(root, "#hs-q", form.q);
   setCheck(root, "#hs-other-city", Boolean(form.q.trim()));
-  setSelect(root, "#hs-neighborhood", form.neighborhood);
   setVal(root, "#hs-checkin-start", form.checkInStart);
   // Legacy URLs carry checkInEnd + nights ranges; collapse to one stay.
   setVal(root, "#hs-checkout", form.checkInStart ? checkOutDate(form) : "");
@@ -1062,8 +1004,6 @@ function readForm(root: HTMLElement): HotelFormState {
   return {
     city: city || DEFAULT_HOTEL_FORM.city,
     q: otherCity ? qRaw : "",
-    neighborhood:
-      root.querySelector<HTMLSelectElement>("#hs-neighborhood")?.value ?? "",
     checkInStart: checkIn,
     // A single check-in date with nights derived from the check-out picker.
     checkInEnd: checkIn,
@@ -1249,14 +1189,9 @@ function renderTable(
   const hasPrices = rows.some(
     (r) => stayTotalUsd(r) != null || r.deal_pct != null,
   );
-  const columnCount = hasPrices ? 7 : 5;
+  const columnCount = hasPrices ? 6 : 4;
   const body = rows
     .map((r, i) => {
-      const plant =
-        (r.plantPenalty ?? 0) >= 5
-          ? `<span class="hs-chip hs-chip-bad" title="Penalized for room-condition complaints">room issues −${Number(r.plantPenalty).toFixed(0)}</span>`
-          : "";
-      const facts = factIcons(r);
       const href = datedHotelUrl(r.googleHotelsUrl, form);
       const total = stayTotalUsd(r);
       const stayDates = r.bestStay
@@ -1270,10 +1205,9 @@ function renderTable(
       return `<tr data-token="${escapeHtml(r.token)}">
         <td class="hs-cell-rank">${i + 1}</td>
         <td class="hs-cell-score"><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
-        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayHotelName(r.name))}</a> ${plant}</td>
+        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayHotelName(r.name))}</a></td>
         <td class="hs-cell-rating hs-cell-num">${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${formatReviewCount(r.reviews)})</span></td>
         ${priceCells}
-        <td class="hs-facts">${facts}</td>
       </tr>
       <tr class="hs-detail" hidden>
         <td colspan="${columnCount}">${detailCard(r, form)}</td>
@@ -1286,7 +1220,7 @@ function renderTable(
     : "";
   container.innerHTML = `<div class="hs-table-wrap"><table class="hs-table">
     <thead><tr>
-      <th class="hs-cell-rank">#</th><th>Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th>${priceHead}<th>Amenities</th>
+      <th class="hs-cell-rank">#</th><th>Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th>${priceHead}
     </tr></thead>
     <tbody>${body}</tbody>
   </table></div>`;
@@ -1333,20 +1267,21 @@ function formatDateRange(checkIn: string, checkOut: string): string {
     : `${aLabel} – ${MONTHS[bm - 1]} ${bd}`;
 }
 
+/** Only surface meaningful bargains (≥25% under expected). */
+const DEAL_CHIP_MIN = 0.25;
+
 function dealChip(
   dealPct: number,
   method: "fit" | "fallback" | null | undefined,
 ): string {
-  const pct = `${Math.abs(dealPct * 100).toFixed(0)}%`;
-  const better = dealPct >= 0;
-  const label = better ? `${pct} under` : `${pct} over`;
+  if (dealPct < DEAL_CHIP_MIN) return "—";
+  const pct = `${Math.round(dealPct * 100)}%`;
+  const label = `${pct} under`;
   const explanation =
     method === "fallback"
-      ? `${pct} ${better ? "better" : "worse"} value than the city median`
-      : `${pct} ${better ? "below" : "above"} the price expected for this quality`;
-  const tone =
-    dealPct >= 0.2 ? "hs-chip-good" : dealPct <= -0.15 ? "hs-chip-bad" : "";
-  return `<span class="hs-chip ${tone}" title="${escapeHtml(explanation)}">${label}</span>`;
+      ? `${pct} better value than the city median`
+      : `${pct} below the price expected for this quality`;
+  return `<span class="hs-chip hs-chip-good" title="${escapeHtml(explanation)}">${label}</span>`;
 }
 
 function datedHotelUrl(
@@ -1368,26 +1303,6 @@ function datedHotelUrl(
   } catch {
     return raw;
   }
-}
-
-function factIcons(r: HotelRow): string {
-  const parts: string[] = [];
-  const map: [string, FactStatus | undefined][] = [
-    ["AC", r.facts?.hasAC],
-    ["Wi‑Fi", r.facts?.hasWifi],
-  ];
-  for (const [label, status] of map) {
-    if (status === "confirmed") parts.push(`<span title="${label} confirmed">✓ ${label}</span>`);
-    else if (status === "inferred") {
-      parts.push(`<span title="${label} inferred from reviews">≈ ${label}</span>`);
-    }
-    else if (status === "conflicting") {
-      parts.push(`<span class="hs-weak" title="${label} conflicting evidence">± ${label}</span>`);
-    }
-    else if (status === "unknown") parts.push(`<span class="hs-unknown" title="${label} unknown">? ${label}</span>`);
-    else parts.push(`<span class="hs-weak" title="${label}">△ ${label}</span>`);
-  }
-  return parts.join(" ");
 }
 
 function detailCard(r: HotelRow, form?: HotelFormState): string {

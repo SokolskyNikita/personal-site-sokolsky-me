@@ -70,10 +70,8 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <header class="fs-section-heading">
             <h2 id="hs-where-heading">Where &amp; when</h2>
             <p>
-              Search uses API credits (estimate next to the button). Show
-              ranking loads the saved comfort list for free — no scan, no
-              prices. Dates are optional on Search; add them for current prices
-              (cached for six hours).
+              Search uses API credits. Show ranking is free (saved list, no
+              prices). Add dates on Search for priced stays.
             </p>
           </header>
           <div class="fs-primary">
@@ -95,10 +93,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 placeholder="Type any city, e.g. Lisbon"
                 autocomplete="off"
               />
-            </div>
-            <div class="fs-field hs-field-neighborhood">
-              <label for="hs-neighborhood">Neighborhood</label>
-              <select id="hs-neighborhood"></select>
             </div>
             <div class="fs-field hs-field-checkin">
               <label for="hs-checkin-start">Check-in</label>
@@ -163,20 +157,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 <option value="confirmed_only">Never matches requirements</option>
               </select>
             </div>
-            <div class="fs-toggles hs-refine-toggles">
-              <label class="fs-check">
-                <input id="hs-require-ac" type="checkbox" />
-                <span>Require AC</span>
-              </label>
-              <label class="fs-check">
-                <input id="hs-require-desk" type="checkbox" />
-                <span>24-hour front desk</span>
-              </label>
-              <label class="fs-check">
-                <input id="hs-branded-only" type="checkbox" />
-                <span>Branded only</span>
-              </label>
-            </div>
             <div class="fs-field">
               <label for="hs-min-reviews">Min reviews</label>
               <select id="hs-min-reviews">
@@ -194,6 +174,20 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 step="10"
                 placeholder="No limit"
               />
+            </div>
+            <div class="fs-toggles hs-refine-toggles">
+              <label class="fs-check">
+                <input id="hs-require-ac" type="checkbox" />
+                <span>Require AC</span>
+              </label>
+              <label class="fs-check">
+                <input id="hs-require-desk" type="checkbox" />
+                <span>24-hour front desk</span>
+              </label>
+              <label class="fs-check">
+                <input id="hs-branded-only" type="checkbox" />
+                <span>Branded only</span>
+              </label>
             </div>
           </div>
         </section>

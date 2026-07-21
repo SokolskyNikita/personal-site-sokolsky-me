@@ -3,7 +3,6 @@ import citiesConfig from "./config/cities.json";
 export type HotelFormState = {
   city: string;
   q: string;
-  neighborhood: string;
   checkInStart: string;
   checkInEnd: string;
   nightsMin: number;
@@ -30,7 +29,6 @@ export type HotelFormState = {
 export const DEFAULT_HOTEL_FORM: HotelFormState = {
   city: "buenos-aires",
   q: "",
-  neighborhood: "",
   checkInStart: "",
   checkInEnd: "",
   nightsMin: 2,
@@ -52,16 +50,6 @@ export function cityOptions(): { slug: string; display: string }[] {
     slug: c.slug,
     display: c.display,
   }));
-}
-
-export function neighborhoodsFor(citySlug: string): {
-  name: string;
-  bbox: number[];
-}[] {
-  const city = (citiesConfig as { slug: string; neighborhoods?: { name: string; bbox: number[] }[] }[]).find(
-    (c) => c.slug === citySlug,
-  );
-  return city?.neighborhoods ?? [];
 }
 
 export function slugifyCity(input: string): string {
@@ -98,7 +86,6 @@ export function formStateFromSearchParams(
   return {
     city,
     q: params.get("q") ?? "",
-    neighborhood: params.get("neighborhood") ?? "",
     checkInStart: params.get("checkInStart") ?? "",
     checkInEnd: params.get("checkInEnd") ?? "",
     nightsMin: clampNum(params.get("nightsMin"), 1, 14, 2),
@@ -123,7 +110,6 @@ export function formStateToSearchParams(form: HotelFormState): URLSearchParams {
   const p = new URLSearchParams();
   if (form.city !== DEFAULT_HOTEL_FORM.city) p.set("city", form.city);
   if (form.q) p.set("q", form.q);
-  if (form.neighborhood) p.set("neighborhood", form.neighborhood);
   if (form.checkInStart) p.set("checkInStart", form.checkInStart);
   if (form.checkInEnd) p.set("checkInEnd", form.checkInEnd);
   if (form.nightsMin !== 2) p.set("nightsMin", String(form.nightsMin));

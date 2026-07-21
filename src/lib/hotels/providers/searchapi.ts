@@ -65,7 +65,8 @@ export class SearchApiHotelProvider implements HotelDataProvider {
     const url = new URL(this.baseUrl);
     url.searchParams.set("engine", "google_hotels");
     if (query.bbox) {
-      url.searchParams.set("bounding_box", query.bbox.join(","));
+      // SearchAPI expects a JSON array string, e.g. "[-58.4,-34.6,-58.3,-34.5]".
+      url.searchParams.set("bounding_box", JSON.stringify(query.bbox));
     } else if (query.q) {
       url.searchParams.set("q", query.q);
     }

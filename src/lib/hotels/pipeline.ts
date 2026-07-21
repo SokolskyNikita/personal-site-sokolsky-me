@@ -27,6 +27,8 @@ export type CityConfig = {
   display: string;
   query: string;
   gl?: string;
+  /** Prefer this metro box when free-text `q` geocodes badly (e.g. Cairo). */
+  bbox?: [number, number, number, number];
   neighborhoods?: { name: string; bbox: number[] }[];
 };
 
@@ -129,6 +131,11 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
   const display = city?.display ?? opts.citySlug;
   const query = opts.q ?? city?.query ?? opts.citySlug;
   const gl = city?.gl ?? "us";
+  const bbox =
+    opts.bbox ??
+    (city?.bbox && city.bbox.length === 4
+      ? (city.bbox as [number, number, number, number])
+      : undefined);
   const dates = qualityScanDates();
   const checkIn = opts.checkIn ?? dates.checkIn;
   const checkOut = opts.checkOut ?? dates.checkOut;
@@ -143,7 +150,7 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
     opts.provider,
     {
       q: query,
-      bbox: opts.bbox,
+      bbox,
       checkIn,
       checkOut,
       adults,
@@ -159,7 +166,7 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
     opts.provider,
     {
       q: query,
-      bbox: opts.bbox,
+      bbox,
       checkIn,
       checkOut,
       adults,
@@ -276,6 +283,11 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
       query,
       gl,
     });
+    // Force city-wide rescans replace the prior index so a bad geocode
+    // (e.g. free-text Cairo → US hotels) cannot linger beside the new set.
+    if (opts.force && !opts.bbox && !opts.q) {
+      await opts.db.clearCityProperties(cityId);
+    }
     for (const s of all) {
       await opts.db.upsertScored(cityId, s);
     }
