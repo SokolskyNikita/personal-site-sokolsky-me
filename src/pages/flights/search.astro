@@ -189,70 +189,73 @@ const defaultStart = new Date().toISOString().slice(0, 10);
             <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
           </div>
 
-          <div class="fs-field">
-            <span class="fs-field-label" id="fs-currency-label">Currency</span>
-            <div
-              class="fs-currency-toggle"
-              role="radiogroup"
-              aria-labelledby="fs-currency-label"
-            >
-              <label class="fs-currency-option">
-                <input
-                  type="radio"
-                  name="fs-currency"
-                  value="USD"
-                  checked={DEFAULT_FORM.currency === "USD"}
-                />
-                <span>USD</span>
+          <div class="fs-display-prefs">
+            <div class="fs-field fs-field-currency">
+              <span class="fs-field-label" id="fs-currency-label">Currency</span>
+              <div
+                class="fs-currency-toggle"
+                role="radiogroup"
+                aria-labelledby="fs-currency-label"
+              >
+                <label class="fs-currency-option">
+                  <input
+                    type="radio"
+                    name="fs-currency"
+                    value="USD"
+                    checked={DEFAULT_FORM.currency === "USD"}
+                  />
+                  <span>USD</span>
+                </label>
+                <label class="fs-currency-option">
+                  <input
+                    type="radio"
+                    name="fs-currency"
+                    value="EUR"
+                    checked={DEFAULT_FORM.currency === "EUR"}
+                  />
+                  <span>EUR</span>
+                </label>
+                <label class="fs-currency-option">
+                  <input
+                    type="radio"
+                    name="fs-currency"
+                    value="GBP"
+                    checked={DEFAULT_FORM.currency === "GBP"}
+                  />
+                  <span>GBP</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="fs-toggles">
+              <label class="fs-check">
+                <input id="fs-round-trip" type="checkbox" />
+                <span>Round trip</span>
               </label>
-              <label class="fs-currency-option">
-                <input
-                  type="radio"
-                  name="fs-currency"
-                  value="EUR"
-                  checked={DEFAULT_FORM.currency === "EUR"}
-                />
-                <span>EUR</span>
-              </label>
-              <label class="fs-currency-option">
-                <input
-                  type="radio"
-                  name="fs-currency"
-                  value="GBP"
-                  checked={DEFAULT_FORM.currency === "GBP"}
-                />
-                <span>GBP</span>
-              </label>
+              <div class="fs-trip-controls" id="fs-trip-controls" hidden>
+                <div class="fs-field fs-trip-length">
+                  <label for="fs-trip-length">Return after</label>
+                  <select id="fs-trip-length">
+                    {[3, 5, 7, 10, 14, 21, 28, 45, 60, 85].map((days) => (
+                      <option
+                        value={String(days)}
+                        selected={days === DEFAULT_FORM.tripLengthDays}
+                      >
+                        {days} {days === 1 ? "day" : "days"}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <label
+                  class="fs-check fs-trip-flex"
+                  title="Search return dates up to five days before and after the selected trip length"
+                >
+                  <input id="fs-flexible-trip-length" type="checkbox" />
+                  <span>± 5 days</span>
+                </label>
+              </div>
             </div>
           </div>
-
-          <div class="fs-toggles">
-            <label class="fs-check">
-              <input id="fs-round-trip" type="checkbox" />
-              <span>Round trip</span>
-            </label>
-            <div class="fs-trip-controls" id="fs-trip-controls" hidden>
-              <div class="fs-field fs-trip-length">
-                <label for="fs-trip-length">Return after</label>
-                <select id="fs-trip-length">
-                  {[3, 5, 7, 10, 14, 21, 28, 45, 60, 85].map((days) => (
-                    <option
-                      value={String(days)}
-                      selected={days === DEFAULT_FORM.tripLengthDays}
-                    >
-                      {days} {days === 1 ? "day" : "days"}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <label
-                class="fs-check fs-trip-flex"
-                title="Search return dates up to five days before and after the selected trip length"
-              >
-                <input id="fs-flexible-trip-length" type="checkbox" />
-                <span>± 5 days</span>
-              </label>
-            </div>
           </div>
 
           <div class="fs-actions">
@@ -260,7 +263,6 @@ const defaultStart = new Date().toISOString().slice(0, 10);
             <button type="button" class="fs-btn" id="fs-cancel" hidden>
               Cancel
             </button>
-          </div>
           </div>
         </section>
       </form>
