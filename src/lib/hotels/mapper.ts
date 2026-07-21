@@ -115,6 +115,10 @@ export function googleHotelsSearchUrl(
 ): string {
   const q = encodeURIComponent(`${name} ${city}`);
   const url = new URL(`https://www.google.com/travel/search?q=${q}`);
+  // Force US English / USD so prices match our index (gl/hl/curr survive Google's redirect).
+  url.searchParams.set("gl", "us");
+  url.searchParams.set("hl", "en");
+  url.searchParams.set("curr", "USD");
   if (checkIn) url.searchParams.set("checkin", checkIn);
   if (checkOut) url.searchParams.set("checkout", checkOut);
   return url.toString();

@@ -988,11 +988,16 @@ function datedHotelUrl(
   form?: HotelFormState,
 ): string {
   if (!raw) return "#";
-  if (!form?.checkInStart) return raw;
   try {
     const url = new URL(raw);
-    url.searchParams.set("checkin", form.checkInStart);
-    url.searchParams.set("checkout", checkOutDate(form));
+    // Always pin USA / English / USD so locale doesn't follow the browser.
+    url.searchParams.set("gl", "us");
+    url.searchParams.set("hl", "en");
+    url.searchParams.set("curr", "USD");
+    if (form?.checkInStart) {
+      url.searchParams.set("checkin", form.checkInStart);
+      url.searchParams.set("checkout", checkOutDate(form));
+    }
     return url.toString();
   } catch {
     return raw;
