@@ -14,7 +14,11 @@ const siteUrl =
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Building = (typeof pageData.buildings)[number];
 type AirbnbSize = "studio" | "1br" | "2br" | "3br" | "4br" | "5br+";
-type AirbnbPriceSource = "monthly" | "weekly_extrapolated" | "monthly_from_stay";
+type AirbnbPriceSource =
+  | "monthly"
+  | "weekly_extrapolated"
+  | "monthly_from_stay"
+  | "stay_extrapolated";
 type AirbnbListing = {
   title: string;
   url: string;
@@ -148,14 +152,25 @@ const formatAirbnbSize = (size?: AirbnbSize) => {
       return null;
   }
 };
-const withAirbnbSize = (listing: AirbnbListing): AirbnbListing => {
-  if (listing.size != null && listing.bedrooms != null) return listing;
-  const known = airbnbSizesByUrl[listing.url];
-  if (!known) return listing;
+const formatRentUsd = (amount?: number | null) => {
+  if (amount == null || !Number.isFinite(amount)) return null;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+const withAirbnbMeta = (listing: AirbnbListing): AirbnbListing => {
+  const knownSize = airbnbSizesByUrl[listing.url];
+  const knownPrice = airbnbPricesByUrl[listing.url];
+  const priceFromMeta =
+    knownPrice && "priceUsdMonthly" in knownPrice ? knownPrice.priceUsdMonthly : undefined;
   return {
     ...listing,
-    size: listing.size ?? known.size,
-    bedrooms: listing.bedrooms ?? known.bedrooms,
+    size: listing.size ?? knownSize?.size,
+    bedrooms: listing.bedrooms ?? knownSize?.bedrooms,
+    priceUsdMonthly: listing.priceUsdMonthly ?? priceFromMeta ?? null,
+    priceSource: listing.priceSource ?? knownPrice?.source ?? null,
   };
 };
 const getAirbnbListings = (building: Building) => {
@@ -168,7 +183,7 @@ const getAirbnbListings = (building: Building) => {
   ) {
     listingMap.set(
       building.airbnb.url,
-      withAirbnbSize({
+      withAirbnbMeta({
         title: building.airbnb.evidence || `${building.name} Airbnb listing`,
         url: building.airbnb.url,
       }),
@@ -180,7 +195,7 @@ const getAirbnbListings = (building: Building) => {
     const existing = listingMap.get(listing.url);
     listingMap.set(
       listing.url,
-      withAirbnbSize({
+      withAirbnbMeta({
         ...existing,
         ...listing,
         title: listing.title || existing?.title || `${building.name} Airbnb listing`,
@@ -190,11 +205,17 @@ const getAirbnbListings = (building: Building) => {
 
   return [...listingMap.values()]
     .filter((listing) => Boolean(listing.size))
-    .map((listing) => ({
-      ...listing,
-      source: "Airbnb" as const,
-      sizeLabel: formatAirbnbSize(listing.size),
-    }))
+    .map((listing) => {
+      const priceLabel =
+        listing.priceUsdMonthly != null ? formatRentUsd(listing.priceUsdMonthly) : null;
+      return {
+        ...listing,
+        source: "Airbnb" as const,
+        sizeLabel: formatAirbnbSize(listing.size),
+        priceLabel,
+        priceUnknown: listing.priceUsdMonthly == null,
+      };
+    })
     .sort((first, second) => {
       const firstRank = first.size ? airbnbSizeRank[first.size] : 99;
       const secondRank = second.size ? airbnbSizeRank[second.size] : 99;
@@ -202,6 +223,9 @@ const getAirbnbListings = (building: Building) => {
       const firstBeds = first.bedrooms ?? 99;
       const secondBeds = second.bedrooms ?? 99;
       if (firstBeds !== secondBeds) return firstBeds - secondBeds;
+      const firstPrice = first.priceUsdMonthly ?? Number.POSITIVE_INFINITY;
+      const secondPrice = second.priceUsdMonthly ?? Number.POSITIVE_INFINITY;
+      if (firstPrice !== secondPrice) return firstPrice - secondPrice;
       return collator.compare(first.title, second.title);
     });
 };
@@ -221,14 +245,6 @@ const getRentalSignature = (listing: RentalListing) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-const formatRentUsd = (amount?: number) => {
-  if (amount == null || !Number.isFinite(amount)) return null;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 const withRentalMeta = (listing: RentalListing): RentalListing => {
   const known = rentalMetaByUrl[listing.url];
   if (!known) return listing;
@@ -617,17 +633,36 @@ const structuredData = {
                       {building.airbnbListings.slice(0, maxVisibleAirbnbListings).map((listing) => (
                         <li>
                           <a
-                            class="listing-link"
+                            class={`listing-link listing-link-airbnb${listing.priceUnknown ? " is-unpriced" : ""}`}
                             href={listing.url}
                             target="_blank"
                             rel="noreferrer noopener"
-                            title={listing.sizeLabel ? `${listing.sizeLabel} · ${listing.title}` : listing.title}
+                            title={[
+                              listing.sizeLabel,
+                              listing.priceLabel
+                                ? `${listing.priceLabel}/mo${
+                                    listing.priceSource === "weekly_extrapolated"
+                                      ? " (from weekly)"
+                                      : ""
+                                  }`
+                                : "Price unknown",
+                              listing.title,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
                           >
-                            {listing.sizeLabel ? (
-                              <span class="listing-source listing-size">{listing.sizeLabel}</span>
-                            ) : (
-                              <span class="listing-source">Airbnb</span>
-                            )}
+                            <span class="listing-meta">
+                              {listing.sizeLabel ? (
+                                <span class="listing-source listing-size">{listing.sizeLabel}</span>
+                              ) : (
+                                <span class="listing-source">Airbnb</span>
+                              )}
+                              {listing.priceLabel ? (
+                                <span class="listing-price">{listing.priceLabel}</span>
+                              ) : (
+                                <span class="listing-price listing-price-unknown">Price unknown</span>
+                              )}
+                            </span>
                             <span class="listing-title">{truncateListingTitle(listing.title)}</span>
                           </a>
                         </li>
@@ -645,17 +680,36 @@ const structuredData = {
                           {building.airbnbListings.slice(maxVisibleAirbnbListings).map((listing) => (
                             <li>
                               <a
-                                class="listing-link"
+                                class={`listing-link listing-link-airbnb${listing.priceUnknown ? " is-unpriced" : ""}`}
                                 href={listing.url}
                                 target="_blank"
                                 rel="noreferrer noopener"
-                                title={listing.sizeLabel ? `${listing.sizeLabel} · ${listing.title}` : listing.title}
+                                title={[
+                                  listing.sizeLabel,
+                                  listing.priceLabel
+                                    ? `${listing.priceLabel}/mo${
+                                        listing.priceSource === "weekly_extrapolated"
+                                          ? " (from weekly)"
+                                          : ""
+                                      }`
+                                    : "Price unknown",
+                                  listing.title,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" · ")}
                               >
-                                {listing.sizeLabel ? (
-                                  <span class="listing-source listing-size">{listing.sizeLabel}</span>
-                                ) : (
-                                  <span class="listing-source">Airbnb</span>
-                                )}
+                                <span class="listing-meta">
+                                  {listing.sizeLabel ? (
+                                    <span class="listing-source listing-size">{listing.sizeLabel}</span>
+                                  ) : (
+                                    <span class="listing-source">Airbnb</span>
+                                  )}
+                                  {listing.priceLabel ? (
+                                    <span class="listing-price">{listing.priceLabel}</span>
+                                  ) : (
+                                    <span class="listing-price listing-price-unknown">Price unknown</span>
+                                  )}
+                                </span>
                                 <span class="listing-title">{truncateListingTitle(listing.title)}</span>
                               </a>
                             </li>
@@ -1575,7 +1629,8 @@ const structuredData = {
     transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .listing-link-rental {
+  .listing-link-rental,
+  .listing-link-airbnb {
     grid-template-columns: auto minmax(0, 1fr);
   }
 
@@ -1599,6 +1654,12 @@ const structuredData = {
     padding: 0.22rem 0.48rem;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+  }
+
+  .listing-price-unknown {
+    color: var(--text-muted);
+    font-weight: 750;
+    letter-spacing: 0;
   }
 
   .listing-link:hover {
@@ -1966,7 +2027,8 @@ const structuredData = {
       padding: 0.55rem 0.6rem;
     }
 
-    .listing-link-rental {
+    .listing-link-rental,
+    .listing-link-airbnb {
       grid-template-columns: auto minmax(0, 1fr);
     }
 

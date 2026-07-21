@@ -11,12 +11,14 @@ import type {
   EvidenceStrictness,
   OpsStats,
   Property,
+  PropertyFacts,
   ScanContext,
   ScanResult,
   ScoredProperty,
 } from "./domain";
 import type { HotelsRepository } from "./db";
 import { mapListProperty } from "./mapper";
+import { extractFacts } from "./facts";
 import type { HotelDataProvider, SearchApiListProperty } from "./providers/types";
 import { scoreProperty } from "./scoring";
 
@@ -181,7 +183,19 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
 
   const observedAt = new Date().toISOString();
   const properties: Property[] = [];
+  const factsByToken = new Map<string, PropertyFacts>();
   for (const raw of byToken.values()) {
+    const existing =
+      opts.db && raw.property_token
+        ? await opts.db.getPropertyByToken(raw.property_token)
+        : null;
+    const existingWhitelist = existing?.whitelist
+      ? (JSON.parse(existing.whitelist) as string[])
+      : [];
+    const configuredWhitelist = whitelistMemberships(
+      raw.name ?? "",
+      display,
+    );
     const mapped = mapListProperty(raw, {
       citySlug: opts.citySlug,
       cityDisplay: display,
@@ -189,9 +203,28 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
       checkOut,
       provider: "searchapi",
       observedAt,
-      whitelist: whitelistMemberships(raw.name ?? "", display),
+      ta: {
+        rating: existing?.ta_rating,
+        reviews: existing?.ta_reviews,
+        rank: existing?.ta_rank,
+        total: existing?.ta_total,
+      },
+      whitelist:
+        configuredWhitelist.length > 0
+          ? configuredWhitelist
+          : existingWhitelist,
     });
-    if (mapped) properties.push(mapped);
+    if (mapped) {
+      properties.push(mapped);
+      const structured = extractFacts(mapped);
+      const previous = existing?.facts_json
+        ? (JSON.parse(existing.facts_json) as PropertyFacts)
+        : null;
+      factsByToken.set(
+        mapped.token,
+        previous ? mergeFacts(structured, previous) : structured,
+      );
+    }
   }
 
   const ratings = properties
@@ -211,7 +244,9 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
     evidenceStrictness: opts.evidenceStrictness ?? "confirmed_or_unknown",
   };
 
-  const all = properties.map((p) => scoreProperty(p, ctx));
+  const all = properties.map((p) =>
+    scoreProperty(p, ctx, factsByToken.get(p.token)),
+  );
   const gated = all.filter((s) => s.gatedOut);
   const kept = all.filter((s) => !s.gatedOut).sort((a, b) => b.score - a.score);
 
@@ -244,12 +279,14 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
     for (const s of all) {
       await opts.db.upsertScored(cityId, s);
     }
-    await opts.db.updateCityScan({
-      cityId,
-      meanRating: cityMean,
-      scannedAt: Math.floor(Date.now() / 1000),
-      credits: estimatedCredits,
-    });
+    if (!opts.bbox && (!city || !opts.q)) {
+      await opts.db.updateCityScan({
+        cityId,
+        meanRating: cityMean,
+        scannedAt: Math.floor(Date.now() / 1000),
+        credits: estimatedCredits,
+      });
+    }
   }
 
   return {
@@ -265,6 +302,23 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
     cityMeanRating: cityMean,
     scoringVersion: kept[0]?.scoringVersion ?? all[0]?.scoringVersion ?? 0,
   };
+}
+
+function mergeFacts(
+  structured: PropertyFacts,
+  previous: PropertyFacts,
+): PropertyFacts {
+  const out = { ...structured };
+  for (const key of Object.keys(structured) as (keyof PropertyFacts)[]) {
+    if (structured[key].status === "confirmed") continue;
+    if (
+      previous[key].status === "inferred" ||
+      previous[key].status === "conflicting"
+    ) {
+      out[key] = previous[key];
+    }
+  }
+  return out;
 }
 
 export function scanOpsStats(result: ScanResult): OpsStats {

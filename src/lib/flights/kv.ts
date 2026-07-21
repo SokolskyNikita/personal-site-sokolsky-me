@@ -118,10 +118,6 @@ export async function countCachedSteps(
   kv: FlightKv,
   keys: string[],
 ): Promise<number> {
-  let hits = 0;
-  for (const key of keys) {
-    const value = await kv.get(key);
-    if (value !== null) hits += 1;
-  }
-  return hits;
+  const values = await Promise.all(keys.map((key) => kv.get(key)));
+  return values.reduce((hits, value) => hits + (value !== null ? 1 : 0), 0);
 }

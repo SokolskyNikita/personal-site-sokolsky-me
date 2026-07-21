@@ -3,6 +3,7 @@ import {
   INDEX_TTL_DAYS,
   MAX_CREDITS_PER_SCAN,
   PRICE_CACHE_HIT_THRESHOLD,
+  PRICE_CACHE_TTL_HOURS,
   PRICE_TOPUP_MAX_CALLS,
   WINDOW_CAP,
 } from "./constants";
@@ -20,6 +21,7 @@ import type { PropertyFacts } from "./domain";
 import type { SearchApiListProperty } from "./providers/types";
 import {
   planPriceSweepCredits,
+  priceWindowMarker,
   runPriceSweep,
 } from "./prices";
 import { generateStayWindows } from "./windows";
@@ -99,17 +101,26 @@ async function handlePlan(
   const ageDays =
     row?.scanned_at != null ? (now - row.scanned_at) / 86400 : null;
   const fresh = ageDays != null && ageDays <= INDEX_TTL_DAYS;
-  const propertiesOnHand = row && db ? (await db.listRawByCity(row.id)).length : 0;
+  const propertyRows = row && db ? await db.listRawByCity(row.id) : [];
+  const propertiesOnHand = propertyRows.length;
 
   // Scan cost: most_reviewed pages + highest_rating pages (enrichment skipped).
-  const scanCreditsEstimate = 4 + 2;
+  const requestedScanPages = Math.min(
+    4,
+    Math.max(1, Number(url.searchParams.get("scanPages") ?? 4)),
+  );
+  const scanCreditsEstimate = requestedScanPages + 2;
 
   const checkInStart = url.searchParams.get("checkInStart");
   const checkInEnd = url.searchParams.get("checkInEnd") ?? checkInStart;
   const nightsMin = Number(url.searchParams.get("nightsMin") ?? 2);
   const nightsMax = Number(url.searchParams.get("nightsMax") ?? nightsMin);
+  const priceAdults = Number(url.searchParams.get("adults") ?? 2);
   let priceSweepEstimate = 0;
   let windowCount = 0;
+  let priceCacheHitsExpected = 0;
+  let cachedWindows = 0;
+  let singleWindowTop20Hits = 0;
   if (checkInStart && checkInEnd) {
     const windows = generateStayWindows({
       checkInStart,
@@ -118,10 +129,53 @@ async function handlePlan(
       nightsMax: Number.isFinite(nightsMax) ? nightsMax : 2,
     });
     windowCount = windows.length;
-    // Cold estimate: one list call per window (cache may skip some).
-    priceSweepEstimate =
-      planPriceSweepCredits(windows, 0) +
-      (windows.length === 1 ? PRICE_TOPUP_MAX_CALLS : 0);
+    if (db && propertyRows.length) {
+      const tokens = propertyRows.map((property) => property.token);
+      const topTokens = new Set(
+        (await db.listByCityScore(row!.id, 20)).map(
+          (property) => property.token,
+        ),
+      );
+      const fresherThan = now - PRICE_CACHE_TTL_HOURS * 3600;
+      for (const window of windows) {
+        const cached = await db.listPricesForTokens(
+          [...tokens, priceWindowMarker(citySlug)],
+          window.checkIn,
+          window.checkOut,
+          fresherThan,
+          Number.isFinite(priceAdults) ? priceAdults : 2,
+        );
+        const pricedForWindow = cached.filter(
+          (price) =>
+            price.token !== priceWindowMarker(citySlug) &&
+            price.nightly_usd != null,
+        );
+        priceCacheHitsExpected += pricedForWindow.length;
+        if (windows.length === 1) {
+          singleWindowTop20Hits = cached.filter(
+            (price) =>
+              topTokens.has(price.token) && price.nightly_usd != null,
+          ).length;
+        }
+        const hasMarker = cached.some(
+          (price) => price.token === priceWindowMarker(citySlug),
+        );
+        if (
+          hasMarker ||
+          pricedForWindow.length >=
+            Math.min(PRICE_CACHE_HIT_THRESHOLD, tokens.length)
+        ) {
+          cachedWindows += 1;
+        }
+      }
+    }
+    priceSweepEstimate = planPriceSweepCredits(windows, cachedWindows);
+    if (windows.length === 1) {
+      priceSweepEstimate += Math.min(
+        PRICE_TOPUP_MAX_CALLS,
+        Math.max(0, 20 - singleWindowTop20Hits),
+      );
+    }
   }
 
   return json({
@@ -139,6 +193,8 @@ async function handlePlan(
     costs: {
       scanCreditsEstimate,
       priceSweepEstimate,
+      priceCacheHitsExpected,
+      cachedWindows,
       windowCount,
       windowCap: WINDOW_CAP,
       priceCacheHitThreshold: PRICE_CACHE_HIT_THRESHOLD,
@@ -310,6 +366,8 @@ async function handleIndex(
           frontDesk24h: facts?.frontDesk24h?.value ?? null,
         },
         factsFull: facts,
+        breakdown: r.breakdown_json ? JSON.parse(r.breakdown_json) : [],
+        whitelist: r.whitelist ? JSON.parse(r.whitelist) : [],
         reviewFeatures: reviewsByToken.get(r.token) ?? null,
         subscores,
         googleHotelsUrl: googleHotelsSearchUrl(
@@ -528,6 +586,8 @@ async function handlePrices(
           frontDesk24h: facts?.frontDesk24h?.value ?? null,
         },
         reviewFeatures: reviewsByToken.get(r.token) ?? null,
+        breakdown: r.breakdown_json ? JSON.parse(r.breakdown_json) : [],
+        whitelist: r.whitelist ? JSON.parse(r.whitelist) : [],
         subscores,
         lat: r.lat,
         lng: r.lng,
@@ -708,14 +768,17 @@ async function handleReviews(
     return json({ ok: false, error: "searchapi_key_missing" }, 503);
   }
 
+  const provider = new SearchApiHotelProvider({
+    apiKey: env.SEARCH_API_IO_KEY,
+    liveMode: true,
+  });
   try {
-    const provider = new SearchApiHotelProvider({
-      apiKey: env.SEARCH_API_IO_KEY,
-      liveMode: true,
-    });
     const result = await analyzeHotelReviews({
       property,
       cityDisplay: city.display,
+      citySlug: city.slug,
+      cityId: city.id,
+      cityMeanRating: city.mean_rating,
       provider,
       db,
       force: url.searchParams.get("force") === "1",
@@ -731,6 +794,7 @@ async function handleReviews(
       {
         ok: false,
         error: e instanceof Error ? e.message : "review_analysis_failed",
+        credits_used: provider.creditsUsed,
       },
       500,
     );

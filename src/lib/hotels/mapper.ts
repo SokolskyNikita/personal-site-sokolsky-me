@@ -86,7 +86,11 @@ function mapBreakdown(items: ReviewsBreakdownItem[] | undefined): {
       total,
       negRate,
     });
-    if (negRate != null && (worstCategoryNeg == null || negRate > worstCategoryNeg)) {
+    if (
+      denom >= 20 &&
+      negRate != null &&
+      (worstCategoryNeg == null || negRate > worstCategoryNeg)
+    ) {
       worstCategoryNeg = negRate;
       worstCategory = item.name ?? key;
     }

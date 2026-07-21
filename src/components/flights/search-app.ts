@@ -58,7 +58,8 @@ type QueryResponse = {
   error?: string;
 };
 
-const CONCURRENCY = 3;
+const ONE_WAY_CONCURRENCY = 6;
+const ROUND_TRIP_CONCURRENCY = 3;
 
 export function mountFlightSearch(root: HTMLElement): void {
   const formEl = root.querySelector<HTMLFormElement>("#fs-form")!;
@@ -395,7 +396,11 @@ export function mountFlightSearch(root: HTMLElement): void {
     let partialReturnFailures = 0;
     let completedSteps = 0;
 
-    await mapPool(planData.plan.steps, CONCURRENCY, async (step) => {
+    const concurrency =
+      spec.tripType === "round_trip"
+        ? ROUND_TRIP_CONCURRENCY
+        : ONE_WAY_CONCURRENCY;
+    await mapPool(planData.plan.steps, concurrency, async (step) => {
       if (controller.signal.aborted) return;
       const outcome = await runStep(spec, step, controller.signal);
       completedSteps += 1;
@@ -463,9 +468,10 @@ export function mountFlightSearch(root: HTMLElement): void {
     activeController = undefined;
 
     if (allOptions.length === 0) {
+      const advice = noResultsAdvice(spec);
       results.insertAdjacentHTML(
         "afterbegin",
-        `<div class="fs-empty"><strong>No matching flights found.</strong><span>Try another cabin, fewer seat restrictions, or a wider date range.</span></div>`,
+        `<div class="fs-empty"><strong>No matching flights found.</strong><span>${escapeHtml(advice)}</span></div>`,
       );
     }
     if (partialReturnFailures > 0) {
@@ -702,6 +708,35 @@ function differenceInCalendarDays(start: string, end: string): number | undefine
   if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) return undefined;
   const days = Math.round((endTime - startTime) / 86_400_000);
   return days > 0 ? days : undefined;
+}
+
+function noResultsAdvice(spec: LegSearch): string {
+  const suggestions: string[] = [];
+  const nextMaxHours = MAX_TOTAL_HOURS_OPTIONS.find(
+    (hours) => hours > spec.maxTotalHours,
+  );
+
+  if (nextMaxHours) {
+    suggestions.push(
+      `increase max total hours to ${nextMaxHours}h${
+        spec.maxTotalHours <= 24 ? " or higher" : ""
+      }`,
+    );
+  }
+  if (spec.maxStops < 2) suggestions.push("allow up to 2 stops");
+  if (modeInvolvesLieFlat(spec.lieFlatPolicy)) {
+    suggestions.push("relax the lie-flat requirement");
+  }
+  if (spec.dateRange.days < 14) suggestions.push("widen the date range");
+
+  if (suggestions.length === 0) {
+    return "Try another cabin, route, or start date.";
+  }
+  if (suggestions.length === 1) return `Try to ${suggestions[0]}.`;
+
+  return `Try to ${suggestions.slice(0, -1).join(", ")}, or ${
+    suggestions.at(-1)!
+  }.`;
 }
 
 function renderResultLeg(

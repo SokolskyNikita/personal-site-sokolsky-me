@@ -10,6 +10,7 @@ import {
   countCachedSteps,
   getBudgetStatus,
   incrementBudget,
+  type BudgetStatus,
   type FlightKv,
 } from "./kv";
 import { planSearch } from "./planner";
@@ -213,6 +214,7 @@ async function handleQuery(
   let searchesUsed = 0;
   let roundTripOptions: ItineraryOption[] | undefined;
   let partialFailures = 0;
+  let responseBudget: BudgetStatus | undefined;
 
   if (cached.hit && cached.value) {
     raw = JSON.parse(cached.value);
@@ -223,6 +225,7 @@ async function handleQuery(
     const budget = env.FLIGHT_QUOTA
       ? await getDurableBudgetStatus(env, budgetLimit)
       : await getBudgetStatus(kv, budgetLimit);
+    responseBudget = budget;
     if (budget.overBudget) {
       cacheOnly = true;
       return json({
@@ -294,7 +297,12 @@ async function handleQuery(
         roundTripOptions = result.options;
       }
       searchesUsed = result.searchesUsed;
-      await recordSearchesUsed(env, kv, budgetLimit, result.searchesUsed);
+      responseBudget = await recordSearchesUsed(
+        env,
+        kv,
+        budgetLimit,
+        result.searchesUsed,
+      );
       const ttl =
         Number(env.FLIGHT_CACHE_TTL_SECONDS) || DEFAULT_CACHE_TTL_SECONDS;
       await cachePut(kv, cacheKey, JSON.stringify(raw), ttl);
@@ -329,11 +337,6 @@ async function handleQuery(
     spec.lieFlatPolicy,
   );
 
-  const budgetLimit = Number(env.FLIGHT_DAILY_BUDGET) || DEFAULT_DAILY_BUDGET;
-  const budget = env.FLIGHT_QUOTA
-    ? await getDurableBudgetStatus(env, budgetLimit)
-    : await getBudgetStatus(kv, budgetLimit);
-
   const publicOptions = options.map(toPublicOption);
 
   console.log(
@@ -364,7 +367,7 @@ async function handleQuery(
             partialFailures === 1 ? "" : "s"
           } failed`
         : undefined,
-    budget,
+    budget: responseBudget,
   });
 }
 
@@ -391,21 +394,24 @@ async function recordSearchesUsed(
   kv: FlightKv,
   budgetLimit: number,
   searchesUsed: number,
-): Promise<void> {
+): Promise<BudgetStatus> {
   if (env.FLIGHT_QUOTA) {
     const stub = durableQuotaStub(env);
-    await stub.fetch(
+    const response = await stub.fetch(
       new Request("https://flight-quota/budget", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ limit: budgetLimit, searchesUsed }),
       }),
     );
-    return;
+    if (!response.ok) throw new Error("flight quota update unavailable");
+    return response.json();
   }
+  let status = await getBudgetStatus(kv, budgetLimit);
   for (let i = 0; i < searchesUsed; i++) {
-    await incrementBudget(kv, budgetLimit);
+    status = await incrementBudget(kv, budgetLimit);
   }
+  return status;
 }
 
 function durableQuotaStub(env: FlightEnv): {

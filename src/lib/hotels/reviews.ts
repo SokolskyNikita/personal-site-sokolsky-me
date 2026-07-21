@@ -9,6 +9,10 @@ import {
   type ReviewInput,
 } from "./review-signals";
 import { matchTripadvisor } from "./ta";
+import { mapListProperty } from "./mapper";
+import type { SearchApiListProperty } from "./providers/types";
+import { scoreProperty } from "./scoring";
+import { CITY_MEAN_FALLBACK } from "./constants";
 
 export const REVIEW_CACHE_TTL_DAYS = 30;
 
@@ -37,6 +41,9 @@ export async function getCachedReviewAnalysis(
 export async function analyzeHotelReviews(input: {
   property: PropertyRow;
   cityDisplay: string;
+  citySlug: string;
+  cityId: number;
+  cityMeanRating: number | null;
   provider: HotelDataProvider;
   db: HotelsRepository;
   force?: boolean;
@@ -132,6 +139,43 @@ export async function analyzeHotelReviews(input: {
     taRating: match.rating,
     taReviews: match.reviews,
   });
+  if (input.property.raw_json) {
+    const mapped = mapListProperty(
+      JSON.parse(input.property.raw_json) as SearchApiListProperty,
+      {
+        citySlug: input.citySlug,
+        cityDisplay: input.cityDisplay,
+        provider: input.property.provider,
+        ta: {
+          rating: match.rating,
+          reviews: match.reviews,
+          rank: input.property.ta_rank,
+          total: input.property.ta_total,
+        },
+        whitelist: input.property.whitelist
+          ? JSON.parse(input.property.whitelist)
+          : [],
+      },
+    );
+    if (mapped) {
+      await input.db.upsertScored(
+        input.cityId,
+        scoreProperty(
+          mapped,
+          {
+            citySlug: input.citySlug,
+            cityMeanRating:
+              input.cityMeanRating ?? CITY_MEAN_FALLBACK,
+            checkIn: "",
+            checkOut: "",
+            adults: 2,
+            evidenceStrictness: "confirmed_or_unknown",
+          },
+          existing ?? undefined,
+        ),
+      );
+    }
+  }
 
   return {
     features,

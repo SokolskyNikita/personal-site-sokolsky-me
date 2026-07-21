@@ -104,6 +104,28 @@ describe("resolveLocation", () => {
       "CTG",
       "POA",
     ]);
+    expect(resolveLocation("africa-gateways")).toEqual([
+      "CAI",
+      "JNB",
+      "LPA",
+      "TFS",
+      "ADD",
+      "CMN",
+      "CPT",
+      "HRG",
+      "RAK",
+      "ALG",
+      "NBO",
+      "ACE",
+      "TUN",
+      "SSH",
+      "TFN",
+      "LOS",
+      "FUE",
+      "ABV",
+      "DUR",
+      "FNC",
+    ]);
     expect(resolveLocation("east-asia-gateways")).toEqual([
       "HND",
       "PVG",
@@ -120,6 +142,18 @@ describe("resolveLocation", () => {
       "KMG",
       "XIY",
       "TPE",
+    ]);
+    expect(resolveLocation("oceania-gateways")).toEqual([
+      "SYD",
+      "MEL",
+      "BNE",
+      "AKL",
+      "PER",
+      "ADL",
+      "CHC",
+      "OOL",
+      "WLG",
+      "CNS",
     ]);
     expect(resolveLocation("vietnam")).toEqual([
       "SGN",

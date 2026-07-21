@@ -165,6 +165,7 @@ function clampNum(
   hi: number,
   fallback: number,
 ): number {
+  if (raw == null || raw === "") return fallback;
   const n = Number(raw);
   if (!Number.isFinite(n)) return fallback;
   return Math.min(hi, Math.max(lo, n));

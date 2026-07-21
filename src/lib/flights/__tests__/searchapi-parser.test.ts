@@ -172,7 +172,7 @@ describe("SearchApiProvider", () => {
     hl: "en",
   };
 
-  it("retries transient errors without unsupported cache parameters", async () => {
+  it("treats an empty Google Flights result as a completed search", async () => {
     const urls: string[] = [];
     let calls = 0;
     const provider = new SearchApiProvider({
@@ -182,19 +182,17 @@ describe("SearchApiProvider", () => {
       fetchImpl: async (url) => {
         urls.push(url);
         calls += 1;
-        const body =
-          calls < 3
-            ? { error: "Google Flights hasn't returned any results." }
-            : { best_flights: [] };
-        return Response.json(body);
+        return Response.json({
+          error: "Google Flights hasn't returned any results.",
+        });
       },
     });
 
     await expect(provider.searchStep(step)).resolves.toMatchObject({
       options: [],
-      searchesUsed: 3,
+      searchesUsed: 1,
     });
-    expect(urls).toHaveLength(3);
+    expect(urls).toHaveLength(1);
     expect(urls.every((url) => !new URL(url).searchParams.has("no_cache"))).toBe(
       true,
     );
@@ -218,6 +216,12 @@ describe("SearchApiProvider", () => {
 
   it("hydrates round-trip candidates with return-flight details", async () => {
     const urls: string[] = [];
+    let activeHydrations = 0;
+    let maxActiveHydrations = 0;
+    let releaseHydrations!: () => void;
+    const hydrationsStarted = new Promise<void>((resolve) => {
+      releaseHydrations = resolve;
+    });
     const itinerary = (
       from: string,
       to: string,
@@ -244,25 +248,42 @@ describe("SearchApiProvider", () => {
       fetchImpl: async (url) => {
         urls.push(url);
         const parsed = new URL(url);
-        return Response.json(
-          parsed.searchParams.has("departure_token")
-            ? {
-                other_flights: [
-                  {
-                    ...itinerary("JFK", "EZE", "2026-08-22", "TA 2"),
-                    booking_token: "book",
-                  },
-                ],
-              }
-            : {
-                other_flights: [
-                  {
-                    ...itinerary("EZE", "JFK", "2026-08-15", "TA 1"),
-                    departure_token: "depart",
-                  },
-                ],
+        const departureToken = parsed.searchParams.get("departure_token");
+        if (departureToken) {
+          activeHydrations += 1;
+          maxActiveHydrations = Math.max(
+            maxActiveHydrations,
+            activeHydrations,
+          );
+          if (activeHydrations === 2) releaseHydrations();
+          await hydrationsStarted;
+          activeHydrations -= 1;
+          return Response.json({
+            other_flights: [
+              {
+                ...itinerary(
+                  "JFK",
+                  "EZE",
+                  "2026-08-22",
+                  departureToken === "depart" ? "TA 2" : "TA 4",
+                ),
+                booking_token: `book-${departureToken}`,
               },
-        );
+            ],
+          });
+        }
+        return Response.json({
+          other_flights: [
+            {
+              ...itinerary("EZE", "JFK", "2026-08-15", "TA 1"),
+              departure_token: "depart",
+            },
+            {
+              ...itinerary("EZE", "JFK", "2026-08-15", "TA 3"),
+              departure_token: "depart-2",
+            },
+          ],
+        });
       },
     });
 
@@ -272,10 +293,11 @@ describe("SearchApiProvider", () => {
       topN: 4,
     });
 
-    expect(result.searchesUsed).toBe(2);
-    expect(result.options).toHaveLength(1);
+    expect(result.searchesUsed).toBe(3);
+    expect(result.options).toHaveLength(2);
+    expect(maxActiveHydrations).toBe(2);
     expect(result.options[0]).toMatchObject({
-      bookingToken: "book",
+      bookingToken: "book-depart",
       returnDate: "2026-08-22",
       returnDurationMinutes: 600,
     });

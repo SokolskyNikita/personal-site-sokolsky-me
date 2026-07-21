@@ -8,6 +8,7 @@ import type {
 import { extractFacts } from "./facts";
 import { evaluateGates } from "./gates";
 import { computeSubscores } from "./signals";
+import { WEIGHTS } from "./config/weights";
 
 export { SCORING_VERSION };
 
@@ -19,6 +20,7 @@ export function comfortScore(subscores: {
   taBonus: number;
   whitelistBonus: number;
   classNudge: number;
+  unknownPenalty?: number;
 }): number {
   return (
     subscores.quality -
@@ -27,7 +29,8 @@ export function comfortScore(subscores: {
     subscores.brandBonus +
     subscores.taBonus +
     subscores.whitelistBonus +
-    subscores.classNudge
+    subscores.classNudge -
+    (subscores.unknownPenalty ?? 0)
   );
 }
 
@@ -38,7 +41,17 @@ export function scoreProperty(
 ): ScoredProperty {
   const resolvedFacts = facts ?? extractFacts(property);
   const gates = evaluateGates(property, resolvedFacts, ctx);
-  const subscores = computeSubscores(property, ctx.cityMeanRating);
+  const baseSubscores = computeSubscores(property, ctx.cityMeanRating);
+  const unknownCount = Object.values(resolvedFacts).filter(
+    (fact) => fact.status === "unknown",
+  ).length;
+  const subscores = {
+    ...baseSubscores,
+    unknownPenalty:
+      ctx.evidenceStrictness === "confirmed_or_unknown"
+        ? unknownCount * WEIGHTS.unknownFactPenalty
+        : 0,
+  };
   const score = comfortScore(subscores);
   return {
     property,

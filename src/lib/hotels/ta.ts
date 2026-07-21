@@ -55,13 +55,22 @@ export function matchTripadvisor(
   const target = normalizeTitle(hotelName);
   if (!target || !places.length) return null;
 
-  const cityTok = normalizeTitle(cityDisplay).split(" ")[0] ?? "";
+  const cityTokens = normalizeTitle(cityDisplay).split(" ").filter(Boolean);
+  const locationAliases =
+    normalizeTitle(cityDisplay) === "buenos aires"
+      ? ["buenos", "aires", "palermo", "recoleta", "puerto madero"]
+      : cityTokens;
   const candidates = places.filter((p) => {
     if (!p.title) return false;
-    const loc = (p.location ?? "").toLowerCase();
-    if (cityTok && loc && !loc.includes(cityTok) && !normalizeTitle(p.title).includes(cityTok)) {
+    const loc = normalizeTitle(p.location ?? "");
+    const title = normalizeTitle(p.title);
+    const locationMatches = locationAliases.some((alias) =>
+      loc.includes(alias),
+    );
+    const titleNamesCity = cityTokens.some((token) => title.includes(token));
+    if (loc && !locationMatches && !titleNamesCity) {
       // Keep if title is otherwise exact — some results omit city in location.
-      return normalizeTitle(p.title) === target;
+      return title === target;
     }
     return true;
   });

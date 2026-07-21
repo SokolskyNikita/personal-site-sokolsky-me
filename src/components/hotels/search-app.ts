@@ -37,6 +37,7 @@ type HotelRow = {
   total_usd?: number | null;
   expected_usd?: number | null;
   deal_pct?: number | null;
+  dealMethod?: "fit" | "fallback" | null;
   taRating?: number | null;
   taReviews?: number | null;
   concordance?: string;
@@ -45,7 +46,6 @@ type HotelRow = {
   googleHotelsUrl?: string | null;
   lat?: number | null;
   lng?: number | null;
-  distanceKm?: number | null;
   facts?: {
     hasAC?: FactStatus;
     hasElevator?: FactStatus;
@@ -75,6 +75,14 @@ type HotelRow = {
       }
     >;
   } | null;
+  breakdown?: Array<{
+    name: string;
+    positive: number;
+    negative: number;
+    total: number;
+    negRate: number | null;
+  }>;
+  whitelist?: string[];
   subscores?: Record<string, number | string | null>;
   gatedOut?: boolean;
   gates?: string[];
@@ -174,6 +182,7 @@ export function mountHotelSearch(root: HTMLElement): void {
   let activeController: AbortController | undefined;
   let latestRows: HotelRow[] = [];
   let latestMeta: Record<string, unknown> = {};
+  let pendingSpendKey: string | null = null;
 
   formEl.addEventListener("change", () => {
     form = readForm(root);
@@ -182,6 +191,8 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
     syncUrl(form);
     syncComfortLabel(root, comfortValue);
+    pendingSpendKey = null;
+    runBtn.textContent = "Search hotels";
   });
 
   root.querySelector("#hs-min-comfort")?.addEventListener("input", () => {
@@ -211,37 +222,37 @@ export function mountHotelSearch(root: HTMLElement): void {
   });
 
   async function bootstrap(): Promise<void> {
-    summary.textContent = "Checking index…";
+    summary.textContent = "Loading saved results…";
     const citySlug = resolveCitySlug(form);
     try {
-      const plan = await fetchPlan(citySlug);
+      const plan = await fetchPlan(citySlug, form);
       if (plan.ok && plan.index && plan.index.propertiesOnHand > 0) {
         const stale =
           !plan.index.fresh && plan.index.scannedAt != null
-            ? `<div class="fs-banner fs-banner-warn">Index is ${plan.index.ageDays?.toFixed(0) ?? "?"} days old. Scan to refresh (~${plan.costs?.scanCreditsEstimate ?? 6} credits).</div>`
+            ? `<div class="fs-banner fs-banner-warn">These results are ${plan.index.ageDays?.toFixed(0) ?? "?"} days old. Update them for about ${plan.costs?.scanCreditsEstimate ?? 6} credits.</div>`
             : "";
         banners.innerHTML = stale;
-        summary.textContent = `Warm index: ${plan.index.propertiesOnHand} properties · mean ★ ${plan.index.meanRating?.toFixed(2) ?? "—"}.`;
+        summary.textContent = `${plan.index.propertiesOnHand} saved hotels. Average rating: ${plan.index.meanRating?.toFixed(2) ?? "—"}.`;
         await loadIndex(citySlug);
         if (hasDates(form)) {
-          await loadPrices(citySlug, form);
+          summary.textContent =
+            "Saved hotels loaded. Search to check the price cost before it runs.";
         }
         return;
       }
       summary.textContent = plan.ok
-        ? `Never scanned. Plan: ~${plan.costs?.scanCreditsEstimate ?? 6} credits (${plan.costs?.mode ?? "fixture"}). Click Search to scan.`
+        ? `No saved hotels yet. A new search will use about ${plan.costs?.scanCreditsEstimate ?? 6} credits.`
         : "Ready.";
     } catch {
-      summary.textContent =
-        "Ready. Click Search to plan and scan (uses fixtures unless SEARCHAPI_LIVE=1).";
+      summary.textContent = "Ready. Search to check the cost before it runs.";
     }
   }
 
   async function runSearch(state: HotelFormState): Promise<void> {
     const controller = new AbortController();
     activeController = controller;
-    setBusy(true, "Planning…");
-    showProgress("Checking index");
+    setBusy(true, "Checking cost…");
+    showProgress("Checking saved results");
     banners.innerHTML = "";
     results.innerHTML = "";
     footer.innerHTML = "";
@@ -253,7 +264,7 @@ export function mountHotelSearch(root: HTMLElement): void {
 
     let plan: PlanResponse;
     try {
-      plan = await fetchPlan(citySlug, controller.signal);
+      plan = await fetchPlan(citySlug, state, controller.signal);
     } catch (err) {
       if (controller.signal.aborted) {
         summary.textContent = "Cancelled.";
@@ -261,18 +272,47 @@ export function mountHotelSearch(root: HTMLElement): void {
         setBusy(false);
         return;
       }
-      summary.textContent = `Plan failed: ${err instanceof Error ? err.message : String(err)}`;
+      summary.textContent = `Couldn't check the search cost: ${err instanceof Error ? err.message : String(err)}`;
       hideProgress();
       setBusy(false);
       return;
     }
 
     const estimate = plan.costs?.scanCreditsEstimate ?? 6;
+    const priceEstimate = hasDates(state)
+      ? (plan.costs?.priceSweepEstimate ?? estimateWindows(state))
+      : 0;
     const onHand = plan.index?.propertiesOnHand ?? 0;
     const fresh = plan.index?.fresh ?? false;
+    const needsScan = !(onHand > 0 && fresh && !state.q && !bbox);
+    const plannedSpend = (needsScan ? estimate : 0) + priceEstimate;
+    const spendKey = JSON.stringify({
+      citySlug,
+      q,
+      bbox,
+      dates: [
+        state.checkInStart,
+        state.checkInEnd,
+        state.nightsMin,
+        state.nightsMax,
+        state.adults,
+      ],
+      scanPages: state.scanPages,
+      plannedSpend,
+    });
+    if (plannedSpend > 0 && pendingSpendKey !== spendKey) {
+      pendingSpendKey = spendKey;
+      summary.textContent = `This search can use up to ${plannedSpend} credits (${needsScan ? `hotels: about ${estimate}` : "saved hotels"}${priceEstimate ? `; prices: up to ${priceEstimate}` : ""}).`;
+      banners.innerHTML = `<div class="fs-banner">Nothing has been charged yet. Confirm to run the search.</div>`;
+      hideProgress();
+      setBusy(false);
+      runBtn.textContent = `Confirm search (~${plannedSpend} credits)`;
+      return;
+    }
+    pendingSpendKey = null;
 
     if (onHand > 0 && fresh && !state.q && !bbox) {
-      summary.textContent = `Using warm index (${onHand} properties). Scan skipped.`;
+      summary.textContent = `Using ${onHand} saved hotels.`;
       await loadIndex(citySlug, controller.signal);
       if (hasDates(state)) {
         await loadPrices(citySlug, state, controller.signal);
@@ -282,10 +322,10 @@ export function mountHotelSearch(root: HTMLElement): void {
       return;
     }
 
-    summary.textContent = `Scan will use ~${estimate} credits (${plan.costs?.mode ?? "?"}). ${onHand ? `${onHand} cached · ` : ""}Confirming…`;
-    banners.innerHTML = `<div class="fs-banner">About to spend ~${estimate} SearchAPI credits (max ${plan.costs?.maxCreditsPerScan ?? 80}). Mode: ${escapeHtml(plan.costs?.mode ?? "unknown")}.</div>`;
-    setBusy(true, "Scanning…");
-    showProgress("Scanning hotels");
+    summary.textContent = `Searching hotels now. Expected cost: about ${estimate} credits${onHand ? `; ${onHand} saved hotels are also available` : ""}.`;
+    banners.innerHTML = `<div class="fs-banner">SearchAPI credit limit for this run: ${plan.costs?.maxCreditsPerScan ?? 80}.</div>`;
+    setBusy(true, "Searching…");
+    showProgress("Searching hotels");
 
     let scan: ScanResponse;
     try {
@@ -305,19 +345,19 @@ export function mountHotelSearch(root: HTMLElement): void {
       scan = (await res.json()) as ScanResponse;
     } catch (err) {
       if (controller.signal.aborted) {
-        summary.textContent = "Scan cancelled.";
+        summary.textContent = "Search cancelled.";
         hideProgress();
         setBusy(false);
         return;
       }
-      summary.textContent = `Scan failed: ${err instanceof Error ? err.message : String(err)}`;
+      summary.textContent = `Search failed: ${err instanceof Error ? err.message : String(err)}`;
       hideProgress();
       setBusy(false);
       return;
     }
 
     if (!scan.ok) {
-      summary.textContent = `Scan failed: ${scan.error ?? "unknown"}`;
+      summary.textContent = `Search failed: ${scan.error ?? "unknown"}`;
       hideProgress();
       setBusy(false);
       return;
@@ -339,17 +379,17 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (scan.demoted?.length) {
       banners.insertAdjacentHTML(
         "beforeend",
-        `<div class="fs-banner fs-banner-warn">High-rating demotions (plant penalty): ${scan.demoted
+        `<div class="fs-banner fs-banner-warn">Hotels moved down because of room-condition complaints: ${scan.demoted
           .slice(0, 3)
           .map(
             (d) =>
-              `${escapeHtml(d.name)} (−${Number(d.plantPenalty ?? 0).toFixed(0)} plant)`,
+              `${escapeHtml(d.name)} (−${Number(d.plantPenalty ?? 0).toFixed(0)} points)`,
           )
           .join(" · ")}</div>`,
       );
     }
 
-    summary.textContent = `Scan done · ${scan.found} found · ${scan.scored} scored · ${scan.gated_out} gated · ${scan.credits_used} credits · ${scan.durationMs ?? "?"}ms`;
+    summary.textContent = `Search finished: ${scan.found} hotels found, ${scan.scored} shown, ${scan.credits_used} credits used (${scan.durationMs ?? "?"} ms).`;
     renderTable(results, filterAndSort(latestRows, state), state);
     renderFooter(footer, latestRows, latestMeta);
     hideProgress();
@@ -389,7 +429,7 @@ export function mountHotelSearch(root: HTMLElement): void {
       clientFetchMs: Math.round(clientMs),
     };
     if (data.durationMs != null && data.durationMs < 500) {
-      progress.textContent = `Warm D1 load ${data.durationMs}ms server · ${Math.round(clientMs)}ms client.`;
+      progress.textContent = `Saved results loaded in ${Math.round(clientMs)} ms.`;
     }
     renderTable(results, filterAndSort(latestRows, form), form);
     renderFooter(footer, latestRows, latestMeta);
@@ -402,8 +442,8 @@ export function mountHotelSearch(root: HTMLElement): void {
   ): Promise<void> {
     if (!hasDates(state)) return;
     const estimate = `~${Math.min(21, estimateWindows(state))} credits`;
-    summary.textContent = `Pricing stay windows (${estimate}, cached 6h)…`;
-    showProgress("Pricing stays");
+    summary.textContent = `Checking prices for the selected dates (${estimate}; cached for six hours)…`;
+    showProgress("Checking prices");
     const res = await fetch("/api/hotels/prices", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -422,7 +462,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     });
     const data = (await res.json()) as PricesResponse;
     if (!data.ok || !data.properties?.length) {
-      summary.textContent = `Prices failed: ${data.error ?? "unknown"}`;
+      summary.textContent = `Couldn't load prices: ${data.error ?? "unknown"}`;
       return;
     }
     latestRows = data.properties.map((r) => ({
@@ -440,7 +480,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     const share = data.top20PricedShare != null
       ? `${Math.round(data.top20PricedShare * 100)}% of top-20 priced`
       : "";
-    summary.textContent = `Priced ${data.pricedCount ?? 0} hotels · ${data.credits_used ?? 0} credits · ${share} · ${data.durationMs ?? "?"}ms`;
+    summary.textContent = `Prices found for ${data.pricedCount ?? 0} hotels. ${share ? `${share}. ` : ""}${data.credits_used ?? 0} credits used (${data.durationMs ?? "?"} ms).`;
     renderTable(results, filterAndSort(latestRows, state), state);
     renderFooter(footer, latestRows, latestMeta);
   }
@@ -474,11 +514,19 @@ export function mountHotelSearch(root: HTMLElement): void {
 
 async function fetchPlan(
   city: string,
+  form?: HotelFormState,
   signal?: AbortSignal,
 ): Promise<PlanResponse> {
-  const res = await fetch(`/api/hotels/plan?city=${encodeURIComponent(city)}`, {
-    signal,
-  });
+  const params = new URLSearchParams({ city });
+  if (form) params.set("scanPages", String(form.scanPages));
+  if (form?.checkInStart) {
+    params.set("checkInStart", form.checkInStart);
+    params.set("checkInEnd", form.checkInEnd || form.checkInStart);
+    params.set("nightsMin", String(form.nightsMin));
+    params.set("nightsMax", String(form.nightsMax));
+    params.set("adults", String(form.adults));
+  }
+  const res = await fetch(`/api/hotels/plan?${params}`, { signal });
   return (await res.json()) as PlanResponse;
 }
 
@@ -538,8 +586,6 @@ function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   setVal(root, "#hs-nights-min", String(form.nightsMin));
   setVal(root, "#hs-nights-max", String(form.nightsMax));
   setVal(root, "#hs-adults", String(form.adults));
-  setVal(root, "#hs-pin-lat", form.pinLat != null ? String(form.pinLat) : "");
-  setVal(root, "#hs-pin-lng", form.pinLng != null ? String(form.pinLng) : "");
   setVal(root, "#hs-min-comfort", String(form.minComfort));
   setSelect(root, "#hs-strictness", form.strictness);
   setCheck(root, "#hs-require-ac", form.requireAC);
@@ -565,15 +611,12 @@ function readForm(root: HTMLElement): HotelFormState {
     "nightly",
     "rating",
     "reviews",
-    "distance",
     "unknowns",
   ];
   const sort = sortAllowed.includes(sortRaw as HotelFormState["sort"])
     ? (sortRaw as HotelFormState["sort"])
     : "comfort";
   const budgetRaw = root.querySelector<HTMLInputElement>("#hs-budget-max")?.value;
-  const pinLatRaw = root.querySelector<HTMLInputElement>("#hs-pin-lat")?.value;
-  const pinLngRaw = root.querySelector<HTMLInputElement>("#hs-pin-lng")?.value;
   return {
     city: city || DEFAULT_HOTEL_FORM.city,
     q: root.querySelector<HTMLInputElement>("#hs-q")?.value.trim() ?? "",
@@ -592,8 +635,8 @@ function readForm(root: HTMLElement): HotelFormState {
     adults: Number(
       root.querySelector<HTMLInputElement>("#hs-adults")?.value ?? 2,
     ),
-    pinLat: pinLatRaw ? Number(pinLatRaw) : null,
-    pinLng: pinLngRaw ? Number(pinLngRaw) : null,
+    pinLat: null,
+    pinLng: null,
     minComfort: Number(
       root.querySelector<HTMLInputElement>("#hs-min-comfort")?.value ?? 0,
     ),
@@ -633,8 +676,9 @@ function estimateWindows(form: HotelFormState): number {
   const b = Date.parse(`${end}T00:00:00Z`);
   if (!Number.isFinite(a) || !Number.isFinite(b) || b < a) return 0;
   const days = Math.floor((b - a) / 86400000) + 1;
-  const nights =
-    Math.max(1, form.nightsMax) - Math.max(1, form.nightsMin) + 1;
+  const minNights = Math.max(1, form.nightsMin);
+  const maxNights = Math.max(minNights, form.nightsMax);
+  const nights = maxNights - minNights + 1;
   return Math.min(21, days * nights);
 }
 
@@ -688,17 +732,6 @@ function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
     return true;
   });
 
-  out = out.map((r) => ({
-    ...r,
-    distanceKm:
-      form.pinLat != null &&
-      form.pinLng != null &&
-      r.lat != null &&
-      r.lng != null
-        ? haversineKm(form.pinLat, form.pinLng, r.lat, r.lng)
-        : null,
-  }));
-
   out = [...out].sort((a, b) => {
     if (form.sort === "deal") {
       const da = a.deal_pct;
@@ -716,12 +749,6 @@ function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
       if (nb == null) return -1;
       return na - nb;
     }
-    if (form.sort === "distance") {
-      if (a.distanceKm == null && b.distanceKm == null) return 0;
-      if (a.distanceKm == null) return 1;
-      if (b.distanceKm == null) return -1;
-      return a.distanceKm - b.distanceKm;
-    }
     if (form.sort === "rating") return (b.rating ?? 0) - (a.rating ?? 0);
     if (form.sort === "reviews") return (b.reviews ?? 0) - (a.reviews ?? 0);
     if (form.sort === "unknowns") {
@@ -730,22 +757,6 @@ function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
     return (b.score ?? 0) - (a.score ?? 0);
   });
   return out;
-}
-
-function haversineKm(
-  lat1: number,
-  lng1: number,
-  lat2: number,
-  lng2: number,
-): number {
-  const R = 6371;
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
 }
 
 function factOk(
@@ -772,7 +783,7 @@ function renderTable(
   form?: HotelFormState,
 ): void {
   if (!rows.length) {
-    container.innerHTML = `<div class="fs-empty"><strong>No hotels match.</strong><span>Loosen comfort or hard requirements, or scan a city.</span></div>`;
+    container.innerHTML = `<div class="fs-empty"><strong>No hotels match.</strong><span>Lower the minimum comfort score, remove a requirement or search again.</span></div>`;
     return;
   }
   if (form?.sort === "deal" && !hasDates(form)) {
@@ -792,55 +803,53 @@ function renderTable(
           ? `<span class="hs-chip hs-chip-bad">plant −${Number(r.plantPenalty).toFixed(0)}</span>`
           : "";
       const facts = factIcons(r);
-      const href = r.googleHotelsUrl || "#";
+      const href = datedHotelUrl(r.googleHotelsUrl, form);
       const nightly = r.nightly_usd ?? r.nightlyUsd;
       const stayDates = r.bestStay
         ? `${r.bestStay.checkIn}→${r.bestStay.checkOut}`
         : "";
       const deal =
         r.deal_pct != null
-          ? `<span class="hs-chip ${r.deal_pct >= 0.2 ? "hs-chip-good" : ""}">${r.deal_pct >= 0 ? "−" : "+"}${Math.abs(r.deal_pct * 100).toFixed(0)}% vs exp</span>`
+          ? `<span class="hs-chip ${r.deal_pct >= 0.2 ? "hs-chip-good" : ""}">${r.dealMethod === "fallback" ? `${Math.abs(r.deal_pct * 100).toFixed(0)}% ${r.deal_pct >= 0 ? "better" : "worse"} value than the median` : `${Math.abs(r.deal_pct * 100).toFixed(0)}% ${r.deal_pct >= 0 ? "below" : "above"} the expected price`}</span>`
           : "—";
       const ta =
         r.taRating != null
           ? `${r.taRating.toFixed(1)}${r.concordance && r.concordance !== "unknown" ? ` <span class="fs-muted">${escapeHtml(r.concordance)}</span>` : ""}`
           : "—";
-      const dist =
-        r.distanceKm != null ? `${r.distanceKm.toFixed(1)} km` : "—";
       return `<tr data-token="${escapeHtml(r.token)}">
         <td>${i + 1}</td>
         <td><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
-        <td><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant}</td>
+        <td><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant} <button type="button" class="hs-row-toggle" aria-expanded="false" aria-label="Show details for ${escapeHtml(r.name)}">Details</button></td>
         <td>${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${r.reviews ?? 0})</span></td>
         <td>${low}</td>
-        <td>${worst}</td>
+        <td class="${worst === "—" ? "hs-cell-empty" : ""}">${worst}</td>
         <td>${r.hotelClass ?? "—"}</td>
         <td>T${r.brandTier ?? 0}</td>
         <td>${ta}</td>
-        <td>${nightly != null ? `$${Math.round(nightly)}` : "—"}<div class="fs-muted">${escapeHtml(stayDates)}</div></td>
-        <td>${deal}</td>
-        <td>${dist}</td>
+        <td class="${nightly == null ? "hs-cell-empty" : ""}">${nightly != null ? `$${Math.round(nightly)}` : "—"}<div class="fs-muted">${escapeHtml(stayDates)}</div></td>
+        <td class="${deal === "—" ? "hs-cell-empty" : ""}">${deal}</td>
         <td class="hs-facts">${facts}</td>
       </tr>
       <tr class="hs-detail" hidden>
-        <td colspan="13">${detailCard(r)}</td>
+        <td colspan="12">${detailCard(r)}</td>
       </tr>`;
     })
     .join("");
 
   container.innerHTML = `<div class="hs-table-wrap"><table class="hs-table">
     <thead><tr>
-      <th>#</th><th>Comfort</th><th>Hotel</th><th>★ (n)</th><th>1–2★ %</th><th>Worst</th><th>Class</th><th>Brand</th><th>TA</th><th>$/night</th><th>Deal</th><th>Dist</th><th>Facts</th>
+      <th>#</th><th>Comfort</th><th>Hotel</th><th>Rating</th><th>1–2★ %</th><th>Review issue</th><th>Class</th><th>Brand</th><th>Tripadvisor</th><th>$/night</th><th>Deal</th><th>Amenities</th>
     </tr></thead>
     <tbody>${body}</tbody>
   </table></div>`;
 
   container.querySelectorAll<HTMLTableRowElement>("tr[data-token]").forEach((tr) => {
-    tr.addEventListener("click", async (ev) => {
-      if ((ev.target as HTMLElement).closest("a")) return;
+    const toggle = tr.querySelector<HTMLButtonElement>(".hs-row-toggle");
+    const toggleDetail = async () => {
       const detail = tr.nextElementSibling as HTMLTableRowElement | null;
       if (!detail?.classList.contains("hs-detail")) return;
       detail.hidden = !detail.hidden;
+      toggle?.setAttribute("aria-expanded", String(!detail.hidden));
       if (!detail.hidden) {
         const token = tr.dataset.token;
         if (token) {
@@ -848,8 +857,36 @@ function renderTable(
           bindPropertyExpand(detail, token, form);
         }
       }
+    };
+    toggle?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      void toggleDetail();
+    });
+    tr.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("a,button")) return;
+      void toggleDetail();
     });
   });
+}
+
+function datedHotelUrl(
+  raw: string | null | undefined,
+  form?: HotelFormState,
+): string {
+  if (!raw) return "#";
+  if (!form?.checkInStart) return raw;
+  try {
+    const url = new URL(raw);
+    url.searchParams.set("checkin", form.checkInStart);
+    if (!url.searchParams.has("checkout")) {
+      const checkout = new Date(`${form.checkInStart}T00:00:00Z`);
+      checkout.setUTCDate(checkout.getUTCDate() + Math.max(1, form.nightsMin));
+      url.searchParams.set("checkout", checkout.toISOString().slice(0, 10));
+    }
+    return url.toString();
+  } catch {
+    return raw;
+  }
 }
 
 function factIcons(r: HotelRow): string {
@@ -877,12 +914,12 @@ function factIcons(r: HotelRow): string {
 function detailCard(r: HotelRow): string {
   const sub = r.subscores ?? {};
   const bars = [
-    ["quality", sub.quality ?? r.quality],
-    ["consistencyPenalty", sub.consistencyPenalty ?? r.consistencyPenalty],
-    ["plantPenalty", sub.plantPenalty ?? r.plantPenalty],
-    ["brandBonus", sub.brandBonus],
-    ["taBonus", sub.taBonus],
-    ["classNudge", sub.classNudge],
+    ["Base rating", sub.quality ?? r.quality],
+    ["Low-rating penalty", sub.consistencyPenalty ?? r.consistencyPenalty],
+    ["Room-condition penalty", sub.plantPenalty ?? r.plantPenalty],
+    ["Brand adjustment", sub.brandBonus],
+    ["Tripadvisor adjustment", sub.taBonus],
+    ["Hotel class adjustment", sub.classNudge],
   ]
     .map(
       ([k, v]) =>
@@ -898,18 +935,72 @@ function detailCard(r: HotelRow): string {
           )
           .join("")}</tbody></table>`
       : "";
+  const factGroups = factLists(r);
+  const breakdown = (r.breakdown ?? [])
+    .filter((item) => item.total >= 20)
+    .sort((a, b) => (b.negRate ?? 0) - (a.negRate ?? 0))
+    .slice(0, 8)
+    .map(
+      (item) =>
+        `<span class="hs-chip ${(item.negRate ?? 0) >= 0.15 ? "hs-chip-bad" : ""}">${escapeHtml(item.name)} · ${item.negRate == null ? "no rating" : `${Math.round(item.negRate * 100)}% negative`}, ${item.total} mentions</span>`,
+    )
+    .join(" ");
+  const whitelist = (r.whitelist ?? [])
+    .map((badge) => `<span class="hs-chip hs-chip-good">${escapeHtml(badge)}</span>`)
+    .join(" ");
+  const mapsUrl =
+    r.lat != null && r.lng != null
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${r.lat},${r.lng}`)}`
+      : null;
   return `<div class="hs-card">
-    <p>Strong / weak / unknown facts in Facts (✓ · ?). Expand loads offers via google_hotels_property.</p>
+    <div class="hs-fact-lists">${factGroups}</div>
     <div class="hs-bars">${bars}</div>
+    ${breakdown ? `<div class="hs-breakdown"><strong>Review categories</strong><div>${breakdown}</div></div>` : ""}
+    ${whitelist ? `<div class="hs-whitelist"><strong>List matches</strong> ${whitelist}</div>` : ""}
     ${matrix ? `<div class="hs-matrix-wrap"><strong>Date × price</strong>${matrix}</div>` : ""}
     <div class="hs-review-signals" data-review-slot>
       ${reviewSignalsMarkup(r.reviewFeatures)}
     </div>
     <div class="hs-expand" data-expand-slot>
-      <button type="button" class="fs-btn" data-load-property>Load offers &amp; property details (~1 credit)</button>
+      <button type="button" class="fs-btn" data-load-property>Load prices and hotel details (~1 credit)</button>
     </div>
+    ${mapsUrl ? `<a href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">Open map</a> · ` : ""}
     ${r.googleHotelsUrl ? `<p><a href="${escapeHtml(r.googleHotelsUrl)}" target="_blank" rel="noopener noreferrer">Open in Google Hotels</a></p>` : ""}
   </div>`;
+}
+
+function factLists(r: HotelRow): string {
+  const labels: Array<[string, keyof NonNullable<HotelRow["facts"]>]> = [
+    ["Air conditioning", "hasAC"],
+    ["Elevator", "hasElevator"],
+    ["Wi-Fi", "hasWifi"],
+    ["24-hour front desk", "frontDesk24h"],
+  ];
+  const groups: Record<string, string[]> = {
+    Confirmed: [],
+    Conflicting: [],
+    Unknown: [],
+  };
+  for (const [label, key] of labels) {
+    const status = r.facts?.[key];
+    const value = r.factValues?.[key];
+    if (status === "confirmed" || (status === "inferred" && value === true)) {
+      groups.Confirmed!.push(`${status === "confirmed" ? "✓" : "≈"} ${label}`);
+    } else if (
+      status === "conflicting" ||
+      (status === "inferred" && value === false)
+    ) {
+      groups.Conflicting!.push(`${status === "conflicting" ? "±" : "△"} ${label}`);
+    } else {
+      groups.Unknown!.push(`? ${label}`);
+    }
+  }
+  return Object.entries(groups)
+    .map(
+      ([group, items]) =>
+        `<div><strong>${group}</strong><span>${items.map(escapeHtml).join(" · ") || "—"}</span></div>`,
+    )
+    .join("");
 }
 
 function reviewSignalsMarkup(
@@ -923,13 +1014,19 @@ function reviewSignalsMarkup(
     .sort((a, b) => b[1].confidence - a[1].confidence)
     .slice(0, 8)
     .map(([topic, signal]) => {
+      const summary =
+        signal.negative > signal.positive
+          ? "mostly negative"
+          : signal.positive > signal.negative
+            ? "mostly positive"
+            : "mixed";
       const tone =
         signal.negative > signal.positive
           ? "hs-chip-bad"
           : signal.positive > signal.negative
             ? "hs-chip-good"
             : "";
-      return `<span class="hs-chip ${tone}" title="${signal.sampleSize} review mentions · confidence ${Math.round(signal.confidence * 100)}%">${escapeHtml(topic)} ${signal.positive.toFixed(1)}+/${signal.negative.toFixed(1)}−</span>`;
+      return `<span class="hs-chip ${tone}" title="Based on ${signal.sampleSize} matching review passages">${escapeHtml(topic)} · ${summary} (${signal.sampleSize})</span>`;
     })
     .join(" ");
   const evidence = Object.entries(features.topics)
@@ -944,7 +1041,7 @@ function reviewSignalsMarkup(
     )
     .slice(0, 5)
     .join("");
-  return `<p><strong>Review signals</strong> · ${features.reviewCount} recent reviews · ${escapeHtml(features.modelVersion)}</p><div>${topics || "No comfort-topic mentions found."}</div>${evidence ? `<details><summary>Evidence excerpts</summary><ul class="hs-evidence">${evidence}</ul></details>` : ""}`;
+  return `<p><strong>What recent reviews mention</strong> (${features.reviewCount} reviews)</p><div>${topics || "These reviews don't mention the tracked comfort details."}</div>${evidence ? `<details><summary>Review quotes</summary><ul class="hs-evidence">${evidence}</ul></details>` : ""}`;
 }
 
 async function expandProperty(
@@ -954,7 +1051,7 @@ async function expandProperty(
 ): Promise<void> {
   const slot = detailRow.querySelector<HTMLElement>("[data-expand-slot]");
   if (!slot || slot.dataset.loaded === "1") return;
-  slot.textContent = "Loading property…";
+  slot.textContent = "Loading hotel details…";
   const params = new URLSearchParams();
   const checkIn = form?.checkInStart;
   if (checkIn) {
@@ -973,10 +1070,11 @@ async function expandProperty(
       freeCancellationSeen?: boolean;
       address?: string | null;
       offers?: { source?: string; total_price?: { extracted_price?: number } }[];
+      topThings?: unknown;
       error?: string;
     };
     if (!data.ok) {
-      slot.textContent = `Expand failed: ${data.error ?? "unknown"}`;
+      slot.textContent = `Couldn't load hotel details: ${data.error ?? "unknown"}`;
       return;
     }
     const offers = (data.offers ?? [])
@@ -988,12 +1086,13 @@ async function expandProperty(
       .join("");
     slot.innerHTML = `
       ${data.address ? `<p>${escapeHtml(data.address)}</p>` : ""}
-      <p>Free cancellation seen: ${data.freeCancellationSeen ? "yes" : "unknown"}</p>
-      ${offers ? `<ul class="hs-offers">${offers}</ul>` : "<p>No offer rows.</p>"}
+      <p>Free cancellation: ${data.freeCancellationSeen ? "listed" : "not listed in these prices"}</p>
+      ${data.topThings ? `<details><summary>Hotel notes</summary><pre class="hs-top-things">${escapeHtml(JSON.stringify(data.topThings, null, 2))}</pre></details>` : ""}
+      ${offers ? `<ul class="hs-offers">${offers}</ul>` : "<p>No prices found.</p>"}
     `;
     slot.dataset.loaded = "1";
   } catch (e) {
-    slot.textContent = `Expand failed: ${e instanceof Error ? e.message : String(e)}`;
+    slot.textContent = `Couldn't load hotel details: ${e instanceof Error ? e.message : String(e)}`;
   }
 }
 
@@ -1009,7 +1108,7 @@ function bindPropertyExpand(
   button.addEventListener("click", async (event) => {
     event.stopPropagation();
     button.disabled = true;
-    button.textContent = "Loading property…";
+    button.textContent = "Loading hotel details…";
     await expandProperty(detailRow, token, form);
   });
 }
@@ -1043,7 +1142,7 @@ function bindReviewAnalysis(
         button.textContent = `Analysis failed: ${data.error ?? "unknown"}`;
         return;
       }
-      slot.innerHTML = `${reviewSignalsMarkup(data.analysis.features)}<p class="fs-muted">${data.credits_used ?? 0} credits used. Facts updated in the index.</p>`;
+      slot.innerHTML = `${reviewSignalsMarkup(data.analysis.features)}<p class="fs-muted">${data.credits_used ?? 0} credits used. Hotel details updated.</p>`;
     } catch (error) {
       button.disabled = false;
       button.textContent =
@@ -1057,12 +1156,23 @@ function renderFooter(
   rows: HotelRow[],
   meta: Record<string, unknown>,
 ): void {
+  const stats = [`<span>Hotels shown: ${rows.length}</span>`];
+  if (meta.credits_used != null) {
+    stats.push(`<span>Credits used: ${meta.credits_used}</span>`);
+  }
+  if (meta.gated_out != null) {
+    stats.push(`<span>Filtered out: ${meta.gated_out}</span>`);
+  }
+  if (meta.topExclusionReason != null) {
+    stats.push(
+      `<span>Most common filter: ${escapeHtml(exclusionReasonLabel(meta.topExclusionReason))}</span>`,
+    );
+  }
+  if (meta.indexDurationMs != null) {
+    stats.push(`<span>Load time: ${meta.indexDurationMs} ms</span>`);
+  }
   footer.innerHTML = `
-    <span>Shown: ${rows.length}</span>
-    <span>Credits: ${meta.credits_used ?? "—"}</span>
-    <span>Gated: ${meta.gated_out ?? "—"}</span>
-    <span>Exclusion: ${escapeHtml(String(meta.topExclusionReason ?? "—"))}</span>
-    <span>D1: ${meta.indexDurationMs ?? "—"}ms</span>
+    ${stats.join("")}
     <a id="hs-download" href="#">Download JSON</a>
   `;
   footer.querySelector("#hs-download")?.addEventListener("click", (e) => {
@@ -1077,6 +1187,21 @@ function renderFooter(
     a.click();
     URL.revokeObjectURL(a.href);
   });
+}
+
+function exclusionReasonLabel(value: unknown): string {
+  const labels: Record<string, string> = {
+    reviews_below_min: "too few reviews",
+    rating_below_min: "rating too low",
+    excluded_type: "excluded property type",
+    require_ac: "air conditioning not confirmed",
+    require_elevator: "elevator not confirmed",
+    require_front_desk_24h: "24-hour front desk not confirmed",
+    branded_only: "not a recognized brand",
+    price_below_min: "price below minimum",
+    price_above_max: "price above maximum",
+  };
+  return labels[String(value)] ?? "—";
 }
 
 function setVal(root: HTMLElement, sel: string, value: string): void {

@@ -1,5 +1,5 @@
 /** Bump on any formula / weight change so rescore can stamp rows. */
-export const SCORING_VERSION = 2;
+export const SCORING_VERSION = 3;
 
 export const WEIGHTS = {
   qualityMax: 55,
@@ -21,6 +21,7 @@ export const WEIGHTS = {
   whitelistBonus: 8,
   classNudge: 2,
   classNudgeMin: 5,
+  unknownFactPenalty: 0.5,
 } as const;
 
 export const GATE_DEFAULTS = {

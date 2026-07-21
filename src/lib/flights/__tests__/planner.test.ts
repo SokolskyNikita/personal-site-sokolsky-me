@@ -137,8 +137,8 @@ describe("planSearch", () => {
     expect(plan.callCount).toBe(240);
     // Largest plans exceed the per-IP daily cap; the global budget still
     // covers a few of them site-wide when mostly uncached.
-    expect(DEFAULT_RATE_LIMIT_PER_DAY).toBe(400);
-    expect(DEFAULT_DAILY_BUDGET).toBe(2_000);
+    expect(DEFAULT_RATE_LIMIT_PER_DAY).toBe(800);
+    expect(DEFAULT_DAILY_BUDGET).toBe(4_000);
     expect(DEFAULT_DAILY_BUDGET).toBeGreaterThanOrEqual(plan.callCount * 4);
   });
 

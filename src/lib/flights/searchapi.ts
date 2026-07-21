@@ -458,33 +458,47 @@ export class SearchApiProvider implements FlightProvider {
         ),
       );
 
-    const options: ItineraryOption[] = [];
-    for (const outbound of candidates) {
-      const returnUrl = buildSearchApiUrl(
-        { ...baseParams, departureToken: outbound.departureToken },
-        this.baseUrl,
-      );
-      try {
-        const inboundResult = await this.fetchWithRetry(returnUrl);
-        searchesUsed += inboundResult.searchesUsed;
-        const inboundOptions = parseSearchApiResponse(inboundResult.raw, {
-          currency: step.currency,
-          departureDate: step.returnDate,
-          onDebug: this.onDebug,
-        });
-        for (const inbound of inboundOptions) {
-          options.push(combineRoundTrip(outbound, inbound, step.returnDate));
-        }
-      } catch (error) {
-        partialFailures += 1;
-        searchesUsed +=
-          error instanceof SearchApiRequestError ? error.searchesUsed : 0;
-        this.onDebug?.(
-          `return-flight lookup failed: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+    const hydratedCandidates = await Promise.all(
+      candidates.map(async (outbound) => {
+        const returnUrl = buildSearchApiUrl(
+          { ...baseParams, departureToken: outbound.departureToken },
+          this.baseUrl,
         );
-      }
+        try {
+          const inboundResult = await this.fetchWithRetry(returnUrl);
+          const inboundOptions = parseSearchApiResponse(inboundResult.raw, {
+            currency: step.currency,
+            departureDate: step.returnDate,
+            onDebug: this.onDebug,
+          });
+          return {
+            options: inboundOptions.map((inbound) =>
+              combineRoundTrip(outbound, inbound, step.returnDate),
+            ),
+            searchesUsed: inboundResult.searchesUsed,
+            failed: false,
+          };
+        } catch (error) {
+          this.onDebug?.(
+            `return-flight lookup failed: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+          return {
+            options: [] as ItineraryOption[],
+            searchesUsed:
+              error instanceof SearchApiRequestError ? error.searchesUsed : 0,
+            failed: true,
+          };
+        }
+      }),
+    );
+
+    const options: ItineraryOption[] = [];
+    for (const result of hydratedCandidates) {
+      options.push(...result.options);
+      searchesUsed += result.searchesUsed;
+      if (result.failed) partialFailures += 1;
     }
 
     return {
@@ -527,6 +541,9 @@ export class SearchApiProvider implements FlightProvider {
 
         const data = (await response.json()) as SearchApiResponse;
         if (data.error) {
+          if (isNoResultsSearchApiMessage(data.error)) {
+            return { raw: data, searchesUsed };
+          }
           if (isRetryableSearchApiMessage(data.error)) {
             throw new RetryableSearchApiError(data.error);
           }
@@ -562,9 +579,11 @@ function isRetryableStatus(status: number): boolean {
 }
 
 function isRetryableSearchApiMessage(message: string): boolean {
-  return /hasn't returned any results|timed? ?out|temporar|try again|unavailable/i.test(
-    message,
-  );
+  return /timed? ?out|temporar|try again|unavailable/i.test(message);
+}
+
+function isNoResultsSearchApiMessage(message: string): boolean {
+  return /hasn't returned any results/i.test(message);
 }
 
 function isRetryableError(error: Error): boolean {

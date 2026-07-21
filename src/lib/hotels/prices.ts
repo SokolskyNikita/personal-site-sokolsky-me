@@ -64,7 +64,7 @@ export type PriceSweepInput = {
   indexLimit?: number;
 };
 
-function windowCacheToken(citySlug: string): string {
+export function priceWindowMarker(citySlug: string): string {
   return `__window__:${citySlug}`;
 }
 
@@ -105,6 +105,7 @@ export async function runPriceSweep(
   );
   const tokens = index.map((r) => r.token);
   const tokenSet = new Set(tokens);
+  const adults = input.adults ?? 2;
   const now = Math.floor(Date.now() / 1000);
   const fresherThan = now - PRICE_CACHE_TTL_HOURS * 3600;
 
@@ -119,12 +120,13 @@ export async function runPriceSweep(
   const primaryWindow = windows[0];
 
   for (const w of windows) {
-    const windowMarker = windowCacheToken(input.citySlug);
+    const windowMarker = priceWindowMarker(input.citySlug);
     const cached = await input.db.listPricesForTokens(
       [...tokens, windowMarker],
       w.checkIn,
       w.checkOut,
       fresherThan,
+      adults,
     );
     const cachedWithPrice = cached.filter(
       (c) => c.token !== windowMarker && c.nightly_usd != null,
@@ -144,7 +146,7 @@ export async function runPriceSweep(
       q: city?.query ?? cityRow.query ?? input.citySlug,
       checkIn: w.checkIn,
       checkOut: w.checkOut,
-      adults: input.adults ?? 2,
+      adults,
       gl: cityRow.gl ?? "us",
       sortBy: "most_reviewed",
       propertyType: "hotel",
@@ -163,6 +165,7 @@ export async function runPriceSweep(
           token,
           checkIn: w.checkIn,
           checkOut: w.checkOut,
+          adults,
           nightlyUsd: null,
           totalUsd: null,
           fetchedAt: now,
@@ -175,6 +178,7 @@ export async function runPriceSweep(
         token,
         checkIn: w.checkIn,
         checkOut: w.checkOut,
+        adults,
         nightlyUsd: nightly,
         totalUsd: typeof total === "number" ? total : null,
         fetchedAt: now,
@@ -194,6 +198,7 @@ export async function runPriceSweep(
       token: windowMarker,
       checkIn: w.checkIn,
       checkOut: w.checkOut,
+      adults,
       nightlyUsd: null,
       totalUsd: null,
       source: "window_marker",
@@ -225,6 +230,7 @@ export async function runPriceSweep(
         primaryWindow.checkIn,
         primaryWindow.checkOut,
         fresherThan,
+        adults,
       );
       if (cached.length && cached[0]!.nightly_usd != null) {
         pushStay(byToken, row.token, {
@@ -264,6 +270,7 @@ export async function runPriceSweep(
           token: row.token,
           checkIn: primaryWindow.checkIn,
           checkOut: primaryWindow.checkOut,
+          adults,
           nightlyUsd,
           totalUsd: typeof total === "number" ? total : null,
           source: "searchapi_property",
@@ -283,6 +290,7 @@ export async function runPriceSweep(
           token: row.token,
           checkIn: primaryWindow.checkIn,
           checkOut: primaryWindow.checkOut,
+          adults,
           nightlyUsd: null,
           totalUsd: null,
           source: "searchapi_property",

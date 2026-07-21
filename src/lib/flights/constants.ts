@@ -13,8 +13,8 @@ export const MAX_AIRPORTS_PER_BATCH = 10;
  */
 export const ROUND_TRIP_CANDIDATES_PER_STEP = 4;
 
-/** Default KV cache TTL for raw SearchAPI.io JSON (2 hours). */
-export const DEFAULT_CACHE_TTL_SECONDS = 2 * 60 * 60;
+/** Default KV cache TTL for raw SearchAPI.io JSON (6 hours). */
+export const DEFAULT_CACHE_TTL_SECONDS = 6 * 60 * 60;
 
 /**
  * Approximate usage cost on SearchAPI.io's entry-level paid plan:
@@ -27,13 +27,13 @@ export const SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD = 4 / 1_000;
 /**
  * Global daily SearchAPI.io call budget.
  * A default Buenos Aires→gateway plan is ~32 live calls at 7 days after the
- * selected date, or ~60 at 14 days after it. 2,000 permits roughly 30–60
+ * selected date, or ~60 at 14 days after it. 4,000 permits roughly 60–120
  * fully uncached typical searches site-wide while capping runaway spend.
  */
-export const DEFAULT_DAILY_BUDGET = 2_000;
+export const DEFAULT_DAILY_BUDGET = 4_000;
 
 /**
  * Per-IP daily rate limit on /query (uncached SearchAPI.io steps).
- * Caps a single client at ~12 typical Buenos Aires→gateway searches per day.
+ * Caps a single client at ~24 typical Buenos Aires→gateway searches per day.
  */
-export const DEFAULT_RATE_LIMIT_PER_DAY = 400;
+export const DEFAULT_RATE_LIMIT_PER_DAY = 800;

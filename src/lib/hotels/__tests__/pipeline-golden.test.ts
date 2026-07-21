@@ -88,6 +88,29 @@ describe("fixture scan pipeline", () => {
     }));
     expect(order).toMatchSnapshot("golden-ranking");
   });
+
+  it("does not replace city-wide mean on neighborhood scans", async () => {
+    const db = createMemoryHotelsRepository();
+    await runCityScan({
+      citySlug: "buenos-aires",
+      provider: new FixtureProvider(),
+      db,
+      checkIn: "2026-08-11",
+      checkOut: "2026-08-13",
+    });
+    const before = await db.getCityBySlug("buenos-aires");
+    await runCityScan({
+      citySlug: "buenos-aires",
+      provider: new FixtureProvider(),
+      db,
+      bbox: [-58.45, -34.6, -58.39, -34.55],
+      checkIn: "2026-08-11",
+      checkOut: "2026-08-13",
+    });
+    const after = await db.getCityBySlug("buenos-aires");
+    expect(after?.mean_rating).toBe(before?.mean_rating);
+    expect(after?.scanned_at).toBe(before?.scanned_at);
+  });
 });
 
 describe("deals (P2 pure)", () => {

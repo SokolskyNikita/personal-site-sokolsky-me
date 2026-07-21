@@ -104,6 +104,7 @@ export type Subscores = {
   taBonus: number;
   whitelistBonus: number;
   classNudge: number;
+  unknownPenalty?: number;
   bayesRating: number;
   maxNegRate: number | null;
   worstPlantCategory: string | null;

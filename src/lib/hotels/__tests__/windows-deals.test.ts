@@ -49,6 +49,7 @@ describe("deals", () => {
       { token: "b", comfort: 60, nightlyUsd: 120 },
     ]);
     expect(deals.every((d) => d.method === "fallback")).toBe(true);
+    expect(deals.every((d) => d.dealPct >= -1 && d.dealPct <= 1)).toBe(true);
   });
 
   it("fits when sample is large enough", () => {

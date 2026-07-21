@@ -1,12 +1,32 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_HOTEL_FORM,
   formStateFromSearchParams,
   formStateToSearchParams,
-  DEFAULT_HOTEL_FORM,
 } from "../url";
 
-describe("hotel url state", () => {
-  it("round-trips form state", () => {
+describe("hotel URL state", () => {
+  it("uses defaults when numeric parameters are absent", () => {
+    const state = formStateFromSearchParams(new URLSearchParams());
+    expect(state.nightsMin).toBe(2);
+    expect(state.nightsMax).toBe(2);
+    expect(state.adults).toBe(2);
+    expect(state.scanPages).toBe(4);
+  });
+
+  it("round-trips dated occupancy state", () => {
+    const input = {
+      ...DEFAULT_HOTEL_FORM,
+      checkInStart: "2026-08-11",
+      checkInEnd: "2026-08-12",
+      nightsMin: 3,
+      nightsMax: 4,
+      adults: 3,
+    };
+    const output = formStateFromSearchParams(formStateToSearchParams(input));
+    expect(output).toMatchObject(input);
+  });
+  it("round-trips filters", () => {
     const form = {
       ...DEFAULT_HOTEL_FORM,
       city: "buenos-aires",

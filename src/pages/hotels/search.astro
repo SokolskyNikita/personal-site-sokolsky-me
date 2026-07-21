@@ -7,7 +7,7 @@ export const prerender = true;
 
 const pageTitle = "Hotel comfort search";
 const pageDescription =
-  "Find hotels with market-transferable comfort evidence — modern rooms, quiet sleep, working HVAC — not just local star averages.";
+  "Compare hotels by room condition, noise, air conditioning and other practical details found in listings and reviews.";
 const themeColorLight = "#f7f6f3";
 const themeColorDark = "#121412";
 const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
@@ -52,23 +52,26 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     <div class="fs-page" id="hs-app">
       <header class="fs-top">
         <div class="fs-heading">
-          <span class="fs-eyebrow">Comfort index</span>
-          <h1 class="fs-title">Hotel search</h1>
+          <span class="fs-eyebrow">Hotels</span>
+          <h1 class="fs-title">Hotel comfort search</h1>
           <p>
-            Rank hotels by transferable comfort evidence, not local guest-mix
-            star averages.
+            Compare hotels using details from listings and reviews: room
+            condition, noise, air conditioning, elevators and front desk hours.
           </p>
         </div>
         <a class="fs-home" href="/">sokolsky.me</a>
       </header>
 
       <form class="fs-form" id="hs-form">
-        <section class="fs-form-section" aria-labelledby="hs-where-heading">
+        <section
+          class="fs-form-section hs-section-where"
+          aria-labelledby="hs-where-heading"
+        >
           <header class="fs-section-heading">
             <h2 id="hs-where-heading">Where &amp; when</h2>
             <p>
-              City preset or free text. Optional stay window prices the comfort
-              index (one list call per window, cached 6h).
+              Choose a city. Add dates for current prices; each date combination
+              can use one API credit. Prices are cached for six hours.
             </p>
           </header>
           <div class="fs-primary">
@@ -127,31 +130,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 value={String(DEFAULT_HOTEL_FORM.adults)}
               />
             </div>
-            <div class="fs-field">
-              <label for="hs-pin-lat">Pin lat</label>
-              <input
-                id="hs-pin-lat"
-                type="number"
-                step="0.0001"
-                placeholder="optional"
-              />
-            </div>
-            <div class="fs-field">
-              <label for="hs-pin-lng">Pin lng</label>
-              <input
-                id="hs-pin-lng"
-                type="number"
-                step="0.0001"
-                placeholder="optional"
-              />
-            </div>
           </div>
         </section>
 
-        <section class="fs-form-section" aria-labelledby="hs-comfort-heading">
+        <section
+          class="fs-form-section hs-section-comfort"
+          aria-labelledby="hs-comfort-heading"
+        >
           <header class="fs-section-heading">
             <h2 id="hs-comfort-heading">Comfort profile</h2>
-            <p>Minimum score and how unknown amenities are treated.</p>
+            <p>Set a minimum score and decide whether to allow missing amenity data.</p>
           </header>
           <div class="fs-secondary">
             <div class="fs-field fs-field-days">
@@ -171,12 +159,12 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               />
             </div>
             <div class="fs-field">
-              <label for="hs-strictness">Evidence strictness</label>
+              <label for="hs-strictness">Missing amenity data</label>
               <select id="hs-strictness">
                 <option value="confirmed_or_unknown" selected
-                  >Confirmed or unknown (default)</option
+                  >Allow missing data (default)</option
                 >
-                <option value="confirmed_only">Confirmed only</option>
+                <option value="confirmed_only">Require confirmed data</option>
               </select>
             </div>
             <div class="fs-field">
@@ -187,17 +175,19 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 <option value="nightly">$/night</option>
                 <option value="rating">Rating</option>
                 <option value="reviews">Reviews</option>
-                <option value="distance">Distance to pin</option>
                 <option value="unknowns">Fewest unknowns</option>
               </select>
             </div>
           </div>
         </section>
 
-        <section class="fs-form-section" aria-labelledby="hs-hard-heading">
+        <section
+          class="fs-form-section hs-section-hard"
+          aria-labelledby="hs-hard-heading"
+        >
           <header class="fs-section-heading">
             <h2 id="hs-hard-heading">Hard requirements</h2>
-            <p>Filter on fact status — absence is unknown, never false.</p>
+            <p>Only show hotels that meet these checks. Missing data does not count as a match.</p>
           </header>
           <div class="fs-secondary">
             <div class="fs-toggles">
@@ -211,7 +201,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               </label>
               <label class="fs-check">
                 <input id="hs-require-desk" type="checkbox" />
-                <span>24h desk</span>
+                <span>24-hour front desk</span>
               </label>
               <label class="fs-check">
                 <input id="hs-branded-only" type="checkbox" />
@@ -240,23 +230,22 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         </section>
 
         <section
-          class="fs-form-section fs-form-section-options"
+          class="fs-form-section fs-form-section-options hs-section-coverage"
           aria-labelledby="hs-depth-heading"
         >
           <header class="fs-section-heading">
-            <h2 id="hs-depth-heading">Search depth</h2>
-            <p>Most-reviewed pages to sweep (highest-rating adds up to 2).</p>
+            <h2 id="hs-depth-heading">Hotel coverage</h2>
+            <p>A larger search checks more result pages and costs more API credits.</p>
           </header>
           <div class="fs-secondary">
             <div class="fs-field">
-              <label for="hs-scan-pages">Scan pages</label>
-              <input
-                id="hs-scan-pages"
-                type="number"
-                min="1"
-                max="4"
-                value={String(DEFAULT_HOTEL_FORM.scanPages)}
-              />
+              <label for="hs-scan-pages">Search size</label>
+              <select id="hs-scan-pages">
+                <option value="1">1 page · up to 3 credits</option>
+                <option value="2">2 pages · up to 4 credits</option>
+                <option value="3">3 pages · up to 5 credits</option>
+                <option value="4" selected>4 pages · up to 6 credits</option>
+              </select>
             </div>
             <div class="fs-actions">
               <button type="submit" class="fs-btn fs-btn-primary" id="hs-run"
@@ -272,15 +261,16 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       <div class="fs-status" aria-live="polite">
         <p class="fs-search-summary" id="hs-search-summary">
-          Ready. Warm cities load from D1; scans confirm credits first.
+          Ready. Saved results load automatically. You'll see the credit cost
+          before a new search runs.
         </p>
         <div id="hs-banners"></div>
         <p class="fs-progress" id="hs-progress"></p>
       </div>
       <div id="hs-results" aria-live="polite"></div>
       <p class="fs-trust-note">
-        Amenities feeds are incomplete — unknown is not false. Ratings are
-        Bayesian-smoothed vs the city mean.
+        Hotel listings often omit amenities. Missing data is treated as unknown,
+        not no. Ratings are adjusted against the city's average.
       </p>
       <div class="fs-footer-stats" id="hs-footer"></div>
 

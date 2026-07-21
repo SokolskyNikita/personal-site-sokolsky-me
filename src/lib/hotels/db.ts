@@ -65,6 +65,7 @@ export type PriceCacheRow = {
   token: string;
   check_in: string;
   check_out: string;
+  adults: number;
   nightly_usd: number | null;
   total_usd: number | null;
   source: string | null;
@@ -105,6 +106,7 @@ export interface HotelsRepository {
     token: string;
     checkIn: string;
     checkOut: string;
+    adults?: number;
     nightlyUsd: number | null;
     totalUsd: number | null;
     source?: string;
@@ -115,11 +117,13 @@ export interface HotelsRepository {
     checkIn: string,
     checkOut: string,
     fresherThan: number,
+    adults?: number,
   ): Promise<PriceCacheRow[]>;
   listPricesForWindows(
     tokens: string[],
     windows: { checkIn: string; checkOut: string }[],
     fresherThan: number,
+    adults?: number,
   ): Promise<PriceCacheRow[]>;
   updateTaFields(input: {
     token: string;
@@ -210,9 +214,19 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
             low_star_share=excluded.low_star_share,
             worst_category=excluded.worst_category,
             worst_category_neg=excluded.worst_category_neg,
-            ta_rating=excluded.ta_rating, ta_reviews=excluded.ta_reviews,
-            ta_rank=excluded.ta_rank, ta_total=excluded.ta_total,
-            whitelist=excluded.whitelist, facts_json=excluded.facts_json,
+            ta_rating=COALESCE(excluded.ta_rating, properties.ta_rating),
+            ta_reviews=COALESCE(excluded.ta_reviews, properties.ta_reviews),
+            ta_rank=COALESCE(excluded.ta_rank, properties.ta_rank),
+            ta_total=COALESCE(excluded.ta_total, properties.ta_total),
+            whitelist=CASE
+              WHEN excluded.whitelist = '[]' THEN properties.whitelist
+              ELSE excluded.whitelist
+            END,
+            facts_json=CASE
+              WHEN properties.facts_json LIKE '%"modelVersion":"topics-v1"%'
+                THEN properties.facts_json
+              ELSE excluded.facts_json
+            END,
             amenities_json=excluded.amenities_json,
             breakdown_json=excluded.breakdown_json,
             histogram_json=excluded.histogram_json, raw_json=excluded.raw_json,
@@ -287,9 +301,9 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
     async upsertPrice(input) {
       await db
         .prepare(
-          `INSERT INTO price_cache (token, check_in, check_out, nightly_usd, total_usd, source, fetched_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?)
-           ON CONFLICT(token, check_in, check_out) DO UPDATE SET
+          `INSERT INTO price_cache (token, check_in, check_out, adults, nightly_usd, total_usd, source, fetched_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(token, check_in, check_out, adults) DO UPDATE SET
              nightly_usd=excluded.nightly_usd,
              total_usd=excluded.total_usd,
              source=excluded.source,
@@ -299,6 +313,7 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
           input.token,
           input.checkIn,
           input.checkOut,
+          input.adults ?? 2,
           input.nightlyUsd,
           input.totalUsd,
           input.source ?? "searchapi",
@@ -307,21 +322,43 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
         .run();
     },
 
-    async listPricesForTokens(tokens, checkIn, checkOut, fresherThan) {
+    async listPricesForTokens(
+      tokens,
+      checkIn,
+      checkOut,
+      fresherThan,
+      adults = 2,
+    ) {
       if (!tokens.length) return [];
+      // D1 caps bound SQL variables; reserve four slots for date/adults/TTL.
+      if (tokens.length > 80) {
+        const out: PriceCacheRow[] = [];
+        for (let i = 0; i < tokens.length; i += 80) {
+          out.push(
+            ...(await this.listPricesForTokens(
+              tokens.slice(i, i + 80),
+              checkIn,
+              checkOut,
+              fresherThan,
+              adults,
+            )),
+          );
+        }
+        return out;
+      }
       const placeholders = tokens.map(() => "?").join(",");
       const { results } = await db
         .prepare(
           `SELECT * FROM price_cache
-           WHERE check_in = ? AND check_out = ? AND fetched_at >= ?
+           WHERE check_in = ? AND check_out = ? AND adults = ? AND fetched_at >= ?
              AND token IN (${placeholders})`,
         )
-        .bind(checkIn, checkOut, fresherThan, ...tokens)
+        .bind(checkIn, checkOut, adults, fresherThan, ...tokens)
         .all<PriceCacheRow>();
       return results;
     },
 
-    async listPricesForWindows(tokens, windows, fresherThan) {
+    async listPricesForWindows(tokens, windows, fresherThan, adults = 2) {
       if (!tokens.length || !windows.length) return [];
       const out: PriceCacheRow[] = [];
       for (const w of windows) {
@@ -330,6 +367,7 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
           w.checkIn,
           w.checkOut,
           fresherThan,
+          adults,
         );
         out.push(...rows);
       }
@@ -516,12 +554,14 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
         (p) =>
           p.token === input.token &&
           p.check_in === input.checkIn &&
-          p.check_out === input.checkOut,
+          p.check_out === input.checkOut &&
+          p.adults === (input.adults ?? 2),
       );
       const row: PriceCacheRow = {
         token: input.token,
         check_in: input.checkIn,
         check_out: input.checkOut,
+        adults: input.adults ?? 2,
         nightly_usd: input.nightlyUsd,
         total_usd: input.totalUsd,
         source: input.source ?? "searchapi",
@@ -530,17 +570,24 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
       if (idx >= 0) prices[idx] = row;
       else prices.push(row);
     },
-    async listPricesForTokens(tokens, checkIn, checkOut, fresherThan) {
+    async listPricesForTokens(
+      tokens,
+      checkIn,
+      checkOut,
+      fresherThan,
+      adults = 2,
+    ) {
       const set = new Set(tokens);
       return prices.filter(
         (p) =>
           set.has(p.token) &&
           p.check_in === checkIn &&
           p.check_out === checkOut &&
+          p.adults === adults &&
           p.fetched_at >= fresherThan,
       );
     },
-    async listPricesForWindows(tokens, windows, fresherThan) {
+    async listPricesForWindows(tokens, windows, fresherThan, adults = 2) {
       const out: PriceCacheRow[] = [];
       for (const w of windows) {
         out.push(
@@ -549,6 +596,7 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
             w.checkIn,
             w.checkOut,
             fresherThan,
+            adults,
           )),
         );
       }

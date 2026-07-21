@@ -57,13 +57,24 @@ export function computeDeals(samples: PricedComfort[]): DealResult[] {
     const scored = samples.filter(
       (s) => s.comfort >= DEAL_MIN_SCORE && s.nightlyUsd > 0,
     );
+    const ratios = scored
+      .map((s) => s.comfort / s.nightlyUsd)
+      .sort((a, b) => a - b);
+    const mid = Math.floor(ratios.length / 2);
+    const medianRatio =
+      ratios.length === 0
+        ? 1
+        : ratios.length % 2
+          ? ratios[mid]!
+          : (ratios[mid - 1]! + ratios[mid]!) / 2;
     return scored.map((s) => {
       const ratio = s.comfort / s.nightlyUsd;
+      const dealPct = medianRatio > 0 ? ratio / medianRatio - 1 : 0;
       return {
         token: s.token,
         nightlyUsd: s.nightlyUsd,
-        expectedUsd: s.nightlyUsd,
-        dealPct: ratio,
+        expectedUsd: s.nightlyUsd * (1 + dealPct),
+        dealPct,
         method: "fallback" as const,
       };
     });

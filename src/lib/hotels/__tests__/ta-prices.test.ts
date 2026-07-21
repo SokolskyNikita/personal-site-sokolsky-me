@@ -180,5 +180,19 @@ describe("price sweep (fixtures)", () => {
     expect(again.windowsSkippedCache).toBe(1);
     expect(again.liveCalls).toBe(0);
     expect(again.topupCalls).toBe(0);
+
+    const differentOccupancy = await runPriceSweep({
+      citySlug: "buenos-aires",
+      provider,
+      db,
+      adults: 3,
+      windows: {
+        checkInStart: "2026-08-11",
+        checkInEnd: "2026-08-11",
+        nightsMin: 2,
+        nightsMax: 2,
+      },
+    });
+    expect(differentOccupancy.liveCalls).toBe(1);
   });
 });
