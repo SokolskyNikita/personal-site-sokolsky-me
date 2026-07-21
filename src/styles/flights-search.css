@@ -832,8 +832,68 @@ a {
   padding-left: 0.1rem;
 }
 
-.fs-city-group .fs-date-group-nested:last-child {
+.fs-city-group > .fs-date-group-nested:last-child,
+.fs-city-expand-body > .fs-date-group-nested:last-child {
   margin-bottom: 0;
+}
+
+.fs-city-expand {
+  margin: 0.15rem 0 0;
+}
+
+.fs-city-expand > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.55rem;
+  padding: 0.2rem 0.15rem;
+  list-style: none;
+  cursor: pointer;
+  color: var(--fs-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.fs-city-expand > summary::-webkit-details-marker {
+  display: none;
+}
+
+.fs-city-expand > summary::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.35rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  opacity: 0.7;
+  transition: transform 140ms ease;
+}
+
+.fs-city-expand[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.fs-city-expand > summary:hover {
+  color: var(--fs-accent);
+}
+
+.fs-city-expand-label-open {
+  display: none;
+}
+
+.fs-city-expand[open] .fs-city-expand-label-closed {
+  display: none;
+}
+
+.fs-city-expand[open] .fs-city-expand-label-open {
+  display: inline;
+}
+
+.fs-city-expand-body {
+  display: flex;
+  flex-direction: column;
 }
 
 .fs-date-heading {

@@ -186,6 +186,10 @@ describe("resolveLocation", () => {
       "HPH",
     ]);
     expect(resolveLocation("germany-gateways")).toHaveLength(5);
+    expect(resolveLocation("lcc-airports")).toHaveLength(62);
+    expect(resolveLocation("lcc-airports")).toEqual(
+      expect.arrayContaining(["BCN", "STN", "BGY", "SHJ", "CRL", "WMI"]),
+    );
   });
 
   it("resolves composed entries with dedupe", () => {
@@ -266,6 +270,7 @@ describe("registry options", () => {
       ["canada-gateways", "Canada gateways"],
       ["east-asia-gateways", "East Asia gateways"],
       ["germany-gateways", "Germany gateways"],
+      ["lcc-airports", "LCC airports"],
       ["mexico-gateways", "Mexico gateways"],
       [
         "oceania-gateways",

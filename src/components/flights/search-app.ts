@@ -762,29 +762,55 @@ function renderCityGroupedResults(
     const cityMeta = cheapest
       ? `${cityGroup.dates.length} ${dayLabel} · from ${formatPrice(cheapest.price, cheapest.currency)}`
       : `${cityGroup.dates.length} ${dayLabel}`;
+    const [first, ...rest] = cityGroup.dates;
     html.push(`
       <section class="fs-city-group">
         <header class="fs-city-heading">
           <h2>${escapeHtml(cityGroup.city)}</h2>
           <span>${escapeHtml(cityMeta)}</span>
         </header>
+        ${first ? renderCityDateBlock(first.date, first.option, spec) : ""}
     `);
-    for (const { date, option } of cityGroup.dates) {
+    if (rest.length > 0) {
+      const moreLabel =
+        rest.length === 1 ? "1 more day" : `${rest.length} more days`;
       html.push(`
-        <section class="fs-date-group fs-date-group-nested">
-          <header class="fs-date-heading">
-            <h3>${formatDateHeader(date)}</h3>
-            <span>${escapeHtml(formatPrice(option.price, option.currency))}</span>
-          </header>
-          <div class="fs-result-list">
-            ${renderResultCard(option, spec)}
+        <details class="fs-city-expand">
+          <summary>
+            <span class="fs-city-expand-label-closed">Expand · ${escapeHtml(moreLabel)}</span>
+            <span class="fs-city-expand-label-open">Collapse</span>
+          </summary>
+          <div class="fs-city-expand-body">
+            ${rest
+              .map(({ date, option }) =>
+                renderCityDateBlock(date, option, spec),
+              )
+              .join("")}
           </div>
-        </section>
+        </details>
       `);
     }
     html.push("</section>");
   }
   return html.join("");
+}
+
+function renderCityDateBlock(
+  date: string,
+  option: ItineraryOption,
+  spec: LegSearch,
+): string {
+  return `
+    <section class="fs-date-group fs-date-group-nested">
+      <header class="fs-date-heading">
+        <h3>${formatDateHeader(date)}</h3>
+        <span>${escapeHtml(formatPrice(option.price, option.currency))}</span>
+      </header>
+      <div class="fs-result-list">
+        ${renderResultCard(option, spec)}
+      </div>
+    </section>
+  `;
 }
 
 function renderResultCard(option: ItineraryOption, spec: LegSearch): string {
