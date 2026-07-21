@@ -61,7 +61,7 @@ export function groupResults(
  */
 export function orderedGroupKeys(
   grouped: Record<string, ItineraryOption[]>,
-  sort: DateGroupSort = "date",
+  sort: DateGroupSort = "cheapest_day",
 ): string[] {
   const keys = Object.keys(grouped);
   if (sort === "date") return keys.sort();
@@ -106,7 +106,7 @@ function cityFloorPrice(dates: Array<{ option: ItineraryOption }>): number {
  */
 export function groupCheapestByCityAndDate(
   options: ItineraryOption[],
-  sort: DateGroupSort = "date",
+  sort: DateGroupSort = "cheapest_day",
   citySort: CityGroupSort = "cheapest_city",
   side: CityGroupSide = "departure",
 ): CityDateGroup[] {
