@@ -65,6 +65,16 @@ const buildingsWithPilates = new Set([
   "torre-promenade",
   "torre-vista-botanico",
 ]);
+const buildingsWithPadel = new Set([
+  "torres-alto-palermo",
+]);
+const buildingsWithTennis = new Set([
+  "forum-alcorta",
+  "mirabilia-palermo",
+  "quartier-boulevard",
+  "torre-promenade",
+  "torres-aisenson",
+]);
 const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
@@ -363,6 +373,8 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
+    hasPadel: buildingsWithPadel.has(building.id),
+    hasTennis: buildingsWithTennis.has(building.id),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
     pricePerTwoBedroomSquareMeter: building.longTermRentUsd.amount / building.approxTwoBedroomAreaSqm.amount,
     lowestAirbnbPriceUsd: getLowestListingPriceUsd(airbnbListings),
@@ -393,6 +405,8 @@ const apartmentMapData = buildings.map((building) => {
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
+    hasPadel: buildingsWithPadel.has(building.id),
+    hasTennis: buildingsWithTennis.has(building.id),
     hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     airbnbListings,
     rentalListings,
@@ -523,6 +537,14 @@ const structuredData = {
             <input id="pilates-only" type="checkbox" autocomplete="off" />
             <span>Has pilates</span>
           </label>
+          <label for="padel-only">
+            <input id="padel-only" type="checkbox" autocomplete="off" />
+            <span>Has padel</span>
+          </label>
+          <label for="tennis-only">
+            <input id="tennis-only" type="checkbox" autocomplete="off" />
+            <span>Has tennis</span>
+          </label>
         </fieldset>
         <label class="filter-dropdown" for="neighborhood-filter">
           <span>Neighborhood</span>
@@ -571,6 +593,8 @@ const structuredData = {
             data-twenty-plus-floors={building.has20PlusFloors}
             data-built-since-2016={building.isBuiltSince2016}
             data-has-pilates={building.hasPilates}
+            data-has-padel={building.hasPadel}
+            data-has-tennis={building.hasTennis}
             data-neighborhood={building.filterNeighborhood}
             data-rent-amount={building.longTermRentUsd.amount}
             data-two-bedroom-area={building.approxTwoBedroomAreaSqm.amount}
@@ -865,6 +889,8 @@ const structuredData = {
   const twentyPlusFloorsOnlyToggle = document.querySelector("#twenty-plus-floors-only");
   const builtSince2016OnlyToggle = document.querySelector("#built-since-2016-only");
   const pilatesOnlyToggle = document.querySelector("#pilates-only");
+  const padelOnlyToggle = document.querySelector("#padel-only");
+  const tennisOnlyToggle = document.querySelector("#tennis-only");
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const buildingSort = document.querySelector("#building-sort");
   const buildingList = document.querySelector(".building-list");
@@ -894,6 +920,8 @@ const structuredData = {
     twentyPlusFloorsOnly: Boolean(twentyPlusFloorsOnlyToggle?.checked),
     builtSince2016Only: Boolean(builtSince2016OnlyToggle?.checked),
     pilatesOnly: Boolean(pilatesOnlyToggle?.checked),
+    padelOnly: Boolean(padelOnlyToggle?.checked),
+    tennisOnly: Boolean(tennisOnlyToggle?.checked),
   });
 
   const matchesCheckboxFilters = (building, filters) =>
@@ -901,7 +929,9 @@ const structuredData = {
     (!filters.multipleOffersOnly || building.hasMultipleRentalOffers) &&
     (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
     (!filters.builtSince2016Only || building.isBuiltSince2016) &&
-    (!filters.pilatesOnly || building.hasPilates);
+    (!filters.pilatesOnly || building.hasPilates) &&
+    (!filters.padelOnly || building.hasPadel) &&
+    (!filters.tennisOnly || building.hasTennis);
 
   const formatAreaLabel = (areaSqm, unit) => {
     const amount = unit === "sqft" ? Math.round(areaSqm * 10.7639) : Math.round(areaSqm);
@@ -1164,6 +1194,8 @@ const structuredData = {
   twentyPlusFloorsOnlyToggle?.addEventListener("change", applyFilters);
   builtSince2016OnlyToggle?.addEventListener("change", applyFilters);
   pilatesOnlyToggle?.addEventListener("change", applyFilters);
+  padelOnlyToggle?.addEventListener("change", applyFilters);
+  tennisOnlyToggle?.addEventListener("change", applyFilters);
   neighborhoodFilter?.addEventListener("change", applyFilters);
   buildingSort?.addEventListener("change", applyFilters);
   for (const input of areaUnitInputs) {
@@ -1835,7 +1867,7 @@ const structuredData = {
 
   .rent-estimate span:first-child {
     color: var(--text);
-    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
     font-weight: 850;
     letter-spacing: -0.055em;
     line-height: 0.95;
@@ -2022,7 +2054,7 @@ const structuredData = {
     }
 
     .rent-estimate span:first-child {
-      font-size: 1.55rem;
+      font-size: 1.35rem;
     }
 
     .rent-estimate span:last-child {

@@ -20,8 +20,9 @@
     "lastAirbnbUrlNormalization": "On 2026-06-30, Airbnb URLs were normalized to the https://www.airbnb.com host while preserving room paths and query strings.",
     "lastTallBuildingAudit": "On 2026-06-30, SkyscraperPage and Skyscraper Center were used to audit Buenos Aires residential buildings with 29 or more floors. Missing buildings were added only when BrightData search/scrape found a direct active rental or Airbnb page.",
     "floorCountSource": "Floor counts were added on 2026-06-30 from SkyscraperPage Buenos Aires index, targeted BrightData Google searches, and direct listing/developer snippets. Null means no reliable total floor count or 20+ floor evidence was found during the audit.",
-    "lastTwoBedroomAreaAudit": "On 2026-07-01, Buenos Aires buildings with stored 2-bedroom / 3-ambiente estimates of 133 m2 or higher were rechecked against additional sales-listing search results. Representative estimates were adjusted when the previous value over-weighted terrace-heavy, largest-format, or extrapolated evidence; entries without stronger building-specific 2BR sale evidence were left unchanged.",
-    "lastUsableInventoryAdd": "Added MilAires (Villa Devoto) and Almarena Puerto Retiro / Distrito Quartier on 2026-07-21 after BrightData verification of priced long-term rental and/or Airbnb inventory with extractable size. Skipped Thames 2164 (en pozo, no priced inventory) and Almarena Madero Urbano (hotel-only, no qualifying Airbnb/long-term with USD+size)."
+    "lastTwoBedroomAreaAudit": "Re-checked approxTwoBedroomAreaSqm for buildings added in the prior ~24h using BrightData past-sales evidence (2026-07-21). Revised Palmera Caballito 55→73, Quartier Boulevard 80→90, Oceana 110→126, Almarena/Distrito Quartier 70→115, Harbour Residences 85→110, Art María 90→120, Faena Residences 90→156, Palacio Estrugamou 150→162, Torres El Mirador 95→100, Torres River View 112→122. Confirmed Forum Alcorta 120, Alto Palermo 110, MilAires 75, YOO Nordelta 95. Torres Aisenson Belgrano kept 120 as a notional 2BR (tower sales are full-floor ~200–300 m² only).",
+    "lastUsableInventoryAdd": "Added Palmera Caballito, Quartier Boulevard, Torres Alto Palermo, Forum Alcorta, Torres Aisenson and Oceana Puerto Madero on 2026-07-21 after BrightData verification of priced long-term rental inventory with extractable size. Skipped Torre Camps (no live priced rental/Airbnb), Harbour Tower (sale/en pozo only), and Osten Tower II (under construction / no priced rental inventory).",
+    "lastListingGapFill": "2026-07-21 BrightData gap-fill for buildings added in prior ~24h: added priced long-term rentals for Faena Residences, Quartier Boulevard (×2), Oceana, Art María, Torres River View, Torres Alto Palermo, Palmera Caballito, Harbour Residences, and Forum Alcorta (×3). Airbnb candidates without extractable monthly USD were not added."
   },
   "buildings": [
     {
@@ -4457,7 +4458,7 @@
         "lat": -34.6146176,
         "lng": -58.3614014
       },
-      "availability": "Airbnb found; rental estimate from Airbnb monthly",
+      "availability": "Rental ad found; Airbnb found",
       "airbnb": {
         "confirmed": true,
         "label": "Airbnb confirmed",
@@ -4465,13 +4466,18 @@
         "evidence": "Airbnb listing titled Studio at Hotel Faena Residences in Puerto Madero."
       },
       "rentalEvidence": {
-        "url": "",
-        "note": "Inventory via Airbnb monthly; no separate long-term ad attached 2026-07-20",
-        "checkedAt": "2026-07-20",
-        "source": "Airbnb"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-puerto-madero-hotel-58850531.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
       },
       "description": "Philippe Starck–designed Faena Hotel residences (El Porteño) on the Dique 2 waterfront, with hotel amenities and river views.",
-      "localRentalAd": null,
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler 2 ambientes amoblado Hotel Faena",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-puerto-madero-hotel-58850531.html",
+        "checkedAt": "2026-07-21"
+      },
       "longTermRentUsd": {
         "amount": 3645,
         "basis": "Airbnb monthly studio quote",
@@ -4482,12 +4488,12 @@
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
-        "amount": 90,
-        "basis": "extrapolated from Faena Residences studio/1BR listing evidence",
-        "confidence": "low",
-        "source": "Airbnb / Puerto Madero branded-residence comparables",
-        "sourceUrl": "https://www.airbnb.com/rooms/1037624108593687742",
-        "summary": "Direct 2BR area evidence was sparse; studio/1BR Faena inventory supports an approximate 90 m2 2BR."
+        "amount": 156,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Zonaprop / Instagram sales ads",
+        "sourceUrl": "https://www.zonaprop.com.ar/venta-q-faena.html",
+        "summary": "Faena Residences 3-ambientes sales commonly list ~156 m² (with nearby ~165–171 m² examples); prior 90 m² estimate was too low."
       }
     },
     {
@@ -4538,12 +4544,12 @@
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
-        "amount": 85,
-        "basis": "extrapolated from Harbour Residences studio listing sizes",
-        "confidence": "low",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-puerto-madero-1-amb-con-cochera-harbour-59579222.html",
-        "summary": "Studio evidence around 44–51 m2; approximate 2BR around 85 m2 for the tower."
+        "amount": 110,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Zonaprop / Mercado Libre",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-puerto-madero-3-ambientes-q-harbour.html",
+        "summary": "Harbour Residences 3-ambientes sales show about 105–112 m² (distinct from larger Harbour Tower inventory); using 110 m²."
       }
     },
     {
@@ -4594,12 +4600,12 @@
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
-        "amount": 112,
-        "basis": "direct 3-room / 2-bedroom listing evidence",
+        "amount": 122,
+        "basis": "direct 3-room / 2-bedroom sales listings",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-con-muebles-river-view-puerto-58782484.html",
-        "summary": "River View 3-ambiente listing showed about 112 m2 total."
+        "source": "Argenprop / Roomix",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-puerto-madero-3-ambientes--18429230",
+        "summary": "River View 3-ambientes sales show about 121–125 m² total (≈120 m² covered); revised from 112 to 122 m²."
       }
     },
     {
@@ -4650,12 +4656,12 @@
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
-        "amount": 95,
-        "basis": "extrapolated from 2-ambiente El Mirador temporary listing",
+        "amount": 100,
+        "basis": "extrapolated from 2-ambiente sales plus 3-ambiente neighborhood comps",
         "confidence": "medium-low",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-temporal-en-puerto-madero-1-ambiente--19802539",
-        "summary": "1BR/2-ambiente evidence around 65–70 m2; approximate 2BR near 95 m2."
+        "source": "Mercado Libre / Roomix",
+        "sourceUrl": "https://inmuebles.mercadolibre.com.ar/capital-federal/puerto-madero/edificio-mirador-puerto-madero",
+        "summary": "El Mirador 2-ambientes sales around 67 m²; scarce exact 3-ambiente sizes, so a 2BR comparison is estimated near 100 m²."
       }
     },
     {
@@ -4707,12 +4713,12 @@
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
-        "amount": 90,
-        "basis": "extrapolated from Art María studio listing evidence",
-        "confidence": "low",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
-        "summary": "Studio evidence around 44 m2; approximate 2BR near 90 m2 for the complex."
+        "amount": 120,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Mercado Libre / Instagram sales ads",
+        "sourceUrl": "https://inmuebles.mercadolibre.com.ar/capital-federal/puerto-madero/art-maria-puerto-madero",
+        "summary": "Art María 3-ambientes sales repeatedly list ~120–126 m²; using 120 m²."
       }
     },
     {
@@ -4764,12 +4770,12 @@
       },
       "floorsAboveGround": 7,
       "approxTwoBedroomAreaSqm": {
-        "amount": 150,
-        "basis": "extrapolated from large Estrugamou classic floorplates",
-        "confidence": "medium-low",
-        "source": "RE/MAX / Argenprop",
-        "sourceUrl": "https://www.remax.com.ar/listings/departamento-clasico-en-edificio-estrugamou",
-        "summary": "Listings showed ~153–280 m2 for 3–6 ambiente units; a smaller classic 2BR is estimated near 150 m2."
+        "amount": 162,
+        "basis": "direct 3-room / 2-bedroom sales listing",
+        "confidence": "medium",
+        "source": "YouTube listing walkthrough / sales ads",
+        "sourceUrl": "https://www.youtube.com/watch?v=4qAZDwOdvFc",
+        "summary": "A Palacio Estrugamou 3-ambientes sale was presented at 162 m² total; classic floorplates also include larger 4-amb units around 153–256 m²."
       }
     },
     {
@@ -4824,9 +4830,9 @@
         "amount": 95,
         "basis": "direct 3-room / 2-bedroom listing evidence",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-nordelta-en-alquiler-en-yoo-59415015.html",
-        "summary": "YOO Nordelta 3-ambiente listing showed about 95 m2 covered plus balcony."
+        "source": "YOO Nordelta sales / rental comps",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-yoo-nordelta-nordelta-tigre.html",
+        "summary": "YOO Nordelta 3-ambientes comps span roughly 82–113 m²; 95 m² remains a solid central estimate for a standard 2BR."
       }
     },
     {
@@ -4879,11 +4885,11 @@
       "floorsAboveGround": 5,
       "approxTwoBedroomAreaSqm": {
         "amount": 75,
-        "basis": "developer / press 3-room typology",
-        "confidence": "medium",
-        "source": "Áreas Globales / Ecipsa press",
-        "sourceUrl": "https://ecipsa.com/novedades/milaires-ya-vendio-el-80-en-8-meses-como-es-el-proyecto/",
-        "summary": "Press coverage of MilAires described 3-ambiente units around 75 m2."
+        "basis": "direct 3-room / 2-bedroom sales listing",
+        "confidence": "high",
+        "source": "RE/MAX",
+        "sourceUrl": "https://www.remax.com.ar/listings/milaires-venta-dpto-3-amb-balcon-parrilla-v-devoto",
+        "summary": "MilAires Devoto 3-ambientes sale listed 75 m² total / 65 m² covered with 2 bedrooms, confirming the prior estimate."
       }
     },
     {
@@ -4937,12 +4943,352 @@
       },
       "floorsAboveGround": 14,
       "approxTwoBedroomAreaSqm": {
-        "amount": 70,
-        "basis": "extrapolated from loft / studio inventory",
+        "amount": 115,
+        "basis": "direct 3-room / 2-bedroom sales listing in Distrito Quartier",
+        "confidence": "medium",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/inmuebles-distrito-quartier-retiro.html",
+        "summary": "Distrito Quartier Puerto Retiro (shared Almarena complex) has a 3-ambientes sale at 115 m²; loft/studio inventory is smaller (≈40–70 m²)."
+      }
+    },
+    {
+      "id": "palmera-caballito",
+      "name": "Palmera Caballito",
+      "aliases": [
+        "Torre Palmera Caballito",
+        "Palmera Caballito Doblas"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Caballito",
+      "built": "2010s",
+      "address": "Doblas 955",
+      "fullAddress": "Doblas 955, Caballito / Parque Chacabuco, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Doblas%20955%2C%20Caballito%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.6281402,
+        "lng": -58.4295671
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-en-torre-palmera-parque-59384871.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Portland tower on Doblas with club-style amenities including indoor/outdoor pools, spa, gym and a fútbol 5 court.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler monoambiente Torre Palmera Caballito",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-en-torre-palmera-parque-59384871.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 550,
+        "basis": "direct studio / 1-ambiente listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-en-torre-palmera-parque-59384871.html",
+        "summary": "Live Zonaprop studio listing showed USD 550 rent plus ARS 150,000 expensas."
+      },
+      "floorsAboveGround": 24,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 73,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Facebook / Mercado Libre / Instagram sales ads",
+        "sourceUrl": "https://www.facebook.com/gorapropiedades/posts/en-venta-palmera-caballitodoblas-950-caballito%EF%B8%8F73-m2%EF%B8%8F3-ambientes-piso-alto-palme/902904828502082/",
+        "summary": "Past Palmera Caballito Doblas sales for 3 ambientes clustered around 69–80 m² (incl. a 73 m² floor sale and an ~80 m² Instagram sale)."
+      }
+    },
+    {
+      "id": "quartier-boulevard",
+      "name": "Quartier Boulevard",
+      "aliases": [
+        "Torre Quartier Boulevard",
+        "Quartier Boulevard Palermo"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Palermo Hollywood",
+      "built": "2010s",
+      "address": "Av. Juan B. Justo 1045",
+      "fullAddress": "Av. Juan B. Justo 1045, Palermo Hollywood, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Juan%20B.%20Justo%201045%2C%20Palermo%20Hollywood%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.5809126,
+        "lng": -58.429071
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-en-quartier-boulevard-con-59521444.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Tall tower on Juan B. Justo in Palermo Hollywood with pool, gym, SUM amenities, tennis court and fútbol 5.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Departamento 2 ambientes Quartier Boulevard con cochera",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-en-quartier-boulevard-con-59521444.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 1300,
+        "basis": "direct 2-room / 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-en-quartier-boulevard-con-59521444.html",
+        "summary": "Live Zonaprop 2-ambientes listing showed USD 1,300 rent plus ARS 350,000 expensas."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Zonaprop sales search",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-hollywood-q-quartier-boulevard.html",
+        "summary": "Active Quartier Boulevard sales for 3 ambientes showed about 81–92 m² total; using ~90 m² as the typical 2BR size."
+      }
+    },
+    {
+      "id": "torres-alto-palermo",
+      "name": "Torres Alto Palermo",
+      "aliases": [
+        "Alto Palermo Park",
+        "Alto Palermo Plaza",
+        "Torre Alto Palermo Park"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Palermo / Alto Palermo",
+      "built": "1990s",
+      "address": "Juncal 3280",
+      "fullAddress": "Juncal 3280, Palermo, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juncal%203280%2C%20Palermo%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.58563056,
+        "lng": -58.41063333
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-semipiso-en-torre-alto-palermo-park-vistas-56834924.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Twin 1990s towers facing Parque Las Heras with pool, dual gyms, and covered squash and pádel courts.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Semipiso Torre Alto Palermo Park",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-semipiso-en-torre-alto-palermo-park-vistas-56834924.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 3000,
+        "basis": "direct large 5-room / 3-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-semipiso-en-torre-alto-palermo-park-vistas-56834924.html",
+        "summary": "Live Zonaprop 5-ambientes listing showed USD 3,000 rent plus ARS 600,000 expensas for a 185 m2 unit."
+      },
+      "floorsAboveGround": 35,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 110,
+        "basis": "direct 3-room / 2-bedroom sales listing",
+        "confidence": "high",
+        "source": "Mercado Libre",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1614047203-departamento-en-venta-en-torre-alto-palermo-3-ambientescochera-amenities-premium-vista-abierta-_JM",
+        "summary": "Torre Alto Palermo 3-ambientes sale listed 110 m² total / covered, matching the prior estimate."
+      }
+    },
+    {
+      "id": "forum-alcorta",
+      "name": "Forum Alcorta",
+      "aliases": [
+        "Torre Forum Alcorta",
+        "Forum Ramsay",
+        "Forum Alcorta Bajo Belgrano"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Bajo Belgrano",
+      "built": "2000s",
+      "address": "Ramsay 2055",
+      "fullAddress": "Ramsay 2055, Bajo Belgrano, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Ramsay%202055%2C%20Belgrano%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.5524382,
+        "lng": -58.439477
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-belgrano:-3-dorm-coch-dep.-59592222.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Premium Bajo Belgrano complex with indoor/outdoor pools, fitness center, and covered plus outdoor tennis courts.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler 5 ambientes Forum Alcorta",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-belgrano:-3-dorm-coch-dep.-59592222.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 7500,
+        "basis": "direct 5-room / 3-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-belgrano:-3-dorm-coch-dep.-59592222.html",
+        "summary": "Live Zonaprop 5-ambientes listing showed USD 7,500 rent plus ARS 1,900,000 expensas for a 225 m2 unit."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 120,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-belgrano-q-forum.html",
+        "summary": "Forum Alcorta 3-ambientes sales repeatedly list ~115–121 m² (with occasional ~135 m²); 120 m² is the modal size."
+      }
+    },
+    {
+      "id": "torres-aisenson",
+      "name": "Torres Aisenson",
+      "aliases": [
+        "Torre Aisenson",
+        "Torres Aisenson Belgrano",
+        "Torre Aisenson Villanueva"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Belgrano C",
+      "built": "1980s",
+      "address": "Villanueva 1200",
+      "fullAddress": "Villanueva 1200, Belgrano C, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Villanueva%201200%2C%20Belgrano%2C%20Buenos%20Aires",
+      "location": {
+        "lat": -34.5666694,
+        "lng": -58.4414227
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-piso-en-alquiler-en-torre-aisenson-para-diplomaticos!-59507263.html",
+        "note": "Active long-term rental listing verified 2026-07-21 (diplomat clause)",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Tall Belgrano C Aisenson tower with heated pool, gym, sauna and tennis court; live inventory is large full-floor apartments.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Piso en alquiler Torre Aisenson",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-piso-en-alquiler-en-torre-aisenson-para-diplomaticos!-59507263.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 3000,
+        "basis": "direct large full-floor listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-piso-en-alquiler-en-torre-aisenson-para-diplomaticos!-59507263.html",
+        "summary": "Live Zonaprop full-floor listing showed USD 3,000 rent plus ARS 1,500,000 expensas for a 290 m2 unit."
+      },
+      "floorsAboveGround": 32,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 120,
+        "basis": "extrapolated; Belgrano Aisenson stock is large-floor only",
         "confidence": "low",
-        "source": "BrightData listing audit / Unitrank",
-        "sourceUrl": "https://unitrank.com/en/ar/buenos-aires/1br-retiro-BfbUOxbHs6Y",
-        "summary": "Active inventory is studio/loft-heavy; larger loft formats around 65 m2 plus mezzanine suggest a rough ~70 m2 2BR comparison."
+        "source": "Zonaprop Belgrano Aisenson sales",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-q-aisenson.html",
+        "summary": "Belgrano Torres Aisenson sales are almost entirely full floors (~200–300 m²). No true 3-ambiente stock found there; 120 m² is a notional 2BR comparison, not a measured unit in this tower."
+      }
+    },
+    {
+      "id": "oceana-puerto-madero",
+      "name": "Oceana Puerto Madero",
+      "aliases": [
+        "Oceana",
+        "Oceana Consultatio",
+        "Oceana Juana Manso"
+      ],
+      "officialWebsiteUrl": "https://www.oceanapuertomadero.ar/",
+      "zone": "Puerto Madero",
+      "built": "2020s",
+      "address": "Juana Manso 1415",
+      "fullAddress": "Juana Manso 1415, Puerto Madero, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Oceana%20Puerto%20Madero%2C%20Juana%20Manso%201415",
+      "location": {
+        "lat": -34.614249,
+        "lng": -58.3624896
+      },
+      "availability": "Rental ad found; Airbnb found but unpriced",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb found but monthly USD not extracted",
+        "url": "https://www.airbnb.com/rooms/1234051976876846188",
+        "evidence": "Airbnb listing \"Oceana Puerto Madero Brand New\" exists, but BrightData scrapes did not yield extractable monthly/weekly USD, so it was not added as priced inventory."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-puerto-madero-59400261.html",
+        "note": "Active long-term rental listing verified 2026-07-21",
+        "checkedAt": "2026-07-21",
+        "source": "Zonaprop"
+      },
+      "description": "Consultatio low-rise twin buildings on Dique 2 with plaza amenities, spa, gym, rooftop pool and a golf simulator.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Departamento 2 ambientes Oceana Puerto Madero",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-puerto-madero-59400261.html",
+        "checkedAt": "2026-07-21"
+      },
+      "longTermRentUsd": {
+        "amount": 3000,
+        "basis": "direct 2-room / 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-puerto-madero-59400261.html",
+        "summary": "Live Zonaprop 2-ambientes listing showed USD 3,000 rent plus ARS 700,000 expensas for ~74-92 m2."
+      },
+      "floorsAboveGround": 8,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 126,
+        "basis": "direct 3-room / 2-bedroom sales listings",
+        "confidence": "high",
+        "source": "Mercado Libre / Argenprop sales ads",
+        "sourceUrl": "https://inmuebles.mercadolibre.com.ar/capital-federal/puerto-madero/oceana-puerto-madero",
+        "summary": "Oceana Puerto Madero 3-ambientes sales commonly list ~126–128 m² (larger ~155 m² examples also appear); using 126 m²."
       }
     }
   ]
