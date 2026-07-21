@@ -277,7 +277,8 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "schengen-eu-gateways",
     type: "region",
     label: "Schengen and EU gateways",
-    // Top 40 Schengen-area airports by 2024 passenger traffic.
+    // Top Schengen/EU airports by passenger traffic, including Canary
+    // Islands and Madeira (Spanish/Portuguese Atlantic islands).
     airports: [
       "CDG",
       "AMS",
@@ -302,6 +303,8 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
       "WAW",
       "DUS",
       "ALC",
+      "LPA",
+      "TFS",
       "GVA",
       "BUD",
       "BGY",
@@ -315,10 +318,14 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
       "CTA",
       "VCE",
       "MRS",
-      "KRK",
       "VLC",
+      "ACE",
+      "TFN",
+      "FUE",
+      "KRK",
       "BLQ",
       "LIN",
+      "FNC",
     ],
   },
   "mexico-gateways": {
@@ -355,25 +362,25 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "africa-gateways",
     type: "continent",
     label: "Africa (except sub-Saharan)",
-    // Top 15 non–Sub-Saharan African-region airports by passenger traffic
-    // (Wikipedia Africa rankings: 2024, with #15 from 2025 when the 2024
-    // table ends). Includes North Africa plus Canary Islands and Madeira.
+    // Top 15 Northern African airports by passenger traffic (Wikipedia
+    // Africa rankings 2024–2025). Excludes Canary Islands and Madeira
+    // (those live under Schengen/EU gateways).
     airports: [
       "CAI",
-      "LPA",
-      "TFS",
       "CMN",
       "HRG",
       "RAK",
       "ALG",
-      "ACE",
       "TUN",
       "SSH",
-      "TFN",
-      "FUE",
-      "FNC",
       "AGA",
       "RMF",
+      "TNG",
+      "ORN",
+      "DJE",
+      "RBA",
+      "MIR",
+      "LXR",
     ],
   },
   "sub-saharan-africa-gateways": {
@@ -661,6 +668,12 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   FNC: "Madeira",
   AGA: "Agadir",
   RMF: "Marsa Alam",
+  TNG: "Tangier",
+  ORN: "Oran",
+  DJE: "Djerba",
+  RBA: "Rabat",
+  MIR: "Monastir",
+  LXR: "Luxor",
   MRU: "Mauritius",
   ACC: "Accra",
   DSS: "Dakar",

@@ -22,7 +22,7 @@ describe("generality proof: Schengen/EU → Mexico", () => {
   it("resolves entries without hardcoded market logic", () => {
     const origins = resolveLocation("schengen-eu-gateways");
     const dests = resolveLocation("mexico-gateways");
-    expect(origins).toHaveLength(40);
+    expect(origins).toHaveLength(46);
     expect(origins).toContain("AMS");
     expect(dests).toEqual(["MEX", "CUN", "GDL", "MTY", "TIJ", "SJD"]);
   });
@@ -33,7 +33,7 @@ describe("generality proof: Schengen/EU → Mexico", () => {
       dest: "mexico-gateways",
       dateRange: { start: "2026-07-20", days: 2 },
     });
-    expect(plan.callCount).toBe(12);
+    expect(plan.callCount).toBe(15);
     expect(plan.originAirports).toContain("CDG");
     expect(plan.destAirports).toContain("MEX");
   });

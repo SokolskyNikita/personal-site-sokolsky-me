@@ -73,16 +73,16 @@ describe("planSearch", () => {
   });
 
   it("computes exact cross-product call count with multi-batch sets on both sides", () => {
-    // Schengen/EU = 40 airports → 4 batches at size 10
+    // Schengen/EU = 46 airports → 5 batches at size 10
     // Canada = 6 airports → 1 batch
-    // Selected date + 3 days → 4 × 1 × 4 = 16
+    // Selected date + 3 days → 5 × 1 × 4 = 20
     const plan = planSearch({
       origin: "schengen-eu-gateways",
       dest: "canada-gateways",
       dateRange: { start: "2026-07-20", days: 3 },
     });
-    expect(plan.callCount).toBe(16);
-    expect(plan.steps).toHaveLength(16);
+    expect(plan.callCount).toBe(20);
+    expect(plan.steps).toHaveLength(20);
     expect(plan.dates).toEqual([
       "2026-07-20",
       "2026-07-21",
@@ -112,8 +112,8 @@ describe("planSearch", () => {
   });
 
   it("uses a smaller batch size for call-count math proof", () => {
-    // 40 origin airports / batch 2 = 20 batches; 6 dest / batch 2 = 3 batches
-    // Selected date + 2 days → 20 × 3 × 3 = 180
+    // 46 origin airports / batch 2 = 23 batches; 6 dest / batch 2 = 3 batches
+    // Selected date + 2 days → 23 × 3 × 3 = 207
     const plan = planSearch(
       {
         origin: "schengen-eu-gateways",
@@ -122,9 +122,9 @@ describe("planSearch", () => {
       },
       2,
     );
-    expect(plan.originAirports).toHaveLength(40);
+    expect(plan.originAirports).toHaveLength(46);
     expect(plan.destAirports).toHaveLength(6);
-    expect(plan.callCount).toBe(180);
+    expect(plan.callCount).toBe(207);
   });
 
   it("keeps the largest registry search within configured limits", () => {
@@ -134,7 +134,7 @@ describe("planSearch", () => {
       dateRange: { start: "2026-08-01", days: 14 },
     });
 
-    expect(plan.callCount).toBe(240);
+    expect(plan.callCount).toBe(300);
     // Largest plans exceed the per-IP daily cap; the global budget still
     // covers a few of them site-wide when mostly uncached.
     expect(DEFAULT_RATE_LIMIT_PER_DAY).toBe(800);

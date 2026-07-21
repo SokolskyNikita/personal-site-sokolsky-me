@@ -86,7 +86,10 @@ describe("resolveLocation", () => {
       "YOW",
     ]);
     expect(resolveLocation("uk-ireland-gateways")).toHaveLength(10);
-    expect(resolveLocation("schengen-eu-gateways")).toHaveLength(40);
+    expect(resolveLocation("schengen-eu-gateways")).toEqual(
+      expect.arrayContaining(["LPA", "TFS", "ACE", "TFN", "FUE", "FNC"]),
+    );
+    expect(resolveLocation("schengen-eu-gateways")).toHaveLength(46);
     expect(resolveLocation("mexico-gateways")).toHaveLength(6);
     expect(resolveLocation("south-america-gateways")).toEqual([
       "GRU",
@@ -107,21 +110,24 @@ describe("resolveLocation", () => {
     ]);
     expect(resolveLocation("africa-gateways")).toEqual([
       "CAI",
-      "LPA",
-      "TFS",
       "CMN",
       "HRG",
       "RAK",
       "ALG",
-      "ACE",
       "TUN",
       "SSH",
-      "TFN",
-      "FUE",
-      "FNC",
       "AGA",
       "RMF",
+      "TNG",
+      "ORN",
+      "DJE",
+      "RBA",
+      "MIR",
+      "LXR",
     ]);
+    expect(resolveLocation("africa-gateways")).toEqual(
+      expect.not.arrayContaining(["LPA", "TFS", "ACE", "TFN", "FUE", "FNC"]),
+    );
     expect(resolveLocation("sub-saharan-africa-gateways")).toEqual([
       "JNB",
       "ADD",
