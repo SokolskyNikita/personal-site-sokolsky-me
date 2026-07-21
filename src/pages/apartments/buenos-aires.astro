@@ -91,6 +91,10 @@ const rentalMetaByUrl = (
 const getNeighborhoodGroup = (zone: string) => {
   const normalizedZone = zone.toLowerCase();
 
+  // Check more specific / left-side labels before broader ones so border
+  // strings like "Recoleta / Palermo border" don't collapse into Palermo.
+  if (normalizedZone.includes("recoleta")) return "Recoleta";
+  if (normalizedZone.includes("puerto madero")) return "Puerto Madero";
   if (
     normalizedZone.includes("palermo") ||
     normalizedZone.includes("cañitas") ||
@@ -100,7 +104,6 @@ const getNeighborhoodGroup = (zone: string) => {
   ) {
     return "Palermo";
   }
-  if (normalizedZone.includes("puerto madero")) return "Puerto Madero";
   if (normalizedZone.includes("belgrano") || normalizedZone.includes("bajo belgrano")) {
     return "Belgrano";
   }
@@ -110,7 +113,6 @@ const getNeighborhoodGroup = (zone: string) => {
   if (normalizedZone.includes("villa crespo")) return "Villa Crespo";
   if (normalizedZone.includes("colegiales")) return "Colegiales";
   if (normalizedZone.includes("flores")) return "Flores";
-  if (normalizedZone.includes("recoleta")) return "Recoleta";
   if (normalizedZone.includes("barracas")) return "Barracas";
 
   return zone.replace(/\s*\/.*$/, "").replace(/\s+edge$/i, "");

@@ -450,16 +450,22 @@ export function mountHotelSearch(root: HTMLElement): void {
     hideProgress();
     setBusy(false);
 
-    // Prefer D1 warm path if available after scan.
-    if (!q && !bbox) {
-      try {
+    // Prefer D1 warm path if available after scan. Skip the city-wide index
+    // for neighborhood searches so the bbox-filtered scan rows are kept.
+    try {
+      if (!bbox) {
         await loadIndex(citySlug);
-        if (hasDates(state)) {
-          await loadPrices(citySlug, state);
-        }
-      } catch {
-        /* keep scan payload */
       }
+      if (hasDates(state)) {
+        await loadPrices(
+          citySlug,
+          state,
+          undefined,
+          bbox ? new Set(latestRows.map((r) => r.token)) : undefined,
+        );
+      }
+    } catch {
+      /* keep scan payload */
     }
   }
 
@@ -495,6 +501,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     citySlug: string,
     state: HotelFormState,
     signal?: AbortSignal,
+    onlyTokens?: Set<string>,
   ): Promise<void> {
     if (!hasDates(state)) return;
     summary.textContent =
@@ -522,10 +529,12 @@ export function mountHotelSearch(root: HTMLElement): void {
       summary.textContent = `Couldn't load prices: ${data.error ?? "unknown"}`;
       return;
     }
-    latestRows = data.properties.map((r) => ({
-      ...r,
-      nightlyUsd: r.nightly_usd ?? r.nightlyUsd ?? null,
-    }));
+    latestRows = data.properties
+      .filter((r) => !onlyTokens || onlyTokens.has(r.token))
+      .map((r) => ({
+        ...r,
+        nightlyUsd: r.nightly_usd ?? r.nightlyUsd ?? null,
+      }));
     latestMeta = {
       ...latestMeta,
       credits_used: data.credits_used,
@@ -776,11 +785,16 @@ function syncComfortLabel(root: HTMLElement, label: HTMLElement): void {
 }
 
 function filterAndSort(rows: HotelRow[], form: HotelFormState): HotelRow[] {
+  // Once a price sweep has run, hotels without a found price are dropped.
+  const pricesLoaded = rows.some(
+    (r) => (r.nightly_usd ?? r.nightlyUsd) != null,
+  );
   let out = rows.filter((r) => {
     if ((r.score ?? 0) < form.minComfort) return false;
     if ((r.reviews ?? 0) < form.minReviews) return false;
     if (form.brandedOnly && (r.brandTier ?? 0) < 1) return false;
     const nightly = r.nightly_usd ?? r.nightlyUsd;
+    if (pricesLoaded && nightly == null) return false;
     if (form.budgetMax != null && nightly != null && nightly > form.budgetMax) {
       return false;
     }
@@ -889,14 +903,14 @@ function renderTable(
       return `<tr data-token="${escapeHtml(r.token)}">
         <td class="hs-cell-rank">${i + 1}</td>
         <td class="hs-cell-score"><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
-        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant} <button type="button" class="hs-row-toggle" aria-expanded="false" aria-label="Show details for ${escapeHtml(r.name)}">Details</button></td>
+        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant}</td>
         <td class="hs-cell-rating hs-cell-num">${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${formatReviewCount(r.reviews)})</span></td>
         <td class="hs-cell-low hs-cell-num">${low}</td>
         ${priceCells}
         <td class="hs-facts">${facts}</td>
       </tr>
       <tr class="hs-detail" hidden>
-        <td colspan="${columnCount}">${detailCard(r)}</td>
+        <td colspan="${columnCount}">${detailCard(r, form)}</td>
       </tr>`;
     })
     .join("");
@@ -912,12 +926,10 @@ function renderTable(
   </table></div>`;
 
   container.querySelectorAll<HTMLTableRowElement>("tr[data-token]").forEach((tr) => {
-    const toggle = tr.querySelector<HTMLButtonElement>(".hs-row-toggle");
     const toggleDetail = async () => {
       const detail = tr.nextElementSibling as HTMLTableRowElement | null;
       if (!detail?.classList.contains("hs-detail")) return;
       detail.hidden = !detail.hidden;
-      toggle?.setAttribute("aria-expanded", String(!detail.hidden));
       if (!detail.hidden) {
         const token = tr.dataset.token;
         if (token) {
@@ -926,10 +938,6 @@ function renderTable(
         }
       }
     };
-    toggle?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      void toggleDetail();
-    });
     tr.addEventListener("click", (event) => {
       if ((event.target as HTMLElement).closest("a,button")) return;
       void toggleDetail();
@@ -984,11 +992,7 @@ function datedHotelUrl(
   try {
     const url = new URL(raw);
     url.searchParams.set("checkin", form.checkInStart);
-    if (!url.searchParams.has("checkout")) {
-      const checkout = new Date(`${form.checkInStart}T00:00:00Z`);
-      checkout.setUTCDate(checkout.getUTCDate() + Math.max(1, form.nightsMin));
-      url.searchParams.set("checkout", checkout.toISOString().slice(0, 10));
-    }
+    url.searchParams.set("checkout", checkOutDate(form));
     return url.toString();
   } catch {
     return raw;
@@ -1016,7 +1020,7 @@ function factIcons(r: HotelRow): string {
   return parts.join(" ");
 }
 
-function detailCard(r: HotelRow): string {
+function detailCard(r: HotelRow, form?: HotelFormState): string {
   const sub = r.subscores ?? {};
   const bars = [
     ["Base rating", sub.quality ?? r.quality],
@@ -1070,7 +1074,7 @@ function detailCard(r: HotelRow): string {
       <button type="button" class="fs-btn" data-load-property>Load prices and hotel details (~1 credit)</button>
     </div>
     ${mapsUrl ? `<a href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">Open map</a> · ` : ""}
-    ${r.googleHotelsUrl ? `<p><a href="${escapeHtml(r.googleHotelsUrl)}" target="_blank" rel="noopener noreferrer">Open in Google Hotels</a></p>` : ""}
+    ${r.googleHotelsUrl ? `<p><a href="${escapeHtml(datedHotelUrl(r.googleHotelsUrl, form))}" target="_blank" rel="noopener noreferrer">Open in Google Hotels</a></p>` : ""}
   </div>`;
 }
 
