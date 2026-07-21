@@ -276,19 +276,19 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
         .run();
     },
 
-    async listByCityScore(cityId, limit = 100) {
+    async listByCityScore(cityId, limit) {
       // Omit raw_json — warm index must stay under ~500ms.
-      const { results } = await db
-        .prepare(
-          `SELECT token, city_id, name, lat, lng, hotel_class, brand_tier,
-                  rating, reviews, low_star_share, worst_category, worst_category_neg,
-                  facts_json, score, subscores_json, gates_json, scoring_version, provider
-           FROM properties
-           WHERE city_id = ? AND (gates_json = '[]' OR gates_json IS NULL)
-           ORDER BY score DESC LIMIT ?`,
-        )
-        .bind(cityId, limit)
-        .all<PropertyRow>();
+      const query = `SELECT token, city_id, name, lat, lng, hotel_class, brand_tier,
+                            rating, reviews, low_star_share, worst_category, worst_category_neg,
+                            facts_json, score, subscores_json, gates_json, scoring_version, provider
+                     FROM properties
+                     WHERE city_id = ? AND (gates_json = '[]' OR gates_json IS NULL)
+                     ORDER BY score DESC${limit == null ? "" : " LIMIT ?"}`;
+      const statement = db.prepare(query);
+      const { results } =
+        limit == null
+          ? await statement.bind(cityId).all<PropertyRow>()
+          : await statement.bind(cityId, limit).all<PropertyRow>();
       return results;
     },
 
@@ -565,11 +565,11 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
         enriched_at: null,
       });
     },
-    async listByCityScore(cityId, limit = 100) {
-      return [...properties.values()]
+    async listByCityScore(cityId, limit) {
+      const matches = [...properties.values()]
         .filter((p) => p.city_id === cityId && p.gates_json === "[]")
-        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-        .slice(0, limit);
+        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+      return limit == null ? matches : matches.slice(0, limit);
     },
     async listRawByCity(cityId) {
       return [...properties.values()].filter((p) => p.city_id === cityId);

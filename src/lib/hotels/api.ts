@@ -33,8 +33,13 @@ import {
   getCachedReviewAnalysis,
 } from "./reviews";
 import { REVIEW_MODEL_VERSION } from "./review-signals";
+import {
+  createHotelQuotaGuard,
+  HotelQuotaExceededError,
+  type HotelQuotaEnv,
+} from "./quota";
 
-export type HotelsEnv = {
+export type HotelsEnv = HotelQuotaEnv & {
   hotels_index?: HotelsD1;
   SEARCH_API_IO_KEY?: string;
   SEARCHAPI_LIVE?: string;
@@ -81,6 +86,19 @@ export async function handleHotelsApi(
     }
     return json({ ok: false, error: "not_found" }, 404);
   } catch (e) {
+    if (e instanceof HotelQuotaExceededError) {
+      return json(
+        {
+          ok: false,
+          error: e.code,
+          quota: e.quota,
+        },
+        429,
+        {
+          "Retry-After": String(secondsUntil(e.quota.resetAt)),
+        },
+      );
+    }
     return json(
       {
         ok: false,
@@ -106,6 +124,16 @@ function liveEnabled(env: HotelsEnv): boolean {
 
 function useFixtures(env: HotelsEnv): boolean {
   return !liveEnabled(env);
+}
+
+function hotelProvider(env: HotelsEnv, request: Request) {
+  return useFixtures(env)
+    ? new FixtureProvider()
+    : new SearchApiHotelProvider({
+        apiKey: env.SEARCH_API_IO_KEY ?? "",
+        liveMode: true,
+        beforeCall: createHotelQuotaGuard(env, request),
+      });
 }
 
 async function handlePlan(
@@ -264,12 +292,7 @@ async function handleScan(
     : undefined;
 
   try {
-    const provider = useFixtures(env)
-      ? new FixtureProvider()
-      : new SearchApiHotelProvider({
-          apiKey: env.SEARCH_API_IO_KEY ?? "",
-          liveMode: true,
-        });
+    const provider = hotelProvider(env, request);
 
     if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
       return json({ ok: false, error: "searchapi_key_missing" }, 503);
@@ -309,12 +332,13 @@ async function handleScan(
       cityMeanRating: result.cityMeanRating,
       scoringVersion: result.scoringVersion,
       top10: summarizeTop(result.top10),
-      properties: summarizeTop(kept.slice(0, 60)),
+      properties: summarizeTop(kept),
       demoted: summarizeTop(demoted),
       durationMs: Date.now() - t0,
       ops: scanOpsStats(result),
     });
   } catch (e) {
+    if (e instanceof HotelQuotaExceededError) throw e;
     if (e instanceof LiveModeDisabledError) {
       return json({ ok: false, error: "live_mode_disabled" }, 403);
     }
@@ -346,10 +370,9 @@ async function handleIndex(
     return json({ ok: true, city: citySlug, properties: [], neverScanned: true });
   }
   const t0 = Date.now();
-  // Normal search keeps the payload compact; Show ranking explicitly asks for
-  // every eligible hotel in the saved city index.
-  const limit = url.searchParams.get("full") === "1" ? 500 : 100;
-  const rows = await db.listByCityScore(city.id, limit);
+  // Every search path returns the complete eligible city index. The UI must not
+  // silently hide lower-ranked hotels that may have availability or better prices.
+  const rows = await db.listByCityScore(city.id);
   const reviewRows = await db.listLatestReviewFeatures(
     rows.map((row) => row.token),
     REVIEW_MODEL_VERSION,
@@ -475,12 +498,7 @@ async function handlePrices(
   }
 
   try {
-    const provider = useFixtures(env)
-      ? new FixtureProvider()
-      : new SearchApiHotelProvider({
-          apiKey: env.SEARCH_API_IO_KEY ?? "",
-          liveMode: true,
-        });
+    const provider = hotelProvider(env, request);
     if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
       return json({ ok: false, error: "searchapi_key_missing" }, 503);
     }
@@ -574,7 +592,7 @@ async function handlePrices(
     }
 
     // Merge index identity + price fields for UI.
-    const indexRows = await db.listByCityScore(city.id, 100);
+    const indexRows = await db.listByCityScore(city.id);
     const reviewRows = await db.listLatestReviewFeatures(
       indexRows.map((row) => row.token),
       REVIEW_MODEL_VERSION,
@@ -668,6 +686,7 @@ async function handlePrices(
       },
     });
   } catch (e) {
+    if (e instanceof HotelQuotaExceededError) throw e;
     if (e instanceof LiveModeDisabledError) {
       return json({ ok: false, error: "live_mode_disabled" }, 403);
     }
@@ -697,14 +716,42 @@ async function handleProperty(
   const checkIn = url.searchParams.get("checkIn") ?? undefined;
   const checkOut = url.searchParams.get("checkOut") ?? undefined;
   const adults = Number(url.searchParams.get("adults") ?? 2);
+  const normalizedAdults = Number.isFinite(adults) ? adults : 2;
+  const priceOnly = url.searchParams.get("priceOnly") === "1";
 
   try {
-    const provider = useFixtures(env)
-      ? new FixtureProvider()
-      : new SearchApiHotelProvider({
-          apiKey: env.SEARCH_API_IO_KEY ?? "",
-          liveMode: true,
+    if (priceOnly && env.hotels_index && checkIn && checkOut) {
+      const db = createD1HotelsRepository(env.hotels_index);
+      const cached = (
+        await db.listPricesForTokens(
+          [token],
+          checkIn,
+          checkOut,
+          Math.floor(Date.now() / 1000) - PRICE_CACHE_TTL_HOURS * 3600,
+          normalizedAdults,
+        )
+      )[0];
+      // Positive list/property prices are reusable. A cached null is conclusive
+      // only when it came from an exact property lookup, not a bulk-list miss.
+      if (
+        cached &&
+        (cached.nightly_usd != null ||
+          cached.total_usd != null ||
+          cached.source === "searchapi_property")
+      ) {
+        return json({
+          ok: true,
+          token,
+          nightly_usd: cached.nightly_usd,
+          total_usd: cached.total_usd,
+          price_resolved: true,
+          cached: true,
+          credits_used: 0,
         });
+      }
+    }
+
+    const provider = hotelProvider(env, request);
     if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
       return json({ ok: false, error: "searchapi_key_missing" }, 503);
     }
@@ -713,9 +760,32 @@ async function handleProperty(
       propertyToken: token,
       checkIn,
       checkOut,
-      adults: Number.isFinite(adults) ? adults : 2,
+      adults: normalizedAdults,
     });
     const p = page.property;
+    const nightly =
+      typeof p.price_per_night?.extracted_price === "number" &&
+      p.price_per_night.extracted_price > 0
+        ? p.price_per_night.extracted_price
+        : null;
+    const total =
+      typeof p.total_price?.extracted_price === "number" &&
+      p.total_price.extracted_price > 0
+        ? p.total_price.extracted_price
+        : null;
+    if (env.hotels_index && checkIn && checkOut) {
+      const db = createD1HotelsRepository(env.hotels_index);
+      await db.upsertPrice({
+        token,
+        checkIn,
+        checkOut,
+        adults: normalizedAdults,
+        nightlyUsd: nightly,
+        totalUsd: total,
+        source: "searchapi_property",
+        fetchedAt: Math.floor(Date.now() / 1000),
+      });
+    }
     const offers = [
       ...(Array.isArray(p.featured_offers) ? p.featured_offers : []),
       ...(Array.isArray(p.all_offers) ? p.all_offers : []),
@@ -735,8 +805,10 @@ async function handleProperty(
       rating: p.rating ?? null,
       reviews: p.reviews ?? null,
       address: (p as { address?: string }).address ?? null,
-      nightly_usd: p.price_per_night?.extracted_price ?? null,
-      total_usd: p.total_price?.extracted_price ?? null,
+      nightly_usd: nightly,
+      total_usd: total,
+      price_resolved: true,
+      cached: false,
       freeCancellationSeen: freeCancel,
       offers,
       topThings:
@@ -748,6 +820,7 @@ async function handleProperty(
         : (provider as SearchApiHotelProvider).creditsUsed,
     });
   } catch (e) {
+    if (e instanceof HotelQuotaExceededError) throw e;
     if (e instanceof LiveModeDisabledError) {
       return json({ ok: false, error: "live_mode_disabled" }, 403);
     }
@@ -801,10 +874,7 @@ async function handleReviews(
     return json({ ok: false, error: "searchapi_key_missing" }, 503);
   }
 
-  const provider = new SearchApiHotelProvider({
-    apiKey: env.SEARCH_API_IO_KEY,
-    liveMode: true,
-  });
+  const provider = hotelProvider(env, request);
   try {
     const result = await analyzeHotelReviews({
       property,
@@ -823,6 +893,7 @@ async function handleReviews(
       credits_used: result.creditsUsed,
     });
   } catch (e) {
+    if (e instanceof HotelQuotaExceededError) throw e;
     return json(
       {
         ok: false,
@@ -896,12 +967,23 @@ async function handleRescore(
   });
 }
 
-function json(body: unknown, status = 200): Response {
+function secondsUntil(isoTimestamp: string): number {
+  const reset = Date.parse(isoTimestamp);
+  if (!Number.isFinite(reset)) return 60;
+  return Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+}
+
+function json(
+  body: unknown,
+  status = 200,
+  extraHeaders?: Record<string, string>,
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
+      ...extraHeaders,
     },
   });
 }

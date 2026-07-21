@@ -36,6 +36,7 @@ type HotelRow = {
   nightlyUsd?: number | null;
   nightly_usd?: number | null;
   total_usd?: number | null;
+  priceResolved?: boolean;
   expected_usd?: number | null;
   deal_pct?: number | null;
   dealMethod?: "fit" | "fallback" | null;
@@ -127,6 +128,14 @@ type PricesResponse = {
   ops?: Record<string, unknown>;
   durationMs?: number;
   error?: string;
+  quota?: HotelQuotaStatus;
+};
+
+type HotelQuotaStatus = {
+  reason?: "per_ip_limit_reached" | "global_budget_reached" | null;
+  resetAt?: string;
+  rate?: { count: number; limit: number };
+  budget?: { used: number; remaining: number; limit: number };
 };
 
 type ScanResponse = {
@@ -214,13 +223,22 @@ export function mountHotelSearch(root: HTMLElement): void {
   // costs credits and should update the table instantly.
   const refineIds = new Set([
     "hs-sort",
-    "hs-strictness",
     "hs-require-ac",
     "hs-require-desk",
     "hs-branded-only",
     "hs-min-reviews",
     "hs-budget-max",
   ]);
+
+  results.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+      "[data-check-price]",
+    );
+    if (!button) return;
+    event.stopPropagation();
+    const token = button.dataset.token;
+    if (token) void loadExactPrice(token, button);
+  });
 
   formEl.addEventListener("change", (event) => {
     const targetId = (event.target as HTMLElement | null)?.id ?? "";
@@ -240,6 +258,12 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
     syncCityMode();
     form = readForm(root);
+    if (
+      (targetId === "hs-checkin-start" || targetId === "hs-checkout") &&
+      stayDatesSelected(root)
+    ) {
+      clearDatesRequiredError();
+    }
     syncUrl(form);
     syncCreditHint();
     syncSortOptions();
@@ -251,6 +275,28 @@ export function mountHotelSearch(root: HTMLElement): void {
       }
     }
   });
+
+  function showDatesRequiredError(): void {
+    const checkIn = root.querySelector<HTMLInputElement>("#hs-checkin-start");
+    const checkOut = root.querySelector<HTMLInputElement>("#hs-checkout");
+    checkIn?.classList.add("is-invalid");
+    checkOut?.classList.add("is-invalid");
+    checkIn?.setAttribute("aria-invalid", "true");
+    checkOut?.setAttribute("aria-invalid", "true");
+    summary.textContent = "Select check-in and check-out dates to search.";
+    banners.innerHTML =
+      `<div class="fs-banner fs-banner-warn" role="alert">Choose your stay dates, then press Search hotels again.</div>`;
+    const focusEl = !checkIn?.value ? checkIn : checkOut;
+    focusEl?.focus();
+  }
+
+  function clearDatesRequiredError(): void {
+    for (const id of ["#hs-checkin-start", "#hs-checkout"] as const) {
+      const el = root.querySelector<HTMLInputElement>(id);
+      el?.classList.remove("is-invalid");
+      el?.removeAttribute("aria-invalid");
+    }
+  }
 
   function syncCityMode(): void {
     const other = otherCityCheck.checked;
@@ -272,7 +318,7 @@ export function mountHotelSearch(root: HTMLElement): void {
       'option[value="deal"]',
     );
     if (!sortSelect || !dealOption) return;
-    const datesSet = hasDates(readForm(root));
+    const datesSet = stayDatesSelected(root);
     dealOption.disabled = !datesSet;
     if (!datesSet && sortSelect.value === "deal") {
       sortSelect.value = "comfort";
@@ -283,14 +329,14 @@ export function mountHotelSearch(root: HTMLElement): void {
   function syncCreditHint(): void {
     if (!creditHint) return;
     const state = readForm(root);
-    if (!hasDates(state)) {
+    if (!stayDatesSelected(root)) {
       creditHint.textContent =
-        "No dates — Search returns hotels without prices. Show ranking is always free.";
+        "Select check-in and check-out to Search. Show ranking is always free (no dates needed).";
       return;
     }
     const checkOut = checkOutDate(state);
     const nights = state.nightsMin;
-    creditHint.textContent = `Search: prices for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}) · up to 1 extra credit. Show ranking skips prices.`;
+    creditHint.textContent = `Search: exact prices for every ranked hotel for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}). Cached prices are free; each uncached hotel may use 1 credit.`;
   }
 
   cancelBtn.addEventListener("click", () => {
@@ -328,6 +374,11 @@ export function mountHotelSearch(root: HTMLElement): void {
       return;
     }
     form = readForm(root);
+    if (!stayDatesSelected(root)) {
+      showDatesRequiredError();
+      return;
+    }
+    clearDatesRequiredError();
     syncUrl(form);
     await runSearch(form);
   });
@@ -638,6 +689,20 @@ export function mountHotelSearch(root: HTMLElement): void {
     renderFooter(footer, visible, latestMeta);
   }
 
+  function showHotelQuotaBanner(
+    reason: "per_ip_limit_reached" | "global_budget_reached",
+  ): void {
+    const message =
+      reason === "per_ip_limit_reached"
+        ? "Your daily hotel price-search limit was reached."
+        : "The site-wide daily SearchAPI budget was reached.";
+    if (banners.querySelector("[data-hotel-quota-banner]")) return;
+    banners.insertAdjacentHTML(
+      "beforeend",
+      `<div class="fs-banner fs-banner-warn" data-hotel-quota-banner>${message} Cached prices remain available. Limits reset daily.<span class="fs-banner-contact">Need a larger limit? Email <a href="mailto:sokolx@gmail.com">sokolx@gmail.com</a>.</span></div>`,
+    );
+  }
+
   async function loadPrices(
     citySlug: string,
     state: HotelFormState,
@@ -645,8 +710,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     onlyTokens?: Set<string>,
   ): Promise<void> {
     if (!hasDates(state)) return;
-    summary.textContent =
-      "Checking prices for your dates (~1 credit; cached for six hours)…";
+    summary.textContent = "";
     const data = await fetchJson<PricesResponse>("/api/hotels/prices", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -657,8 +721,9 @@ export function mountHotelSearch(root: HTMLElement): void {
         nightsMin: state.nightsMin,
         nightsMax: state.nightsMin,
         adults: state.adults,
-        // Single window → top-up missing top-20 prices is allowed.
-        topUp: true,
+        // One bulk page first; every remaining hotel is resolved below through
+        // cache-aware exact-property requests.
+        topUp: false,
         // TA join is optional (+≤5 credits); keep price sweep ≤ window count.
         joinTa: false,
       }),
@@ -667,6 +732,12 @@ export function mountHotelSearch(root: HTMLElement): void {
       retries: 1,
       onRetry: (a, m) => retryHook("Checking prices")(a, m),
     });
+    if (!data.ok && isHotelQuotaError(data.error)) {
+      showHotelQuotaBanner(data.error);
+      summary.textContent =
+        "Price lookup limit reached. Showing the full ranking with cached prices only.";
+      return;
+    }
     if (!data.ok || !data.properties?.length) {
       throw new Error(data.error ?? "No prices returned");
     }
@@ -675,22 +746,236 @@ export function mountHotelSearch(root: HTMLElement): void {
       .map((r) => ({
         ...r,
         nightlyUsd: r.nightly_usd ?? r.nightlyUsd ?? null,
+        priceResolved:
+          r.nightly_usd != null ||
+          r.nightlyUsd != null ||
+          r.total_usd != null,
       }));
+    const bulkCredits = data.credits_used ?? 0;
     latestMeta = {
       ...latestMeta,
-      credits_used: data.credits_used,
+      credits_used: bulkCredits,
       pricedCount: data.pricedCount,
       top20PricedShare: data.top20PricedShare,
       priceOps: data.ops,
       priceDurationMs: data.durationMs,
     };
-    const share = data.top20PricedShare != null
-      ? `${Math.round(data.top20PricedShare * 100)}% of top-20 priced`
-      : "";
-    summary.textContent = `Prices found for ${data.pricedCount ?? 0} hotels. ${share ? `${share}. ` : ""}${data.credits_used ?? 0} credits used (${data.durationMs ?? "?"} ms).`;
+    const missing = latestRows.filter((row) => !row.priceResolved);
+    let next = 0;
+    let completed = 0;
+    let unavailable = 0;
+    let failed = 0;
+    let exactCredits = 0;
+    let exactResolved = 0;
+    let quotaReason:
+      | "per_ip_limit_reached"
+      | "global_budget_reached"
+      | null = null;
+    const checkOut = checkOutDate(state);
+    if (missing.length > 0) {
+      setSearchProgress("Checking exact prices", 0, missing.length);
+    }
+
+    const resolveNext = async (): Promise<void> => {
+      while (next < missing.length) {
+        if (quotaReason) return;
+        const row = missing[next++];
+        if (!row) return;
+        const params = new URLSearchParams({
+          checkIn: state.checkInStart,
+          checkOut,
+          adults: String(state.adults),
+          priceOnly: "1",
+        });
+        try {
+          const exact = await fetchJson<{
+            ok: boolean;
+            nightly_usd?: number | null;
+            total_usd?: number | null;
+            price_resolved?: boolean;
+            cached?: boolean;
+            credits_used?: number;
+            error?: string;
+            quota?: HotelQuotaStatus;
+          }>(
+            `/api/hotels/property/${encodeURIComponent(row.token)}?${params}`,
+            {
+              signal,
+              timeoutMs: 45_000,
+              retries: 1,
+            },
+          );
+          if (!exact.ok && isHotelQuotaError(exact.error)) {
+            quotaReason = exact.error;
+            return;
+          }
+          if (!exact.ok || exact.price_resolved !== true) {
+            throw new Error(exact.error ?? "Price was not resolved");
+          }
+          const nightly = exact.nightly_usd ?? null;
+          const total = exact.total_usd ?? null;
+          const stay: StayPrice | null =
+            nightly != null
+              ? {
+                  checkIn: state.checkInStart,
+                  checkOut,
+                  nights: state.nightsMin,
+                  nightlyUsd: nightly,
+                  totalUsd: total,
+                }
+              : null;
+          latestRows = latestRows.map((candidate) =>
+            candidate.token === row.token
+              ? {
+                  ...candidate,
+                  nightlyUsd: nightly,
+                  nightly_usd: nightly,
+                  total_usd: total,
+                  priceResolved: true,
+                  bestStay: stay,
+                  matrix: [
+                    {
+                      checkIn: state.checkInStart,
+                      checkOut,
+                      nightlyUsd: nightly,
+                    },
+                  ],
+                }
+              : candidate,
+          );
+          exactResolved += 1;
+          exactCredits += exact.credits_used ?? 0;
+          if (nightly == null && total == null) unavailable += 1;
+        } catch (error) {
+          if (signal?.aborted) throw error;
+          failed += 1;
+        } finally {
+          completed += 1;
+          setSearchProgress("Checking exact prices", completed, missing.length);
+        }
+      }
+    };
+
+    await Promise.all(
+      Array.from(
+        { length: Math.min(5, missing.length) },
+        async () => resolveNext(),
+      ),
+    );
+
+    const creditsUsed = bulkCredits + exactCredits;
+    const quotaSkipped = quotaReason
+      ? Math.max(0, missing.length - exactResolved - failed)
+      : 0;
+    const pricedCount = latestRows.filter(
+      (row) =>
+        row.nightly_usd != null ||
+        row.nightlyUsd != null ||
+        row.total_usd != null,
+    ).length;
+    latestMeta = {
+      ...latestMeta,
+      credits_used: creditsUsed,
+      pricedCount,
+    };
+    const checked = latestRows.length - failed;
+    if (quotaReason) showHotelQuotaBanner(quotaReason);
+    summary.textContent = quotaReason
+      ? `Checked ${latestRows.length - failed - quotaSkipped} of ${latestRows.length} hotels: ${pricedCount} prices found, ${unavailable} unavailable, ${quotaSkipped} skipped by the daily limit. ${creditsUsed} credits used.`
+      : failed > 0
+        ? `Checked ${checked} of ${latestRows.length} hotels: ${pricedCount} prices found, ${unavailable} unavailable, ${failed} failed. ${creditsUsed} credits used.`
+        : `Checked all ${latestRows.length} hotels: ${pricedCount} prices found, ${unavailable} unavailable. ${creditsUsed} credits used.`;
     const visible = filterAndSort(latestRows, state);
     renderTable(results, visible, state);
     renderFooter(footer, visible, latestMeta);
+  }
+
+  async function loadExactPrice(
+    token: string,
+    button: HTMLButtonElement,
+  ): Promise<void> {
+    form = readForm(root);
+    if (!stayDatesSelected(root)) {
+      showDatesRequiredError();
+      return;
+    }
+    const checkIn = form.checkInStart;
+    const checkOut = checkOutDate(form);
+    button.disabled = true;
+    button.textContent = "Checking…";
+    const params = new URLSearchParams({
+      checkIn,
+      checkOut,
+      adults: String(form.adults),
+    });
+    try {
+      const data = await fetchJson<{
+        ok: boolean;
+        nightly_usd?: number | null;
+        total_usd?: number | null;
+        credits_used?: number;
+        error?: string;
+        quota?: HotelQuotaStatus;
+      }>(`/api/hotels/property/${encodeURIComponent(token)}?${params}`, {
+        timeoutMs: 45_000,
+        retries: 1,
+      });
+      if (!data.ok && isHotelQuotaError(data.error)) {
+        showHotelQuotaBanner(data.error);
+        button.disabled = false;
+        button.textContent = "Daily limit reached";
+        return;
+      }
+      if (!data.ok) throw new Error(data.error ?? "No price returned");
+      const nightly = data.nightly_usd ?? null;
+      const total = data.total_usd ?? null;
+      if (nightly == null && total == null) {
+        latestRows = latestRows.map((row) =>
+          row.token === token ? { ...row, priceResolved: true } : row,
+        );
+        const visible = filterAndSort(latestRows, form);
+        renderTable(results, visible, form);
+        renderFooter(footer, visible, latestMeta);
+        return;
+      }
+      const stay: StayPrice | null =
+        nightly != null
+          ? {
+              checkIn,
+              checkOut,
+              nights: form.nightsMin,
+              nightlyUsd: nightly,
+              totalUsd: total,
+            }
+          : null;
+      latestRows = latestRows.map((row) =>
+        row.token === token
+          ? {
+              ...row,
+              nightlyUsd: nightly,
+              nightly_usd: nightly,
+              total_usd: total,
+              priceResolved: true,
+              bestStay: stay,
+              matrix: [
+                {
+                  checkIn,
+                  checkOut,
+                  nightlyUsd: nightly,
+                },
+              ],
+            }
+          : row,
+      );
+      summary.textContent = `Exact price loaded${data.credits_used != null ? ` (${data.credits_used} credit${data.credits_used === 1 ? "" : "s"})` : ""}.`;
+      const visible = filterAndSort(latestRows, form);
+      renderTable(results, visible, form);
+      renderFooter(footer, visible, latestMeta);
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = "Retry price";
+      summary.textContent = `Couldn't load this price: ${formatNetworkError(error)}.`;
+    }
   }
 
   function setBusy(busy: boolean, label = "Search hotels"): void {
@@ -830,6 +1115,14 @@ function formatNetworkError(error: unknown): string {
   return "connection problem";
 }
 
+function isHotelQuotaError(
+  value: unknown,
+): value is "per_ip_limit_reached" | "global_budget_reached" {
+  return (
+    value === "per_ip_limit_reached" || value === "global_budget_reached"
+  );
+}
+
 async function fetchJson<T>(
   url: string,
   opts: FetchJsonOptions = {},
@@ -924,11 +1217,19 @@ function resolveCitySlug(form: HotelFormState): string {
 
 function populateCities(select: HTMLSelectElement): void {
   select.replaceChildren();
+  let currentCountry = "";
+  let group: HTMLOptGroupElement | null = null;
   for (const c of cityOptions()) {
+    if (c.country !== currentCountry) {
+      currentCountry = c.country;
+      group = document.createElement("optgroup");
+      group.label = c.country;
+      select.append(group);
+    }
     const opt = document.createElement("option");
     opt.value = c.slug;
     opt.textContent = c.display;
-    select.append(opt);
+    group!.append(opt);
   }
 }
 
@@ -940,7 +1241,6 @@ function applyFormToDom(root: HTMLElement, form: HotelFormState): void {
   // Legacy URLs carry checkInEnd + nights ranges; collapse to one stay.
   setVal(root, "#hs-checkout", form.checkInStart ? checkOutDate(form) : "");
   setVal(root, "#hs-adults", String(form.adults));
-  setSelect(root, "#hs-strictness", form.strictness);
   setCheck(root, "#hs-require-ac", form.requireAC);
   setCheck(root, "#hs-require-desk", form.requireFrontDesk24h);
   setCheck(root, "#hs-branded-only", form.brandedOnly);
@@ -990,11 +1290,7 @@ function readForm(root: HTMLElement): HotelFormState {
     ),
     pinLat: null,
     pinLng: null,
-    strictness:
-      root.querySelector<HTMLSelectElement>("#hs-strictness")?.value ===
-      "confirmed_only"
-        ? "confirmed_only"
-        : "confirmed_or_unknown",
+    strictness: "confirmed_or_unknown",
     requireAC: !!root.querySelector<HTMLInputElement>("#hs-require-ac")?.checked,
     requireFrontDesk24h: !!root.querySelector<HTMLInputElement>(
       "#hs-require-desk",
@@ -1050,8 +1346,16 @@ function normalizeRanges(root: HTMLElement, changedId: string): void {
   }
 }
 
+function stayDatesSelected(root: HTMLElement): boolean {
+  const checkIn =
+    root.querySelector<HTMLInputElement>("#hs-checkin-start")?.value ?? "";
+  const checkOut =
+    root.querySelector<HTMLInputElement>("#hs-checkout")?.value ?? "";
+  return nightsBetween(checkIn, checkOut) != null;
+}
+
 function hasDates(form: HotelFormState): boolean {
-  return Boolean(form.checkInStart);
+  return Boolean(form.checkInStart) && form.nightsMin >= 1;
 }
 
 /** Prefer API total; otherwise nightly × nights for the best stay. */
@@ -1162,9 +1466,9 @@ function renderTable(
   }
   // Price columns only appear once at least one row has price data,
   // so a dateless search isn't padded with empty "—" columns.
-  const hasPrices = rows.some(
-    (r) => stayTotalUsd(r) != null || r.deal_pct != null,
-  );
+  const hasPrices =
+    hasDates(form ?? DEFAULT_HOTEL_FORM) ||
+    rows.some((r) => stayTotalUsd(r) != null || r.deal_pct != null);
   const columnCount = hasPrices ? 6 : 4;
   const body = rows
     .map((r, i) => {
@@ -1174,8 +1478,16 @@ function renderTable(
         ? formatDateRange(r.bestStay.checkIn, r.bestStay.checkOut)
         : "";
       const deal = r.deal_pct != null ? dealChip(r.deal_pct, r.dealMethod) : "—";
+      const priceContent =
+        total != null
+          ? `$${Math.round(total)}${stayDates ? `<div class="fs-muted">${escapeHtml(stayDates)}</div>` : ""}`
+          : form?.checkInStart
+            ? r.priceResolved
+              ? `<span class="fs-muted">No availability</span>`
+              : `<button type="button" class="fs-btn" data-check-price data-token="${escapeHtml(r.token)}" title="Retry this exact hotel's price for the selected dates (about 1 credit)">Retry price</button>`
+            : "—";
       const priceCells = hasPrices
-        ? `<td class="hs-cell-price hs-cell-num ${total == null ? "hs-cell-empty" : ""}">${total != null ? `$${Math.round(total)}` : "—"}${stayDates ? `<div class="fs-muted">${escapeHtml(stayDates)}</div>` : ""}</td>
+        ? `<td class="hs-cell-price hs-cell-num ${total == null ? "hs-cell-empty" : ""}">${priceContent}</td>
         <td class="hs-cell-deal ${deal === "—" ? "hs-cell-empty" : ""}">${deal}</td>`
         : "";
       return `<tr data-token="${escapeHtml(r.token)}">
@@ -1400,6 +1712,8 @@ async function expandProperty(
       ok: boolean;
       freeCancellationSeen?: boolean;
       address?: string | null;
+      nightly_usd?: number | null;
+      total_usd?: number | null;
       offers?: { source?: string; total_price?: { extracted_price?: number } }[];
       topThings?: unknown;
       error?: string;
@@ -1419,8 +1733,15 @@ async function expandProperty(
         return `<li>${escapeHtml(o.source ?? "offer")}${price != null ? ` · $${Math.round(price)}` : ""}</li>`;
       })
       .join("");
+    const exactPrice =
+      data.total_usd != null
+        ? `<p><strong>$${Math.round(data.total_usd)} total</strong>${data.nightly_usd != null ? ` · $${Math.round(data.nightly_usd)}/night` : ""}</p>`
+        : data.nightly_usd != null
+          ? `<p><strong>$${Math.round(data.nightly_usd)}/night</strong></p>`
+          : "";
     slot.innerHTML = `
       ${data.address ? `<p>${escapeHtml(data.address)}</p>` : ""}
+      ${exactPrice}
       <p>Free cancellation: ${data.freeCancellationSeen ? "listed" : "not listed in these prices"}</p>
       ${data.topThings ? `<details><summary>Hotel notes</summary><pre class="hs-top-things">${escapeHtml(JSON.stringify(data.topThings, null, 2))}</pre></details>` : ""}
       ${offers ? `<ul class="hs-offers">${offers}</ul>` : "<p>No prices found.</p>"}
@@ -1539,6 +1860,7 @@ function exclusionReasonLabel(value: unknown): string {
     reviews_below_min: "too few reviews",
     rating_below_min: "rating too low",
     excluded_type: "excluded property type",
+    no_private_bathroom: "private bathroom not assured",
     require_ac: "air conditioning not confirmed",
     require_elevator: "elevator not confirmed",
     require_front_desk_24h: "24-hour front desk not confirmed",

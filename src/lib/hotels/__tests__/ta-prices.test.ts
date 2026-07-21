@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { createMemoryHotelsRepository } from "../db";
+import { mapListProperty } from "../mapper";
 import { FixtureProvider } from "../providers/fixtures";
 import { runPriceSweep } from "../prices";
+import { scoreProperty } from "../scoring";
 import { matchTripadvisor, normalizeTitle, ratingConcordance } from "../ta";
 
 describe("tripadvisor concordance", () => {
@@ -41,6 +43,22 @@ describe("tripadvisor concordance", () => {
     expect(normalizeTitle("The Four Seasons Hotel")).toBe("four seasons");
   });
 
+  it("matches Llao Llao across hotel and resort suffixes", () => {
+    const m = matchTripadvisor("Llao Llao Hotel", "Bariloche", [
+      {
+        title: "Llao Llao Resort, Golf-Spa",
+        rating: 4.5,
+        reviews: 4100,
+        place_id: "llao-llao",
+        location: "San Carlos de Bariloche",
+      },
+    ]);
+    expect(m).toMatchObject({
+      placeId: "llao-llao",
+      confidence: "exact",
+    });
+  });
+
   it("ratingConcordance buckets", () => {
     expect(ratingConcordance(4.7, 4.7)).toBe("agree");
     expect(ratingConcordance(4.7, 4.4)).toBe("soft");
@@ -50,6 +68,59 @@ describe("tripadvisor concordance", () => {
 });
 
 describe("price sweep (fixtures)", () => {
+  it("returns the full eligible index instead of capping at 100", async () => {
+    const db = createMemoryHotelsRepository();
+    const cityId = await db.ensureCity({
+      slug: "buenos-aires",
+      display: "Buenos Aires",
+      query: "Buenos Aires",
+    });
+    const provider = new FixtureProvider();
+    const page = await provider.listProperties({
+      q: "Buenos Aires",
+      sortBy: "most_reviewed",
+    });
+    const template = page.properties[0]!;
+    for (let i = 0; i < 105; i += 1) {
+      const property = mapListProperty(
+        {
+          ...template,
+          property_token: `full-index-${i}`,
+          name: `Full Index Hotel ${i}`,
+        },
+        { citySlug: "buenos-aires", cityDisplay: "Buenos Aires" },
+      )!;
+      await db.upsertScored(
+        cityId,
+        scoreProperty(property, {
+          citySlug: "buenos-aires",
+          cityMeanRating: 4.2,
+          checkIn: "",
+          checkOut: "",
+          adults: 2,
+          evidenceStrictness: "confirmed_or_unknown",
+        }),
+      );
+    }
+
+    expect(await db.listByCityScore(cityId)).toHaveLength(105);
+    expect(await db.listByCityScore(cityId, 100)).toHaveLength(100);
+
+    const sweep = await runPriceSweep({
+      citySlug: "buenos-aires",
+      provider,
+      db,
+      windows: {
+        checkInStart: "2026-08-11",
+        checkInEnd: "2026-08-11",
+        nightsMin: 2,
+        nightsMax: 2,
+      },
+    });
+    expect(sweep.indexSize).toBe(105);
+    expect(sweep.properties).toHaveLength(105);
+  });
+
   it("joins dated list prices onto index tokens", async () => {
     const db = createMemoryHotelsRepository();
     const cityId = await db.ensureCity({

@@ -94,6 +94,51 @@ describe("gates", () => {
       expect.arrayContaining(["rating_below_min", "reviews_below_min"]),
     );
   });
+
+  it("gates hostels and backpacker accommodation", () => {
+    for (const name of ["Central Hostel", "City Backpacker Lodge"]) {
+      const scored = scoreProperty(baseProperty({ name }), ctx);
+      expect(scored.gates).toContainEqual(
+        expect.objectContaining({ reason: "no_private_bathroom" }),
+      );
+    }
+  });
+
+  it("gates listings whose description mentions shared bathrooms", () => {
+    const scored = scoreProperty(
+      baseProperty({
+        raw: {
+          description:
+            "Traditional rooms, some with shared bathrooms, plus free Wi-Fi.",
+        },
+      }),
+      ctx,
+    );
+    expect(scored.gates).toContainEqual(
+      expect.objectContaining({ reason: "no_private_bathroom" }),
+    );
+  });
+
+  it.each([
+    "Unfussy rooms with shared or private bathrooms.",
+    "Cozy quarters, some with en suite bathrooms.",
+    "Casual rooms, some rooms have private bathrooms.",
+  ])("gates mixed bathroom inventory: %s", (description) => {
+    const scored = scoreProperty(
+      baseProperty({ raw: { description } }),
+      ctx,
+    );
+    expect(scored.gates).toContainEqual(
+      expect.objectContaining({ reason: "no_private_bathroom" }),
+    );
+  });
+
+  it("does not reject a pod-branded hotel without shared-bath evidence", () => {
+    const scored = scoreProperty(baseProperty({ name: "Pod 39" }), ctx);
+    expect(scored.gates.some((g) => g.reason === "no_private_bathroom")).toBe(
+      false,
+    );
+  });
 });
 
 describe("scoring", () => {

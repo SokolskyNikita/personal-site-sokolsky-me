@@ -9,6 +9,7 @@ import type { HotelsRepository, PropertyRow } from "./db";
 import { getCityConfig } from "./pipeline";
 import type { HotelDataProvider } from "./providers/types";
 import { googleHotelsSearchUrl } from "./mapper";
+import { HotelQuotaExceededError } from "./quota";
 import {
   generateStayWindows,
   median,
@@ -60,7 +61,7 @@ export type PriceSweepInput = {
   adults?: number;
   /** Single-window coverage fill; disabled for flexible sweeps to preserve 1 credit/window. */
   topUp?: boolean;
-  /** Cap index rows considered for join / deal set. */
+  /** Optional cap for specialized callers; normal searches use the full index. */
   indexLimit?: number;
 };
 
@@ -99,10 +100,7 @@ export async function runPriceSweep(
   }
 
   const windows = generateStayWindows(input.windows);
-  const index = await input.db.listByCityScore(
-    cityRow.id,
-    input.indexLimit ?? 100,
-  );
+  const index = await input.db.listByCityScore(cityRow.id, input.indexLimit);
   const tokens = index.map((r) => r.token);
   const tokenSet = new Set(tokens);
   const adults = input.adults ?? 2;
@@ -143,7 +141,10 @@ export async function runPriceSweep(
     }
 
     const page = await input.provider.listProperties({
-      q: city?.query ?? cityRow.query ?? input.citySlug,
+      q: city?.bbox
+        ? undefined
+        : (city?.query ?? cityRow.query ?? input.citySlug),
+      bbox: city?.bbox,
       checkIn: w.checkIn,
       checkOut: w.checkOut,
       adults,
@@ -285,7 +286,8 @@ export async function runPriceSweep(
             totalUsd: typeof total === "number" ? total : null,
           });
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof HotelQuotaExceededError) throw error;
         await input.db.upsertPrice({
           token: row.token,
           checkIn: primaryWindow.checkIn,

@@ -7,6 +7,36 @@ import type {
 } from "./domain";
 import { factSatisfies } from "./facts";
 
+const SHARED_BATHROOM_PATTERN =
+  /\b(?:shared|communal)(?:\s+(?:or|and)\s+(?:private|en[\s-]?suite))?\s+(?:bathrooms?|baths?|toilets?|restrooms?|washrooms?)\b|\b(?:private|en[\s-]?suite)\s+(?:or|and)\s+(?:shared|communal)\s+(?:bathrooms?|baths?|toilets?|restrooms?|washrooms?)\b|\b(?:bathrooms?|baths?|toilets?|restrooms?|washrooms?)\s+(?:are\s+)?(?:shared|communal)\b/i;
+const PARTIAL_PRIVATE_BATHROOM_PATTERN =
+  /\bsome(?:\s+(?:rooms?|quarters|units?|accommodations?))?\s+(?:with|have|feature|featuring)\s+(?:an?\s+)?(?:private|en[\s-]?suite)\s+(?:bathrooms?|baths?|toilets?|restrooms?|washrooms?)\b/i;
+const SHARED_LODGING_PATTERN =
+  /\b(?:hostels?|backpackers?|dorms?|dormitor(?:y|ies)|capsules?|albergues?)\b/i;
+
+export function privateBathroomExclusionReason(
+  property: Property,
+): string | null {
+  const raw =
+    property.raw && typeof property.raw === "object"
+      ? (property.raw as { description?: unknown })
+      : null;
+  const description =
+    typeof raw?.description === "string" ? raw.description : "";
+  const identity = `${property.type ?? ""} ${property.name}`;
+  if (SHARED_LODGING_PATTERN.test(identity)) {
+    return "shared-facility accommodation type";
+  }
+  if (
+    SHARED_BATHROOM_PATTERN.test(description) ||
+    PARTIAL_PRIVATE_BATHROOM_PATTERN.test(description) ||
+    SHARED_LODGING_PATTERN.test(description)
+  ) {
+    return "listing describes shared bathroom facilities";
+  }
+  return null;
+}
+
 export function evaluateGates(
   property: Property,
   facts: PropertyFacts,
@@ -27,6 +57,14 @@ export function evaluateGates(
     failures.push({
       reason: "rating_below_min",
       detail: `${property.rating ?? "null"} < ${minRating}`,
+    });
+  }
+
+  const privateBathroomFailure = privateBathroomExclusionReason(property);
+  if (privateBathroomFailure) {
+    failures.push({
+      reason: "no_private_bathroom",
+      detail: privateBathroomFailure,
     });
   }
 

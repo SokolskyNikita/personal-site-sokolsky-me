@@ -53,41 +53,25 @@ type RentalMeta = {
   expensesIncluded?: boolean;
 };
 const buildings = pageData.buildings;
+// Strict: reformer / camilla / pilates machines — not yoga-mat "pilates" corners.
 const buildingsWithPilates = new Set([
   "almarena-puerto-retiro",
-  "concepcion-palermo",
-  "deco-recoleta",
   "forum-puerto-madero",
-  "lumiere-urbano",
   "milaires",
-  "quartier-del-bajo",
-  "quantum-bellini",
-  "torre-promenade",
-  "torre-vista-botanico",
 ]);
 const buildingsWithCinema = new Set([
   "alvear-tower",
-  "astor-palermo",
-  "casa-ho",
   "chateau-puerto-madero",
   "forum-puerto-madero",
   "harbour-residences",
   "la-musa-stars",
   "madero-center",
-  "maior-barrancas",
   "quartier-boulevard",
   "quartier-dorrego",
   "quartier-polo",
   "torre-bellini-palermo-chico",
-  "torre-bulnes",
-  "torre-deco-palermo-nuevo",
-  "torre-deco-segui",
-  "torre-las-plazas",
   "torre-liberateur",
-  "torre-palermo-uno",
   "torre-promenade",
-  "torre-quantum-palermo",
-  "torre-ruggieri",
   "torres-de-montaneses",
   "yoo-nordelta",
 ]);
@@ -366,6 +350,22 @@ const isBuiltSince2016 = (built: string) => {
 
   return Math.max(...years) >= 2016;
 };
+/** Sort key for construction year: mid-decade for "1980s", midpoint for ranges, null if unknown. */
+const parseConstructionSortYear = (built: string): number | null => {
+  const years = [...built.matchAll(/\b(?:19|20)\d{2}\b/g)].map((match) =>
+    Number(match[0]),
+  );
+  if (years.length > 0) {
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+    return Math.round((minYear + maxYear) / 2);
+  }
+  const decadeMatch = built.match(/\b((?:19|20)\d)0s\b/i);
+  if (decadeMatch) {
+    return Number(`${decadeMatch[1]}0`) + 5;
+  }
+  return null;
+};
 const getLowestListingPriceUsd = (
   listings: Array<{ priceUsdMonthly?: number | null }>,
 ) => {
@@ -388,6 +388,7 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
     has20PlusFloors:
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
+    constructionSortYear: parseConstructionSortYear(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
     hasCinema: buildingsWithCinema.has(building.id),
     filterNeighborhood: getNeighborhoodGroup(building.zone),
@@ -588,6 +589,7 @@ const structuredData = {
               <option value="price-per-sqm-asc">$$$ per square meter</option>
               <option value="airbnb-count-desc">Number of Airbnbs</option>
               <option value="rental-count-desc">Number of long-term rentals</option>
+              <option value="construction-year-asc">Construction year</option>
             </select>
           </label>
           <fieldset class="area-unit-toggle" aria-label="Area unit">
@@ -625,6 +627,7 @@ const structuredData = {
             data-lowest-airbnb-price={building.lowestAirbnbPriceUsd ?? ""}
             data-airbnb-count={building.airbnbListings.length}
             data-rental-count={building.rentalListings.length}
+            data-construction-year={building.constructionSortYear ?? ""}
           >
             <div class="building-main">
               <div class="building-title-row">
@@ -999,6 +1002,15 @@ const structuredData = {
     return direction === "desc" ? secondPrice - firstPrice : firstPrice - secondPrice;
   };
 
+  const compareConstructionYears = (firstYear, secondYear) => {
+    const firstMissing = firstYear == null;
+    const secondMissing = secondYear == null;
+    if (firstMissing && secondMissing) return 0;
+    if (firstMissing) return -1;
+    if (secondMissing) return 1;
+    return firstYear - secondYear;
+  };
+
   const compareRowsBySort = (firstRow, secondRow) => {
     const sortValue = buildingSort?.value ?? "price-asc";
     const firstRent = numericDatasetValue(firstRow, "rentAmount");
@@ -1015,6 +1027,8 @@ const structuredData = {
     const secondListedRentalPrice = optionalNumericDatasetValue(secondRow, "lowestRentalPrice");
     const firstListedAirbnbPrice = optionalNumericDatasetValue(firstRow, "lowestAirbnbPrice");
     const secondListedAirbnbPrice = optionalNumericDatasetValue(secondRow, "lowestAirbnbPrice");
+    const firstConstructionYear = optionalNumericDatasetValue(firstRow, "constructionYear");
+    const secondConstructionYear = optionalNumericDatasetValue(secondRow, "constructionYear");
 
     const primarySort =
       sortValue === "price-desc"
@@ -1035,7 +1049,9 @@ const structuredData = {
                       ? secondAirbnbCount - firstAirbnbCount
                       : sortValue === "rental-count-desc"
                         ? secondRentalCount - firstRentalCount
-                        : firstRent - secondRent;
+                        : sortValue === "construction-year-asc"
+                          ? compareConstructionYears(firstConstructionYear, secondConstructionYear)
+                          : firstRent - secondRent;
 
     return primarySort || compareRowsByName(firstRow, secondRow);
   };

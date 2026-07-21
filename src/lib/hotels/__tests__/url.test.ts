@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  cityOptions,
   DEFAULT_HOTEL_FORM,
   formStateFromSearchParams,
   formStateToSearchParams,
@@ -40,5 +41,16 @@ describe("hotel URL state", () => {
     expect(back.requireAC).toBe(true);
     expect(back.minReviews).toBe(500);
     expect(back.sort).toBe("rating");
+  });
+
+  it("sorts cities by country then display name", () => {
+    const options = cityOptions();
+    expect(options[0]).toMatchObject({
+      country: "Argentina",
+      display: "Bariloche",
+    });
+    const keys = options.map((c) => `${c.country}\0${c.display}`);
+    expect(keys).toEqual([...keys].sort((a, b) => a.localeCompare(b)));
+    expect(options.every((c) => c.country.length > 0)).toBe(true);
   });
 });

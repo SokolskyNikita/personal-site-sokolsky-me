@@ -9,6 +9,10 @@ export const DEAL_MIN_SCORE = 40;
 export const DEAL_MIN_SAMPLE = 12;
 export const WINDOW_CAP = 21;
 export const PRICE_CACHE_TTL_HOURS = 6;
+/** Uncached SearchAPI credits available to one IP per UTC day. */
+export const HOTEL_RATE_LIMIT_PER_DAY = 500;
+/** Shared SearchAPI budget used by both flights and hotels. */
+export const SEARCHAPI_DAILY_BUDGET = 4_000;
 /** Skip a window list call when this many index tokens already have fresh prices. */
 export const PRICE_CACHE_HIT_THRESHOLD = 12;
 /** After window lists, fill missing top-N prices via google_hotels_property. */

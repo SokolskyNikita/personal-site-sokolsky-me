@@ -25,6 +25,7 @@ import { scoreProperty } from "./scoring";
 export type CityConfig = {
   slug: string;
   display: string;
+  country: string;
   query: string;
   gl?: string;
   /** Prefer this metro box when free-text `q` geocodes badly (e.g. Cairo). */

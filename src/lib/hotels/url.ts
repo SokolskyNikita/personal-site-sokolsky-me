@@ -45,11 +45,24 @@ export const DEFAULT_HOTEL_FORM: HotelFormState = {
   sort: "comfort",
 };
 
-export function cityOptions(): { slug: string; display: string }[] {
-  return (citiesConfig as { slug: string; display: string }[]).map((c) => ({
-    slug: c.slug,
-    display: c.display,
-  }));
+export type CityOption = {
+  slug: string;
+  display: string;
+  country: string;
+};
+
+export function cityOptions(): CityOption[] {
+  return (citiesConfig as CityOption[])
+    .map((c) => ({
+      slug: c.slug,
+      display: c.display,
+      country: c.country,
+    }))
+    .sort(
+      (a, b) =>
+        a.country.localeCompare(b.country) ||
+        a.display.localeCompare(b.display),
+    );
 }
 
 export function slugifyCity(input: string): string {

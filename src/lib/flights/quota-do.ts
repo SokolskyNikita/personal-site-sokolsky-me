@@ -7,6 +7,9 @@ import type { BudgetStatus, RateLimitStatus } from "./kv";
 type DurableObjectStorageLike = {
   get<T = unknown>(key: string): Promise<T | undefined>;
   put(key: string, value: unknown): Promise<void>;
+  transaction?<T>(
+    closure: (transaction: DurableObjectStorageLike) => Promise<T>,
+  ): Promise<T>;
 };
 
 type DurableObjectStateLike = {
@@ -57,6 +60,20 @@ export class FlightQuotaCoordinator {
         ),
       );
     }
+    if (url.pathname === "/reserve") {
+      return Response.json(
+        await this.reserveCredits({
+          ip: typeof body.ip === "string" ? body.ip : "unknown",
+          scope: safeScope(body.scope),
+          amount: positiveInt(body.amount, 1),
+          perIpLimit: positiveInt(
+            body.perIpLimit,
+            DEFAULT_RATE_LIMIT_PER_DAY,
+          ),
+          globalLimit: positiveInt(body.globalLimit, DEFAULT_DAILY_BUDGET),
+        }),
+      );
+    }
 
     return Response.json({ error: "not_found" }, { status: 404 });
   }
@@ -95,6 +112,116 @@ export class FlightQuotaCoordinator {
     await this.state.storage.put(key, next);
     return { allowed: true, count: next, limit };
   }
+
+  private async reserveCredits(input: {
+    ip: string;
+    scope: string;
+    amount: number;
+    perIpLimit: number;
+    globalLimit: number;
+  }): Promise<{
+    allowed: boolean;
+    reason: "per_ip_limit_reached" | "global_budget_reached" | null;
+    amount: number;
+    rate: RateLimitStatus;
+    budget: BudgetStatus;
+    resetAt: string;
+  }> {
+    const run = async (storage: DurableObjectStorageLike) => {
+      const day = utcDay();
+      const budgetKey = `budget:${day}`;
+      const rateKey = `rate:${day}:${input.scope}:${input.ip}`;
+      const [budgetUsed, rateUsed] = await Promise.all([
+        storage.get<number>(budgetKey),
+        storage.get<number>(rateKey),
+      ]);
+      const safeBudgetUsed = budgetUsed ?? 0;
+      const safeRateUsed = rateUsed ?? 0;
+      const resetAt = `${nextUtcDay(day)}T00:00:00.000Z`;
+
+      if (safeBudgetUsed + input.amount > input.globalLimit) {
+        return {
+          allowed: false,
+          reason: "global_budget_reached" as const,
+          amount: input.amount,
+          rate: {
+            allowed: safeRateUsed + input.amount <= input.perIpLimit,
+            count: safeRateUsed,
+            limit: input.perIpLimit,
+          },
+          budget: budgetResult(
+            day,
+            safeBudgetUsed,
+            input.globalLimit,
+          ),
+          resetAt,
+        };
+      }
+      if (safeRateUsed + input.amount > input.perIpLimit) {
+        return {
+          allowed: false,
+          reason: "per_ip_limit_reached" as const,
+          amount: input.amount,
+          rate: {
+            allowed: false,
+            count: safeRateUsed,
+            limit: input.perIpLimit,
+          },
+          budget: budgetResult(
+            day,
+            safeBudgetUsed,
+            input.globalLimit,
+          ),
+          resetAt,
+        };
+      }
+
+      const nextBudget = safeBudgetUsed + input.amount;
+      const nextRate = safeRateUsed + input.amount;
+      await Promise.all([
+        storage.put(budgetKey, nextBudget),
+        storage.put(rateKey, nextRate),
+      ]);
+      return {
+        allowed: true,
+        reason: null,
+        amount: input.amount,
+        rate: {
+          allowed: true,
+          count: nextRate,
+          limit: input.perIpLimit,
+        },
+        budget: budgetResult(day, nextBudget, input.globalLimit),
+        resetAt,
+      };
+    };
+
+    return this.state.storage.transaction
+      ? this.state.storage.transaction(run)
+      : run(this.state.storage);
+  }
+}
+
+function budgetResult(day: string, used: number, limit: number): BudgetStatus {
+  return {
+    used,
+    remaining: Math.max(0, limit - used),
+    limit,
+    day,
+    overBudget: used >= limit,
+  };
+}
+
+function nextUtcDay(day: string): string {
+  const date = new Date(`${day}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function safeScope(value: unknown): string {
+  return typeof value === "string" && /^[a-z][a-z0-9_-]{0,31}$/.test(value)
+    ? value
+    : "default";
 }
 
 function positiveInt(value: unknown, fallback: number): number {

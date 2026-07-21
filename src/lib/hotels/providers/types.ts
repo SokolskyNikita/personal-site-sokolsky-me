@@ -83,6 +83,7 @@ export type ReviewsBreakdownItem = {
 export type SearchApiListProperty = {
   property_token?: string;
   name?: string;
+  description?: string;
   type?: string;
   data_id?: string;
   city?: string;

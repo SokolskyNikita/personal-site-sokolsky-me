@@ -1,6 +1,7 @@
 import type { HotelsRepository, PropertyRow } from "./db";
 import type { PropertyFacts } from "./domain";
 import type { HotelDataProvider } from "./providers/types";
+import tripadvisorOverrides from "./config/tripadvisor-overrides.json";
 import {
   classifyReviews,
   inferredBooleanFact,
@@ -8,13 +9,20 @@ import {
   type ReviewFeatureSet,
   type ReviewInput,
 } from "./review-signals";
-import { matchTripadvisor } from "./ta";
+import { matchTripadvisor, normalizeTitle, type TaMatch } from "./ta";
 import { mapListProperty } from "./mapper";
 import type { SearchApiListProperty } from "./providers/types";
 import { scoreProperty } from "./scoring";
 import { CITY_MEAN_FALLBACK } from "./constants";
 
 export const REVIEW_CACHE_TTL_DAYS = 30;
+
+type TripadvisorOverride = {
+  citySlug: string;
+  hotelName: string;
+  placeId: string;
+  title: string;
+};
 
 export type ReviewAnalysisResult = {
   features: ReviewFeatureSet;
@@ -65,15 +73,42 @@ export async function analyzeHotelReviews(input: {
   }
 
   let creditsUsed = 0;
-  const search = await input.provider.searchTripadvisor(
+  const override = (tripadvisorOverrides as TripadvisorOverride[]).find(
+    (candidate) =>
+      candidate.citySlug === input.citySlug &&
+      normalizeTitle(candidate.hotelName) ===
+        normalizeTitle(input.property.name),
+  );
+  let match: TaMatch | null = override
+    ? {
+        rating: null,
+        reviews: null,
+        placeId: override.placeId,
+        title: override.title,
+        confidence: "exact",
+      }
+    : null;
+  const coreName = normalizeTitle(input.property.name);
+  const searchQueries = [
     `${input.property.name} ${input.cityDisplay}`,
+    `${coreName} ${input.cityDisplay}`,
+    coreName,
+  ].filter(
+    (query, index, queries) =>
+      query.trim().length > 0 && queries.indexOf(query) === index,
   );
-  creditsUsed += 1;
-  const match = matchTripadvisor(
-    input.property.name,
-    input.cityDisplay,
-    search.places,
-  );
+  if (!match) {
+    for (const query of searchQueries) {
+      const search = await input.provider.searchTripadvisor(query);
+      creditsUsed += 1;
+      match = matchTripadvisor(
+        input.property.name,
+        input.cityDisplay,
+        search.places,
+      );
+      if (match?.placeId) break;
+    }
+  }
   if (!match?.placeId) throw new Error("tripadvisor_match_not_found");
 
   const page = await input.provider.getTripadvisorReviews(match.placeId, 1);

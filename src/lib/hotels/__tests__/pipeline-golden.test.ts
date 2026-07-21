@@ -22,6 +22,47 @@ describe("SearchApiHotelProvider live gate", () => {
       }),
     ).rejects.toBeInstanceOf(LiveModeDisabledError);
   });
+
+  it("runs the server quota hook before any outbound provider request", async () => {
+    let fetched = false;
+    const p = new SearchApiHotelProvider({
+      apiKey: "x",
+      liveMode: true,
+      beforeCall: async () => {
+        throw new Error("per_ip_limit_reached");
+      },
+      fetchImpl: async () => {
+        fetched = true;
+        return Response.json({});
+      },
+    });
+    await expect(
+      p.getProperty({ propertyToken: "token" }),
+    ).rejects.toThrow("per_ip_limit_reached");
+    expect(fetched).toBe(false);
+  });
+
+  it("reserves quota separately for every outbound retry", async () => {
+    let reservations = 0;
+    let requests = 0;
+    const p = new SearchApiHotelProvider({
+      apiKey: "x",
+      liveMode: true,
+      retryAttempts: 2,
+      beforeCall: async () => {
+        reservations += 1;
+      },
+      fetchImpl: async () => {
+        requests += 1;
+        return Response.json({ error: "temporary" }, { status: 503 });
+      },
+    });
+    await expect(p.getProperty({ propertyToken: "token" })).rejects.toThrow(
+      "temporary",
+    );
+    expect(reservations).toBe(2);
+    expect(requests).toBe(2);
+  });
 });
 
 describe("fixture scan pipeline", () => {

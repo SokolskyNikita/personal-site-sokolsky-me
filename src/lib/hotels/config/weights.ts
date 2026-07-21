@@ -1,5 +1,5 @@
 /** Bump on any formula / weight change so rescore can stamp rows. */
-export const SCORING_VERSION = 3;
+export const SCORING_VERSION = 5;
 
 export const WEIGHTS = {
   qualityMax: 55,

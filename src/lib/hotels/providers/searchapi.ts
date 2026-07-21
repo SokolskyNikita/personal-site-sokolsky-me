@@ -22,6 +22,8 @@ export type SearchApiHotelProviderOptions = {
   retryAttempts?: number;
   /** Hard refuse unless liveMode is true (SEARCHAPI_LIVE=1). */
   liveMode: boolean;
+  /** Server-side quota reservation performed before each logical API call. */
+  beforeCall?: (info: { engine: string }) => Promise<void>;
   onCall?: (info: {
     engine: string;
     ok: boolean;
@@ -43,6 +45,7 @@ export class SearchApiHotelProvider implements HotelDataProvider {
   private readonly baseUrl: string;
   private readonly retryAttempts: number;
   private readonly liveMode: boolean;
+  private readonly beforeCall?: SearchApiHotelProviderOptions["beforeCall"];
   private readonly onCall?: SearchApiHotelProviderOptions["onCall"];
   creditsUsed = 0;
 
@@ -54,6 +57,7 @@ export class SearchApiHotelProvider implements HotelDataProvider {
       options.baseUrl ?? "https://www.searchapi.io/api/v1/search";
     this.retryAttempts = Math.max(1, options.retryAttempts ?? 3);
     this.liveMode = options.liveMode;
+    this.beforeCall = options.beforeCall;
     this.onCall = options.onCall;
   }
 
@@ -218,6 +222,7 @@ export class SearchApiHotelProvider implements HotelDataProvider {
   private async fetchJson(url: URL, engine: string): Promise<unknown> {
     let lastError: string | undefined;
     for (let attempt = 0; attempt < this.retryAttempts; attempt++) {
+      await this.beforeCall?.({ engine });
       try {
         const res = await this.fetchImpl(url.toString(), {
           headers: { Authorization: `Bearer ${this.apiKey}` },

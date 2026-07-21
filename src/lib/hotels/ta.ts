@@ -27,7 +27,7 @@ export function normalizeTitle(s: string): string {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\b(hotel|the|a|an)\b/g, " ")
+    .replace(/\b(hotel|resort|golf|spa|the|a|an)\b/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
