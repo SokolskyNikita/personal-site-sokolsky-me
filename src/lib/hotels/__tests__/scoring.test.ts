@@ -51,6 +51,7 @@ describe("brand tier", () => {
   it("matches luxury and upper-upscale brands", () => {
     expect(matchBrandTier("Four Seasons Hotel Buenos Aires")).toBe(3);
     expect(matchBrandTier("Palacio Duhau - Park Hyatt Buenos Aires")).toBe(3);
+    expect(matchBrandTier("Alvear Palace Hotel")).toBe(3);
     expect(matchBrandTier("Hilton Buenos Aires")).toBe(2);
     expect(matchBrandTier("Florida Garden")).toBe(0);
   });

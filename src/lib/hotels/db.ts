@@ -194,9 +194,7 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
         .prepare(
           `SELECT token, city_id, name, lat, lng, hotel_class, brand_tier,
                   rating, reviews, low_star_share, worst_category, worst_category_neg,
-                  ta_rating, ta_reviews, ta_rank, ta_total, whitelist,
-                  facts_json, amenities_json, breakdown_json, histogram_json,
-                  score, subscores_json, gates_json, scoring_version, provider, enriched_at
+                  facts_json, score, subscores_json, gates_json, scoring_version, provider
            FROM properties
            WHERE city_id = ? AND (gates_json = '[]' OR gates_json IS NULL)
            ORDER BY score DESC LIMIT ?`,
