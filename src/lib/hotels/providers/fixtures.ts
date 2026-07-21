@@ -2,6 +2,7 @@ import mostReviewedP1 from "../../../../fixtures/hotels/ba-most-reviewed-p1.json
 import mostReviewedP2 from "../../../../fixtures/hotels/ba-most-reviewed-p2.json";
 import highestRatingP1 from "../../../../fixtures/hotels/ba-highest-rating-p1.json";
 import propertyFourSeasons from "../../../../fixtures/hotels/property-fourseasons.json";
+import tripadvisorFourSeasons from "../../../../fixtures/hotels/tripadvisor-fourseasons.json";
 import type {
   GetPropertyQuery,
   HotelDataProvider,
@@ -10,6 +11,7 @@ import type {
   ListPropertiesQuery,
   SearchApiListProperty,
   SearchApiPropertyDetails,
+  TripadvisorSearchResult,
 } from "./types";
 
 type ListFixture = {
@@ -94,6 +96,18 @@ export class FixtureProvider implements HotelDataProvider {
         property_token: query.propertyToken || property.property_token,
       },
       requestUrl: data.search_metadata?.request_url,
+      searchId: data.search_metadata?.id,
+      raw: data,
+    };
+  }
+
+  async searchTripadvisor(_q: string): Promise<TripadvisorSearchResult> {
+    const data = tripadvisorFourSeasons as unknown as {
+      place_results?: TripadvisorSearchResult["places"];
+      search_metadata?: { id?: string };
+    };
+    return {
+      places: data.place_results ?? [],
       searchId: data.search_metadata?.id,
       raw: data,
     };

@@ -1,4 +1,10 @@
-import { INDEX_TTL_DAYS, MAX_CREDITS_PER_SCAN } from "./constants";
+import {
+  CITY_MEAN_FALLBACK,
+  INDEX_TTL_DAYS,
+  MAX_CREDITS_PER_SCAN,
+  PRICE_CACHE_HIT_THRESHOLD,
+  WINDOW_CAP,
+} from "./constants";
 import { createD1HotelsRepository, type HotelsD1 } from "./db";
 import { getCityConfig, runCityScan, scanOpsStats, summarizeTop } from "./pipeline";
 import { FixtureProvider } from "./providers/fixtures";
@@ -6,11 +12,16 @@ import {
   LiveModeDisabledError,
   SearchApiHotelProvider,
 } from "./providers/searchapi";
-import { mapListProperty } from "./mapper";
+import { googleHotelsSearchUrl, mapListProperty } from "./mapper";
 import { scoreProperty, SCORING_VERSION } from "./scoring";
 import type { ScanContext } from "./domain";
 import type { SearchApiListProperty } from "./providers/types";
-import { CITY_MEAN_FALLBACK } from "./constants";
+import {
+  planPriceSweepCredits,
+  runPriceSweep,
+} from "./prices";
+import { generateStayWindows } from "./windows";
+import { matchTripadvisor, ratingConcordance } from "./ta";
 
 export type HotelsEnv = {
   hotels_index?: HotelsD1;
@@ -22,6 +33,7 @@ const PLAN_PATH = "/api/hotels/plan";
 const SCAN_PATH = "/api/hotels/scan";
 const INDEX_PATH = "/api/hotels/index";
 const RESCORE_PATH = "/api/hotels/rescore";
+const PRICES_PATH = "/api/hotels/prices";
 
 export function isHotelsApiPath(pathname: string): boolean {
   return (
@@ -29,6 +41,7 @@ export function isHotelsApiPath(pathname: string): boolean {
     pathname === SCAN_PATH ||
     pathname === INDEX_PATH ||
     pathname === RESCORE_PATH ||
+    pathname === PRICES_PATH ||
     pathname.startsWith("/api/hotels/property/")
   );
 }
@@ -42,6 +55,10 @@ export async function handleHotelsApi(
   if (url.pathname === SCAN_PATH) return handleScan(request, env, url);
   if (url.pathname === INDEX_PATH) return handleIndex(request, env, url);
   if (url.pathname === RESCORE_PATH) return handleRescore(request, env, url);
+  if (url.pathname === PRICES_PATH) return handlePrices(request, env, url);
+  if (url.pathname.startsWith("/api/hotels/property/")) {
+    return handleProperty(request, env, url);
+  }
   return json({ ok: false, error: "not_found" }, 404);
 }
 
@@ -75,7 +92,24 @@ async function handlePlan(
 
   // Scan cost: most_reviewed pages + highest_rating pages (enrichment skipped).
   const scanCreditsEstimate = 4 + 2;
-  const priceSweepEstimate = 0;
+
+  const checkInStart = url.searchParams.get("checkInStart");
+  const checkInEnd = url.searchParams.get("checkInEnd") ?? checkInStart;
+  const nightsMin = Number(url.searchParams.get("nightsMin") ?? 2);
+  const nightsMax = Number(url.searchParams.get("nightsMax") ?? nightsMin);
+  let priceSweepEstimate = 0;
+  let windowCount = 0;
+  if (checkInStart && checkInEnd) {
+    const windows = generateStayWindows({
+      checkInStart,
+      checkInEnd,
+      nightsMin: Number.isFinite(nightsMin) ? nightsMin : 2,
+      nightsMax: Number.isFinite(nightsMax) ? nightsMax : 2,
+    });
+    windowCount = windows.length;
+    // Cold estimate: one list call per window (cache may skip some).
+    priceSweepEstimate = planPriceSweepCredits(windows, 0);
+  }
 
   return json({
     ok: true,
@@ -92,6 +126,9 @@ async function handlePlan(
     costs: {
       scanCreditsEstimate,
       priceSweepEstimate,
+      windowCount,
+      windowCap: WINDOW_CAP,
+      priceCacheHitThreshold: PRICE_CACHE_HIT_THRESHOLD,
       maxCreditsPerScan: MAX_CREDITS_PER_SCAN,
       mode: useFixtures(env) ? "fixture" : "live",
     },
@@ -244,15 +281,292 @@ async function handleIndex(
         },
         factsFull: facts,
         subscores,
-        googleHotelsUrl: null as string | null,
+        googleHotelsUrl: googleHotelsSearchUrl(
+          r.name,
+          city.display,
+        ),
         lat: r.lat,
         lng: r.lng,
+        taRating: r.ta_rating,
+        taReviews: r.ta_reviews,
         scoringVersion: r.scoring_version,
         gatedOut: false,
         gates: [],
       };
     }),
   });
+}
+
+async function handlePrices(
+  request: Request,
+  env: HotelsEnv,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "POST" && request.method !== "GET") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+  if (!env.hotels_index) {
+    return json({ ok: false, error: "db_unavailable" }, 503);
+  }
+
+  let body: {
+    citySlug?: string;
+    checkInStart?: string;
+    checkInEnd?: string;
+    nightsMin?: number;
+    nightsMax?: number;
+    adults?: number;
+    joinTa?: boolean;
+  } = {};
+  if (request.method === "POST") {
+    try {
+      body = (await request.json()) as typeof body;
+    } catch {
+      body = {};
+    }
+  }
+
+  const citySlug =
+    body.citySlug ?? url.searchParams.get("city") ?? "buenos-aires";
+  const checkInStart =
+    body.checkInStart ?? url.searchParams.get("checkInStart") ?? "";
+  const checkInEnd =
+    body.checkInEnd ??
+    url.searchParams.get("checkInEnd") ??
+    checkInStart;
+  const nightsMin = Number(
+    body.nightsMin ?? url.searchParams.get("nightsMin") ?? 2,
+  );
+  const nightsMax = Number(
+    body.nightsMax ?? url.searchParams.get("nightsMax") ?? nightsMin,
+  );
+  const adults = Number(body.adults ?? url.searchParams.get("adults") ?? 2);
+  const joinTa =
+    body.joinTa === true || url.searchParams.get("joinTa") === "1";
+
+  if (!checkInStart || !checkInEnd) {
+    return json({ ok: false, error: "dates_required" }, 400);
+  }
+
+  const db = createD1HotelsRepository(env.hotels_index);
+  const city = await db.getCityBySlug(citySlug);
+  if (!city) {
+    return json({ ok: false, error: "city_not_found" }, 404);
+  }
+
+  try {
+    const provider = useFixtures(env)
+      ? new FixtureProvider()
+      : new SearchApiHotelProvider({
+          apiKey: env.SEARCH_API_IO_KEY ?? "",
+          liveMode: true,
+        });
+    if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
+      return json({ ok: false, error: "searchapi_key_missing" }, 503);
+    }
+
+    const t0 = Date.now();
+    const sweep = await runPriceSweep({
+      citySlug,
+      provider,
+      db,
+      adults: Number.isFinite(adults) ? adults : 2,
+      windows: {
+        checkInStart,
+        checkInEnd,
+        nightsMin: Number.isFinite(nightsMin) ? nightsMin : 2,
+        nightsMax: Number.isFinite(nightsMax) ? nightsMax : 2,
+      },
+    });
+
+    let taJoined = 0;
+    let taCredits = 0;
+    const cityCfg = getCityConfig(citySlug);
+    const display = cityCfg?.display ?? city.display;
+
+    if (joinTa && provider.searchTripadvisor) {
+      const top = (await db.listByCityScore(city.id, 15)).filter(
+        (r) => r.ta_rating == null,
+      );
+      for (const row of top.slice(0, 5)) {
+        const result = await provider.searchTripadvisor(
+          `${row.name} ${display}`,
+        );
+        taCredits += 1;
+        const match = matchTripadvisor(row.name, display, result.places);
+        if (!match) continue;
+        await db.updateTaFields({
+          token: row.token,
+          taRating: match.rating,
+          taReviews: match.reviews,
+        });
+        taJoined += 1;
+      }
+    }
+
+    // Merge index identity + price fields for UI.
+    const indexRows = await db.listByCityScore(city.id, 100);
+    const pricedByToken = new Map(sweep.properties.map((p) => [p.token, p]));
+    const properties = indexRows.map((r) => {
+      const priced = pricedByToken.get(r.token);
+      const facts = r.facts_json ? JSON.parse(r.facts_json) : null;
+      const subscores = r.subscores_json ? JSON.parse(r.subscores_json) : null;
+      const best = priced?.bestStay ?? null;
+      return {
+        token: r.token,
+        name: r.name,
+        score: r.score,
+        rating: r.rating,
+        reviews: r.reviews,
+        hotelClass: r.hotel_class,
+        brandTier: r.brand_tier,
+        lowStarShare: r.low_star_share,
+        worstCategory: r.worst_category,
+        worstCategoryNeg: r.worst_category_neg,
+        plantPenalty: subscores?.plantPenalty ?? 0,
+        facts: {
+          hasAC: facts?.hasAC?.status ?? "unknown",
+          hasElevator: facts?.hasElevator?.status ?? "unknown",
+          hasWifi: facts?.hasWifi?.status ?? "unknown",
+          frontDesk24h: facts?.frontDesk24h?.status ?? "unknown",
+        },
+        subscores,
+        lat: r.lat,
+        lng: r.lng,
+        taRating: r.ta_rating,
+        taReviews: r.ta_reviews,
+        concordance: ratingConcordance(r.rating, r.ta_rating),
+        nightly_usd: best?.nightlyUsd ?? null,
+        total_usd: best?.totalUsd ?? null,
+        expected_usd: priced?.expectedUsd ?? null,
+        deal_pct: priced?.dealPct ?? null,
+        dealMethod: priced?.dealMethod ?? null,
+        bestStay: best,
+        matchingStays: priced?.matchingStays ?? [],
+        matrix: priced?.matrix ?? [],
+        minNightly: priced?.minNightly ?? null,
+        medianNightly: priced?.medianNightly ?? null,
+        maxNightly: priced?.maxNightly ?? null,
+        googleHotelsUrl:
+          priced?.googleHotelsUrl ??
+          googleHotelsSearchUrl(r.name, display, checkInStart, checkInEnd),
+      };
+    });
+
+    const top20 = properties.slice(0, 20);
+    const top20Priced = top20.filter((p) => p.nightly_usd != null).length;
+
+    return json({
+      ok: true,
+      city: citySlug,
+      windows: sweep.windows,
+      properties,
+      pricedCount: sweep.pricedCount,
+      top20PricedShare: top20.length ? top20Priced / top20.length : 0,
+      credits_used: sweep.creditsUsed + taCredits,
+      durationMs: Date.now() - t0,
+      ops: {
+        cacheHits: sweep.cacheHits,
+        liveCalls: sweep.liveCalls,
+        windowsSkippedCache: sweep.windowsSkippedCache,
+        windowCount: sweep.windows.length,
+        taJoined,
+        taCredits,
+        mode: useFixtures(env) ? "fixture" : "live",
+      },
+    });
+  } catch (e) {
+    if (e instanceof LiveModeDisabledError) {
+      return json({ ok: false, error: "live_mode_disabled" }, 403);
+    }
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : "prices_failed",
+      },
+      500,
+    );
+  }
+}
+
+async function handleProperty(
+  request: Request,
+  env: HotelsEnv,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "GET") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+  const token = decodeURIComponent(
+    url.pathname.replace("/api/hotels/property/", ""),
+  );
+  if (!token) return json({ ok: false, error: "token_required" }, 400);
+
+  const checkIn = url.searchParams.get("checkIn") ?? undefined;
+  const checkOut = url.searchParams.get("checkOut") ?? undefined;
+  const adults = Number(url.searchParams.get("adults") ?? 2);
+
+  try {
+    const provider = useFixtures(env)
+      ? new FixtureProvider()
+      : new SearchApiHotelProvider({
+          apiKey: env.SEARCH_API_IO_KEY ?? "",
+          liveMode: true,
+        });
+    if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
+      return json({ ok: false, error: "searchapi_key_missing" }, 503);
+    }
+
+    const page = await provider.getProperty({
+      propertyToken: token,
+      checkIn,
+      checkOut,
+      adults: Number.isFinite(adults) ? adults : 2,
+    });
+    const p = page.property;
+    const offers = [
+      ...(Array.isArray(p.featured_offers) ? p.featured_offers : []),
+      ...(Array.isArray(p.all_offers) ? p.all_offers : []),
+    ].slice(0, 8);
+    const freeCancel = offers.some(
+      (o) =>
+        o &&
+        typeof o === "object" &&
+        (o as { has_free_cancellation?: boolean }).has_free_cancellation ===
+          true,
+    );
+
+    return json({
+      ok: true,
+      token,
+      name: p.name ?? null,
+      rating: p.rating ?? null,
+      reviews: p.reviews ?? null,
+      address: (p as { address?: string }).address ?? null,
+      nightly_usd: p.price_per_night?.extracted_price ?? null,
+      total_usd: p.total_price?.extracted_price ?? null,
+      freeCancellationSeen: freeCancel,
+      offers,
+      topThings:
+        (p as { review_results?: { top_things_to_know?: unknown } })
+          .review_results?.top_things_to_know ?? null,
+      requestUrl: page.requestUrl ?? null,
+      credits_used: useFixtures(env)
+        ? 0
+        : (provider as SearchApiHotelProvider).creditsUsed,
+    });
+  } catch (e) {
+    if (e instanceof LiveModeDisabledError) {
+      return json({ ok: false, error: "live_mode_disabled" }, 403);
+    }
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : "property_failed",
+      },
+      500,
+    );
+  }
 }
 
 async function handleRescore(

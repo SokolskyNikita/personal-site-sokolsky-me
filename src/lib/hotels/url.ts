@@ -4,6 +4,13 @@ export type HotelFormState = {
   city: string;
   q: string;
   neighborhood: string;
+  checkInStart: string;
+  checkInEnd: string;
+  nightsMin: number;
+  nightsMax: number;
+  adults: number;
+  pinLat: number | null;
+  pinLng: number | null;
   minComfort: number;
   strictness: "confirmed_only" | "confirmed_or_unknown";
   requireAC: boolean;
@@ -12,7 +19,14 @@ export type HotelFormState = {
   brandedOnly: boolean;
   minReviews: 200 | 500 | 1000;
   budgetMax: number | null;
-  sort: "comfort" | "rating" | "reviews" | "unknowns";
+  sort:
+    | "comfort"
+    | "deal"
+    | "nightly"
+    | "rating"
+    | "reviews"
+    | "distance"
+    | "unknowns";
   scanPages: number;
 };
 
@@ -20,6 +34,13 @@ export const DEFAULT_HOTEL_FORM: HotelFormState = {
   city: "buenos-aires",
   q: "",
   neighborhood: "",
+  checkInStart: "",
+  checkInEnd: "",
+  nightsMin: 2,
+  nightsMax: 2,
+  adults: 2,
+  pinLat: null,
+  pinLng: null,
   minComfort: 0,
   strictness: "confirmed_or_unknown",
   requireAC: false,
@@ -65,15 +86,32 @@ export function formStateFromSearchParams(
   const minReviews =
     minReviewsRaw === 500 || minReviewsRaw === 1000 ? minReviewsRaw : 200;
   const sortRaw = params.get("sort") ?? "comfort";
-  const sort =
-    sortRaw === "rating" || sortRaw === "reviews" || sortRaw === "unknowns"
-      ? sortRaw
-      : "comfort";
+  const sortAllowed = [
+    "comfort",
+    "deal",
+    "nightly",
+    "rating",
+    "reviews",
+    "distance",
+    "unknowns",
+  ] as const;
+  const sort = sortAllowed.includes(sortRaw as (typeof sortAllowed)[number])
+    ? (sortRaw as HotelFormState["sort"])
+    : "comfort";
   const budget = params.get("budgetMax");
+  const pinLat = params.get("pinLat");
+  const pinLng = params.get("pinLng");
   return {
     city,
     q: params.get("q") ?? "",
     neighborhood: params.get("neighborhood") ?? "",
+    checkInStart: params.get("checkInStart") ?? "",
+    checkInEnd: params.get("checkInEnd") ?? "",
+    nightsMin: clampNum(params.get("nightsMin"), 1, 14, 2),
+    nightsMax: clampNum(params.get("nightsMax"), 1, 14, 2),
+    adults: clampNum(params.get("adults"), 1, 8, 2),
+    pinLat: pinLat != null && pinLat !== "" ? Number(pinLat) : null,
+    pinLng: pinLng != null && pinLng !== "" ? Number(pinLng) : null,
     minComfort: clampNum(params.get("minComfort"), 0, 100, 0),
     strictness:
       params.get("strictness") === "confirmed_only"
@@ -95,6 +133,17 @@ export function formStateToSearchParams(form: HotelFormState): URLSearchParams {
   if (form.city !== DEFAULT_HOTEL_FORM.city) p.set("city", form.city);
   if (form.q) p.set("q", form.q);
   if (form.neighborhood) p.set("neighborhood", form.neighborhood);
+  if (form.checkInStart) p.set("checkInStart", form.checkInStart);
+  if (form.checkInEnd) p.set("checkInEnd", form.checkInEnd);
+  if (form.nightsMin !== 2) p.set("nightsMin", String(form.nightsMin));
+  if (form.nightsMax !== form.nightsMin) {
+    p.set("nightsMax", String(form.nightsMax));
+  } else if (form.nightsMin !== 2) {
+    p.set("nightsMax", String(form.nightsMax));
+  }
+  if (form.adults !== 2) p.set("adults", String(form.adults));
+  if (form.pinLat != null) p.set("pinLat", String(form.pinLat));
+  if (form.pinLng != null) p.set("pinLng", String(form.pinLng));
   if (form.minComfort > 0) p.set("minComfort", String(form.minComfort));
   if (form.strictness !== DEFAULT_HOTEL_FORM.strictness) {
     p.set("strictness", form.strictness);

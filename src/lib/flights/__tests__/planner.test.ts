@@ -149,8 +149,8 @@ describe("planSearch", () => {
       dateRange: { start: "2026-08-01", days: 0 },
     });
     expect(plan.originAirports).toHaveLength(2);
-    expect(plan.destAirports).toHaveLength(100);
-    expect(plan.callCount).toBe(10);
+    expect(plan.destAirports).toHaveLength(125);
+    expect(plan.callCount).toBe(13);
   });
 
   it("rejects Anywhere to Anywhere", () => {

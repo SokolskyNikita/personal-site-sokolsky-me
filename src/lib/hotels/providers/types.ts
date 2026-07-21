@@ -153,6 +153,21 @@ export type ProviderCallLog = {
   error?: string;
 };
 
+export type TripadvisorSearchResult = {
+  places: Array<{
+    title?: string;
+    rating?: number;
+    reviews?: number;
+    place_id?: string | number;
+    location?: string;
+    type?: string;
+    link?: string;
+    position?: number;
+  }>;
+  searchId?: string;
+  raw: unknown;
+};
+
 export interface HotelDataProvider {
   listProperties(
     query: ListPropertiesQuery,
@@ -160,4 +175,7 @@ export interface HotelDataProvider {
   ): Promise<HotelListPage>;
 
   getProperty(query: GetPropertyQuery): Promise<HotelPropertyPage>;
+
+  /** Optional — P2 TA concordance. */
+  searchTripadvisor?(q: string): Promise<TripadvisorSearchResult>;
 }

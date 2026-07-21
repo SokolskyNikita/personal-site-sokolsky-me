@@ -15,7 +15,7 @@ export type LocationEntry = {
   refs?: string[];
 };
 
-/** Registry id for the worldwide top-100 airport set. */
+/** Registry id for the worldwide top-125 airport set. */
 export const ANYWHERE_LOCATION_ID = "anywhere";
 
 /**
@@ -26,9 +26,9 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
   anywhere: {
     id: ANYWHERE_LOCATION_ID,
     type: "continent",
-    label: "Anywhere (top 100 airports)",
-    // Approximate world top 100 by passenger traffic: Wikipedia/ACI 2025
-    // top 50, then other recent high-traffic airports through ~100.
+    label: "Anywhere (top 125 airports)",
+    // Approximate world top 125 by passenger traffic from Wikipedia/ACI
+    // regional rankings (2024–2025) and FAA enplanements.
     airports: [
       "ATL",
       "DXB",
@@ -130,6 +130,31 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
       "VIE",
       "YVR",
       "AUH",
+      "ATH",
+      "MXP",
+      "WUH",
+      "IAD",
+      "AGP",
+      "LIM",
+      "BER",
+      "SCL",
+      "SAN",
+      "BNA",
+      "TPA",
+      "WAW",
+      "DCA",
+      "VKO",
+      "CGH",
+      "HEL",
+      "AUS",
+      "HNL",
+      "LED",
+      "PTY",
+      "MDW",
+      "LTN",
+      "PDX",
+      "GVA",
+      "GDL",
     ],
   },
   "buenos-aires": {
@@ -542,6 +567,10 @@ export const AIRPORT_CITY_LABELS: Record<string, string> = {
   MEL: "Melbourne",
   SVO: "Moscow",
   DME: "Moscow",
+  VKO: "Moscow",
+  LED: "Saint Petersburg",
+  WUH: "Wuhan",
+  PTY: "Panama City",
 };
 
 export function airportLabel(code: string): string {

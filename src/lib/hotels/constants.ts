@@ -8,6 +8,9 @@ export const BAYES_K = 150;
 export const DEAL_MIN_SCORE = 40;
 export const DEAL_MIN_SAMPLE = 12;
 export const WINDOW_CAP = 21;
+export const PRICE_CACHE_TTL_HOURS = 6;
+/** Skip a window list call when this many index tokens already have fresh prices. */
+export const PRICE_CACHE_HIT_THRESHOLD = 12;
 
 /** Quality-scan stay: nearest Tue→Thu ≥ 21 days out (computed at call time). */
 export function qualityScanDates(now = new Date()): {

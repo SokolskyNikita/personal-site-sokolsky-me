@@ -1,0 +1,183 @@
+import { describe, expect, it } from "vitest";
+import { createMemoryHotelsRepository } from "../db";
+import { FixtureProvider } from "../providers/fixtures";
+import { runPriceSweep } from "../prices";
+import { matchTripadvisor, normalizeTitle, ratingConcordance } from "../ta";
+
+describe("tripadvisor concordance", () => {
+  it("matches exact Four Seasons title", () => {
+    const m = matchTripadvisor(
+      "Four Seasons Hotel Buenos Aires",
+      "Buenos Aires",
+      [
+        {
+          title: "Four Seasons Hotel Buenos Aires",
+          rating: 4.7,
+          reviews: 2278,
+          place_id: "x",
+          location: "Buenos Aires",
+        },
+        {
+          title: "Four Seasons Hotel Prague",
+          rating: 4.8,
+          reviews: 100,
+          location: "Prague",
+        },
+      ],
+    );
+    expect(m?.rating).toBe(4.7);
+    expect(m?.confidence).toBe("exact");
+  });
+
+  it("refuses ambiguous near-duplicates", () => {
+    const m = matchTripadvisor("Alvear", "Buenos Aires", [
+      { title: "Alvear Palace Hotel", rating: 4.5, reviews: 100 },
+      { title: "Alvear Icon Hotel", rating: 4.6, reviews: 100 },
+    ]);
+    expect(m).toBeNull();
+  });
+
+  it("normalize strips hotel filler words", () => {
+    expect(normalizeTitle("The Four Seasons Hotel")).toBe("four seasons");
+  });
+
+  it("ratingConcordance buckets", () => {
+    expect(ratingConcordance(4.7, 4.7)).toBe("agree");
+    expect(ratingConcordance(4.7, 4.4)).toBe("soft");
+    expect(ratingConcordance(4.7, 3.9)).toBe("diverge");
+    expect(ratingConcordance(null, 4.5)).toBe("unknown");
+  });
+});
+
+describe("price sweep (fixtures)", () => {
+  it("joins dated list prices onto index tokens", async () => {
+    const db = createMemoryHotelsRepository();
+    const cityId = await db.ensureCity({
+      slug: "buenos-aires",
+      display: "Buenos Aires",
+      query: "Buenos Aires",
+    });
+    // Seed a few tokens from the fixture list.
+    const provider = new FixtureProvider();
+    const page = await provider.listProperties({
+      q: "Buenos Aires",
+      checkIn: "2026-08-11",
+      checkOut: "2026-08-13",
+      sortBy: "most_reviewed",
+    });
+    for (const raw of page.properties.slice(0, 6)) {
+      if (!raw.property_token || !raw.name) continue;
+      await db.upsertScored(cityId, {
+        property: {
+          token: raw.property_token,
+          name: raw.name,
+          citySlug: "buenos-aires",
+          type: "hotel",
+          lat: null,
+          lng: null,
+          hotelClass: null,
+          brandTier: 0,
+          rating: typeof raw.rating === "number" ? raw.rating : null,
+          reviews: typeof raw.reviews === "number" ? raw.reviews : null,
+          amenities: [],
+          histogram: null,
+          breakdown: [],
+          lowStarShare: null,
+          worstCategory: null,
+          worstCategoryNeg: null,
+          taRating: null,
+          taReviews: null,
+          taRank: null,
+          taTotal: null,
+          whitelist: [],
+          nightlyUsd: null,
+          totalUsd: null,
+          googleHotelsUrl: null,
+          provider: "fixture",
+          raw,
+          observedAt: new Date().toISOString(),
+        },
+        facts: {
+          hasAC: {
+            value: null,
+            status: "unknown",
+            sources: [],
+            observedAt: "",
+          },
+          hasElevator: {
+            value: null,
+            status: "unknown",
+            sources: [],
+            observedAt: "",
+          },
+          hasWifi: {
+            value: null,
+            status: "unknown",
+            sources: [],
+            observedAt: "",
+          },
+          frontDesk24h: {
+            value: null,
+            status: "unknown",
+            sources: [],
+            observedAt: "",
+          },
+          freeCancellationSeen: {
+            value: null,
+            status: "unknown",
+            sources: [],
+            observedAt: "",
+          },
+        },
+        gates: [],
+        gatedOut: false,
+        score: 50,
+        subscores: {
+          quality: 40,
+          consistencyPenalty: 0,
+          plantPenalty: 0,
+          brandBonus: 0,
+          taBonus: 0,
+          whitelistBonus: 0,
+          classNudge: 0,
+          bayesRating: 4.2,
+          maxNegRate: 0,
+          worstPlantCategory: null,
+        },
+        scoringVersion: 1,
+      });
+    }
+
+    const sweep = await runPriceSweep({
+      citySlug: "buenos-aires",
+      provider,
+      db,
+      windows: {
+        checkInStart: "2026-08-11",
+        checkInEnd: "2026-08-11",
+        nightsMin: 2,
+        nightsMax: 2,
+      },
+    });
+
+    expect(sweep.windows).toHaveLength(1);
+    expect(sweep.liveCalls).toBe(1);
+    expect(sweep.pricedCount).toBeGreaterThanOrEqual(1);
+    expect(sweep.properties.some((p) => p.bestStay != null)).toBe(true);
+
+    // Second pass should hit cache and skip the list call.
+    const again = await runPriceSweep({
+      citySlug: "buenos-aires",
+      provider,
+      db,
+      windows: {
+        checkInStart: "2026-08-11",
+        checkInEnd: "2026-08-11",
+        nightsMin: 2,
+        nightsMax: 2,
+      },
+    });
+    expect(again.windowsSkippedCache).toBe(1);
+    expect(again.liveCalls).toBe(0);
+  });
+});

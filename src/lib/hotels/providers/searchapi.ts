@@ -6,6 +6,7 @@ import type {
   ListPropertiesQuery,
   SearchApiListProperty,
   SearchApiPropertyDetails,
+  TripadvisorSearchResult,
 } from "./types";
 
 export type SearchApiFetch = (
@@ -140,6 +141,22 @@ export class SearchApiHotelProvider implements HotelDataProvider {
     return {
       property: data.property,
       requestUrl: data.search_metadata?.request_url,
+      searchId: data.search_metadata?.id,
+      raw: data,
+    };
+  }
+
+  async searchTripadvisor(q: string): Promise<TripadvisorSearchResult> {
+    this.assertLive();
+    const url = new URL(this.baseUrl);
+    url.searchParams.set("engine", "tripadvisor");
+    url.searchParams.set("q", q);
+    const data = (await this.fetchJson(url, "tripadvisor")) as {
+      place_results?: TripadvisorSearchResult["places"];
+      search_metadata?: { id?: string };
+    };
+    return {
+      places: data.place_results ?? [],
       searchId: data.search_metadata?.id,
       raw: data,
     };

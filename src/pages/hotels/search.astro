@@ -66,7 +66,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <section class="fs-form-section" aria-labelledby="hs-where-heading">
           <header class="fs-section-heading">
             <h2 id="hs-where-heading">Where &amp; when</h2>
-            <p>City preset, free text, or neighborhood box. Quality index is date-agnostic; prices come later.</p>
+            <p>
+              City preset or free text. Optional stay window prices the comfort
+              index (one list call per window, cached 6h).
+            </p>
           </header>
           <div class="fs-primary">
             <div class="fs-field">
@@ -85,6 +88,62 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
             <div class="fs-field">
               <label for="hs-neighborhood">Neighborhood</label>
               <select id="hs-neighborhood"></select>
+            </div>
+            <div class="fs-field">
+              <label for="hs-checkin-start">Check-in from</label>
+              <input id="hs-checkin-start" type="date" />
+            </div>
+            <div class="fs-field">
+              <label for="hs-checkin-end">Check-in to</label>
+              <input id="hs-checkin-end" type="date" />
+            </div>
+            <div class="fs-field">
+              <label for="hs-nights-min">Nights min</label>
+              <input
+                id="hs-nights-min"
+                type="number"
+                min="1"
+                max="14"
+                value={String(DEFAULT_HOTEL_FORM.nightsMin)}
+              />
+            </div>
+            <div class="fs-field">
+              <label for="hs-nights-max">Nights max</label>
+              <input
+                id="hs-nights-max"
+                type="number"
+                min="1"
+                max="14"
+                value={String(DEFAULT_HOTEL_FORM.nightsMax)}
+              />
+            </div>
+            <div class="fs-field">
+              <label for="hs-adults">Adults</label>
+              <input
+                id="hs-adults"
+                type="number"
+                min="1"
+                max="8"
+                value={String(DEFAULT_HOTEL_FORM.adults)}
+              />
+            </div>
+            <div class="fs-field">
+              <label for="hs-pin-lat">Pin lat</label>
+              <input
+                id="hs-pin-lat"
+                type="number"
+                step="0.0001"
+                placeholder="optional"
+              />
+            </div>
+            <div class="fs-field">
+              <label for="hs-pin-lng">Pin lng</label>
+              <input
+                id="hs-pin-lng"
+                type="number"
+                step="0.0001"
+                placeholder="optional"
+              />
             </div>
           </div>
         </section>
@@ -124,8 +183,11 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <label for="hs-sort">Sort</label>
               <select id="hs-sort">
                 <option value="comfort" selected>Comfort</option>
+                <option value="deal">Best deal (needs dates)</option>
+                <option value="nightly">$/night</option>
                 <option value="rating">Rating</option>
                 <option value="reviews">Reviews</option>
+                <option value="distance">Distance to pin</option>
                 <option value="unknowns">Fewest unknowns</option>
               </select>
             </div>

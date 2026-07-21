@@ -51,13 +51,13 @@ describe("resolveLocation", () => {
     expect(resolveLocation("madrid")).toEqual(["MAD"]);
   });
 
-  it("resolves Anywhere to the top 100 airports by passenger traffic", () => {
+  it("resolves Anywhere to the top 125 airports by passenger traffic", () => {
     const airports = resolveLocation(ANYWHERE_LOCATION_ID);
-    expect(airports).toHaveLength(100);
-    expect(new Set(airports).size).toBe(100);
+    expect(airports).toHaveLength(125);
+    expect(new Set(airports).size).toBe(125);
     expect(airports[0]).toBe("ATL");
     expect(airports).toContain("DXB");
-    expect(airports).toContain("AUH");
+    expect(airports).toContain("GDL");
   });
 
   it("rejects Anywhere to Anywhere but allows Anywhere on one side", () => {

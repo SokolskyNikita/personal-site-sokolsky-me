@@ -61,6 +61,16 @@ export type PropertyRow = {
   enriched_at: number | null;
 };
 
+export type PriceCacheRow = {
+  token: string;
+  check_in: string;
+  check_out: string;
+  nightly_usd: number | null;
+  total_usd: number | null;
+  source: string | null;
+  fetched_at: number;
+};
+
 export interface HotelsRepository {
   ensureCity(input: {
     slug: string;
@@ -78,6 +88,31 @@ export interface HotelsRepository {
   upsertScored(cityId: number, scored: ScoredProperty): Promise<void>;
   listByCityScore(cityId: number, limit?: number): Promise<PropertyRow[]>;
   listRawByCity(cityId: number): Promise<PropertyRow[]>;
+  upsertPrice(input: {
+    token: string;
+    checkIn: string;
+    checkOut: string;
+    nightlyUsd: number | null;
+    totalUsd: number | null;
+    source?: string;
+    fetchedAt: number;
+  }): Promise<void>;
+  listPricesForTokens(
+    tokens: string[],
+    checkIn: string,
+    checkOut: string,
+    fresherThan: number,
+  ): Promise<PriceCacheRow[]>;
+  listPricesForWindows(
+    tokens: string[],
+    windows: { checkIn: string; checkOut: string }[],
+    fresherThan: number,
+  ): Promise<PriceCacheRow[]>;
+  updateTaFields(input: {
+    token: string;
+    taRating: number | null;
+    taReviews: number | null;
+  }): Promise<void>;
 }
 
 export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
@@ -211,6 +246,67 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
         .all<PropertyRow>();
       return results;
     },
+
+    async upsertPrice(input) {
+      await db
+        .prepare(
+          `INSERT INTO price_cache (token, check_in, check_out, nightly_usd, total_usd, source, fetched_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(token, check_in, check_out) DO UPDATE SET
+             nightly_usd=excluded.nightly_usd,
+             total_usd=excluded.total_usd,
+             source=excluded.source,
+             fetched_at=excluded.fetched_at`,
+        )
+        .bind(
+          input.token,
+          input.checkIn,
+          input.checkOut,
+          input.nightlyUsd,
+          input.totalUsd,
+          input.source ?? "searchapi",
+          input.fetchedAt,
+        )
+        .run();
+    },
+
+    async listPricesForTokens(tokens, checkIn, checkOut, fresherThan) {
+      if (!tokens.length) return [];
+      const placeholders = tokens.map(() => "?").join(",");
+      const { results } = await db
+        .prepare(
+          `SELECT * FROM price_cache
+           WHERE check_in = ? AND check_out = ? AND fetched_at >= ?
+             AND token IN (${placeholders})`,
+        )
+        .bind(checkIn, checkOut, fresherThan, ...tokens)
+        .all<PriceCacheRow>();
+      return results;
+    },
+
+    async listPricesForWindows(tokens, windows, fresherThan) {
+      if (!tokens.length || !windows.length) return [];
+      const out: PriceCacheRow[] = [];
+      for (const w of windows) {
+        const rows = await this.listPricesForTokens(
+          tokens,
+          w.checkIn,
+          w.checkOut,
+          fresherThan,
+        );
+        out.push(...rows);
+      }
+      return out;
+    },
+
+    async updateTaFields(input) {
+      await db
+        .prepare(
+          `UPDATE properties SET ta_rating = ?, ta_reviews = ? WHERE token = ?`,
+        )
+        .bind(input.taRating, input.taReviews, input.token)
+        .run();
+    },
   };
 }
 
@@ -218,17 +314,21 @@ export function createD1HotelsRepository(db: HotelsD1): HotelsRepository {
 export function createMemoryHotelsRepository(): HotelsRepository & {
   cities: Map<string, CityRow>;
   properties: Map<string, PropertyRow>;
+  prices: PriceCacheRow[];
 } {
   const cities = new Map<string, CityRow>();
   const properties = new Map<string, PropertyRow>();
+  const prices: PriceCacheRow[] = [];
   let nextId = 1;
 
   const repo: HotelsRepository & {
     cities: Map<string, CityRow>;
     properties: Map<string, PropertyRow>;
+    prices: PriceCacheRow[];
   } = {
     cities,
     properties,
+    prices,
     async ensureCity(input) {
       const existing = cities.get(input.slug);
       if (existing) return existing.id;
@@ -298,6 +398,55 @@ export function createMemoryHotelsRepository(): HotelsRepository & {
     },
     async listRawByCity(cityId) {
       return [...properties.values()].filter((p) => p.city_id === cityId);
+    },
+    async upsertPrice(input) {
+      const idx = prices.findIndex(
+        (p) =>
+          p.token === input.token &&
+          p.check_in === input.checkIn &&
+          p.check_out === input.checkOut,
+      );
+      const row: PriceCacheRow = {
+        token: input.token,
+        check_in: input.checkIn,
+        check_out: input.checkOut,
+        nightly_usd: input.nightlyUsd,
+        total_usd: input.totalUsd,
+        source: input.source ?? "searchapi",
+        fetched_at: input.fetchedAt,
+      };
+      if (idx >= 0) prices[idx] = row;
+      else prices.push(row);
+    },
+    async listPricesForTokens(tokens, checkIn, checkOut, fresherThan) {
+      const set = new Set(tokens);
+      return prices.filter(
+        (p) =>
+          set.has(p.token) &&
+          p.check_in === checkIn &&
+          p.check_out === checkOut &&
+          p.fetched_at >= fresherThan,
+      );
+    },
+    async listPricesForWindows(tokens, windows, fresherThan) {
+      const out: PriceCacheRow[] = [];
+      for (const w of windows) {
+        out.push(
+          ...(await this.listPricesForTokens(
+            tokens,
+            w.checkIn,
+            w.checkOut,
+            fresherThan,
+          )),
+        );
+      }
+      return out;
+    },
+    async updateTaFields(input) {
+      const row = properties.get(input.token);
+      if (!row) return;
+      row.ta_rating = input.taRating;
+      row.ta_reviews = input.taReviews;
     },
   };
   return repo;
