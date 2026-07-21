@@ -535,7 +535,6 @@ export function mountFlightSearch(root: HTMLElement): void {
       progress.textContent = formatSearchProgress(
         `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`,
         allOptions,
-        currentCitySide(),
       );
       showSearchProgress(
         "Searching flights",
@@ -610,7 +609,6 @@ export function mountFlightSearch(root: HTMLElement): void {
         ? `Cancelled after ${completedSteps} of ${planData.plan.callCount} batches. Partial results are shown.`
         : `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`,
       allOptions,
-      currentCitySide(),
     );
     renderCostSummary(searchSummary, stats.callsMade, stats.cacheHits);
     results.removeAttribute("aria-busy");
@@ -641,13 +639,23 @@ function countDistinctCities(
   return cities.size;
 }
 
+/**
+ * Distinct cities on the busier side of the route (arrival or departure).
+ * Avoids undercounting when the city-group control is set to the single-city side.
+ */
+function countCitiesFound(options: ItineraryOption[]): number {
+  return Math.max(
+    countDistinctCities(options, "departure"),
+    countDistinctCities(options, "arrival"),
+  );
+}
+
 /** Append "Cities found" when more than two distinct cities appear in results. */
 function formatSearchProgress(
   base: string,
   options: ItineraryOption[],
-  side: CityGroupSide,
 ): string {
-  const cities = countDistinctCities(options, side);
+  const cities = countCitiesFound(options);
   if (cities <= 2) return base;
   return `${base} · Cities found: ${cities}`;
 }
