@@ -13,7 +13,7 @@ import { airportLabel } from "../../lib/flights/locations";
 import {
   defaultCityGroupSide,
   isAnywhereToAnywhere,
-  listRegistryOptions,
+  listRegistryOptionSections,
 } from "../../lib/flights/resolver";
 import {
   SEARCH_MODES,
@@ -1026,11 +1026,21 @@ function formatCabinDetail(option: ItineraryOption): string {
 }
 
 function populateSelects(root: HTMLElement): void {
-  const registry = listRegistryOptions();
+  const sections = listRegistryOptionSections();
+  const registryHtml = sections
+    .map((section) => {
+      const options = section.options
+        .map(
+          (o) =>
+            `<option value="${escapeAttr(o.id)}">${escapeHtml(o.label)}</option>`,
+        )
+        .join("");
+      if (section.continent === null) return options;
+      return `<optgroup label="${escapeAttr(section.continent)}">${options}</optgroup>`;
+    })
+    .join("");
   for (const sel of root.querySelectorAll<HTMLSelectElement>("[data-registry]")) {
-    sel.innerHTML = registry
-      .map((o) => `<option value="${escapeAttr(o.id)}">${escapeHtml(o.label)}</option>`)
-      .join("");
+    sel.innerHTML = registryHtml;
   }
   const modeSel = root.querySelector<HTMLSelectElement>("#fs-mode")!;
   modeSel.innerHTML = SEARCH_MODES.map(

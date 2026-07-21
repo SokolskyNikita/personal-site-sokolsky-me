@@ -5,10 +5,36 @@ export type LocationType =
   | "region"
   | "continent";
 
+/** Dropdown continent groups (Anywhere is pinned above these). */
+export type ContinentGroup =
+  | "Africa"
+  | "Asia"
+  | "Europe"
+  | "North America"
+  | "Oceania"
+  | "South America"
+  | "Worldwide";
+
+/** Alphabetical continent order for the origin/destination selects. */
+export const CONTINENT_GROUP_ORDER: ContinentGroup[] = [
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "Oceania",
+  "South America",
+  "Worldwide",
+];
+
 export type LocationEntry = {
   id: string;
   type: LocationType;
   label: string;
+  /**
+   * Dropdown continent group. `null` pins the entry above all groups
+   * (used for Anywhere).
+   */
+  continent: ContinentGroup | null;
   /** Direct IATA codes owned by this entry. */
   airports?: string[];
   /** Other registry ids to compose recursively. */
@@ -27,6 +53,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: ANYWHERE_LOCATION_ID,
     type: "continent",
     label: "Anywhere (top 125 airports)",
+    continent: null,
     // Approximate world top 125 by passenger traffic from Wikipedia/ACI
     // regional rankings (2024–2025) and FAA enplanements.
     airports: [
@@ -161,54 +188,63 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "buenos-aires",
     type: "city",
     label: "Buenos Aires (all airports)",
+    continent: "South America",
     airports: ["EZE", "AEP"],
   },
   london: {
     id: "london",
     type: "city",
     label: "London (all airports)",
+    continent: "Europe",
     airports: ["LHR", "LGW", "STN", "LTN", "LCY", "SEN"],
   },
   madrid: {
     id: "madrid",
     type: "city",
     label: "Madrid (all airports)",
+    continent: "Europe",
     airports: ["MAD"],
   },
   seattle: {
     id: "seattle",
     type: "city",
     label: "Seattle (all airports)",
+    continent: "North America",
     airports: ["SEA", "PAE", "BFI"],
   },
   "san-francisco": {
     id: "san-francisco",
     type: "city",
     label: "San Francisco (all airports)",
+    continent: "North America",
     airports: ["SFO", "OAK", "SJC"],
   },
   "new-york": {
     id: "new-york",
     type: "city",
     label: "New York City (all airports)",
+    continent: "North America",
     airports: ["JFK", "LGA", "EWR"],
   },
   tashkent: {
     id: "tashkent",
     type: "city",
     label: "Tashkent (all airports)",
+    continent: "Asia",
     airports: ["TAS", "TVT"],
   },
   prague: {
     id: "prague",
     type: "city",
     label: "Prague (all airports)",
+    continent: "Europe",
     airports: ["PRG", "VOD"],
   },
   "usa-gateways": {
     id: "usa-gateways",
     type: "country",
     label: "USA gateways",
+    continent: "North America",
     // Top 35 US airports by 2024 total passenger traffic (ACI-NA).
     airports: [
       "ATL",
@@ -252,6 +288,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "canada-gateways",
     type: "country",
     label: "Canada gateways",
+    continent: "North America",
     // Top 6 Canadian airports by 2024 passenger traffic.
     airports: ["YYZ", "YVR", "YUL", "YYC", "YEG", "YOW"],
   },
@@ -259,6 +296,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "uk-ireland-gateways",
     type: "region",
     label: "United Kingdom and Ireland gateways",
+    continent: "Europe",
     // Combined top 10 by 2024 passenger traffic.
     airports: [
       "LHR",
@@ -277,6 +315,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "schengen-eu-gateways",
     type: "region",
     label: "Schengen and EU gateways",
+    continent: "Europe",
     // Top Schengen/EU airports by passenger traffic, including Canary
     // Islands and Madeira (Spanish/Portuguese Atlantic islands).
     airports: [
@@ -332,6 +371,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "mexico-gateways",
     type: "country",
     label: "Mexico gateways",
+    continent: "North America",
     // Top 6 Mexican airports by 2024 passenger traffic.
     airports: ["MEX", "CUN", "GDL", "MTY", "TIJ", "SJD"],
   },
@@ -339,6 +379,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "south-america-gateways",
     type: "continent",
     label: "South America gateways",
+    continent: "South America",
     // Top 15 South American airports by 2024 passenger traffic.
     airports: [
       "GRU",
@@ -362,6 +403,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "africa-gateways",
     type: "continent",
     label: "Africa (except sub-Saharan)",
+    continent: "Africa",
     // Top 15 Northern African airports by passenger traffic (Wikipedia
     // Africa rankings 2024–2025). Excludes Canary Islands and Madeira
     // (those live under Schengen/EU gateways).
@@ -387,6 +429,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "sub-saharan-africa-gateways",
     type: "region",
     label: "Africa (Sub-Saharan)",
+    continent: "Africa",
     // Top 15 Sub-Saharan African airports by 2024 passenger traffic.
     airports: [
       "JNB",
@@ -410,6 +453,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "east-asia-gateways",
     type: "region",
     label: "East Asia gateways",
+    continent: "Asia",
     // Top 15 East Asian airports by 2024 passenger traffic.
     airports: [
       "HND",
@@ -433,6 +477,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "oceania-gateways",
     type: "region",
     label: "Oceania (Australia and New Zealand) gateways",
+    continent: "Oceania",
     // Combined top 10 Australian and New Zealand airports by 2024 passenger traffic.
     airports: [
       "SYD",
@@ -451,6 +496,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "vietnam",
     type: "country",
     label: "Vietnam gateways",
+    continent: "Asia",
     // Top 6 Vietnamese airports by 2024 passenger traffic.
     airports: ["SGN", "HAN", "DAD", "CXR", "PQC", "HPH"],
   },
@@ -458,6 +504,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "germany-gateways",
     type: "country",
     label: "Germany gateways",
+    continent: "Europe",
     // Top 5 German airports by 2024 passenger traffic.
     airports: ["FRA", "MUC", "BER", "DUS", "HAM"],
   },
@@ -465,6 +512,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "lcc-airports",
     type: "region",
     label: "LCC airports",
+    continent: "Worldwide",
     // Major low-cost carrier hubs / secondary airports by approximate
     // annual passengers and dominant LCC presence.
     airports: [

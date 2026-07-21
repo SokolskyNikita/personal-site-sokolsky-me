@@ -8,6 +8,7 @@ import {
   isAnywhereToAnywhere,
   isRawIata,
   isSingleCityLocation,
+  listRegistryOptionSections,
   listRegistryOptions,
   normalizeLocationRef,
   resolveLocation,
@@ -197,6 +198,7 @@ describe("resolveLocation", () => {
       id: "test-composed",
       type: "region",
       label: "Test composed",
+      continent: "North America",
       airports: ["YYZ"],
       refs: ["canada-gateways", "mexico-gateways"],
     };
@@ -228,12 +230,14 @@ describe("resolveLocation", () => {
       id: "cycle-a",
       type: "region",
       label: "Cycle A",
+      continent: "Worldwide",
       refs: ["cycle-b"],
     };
     LOCATION_REGISTRY["cycle-b"] = {
       id: "cycle-b",
       type: "region",
       label: "Cycle B",
+      continent: "Worldwide",
       refs: ["cycle-a"],
     };
     try {
@@ -262,34 +266,53 @@ describe("IATA helpers", () => {
 });
 
 describe("registry options", () => {
-  it("lists alphabetized gateways before alphabetized cities", () => {
-    expect(listRegistryOptions().map(({ id, label }) => [id, label])).toEqual([
-      ["africa-gateways", "Africa (except sub-Saharan)"],
-      ["sub-saharan-africa-gateways", "Africa (Sub-Saharan)"],
-      ["anywhere", "Anywhere (top 125 airports)"],
-      ["canada-gateways", "Canada gateways"],
-      ["east-asia-gateways", "East Asia gateways"],
-      ["germany-gateways", "Germany gateways"],
-      ["lcc-airports", "LCC airports"],
-      ["mexico-gateways", "Mexico gateways"],
+  it("lists Anywhere first, then alphabetized options within continents", () => {
+    expect(
+      listRegistryOptionSections().map(({ continent, options }) => [
+        continent,
+        options.map(({ id }) => id),
+      ]),
+    ).toEqual([
+      [null, ["anywhere"]],
       [
-        "oceania-gateways",
-        "Oceania (Australia and New Zealand) gateways",
+        "Africa",
+        ["africa-gateways", "sub-saharan-africa-gateways"],
       ],
-      ["schengen-eu-gateways", "Schengen and EU gateways"],
-      ["south-america-gateways", "South America gateways"],
-      ["uk-ireland-gateways", "United Kingdom and Ireland gateways"],
-      ["usa-gateways", "USA gateways"],
-      ["vietnam", "Vietnam gateways"],
-      ["buenos-aires", "Buenos Aires (all airports)"],
-      ["london", "London (all airports)"],
-      ["madrid", "Madrid (all airports)"],
-      ["new-york", "New York City (all airports)"],
-      ["prague", "Prague (all airports)"],
-      ["san-francisco", "San Francisco (all airports)"],
-      ["seattle", "Seattle (all airports)"],
-      ["tashkent", "Tashkent (all airports)"],
+      ["Asia", ["east-asia-gateways", "tashkent", "vietnam"]],
+      [
+        "Europe",
+        [
+          "germany-gateways",
+          "london",
+          "madrid",
+          "prague",
+          "schengen-eu-gateways",
+          "uk-ireland-gateways",
+        ],
+      ],
+      [
+        "North America",
+        [
+          "canada-gateways",
+          "mexico-gateways",
+          "new-york",
+          "san-francisco",
+          "seattle",
+          "usa-gateways",
+        ],
+      ],
+      ["Oceania", ["oceania-gateways"]],
+      [
+        "South America",
+        ["buenos-aires", "south-america-gateways"],
+      ],
+      ["Worldwide", ["lcc-airports"]],
     ]);
+
+    expect(listRegistryOptions()[0]).toEqual({
+      id: "anywhere",
+      label: "Anywhere (top 125 airports)",
+    });
   });
 });
 

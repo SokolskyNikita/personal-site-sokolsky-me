@@ -1,4 +1,9 @@
-import { ANYWHERE_LOCATION_ID, LOCATION_REGISTRY } from "./locations";
+import {
+  ANYWHERE_LOCATION_ID,
+  CONTINENT_GROUP_ORDER,
+  LOCATION_REGISTRY,
+  type ContinentGroup,
+} from "./locations";
 import type { CityGroupSide, LocationRef } from "./types";
 
 const IATA_RE = /^[A-Z]{3}$/;
@@ -102,17 +107,51 @@ export function resolveLocation(ref: LocationRef): string[] {
   return airports;
 }
 
-export function listRegistryOptions(): Array<{ id: string; label: string }> {
-  return Object.values(LOCATION_REGISTRY)
-    .sort((a, b) => {
-      const aGroup = a.type === "city" ? 1 : 0;
-      const bGroup = b.type === "city" ? 1 : 0;
-      return aGroup - bGroup || a.label.localeCompare(b.label, "en");
-    })
-    .map((entry) => ({
-      id: entry.id,
-      label: entry.label,
-    }));
+export type RegistryOption = { id: string; label: string };
+
+/** One dropdown section: pinned top options (`continent: null`) or an optgroup. */
+export type RegistryOptionSection = {
+  continent: ContinentGroup | null;
+  options: RegistryOption[];
+};
+
+/**
+ * Origin/destination dropdown sections: Anywhere first, then continent
+ * optgroups with alphabetized options.
+ */
+export function listRegistryOptionSections(): RegistryOptionSection[] {
+  const pinned: RegistryOption[] = [];
+  const byContinent = new Map<ContinentGroup, RegistryOption[]>();
+
+  for (const entry of Object.values(LOCATION_REGISTRY)) {
+    const option = { id: entry.id, label: entry.label };
+    if (entry.continent === null) {
+      pinned.push(option);
+      continue;
+    }
+    const list = byContinent.get(entry.continent) ?? [];
+    list.push(option);
+    byContinent.set(entry.continent, list);
+  }
+
+  pinned.sort((a, b) => a.label.localeCompare(b.label, "en"));
+
+  const sections: RegistryOptionSection[] = [];
+  if (pinned.length > 0) {
+    sections.push({ continent: null, options: pinned });
+  }
+  for (const continent of CONTINENT_GROUP_ORDER) {
+    const options = byContinent.get(continent);
+    if (!options?.length) continue;
+    options.sort((a, b) => a.label.localeCompare(b.label, "en"));
+    sections.push({ continent, options });
+  }
+  return sections;
+}
+
+/** Flat registry options in dropdown order (Anywhere, then by continent). */
+export function listRegistryOptions(): RegistryOption[] {
+  return listRegistryOptionSections().flatMap((section) => section.options);
 }
 
 /** True for Anywhere or a multi-airport gateway / region registry entry. */
