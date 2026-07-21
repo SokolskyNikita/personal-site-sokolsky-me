@@ -4,12 +4,17 @@ import {
   type FlightEnv,
 } from "./lib/flights/api";
 import {
+  handleHotelsApi,
+  isHotelsApiPath,
+  type HotelsEnv,
+} from "./lib/hotels";
+import {
   handlePredictionMarketOdds,
   isPredictionMarketOddsPath,
 } from "./lib/prediction-markets";
 export { FlightQuotaCoordinator } from "./lib/flights/quota-do";
 
-export interface Env extends FlightEnv {
+export interface Env extends FlightEnv, HotelsEnv {
   ASSETS: AssetFetcher;
   AI_COMPASS_DB?: D1Database;
 }
@@ -114,6 +119,10 @@ export default {
 
     if (isFlightApiPath(url.pathname)) {
       return handleFlightApi(request, env, url);
+    }
+
+    if (isHotelsApiPath(url.pathname)) {
+      return handleHotelsApi(request, env, url);
     }
 
     if (isPredictionMarketOddsPath(url.pathname)) {
