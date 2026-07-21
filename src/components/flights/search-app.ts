@@ -1,4 +1,9 @@
 import {
+  convertCurrency,
+  parseSearchCurrency,
+  type SearchCurrency,
+} from "../../lib/flights/currency";
+import {
   formatDateHeader,
   formatDuration,
   formatPrice,
@@ -140,6 +145,13 @@ export function mountFlightSearch(root: HTMLElement): void {
     return citySideSelect.value === "arrival" ? "arrival" : "departure";
   }
 
+  function currentCurrency(): SearchCurrency {
+    const selected = root.querySelector<HTMLInputElement>(
+      'input[name="fs-currency"]:checked',
+    )?.value;
+    return parseSearchCurrency(selected, form.currency);
+  }
+
   function syncCityGroupControls(): void {
     const grouped = currentGroupByCity();
     citySideWrap.hidden = !grouped;
@@ -170,6 +182,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       groupByCity: currentGroupByCity(),
       citySort: currentCitySort(),
       citySide: currentCitySide(),
+      currency: currentCurrency(),
     });
   }
 
@@ -181,6 +194,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       groupByCity: currentGroupByCity(),
       citySort: currentCitySort(),
       citySide: currentCitySide(),
+      currency: currentCurrency(),
     });
   }
 
@@ -197,6 +211,15 @@ export function mountFlightSearch(root: HTMLElement): void {
     }
     rerenderLatestResults();
   });
+  for (const input of root.querySelectorAll<HTMLInputElement>(
+    'input[name="fs-currency"]',
+  )) {
+    input.addEventListener("change", () => {
+      form = { ...form, currency: currentCurrency() };
+      syncUrl(form);
+      rerenderLatestResults();
+    });
+  }
 
   // Registry select wins over leftover IATA text.
   for (const id of ["#fs-origin-reg", "#fs-dest-reg"] as const) {
@@ -733,6 +756,17 @@ async function runStep(
   }
 }
 
+function formatDisplayPrice(
+  price: number,
+  fromCurrency: string,
+  displayCurrency: SearchCurrency,
+): string {
+  return formatPrice(
+    convertCurrency(price, fromCurrency, displayCurrency),
+    displayCurrency,
+  );
+}
+
 function renderResults(
   container: HTMLElement,
   options: ItineraryOption[],
@@ -742,9 +776,11 @@ function renderResults(
     groupByCity?: boolean;
     citySort?: CityGroupSort;
     citySide?: CityGroupSide;
+    currency?: SearchCurrency;
   } = {},
 ): void {
   const sort = view.sort ?? "date";
+  const currency = view.currency ?? "USD";
   const errors = [...container.querySelectorAll(".fs-step-error")];
   const html = view.groupByCity
     ? renderCityGroupedResults(
@@ -753,8 +789,9 @@ function renderResults(
         sort,
         view.citySort ?? "cheapest_city",
         view.citySide ?? "departure",
+        currency,
       )
-    : renderDateGroupedResults(options, spec, sort);
+    : renderDateGroupedResults(options, spec, sort, currency);
   container.innerHTML = html;
   for (const err of errors) container.appendChild(err);
 }
@@ -763,6 +800,7 @@ function renderDateGroupedResults(
   options: ItineraryOption[],
   spec: LegSearch,
   sort: DateGroupSort,
+  currency: SearchCurrency,
 ): string {
   const grouped = groupResults(options, { groupBy: "date", topN: spec.topN });
   const dates = orderedGroupKeys(grouped, sort);
@@ -773,7 +811,7 @@ function renderDateGroupedResults(
     const cheapest = dateOptions[0];
     const dayMeta =
       sort === "cheapest_day" && cheapest
-        ? `${formatPrice(cheapest.price, cheapest.currency)} · ${dateOptions.length} ${optionLabel}`
+        ? `${formatDisplayPrice(cheapest.price, cheapest.currency, currency)} · ${dateOptions.length} ${optionLabel}`
         : `${dateOptions.length} ${optionLabel}`;
     html.push(`
       <section class="fs-date-group">
@@ -782,7 +820,7 @@ function renderDateGroupedResults(
           <span>${escapeHtml(dayMeta)}</span>
         </header>
         <div class="fs-result-list">
-          ${dateOptions.map((option) => renderResultCard(option, spec)).join("")}
+          ${dateOptions.map((option) => renderResultCard(option, spec, currency)).join("")}
         </div>
       </section>
     `);
@@ -796,6 +834,7 @@ function renderCityGroupedResults(
   sort: DateGroupSort,
   citySort: CityGroupSort,
   citySide: CityGroupSide,
+  currency: SearchCurrency,
 ): string {
   const cities = groupCheapestByCityAndDate(
     options,
@@ -812,7 +851,7 @@ function renderCityGroupedResults(
       undefined as ItineraryOption | undefined,
     );
     const cityMeta = cheapest
-      ? `${cityGroup.dates.length} ${dayLabel} · from ${formatPrice(cheapest.price, cheapest.currency)}`
+      ? `${cityGroup.dates.length} ${dayLabel} · from ${formatDisplayPrice(cheapest.price, cheapest.currency, currency)}`
       : `${cityGroup.dates.length} ${dayLabel}`;
     const [first, ...rest] = cityGroup.dates;
     html.push(`
@@ -821,7 +860,7 @@ function renderCityGroupedResults(
           <h2>${escapeHtml(cityGroup.city)}</h2>
           <span>${escapeHtml(cityMeta)}</span>
         </header>
-        ${first ? renderCityDateBlock(first.date, first.option, spec) : ""}
+        ${first ? renderCityDateBlock(first.date, first.option, spec, currency) : ""}
     `);
     if (rest.length > 0) {
       const moreLabel =
@@ -835,7 +874,7 @@ function renderCityGroupedResults(
           <div class="fs-city-expand-body">
             ${rest
               .map(({ date, option }) =>
-                renderCityDateBlock(date, option, spec),
+                renderCityDateBlock(date, option, spec, currency),
               )
               .join("")}
           </div>
@@ -851,26 +890,31 @@ function renderCityDateBlock(
   date: string,
   option: ItineraryOption,
   spec: LegSearch,
+  currency: SearchCurrency,
 ): string {
   return `
     <section class="fs-date-group fs-date-group-nested">
       <header class="fs-date-heading">
         <h3>${formatDateHeader(date)}</h3>
-        <span>${escapeHtml(formatPrice(option.price, option.currency))}</span>
+        <span>${escapeHtml(formatDisplayPrice(option.price, option.currency, currency))}</span>
       </header>
       <div class="fs-result-list">
-        ${renderResultCard(option, spec)}
+        ${renderResultCard(option, spec, currency)}
       </div>
     </section>
   `;
 }
 
-function renderResultCard(option: ItineraryOption, spec: LegSearch): string {
+function renderResultCard(
+  option: ItineraryOption,
+  spec: LegSearch,
+  currency: SearchCurrency,
+): string {
   const firstSegment = option.segments[0]!;
   const lastSegment = option.segments.at(-1)!;
   const origin = airportLabel(firstSegment.departureAirport);
   const dest = option.destinationLabel ?? option.destinationAirport;
-  const price = formatPrice(option.price, option.currency);
+  const price = formatDisplayPrice(option.price, option.currency, currency);
   const tripDurationDays = option.returnDate
     ? differenceInCalendarDays(option.departureDate, option.returnDate)
     : undefined;
@@ -1143,6 +1187,12 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
   setVal(root, "#fs-topn", String(form.topN));
   setVal(root, "#fs-start", form.start);
 
+  for (const input of root.querySelectorAll<HTMLInputElement>(
+    'input[name="fs-currency"]',
+  )) {
+    input.checked = input.value === form.currency;
+  }
+
   const startInput = root.querySelector<HTMLInputElement>("#fs-start");
   if (startInput) {
     const min = todayLocalDate();
@@ -1240,6 +1290,11 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
       : base.maxTotalHours,
     topN: Number(root.querySelector<HTMLInputElement>("#fs-topn")?.value) || 2,
     deepSearch: prev.deepSearch,
+    currency: parseSearchCurrency(
+      root.querySelector<HTMLInputElement>('input[name="fs-currency"]:checked')
+        ?.value,
+      prev.currency,
+    ),
   };
 }
 

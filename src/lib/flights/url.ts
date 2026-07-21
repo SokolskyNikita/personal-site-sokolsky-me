@@ -1,3 +1,4 @@
+import { parseSearchCurrency, type SearchCurrency } from "./currency";
 import { DEFAULT_SEARCH_MODE_ID, getSearchMode } from "./modes";
 import {
   LegSearchSchema,
@@ -24,7 +25,7 @@ export const DEFAULT_FORM = {
   maxTotalHours: 24 as MaxTotalHours,
   deepSearch: false,
   topN: 4,
-  currency: "USD",
+  currency: "USD" as SearchCurrency,
   gl: "us",
   hl: "en",
 };
@@ -48,7 +49,8 @@ export type FormState = {
   maxTotalHours: MaxTotalHours;
   deepSearch: boolean;
   topN: number;
-  currency: string;
+  /** Display currency; API searches always run in USD for cache reuse. */
+  currency: SearchCurrency;
   gl: string;
   hl: string;
 };
@@ -89,7 +91,8 @@ export function formStateToLegSearch(form: FormState): LegSearch {
     cabin: form.cabin,
     lieFlatPolicy: form.lieFlatPolicy,
     includeUnverified: false,
-    currency: form.currency,
+    // Always USD so cache keys stay shared across display-currency toggles.
+    currency: "USD",
     gl: form.gl,
     hl: form.hl,
     deepSearch: form.deepSearch,
@@ -175,7 +178,7 @@ export function formStateFromSearchParams(
         ? base.deepSearch
         : params.get("deepSearch") === "1",
     topN: clampInt(params.get("topN"), 1, 20, base.topN),
-    currency: params.get("currency") ?? base.currency,
+    currency: parseSearchCurrency(params.get("currency"), base.currency),
     gl: params.get("gl") ?? base.gl,
     hl: params.get("hl") ?? base.hl,
   };

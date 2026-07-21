@@ -37,11 +37,13 @@ describe("spec ↔ URL round-trip", () => {
     form.maxTotalHours = 36;
     form.topN = 2;
     form.deepSearch = true;
+    form.currency = "EUR";
 
     const params = formStateToSearchParams(form);
     expect(params.get("cabin")).toBe("business");
     expect(params.get("lieFlatPolicy")).toBe("all_segments");
     expect(params.get("maxTotalHours")).toBe("36");
+    expect(params.get("currency")).toBe("EUR");
     expect(params.has("deepSearch")).toBe(false);
 
     const restored = formStateFromSearchParams(params);
@@ -52,11 +54,14 @@ describe("spec ↔ URL round-trip", () => {
     expect(restored.deepSearch).toBe(false);
     expect(restored.origin).toBe(DEFAULT_FORM.origin);
     expect(restored.dest).toBe(DEFAULT_FORM.dest);
+    expect(restored.currency).toBe("EUR");
 
     const spec = formStateToLegSearch(restored);
     expect(spec.cabin).toBe("business");
     expect(spec.lieFlatPolicy).toBe("all_segments");
     expect(spec.maxTotalHours).toBe(36);
+    // Display currency is EUR, but API searches stay in USD for cache reuse.
+    expect(spec.currency).toBe("USD");
   });
 
   it("restores first cabin via URL params without a UI preset", () => {

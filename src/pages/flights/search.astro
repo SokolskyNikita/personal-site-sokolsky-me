@@ -189,6 +189,43 @@ const defaultStart = new Date().toISOString().slice(0, 10);
             <input id="fs-topn" type="number" min="1" max="20" value={String(DEFAULT_FORM.topN)} />
           </div>
 
+          <div class="fs-field">
+            <span class="fs-field-label" id="fs-currency-label">Currency</span>
+            <div
+              class="fs-currency-toggle"
+              role="radiogroup"
+              aria-labelledby="fs-currency-label"
+            >
+              <label class="fs-currency-option">
+                <input
+                  type="radio"
+                  name="fs-currency"
+                  value="USD"
+                  checked={DEFAULT_FORM.currency === "USD"}
+                />
+                <span>USD</span>
+              </label>
+              <label class="fs-currency-option">
+                <input
+                  type="radio"
+                  name="fs-currency"
+                  value="EUR"
+                  checked={DEFAULT_FORM.currency === "EUR"}
+                />
+                <span>EUR</span>
+              </label>
+              <label class="fs-currency-option">
+                <input
+                  type="radio"
+                  name="fs-currency"
+                  value="GBP"
+                  checked={DEFAULT_FORM.currency === "GBP"}
+                />
+                <span>GBP</span>
+              </label>
+            </div>
+          </div>
+
           <div class="fs-toggles">
             <label class="fs-check">
               <input id="fs-round-trip" type="checkbox" />

@@ -2,6 +2,7 @@ export * from "./types";
 export * from "./cabin";
 export * from "./locations";
 export * from "./airport-coords";
+export * from "./currency";
 export * from "./resolver";
 export * from "./classifier";
 export * from "./policy";
