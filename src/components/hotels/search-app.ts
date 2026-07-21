@@ -8,6 +8,7 @@ import {
   type HotelFormState,
 } from "../../lib/hotels/url";
 import { SCAN_PAGES_MOST_REVIEWED } from "../../lib/hotels/constants";
+import { displayHotelName } from "../../lib/hotels/display";
 
 type FactStatus = "confirmed" | "inferred" | "unknown" | "conflicting";
 
@@ -608,7 +609,7 @@ export function mountHotelSearch(root: HTMLElement): void {
           .slice(0, 3)
           .map(
             (d) =>
-              `${escapeHtml(d.name)} (−${Number(d.plantPenalty ?? 0).toFixed(0)} points)`,
+              `${escapeHtml(displayHotelName(d.name))} (−${Number(d.plantPenalty ?? 0).toFixed(0)} points)`,
           )
           .join(" · ")}</div>`,
       );
@@ -1269,7 +1270,7 @@ function renderTable(
       return `<tr data-token="${escapeHtml(r.token)}">
         <td class="hs-cell-rank">${i + 1}</td>
         <td class="hs-cell-score"><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
-        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a> ${plant}</td>
+        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayHotelName(r.name))}</a> ${plant}</td>
         <td class="hs-cell-rating hs-cell-num">${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${formatReviewCount(r.reviews)})</span></td>
         ${priceCells}
         <td class="hs-facts">${facts}</td>
