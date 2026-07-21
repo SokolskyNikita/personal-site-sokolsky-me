@@ -177,4 +177,29 @@ describe("groupCheapestByCityAndDate", () => {
     );
     expect(grouped[0]!.city).toBe("XYZ");
   });
+
+  it("sorts cities by price per great-circle km", () => {
+    // Santiago is cheapest absolutely but a short hop; Madrid costs more
+    // yet far less per km, so $/distance should prefer Madrid.
+    const options = [
+      makeOption("scl", 100, "2026-07-20", "SCL", "EZE"),
+      makeOption("mad", 400, "2026-07-20", "MAD", "EZE"),
+    ];
+
+    const byPrice = groupCheapestByCityAndDate(
+      options,
+      "date",
+      "cheapest_city",
+      "arrival",
+    );
+    expect(byPrice.map((g) => g.city)).toEqual(["Santiago", "Madrid"]);
+
+    const byRate = groupCheapestByCityAndDate(
+      options,
+      "date",
+      "price_per_distance",
+      "arrival",
+    );
+    expect(byRate.map((g) => g.city)).toEqual(["Madrid", "Santiago"]);
+  });
 });

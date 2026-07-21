@@ -1,3 +1,4 @@
+import { airportDistanceKm } from "./airport-coords";
 import { airportCity } from "./locations";
 import type {
   CityGroupSide,
@@ -90,12 +91,30 @@ function isCheaper(a: ItineraryOption, b: ItineraryOption): boolean {
   );
 }
 
-function cityFloorPrice(dates: Array<{ option: ItineraryOption }>): number {
-  let floor = Number.POSITIVE_INFINITY;
+function cityFloorOption(
+  dates: Array<{ option: ItineraryOption }>,
+): ItineraryOption | undefined {
+  let best: ItineraryOption | undefined;
   for (const { option } of dates) {
-    if (option.price < floor) floor = option.price;
+    if (!best || isCheaper(option, best)) best = option;
   }
-  return floor;
+  return best;
+}
+
+function cityFloorPrice(dates: Array<{ option: ItineraryOption }>): number {
+  return cityFloorOption(dates)?.price ?? Number.POSITIVE_INFINITY;
+}
+
+/** Cheapest fare ÷ great-circle km for that itinerary's OD airports. */
+function cityPricePerKm(dates: Array<{ option: ItineraryOption }>): number {
+  const option = cityFloorOption(dates);
+  if (!option) return Number.POSITIVE_INFINITY;
+  const origin = option.segments[0]?.departureAirport;
+  const dest = option.destinationAirport;
+  if (!origin || !dest) return Number.POSITIVE_INFINITY;
+  const km = airportDistanceKm(origin, dest);
+  if (km === null || km <= 0) return Number.POSITIVE_INFINITY;
+  return option.price / km;
 }
 
 /**
@@ -147,6 +166,13 @@ export function groupCheapestByCityAndDate(
 
   if (citySort === "alpha") {
     groups.sort((a, b) => a.city.localeCompare(b.city));
+  } else if (citySort === "price_per_distance") {
+    groups.sort(
+      (a, b) =>
+        cityPricePerKm(a.dates) - cityPricePerKm(b.dates) ||
+        cityFloorPrice(a.dates) - cityFloorPrice(b.dates) ||
+        a.city.localeCompare(b.city),
+    );
   } else {
     groups.sort(
       (a, b) =>

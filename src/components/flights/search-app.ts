@@ -125,7 +125,9 @@ export function mountFlightSearch(root: HTMLElement): void {
   }
 
   function currentCitySort(): CityGroupSort {
-    return citySortSelect.value === "alpha" ? "alpha" : "cheapest_city";
+    const value = citySortSelect.value;
+    if (value === "alpha" || value === "price_per_distance") return value;
+    return "cheapest_city";
   }
 
   function currentCitySide(): CityGroupSide {

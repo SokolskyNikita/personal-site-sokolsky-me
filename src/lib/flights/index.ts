@@ -1,6 +1,7 @@
 export * from "./types";
 export * from "./cabin";
 export * from "./locations";
+export * from "./airport-coords";
 export * from "./resolver";
 export * from "./classifier";
 export * from "./policy";
