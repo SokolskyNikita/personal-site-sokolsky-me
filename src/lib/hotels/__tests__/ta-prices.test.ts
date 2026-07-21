@@ -78,6 +78,8 @@ describe("price sweep (fixtures)", () => {
     const provider = new FixtureProvider();
     const page = await provider.listProperties({
       q: "Buenos Aires",
+      checkIn: "2026-08-11",
+      checkOut: "2026-08-13",
       sortBy: "most_reviewed",
     });
     const template = page.properties[0]!;
