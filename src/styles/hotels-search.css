@@ -70,21 +70,31 @@
   grid-column: span 2;
 }
 
-#hs-app .hs-section-comfort .fs-secondary {
-  grid-template-columns: minmax(14rem, 2fr) minmax(12rem, 1fr) minmax(10rem, 1fr);
+#hs-app .hs-run-row {
+  display: grid;
+  grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr) max-content;
+  align-items: end;
+  gap: 0.65rem 1rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--fs-line);
 }
 
-#hs-app .hs-section-hard .fs-secondary {
-  grid-template-columns: minmax(24rem, 2fr) minmax(9rem, 0.7fr) minmax(10rem, 0.8fr);
+#hs-app .hs-credit-hint {
+  margin: 0 0 0.72rem;
+  color: var(--fs-muted);
+  font-size: 0.76rem;
+  text-align: right;
 }
 
-#hs-app .hs-section-coverage .fs-secondary {
-  grid-template-columns: minmax(15rem, 1fr) max-content;
+#hs-app .hs-section-refine .fs-secondary {
+  grid-template-columns: minmax(14rem, 2fr) minmax(10rem, 1fr) minmax(12rem, 1fr);
   align-items: end;
 }
 
-#hs-app .hs-section-coverage .fs-field {
-  max-width: 24rem;
+#hs-app .hs-refine-toggles {
+  grid-column: 1;
+  flex-wrap: wrap;
 }
 
 #hs-app .fs-status,
@@ -336,28 +346,38 @@
     grid-column: span 2;
   }
 
-  #hs-app .hs-section-comfort .fs-secondary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  #hs-app .hs-section-comfort .fs-field-days {
-    grid-column: 1 / -1;
-  }
-
-  #hs-app .hs-section-hard .fs-secondary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  #hs-app .hs-section-hard .fs-toggles {
-    grid-column: 1 / -1;
-  }
-
-  #hs-app .hs-section-coverage .fs-secondary {
+  #hs-app .hs-run-row {
     grid-template-columns: minmax(0, 1fr);
+    gap: 0.55rem;
   }
 
-  #hs-app .hs-section-coverage .fs-field {
-    max-width: none;
+  #hs-app .hs-credit-hint {
+    margin: 0;
+    text-align: left;
+    order: 3;
+  }
+
+  #hs-app .hs-run-row .fs-actions {
+    justify-content: stretch;
+  }
+
+  #hs-app .hs-run-row .fs-btn {
+    flex: 1;
+  }
+
+  #hs-app .hs-section-refine .fs-secondary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #hs-app .hs-section-refine .hs-refine-comfort,
+  #hs-app .hs-refine-toggles {
+    grid-column: 1 / -1;
+  }
+
+  #hs-app .hs-refine-toggles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.2rem 0.75rem;
   }
 
   #hs-app .fs-field input,

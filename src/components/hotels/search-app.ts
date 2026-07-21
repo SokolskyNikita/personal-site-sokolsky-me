@@ -171,12 +171,22 @@ export function mountHotelSearch(root: HTMLElement): void {
   const citySelect = root.querySelector<HTMLSelectElement>("#hs-city")!;
   const neighborhoodSelect =
     root.querySelector<HTMLSelectElement>("#hs-neighborhood")!;
+  const qInput = root.querySelector<HTMLInputElement>("#hs-q")!;
+  const creditHint = root.querySelector<HTMLElement>("#hs-credit-hint");
 
   populateCities(citySelect);
+  const today = new Date().toISOString().slice(0, 10);
+  for (const sel of ["#hs-checkin-start", "#hs-checkin-end"]) {
+    const el = root.querySelector<HTMLInputElement>(sel);
+    if (el) el.min = today;
+  }
   let form = formStateFromSearchParams(new URLSearchParams(location.search));
   applyFormToDom(root, form);
   populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
   syncComfortLabel(root, comfortValue);
+  syncCityMode();
+  syncCreditHint();
+  syncSortOptions();
 
   let isRunning = false;
   let activeController: AbortController | undefined;
@@ -184,13 +194,45 @@ export function mountHotelSearch(root: HTMLElement): void {
   let latestMeta: Record<string, unknown> = {};
   let pendingSpendKey: string | null = null;
 
-  formEl.addEventListener("change", () => {
+  // Controls that only filter/sort already-loaded rows. Changing them never
+  // costs credits and should update the table instantly.
+  const refineIds = new Set([
+    "hs-min-comfort",
+    "hs-sort",
+    "hs-strictness",
+    "hs-require-ac",
+    "hs-require-elevator",
+    "hs-require-desk",
+    "hs-branded-only",
+    "hs-min-reviews",
+    "hs-budget-max",
+  ]);
+
+  formEl.addEventListener("change", (event) => {
+    const targetId = (event.target as HTMLElement | null)?.id ?? "";
+    normalizeRanges(root, targetId);
     form = readForm(root);
-    if ((form.city || form.q) && !form.q) {
+    if (targetId === "hs-city" && form.city) {
+      // Picking a listed city takes over from any free-text city.
+      qInput.value = "";
+      form = readForm(root);
+    }
+    syncCityMode();
+    if (!form.q) {
       populateNeighborhoods(neighborhoodSelect, form.city, form.neighborhood);
     }
     syncUrl(form);
     syncComfortLabel(root, comfortValue);
+    syncCreditHint();
+    syncSortOptions();
+    if (refineIds.has(targetId)) {
+      if (latestRows.length) {
+        const visible = filterAndSort(latestRows, form);
+        renderTable(results, visible, form);
+        renderFooter(footer, visible, latestMeta);
+      }
+      return;
+    }
     pendingSpendKey = null;
     runBtn.textContent = "Search hotels";
   });
@@ -203,6 +245,50 @@ export function mountHotelSearch(root: HTMLElement): void {
       renderTable(results, filterAndSort(latestRows, form), form);
     }
   });
+
+  function syncCityMode(): void {
+    const hasQ = qInput.value.trim().length > 0;
+    if (hasQ) {
+      citySelect.value = "";
+      neighborhoodSelect.value = "";
+      neighborhoodSelect.disabled = true;
+      neighborhoodSelect.title =
+        "Neighborhood filters are only available for listed cities.";
+    } else {
+      if (!citySelect.value) citySelect.value = DEFAULT_HOTEL_FORM.city;
+      neighborhoodSelect.disabled = false;
+      neighborhoodSelect.title = "";
+    }
+  }
+
+  function syncSortOptions(): void {
+    const sortSelect = root.querySelector<HTMLSelectElement>("#hs-sort");
+    const dealOption = sortSelect?.querySelector<HTMLOptionElement>(
+      'option[value="deal"]',
+    );
+    if (!sortSelect || !dealOption) return;
+    const datesSet = hasDates(readForm(root));
+    dealOption.disabled = !datesSet;
+    if (!datesSet && sortSelect.value === "deal") {
+      sortSelect.value = "comfort";
+      form = readForm(root);
+    }
+  }
+
+  function syncCreditHint(): void {
+    if (!creditHint) return;
+    const state = readForm(root);
+    if (!hasDates(state)) {
+      creditHint.textContent =
+        "No dates set — the search returns hotels without prices.";
+      return;
+    }
+    const windows = estimateWindows(state);
+    creditHint.textContent =
+      windows <= 1
+        ? "Prices for 1 date combination · up to 1 extra credit."
+        : `Prices for ${windows} date combinations · up to ${windows} extra credits.`;
+  }
 
   cancelBtn.addEventListener("click", () => {
     activeController?.abort();
@@ -390,8 +476,11 @@ export function mountHotelSearch(root: HTMLElement): void {
     }
 
     summary.textContent = `Search finished: ${scan.found} hotels found, ${scan.scored} shown, ${scan.credits_used} credits used (${scan.durationMs ?? "?"} ms).`;
-    renderTable(results, filterAndSort(latestRows, state), state);
-    renderFooter(footer, latestRows, latestMeta);
+    {
+      const visible = filterAndSort(latestRows, state);
+      renderTable(results, visible, state);
+      renderFooter(footer, visible, latestMeta);
+    }
     hideProgress();
     setBusy(false);
 
@@ -431,8 +520,9 @@ export function mountHotelSearch(root: HTMLElement): void {
     if (data.durationMs != null && data.durationMs < 500) {
       progress.textContent = `Saved results loaded in ${Math.round(clientMs)} ms.`;
     }
-    renderTable(results, filterAndSort(latestRows, form), form);
-    renderFooter(footer, latestRows, latestMeta);
+    const visible = filterAndSort(latestRows, form);
+    renderTable(results, visible, form);
+    renderFooter(footer, visible, latestMeta);
   }
 
   async function loadPrices(
@@ -481,8 +571,9 @@ export function mountHotelSearch(root: HTMLElement): void {
       ? `${Math.round(data.top20PricedShare * 100)}% of top-20 priced`
       : "";
     summary.textContent = `Prices found for ${data.pricedCount ?? 0} hotels. ${share ? `${share}. ` : ""}${data.credits_used ?? 0} credits used (${data.durationMs ?? "?"} ms).`;
-    renderTable(results, filterAndSort(latestRows, state), state);
-    renderFooter(footer, latestRows, latestMeta);
+    const visible = filterAndSort(latestRows, state);
+    renderTable(results, visible, state);
+    renderFooter(footer, visible, latestMeta);
   }
 
   function setBusy(busy: boolean, label = "Search hotels"): void {
@@ -662,6 +753,21 @@ function readForm(root: HTMLElement): HotelFormState {
       root.querySelector<HTMLInputElement>("#hs-scan-pages")?.value ?? 4,
     ),
   };
+}
+
+function normalizeRanges(root: HTMLElement, changedId: string): void {
+  const start = root.querySelector<HTMLInputElement>("#hs-checkin-start");
+  const end = root.querySelector<HTMLInputElement>("#hs-checkin-end");
+  if (start && end && end.value && start.value && end.value < start.value) {
+    if (changedId === "hs-checkin-end") start.value = end.value;
+    else end.value = start.value;
+  }
+  const min = root.querySelector<HTMLInputElement>("#hs-nights-min");
+  const max = root.querySelector<HTMLInputElement>("#hs-nights-max");
+  if (min && max && Number(max.value) < Number(min.value)) {
+    if (changedId === "hs-nights-max") min.value = max.value;
+    else max.value = min.value;
+  }
 }
 
 function hasDates(form: HotelFormState): boolean {
