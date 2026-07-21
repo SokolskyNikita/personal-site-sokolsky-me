@@ -212,6 +212,13 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     continent: "North America",
     airports: ["SEA", "PAE", "BFI"],
   },
+  vancouver: {
+    id: "vancouver",
+    type: "city",
+    label: "Vancouver (YVR)",
+    continent: "North America",
+    airports: ["YVR"],
+  },
   "san-francisco": {
     id: "san-francisco",
     type: "city",

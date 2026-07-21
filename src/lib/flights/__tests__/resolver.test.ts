@@ -299,6 +299,7 @@ describe("registry options", () => {
           "san-francisco",
           "seattle",
           "usa-gateways",
+          "vancouver",
         ],
       ],
       ["Oceania", ["oceania-gateways"]],
