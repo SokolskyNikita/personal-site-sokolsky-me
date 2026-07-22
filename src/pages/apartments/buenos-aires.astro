@@ -39,18 +39,18 @@ type RentalListing = {
   signature?: string;
   size?: AirbnbSize;
   bedrooms?: number;
-  priceUsdMonthly?: number;
+  priceUsdMonthly?: number | null;
   rentUsd?: number;
-  expensesUsd?: number;
-  expensesIncluded?: boolean;
+  expensesUsd?: number | null;
+  expensesIncluded?: boolean | null;
 };
 type RentalMeta = {
   size?: AirbnbSize;
   bedrooms?: number;
-  priceUsdMonthly?: number;
+  priceUsdMonthly?: number | null;
   rentUsd?: number;
-  expensesUsd?: number;
-  expensesIncluded?: boolean;
+  expensesUsd?: number | null;
+  expensesIncluded?: boolean | null;
 };
 const buildings = pageData.buildings;
 // Strict: reformer / camilla / pilates machines — not yoga-mat "pilates" corners.
