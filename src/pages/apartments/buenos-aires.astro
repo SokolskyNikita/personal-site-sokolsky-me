@@ -263,10 +263,9 @@ const getAirbnbListings = (building: Building) => {
   }
 
   return [...listingMap.values()]
-    .filter((listing) => Boolean(listing.size))
+    .filter((listing) => Boolean(listing.size) && listing.priceUsdMonthly != null)
     .map((listing) => {
-      const priceLabel =
-        listing.priceUsdMonthly != null ? formatRentUsd(listing.priceUsdMonthly) : null;
+      const priceLabel = formatRentUsd(listing.priceUsdMonthly!);
       const source = listing.url.includes("booking.com")
         ? ("Booking" as const)
         : ("Airbnb" as const);
@@ -275,7 +274,7 @@ const getAirbnbListings = (building: Building) => {
         source,
         sizeLabel: formatAirbnbSize(listing.size),
         priceLabel,
-        priceUnknown: listing.priceUsdMonthly == null,
+        priceUnknown: false,
       };
     })
     .sort((first, second) => {
