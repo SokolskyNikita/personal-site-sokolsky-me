@@ -12,6 +12,10 @@ import {
   handlePredictionMarketOdds,
   isPredictionMarketOddsPath,
 } from "./lib/prediction-markets";
+import {
+  handleAgentDiscovery,
+  withAgentDiscoveryHeaders,
+} from "./lib/agent-discovery";
 export { FlightQuotaCoordinator } from "./lib/flights/quota-do";
 
 export interface Env extends FlightEnv, HotelsEnv {
@@ -105,6 +109,11 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    const discoveryResponse = await handleAgentDiscovery(request);
+    if (discoveryResponse) {
+      return discoveryResponse;
+    }
+
     if (url.pathname === AI_COMPASS_RESULT_PATH) {
       return handleAiCompassResult(request, env, url);
     }
@@ -137,7 +146,10 @@ export default {
       return withUtf8TextHeaders(await env.ASSETS.fetch(request));
     }
 
-    return env.ASSETS.fetch(request);
+    return withAgentDiscoveryHeaders(
+      await env.ASSETS.fetch(request),
+      url.pathname,
+    );
   },
 };
 

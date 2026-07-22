@@ -194,6 +194,105 @@ const structuredData = {
         </section>
       </main>
     </div>
+    <script>
+      type WebMcpTool = {
+        name: string;
+        description: string;
+        inputSchema: Record<string, unknown>;
+        execute: (
+          input: Record<string, unknown>,
+        ) => Promise<{ content: Array<{ type: "text"; text: string }> }>;
+      };
+
+      type ModelContext = {
+        registerTool: (tool: WebMcpTool) => void;
+        unregisterTool: (name: string) => void;
+      };
+
+      const modelContext = (
+        navigator as Navigator & { modelContext?: ModelContext }
+      ).modelContext;
+
+      if (modelContext?.registerTool) {
+        const tools: WebMcpTool[] = [
+          {
+            name: "search-site-resources",
+            description:
+              "Find relevant public pages and resources published on sokolsky.me.",
+            inputSchema: {
+              type: "object",
+              properties: {
+                query: {
+                  type: "string",
+                  description:
+                    "A topic, place, project, or page name to search for.",
+                },
+              },
+              required: ["query"],
+              additionalProperties: false,
+            },
+            async execute(input) {
+              const query =
+                typeof input.query === "string"
+                  ? input.query.trim().toLowerCase()
+                  : "";
+              if (!query) throw new Error("query is required");
+
+              const response = await fetch("/llms.txt", {
+                headers: { Accept: "text/plain" },
+              });
+              if (!response.ok) throw new Error("site guide is unavailable");
+
+              const matches = (await response.text())
+                .split("\n")
+                .filter((line) => line.toLowerCase().includes(query))
+                .slice(0, 12);
+
+              return {
+                content: [
+                  {
+                    type: "text",
+                    text:
+                      matches.length > 0
+                        ? matches.join("\n")
+                        : `No public site resources matched "${query}".`,
+                  },
+                ],
+              };
+            },
+          },
+          {
+            name: "get-public-api-description",
+            description:
+              "Return the OpenAPI description for the read-only public sokolsky.me API.",
+            inputSchema: {
+              type: "object",
+              properties: {},
+              additionalProperties: false,
+            },
+            async execute() {
+              const response = await fetch("/openapi.json", {
+                headers: { Accept: "application/vnd.oai.openapi+json" },
+              });
+              if (!response.ok) throw new Error("OpenAPI description is unavailable");
+
+              return {
+                content: [{ type: "text", text: await response.text() }],
+              };
+            },
+          },
+        ];
+
+        for (const tool of tools) modelContext.registerTool(tool);
+        window.addEventListener(
+          "pagehide",
+          () => {
+            for (const tool of tools) modelContext.unregisterTool(tool.name);
+          },
+          { once: true },
+        );
+      }
+    </script>
   </body>
 </html>
 

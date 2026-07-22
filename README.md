@@ -43,6 +43,20 @@ PostHog is routed through a Cloudflare reverse proxy on `images.sokolsky.me`, ma
 - `npm run verify:posthog` checks every generated HTML page for the proxy-backed snippet.
 - Keep `PUBLIC_POSTHOG_UI_HOST` pointed at `https://us.posthog.com`.
 
+## agent discovery
+
+The Worker publishes standards-based discovery resources for agents:
+
+- Markdown content negotiation for the homepage (`Accept: text/markdown`)
+- RFC 8288 `Link` response headers
+- RFC 9727 API catalog at `/.well-known/api-catalog`
+- OpenAPI and human-readable API docs at `/openapi.json` and `/api.md`
+- Agent Skills discovery at `/.well-known/agent-skills/index.json`
+- guarded WebMCP tools on the homepage
+
+OAuth and MCP server metadata are intentionally omitted because the advertised
+API is public/read-only and the site does not operate an MCP transport.
+
 ## one-time cloudflare setup
 
 1. Authenticate Wrangler:
