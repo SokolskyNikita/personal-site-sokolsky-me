@@ -73,7 +73,6 @@ const buildingsWithCinema = new Set([
   "quartier-polo",
   "torre-bellini-palermo-chico",
   "torre-promenade",
-  "torre-union",
   "torres-de-montaneses",
 ]);
 const collator = new Intl.Collator("en", {
@@ -423,7 +422,6 @@ const buildingsWithSort = priceSortedBuildings.map((building: Building, index) =
     ...building,
     airbnbListings,
     rentalListings,
-    hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     has20PlusFloors:
       building.floorsAboveGround !== null && building.floorsAboveGround >= 20,
     isBuiltSince2016: isBuiltSince2016(building.built),
@@ -461,7 +459,6 @@ const apartmentMapData = buildings.map((building) => {
     isBuiltSince2016: isBuiltSince2016(building.built),
     hasPilates: buildingsWithPilates.has(building.id),
     hasCinema: buildingsWithCinema.has(building.id),
-    hasMultipleRentalOffers: airbnbListings.length >= 2 || rentalListings.length >= 2,
     airbnbListings,
     rentalListings,
     mapUrl: building.googleMapsUrl,
@@ -577,10 +574,6 @@ const structuredData = {
                 <input id="airbnb-only" type="checkbox" autocomplete="off" />
                 <span>Airbnb</span>
               </label>
-              <label for="multiple-offers-only">
-                <input id="multiple-offers-only" type="checkbox" autocomplete="off" />
-                <span>2+ listings</span>
-              </label>
               <label for="twenty-plus-floors-only">
                 <input id="twenty-plus-floors-only" type="checkbox" autocomplete="off" />
                 <span>20+ floors</span>
@@ -653,7 +646,6 @@ const structuredData = {
             class={`building-card ${building.airbnbListings.length > 0 ? "is-airbnb" : ""}`}
             data-building-id={building.id}
             data-airbnb={building.airbnbListings.length > 0}
-            data-multiple-offers={building.hasMultipleRentalOffers}
             data-twenty-plus-floors={building.has20PlusFloors}
             data-built-since-2016={building.isBuiltSince2016}
             data-has-pilates={building.hasPilates}
@@ -949,7 +941,6 @@ const structuredData = {
   }
 
   const airbnbOnlyToggle = document.querySelector("#airbnb-only");
-  const multipleOffersOnlyToggle = document.querySelector("#multiple-offers-only");
   const twentyPlusFloorsOnlyToggle = document.querySelector("#twenty-plus-floors-only");
   const builtSince2016OnlyToggle = document.querySelector("#built-since-2016-only");
   const pilatesOnlyToggle = document.querySelector("#pilates-only");
@@ -979,7 +970,6 @@ const structuredData = {
 
   const getCheckboxFilters = () => ({
     airbnbOnly: Boolean(airbnbOnlyToggle?.checked),
-    multipleOffersOnly: Boolean(multipleOffersOnlyToggle?.checked),
     twentyPlusFloorsOnly: Boolean(twentyPlusFloorsOnlyToggle?.checked),
     builtSince2016Only: Boolean(builtSince2016OnlyToggle?.checked),
     pilatesOnly: Boolean(pilatesOnlyToggle?.checked),
@@ -988,7 +978,6 @@ const structuredData = {
 
   const matchesCheckboxFilters = (building, filters) =>
     (!filters.airbnbOnly || building.airbnbConfirmed) &&
-    (!filters.multipleOffersOnly || building.hasMultipleRentalOffers) &&
     (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
     (!filters.builtSince2016Only || building.isBuiltSince2016) &&
     (!filters.pilatesOnly || building.hasPilates) &&
@@ -1264,7 +1253,6 @@ const structuredData = {
     applyFilters();
   };
   airbnbOnlyToggle?.addEventListener("change", applyFilters);
-  multipleOffersOnlyToggle?.addEventListener("change", applyFilters);
   twentyPlusFloorsOnlyToggle?.addEventListener("change", applyFilters);
   builtSince2016OnlyToggle?.addEventListener("change", applyFilters);
   pilatesOnlyToggle?.addEventListener("change", applyFilters);
