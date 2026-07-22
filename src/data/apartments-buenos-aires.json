@@ -33,61 +33,11 @@
     "lastRecentCompletionGapFill": "Added OM Recoleta (2025), Alpha Núñez (2025), Life Barrancas (2025), My Residence (2024) and Alma Palermo (2024) on 2026-07-21 after BrightData verification of completion years and live priced rental/temporary-rental pages. Skipped Velvet Casa Campos (2023 inauguration confirmed, but no live priced rental/Airbnb page survived verification — only sales and a delisted Roomix rental). Skipped Vista Belgrano Tower (Airbnb/rental exist, but construction evidence points to ~2020 rather than 2023–2026). Skipped Lezica OWN Residences (finalized 2025, sale-only / no live rental). Skipped Filum Recoleta (en pozo / delivery ~2027).",
     "lastGoogleMapsGeocode": "On 2026-07-21, geocoded buildings added in the prior ~36h with GOOGLE_MAPS_API_KEY_PRIVATE (Places Find Place / Geocoding). Filled missing googlePlaceId, location, fullAddress and googleMapsUrl. Alpha Núñez uses the exact Vuelta de Obligado 3928 street-address place (no named Places entry). Rejected Aura Núñez false positive. Kept existing Faena Residences place id (rejected temporary-rental listing place).",
     "lastFiveBuildingAreaAirbnbRentalAudit": "Audited OM Recoleta, Alpha Núñez, Life Barrancas, My Residence and Alma Palermo on 2026-07-21: refreshed approx 2BR m² from past-sale evidence (OM 107 via ML; My Residence 96 via RE/MAX; Alma 42 via Argenprop; Life Barrancas 146 covered kept; Alpha ~75 medium kept — no clean 3-amb sale m²). Added missed Airbnb for My Residence (1) and Alma Palermo (2). Added missed/extra long-term rental overlays for OM (ZP USD 1,250 2-amb + Roomix USD 3,750 4-amb), Alpha (Martin Prop ARS 850k studio syndication), and My Residence (Argenprop USD 700 studio syndication). No Airbnb found for OM / Alpha / Life Barrancas.",
-    "lastSixBuildingBookingGapFill": "Added Portal Arévalo, Beruti 3062, Pont Bleu, Aventura Julián Álvarez 1205, AER Julián Álvarez 1253 and Junín 1435. Prefer Airbnb Magno/Pont Bleu/AER/Beruti listings; Booking.com used as Airbnb-column fallback for Aventura 1205 and Junín 1435 (and supplementary for Pont Bleu / AER). Live priced long-term rental added for Pont Bleu; others lacked stable direct long-term URLs."
+    "lastSixBuildingBookingGapFill": "Added Portal Arévalo, Beruti 3062, Pont Bleu, Aventura Julián Álvarez 1205, AER Julián Álvarez 1253 and Junín 1435. Prefer Airbnb Magno/Pont Bleu/AER/Beruti listings; Booking.com used as Airbnb-column fallback for Aventura 1205 and Junín 1435 (and supplementary for Pont Bleu / AER). Live priced long-term rental added for Pont Bleu; others lacked stable direct long-term URLs.",
+    "minOneBedroomAreaRule": "Buildings whose typical 1-bedroom / 2-ambientes area is under 60 m² must not remain in buildings[]. Blacklist them so they are not re-added.",
+    "lastMinOneBedroomAreaPurge": "Removed and blacklisted 9 buildings on 2026-07-22 for typical 1BR area under 60 m²: aer-julian-alvarez, avellaneda-260, aventura-julian-alvarez, beruti-3062, junin-1435, madero-urbano, pont-bleu, portal-arevalo, torre-liberateur."
   },
   "buildings": [
-    {
-      "id": "aer-julian-alvarez",
-      "name": "AER Julián Álvarez",
-      "aliases": [
-        "AER Julian Alvarez",
-        "Julián Álvarez 1253",
-        "Aventura 204"
-      ],
-      "officialWebsiteUrl": "https://aerjulianalvarez.cuberorubio.com.ar/",
-      "zone": "Palermo Soho",
-      "built": "Around 2022-2024",
-      "address": "Julián Álvarez 1253",
-      "fullAddress": "Julián Álvarez 1253, C1414DRY Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJK-HUcgDLvJURW65RiYgsHko",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juli%C3%A1n%20%C3%81lvarez%201253%2C%20C1414DRY%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJK-HUcgDLvJURW65RiYgsHko",
-      "location": {
-        "lat": -34.5946904,
-        "lng": -58.42676059999999
-      },
-      "availability": "Airbnb and Booking short-stays found",
-      "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/1047256345922473465",
-        "evidence": "Airbnb \"Casa JA\" explicitly names AER Julián Álvarez amenities/connectivity. Booking \"Aventura 204\" maps to the same address 1253 Julián Álvarez. Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/departamentos-alquiler-palermo-soho-1-ambiente-dueno-directo.html",
-        "note": "Search index showed USD 700 + ARS 195,000 expensas studio at Julián Álvarez 1253 (37 m²); direct property URL not stably extractable on 2026-07-22.",
-        "checkedAt": "2026-07-22",
-        "source": "Zonaprop search snippet"
-      },
-      "description": "Cubero Rubio AER project at Julián Álvarez 1253 with gym, sauna, heated pool, SUM/patio and 1–4 ambiente units in Palermo Soho.",
-      "localRentalAd": null,
-      "longTermRentUsd": {
-        "amount": 830,
-        "basis": "direct studio search-snippet rental (USD + ARS expensas)",
-        "confidence": "medium",
-        "source": "Zonaprop search snippet",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-alquiler-palermo-soho-1-ambiente-dueno-directo.html",
-        "summary": "Indexed Julián Álvarez 1253 studio showed USD 700 + ARS 195,000 expensas (~USD 130) = ~USD 830 all-in for 37 m²; standard 1BR estimate similar."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 70,
-        "basis": "extrapolated from 37 m² studio listings and developer 1–4 ambiente mix",
-        "confidence": "medium-low",
-        "source": "Zonaprop snippets / developer site",
-        "sourceUrl": "https://aerjulianalvarez.cuberorubio.com.ar/",
-        "summary": "Studio evidence ~37 m²; developer offers 1–4 ambientes. Representative 2BR estimate ~70 m² pending a clean 3-ambiente sale."
-      }
-    },
     {
       "id": "almarena-puerto-retiro",
       "name": "Almarena Puerto Retiro",
@@ -481,110 +431,6 @@
       }
     },
     {
-      "id": "avellaneda-260",
-      "name": "Avellaneda 260",
-      "aliases": [],
-      "officialWebsiteUrl": null,
-      "zone": "Caballito",
-      "built": "Around 2024",
-      "address": "Av. Avellaneda 260",
-      "fullAddress": "Av. Avellaneda 260, C1405CNP Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJMUS7-7rLvJURJ8ZAZFfVvnc",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Avellaneda%20260%2C%20C1405CNP%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJMUS7-7rLvJURJ8ZAZFfVvnc",
-      "location": {
-        "lat": -34.6126234,
-        "lng": -58.434059
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
-      },
-      "rentalEvidence": {
-        "source": "Roomix / CityProp",
-        "url": "https://roomix.ai/propiedad/departamento-2-ambientes-caballito-41e706b7",
-        "summary": "Direct 2-room rental page for Avellaneda 260 at USD 1,100."
-      },
-      "description": "Caballito building near Parque Rivadavia, with compact furnished units and shared amenities.",
-      "localRentalAd": {
-        "source": "Roomix / CityProp",
-        "title": "Alquiler Temporal Departamento 2 Ambientes Caballito",
-        "url": "https://roomix.ai/propiedad/departamento-2-ambientes-caballito-41e706b7",
-        "summary": "Direct 2-room temporary rental page for Avellaneda 260."
-      },
-      "longTermRentUsd": {
-        "amount": 1100,
-        "basis": "direct 2-room temporary listing",
-        "confidence": "high",
-        "source": "Regular search / Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-caballito-41e706b7",
-        "summary": "Roomix and regular search showed a 45 m2 2-room temporary rental at Avellaneda 260 for USD 1,100."
-      },
-      "floorsAboveGround": 24,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 65,
-        "basis": "extrapolated from direct 45 m2 2-room evidence",
-        "confidence": "medium",
-        "source": "Existing rental evidence / Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-caballito-41e706b7",
-        "summary": "A direct Avellaneda 260 2-room listing showed 45 m2; a compact 2BR is estimated around 65 m2."
-      }
-    },
-    {
-      "id": "aventura-julian-alvarez",
-      "name": "Aventura Julián Álvarez",
-      "aliases": [
-        "Aventura 108",
-        "Julián Álvarez 1205",
-        "JA1205"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo Soho",
-      "built": "2020s",
-      "address": "Julián Álvarez 1205",
-      "fullAddress": "Julián Álvarez 1205, C1414DRY Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJOV4KjXnKvJURQ_yoVp2XqN0",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Juli%C3%A1n%20%C3%81lvarez%201205%2C%20C1414DRY%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJOV4KjXnKvJURQ_yoVp2XqN0",
-      "location": {
-        "lat": -34.595071,
-        "lng": -58.4272097
-      },
-      "availability": "Booking.com short-stay found; Airbnb not exact-confirmed",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Booking.com short-stay",
-        "url": "https://www.booking.com/hotel/ar/ja1205-08.es-ar.html",
-        "evidence": "No exact Airbnb found. Booking \"Aventura 108\" at Julián Álvarez 1205 advertises seasonal outdoor pool; related same-address Booking listings mention gym and sauna. Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.booking.com/hotel/ar/ja1205-08.es-ar.html",
-        "note": "No live traditional long-term rental with extractable price/size found for 1205; short-stay inventory on Booking.",
-        "checkedAt": "2026-07-22",
-        "source": "Booking.com"
-      },
-      "description": "Palermo Soho amenity building at Julián Álvarez 1205 with gym, sauna and seasonal outdoor pool, operated partly as short stays (Aventura 108).",
-      "localRentalAd": null,
-      "longTermRentUsd": {
-        "amount": 900,
-        "basis": "extrapolated from nearby AER Julián Álvarez 1253 studio rental and Palermo Soho comps",
-        "confidence": "low",
-        "source": "BrightData neighborhood comps",
-        "sourceUrl": "https://www.booking.com/hotel/ar/ja1205-08.es-ar.html",
-        "summary": "No direct long-term listing for 1205; nearby AER 1253 studio snippets ~USD 700 + expensas and Palermo Soho 1BR comps support ~USD 900 for a standard 1BR."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 65,
-        "basis": "extrapolated from nearby AER 37 m² studios and Palermo Soho mid-rise comps",
-        "confidence": "low",
-        "source": "BrightData comps",
-        "sourceUrl": "https://www.booking.com/hotel/ar/ja1205-08.es-ar.html",
-        "summary": "No clean sale m² for Julián Álvarez 1205; ~65 m² is a low-confidence 2BR placeholder from nearby Palermo Soho amenity buildings."
-      }
-    },
-    {
       "id": "be-plaza",
       "name": "Be Plaza",
       "aliases": [
@@ -644,57 +490,6 @@
         "source": "BrightData Google / Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-palermo-3-ambientes--19558559",
         "summary": "Torre Be Plaza 3-room listing evidence showed 90 m2 with 2 bedrooms and 2 baths."
-      }
-    },
-    {
-      "id": "beruti-3062",
-      "name": "Beruti 3062",
-      "aliases": [
-        "Recoleta Suite Alto Palermo",
-        "Beruti 3062 Recoleta"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Recoleta",
-      "built": "2010s",
-      "address": "Beruti 3062",
-      "fullAddress": "Beruti 3062, C1425BBL Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJ_2LMXYPKvJURV6S4XpJ3Bqo",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Beruti%203062%2C%20C1425BBL%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJ_2LMXYPKvJURV6S4XpJ3Bqo",
-      "location": {
-        "lat": -34.5892756,
-        "lng": -58.4071934
-      },
-      "availability": "Airbnb found; long-term rental snippets",
-      "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/1399446248654287453",
-        "evidence": "Exact-building Airbnb titled \"Recoleta Suite Alto Palermo\" for Beruti 3062; 1 bedroom. Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/departamentos-monoambiente-alquiler-recoleta-con-sum.html",
-        "note": "Search index showed furnished monoambiente at Beruti 3062 for ARS 950,000 + 190,000 expensas (45 m²); no stable direct property URL survived BrightData verification on 2026-07-22.",
-        "checkedAt": "2026-07-22",
-        "source": "Zonaprop search snippet"
-      },
-      "description": "Recoleta / Alto Palermo edge building at Beruti 3062 with gym amenities and furnished short-stay suites marketed as Recoleta Suite Alto Palermo.",
-      "localRentalAd": null,
-      "longTermRentUsd": {
-        "amount": 760,
-        "basis": "direct 1-room / studio search-snippet rental converted from ARS",
-        "confidence": "medium",
-        "source": "Zonaprop search snippet",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-monoambiente-alquiler-recoleta-con-sum.html",
-        "summary": "Indexed Beruti 3062 furnished monoambiente showed ARS 950,000 + 190,000 expensas (~USD 633 + 127 = 760 all-in at 1,500) for 45 m²."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 70,
-        "basis": "extrapolated from 45 m² studio listing toward standard 2BR",
-        "confidence": "low",
-        "source": "Zonaprop search snippets",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-monoambiente-alquiler-recoleta-con-sum.html",
-        "summary": "Live/index evidence centered on ~45 m² monoambientes; no clean 3-ambiente sale m² found, so ~70 m² is a low-confidence 2BR extrapolation."
       }
     },
     {
@@ -1758,58 +1553,6 @@
       }
     },
     {
-      "id": "junin-1435",
-      "name": "Junín 1435",
-      "aliases": [
-        "MOT Junín 1400",
-        "MOT Junin 1400 Recoleta",
-        "Junin 1435"
-      ],
-      "officialWebsiteUrl": "https://perriconstrucciones.com.ar/131/",
-      "zone": "Recoleta",
-      "built": "Around 2023-2024",
-      "address": "Junín 1435",
-      "fullAddress": "Junín 1435, C1113AAM Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJlcjk9ZfKvJUR804QfVh-HQA",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jun%C3%ADn%201435%2C%20C1113AAM%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJlcjk9ZfKvJUR804QfVh-HQA",
-      "location": {
-        "lat": -34.5915433,
-        "lng": -58.3956518
-      },
-      "availability": "Booking.com short-stay found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Booking.com short-stay",
-        "url": "https://www.booking.com/hotel/ar/mot-junin-1400-recoleta.es-ar.html",
-        "evidence": "No live Airbnb found (prior MOT Junín listing 404). Booking \"MOT Junin 1400 Recoleta\" is at Junín 1435 (4BR / 110 m² unit). Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.booking.com/hotel/ar/mot-junin-1400-recoleta.es-ar.html",
-        "note": "No live traditional long-term rental with extractable monthly price found; Roomix index snippet ~ARS 900k + 250k expensas for ~50 m² monoambiente was not independently verifiable as a live direct page.",
-        "checkedAt": "2026-07-22",
-        "source": "Booking.com / Roomix index"
-      },
-      "description": "Perri Construcciones Recoleta mid-rise at Junín 1435 (~11 floors / 40 units) with pool, gym, SUM, solarium and laundry.",
-      "localRentalAd": null,
-      "longTermRentUsd": {
-        "amount": 767,
-        "basis": "Roomix index monoambiente snippet converted from ARS",
-        "confidence": "medium-low",
-        "source": "Roomix index snippet",
-        "sourceUrl": "https://roomix.ai/alquileres/alquiler-en-almagro-1-banos?page=131",
-        "summary": "Indexed Junín 1435 monoambiente ~ARS 900,000 + 250,000 expensas (~USD 600 + 167 = 767) for ~50 m²; treat as approximate until a live direct listing is confirmed."
-      },
-      "floorsAboveGround": 11,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 70,
-        "basis": "extrapolated from 49–55 m² 1-ambiente sale units",
-        "confidence": "medium-low",
-        "source": "Zonaprop sale listing",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-edif.-a-estrenar-junin-1435-recoleta-52723952.html",
-        "summary": "Sale listing UF 102 showed 49 m² covered / 55 m² total for a 1-ambiente with dormitorio en suite; 2BR estimate ~70 m²."
-      }
-    },
-    {
       "id": "l-avenue-libertador",
       "name": "L'Avenue Libertador",
       "aliases": [
@@ -2364,67 +2107,6 @@
         "source": "BrightData Google / Argenprop / Inmuebles Clarin",
         "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-puerto-madero-3-ambientes--19113130",
         "summary": "Madero Plaza 3-room listings showed about 107-109 m2; 107 m2 is used."
-      }
-    },
-    {
-      "id": "madero-urbano",
-      "name": "Madero Urbano / Quartier Puerto Urbano",
-      "aliases": [
-        "Quartier Madero Urbano",
-        "Quartier Puerto Urbano",
-        "Almarena Madero Urbano",
-        "Almarena Madero Urbano, Affiliated by Meliá",
-        "Azopardo 770",
-        "Azopardo 780",
-        "Madero Urbano Studios"
-      ],
-      "officialWebsiteUrl": "https://www.melia.com/en/hotels/argentina/buenos-aires/almarena-madero-urbano-affiliated-by-melia",
-      "zone": "Puerto Madero / San Telmo",
-      "built": "2013",
-      "address": "Azopardo 770",
-      "fullAddress": "Azopardo 770, C1107ADL Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJnRNQMNQ0o5URcyEyqENAeKc",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Azopardo%20770%2C%20C1107ADL%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJnRNQMNQ0o5URcyEyqENAeKc",
-      "location": {
-        "lat": -34.6164475,
-        "lng": -58.36724210000001
-      },
-      "availability": "Airbnb and long-term rental found",
-      "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/909350279835225002",
-        "evidence": "Exact-complex Airbnb \"Enjoy the incredible views of Buenos Aires\" in Madero Urbano Studios; other Airbnbs state Azopardo 770. Hotel wing listed as Azopardo 780 (Almarena / Meliá). Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-con-amenities-en-59569607.html",
-        "note": "Active long-term monoambiente at Azopardo 770 verified 2026-07-22",
-        "checkedAt": "2026-07-22",
-        "source": "Zonaprop"
-      },
-      "description": "2013 Argencons Quartier tower (~23–24 floors / 312 units) at Azopardo 770 with Melía-affiliated Almarena hotel inventory at Azopardo 780; shared pool, gym, spa/sauna, jacuzzi and microcine.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Monoambiente con amenities en Quartier Madero Urbano",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-con-amenities-en-59569607.html",
-        "checkedAt": "2026-07-22"
-      },
-      "longTermRentUsd": {
-        "amount": 859,
-        "basis": "direct unfurnished monoambiente traditional alquiler + expensas",
-        "confidence": "high",
-        "source": "Zonaprop / MercadoLibre / Selectia",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-con-amenities-en-59569607.html",
-        "summary": "Active 42 m² monoambiente at Azopardo 770: USD 550 + ARS 464,000 expensas (~USD 309) = ~USD 859. Larger 47–49 m² 1-dorm lofts with parking run USD 700–850 + similar expensas (~USD 1,013–1,215 all-in)."
-      },
-      "floorsAboveGround": 23,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 47,
-        "basis": "median 1-dorm / 2-ambiente loft (tower has no verified true 2BR / 3-ambientes stock)",
-        "confidence": "high",
-        "source": "Unité Quartier / Melia / Roomix / sales",
-        "sourceUrl": "https://unitequartier.com/emprendimiento/quartier-madero-urbano--9978",
-        "summary": "Developer lists 312 units of 1–2 ambientes only (37/42/47 m²). Median 1BR / 2-ambientes ~47 m² (≈42 covered + balcony). No verified true 2-bedroom (3-ambiente) stock; larger Azopardo 700 ads for Torre La Prensa were excluded."
       }
     },
     {
@@ -3233,115 +2915,6 @@
         "source": "Lanven sale listing",
         "sourceUrl": "https://lanven.com.ar/ficha-propiedad.php?id=4343344",
         "summary": "A Palmera Crespo sale listing described a 3 ambientes apartment at 83 m2."
-      }
-    },
-    {
-      "id": "pont-bleu",
-      "name": "Pont Bleu",
-      "aliases": [
-        "Pont Blue",
-        "Torre Pont Bleu",
-        "Suite Soho 4150"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo Soho",
-      "built": "Around 2016",
-      "address": "Honduras 4150",
-      "fullAddress": "Honduras 4150, C1414 Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJ45QSHnzKvJURabEkm_-S0hE",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Honduras%204150%2C%20C1414%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJ45QSHnzKvJURabEkm_-S0hE",
-      "location": {
-        "lat": -34.5942345,
-        "lng": -58.42182270000001
-      },
-      "availability": "Airbnb and long-term rental found",
-      "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/26099554",
-        "evidence": "Exact-building Airbnb \"Warm Studio in Palermo Soho\" in Complejo Pont Bleu; pool/gym amenities. Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-pont-bleu-alquiler-departamento-2-ambientes-amenities-59511743.html",
-        "note": "Active long-term 2 ambientes at Honduras 4154 piso 5 verified 2026-07-22",
-        "checkedAt": "2026-07-22",
-        "source": "Zonaprop"
-      },
-      "description": "Twin-tower Palermo Soho complex at Honduras 4150–4154 with outdoor pools, fitness center, SUM, parrilla, solarium and 24-hour security.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Pont Bleu 2 ambientes con cochera",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-pont-bleu-alquiler-departamento-2-ambientes-amenities-59511743.html",
-        "checkedAt": "2026-07-22"
-      },
-      "longTermRentUsd": {
-        "amount": 1168,
-        "basis": "direct 2-room / 1-bedroom listing converted from ARS",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-pont-bleu-alquiler-departamento-2-ambientes-amenities-59511743.html",
-        "summary": "Live Pont Bleu 2 ambientes at Honduras 4154 listed ARS 1,250,000 + 502,000 expensas (~USD 833 + 335 = 1,168) for 45 m² covered / 52 m² total."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 80,
-        "basis": "extrapolated from 52–53 m² 2-ambiente sales toward 3-ambiente / 2BR",
-        "confidence": "medium",
-        "source": "Zonaprop / Roomix sale snippets",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-palermo-mas-de-1-garage-q-honduras.html",
-        "summary": "Pont Bleu 2 ambientes sales cluster around 52–53 m²; larger 3-ambiente/dúplex snippets reach ~78–138 m². Representative 2BR estimate ~80 m²."
-      }
-    },
-    {
-      "id": "portal-arevalo",
-      "name": "Portal Arévalo",
-      "aliases": [
-        "Portal Arevalo",
-        "Portal Arévalo by Magno",
-        "Arévalo 2015"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo Hollywood",
-      "built": "2025-2026",
-      "address": "Arévalo 2015",
-      "fullAddress": "Arévalo 2015, C1414CQO Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJKZiQgJS1vJUR2QsnUZcEYIc",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Ar%C3%A9valo%202015%2C%20C1414CQO%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJKZiQgJS1vJUR2QsnUZcEYIc",
-      "location": {
-        "lat": -34.5784004,
-        "lng": -58.4373635
-      },
-      "availability": "Airbnb found (Magno short-stay inventory)",
-      "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/1637985026733399008",
-        "evidence": "Exact-building Magno listing titled \"Portal Arévalo in Palermo by Magno | 41\" at Arévalo 2015; 1 bedroom. Checked 2026-07-22."
-      },
-      "rentalEvidence": {
-        "url": "https://www.airbnb.com/rooms/1637985026733399008",
-        "note": "No live long-term rental with extractable price found; Magno operates the building as short-stay inventory.",
-        "checkedAt": "2026-07-22",
-        "source": "Airbnb / BrightData"
-      },
-      "description": "Magno boutique rental building at Arévalo 2015 in Palermo Hollywood with an included gym and hotel-style furnished units aimed at short stays.",
-      "localRentalAd": null,
-      "longTermRentUsd": {
-        "amount": 1100,
-        "basis": "extrapolated from Magno 1BR short-stay pricing and Palermo Hollywood comps",
-        "confidence": "low",
-        "source": "BrightData Airbnb + neighborhood comps",
-        "sourceUrl": "https://www.airbnb.com/rooms/1637985026733399008",
-        "summary": "No live traditional long-term listing found. Weekly Airbnb ~USD 598/7 nights (~USD 2,560/mo gross) for a 1BR Magno unit; long-term 1BR estimate ~USD 1,100."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 55,
-        "basis": "2-ambiente / 1-bedroom Magno unit sizes (2BR inventory limited)",
-        "confidence": "medium-low",
-        "source": "BrightData / Magno listing snippets",
-        "sourceUrl": "https://www.instagram.com/p/Da4BczhRfRn/",
-        "summary": "Portal Arévalo inventory is mostly studio/1BR Magno units; typical furnished 2-ambiente footprint ~50–55 m². Clean 3-ambiente sale m² not found."
       }
     },
     {
@@ -4204,65 +3777,6 @@
       }
     },
     {
-      "id": "torre-liberateur",
-      "name": "Torre Libérateur",
-      "aliases": [
-        "Torre Liberateur",
-        "Edificio Liberateur",
-        "Libérateur Belgrano",
-        "Av. del Libertador 5750",
-        "Libérateur"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Belgrano C",
-      "built": "2020",
-      "address": "Mcal. Antonio José de Sucre 1530",
-      "fullAddress": "Mcal. Antonio José de Sucre 1530, C1428ARN Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJJw5Jfsy1vJURtHeaJQr0eLk",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Mcal.%20Antonio%20Jos%C3%A9%20de%20Sucre%201530%2C%20C1428ARN%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJJw5Jfsy1vJURtHeaJQr0eLk",
-      "location": {
-        "lat": -34.5590218,
-        "lng": -58.44613949999999
-      },
-      "availability": "Rental ads found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb with extractable monthly or weekly USD pricing was found in BrightData searches on 2026-07-21."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-cochera-opcional-59634553.html",
-        "note": "Live long-term rental listing verified 2026-07-21",
-        "checkedAt": "2026-07-21",
-        "source": "Zonaprop"
-      },
-      "description": "Modern mixed-use Belgrano tower at Libertador and Sucre with indoor pool, gym, spa, sauna, business spaces and a dedicated microcinema.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler 2 ambientes en Belgrano, cochera opcional",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-cochera-opcional-59634553.html",
-        "checkedAt": "2026-07-21"
-      },
-      "longTermRentUsd": {
-        "amount": 1000,
-        "basis": "direct 2-room / 1-bedroom listing",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-cochera-opcional-59634553.html",
-        "summary": "Live Zonaprop listing showed USD 1,000 rent plus ARS 400,000 expensas (~USD 267 at ARS 1,500) for a 55 m², 1-bedroom apartment."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 90,
-        "basis": "interpolated from direct 1-bedroom and 3-bedroom rentals",
-        "confidence": "medium",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-4-ambientes-con-dependencia-y-cochera-en-59470516.html",
-        "summary": "Current Libérateur rentals show 55 m² for 1BR and 114 m² for 3BR; approximately 90 m² is a reasonable 2BR comparison."
-      }
-    },
-    {
       "aliases": [],
       "id": "torre-lumiere-palermo",
       "name": "Torre Lumière Palermo",
@@ -4725,9 +4239,11 @@
       "id": "torre-union",
       "name": "Torre Unión",
       "aliases": [
+        "Cuba 2300",
+        "Olazábal 2207",
         "Torre Union",
-        "Torre Unión Olazábal",
-        "Torre Unión Cuba y Olazábal"
+        "Torre Unión Cuba y Olazábal",
+        "Torre Unión Olazábal"
       ],
       "officialWebsiteUrl": null,
       "zone": "Belgrano C",
@@ -4740,28 +4256,28 @@
         "lat": -34.5590054,
         "lng": -58.4561534
       },
-      "availability": "Airbnb found; long-term rental evidence from search snippets",
+      "availability": "Rental evidence found; Airbnb not exact-confirmed",
       "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/898533044517407399",
-        "evidence": "Exact-building match for Olazábal 2200 / Torre Unión (Airbnb pin ~60 m from Av. Olazábal 2200). Listing titled \"Departamento (A) en Belgrano, amplio y luminoso\" / \"13a\" describes a modern tower near Cabildo y Juramento with pool and gym; building amenities include pool, gym, sauna and losa radiante. Host Isadora. Checked 2026-07-22."
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "Prior Airbnb 898533044517407399 is Torre Isadora (wrong building / host Isadora), not Torre Unión. No exact-building Airbnb found on 2026-07-22 audit."
       },
       "rentalEvidence": {
-        "url": "https://www.argenprop.com/departamentos/alquiler/belgrano/4-ambientes/pesos-desde-70000",
-        "note": "Search index showed Torre Unión Olazábal al 2200 piso 25 rental at USD 3,500 + ARS 1,000,000 expensas for ~120 m² / 3 dorm; direct listing URL returned 410 on 2026-07-22",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-union-alquiler-2-dorm-con-cochera-sin-muebles-57957816.html",
+        "note": "Exact-building 2-dorm / 3-amb / ~80 m² Torre Unión rental indexed at USD 2,200 (expensas included per snippet); page now finalized. No live extractable traditional rental on 2026-07-22.",
         "checkedAt": "2026-07-22",
-        "source": "Argenprop search snippet"
+        "source": "Zonaprop finalized listing"
       },
       "description": "CRIBA / Estudio Parysow 34-level Belgrano C tower at Cuba and Olazábal (2006) with curtain-wall facades, pool, gym, sauna, SUM, microcine and full hotel-style amenities.",
       "localRentalAd": null,
       "longTermRentUsd": {
-        "amount": 1800,
-        "basis": "extrapolated from 3-bedroom / 4-room search-snippet rental",
+        "amount": 1500,
+        "basis": "scaled from finalized exact-building 2BR/3-amb rental (USD 2,200 incl. expensas, ~80 m²)",
         "confidence": "medium-low",
-        "source": "Argenprop search snippet",
-        "sourceUrl": "https://www.argenprop.com/22044178--departamento-en-alquiler-en-belgrano-4-ambientes--18803879",
-        "summary": "Indexed Torre Unión piso 25 listing showed USD 3,500 rent plus ARS 1,000,000 expensas for ~120 m² covered / 3 dormitorios; standard 1BR estimate scaled down to about USD 1,800. Direct listing page was gone (410) when re-checked 2026-07-22."
+        "source": "Zonaprop finalized listing / Argenprop index snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-union-alquiler-2-dorm-con-cochera-sin-muebles-57957816.html",
+        "summary": "No live traditional 1BR/2-ambientes listing found for Torre Unión on 2026-07-22. Finalized 2-dorm listing showed ~USD 2,200 rent including expensas for ~80 m²; scaling to a standard 1BR/2-ambientes implies about USD 1,500. Nearby Olazábal 2200 ARS listings for Torre Isadora were excluded."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -4773,11 +4289,11 @@
       "floorsAboveGround": 34,
       "approxTwoBedroomAreaSqm": {
         "amount": 105,
-        "basis": "direct 3-room / 2-bedroom sale listing evidence",
+        "basis": "direct 3-ambientes / 2-dorm sale listing at Av. Olazábal al 2207 / Torre Unión",
         "confidence": "high",
-        "source": "Zonaprop search snippets",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-venta-belgrano-3-ambientes-q-olazabal.html",
-        "summary": "Torre Union sale snippets at Av Olazábal al 2207 showed 105 m² total for a 3 ambientes / 2 dorm unit with cochera."
+        "source": "Zonaprop / Clarín / One Brokers sale listing",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-torre-union-2-dorm.-ex-3-con-cochera-y-baulera-59602935.html",
+        "summary": "Live sale listing: 105 m² total / 98 m² covered, 3 ambientes / 2 dormitorios + cochera/baulera. A finalized rental for another 3-amb / 2-dorm unit quoted 80 m², so sizes vary; 105 remains the best current sale-backed 2BR figure."
       }
     },
     {
@@ -5236,12 +4752,12 @@
       "zone": "Palermo Soho",
       "built": "2013-2018",
       "address": "Paraguay 4747",
-      "fullAddress": "Paraguay 4747, C1414 Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJ35i7qYW1vJUR8-WYkwrciE0",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Paraguay%204700%2C%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJ35i7qYW1vJUR8-WYkwrciE0",
+      "fullAddress": "Paraguay 4747, C1425BSS Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJjzUnBgC1vJUR5IVgZ_grQjE",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Paraguay%204747%2C%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJjzUnBgC1vJUR5IVgZ_grQjE",
       "location": {
-        "lat": -34.5825823,
-        "lng": -58.4271289
+        "lat": -34.5825682,
+        "lng": -58.4267146
       },
       "availability": "Temporary rentals",
       "airbnb": {
@@ -5280,12 +4796,12 @@
       },
       "floorsAboveGround": 28,
       "approxTwoBedroomAreaSqm": {
-        "amount": 85,
-        "basis": "direct 3-room / 2-bedroom sale listing evidence",
-        "confidence": "medium-high",
-        "source": "BrightData Google / Zonaprop sale snippets",
-        "sourceUrl": "https://www.zonaprop.com.ar/inmuebles-palermo-soho-3-ambientes-mas-de-1-garage.html",
-        "summary": "Town House Soho sale snippets showed a 3 ambientes apartment at about 85 m2."
+        "amount": 83,
+        "basis": "direct 3-room / 2-bedroom sale listing evidence (total m²)",
+        "confidence": "high",
+        "source": "Inmuebles Clarín / Roomix sale listing",
+        "sourceUrl": "https://www.inmuebles.clarin.com/departamento-en-venta-en-palermo-soho-3-ambientes--20009803",
+        "summary": "Town House Soho 3 ambientes sale at Paraguay 4700 listed 83 m² total / 78 m² covered; replaces prior ~85 m² snippet. Live Soho III 1BR is 62 m² total / 55 m² covered."
       }
     },
     {
@@ -5592,6 +5108,133 @@
       ],
       "reason": "Removed by explicit user request.",
       "blacklistedAt": "2026-07-21"
+    },
+    {
+      "id": "aer-julian-alvarez",
+      "name": "AER Julián Álvarez",
+      "aliases": [
+        "AER Julian Alvarez",
+        "Julián Álvarez 1253",
+        "Aventura 204"
+      ],
+      "addressHints": [
+        "Julián Álvarez 1253"
+      ],
+      "reason": "Studio / 1BR evidence ~37 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "avellaneda-260",
+      "name": "Avellaneda 260",
+      "aliases": [],
+      "addressHints": [
+        "Av. Avellaneda 260"
+      ],
+      "reason": "Direct 2-room / 1BR evidence at 45 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "aventura-julian-alvarez",
+      "name": "Aventura Julián Álvarez",
+      "aliases": [
+        "Aventura 108",
+        "Julián Álvarez 1205",
+        "JA1205"
+      ],
+      "addressHints": [
+        "Julián Álvarez 1205"
+      ],
+      "reason": "No ≥60 m² 1BR evidence; nearby comps ~37 m² studios (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "beruti-3062",
+      "name": "Beruti 3062",
+      "aliases": [
+        "Recoleta Suite Alto Palermo",
+        "Beruti 3062 Recoleta"
+      ],
+      "addressHints": [
+        "Beruti 3062"
+      ],
+      "reason": "Unit evidence centered on ~45 m² monoambientes; no ≥60 m² 1BR (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "junin-1435",
+      "name": "Junín 1435",
+      "aliases": [
+        "MOT Junín 1400",
+        "MOT Junin 1400 Recoleta",
+        "Junin 1435"
+      ],
+      "addressHints": [
+        "Junín 1435"
+      ],
+      "reason": "1-ambiente / ensuite units ~49–55 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "madero-urbano",
+      "name": "Madero Urbano / Quartier Puerto Urbano",
+      "aliases": [
+        "Quartier Madero Urbano",
+        "Quartier Puerto Urbano",
+        "Almarena Madero Urbano",
+        "Almarena Madero Urbano, Affiliated by Meliá",
+        "Azopardo 770",
+        "Azopardo 780",
+        "Madero Urbano Studios"
+      ],
+      "addressHints": [
+        "Azopardo 770"
+      ],
+      "reason": "Typical 1BR / 2-ambientes ~47 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "pont-bleu",
+      "name": "Pont Bleu",
+      "aliases": [
+        "Pont Blue",
+        "Torre Pont Bleu",
+        "Suite Soho 4150"
+      ],
+      "addressHints": [
+        "Honduras 4150"
+      ],
+      "reason": "Typical 1BR / 2-ambientes ~52–53 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "portal-arevalo",
+      "name": "Portal Arévalo",
+      "aliases": [
+        "Portal Arevalo",
+        "Portal Arévalo by Magno",
+        "Arévalo 2015"
+      ],
+      "addressHints": [
+        "Arévalo 2015"
+      ],
+      "reason": "Typical 1BR / 2-ambientes ~50–55 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
+    },
+    {
+      "id": "torre-liberateur",
+      "name": "Torre Libérateur",
+      "aliases": [
+        "Torre Liberateur",
+        "Edificio Liberateur",
+        "Libérateur Belgrano",
+        "Av. del Libertador 5750",
+        "Libérateur"
+      ],
+      "addressHints": [
+        "Mcal. Antonio José de Sucre 1530"
+      ],
+      "reason": "Documented 1BR rentals at 55 m² (under 60 m² minimum).",
+      "blacklistedAt": "2026-07-22"
     }
   ]
 }
