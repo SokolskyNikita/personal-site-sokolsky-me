@@ -58,6 +58,7 @@ const buildingsWithPilates = new Set([
   "almarena-puerto-retiro",
   "forum-puerto-madero",
   "milaires",
+  "town-house-soho",
 ]);
 const buildingsWithCinema = new Set([
   "alvear-tower",
@@ -72,6 +73,7 @@ const buildingsWithCinema = new Set([
   "torre-bellini-palermo-chico",
   "torre-liberateur",
   "torre-promenade",
+  "torre-union",
   "torres-de-montaneses",
 ]);
 const collator = new Intl.Collator("en", {
@@ -236,11 +238,8 @@ const getAirbnbListings = (building: Building) => {
   const listingMap = new Map<string, AirbnbListing>();
   const fallbackTitle = `${building.name} listing`;
 
-  if (
-    building.airbnb.confirmed &&
-    building.airbnb.url &&
-    !removedAirbnbUrls.has(building.airbnb.url)
-  ) {
+  // Include primary short-stay URL even when unconfirmed (e.g. Booking.com fallback).
+  if (building.airbnb.url && !removedAirbnbUrls.has(building.airbnb.url)) {
     listingMap.set(
       building.airbnb.url,
       withAirbnbMeta({
@@ -269,9 +268,12 @@ const getAirbnbListings = (building: Building) => {
     .map((listing) => {
       const priceLabel =
         listing.priceUsdMonthly != null ? formatRentUsd(listing.priceUsdMonthly) : null;
+      const source = listing.url.includes("booking.com")
+        ? ("Booking" as const)
+        : ("Airbnb" as const);
       return {
         ...listing,
-        source: "Airbnb" as const,
+        source,
         sizeLabel: formatAirbnbSize(listing.size),
         priceLabel,
         priceUnknown: listing.priceUsdMonthly == null,
