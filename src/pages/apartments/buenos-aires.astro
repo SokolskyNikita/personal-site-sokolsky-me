@@ -197,10 +197,57 @@ const withAirbnbMeta = (listing: AirbnbListing): AirbnbListing => {
     priceSource: listing.priceSource ?? knownPrice?.source ?? null,
   };
 };
+/** Sentence-case shouty/ALL-CAPS listing titles; leave normal titles alone. */
+const toStandardListingTitle = (title: string) => {
+  const cleaned = title.replace(/\s+/g, " ").trim();
+  if (!cleaned) return cleaned;
+
+  const letters = cleaned.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g) ?? [];
+  const upperRatio =
+    letters.length === 0
+      ? 0
+      : letters.filter((c) => c === c.toUpperCase() && c !== c.toLowerCase()).length /
+        letters.length;
+
+  const leadingCaps = cleaned.match(
+    /^([A-ZÁÉÍÓÚÜÑ][A-ZÁÉÍÓÚÜÑ0-9./\-]*(?:\s+[A-ZÁÉÍÓÚÜÑ0-9./\-]+)+)\b/,
+  );
+  const leadingCapsLetters = leadingCaps?.[1].match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g) ?? [];
+  const needsFix = upperRatio >= 0.7 || leadingCapsLetters.length >= 8;
+  if (!needsFix) return cleaned;
+
+  const sentenceCase = (value: string) => {
+    let next = value.toLocaleLowerCase("es-AR");
+    next = next.replace(/[a-záéíóúüñ]/i, (c) => c.toLocaleUpperCase("es-AR"));
+    for (const name of [
+      "Almagro",
+      "Montevideo",
+      "Montañeses",
+      "Torres de Montañeses",
+      "Recoleta",
+      "Palermo",
+      "Puerto Madero",
+      "Belgrano",
+      "Núñez",
+      "Soho",
+      "Decó",
+      "Torre Decó",
+    ]) {
+      next = next.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), name);
+    }
+    return next.replace(/\bm2\b/gi, "m²").replace(/\bm²\b/gi, "m²");
+  };
+
+  if (upperRatio < 0.7 && leadingCaps?.[1]) {
+    return cleaned.replace(leadingCaps[1], sentenceCase(leadingCaps[1]));
+  }
+  return sentenceCase(cleaned);
+};
+
 /** Pull the real listing name out of research-note evidence ("Airbnb result titled …"). */
 const refineAirbnbListingTitle = (raw: string | null | undefined, fallback: string) => {
   const text = String(raw ?? "").replace(/\s+/g, " ").trim();
-  if (!text) return fallback;
+  if (!text) return toStandardListingTitle(fallback);
 
   const quoted =
     text.match(/(?:result|listing)\s+(?:is\s+)?titled\s+[""]([^""]+)[""]/i) ||
@@ -208,7 +255,7 @@ const refineAirbnbListingTitle = (raw: string | null | undefined, fallback: stri
     text.match(/\bAirbnb\s+[""]([^""]+)[""]/i);
   if (quoted?.[1]) {
     const title = quoted[1].trim().replace(/[.]+$/g, "");
-    if (title.length >= 3) return title;
+    if (title.length >= 3) return toStandardListingTitle(title);
   }
 
   const unquoted = text.match(/(?:result|listing)\s+(?:is\s+)?titled\s+(.+?)(?:\.|$)/i);
@@ -219,7 +266,7 @@ const refineAirbnbListingTitle = (raw: string | null | undefined, fallback: stri
       .replace(/[.]+$/g, "")
       .replace(/\s+(?:names|states|lists|describes|priced at)\b.*$/i, "")
       .trim();
-    if (title.length >= 3 && !/^no\b/i.test(title)) return title;
+    if (title.length >= 3 && !/^no\b/i.test(title)) return toStandardListingTitle(title);
   }
 
   if (
@@ -228,10 +275,10 @@ const refineAirbnbListingTitle = (raw: string | null | undefined, fallback: stri
     ) ||
     (/\bairbnb\b/i.test(text) && /(?:titled|result|exact-building)/i.test(text))
   ) {
-    return fallback;
+    return toStandardListingTitle(fallback);
   }
 
-  return text;
+  return toStandardListingTitle(text);
 };
 const getAirbnbListings = (building: Building) => {
   const listingMap = new Map<string, AirbnbListing>();
@@ -326,7 +373,10 @@ const getRentalListings = (building: Building) => {
     if (!listing?.url || !isDirectRentalUrl(listing.url)) return;
     if (removedRentalUrls.has(listing.url)) return;
 
-    const enriched = withRentalMeta(listing);
+    const enriched = withRentalMeta({
+      ...listing,
+      title: toStandardListingTitle(listing.title),
+    });
     if (!enriched.size || enriched.priceUsdMonthly == null) return;
     const signature = getRentalSignature(enriched);
     if (signatures.has(signature) || listingMap.has(enriched.url)) return;
@@ -371,7 +421,7 @@ const getRentalListings = (building: Building) => {
 
 const maxVisibleAirbnbListings = 5;
 const truncateListingTitle = (title: string, maxLength = 72) => {
-  const cleaned = title.replace(/\s+/g, " ").trim();
+  const cleaned = toStandardListingTitle(title);
   if (cleaned.length <= maxLength) return cleaned;
   return `${cleaned.slice(0, maxLength - 1).trimEnd()}…`;
 };
