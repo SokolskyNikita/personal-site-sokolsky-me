@@ -670,7 +670,8 @@ const structuredData = {
               <option value="price-per-sqm-asc">$$$ per square meter</option>
               <option value="airbnb-count-desc">Number of Airbnbs</option>
               <option value="rental-count-desc">Number of long-term rentals</option>
-              <option value="construction-year-asc">Construction year</option>
+              <option value="construction-year-asc">Construction year, asc</option>
+              <option value="construction-year-desc">Construction year, desc</option>
             </select>
           </label>
           <fieldset class="area-unit-toggle" aria-label="Area unit">
@@ -1079,13 +1080,13 @@ const structuredData = {
     return direction === "desc" ? secondPrice - firstPrice : firstPrice - secondPrice;
   };
 
-  const compareConstructionYears = (firstYear, secondYear) => {
+  const compareConstructionYears = (firstYear, secondYear, direction) => {
     const firstMissing = firstYear == null;
     const secondMissing = secondYear == null;
     if (firstMissing && secondMissing) return 0;
-    if (firstMissing) return -1;
-    if (secondMissing) return 1;
-    return firstYear - secondYear;
+    if (firstMissing) return 1;
+    if (secondMissing) return -1;
+    return direction === "desc" ? secondYear - firstYear : firstYear - secondYear;
   };
 
   const compareRowsBySort = (firstRow, secondRow) => {
@@ -1127,8 +1128,18 @@ const structuredData = {
                       : sortValue === "rental-count-desc"
                         ? secondRentalCount - firstRentalCount
                         : sortValue === "construction-year-asc"
-                          ? compareConstructionYears(firstConstructionYear, secondConstructionYear)
-                          : firstRent - secondRent;
+                          ? compareConstructionYears(
+                              firstConstructionYear,
+                              secondConstructionYear,
+                              "asc",
+                            )
+                          : sortValue === "construction-year-desc"
+                            ? compareConstructionYears(
+                                firstConstructionYear,
+                                secondConstructionYear,
+                                "desc",
+                              )
+                            : firstRent - secondRent;
 
     return primarySort || compareRowsByName(firstRow, secondRow);
   };
