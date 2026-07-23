@@ -184,15 +184,32 @@ const formatRentUsd = (amount?: number | null) => {
     maximumFractionDigits: 0,
   }).format(amount);
 };
+/** If the listing title says studio/monoambiente, force size=studio. */
+const sizeFromListingTitle = (
+  title: string | null | undefined,
+  fallbackSize?: AirbnbSize,
+  fallbackBedrooms?: number,
+): { size?: AirbnbSize; bedrooms?: number } => {
+  if (/\bstudios?\b|\bmonoambiente\b|\bmonoamb\b/i.test(String(title ?? ""))) {
+    return { size: "studio", bedrooms: 0 };
+  }
+  return { size: fallbackSize, bedrooms: fallbackBedrooms };
+};
+
 const withAirbnbMeta = (listing: AirbnbListing): AirbnbListing => {
   const knownSize = airbnbSizesByUrl[listing.url];
   const knownPrice = airbnbPricesByUrl[listing.url];
   const priceFromMeta =
     knownPrice && "priceUsdMonthly" in knownPrice ? knownPrice.priceUsdMonthly : undefined;
+  const inferred = sizeFromListingTitle(
+    listing.title,
+    listing.size ?? knownSize?.size,
+    listing.bedrooms ?? knownSize?.bedrooms,
+  );
   return {
     ...listing,
-    size: listing.size ?? knownSize?.size,
-    bedrooms: listing.bedrooms ?? knownSize?.bedrooms,
+    size: inferred.size,
+    bedrooms: inferred.bedrooms,
     priceUsdMonthly: listing.priceUsdMonthly ?? priceFromMeta ?? null,
     priceSource: listing.priceSource ?? knownPrice?.source ?? null,
   };
@@ -355,11 +372,22 @@ const getRentalSignature = (listing: RentalListing) =>
     .replace(/^-|-$/g, "");
 const withRentalMeta = (listing: RentalListing): RentalListing => {
   const known = rentalMetaByUrl[listing.url];
-  if (!known) return listing;
+  const inferred = sizeFromListingTitle(
+    listing.title,
+    listing.size ?? known?.size,
+    listing.bedrooms ?? known?.bedrooms,
+  );
+  if (!known) {
+    return {
+      ...listing,
+      size: inferred.size,
+      bedrooms: inferred.bedrooms,
+    };
+  }
   return {
     ...listing,
-    size: listing.size ?? known.size,
-    bedrooms: listing.bedrooms ?? known.bedrooms,
+    size: inferred.size,
+    bedrooms: inferred.bedrooms,
     priceUsdMonthly: listing.priceUsdMonthly ?? known.priceUsdMonthly,
     rentUsd: listing.rentUsd ?? known.rentUsd,
     expensesUsd: listing.expensesUsd ?? known.expensesUsd,
