@@ -12,7 +12,43 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 type Laundry = (typeof pageData.laundries)[number];
-const laundries = pageData.laundries;
+const smallNameWords = new Set([
+  "and",
+  "de",
+  "del",
+  "en",
+  "of",
+  "the",
+  "y",
+]);
+/** Title-case laundry names for display; keeps small Spanish/English connectors lowercase. */
+const toStandardName = (name: string) => {
+  const trimmed = name.replace(/\s+/g, " ").trim();
+  if (!trimmed) return name;
+
+  let firstWord = true;
+  return trimmed.replace(
+    /[A-Za-zÀ-ÿÁÉÍÓÚÜÑáéíóúüñ]+(?:'[A-Za-zÀ-ÿÁÉÍÓÚÜÑáéíóúüñ]+)?|\d+/g,
+    (word) => {
+      if (/^\d+$/.test(word)) {
+        firstWord = false;
+        return word;
+      }
+
+      const lower = word.toLocaleLowerCase("es-AR");
+      const next =
+        !firstWord && smallNameWords.has(lower)
+          ? lower
+          : lower.charAt(0).toLocaleUpperCase("es-AR") + lower.slice(1);
+      firstWord = false;
+      return next;
+    },
+  );
+};
+const laundries = pageData.laundries.map((laundry: Laundry) => ({
+  ...laundry,
+  name: toStandardName(laundry.name),
+}));
 const updatedDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
