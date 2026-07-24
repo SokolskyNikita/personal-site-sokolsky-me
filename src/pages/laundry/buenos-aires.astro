@@ -298,7 +298,6 @@ const structuredData = {
           <span>Laundry</span>
           <span>Map</span>
           <span>Address</span>
-          <span>Service proof</span>
           <span>Hours</span>
           <span>GMaps rating</span>
           <span>Notes</span>
@@ -333,12 +332,6 @@ const structuredData = {
               </a>
             </div>
             <p class="address">{laundry.address}</p>
-            <p class="service-proof" title={`${laundry.serviceProof.source}: ${laundry.serviceProof.quote}`}>
-              <span class="proof-label">{laundry.serviceProof.label}</span>
-              <a href={laundry.serviceProof.sourceUrl} target="_blank" rel="noreferrer noopener">
-                {laundry.serviceProof.source}
-              </a>
-            </p>
             <p class="hours">{laundry.hours}</p>
             <p
               class="rating"
@@ -997,7 +990,6 @@ const structuredData = {
       minmax(8rem, 1.05fr)
       3.25rem
       minmax(7rem, 0.72fr)
-      minmax(9.5rem, 1fr)
       minmax(8rem, 0.9fr)
       minmax(6.5rem, 0.62fr)
       minmax(14rem, 1.7fr);
@@ -1074,35 +1066,24 @@ const structuredData = {
   }
 
   .address,
-  .service-proof,
   .hours,
   .description {
     color: var(--text-muted);
     font-size: 0.9rem;
   }
 
-  .service-proof,
   .rating {
     display: grid;
     gap: 0.12rem;
     line-height: 1.35;
-  }
-
-  .proof-label,
-  .rating-score {
-    color: var(--text);
-    font-weight: 750;
-  }
-
-  .service-proof a {
-    font-size: 0.76rem;
-    font-weight: 650;
-  }
-
-  .rating {
     font-size: 0.95rem;
     font-weight: 750;
     font-variant-numeric: tabular-nums;
+  }
+
+  .rating-score {
+    color: var(--text);
+    font-weight: 750;
   }
 
   .rating-score::before {
@@ -1186,7 +1167,6 @@ const structuredData = {
         minmax(8rem, 1.15fr)
         3rem
         minmax(6.25rem, 0.8fr)
-        minmax(8.5rem, 1fr)
         minmax(7.5rem, 0.9fr)
         minmax(6.4rem, 0.72fr)
         minmax(12rem, 1.4fr);
@@ -1281,18 +1261,9 @@ const structuredData = {
       display: none;
     }
 
-    .service-proof {
-      position: absolute;
-      top: 0.7rem;
-      right: 3rem;
-      width: 6.9rem;
-      font-size: 0.78rem;
-      text-align: right;
-    }
-
     .rating {
       position: absolute;
-      top: 3rem;
+      top: 0.7rem;
       right: 3rem;
       width: 6.9rem;
       color: var(--text-muted);
