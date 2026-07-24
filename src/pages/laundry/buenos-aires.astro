@@ -127,12 +127,6 @@ const popularityRanks = sortRank(
 const laundriesWithSort = laundries.map((laundry: Laundry) => ({
   ...laundry,
   reviewCountLabel: formatter.format(laundry.reviewCount),
-  officialLabel:
-    laundry.officialUrlType === "instagram"
-      ? "Instagram"
-      : laundry.officialUrlType === "website"
-        ? "Website"
-        : "GMaps",
   openPast6Weekdays: openPast6WeekdaysById.get(laundry.id) ?? false,
   openPast3Saturdays: openPast3SaturdaysById.get(laundry.id) ?? false,
   sortOrderStyle: [
@@ -317,7 +311,6 @@ const structuredData = {
               <a href={laundry.officialUrl} target="_blank" rel="noreferrer noopener">
                 {laundry.name}
               </a>
-              <span>{laundry.officialLabel}</span>
             </h2>
             <div class="map-actions">
               <a
@@ -1038,14 +1031,6 @@ const structuredData = {
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.22;
-  }
-
-  .laundry-name span {
-    color: var(--text-muted);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   .map-actions {
