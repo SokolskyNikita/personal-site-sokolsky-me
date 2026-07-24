@@ -294,7 +294,6 @@ const structuredData = {
           <span>Address</span>
           <span>Hours</span>
           <span>GMaps rating</span>
-          <span>Notes</span>
         </div>
 
         {laundriesWithSort.map((laundry) => (
@@ -333,7 +332,6 @@ const structuredData = {
               <span class="rating-score">{laundry.rating.toFixed(1)}</span>
               <span class="review-count">{laundry.reviewCountLabel} reviews</span>
             </p>
-            <p class="description">{laundry.description}</p>
           </article>
         ))}
       </section>
@@ -980,12 +978,11 @@ const structuredData = {
   .laundry-row {
     display: grid;
     grid-template-columns:
-      minmax(8rem, 1.05fr)
+      minmax(8rem, 1.2fr)
       4.25rem
-      minmax(7rem, 0.72fr)
-      minmax(8rem, 0.9fr)
-      minmax(6.5rem, 0.62fr)
-      minmax(14rem, 1.7fr);
+      minmax(7rem, 0.9fr)
+      minmax(8rem, 1.1fr)
+      minmax(6.5rem, 0.7fr);
     gap: 0;
     align-items: stretch;
     border-top: 1px solid var(--border);
@@ -1056,8 +1053,7 @@ const structuredData = {
   }
 
   .address,
-  .hours,
-  .description {
+  .hours {
     color: var(--text-muted);
     font-size: 0.9rem;
   }
@@ -1154,12 +1150,11 @@ const structuredData = {
 
     .laundry-row {
       grid-template-columns:
-        minmax(8rem, 1.15fr)
+        minmax(8rem, 1.3fr)
         4rem
-        minmax(6.25rem, 0.8fr)
-        minmax(7.5rem, 0.9fr)
-        minmax(6.4rem, 0.72fr)
-        minmax(12rem, 1.4fr);
+        minmax(6.25rem, 1fr)
+        minmax(7.5rem, 1.1fr)
+        minmax(6.4rem, 0.8fr);
     }
   }
 
@@ -1203,11 +1198,9 @@ const structuredData = {
 
     .laundry-row {
       position: relative;
-      min-height: 5.5rem;
+      min-height: 3.4rem;
       grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        "name"
-        "desc";
+      grid-template-areas: "name";
       gap: 0.2rem 0.6rem;
       align-items: center;
       border-top: 1px solid var(--border);
@@ -1263,12 +1256,6 @@ const structuredData = {
 
     .review-count {
       font-size: 0.72rem;
-    }
-
-    .description {
-      grid-area: desc;
-      font-size: 0.92rem;
-      line-height: 1.35;
     }
 
     .method-card,
