@@ -446,6 +446,7 @@ const getRentalListings = (building: Building) => {
 };
 
 const maxVisibleAirbnbListings = 5;
+const maxVisibleRentalListings = 5;
 const truncateListingTitle = (title: string, maxLength = 72) => {
   const cleaned = toStandardListingTitle(title);
   if (cleaned.length <= maxLength) return cleaned;
@@ -914,7 +915,7 @@ const structuredData = {
                       </p>
                     </header>
                     <ul class="listing-list">
-                      {building.rentalListings.map((listing) => (
+                      {building.rentalListings.slice(0, maxVisibleRentalListings).map((listing) => (
                         <li>
                           <a
                             class={`listing-link listing-link-rental${listing.priceLabel ? "" : " is-unpriced"}`}
@@ -946,6 +947,49 @@ const structuredData = {
                         </li>
                       ))}
                     </ul>
+                    {building.rentalListings.length > maxVisibleRentalListings ? (
+                      <details class="listing-more">
+                        <summary>
+                          Show {building.rentalListings.length - maxVisibleRentalListings} more rental
+                          {building.rentalListings.length - maxVisibleRentalListings === 1
+                            ? " ad"
+                            : " ads"}
+                        </summary>
+                        <ul class="listing-list">
+                          {building.rentalListings.slice(maxVisibleRentalListings).map((listing) => (
+                            <li>
+                              <a
+                                class={`listing-link listing-link-rental${listing.priceLabel ? "" : " is-unpriced"}`}
+                                href={listing.url}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                                title={[
+                                  listing.sizeLabel,
+                                  listing.priceLabel
+                                    ? `${listing.priceLabel}/mo${listing.expensesIncluded === false ? " incl. expenses" : ""}`
+                                    : null,
+                                  `${listing.source}: ${listing.title}`,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" · ")}
+                              >
+                                <span class="listing-meta">
+                                  {listing.sizeLabel ? (
+                                    <span class="listing-source listing-size">{listing.sizeLabel}</span>
+                                  ) : (
+                                    <span class="listing-source">{listing.source}</span>
+                                  )}
+                                  {listing.priceLabel ? (
+                                    <span class="listing-price">{listing.priceLabel}</span>
+                                  ) : null}
+                                </span>
+                                <span class="listing-title">{truncateListingTitle(listing.title)}</span>
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    ) : null}
                   </section>
                 ) : null}
               </div>

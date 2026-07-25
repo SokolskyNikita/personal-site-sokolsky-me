@@ -931,6 +931,7 @@ const getRentalListings = (building: Building) => {
     label: listings.length === 1 ? "Rental ad" : `Rental ${index + 1}`,
   }));
 };
+const maxVisibleRentalListings = 5;
 const priceSortedBuildings = [...buildings].sort((first, second) =>
   first.longTermRentUsd.amount - second.longTermRentUsd.amount ||
   collator.compare(first.name, second.name)
@@ -1197,7 +1198,7 @@ const structuredData = {
                 ) : null}
                 {building.rentalListings.length > 0 ? (
                   <div class="link-row rental-link-row" aria-label={`${building.name} rental links`}>
-                    {building.rentalListings.map((listing) => (
+                    {building.rentalListings.slice(0, maxVisibleRentalListings).map((listing) => (
                       <a
                         href={listing.url}
                         target="_blank"
@@ -1208,6 +1209,26 @@ const structuredData = {
                         {listing.label}
                       </a>
                     ))}
+                    {building.rentalListings.length > maxVisibleRentalListings ? (
+                      <details class="rental-more">
+                        <summary>
+                          Show {building.rentalListings.length - maxVisibleRentalListings} more
+                        </summary>
+                        <div class="rental-more-links">
+                          {building.rentalListings.slice(maxVisibleRentalListings).map((listing) => (
+                            <a
+                              href={listing.url}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              aria-label={`Open ${listing.label} for ${building.name}`}
+                              title={`${listing.source}: ${listing.title}`}
+                            >
+                              {listing.label}
+                            </a>
+                          ))}
+                        </div>
+                      </details>
+                    ) : null}
                   </div>
                 ) : null}
               </div>
@@ -1914,6 +1935,54 @@ const structuredData = {
   .airbnb-link-row,
   .rental-link-row {
     width: 100%;
+  }
+
+  .rental-link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .rental-more {
+    width: 100%;
+    margin: 0;
+  }
+
+  .rental-more summary {
+    width: max-content;
+    margin: 0.1rem 0 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 750;
+    list-style: none;
+  }
+
+  .rental-more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .rental-more summary:hover,
+  .rental-more summary:focus-visible {
+    color: var(--text);
+  }
+
+  .rental-more summary:focus-visible {
+    border-radius: 0.2rem;
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 3px;
+  }
+
+  .rental-more[open] summary {
+    margin-bottom: 0.35rem;
+  }
+
+  .rental-more-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
   }
 
   .building-tags span {
