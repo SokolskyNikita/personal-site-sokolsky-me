@@ -27,7 +27,6 @@ const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
-const maxRentalListingsPerBuilding = 6;
 const additionalAirbnbListingsByBuilding: Record<string, AirbnbListing[]> = {
   "the-tower": [
     {
@@ -927,12 +926,10 @@ const getRentalListings = (building: Building) => {
     addListing(listing);
   }
 
-  return [...listingMap.values()]
-    .slice(0, maxRentalListingsPerBuilding)
-    .map((listing, index, listings) => ({
-      ...listing,
-      label: listings.length === 1 ? "Rental ad" : `Rental ${index + 1}`,
-    }));
+  return [...listingMap.values()].map((listing, index, listings) => ({
+    ...listing,
+    label: listings.length === 1 ? "Rental ad" : `Rental ${index + 1}`,
+  }));
 };
 const priceSortedBuildings = [...buildings].sort((first, second) =>
   first.longTermRentUsd.amount - second.longTermRentUsd.amount ||

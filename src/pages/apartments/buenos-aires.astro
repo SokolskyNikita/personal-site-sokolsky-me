@@ -79,7 +79,6 @@ const collator = new Intl.Collator("en", {
   sensitivity: "base",
   numeric: true,
 });
-const maxRentalListingsPerBuilding = listingsData.maxRentalListingsPerBuilding;
 const removedAirbnbUrls = new Set(listingsData.removedAirbnbUrls);
 const removedRentalUrls = new Set(
   ("removedRentalUrls" in listingsData
@@ -443,8 +442,7 @@ const getRentalListings = (building: Building) => {
       const secondPrice = second.priceUsdMonthly ?? Number.POSITIVE_INFINITY;
       if (firstPrice !== secondPrice) return firstPrice - secondPrice;
       return collator.compare(first.title, second.title);
-    })
-    .slice(0, maxRentalListingsPerBuilding);
+    });
 };
 
 const maxVisibleAirbnbListings = 5;
