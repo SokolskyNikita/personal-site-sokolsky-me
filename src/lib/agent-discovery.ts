@@ -34,6 +34,11 @@ Software Engineer at AWS based in Seattle, working on backend systems for AWS
 WAF. More than a decade of experience building reliable software and
 distributed systems, including eight years at Amazon and AWS.
 
+## CV
+
+- [CV, PDF](${SITE_ORIGIN}/files/Sokolsky-Nikita-CV-2026.pdf)
+- [CV, Markdown](${SITE_ORIGIN}/files/Sokolsky-Nikita-CV-2026.md)
+
 ## Connect
 
 - [Substack](https://nsokolsky.substack.com/)
