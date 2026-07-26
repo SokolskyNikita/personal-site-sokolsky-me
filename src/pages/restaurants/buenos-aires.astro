@@ -75,6 +75,13 @@ const brunchCount = restaurants.filter(servesBrunch).length;
 const hotelRestaurantCount = restaurants.filter(isHotelRestaurant).length;
 const priceValue = (restaurant: Restaurant) =>
   restaurant.price.usd.estimate ?? Number.MAX_SAFE_INTEGER;
+const compatibleDishCountValue = (restaurant: Restaurant) => {
+  const count = (restaurant as Restaurant & { compatibleDishCount?: number | null })
+    .compatibleDishCount;
+  return typeof count === "number" ? count : null;
+};
+const vegetarianSortValue = (restaurant: Restaurant) =>
+  compatibleDishCountValue(restaurant) ?? Number.NEGATIVE_INFINITY;
 const sortRank = (
   items: Restaurant[],
   compare: (a: Restaurant, b: Restaurant) => number,
@@ -110,23 +117,37 @@ const popularityRanks = sortRank(
     b.rating - a.rating ||
     collator.compare(a.name, b.name),
 );
-const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => ({
-  ...restaurant,
-  cuisineTypesAttribute: restaurant.cuisineTypes.join("|"),
-  doesDelivery: hasDelivery(restaurant),
-  servesBreakfast: servesBreakfast(restaurant),
-  servesBrunch: servesBrunch(restaurant),
-  isHotelRestaurant: isHotelRestaurant(restaurant),
-  deliveryServicesLabel:
-    restaurant.delivery?.services.map((service) => service.name).join(", ") ?? "",
-  reviewCountLabel: formatter.format(restaurant.reviewCount),
-  sortOrderStyle: [
-    `--sort-name: ${nameRanks.get(restaurant.id)}`,
-    `--sort-rating: ${ratingRanks.get(restaurant.id)}`,
-    `--sort-price: ${priceRanks.get(restaurant.id)}`,
-    `--sort-popularity: ${popularityRanks.get(restaurant.id)}`,
-  ].join("; "),
-}));
+const vegetarianRanks = sortRank(
+  restaurants,
+  (a: Restaurant, b: Restaurant) =>
+    vegetarianSortValue(b) - vegetarianSortValue(a) ||
+    collator.compare(a.name, b.name),
+);
+const restaurantsWithSort = restaurants.map((restaurant: Restaurant) => {
+  const compatibleDishCount = compatibleDishCountValue(restaurant);
+
+  return {
+    ...restaurant,
+    cuisineTypesAttribute: restaurant.cuisineTypes.join("|"),
+    doesDelivery: hasDelivery(restaurant),
+    servesBreakfast: servesBreakfast(restaurant),
+    servesBrunch: servesBrunch(restaurant),
+    isHotelRestaurant: isHotelRestaurant(restaurant),
+    deliveryServicesLabel:
+      restaurant.delivery?.services.map((service) => service.name).join(", ") ?? "",
+    reviewCountLabel: formatter.format(restaurant.reviewCount),
+    compatibleDishCount,
+    compatibleDishCountLabel:
+      compatibleDishCount === null ? "—" : formatter.format(compatibleDishCount),
+    sortOrderStyle: [
+      `--sort-name: ${nameRanks.get(restaurant.id)}`,
+      `--sort-rating: ${ratingRanks.get(restaurant.id)}`,
+      `--sort-price: ${priceRanks.get(restaurant.id)}`,
+      `--sort-popularity: ${popularityRanks.get(restaurant.id)}`,
+      `--sort-vegetarian: ${vegetarianRanks.get(restaurant.id)}`,
+    ].join("; "),
+  };
+});
 const googleMapsApiKey =
   import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
   process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
@@ -262,6 +283,8 @@ const structuredData = {
             <label for="sort-price">Price</label>
             <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
             <label for="sort-popularity">Popularity</label>
+            <input id="sort-vegetarian" type="radio" name="sort" autocomplete="off" />
+            <label for="sort-vegetarian"># of vegetarian-friendly dishes</label>
           </fieldset>
           <fieldset class="currency-toggle">
             <legend>Price currency</legend>
@@ -280,6 +303,11 @@ const structuredData = {
             <label for="filter-brunch">Serves brunch ({brunchCount})</label>
             <input id="filter-exclude-hotels" type="checkbox" autocomplete="off" />
             <label for="filter-exclude-hotels">Exclude hotel restaurants ({hotelRestaurantCount})</label>
+          </fieldset>
+          <fieldset class="veg-toggle">
+            <legend>Display</legend>
+            <input id="show-veg-count" type="checkbox" autocomplete="off" />
+            <label for="show-veg-count">Show # of vegetarian-friendly dishes</label>
           </fieldset>
           <label class="filter-dropdown" for="neighborhood-filter">
             <span>Neighborhood</span>
@@ -312,6 +340,7 @@ const structuredData = {
           <span>Address</span>
           <span>Per person</span>
           <span>GMaps rating</span>
+          <span class="veg-head">Veg dishes</span>
           <span>Description</span>
         </div>
 
@@ -389,6 +418,17 @@ const structuredData = {
             >
               <span class="rating-score">{restaurant.rating.toFixed(1)}</span>
               <span class="review-count">{restaurant.reviewCountLabel} ratings</span>
+            </p>
+            <p
+              class={`veg-count ${restaurant.compatibleDishCount === null ? "veg-count-unknown" : ""}`}
+              aria-label={
+                restaurant.compatibleDishCount === null
+                  ? "Vegetarian-friendly dish count unavailable"
+                  : `${restaurant.compatibleDishCountLabel} vegetarian-friendly dishes`
+              }
+            >
+              <span class="veg-count-value">{restaurant.compatibleDishCountLabel}</span>
+              <span class="veg-count-label">veg dishes</span>
             </p>
             <p class="description">{restaurant.description}</p>
           </article>
@@ -921,7 +961,8 @@ const structuredData = {
 
   .sort-toggle,
   .currency-toggle,
-  .delivery-toggle {
+  .delivery-toggle,
+  .veg-toggle {
     display: flex;
     width: fit-content;
     align-items: center;
@@ -980,13 +1021,15 @@ const structuredData = {
     border-radius: 999px;
   }
 
-  .delivery-toggle {
+  .delivery-toggle,
+  .veg-toggle {
     border-radius: 999px;
   }
 
   .sort-toggle legend,
   .currency-toggle legend,
-  .delivery-toggle legend {
+  .delivery-toggle legend,
+  .veg-toggle legend {
     margin: 0 0.3rem 0 0.2rem;
     padding: 0;
     color: var(--text-muted);
@@ -999,7 +1042,8 @@ const structuredData = {
 
   .sort-toggle input,
   .currency-toggle input,
-  .delivery-toggle input {
+  .delivery-toggle input,
+  .veg-toggle input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
@@ -1007,7 +1051,8 @@ const structuredData = {
 
   .sort-toggle label,
   .currency-toggle label,
-  .delivery-toggle label {
+  .delivery-toggle label,
+  .veg-toggle label {
     display: inline-flex;
     min-height: 2.05rem;
     align-items: center;
@@ -1026,7 +1071,8 @@ const structuredData = {
 
   .sort-toggle label::before,
   .currency-toggle label::before,
-  .delivery-toggle label::before {
+  .delivery-toggle label::before,
+  .veg-toggle label::before {
     content: "";
     width: 0.58rem;
     height: 0.58rem;
@@ -1039,12 +1085,14 @@ const structuredData = {
   #sort-rating:checked ~ label[for="sort-rating"],
   #sort-price:checked ~ label[for="sort-price"],
   #sort-popularity:checked ~ label[for="sort-popularity"],
+  #sort-vegetarian:checked ~ label[for="sort-vegetarian"],
   #currency-usd:checked ~ label[for="currency-usd"],
   #currency-ars:checked ~ label[for="currency-ars"],
-#filter-delivery:checked ~ label[for="filter-delivery"],
-#filter-breakfast:checked ~ label[for="filter-breakfast"],
-#filter-brunch:checked ~ label[for="filter-brunch"],
-#filter-exclude-hotels:checked ~ label[for="filter-exclude-hotels"] {
+  #filter-delivery:checked ~ label[for="filter-delivery"],
+  #filter-breakfast:checked ~ label[for="filter-breakfast"],
+  #filter-brunch:checked ~ label[for="filter-brunch"],
+  #filter-exclude-hotels:checked ~ label[for="filter-exclude-hotels"],
+  #show-veg-count:checked ~ label[for="show-veg-count"] {
     background: var(--accent);
     color: var(--bg);
   }
@@ -1053,12 +1101,14 @@ const structuredData = {
   #sort-rating:checked ~ label[for="sort-rating"]::before,
   #sort-price:checked ~ label[for="sort-price"]::before,
   #sort-popularity:checked ~ label[for="sort-popularity"]::before,
+  #sort-vegetarian:checked ~ label[for="sort-vegetarian"]::before,
   #currency-usd:checked ~ label[for="currency-usd"]::before,
   #currency-ars:checked ~ label[for="currency-ars"]::before,
-#filter-delivery:checked ~ label[for="filter-delivery"]::before,
-#filter-breakfast:checked ~ label[for="filter-breakfast"]::before,
-#filter-brunch:checked ~ label[for="filter-brunch"]::before,
-#filter-exclude-hotels:checked ~ label[for="filter-exclude-hotels"]::before {
+  #filter-delivery:checked ~ label[for="filter-delivery"]::before,
+  #filter-breakfast:checked ~ label[for="filter-breakfast"]::before,
+  #filter-brunch:checked ~ label[for="filter-brunch"]::before,
+  #filter-exclude-hotels:checked ~ label[for="filter-exclude-hotels"]::before,
+  #show-veg-count:checked ~ label[for="show-veg-count"]::before {
     background: currentColor;
     box-shadow: inset 0 0 0 3px var(--accent);
     opacity: 1;
@@ -1094,6 +1144,17 @@ const structuredData = {
     gap: 0;
     align-items: stretch;
     border-top: 1px solid var(--border);
+  }
+
+  body:has(#show-veg-count:checked) .restaurant-row {
+    grid-template-columns:
+      minmax(8rem, 1.1fr)
+      3.75rem
+      minmax(6.5rem, 0.72fr)
+      minmax(6.2rem, 0.48fr)
+      minmax(6.2rem, 0.56fr)
+      minmax(5.4rem, 0.45fr)
+      minmax(14rem, 2.4fr);
   }
 
   .restaurant-row[hidden] {
@@ -1209,7 +1270,8 @@ const structuredData = {
   }
 
   .price,
-  .rating {
+  .rating,
+  .veg-count {
     font-size: 0.95rem;
     font-weight: 750;
     font-variant-numeric: tabular-nums;
@@ -1217,6 +1279,33 @@ const structuredData = {
 
   .price {
     white-space: nowrap;
+  }
+
+  .veg-count,
+  .veg-head {
+    display: none;
+  }
+
+  body:has(#show-veg-count:checked) .veg-count {
+    display: grid;
+    gap: 0.12rem;
+    align-content: start;
+    line-height: 1.35;
+  }
+
+  body:has(#show-veg-count:checked) .veg-head {
+    display: block;
+  }
+
+  .veg-count-label {
+    display: none;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    font-weight: 650;
+  }
+
+  .veg-count-unknown .veg-count-value {
+    color: var(--text-muted);
   }
 
   .price-ars,
@@ -1243,6 +1332,10 @@ const structuredData = {
 
   body:has(#sort-popularity:checked) .restaurant-row:not(.restaurant-head) {
     order: var(--sort-popularity);
+  }
+
+  body:has(#sort-vegetarian:checked) .restaurant-row:not(.restaurant-head) {
+    order: var(--sort-vegetarian);
   }
 
   .rating {
@@ -1324,6 +1417,17 @@ const structuredData = {
         minmax(7.7rem, 0.86fr)
         minmax(6.4rem, 0.72fr)
         minmax(12rem, 2fr);
+    }
+
+    body:has(#show-veg-count:checked) .restaurant-row {
+      grid-template-columns:
+        minmax(7.5rem, 1.1fr)
+        3.75rem
+        minmax(5.8rem, 0.7fr)
+        minmax(6.8rem, 0.78fr)
+        minmax(5.8rem, 0.64fr)
+        minmax(5.2rem, 0.5fr)
+        minmax(10rem, 1.8fr);
     }
   }
 
@@ -1445,6 +1549,30 @@ const structuredData = {
       color: var(--text-muted);
       font-size: 0.86rem;
       text-align: right;
+    }
+
+    body:has(#show-veg-count:checked) .restaurant-row {
+      min-height: 6.8rem;
+      padding-bottom: 0.85rem;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    body:has(#show-veg-count:checked) .veg-count {
+      position: absolute;
+      top: 4.05rem;
+      right: 3rem;
+      width: 6.9rem;
+      display: grid;
+      gap: 0.05rem;
+      justify-items: end;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      text-align: right;
+    }
+
+    body:has(#show-veg-count:checked) .veg-count-label {
+      display: block;
+      font-size: 0.68rem;
     }
 
     .review-count {
