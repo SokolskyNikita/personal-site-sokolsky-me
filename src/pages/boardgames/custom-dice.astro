@@ -1,0 +1,1116 @@
+---
+export const prerender = true;
+
+const pageTitle = "Chai D20 for ChaiSociety";
+const pageDescription =
+  "Vendor prices and notes for a custom D20 with חי on face 18, with the 20 left alone. 3D-printed dice usually roll unfairly; printed or engraved plastic is enough for a ChaiSociety giveaway.";
+const themeColorLight = "#f7f4ef";
+const themeColorDark = "#121510";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const chai = "חי";
+const verifiedAsOf = "2026-07-26";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  dateModified: verifiedAsOf,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: [
+    { "@type": "Thing", name: "Custom D20" },
+    { "@type": "Thing", name: "Chai" },
+    { "@type": "Thing", name: "ChaiSociety" },
+  ],
+  inLanguage: "en",
+};
+
+type PriceRow = {
+  qty: string;
+  unit: string;
+  total: string;
+  highlight?: boolean;
+};
+
+type Vendor = {
+  name: string;
+  href: string;
+  face18: string;
+  price: string;
+  notes: string;
+  highlight?: boolean;
+};
+
+/** Cents only when the amount is $10 or less. */
+const money = (amount: number): string => {
+  if (amount > 10) {
+    return `$${Math.round(amount).toLocaleString("en-US")}`;
+  }
+  const fixed = amount.toFixed(2);
+  return `$${fixed.endsWith(".00") ? String(amount) : fixed}`;
+};
+
+const moneyRange = (low: number, high: number): string =>
+  `${money(low)}–${money(high)}`;
+
+/** Verified from boardgamesmaker.com/print/fi-8836.html on 2026-07-26 */
+const bgmUnitPrices: PriceRow[] = [
+  { qty: "1", unit: money(9), total: money(9) },
+  { qty: "2–5", unit: money(6.85), total: moneyRange(13.7, 34.25) },
+  { qty: "6–29", unit: money(5.6), total: moneyRange(33.6, 162.4) },
+  {
+    qty: "30–49",
+    unit: money(4.5),
+    total: moneyRange(135, 220.5),
+    highlight: true,
+  },
+  { qty: "50–99", unit: money(3.65), total: moneyRange(182.5, 361.35) },
+  { qty: "100–249", unit: money(3), total: moneyRange(300, 747) },
+  { qty: "250–499", unit: money(2.5), total: moneyRange(625, 1247.5) },
+  { qty: "500–999", unit: money(2.05), total: `${money(1025)}+` },
+];
+
+const vendors: Vendor[] = [
+  {
+    name: "BoardGamesMaker",
+    href: "https://www.boardgamesmaker.com/print/fi-8836.html",
+    face18: "Yes. Full-color print on every face independently.",
+    price: `${money(9)} one-off; ${money(4.5)} each at 30–49; ${money(3)} each at 100–249. No setup fee, no minimum.`,
+    notes:
+      "20mm plastic, made overseas, ships to the US. You can print a dark marbled body with gold numerals. It will still look printed, not like recessed cast resin.",
+    highlight: true,
+  },
+  {
+    name: "ShopTakenoko (Etsy)",
+    href: "https://www.etsy.com/listing/1576561805/custom-dice-large-15-d20-engrave-on-all",
+    face18:
+      'Yes. Listing is "engrave on all 20 faces," and the face list accepts Unicode.',
+    price: `${money(59.95)} for the 38mm (1.5") die; other Takenoko D20 listings start around ${money(29.95)}`,
+    notes:
+      "Made in-house in Massachusetts. Engraved, polished and hand-painted. You can type חי into the face list.",
+  },
+  {
+    name: "Fantastic Knickknackery",
+    href: "https://www.ariellemilstein.com/product-page/custom-laser-engraved-d20",
+    face18: "Yes. Custom laser engraving; listing allows 1–2 characters per face.",
+    price: `${money(60)} per die on the seller's site (message for bulk)`,
+    notes:
+      "20mm solid white with dark ink fill. New Jersey / US-made. A two-letter חי fits.",
+  },
+  {
+    name: "Only Crits",
+    href: "https://www.onlycrits.com/pages/wholesale-bulk-orders",
+    face18:
+      'Yes. Their form says: "tell us which die and which number you want replaced" (20, 1, every face, or a specific number).',
+    price: "Quote only; runs of 100–3,000; reply promised within 2 business days",
+    notes:
+      "Acrylic, resin, metal, wood or gemstone. The place to ask if ChaiSociety wants wood or 100+ units.",
+  },
+  {
+    name: "Bear Dice",
+    href: "https://beardice.com/products/custom-d20-dice",
+    face18:
+      "Partial. Gemstone and glass let you choose the engraved face; resin defaults to the 20.",
+    price: "From the mid-$30s for basic custom; gemstone and glass cost more; singles accepted",
+    notes:
+      "7–15 business days, digital proof before cutting. Storefront in Buffalo Grove, IL. Factory-direct, not US-made.",
+  },
+  {
+    name: "Chessex Custom",
+    href: "https://www.chessex.com/custom-engraved-dice",
+    face18: "Maybe. They do US custom engraving; face-18 on a d20 is quote-only.",
+    price: "Email custom@chessex.com or call (260) 482-9234. No public D20 price sheet.",
+    notes:
+      "Made and shipped from the USA. Get them to say in writing they can replace an arbitrary face on a d20. Their public custom page talks more about d6 high-face work.",
+  },
+];
+
+const ruledOut = [
+  {
+    name: "Role 4 Initiative quick-turn",
+    detail: `Kalamazoo workshop laser-engraves only the highest face of each die (${money(35)} setup, 25 minimum, typical 8 weeks; the site said orders process after Aug 5 while they are at Gen Con). All-faces work is only on larger factory runs (FAQ cites MOQ 500).`,
+  },
+  {
+    name: "Baron of Dice custom D20",
+    detail: `Custom design goes on the 1-face only, 22mm, from ${money(295)} per 100. Wrong face.`,
+  },
+  {
+    name: "The Game Crafter printed dice",
+    detail:
+      "On-demand custom printing is D4, D6 and D8 only. No custom printed D20.",
+  },
+  {
+    name: "PrintNinja engraved/silkscreen faces",
+    detail:
+      "They make D20s as game components, but engraved and silkscreen custom art is documented for 6-sided dice only (1,000 / 5,000 MOQ). Too big and wrong die shape for this.",
+  },
+  {
+    name: "Foam Brain Games customs",
+    detail: `Custom metal sets list around ${money(9000)} per 500; custom inclusion resin is also four-figure. Skip unless you are already doing a publisher-scale resin run.`,
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="ChaiSociety, custom D20, chai die, Hebrew dice, face 18, 3D printed dice, BoardGamesMaker, חי"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        <p class="eyebrow">Reply to Mottel · ChaiSociety</p>
+        <h1>
+          Chai D20
+          <span class="chai" lang="he" dir="rtl">{chai}</span>
+        </h1>
+        <p class="dek">
+          Mottel asked how hard and expensive it is to put{" "}
+          <span lang="he" dir="rtl"><strong>{chai}</strong></span> on face{" "}
+          <strong>18</strong> of a D20, and whether 3D-printed dice roll well.
+          Material: whatever fits; printed plastic is fine for gifts.
+        </p>
+        <p class="source-note">
+          Prices and vendor claims checked on vendor sites{" "}
+          <time datetime={verifiedAsOf}>26 Jul 2026</time>. Shipping, tariffs
+          and ink colors are extra unless noted.
+        </p>
+      </header>
+
+      <article class="article">
+        <section id="direct-answer" aria-labelledby="direct-answer-heading">
+          <h2 id="direct-answer-heading">Upshot</h2>
+          <dl class="answer-grid">
+            <div>
+              <dt>Difficulty</dt>
+              <dd>
+                Easy if the shop can change face <strong>18</strong> and leave{" "}
+                <strong>20</strong> alone. Most "custom D20" shops only touch
+                the crit face, so that filter is where the time goes. The Hebrew
+                itself is straightforward.
+              </dd>
+            </div>
+            <div>
+              <dt>Cost</dt>
+              <dd>
+                <strong>{money(9)}</strong> for one printed prototype.{" "}
+                <strong>{moneyRange(135, 183)}</strong> for 30–50 printed member
+                gifts before shipping.{" "}
+                <strong>{moneyRange(35, 60)}</strong> each for US-made engraved
+                pieces. Wood or metal at 100+ is quote-only through Only Crits.
+              </dd>
+            </div>
+            <div>
+              <dt>Material</dt>
+              <dd>
+                Printed plastic or US laser-engraved acrylic/resin for member
+                gifts. Wood through Only Crits in bulk. The black-and-gold
+                galaxy look in the photo is cast resin with recessed fill, and
+                that costs a lot more than a printed promo die.
+              </dd>
+            </div>
+            <div>
+              <dt>3D print</dt>
+              <dd>
+                <strong>Skip it for the giveaway.</strong> They bias too often.
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section id="3d-print" aria-labelledby="3d-print-heading">
+          <h2 id="3d-print-heading">3D-printed D20s and fairness</h2>
+          <p>
+            I would not hand these out as the ChaiSociety gift. FDM or SLA can
+            look neat on a desk. For play, they are a bad bet.
+          </p>
+          <ul class="spec-list">
+            <li>
+              <strong>Infill pulls weight to one axis.</strong> On{" "}
+              <a
+                href="https://3dprinting.stackexchange.com/questions/3605/will-3d-printed-dice-be-fair"
+                target="_blank"
+                rel="noopener noreferrer">3D Printing Stack Exchange</a
+              >, people who rolled FDM dice for hundreds of throws got clear
+              bias; sparse infill packs mass along the print direction.
+            </li>
+            <li>
+              <strong>Solid fill helps a bit and still fails often.</strong>{" "}
+              Store-bought dice already lean a little. A home or bureau print
+              with layer lines and uneven density usually leans harder (
+              <a
+                href="https://www.3dpprofessor.com/2013/10/07/testing-3d-printed-dice-fairness/"
+                target="_blank"
+                rel="noopener noreferrer">3D Printing Professor tests</a
+              >).
+            </li>
+            <li>
+              <strong>Saltwater float tests are a weak check</strong> for how a
+              d20 actually rolls. Fine for catching an obviously loaded die.
+              Useless as proof of fairness.
+            </li>
+            <li>
+              <strong>Shapeways shut down.</strong> Chapter 7 in July 2024;
+              orders stopped. Old listings are dead ends.
+            </li>
+          </ul>
+          <p>
+            Someone in the group can still mess around on MakerWorld with a
+            parametric every-face D20 model. That is a desk toy. Keep it out of
+            the gift bag.
+          </p>
+        </section>
+
+        <section id="constraint" aria-labelledby="constraint-heading">
+          <h2 id="constraint-heading">The face-18 filter</h2>
+          <p>
+            You want a normal D20 where only the <strong>18</strong> becomes{" "}
+            <span lang="he" dir="rtl"><strong>{chai}</strong></span>. Crits
+            still crit. That kills Role 4 Initiative quick-turn (logo on the
+            20), Baron of Dice (logo on the 1) and most cheap laser shops.
+          </p>
+          <p class="callout">
+            Get it in writing: all 20 faces designed independently, or an
+            arbitrary non-20 face replaced.
+          </p>
+        </section>
+
+        <section id="vendors" aria-labelledby="vendors-heading">
+          <h2 id="vendors-heading">Vendors that clear the filter</h2>
+          <div class="table-wrap vendors-table">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Vendor</th>
+                  <th scope="col">Face 18?</th>
+                  <th scope="col">Price (checked)</th>
+                  <th scope="col">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  vendors.map((vendor) => (
+                    <tr class={vendor.highlight ? "row-highlight" : undefined}>
+                      <th scope="row">
+                        <a href={vendor.href} target="_blank" rel="noopener noreferrer">
+                          {vendor.name}
+                        </a>
+                      </th>
+                      <td data-label="Face 18?">{vendor.face18}</td>
+                      <td data-label="Price">{vendor.price}</td>
+                      <td data-label="Notes">{vendor.notes}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Ruled out</h3>
+          <ul class="spec-list">
+            {
+              ruledOut.map((item) => (
+                <li>
+                  <strong>{item.name}:</strong> {item.detail}
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section id="costs" aria-labelledby="costs-heading">
+          <h2 id="costs-heading">What it costs</h2>
+          <h3>BoardGamesMaker printed D20 (before shipping)</h3>
+          <p>
+            From their live{" "}
+            <a
+              href="https://www.boardgamesmaker.com/print/fi-8836.html"
+              target="_blank"
+              rel="noopener noreferrer">D20 polyhedral price table</a
+            >: no setup charge, 20mm, one-piece orders allowed.
+          </p>
+          <div class="table-wrap table-wrap-narrow pricing-table">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Qty band</th>
+                  <th scope="col">Per die</th>
+                  <th scope="col">Band total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  bgmUnitPrices.map((row) => (
+                    <tr class={row.highlight ? "row-highlight" : undefined}>
+                      <th scope="row">{row.qty}</th>
+                      <td class="price" data-label="Per die">{row.unit}</td>
+                      <td class="price" data-label="Band total">{row.total}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Order <strong>30, not 25</strong>. Five extra dice, {money(5)} less
+            than 25 at the {money(5.6)} band ({money(140)} → {money(135)}). Same
+            cliff at 50 and 100.
+          </p>
+
+          <h3>US-made engraved, small quantities</h3>
+          <p>
+            ShopTakenoko ({money(60)} for 38mm) or Fantastic Knickknackery
+            ({money(60)} for 20mm). Fifty units is about{" "}
+            <strong>{money(3000)}</strong> list vs{" "}
+            <strong>{money(182.5)}</strong> printed. The gap buys domestic work,
+            recessed engraving and hand fill. It does not buy fairer rolls.
+          </p>
+
+          <h3>Bulk / wood / metal</h3>
+          <p>
+            For wood or something closer to the photo at 100–3,000, email Only
+            Crits. Role 4 Initiative will do all faces only after their factory
+            MOQ (FAQ: 500). Custom injection molding ({money(1000)}–
+            {money(2500)} tooling, then {money(1)}–{money(3)} per die) undercuts
+            BoardGamesMaker only past roughly 1,000 units.
+          </p>
+        </section>
+
+        <section id="recommended" aria-labelledby="recommended-heading">
+          <h2 id="recommended-heading">What I’d do for ChaiSociety</h2>
+          <ol class="steps">
+            <li>
+              Order one <strong>{money(9)} BoardGamesMaker prototype</strong>{" "}
+              with a dark marbled body and gold numerals if you want something
+              close to the photo without spending real money yet.
+            </li>
+            <li>
+              Change <strong>only</strong> face 18 to outlined vector{" "}
+              <span lang="he" dir="rtl"><strong>{chai}</strong></span>. Keep 20
+              as 20.
+            </li>
+            <li>Check the physical die for legibility and letter orientation.</li>
+            <li>
+              If the print is fine, order <strong>30, 50 or 100</strong>.
+            </li>
+            <li>
+              If you want real engraving or US-made (or wood): ShopTakenoko or
+              Fantastic Knickknackery for a few; Only Crits once you hit 100+.
+            </li>
+          </ol>
+
+          <h3>Copy-paste for the vendor</h3>
+          <blockquote class="vendor-copy">
+            <p>
+              Produce a normally numbered D20 using the standard face layout and
+              orientation. Replace only the numeral 18 with the supplied Hebrew
+              glyph <span lang="he" dir="rtl">{chai}</span>. Keep the numeral 20
+              unchanged. Treat the Hebrew artwork as outlined vector shapes
+              rather than editable text. Please provide a proof showing all 20
+              faces before production.
+            </p>
+          </blockquote>
+        </section>
+
+        <section id="art" aria-labelledby="art-heading">
+          <h2 id="art-heading">Art specs (Hebrew orientation)</h2>
+          <ul class="spec-list">
+            <li>
+              <strong>File format.</strong> SVG or AI with{" "}
+              <span lang="he" dir="rtl">{chai}</span> converted to outlines.
+              Assume they do not have a Hebrew font and their RIP mishandles RTL.
+              ShopTakenoko is the exception: Unicode in the face list.
+            </li>
+            <li>
+              <strong>Orientation.</strong>{" "}
+              <strong>
+                Chet (<span lang="he" dir="rtl">ח</span>) on the right, yod
+                (<span lang="he" dir="rtl">י</span>) on the left
+              </strong>, upright on the face. Non-Hebrew-reading shops flip this
+              constantly. Demand the all-faces proof.
+            </li>
+            <li>
+              <strong>Size.</strong> On 20mm dice aim for 3–6mm character height
+              and 0.3–0.5mm minimum stroke. Hairline calligraphic chai dies at
+              20mm. At 38mm it is fine.
+            </li>
+            <li>
+              <strong>Optional.</strong> A small "18" under the chai if people
+              will actually play with the die.
+            </li>
+            <li>
+              <strong>Balance.</strong> One face’s ink barely moves fairness
+              compared with how the die was made.
+            </li>
+          </ul>
+        </section>
+
+        <section id="diy" aria-labelledby="diy-heading">
+          <h2 id="diy-heading">DIY and side routes</h2>
+          <ul class="spec-list">
+            <li>
+              <strong>Chessex blank white D20s.</strong> Bag of 10 is{" "}
+              <strong>{money(5.5)}</strong> on chessex.com ({money(0.55)} each)
+              if someone has a laser. Past ~20 units this gets miserable.
+            </li>
+            <li>
+              <strong>Metal shops (Norse Foundry etc.).</strong> They take custom
+              inquiries. Luxury one-offs or sponsored sets. No posted face-18
+              member-gift SKU I could find.
+            </li>
+            <li>
+              <strong>Craftcloud / Xometry / local SLA.</strong> Desk piece only.
+              Same fairness problem as above.
+            </li>
+          </ul>
+        </section>
+
+        <section id="caveats" aria-labelledby="caveats-heading">
+          <h2 id="caveats-heading">Where the sources disagree</h2>
+          <ul class="spec-list">
+            <li>
+              Role 4 Initiative’s setup fee is <strong>{money(35)}</strong> on
+              the current quick-turn page (I also saw {money(25)} cited
+              elsewhere). Doesn’t matter unless you clear the all-faces factory
+              MOQ.
+            </li>
+            <li>
+              Fantastic Knickknackery’s Etsy ladder ({money(60)} → {money(210)}{" "}
+              for six) showed up in older scrapes; their own site lists{" "}
+              <strong>{money(60)}</strong>. Message them for 25+.
+            </li>
+            <li>
+              ShopTakenoko "25% off at 5+" appears on some of their listings. I
+              didn’t see it locked to the 38mm all-faces D20. Check before you
+              budget the discount.
+            </li>
+            <li>
+              BoardGamesMaker, Bear Dice and Only Crits’ cheaper tiers are
+              overseas-made. If "done in the US" means{" "}
+              <em>manufactured</em> in the US, that is ShopTakenoko and
+              Fantastic Knickknackery (and Chessex custom, if they can do the
+              face).
+            </li>
+            <li>Unit prices above skip shipping and tariffs.</li>
+          </ul>
+        </section>
+
+      </article>
+    </main>
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f4ef;
+        --paper: #fffcf7;
+        --ink: #171c14;
+        --muted: #5f6758;
+        --line: #d5d0c4;
+        --accent: #1f6b45;
+        --accent-soft: #dcefe4;
+        --highlight: #eef6f0;
+        --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+          Georgia, serif;
+        --sans: "Avenir Next", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #121510;
+          --paper: #1a1f18;
+          --ink: #eef2e8;
+          --muted: #a7b09c;
+          --line: #343c31;
+          --accent: #7dcca0;
+          --accent-soft: #1f3327;
+          --highlight: #243128;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        max-width: 100%;
+        overflow-x: clip;
+        background:
+          radial-gradient(
+            ellipse 80% 50% at 10% -10%,
+            color-mix(in srgb, var(--accent-soft) 70%, transparent),
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 60% 40% at 100% 0%,
+            color-mix(in srgb, var(--line) 55%, transparent),
+            transparent 50%
+          ),
+          var(--bg);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-kerning: normal;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        max-width: 100%;
+        margin: 0;
+        overflow-x: clip;
+      }
+
+      a {
+        color: var(--accent);
+        overflow-wrap: anywhere;
+        text-decoration-line: underline;
+        text-decoration-thickness: 0.07em;
+        text-decoration-color: color-mix(in srgb, var(--accent) 42%, transparent);
+        text-underline-offset: 0.18em;
+        transition:
+          color 140ms ease,
+          text-decoration-color 140ms ease;
+      }
+
+      a:hover {
+        color: var(--ink);
+        text-decoration-color: currentColor;
+      }
+
+      .page {
+        width: 100%;
+        max-width: 46rem;
+        margin: 0 auto;
+        padding: clamp(16px, 4vw, 48px) clamp(12px, 3.5vw, 28px) 72px;
+      }
+
+      .hero {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background:
+          radial-gradient(
+            circle at top right,
+            var(--accent-soft),
+            transparent 42%
+          ),
+          var(--paper);
+        box-shadow: 0 18px 48px rgb(0 0 0 / 6%);
+        padding: clamp(22px, 4.5vw, 40px);
+      }
+
+      .home-link {
+        display: inline-flex;
+        width: fit-content;
+        margin-bottom: 2.25rem;
+        color: var(--muted);
+        font:
+          700 0.72rem/1.2 var(--sans);
+        letter-spacing: 0.1em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .home-link:hover {
+        color: var(--accent);
+      }
+
+      .eyebrow {
+        margin: 0 0 0.7rem;
+        color: var(--accent);
+        font:
+          750 0.72rem/1.25 var(--sans);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      dt,
+      dd {
+        margin-top: 0;
+      }
+
+      h1 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.15em 0.4em;
+        align-items: baseline;
+        margin-bottom: 0.85rem;
+        font-size: clamp(2.1rem, 6.5vw, 3.35rem);
+        font-weight: 650;
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+        overflow-wrap: break-word;
+        text-wrap: balance;
+      }
+
+      .chai {
+        color: var(--accent);
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .dek {
+        max-width: 38rem;
+        margin-bottom: 1.15rem;
+        color: var(--muted);
+        font-size: clamp(1.08rem, 2vw, 1.28rem);
+        line-height: 1.48;
+        letter-spacing: -0.01em;
+        text-wrap: pretty;
+      }
+
+      .source-note {
+        max-width: 38rem;
+        margin-bottom: 0;
+        border-left: 3px solid var(--accent);
+        padding-left: 0.95rem;
+        color: var(--muted);
+        font:
+          0.9rem/1.55 var(--sans);
+      }
+
+      .article {
+        min-width: 0;
+        margin-top: 1.5rem;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--paper);
+        padding: clamp(1.15rem, 4vw, 2.5rem);
+      }
+
+      section {
+        min-width: 0;
+      }
+
+      section + section {
+        margin-top: clamp(2rem, 5vw, 3.25rem);
+      }
+
+      h2 {
+        margin-bottom: 0.9rem;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.55rem;
+        color: var(--accent);
+        font:
+          750 clamp(1.2rem, 2.6vw, 1.65rem)/1.2 var(--sans);
+        letter-spacing: -0.03em;
+        overflow-wrap: break-word;
+      }
+
+      h3 {
+        margin: 1.65rem 0 0.65rem;
+        color: var(--ink);
+        font:
+          750 clamp(1.02rem, 1.8vw, 1.15rem)/1.3 var(--sans);
+        letter-spacing: -0.015em;
+      }
+
+      h2 + h3 {
+        margin-top: 0.15rem;
+      }
+
+      p,
+      li,
+      td,
+      th,
+      dd {
+        color: color-mix(in srgb, var(--ink) 90%, var(--muted));
+        font-size: clamp(1.01rem, 1.4vw, 1.1rem);
+        line-height: 1.7;
+        overflow-wrap: break-word;
+      }
+
+      p + p {
+        margin-top: 0.85rem;
+      }
+
+      .price,
+      .pricing-table td,
+      .pricing-table th {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .answer-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0;
+        margin: 0;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: color-mix(in srgb, var(--paper) 80%, var(--bg));
+      }
+
+      .answer-grid > div {
+        padding: 1.05rem 1.15rem 1.15rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .answer-grid > div:nth-child(odd) {
+        border-right: 1px solid var(--line);
+      }
+
+      .answer-grid > div:nth-last-child(-n + 2) {
+        border-bottom: 0;
+      }
+
+      dt {
+        margin-bottom: 0.4rem;
+        color: var(--accent);
+        font:
+          750 0.7rem/1.25 var(--sans);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      dd {
+        margin: 0;
+        font-size: 0.98rem;
+        line-height: 1.58;
+      }
+
+      .callout {
+        margin: 1.1rem 0 0;
+        border-left: 3px solid var(--accent);
+        padding-left: 0.95rem;
+        color: var(--ink);
+        font:
+          700 0.98rem/1.5 var(--sans);
+      }
+
+      .table-wrap {
+        width: 100%;
+        max-width: 100%;
+        margin: 0.65rem 0 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--paper) 88%, var(--bg));
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .table-wrap-narrow {
+        max-width: 28rem;
+      }
+
+      table {
+        width: 100%;
+        min-width: 0;
+        border-collapse: collapse;
+      }
+
+      .vendors-table table {
+        min-width: 860px;
+      }
+
+      .pricing-table table {
+        min-width: 0;
+      }
+
+      th,
+      td {
+        padding: 0.7rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      thead th {
+        background: color-mix(in srgb, var(--accent-soft) 55%, var(--paper));
+        color: var(--muted);
+        font:
+          750 0.68rem/1.3 var(--sans);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      tbody th {
+        color: var(--ink);
+        font:
+          700 0.95rem/1.4 var(--sans);
+      }
+
+      tbody th a {
+        color: inherit;
+        text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      }
+
+      tbody tr:last-child th,
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .row-highlight {
+        background: var(--highlight);
+      }
+
+      .row-highlight th,
+      .row-highlight td {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .steps {
+        margin: 0 0 1.1rem;
+        padding-left: 1.3rem;
+      }
+
+      .steps li + li {
+        margin-top: 0.65rem;
+      }
+
+      .spec-list {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      .spec-list li + li {
+        margin-top: 0.75rem;
+      }
+
+      .vendor-copy {
+        margin: 0;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--accent-soft) 38%, var(--paper));
+        padding: clamp(1rem, 2.8vw, 1.4rem);
+      }
+
+      .vendor-copy p {
+        margin: 0;
+        color: var(--ink);
+        font-size: 1rem;
+        line-height: 1.62;
+      }
+
+      strong {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      em {
+        font-style: italic;
+      }
+
+      @media (max-width: 900px) {
+        .answer-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .answer-grid > div:nth-child(odd) {
+          border-right: 0;
+        }
+
+        .answer-grid > div:nth-last-child(-n + 2) {
+          border-bottom: 1px solid var(--line);
+        }
+
+        .answer-grid > div:last-child {
+          border-bottom: 0;
+        }
+
+        .hero,
+        .article {
+          border-radius: 18px;
+        }
+
+        .home-link {
+          margin-bottom: 1.5rem;
+        }
+
+        h1 {
+          font-size: clamp(1.85rem, 9vw, 2.4rem);
+        }
+
+        .dek {
+          font-size: 1.05rem;
+          line-height: 1.5;
+        }
+
+        .source-note {
+          font-size: 0.88rem;
+        }
+
+        h2 {
+          font-size: clamp(1.12rem, 5.2vw, 1.35rem);
+        }
+
+        p,
+        li {
+          font-size: 1rem;
+          line-height: 1.68;
+        }
+
+        dd {
+          font-size: 0.97rem;
+          line-height: 1.58;
+        }
+
+        .vendors-table {
+          border: 0;
+          background: transparent;
+          overflow: visible;
+        }
+
+        .vendors-table table,
+        .vendors-table thead,
+        .vendors-table tbody,
+        .vendors-table tr,
+        .vendors-table th,
+        .vendors-table td {
+          display: block;
+          width: 100%;
+          min-width: 0;
+        }
+
+        .vendors-table thead {
+          position: absolute;
+          inset-inline-start: 0;
+          width: 1px;
+          height: 1px;
+          margin: -1px;
+          padding: 0;
+          overflow: hidden;
+          clip-path: inset(50%);
+          border: 0;
+          white-space: nowrap;
+        }
+
+        .vendors-table tr {
+          margin-bottom: 0.7rem;
+          border: 1px solid var(--line);
+          border-radius: 14px;
+          background: color-mix(in srgb, var(--paper) 88%, var(--bg));
+          padding: 0.85rem 0.95rem 0.45rem;
+        }
+
+        .vendors-table tr:last-child {
+          margin-bottom: 0;
+        }
+
+        .vendors-table th,
+        .vendors-table td {
+          border-bottom: 0;
+          padding: 0 0 0.65rem;
+        }
+
+        .vendors-table th {
+          margin-bottom: 0.15rem;
+          font-size: 1.02rem;
+        }
+
+        .vendors-table td {
+          font-size: 0.94rem;
+          line-height: 1.52;
+        }
+
+        .vendors-table td::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: 0.12rem;
+          color: var(--muted);
+          font:
+            750 0.66rem/1.2 var(--sans);
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+        }
+
+        .pricing-table table {
+          min-width: 0;
+          font-size: 0.94rem;
+        }
+
+        .pricing-table th,
+        .pricing-table td {
+          padding: 0.55rem 0.65rem;
+        }
+
+        .steps,
+        .spec-list {
+          padding-left: 1.1rem;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .page {
+          padding-inline: 0.65rem;
+        }
+
+        .hero,
+        .article {
+          padding: 1rem;
+          border-radius: 14px;
+        }
+
+        .answer-grid > div {
+          padding: 0.9rem;
+        }
+
+        .pricing-table th:last-child,
+        .pricing-table td:last-child {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>
