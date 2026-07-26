@@ -48,5 +48,7 @@ fi
 
 cp -f Nikita_Sokolsky_CV_2026.pdf ../public/files/Sokolsky-Nikita-CV-2026.pdf
 cp -f Nikita_Sokolsky_Full_CV_2026.md ../public/files/Sokolsky-Nikita-CV-2026.md
+cp -f Nikita_Sokolsky_OnePage_CV_2026.pdf ../public/files/Sokolsky-Nikita-CV-2026-Short.pdf
+cp -f Nikita_Sokolsky_OnePage_CV_2026.md ../public/files/Sokolsky-Nikita-CV-2026-Short.md
 
-echo "Built both CVs and published the full one to public/files/"
+echo "Built both CVs and published them to public/files/"

@@ -38,6 +38,8 @@ distributed systems, including eight years at Amazon and AWS.
 
 - [CV, PDF](${SITE_ORIGIN}/files/Sokolsky-Nikita-CV-2026.pdf)
 - [CV, Markdown](${SITE_ORIGIN}/files/Sokolsky-Nikita-CV-2026.md)
+- [One-page CV, PDF](${SITE_ORIGIN}/files/Sokolsky-Nikita-CV-2026-Short.pdf)
+- [One-page CV, Markdown](${SITE_ORIGIN}/files/Sokolsky-Nikita-CV-2026-Short.md)
 
 ## Connect
 
