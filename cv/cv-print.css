@@ -1,0 +1,119 @@
+@page {
+  size: Letter;
+  margin: 0.5in 0.55in 0.6in;
+
+  @bottom-right {
+    content: "Nikita Sokolsky · page " counter(page) " of " counter(pages);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    color: #6b6b6b;
+  }
+}
+
+html {
+  font-size: 10pt;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.32;
+  color: #111;
+  hyphens: none;
+  text-align: left;
+}
+
+p,
+li {
+  orphans: 2;
+  widows: 2;
+}
+
+/* Keep each company, project or entry on one page */
+section.level3 {
+  break-inside: avoid;
+}
+
+/* A list owned directly by a section heading, such as the skills list, reads as
+   one block, so keep it whole */
+section.level2 > ul {
+  break-inside: avoid;
+}
+
+/* Name */
+h1 {
+  font-size: 19pt;
+  font-weight: 700;
+  letter-spacing: 0.2pt;
+  margin: 0 0 3pt;
+  break-after: avoid;
+}
+
+/* Tagline, contact details, work authorization */
+h1 + p {
+  font-size: 9pt;
+  line-height: 1.45;
+  color: #2b2b2b;
+  margin: 0 0 8pt;
+}
+
+/* Section headings */
+h2 {
+  font-size: 10.5pt;
+  font-weight: 700;
+  letter-spacing: 0.2pt;
+  margin: 9pt 0 4pt;
+  padding-bottom: 2pt;
+  border-bottom: 0.6pt solid #9a9a9a;
+  break-after: avoid;
+}
+
+/* Company or project */
+h3 {
+  font-size: 10.5pt;
+  font-weight: 700;
+  margin: 8pt 0 1pt;
+  break-after: avoid;
+}
+
+/* Title, dates and stack line under each company */
+h3 + p {
+  font-size: 9.4pt;
+  line-height: 1.38;
+  color: #2b2b2b;
+  margin: 0 0 3pt;
+}
+
+p {
+  margin: 0 0 4pt;
+}
+
+/* Bullets live in the text flow, so page breaks cannot strand a marker
+   and text extraction keeps them attached to their line */
+ul {
+  list-style: none;
+  margin: 0 0 4pt;
+  padding-left: 9pt;
+}
+
+li {
+  margin-bottom: 2pt;
+  text-indent: -9pt;
+}
+
+li::before {
+  content: "•";
+  display: inline-block;
+  width: 9pt;
+  text-indent: 0;
+}
+
+a {
+  color: #123a6d;
+  text-decoration: none;
+}
+
+strong {
+  font-weight: 700;
+}
