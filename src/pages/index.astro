@@ -38,27 +38,34 @@ const links = [
   },
 ];
 
-const cvLinks = [
-  {
-    label: "PDF",
-    href: "/files/Sokolsky-Nikita-CV-2026.pdf",
-    icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`
-  },
-  {
-    label: "Markdown",
-    href: "/files/Sokolsky-Nikita-CV-2026.md",
-    icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22.27 19.385H1.73A1.73 1.73 0 010 17.655V6.345a1.73 1.73 0 011.73-1.73h20.54A1.73 1.73 0 0124 6.345v11.31a1.73 1.73 0 01-1.73 1.73zM5.769 15.923v-4.5l2.308 2.885 2.307-2.885v4.5h2.308V8.078h-2.308l-2.307 2.885-2.308-2.885H3.46v7.845zM21.232 12h-2.309V8.077h-2.307V12h-2.308l3.461 4.039z"/></svg>`
-  },
-  {
-    label: "One-page PDF",
-    href: "/files/Sokolsky-Nikita-CV-2026-Short.pdf",
-    icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`
-  },
-  {
-    label: "One-page Markdown",
-    href: "/files/Sokolsky-Nikita-CV-2026-Short.md",
-    icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22.27 19.385H1.73A1.73 1.73 0 010 17.655V6.345a1.73 1.73 0 011.73-1.73h20.54A1.73 1.73 0 0124 6.345v11.31a1.73 1.73 0 01-1.73 1.73zM5.769 15.923v-4.5l2.308 2.885 2.307-2.885v4.5h2.308V8.078h-2.308l-2.307 2.885-2.308-2.885H3.46v7.845zM21.232 12h-2.309V8.077h-2.307V12h-2.308l3.461 4.039z"/></svg>`
-  },
+const pdfIcon = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+const markdownIcon = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22.27 19.385H1.73A1.73 1.73 0 010 17.655V6.345a1.73 1.73 0 011.73-1.73h20.54A1.73 1.73 0 0124 6.345v11.31a1.73 1.73 0 01-1.73 1.73zM5.769 15.923v-4.5l2.308 2.885 2.307-2.885v4.5h2.308V8.078h-2.308l-2.307 2.885-2.308-2.885H3.46v7.845zM21.232 12h-2.309V8.077h-2.307V12h-2.308l3.461 4.039z"/></svg>`;
+
+const cvLinkRows = [
+  [
+    {
+      label: "PDF",
+      href: "/files/Sokolsky-Nikita-CV-2026.pdf",
+      icon: pdfIcon
+    },
+    {
+      label: "PDF, 1-pager",
+      href: "/files/Sokolsky-Nikita-CV-2026-Short.pdf",
+      icon: pdfIcon
+    },
+  ],
+  [
+    {
+      label: "Markdown",
+      href: "/files/Sokolsky-Nikita-CV-2026.md",
+      icon: markdownIcon
+    },
+    {
+      label: "Markdown, 1-pager",
+      href: "/files/Sokolsky-Nikita-CV-2026-Short.md",
+      icon: markdownIcon
+    },
+  ],
 ];
 
 const pageTitle = "Nikita Sokolsky";
@@ -204,17 +211,21 @@ const structuredData = {
 
         <section class="cv">
           <h2>CV</h2>
-          <p>Fifteen years of backend and distributed systems work, eight of them at Amazon and AWS. Full version, or a one-page summary.</p>
-          <ul class="links">
-            {cvLinks.map((link) => (
-              <li>
-                <a href={link.href} target="_blank" rel="noreferrer">
-                  <span class="icon" set:html={link.icon} />
-                  {link.label}
-                </a>
-              </li>
+          <p>Fifteen years of backend and distributed systems work, eight of them at Amazon and AWS.</p>
+          <div class="cv-links">
+            {cvLinkRows.map((row) => (
+              <ul class="links">
+                {row.map((link) => (
+                  <li>
+                    <a href={link.href} target="_blank" rel="noreferrer">
+                      <span class="icon" set:html={link.icon} />
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             ))}
-          </ul>
+          </div>
         </section>
 
         <section class="connect">
@@ -463,6 +474,12 @@ const structuredData = {
   .links {
     display: flex;
     flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .cv-links {
+    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
   }
 

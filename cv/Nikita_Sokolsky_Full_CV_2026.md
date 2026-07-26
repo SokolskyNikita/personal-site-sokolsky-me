@@ -1,8 +1,12 @@
 # Nikita Sokolsky
 
-Senior Software Engineer · Distributed systems, high-scale AWS infrastructure, AI-assisted development · 15 years of experience  
+Senior Software Engineer · 15 years of experience
+
+Distributed systems, high-scale AWS infrastructure, AI-assisted development
+
 Seattle, WA · sokolx@gmail.com · +1 206 458 4791  
-[www.linkedin.com/in/nsokolsky](https://www.linkedin.com/in/nsokolsky) · [github.com/SokolskyNikita](https://github.com/SokolskyNikita) · [sokolsky.me](https://sokolsky.me)  
+[www.linkedin.com/in/nsokolsky](https://www.linkedin.com/in/nsokolsky) · [github.com/SokolskyNikita](https://github.com/SokolskyNikita) · [sokolsky.me](https://sokolsky.me)
+
 US Green Card holder, no sponsorship required · open to relocation anywhere in the US · available immediately
 
 ## Summary
