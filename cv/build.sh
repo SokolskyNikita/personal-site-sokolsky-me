@@ -4,11 +4,6 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-source_md="Nikita_Sokolsky_Full_CV_2026.md"
-pdf="Nikita_Sokolsky_CV_2026.pdf"
-published_pdf="../public/files/Sokolsky-Nikita-CV-2026.pdf"
-published_md="../public/files/Sokolsky-Nikita-CV-2026.md"
-
 for tool in pandoc weasyprint; do
   if ! command -v "$tool" >/dev/null; then
     echo "$tool is required but not installed" >&2
@@ -16,20 +11,42 @@ for tool in pandoc weasyprint; do
   fi
 done
 
-pandoc "$source_md" \
-  --from=markdown --to=html5 --standalone \
-  --template=cv-template.html --section-divs --css=cv-print.css \
-  --metadata title="Nikita Sokolsky, Senior Software Engineer" \
-  --metadata author="Nikita Sokolsky" \
-  --metadata lang=en \
-  --metadata description="Senior Software Engineer with 15 years of experience in distributed systems and high-scale AWS infrastructure. 8 years at Amazon and AWS. Seattle, WA." \
-  --metadata keywords="Senior Software Engineer,Distributed Systems,AWS,Java,Rust,Go,Scala,DynamoDB,Kinesis,Kafka,Lambda,LLM,agentic development,MCP,RAG,Amazon,Alexa,AWS WAF,Amazon Bar Raiser" \
-  -o cv.html
+keywords="Senior Software Engineer,Distributed Systems,AWS,Java,Rust,Go,Scala,DynamoDB,Kinesis,Kafka,Lambda,LLM,agentic development,MCP,RAG,Amazon,Alexa,AWS WAF,Amazon Bar Raiser"
 
-# --pdf-tags emits the structure tree that ATS and LLM parsers rely on for reading order
-weasyprint --pdf-tags --custom-metadata cv.html "$pdf"
+render() {
+  local source_md=$1 css=$2 html=$3 pdf=$4 title=$5 description=$6
 
-cp -f "$pdf" "$published_pdf"
-cp -f "$source_md" "$published_md"
+  pandoc "$source_md" \
+    --from=markdown --to=html5 --standalone \
+    --template=cv-template.html --section-divs --css="$css" \
+    --metadata title="$title" \
+    --metadata author="Nikita Sokolsky" \
+    --metadata lang=en \
+    --metadata description="$description" \
+    --metadata keywords="$keywords" \
+    -o "$html"
 
-echo "Built $pdf and published it to public/files/"
+  # --pdf-tags emits the structure tree that ATS and LLM parsers rely on for reading order
+  weasyprint --pdf-tags --custom-metadata "$html" "$pdf"
+}
+
+render Nikita_Sokolsky_Full_CV_2026.md cv-print.css cv.html Nikita_Sokolsky_CV_2026.pdf \
+  "Nikita Sokolsky, Senior Software Engineer" \
+  "Senior Software Engineer with 15 years of experience in distributed systems and high-scale AWS infrastructure. 8 years at Amazon and AWS. Seattle, WA."
+
+render Nikita_Sokolsky_OnePage_CV_2026.md cv-onepage-print.css cv-onepage.html Nikita_Sokolsky_OnePage_CV_2026.pdf \
+  "Nikita Sokolsky, Senior Software Engineer, one-page CV" \
+  "One-page CV. Senior Software Engineer with 15 years of experience in distributed systems and high-scale AWS infrastructure. 8 years at Amazon and AWS. Seattle, WA."
+
+if python3 -c "import weasyprint" 2>/dev/null; then
+  pages=$(python3 -c "from weasyprint import HTML; print(len(HTML('cv-onepage.html').render().pages))")
+  if [ "$pages" != "1" ]; then
+    echo "the one-page CV rendered $pages pages, trim it before sending it out" >&2
+    exit 1
+  fi
+fi
+
+cp -f Nikita_Sokolsky_CV_2026.pdf ../public/files/Sokolsky-Nikita-CV-2026.pdf
+cp -f Nikita_Sokolsky_Full_CV_2026.md ../public/files/Sokolsky-Nikita-CV-2026.md
+
+echo "Built both CVs and published the full one to public/files/"
