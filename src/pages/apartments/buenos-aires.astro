@@ -393,18 +393,31 @@ const withRentalMeta = (listing: RentalListing): RentalListing => {
     expensesIncluded: listing.expensesIncluded ?? known.expensesIncluded,
   };
 };
+const toAirbnbSize = (size: unknown): AirbnbSize | undefined =>
+  typeof size === "string" && size in airbnbSizeRank
+    ? (size as AirbnbSize)
+    : undefined;
 const getRentalListings = (building: Building) => {
   const listingMap = new Map<string, RentalListing>();
   const signatures = new Set<string>();
   const addListing = (
-    listing: RentalListing | { url: null } | null | undefined,
+    listing: RentalListing | Building["localRentalAd"] | { url: null } | null | undefined,
   ) => {
     if (!listing?.url || !isDirectRentalUrl(listing.url)) return;
     if (removedRentalUrls.has(listing.url)) return;
 
     const enriched = withRentalMeta({
-      ...listing,
+      source: listing.source,
       title: toStandardListingTitle(listing.title),
+      url: listing.url,
+      size: toAirbnbSize("size" in listing ? listing.size : undefined),
+      bedrooms: "bedrooms" in listing ? listing.bedrooms : undefined,
+      priceUsdMonthly:
+        "priceUsdMonthly" in listing ? listing.priceUsdMonthly : undefined,
+      rentUsd: "rentUsd" in listing ? listing.rentUsd : undefined,
+      expensesUsd: "expensesUsd" in listing ? listing.expensesUsd : undefined,
+      expensesIncluded:
+        "expensesIncluded" in listing ? listing.expensesIncluded : undefined,
     });
     if (!enriched.size || enriched.priceUsdMonthly == null) return;
     const signature = getRentalSignature(enriched);
