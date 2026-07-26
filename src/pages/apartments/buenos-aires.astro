@@ -396,7 +396,9 @@ const withRentalMeta = (listing: RentalListing): RentalListing => {
 const getRentalListings = (building: Building) => {
   const listingMap = new Map<string, RentalListing>();
   const signatures = new Set<string>();
-  const addListing = (listing: RentalListing | null | undefined) => {
+  const addListing = (
+    listing: RentalListing | { url: null } | null | undefined,
+  ) => {
     if (!listing?.url || !isDirectRentalUrl(listing.url)) return;
     if (removedRentalUrls.has(listing.url)) return;
 
