@@ -2,23 +2,12 @@
 
 Senior Software Engineer · Distributed systems, high-scale AWS infrastructure, AI-assisted development · 15 years of experience  
 Seattle, WA · sokolx@gmail.com · +1 206 458 4791  
-[linkedin.com/in/nsokolsky](https://linkedin.com/in/nsokolsky) · [github.com/SokolskyNikita](https://github.com/SokolskyNikita) · [sokolsky.me](https://sokolsky.me)  
+[www.linkedin.com/in/nsokolsky](https://www.linkedin.com/in/nsokolsky) · [github.com/SokolskyNikita](https://github.com/SokolskyNikita) · [sokolsky.me](https://sokolsky.me)  
 US Green Card holder, no sponsorship required · open to relocation anywhere in the US · available immediately
 
 ## Summary
 
 Backend and distributed systems engineer with 15 years in the industry, 8 of them at Amazon and AWS. Most recently a core engineer on the device data store that every Alexa device in the world reads from, including the infrastructure work that let Alexa+ ship. Before that, two years inside the AWS WAF request path, which evaluates security rules on billions of HTTP requests a day. Java, Rust, Go and Scala on the backend, React when the frontend needs it. Building with LLMs since mid-2022, before ChatGPT shipped. Certified Amazon Bar Raiser with 200+ interviews conducted and five years mentoring junior engineers. M.Sc. in Artificial Intelligence.
-
-## Technical skills
-
-- **Languages:** Java, Rust, Go, Scala, TypeScript, C#/.NET, SQL
-- **AWS:** DynamoDB, Kinesis, MSK (Kafka), Lambda, EC2, ECS, S3, RDS, Elasticsearch, CloudWatch
-- **Systems:** Distributed systems, event-driven architecture, stream processing, microservices, REST API design, capacity planning, load shedding, observability, on-call operations
-- **AI:** LLM-assisted and agentic development (Cursor + custom harnesses), custom MCP tooling, RAG, prompt/context engineering
-- **Data stores:** DynamoDB, PostgreSQL, SQL Server
-- **Frontend:** React, TypeScript, AngularJS
-- **Delivery:** CI/CD, GitHub Actions, automated testing, Cloudflare Workers
-- **Spoken languages:** English, Russian and Czech, fluent in all three
 
 ## Experience
 
@@ -53,7 +42,7 @@ Scala, PostgreSQL (RDS), React
 
 - Led design and delivery of the freight forwarding application that more than 2,000 Flexport cargo operators work in daily.
 - Replaced a legacy monolith with event-driven Scala services on PostgreSQL (RDS). Reliability and deploy cadence both improved.
-- Shipped the React frontend alongside product and design. Operator task-completion time dropped.
+- Shipped the React frontend alongside product and design. Operators got through the same work faster than on the old tool.
 
 ### Amazon Web Services, Networking · Seattle, WA
 
@@ -90,6 +79,17 @@ Java, Spring, React, EC2, Lambda
 - **Creditinfo Solutions** · Prague, Czech Republic · Apr 2013 – Oct 2016. Software Developer, internal platforms (C#, .NET, SQL Server, Dynamics CRM). Owned the Dynamics CRM integration layer serving the company's global offices, working with product managers across several European locations.
 - **moodAway** · London, UK, remote · Jun 2015 – Sep 2015. AngularJS frontend development.
 - **Internships and freelance:** University of Paderborn GET Lab, Germany (2012), algorithms for the GetBot autonomous rescue robot · Lappeenranta University of Technology, Finland (2013) · freelance web app for visual analysis of commercial websites (2011).
+
+## Technical skills
+
+- **Languages:** Java, Rust, Go, Scala, TypeScript, C#/.NET, SQL
+- **AWS:** DynamoDB, Kinesis, MSK (Kafka), Lambda, EC2, ECS, S3, RDS, Elasticsearch, CloudWatch
+- **Systems:** Distributed systems, event-driven architecture, stream processing, microservices, REST API design, capacity planning, load shedding, observability, on-call operations
+- **AI:** LLM-assisted and agentic development (Cursor + custom harnesses), custom MCP tooling, RAG, prompt/context engineering
+- **Data stores:** DynamoDB, PostgreSQL, SQL Server
+- **Frontend:** React, TypeScript, AngularJS
+- **Delivery:** CI/CD, GitHub Actions, automated testing, Cloudflare Workers
+- **Spoken languages:** English, Russian and Czech, fluent in all three
 
 ## Projects
 
