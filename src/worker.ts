@@ -146,6 +146,13 @@ export default {
       return withUtf8TextHeaders(await env.ASSETS.fetch(request));
     }
 
+    // The asset server labels .md files "text/markdown" with no charset, and
+    // browsers then decode text/* as windows-1252 and mangle every non-ASCII
+    // character in the CVs.
+    if (url.pathname.endsWith(".md")) {
+      return withUtf8Charset(await env.ASSETS.fetch(request));
+    }
+
     return withAgentDiscoveryHeaders(
       await env.ASSETS.fetch(request),
       url.pathname,
@@ -600,6 +607,22 @@ function withNoIndexHeaders(response: Response): Response {
 function withUtf8TextHeaders(response: Response): Response {
   const headers = new Headers(response.headers);
   headers.set("Content-Type", "text/plain; charset=utf-8");
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function withUtf8Charset(response: Response): Response {
+  const contentType = response.headers.get("Content-Type");
+  if (!contentType || contentType.toLowerCase().includes("charset=")) {
+    return response;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("Content-Type", `${contentType}; charset=utf-8`);
 
   return new Response(response.body, {
     status: response.status,
