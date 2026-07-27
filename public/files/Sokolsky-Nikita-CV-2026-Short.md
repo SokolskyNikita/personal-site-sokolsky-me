@@ -11,7 +11,7 @@ US Green Card holder, no sponsorship required · open to relocation anywhere in 
 
 ## Summary
 
-Backend and distributed systems engineer, 15 years in the industry and 8 at Amazon and AWS: the data store behind every Alexa device in the world, then the AWS WAF request path. Java, Rust, Go and Scala, building with LLMs since mid-2022.
+Backend and distributed systems engineer, 15 years in the industry and 8 at Amazon and AWS: worked on the AWS WAF evaluation engine, then the data store behind every Alexa device in the world. Java, Rust, Go and Scala, building with LLMs since mid-2022.
 
 ## Experience
 
@@ -47,7 +47,7 @@ Backend and distributed systems engineer, 15 years in the industry and 8 at Amaz
 **Software Development Engineer** · Jan 2018 – May 2021 · Java, Spring, React
 
 - Led the architectural refactor of invoice generation for Amazon Business, then a roughly $25B-a-year gross-sales business, and broke a brittle monolith into independently deployable services. Wrote most of the replacement myself.
-- Delivered the Amazon Business credit card with American Express on schedule in 2018, and owned both frontend and backend.
+- Delivered the Amazon Business credit card with American Express on schedule in 2018, and owned frontend and backend.
 
 ### Earlier · 2011 – 2018
 
