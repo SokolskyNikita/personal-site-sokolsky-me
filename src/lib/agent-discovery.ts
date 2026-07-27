@@ -25,14 +25,15 @@ search quota. Those operations intentionally are not advertised as agent APIs.
 
 const HOME_MARKDOWN = `---
 title: Nikita Sokolsky
-description: Personal website of Nikita Sokolsky, software engineer at AWS.
+description: Personal website of Nikita Sokolsky, senior software engineer in Seattle.
 ---
 
 # Nikita Sokolsky
 
-Software Engineer at AWS based in Seattle, working on backend systems for AWS
-WAF. More than a decade of experience building reliable software and
-distributed systems, including eight years at Amazon and AWS.
+Senior software engineer based in Seattle, looking for his next role. Fifteen
+years building reliable software and distributed systems, eight of them at
+Amazon and AWS, most recently on the data store behind every Alexa device in
+the world and before that in the AWS WAF request path.
 
 ## CV
 
