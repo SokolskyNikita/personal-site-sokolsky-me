@@ -5,7 +5,7 @@ Senior Software Engineer · 15 years of experience
 Distributed systems, high-scale AWS infrastructure, AI-assisted development
 
 Seattle, WA · sokolx@gmail.com · +1 206 458 4791  
-[www.linkedin.com/in/nsokolsky](https://www.linkedin.com/in/nsokolsky) · [github.com/SokolskyNikita](https://github.com/SokolskyNikita) · [sokolsky.me](https://sokolsky.me) · [full CV](https://sokolsky.me/files/Sokolsky-Nikita-CV-2026.pdf)
+[www.linkedin.com/in/nsokolsky](https://www.linkedin.com/in/nsokolsky) · [github.com/SokolskyNikita](https://github.com/SokolskyNikita) · [sokolsky.me](https://sokolsky.me)
 
 US Green Card holder, no sponsorship required · open to relocation anywhere in the US · available immediately
 
