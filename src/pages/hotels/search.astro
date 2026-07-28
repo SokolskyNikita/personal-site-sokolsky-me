@@ -49,7 +49,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
     />
   </head>
   <body>
-    <div class="fs-page" id="hs-app">
+    <main class="fs-page" id="hs-app">
       <header class="fs-top">
         <div class="fs-heading">
           <span class="fs-eyebrow">Hotels</span>
@@ -69,10 +69,6 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         >
           <header class="fs-section-heading">
             <h2 id="hs-where-heading">Where &amp; when</h2>
-            <p>
-              Search needs stay dates (uses API credits). Show ranking is free
-              (saved list, no prices).
-            </p>
           </header>
           <div class="fs-primary">
             <div class="hs-city-block">
@@ -107,6 +103,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <input
                 id="hs-adults"
                 type="number"
+                inputmode="numeric"
                 min="1"
                 max="8"
                 value={String(DEFAULT_HOTEL_FORM.adults)}
@@ -116,13 +113,21 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <div class="hs-run-row">
             <p class="hs-credit-hint" id="hs-credit-hint"></p>
             <div class="fs-actions">
-              <button type="submit" class="fs-btn fs-btn-primary" id="hs-run"
+              <button
+                type="submit"
+                class="fs-btn fs-btn-primary"
+                id="hs-run"
+                aria-describedby="hs-credit-hint"
                 >Search hotels</button
               >
-              <button type="button" class="fs-btn" id="hs-ranking"
+              <button type="button" class="fs-btn hs-btn-secondary" id="hs-ranking"
                 >Show ranking</button
               >
-              <button type="button" class="fs-btn" id="hs-cancel" hidden
+              <button
+                type="button"
+                class="fs-btn hs-btn-secondary"
+                id="hs-cancel"
+                hidden
                 >Cancel</button
               >
             </div>
@@ -161,6 +166,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
               <input
                 id="hs-budget-max"
                 type="number"
+                inputmode="numeric"
                 min="0"
                 step="10"
                 placeholder="No limit"
@@ -185,9 +191,7 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
       </form>
 
       <div class="fs-status" aria-live="polite">
-        <p class="fs-search-summary" id="hs-search-summary">
-          Choose Search hotels or Show ranking to see results.
-        </p>
+        <p class="fs-search-summary" id="hs-search-summary"></p>
         <div
           class="fs-banner fs-banner-warn"
           id="hs-offline-banner"
@@ -199,13 +203,9 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
         <div id="hs-banners"></div>
         <p class="fs-progress" id="hs-progress"></p>
       </div>
-      <div id="hs-results" aria-live="polite"></div>
-      <p class="fs-trust-note">
-        Hotel listings often omit amenities. Missing data is treated as unknown,
-        not no. Ratings are adjusted against the city's average.
-      </p>
-      <div class="fs-footer-stats" id="hs-footer"></div>
 
+      <!-- Above the results: the bar is sticky, so its position decides what
+           it can cover while scrolling. -->
       <div class="fs-search-progress" id="hs-search-progress" hidden>
         <div class="fs-search-progress-copy">
           <strong id="hs-search-progress-label">Preparing</strong>
@@ -222,7 +222,25 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           <span id="hs-search-progress-fill"></span>
         </div>
       </div>
-    </div>
+
+      <div id="hs-results">
+        <div class="fs-empty">
+          <strong>No hotels loaded yet.</strong>
+          <span>
+            Show ranking opens the saved comfort list for the selected city —
+            free, and no dates needed. Search hotels adds live prices for your
+            stay dates.
+          </span>
+        </div>
+      </div>
+      <p class="fs-trust-note">
+        Comfort blends the guest rating with room-condition and consistency
+        signals from reviews; higher is better. Open a row for the score
+        breakdown. Hotel listings often omit amenities, so missing data counts as
+        unknown, not no. Ratings are adjusted against the city's average.
+      </p>
+      <div class="fs-footer-stats" id="hs-footer"></div>
+    </main>
 
     <script>
       import { mountHotelSearch } from "../../components/hotels/search-app";

@@ -218,6 +218,8 @@ export function mountHotelSearch(root: HTMLElement): void {
   syncCityMode();
   syncCreditHint();
   syncSortOptions();
+  syncCheckoutFloor();
+  syncRunButton();
 
   // Controls that only filter/sort already-loaded rows. Changing them never
   // costs credits and should update the table instantly.
@@ -267,6 +269,8 @@ export function mountHotelSearch(root: HTMLElement): void {
     syncUrl(form);
     syncCreditHint();
     syncSortOptions();
+    syncCheckoutFloor();
+    syncRunButton();
     if (refineIds.has(targetId)) {
       if (latestRows.length) {
         const visible = filterAndSort(latestRows, form);
@@ -285,7 +289,7 @@ export function mountHotelSearch(root: HTMLElement): void {
     checkOut?.setAttribute("aria-invalid", "true");
     summary.textContent = "Select check-in and check-out dates to search.";
     banners.innerHTML =
-      `<div class="fs-banner fs-banner-warn" role="alert">Choose your stay dates, then press Search hotels again.</div>`;
+      `<div class="fs-banner fs-banner-warn" role="alert" data-dates-required>Choose your stay dates, then press Search hotels again.</div>`;
     const focusEl = !checkIn?.value ? checkIn : checkOut;
     focusEl?.focus();
   }
@@ -296,6 +300,19 @@ export function mountHotelSearch(root: HTMLElement): void {
       el?.classList.remove("is-invalid");
       el?.removeAttribute("aria-invalid");
     }
+    const stale = banners.querySelector("[data-dates-required]");
+    if (stale) {
+      stale.remove();
+      summary.textContent = "";
+    }
+  }
+
+  /** Stop the date picker from offering a check-out that predates check-in. */
+  function syncCheckoutFloor(): void {
+    const checkIn = root.querySelector<HTMLInputElement>("#hs-checkin-start");
+    const checkOut = root.querySelector<HTMLInputElement>("#hs-checkout");
+    if (!checkIn || !checkOut) return;
+    checkOut.min = checkIn.value ? addDaysIso(checkIn.value, 1) : today;
   }
 
   function syncCityMode(): void {
@@ -331,12 +348,12 @@ export function mountHotelSearch(root: HTMLElement): void {
     const state = readForm(root);
     if (!stayDatesSelected(root)) {
       creditHint.textContent =
-        "Select check-in and check-out to Search. Show ranking is always free (no dates needed).";
+        "Add check-in and check-out dates to search live prices. Show ranking is free and needs no dates.";
       return;
     }
     const checkOut = checkOutDate(state);
     const nights = state.nightsMin;
-    creditHint.textContent = `Search: exact prices for every ranked hotel for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}). Cached prices are free; each uncached hotel may use 1 credit.`;
+    creditHint.textContent = `Search prices every ranked hotel for ${formatDateRange(state.checkInStart, checkOut)} (${nights} night${nights === 1 ? "" : "s"}). Cached prices are free; each uncached hotel costs about 1 credit.`;
   }
 
   cancelBtn.addEventListener("click", () => {
@@ -409,8 +426,7 @@ export function mountHotelSearch(root: HTMLElement): void {
   async function showRanking(state: HotelFormState): Promise<void> {
     const controller = new AbortController();
     activeController = controller;
-    setBusy(true);
-    rankingBtn.textContent = "Loading…";
+    setBusy(true, "Loading…");
     banners.innerHTML = "";
     progress.textContent = "";
     setSearchProgress("Loading ranking", 0, 1);
@@ -461,6 +477,8 @@ export function mountHotelSearch(root: HTMLElement): void {
     // Keep prior results visible until newer data arrives (shitty-wifi friendly).
     banners.innerHTML = "";
     progress.textContent = "";
+    // /plan can take a few seconds; don't leave the last status line standing.
+    summary.textContent = "Checking saved results…";
 
     const citySlug = resolveCitySlug(state);
     const q = state.q.trim() || undefined;
@@ -678,9 +696,6 @@ export function mountHotelSearch(root: HTMLElement): void {
       indexDurationMs: data.durationMs,
       clientFetchMs: Math.round(clientMs),
     };
-    if (data.durationMs != null && data.durationMs < 500) {
-      progress.textContent = `Saved results loaded in ${Math.round(clientMs)} ms.`;
-    }
     const visible =
       options.applyFilters === false
         ? latestRows
@@ -710,7 +725,22 @@ export function mountHotelSearch(root: HTMLElement): void {
     onlyTokens?: Set<string>,
   ): Promise<void> {
     if (!hasDates(state)) return;
-    summary.textContent = "";
+    // Rows rendered mid-sweep show progress instead of a paid lookup button.
+    results.classList.add("is-pricing");
+    try {
+      await runPriceSweep(citySlug, state, signal, onlyTokens);
+    } finally {
+      results.classList.remove("is-pricing");
+    }
+  }
+
+  async function runPriceSweep(
+    citySlug: string,
+    state: HotelFormState,
+    signal?: AbortSignal,
+    onlyTokens?: Set<string>,
+  ): Promise<void> {
+    summary.textContent = "Checking prices for the ranked hotels…";
     const data = await fetchJson<PricesResponse>("/api/hotels/prices", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -885,8 +915,9 @@ export function mountHotelSearch(root: HTMLElement): void {
       : failed > 0
         ? `Checked ${checked} of ${latestRows.length} hotels: ${pricedCount} prices found, ${unavailable} unavailable, ${failed} failed. ${creditsUsed} credits used.`
         : `Checked all ${latestRows.length} hotels: ${pricedCount} prices found, ${unavailable} unavailable. ${creditsUsed} credits used.`;
-    const visible = filterAndSort(latestRows, state);
-    renderTable(results, visible, state);
+    // Refine controls stay live during a sweep, so render the current filters.
+    const visible = filterAndSort(latestRows, form);
+    renderTable(results, visible, form);
     renderFooter(footer, visible, latestMeta);
   }
 
@@ -974,27 +1005,62 @@ export function mountHotelSearch(root: HTMLElement): void {
     } catch (error) {
       button.disabled = false;
       button.textContent = "Retry price";
+      button.title = "Try this hotel's price again (about 1 credit)";
       summary.textContent = `Couldn't load this price: ${formatNetworkError(error)}.`;
     }
   }
 
   function setBusy(busy: boolean, label = "Search hotels"): void {
     isRunning = busy;
+    const focused = document.activeElement;
     for (const control of Array.from(formEl.elements)) {
       if (
-        control instanceof HTMLInputElement ||
-        control instanceof HTMLSelectElement ||
-        control instanceof HTMLButtonElement
+        !(
+          control instanceof HTMLInputElement ||
+          control instanceof HTMLSelectElement ||
+          control instanceof HTMLButtonElement
+        )
       ) {
-        control.disabled = control === cancelBtn ? !busy : busy;
+        continue;
       }
+      if (control === cancelBtn) {
+        control.disabled = !busy;
+        continue;
+      }
+      // Refine controls only re-sort rows that are already loaded, so they stay
+      // usable while a long price sweep runs.
+      if (refineIds.has(control.id)) continue;
+      control.disabled = busy;
     }
+    // Cancel takes the place of Show ranking so the row keeps its width.
     cancelBtn.hidden = !busy;
+    rankingBtn.hidden = busy;
     runBtn.textContent = label;
-    if (!busy) {
+    if (busy) {
+      runBtn.setAttribute("aria-busy", "true");
+      results.setAttribute("aria-busy", "true");
+      // Disabling the focused control would otherwise drop focus to the body.
+      if (focused instanceof HTMLElement && formEl.contains(focused)) {
+        cancelBtn.focus();
+      }
+    } else {
+      runBtn.removeAttribute("aria-busy");
+      results.removeAttribute("aria-busy");
       rankingBtn.textContent = "Show ranking";
       syncCityMode();
+      syncRunButton();
+      if (focused === cancelBtn && !runBtn.disabled) runBtn.focus();
     }
+  }
+
+  /** Search needs stay dates; say so on the button instead of failing on click. */
+  function syncRunButton(): void {
+    if (isRunning) return;
+    const ready = stayDatesSelected(root);
+    runBtn.disabled = !ready;
+    runBtn.title = ready
+      ? "Search exact prices for these dates"
+      : "Select check-in and check-out dates first";
   }
 
   function setSearchProgress(
@@ -1009,8 +1075,16 @@ export function mountHotelSearch(root: HTMLElement): void {
     progressTotal = safeTotal;
     const percent = (safeCompleted / safeTotal) * 100;
     progressDock.hidden = false;
-    progressDock.classList.remove("is-indeterminate");
     progressLabel.textContent = label;
+    // Nothing has finished yet, so sweep instead of showing an empty 0% bar.
+    if (safeCompleted === 0) {
+      progressDock.classList.add("is-indeterminate");
+      progressFill.style.removeProperty("transform");
+      progressCount.textContent = "";
+      progressTrack.removeAttribute("aria-valuenow");
+      return;
+    }
+    progressDock.classList.remove("is-indeterminate");
     progressFill.style.transform = `scaleX(${percent / 100})`;
     progressCount.textContent = `${safeCompleted} of ${safeTotal}`;
     progressTrack.setAttribute("aria-valuenow", String(Math.round(percent)));
@@ -1457,11 +1531,11 @@ function renderTable(
   form?: HotelFormState,
 ): void {
   if (!rows.length) {
-    container.innerHTML = `<div class="fs-empty"><strong>No hotels match.</strong><span>Lower the minimum comfort score, remove a requirement or search again.</span></div>`;
+    container.innerHTML = `<div class="fs-empty"><strong>No hotels match these filters.</strong><span>Raise Max total stay $, lower Min reviews, or clear a requirement such as Require AC.</span></div>`;
     return;
   }
   if (form?.sort === "deal" && !hasDates(form)) {
-    container.innerHTML = `<div class="fs-empty"><strong>Set dates for best-deal sort.</strong><span>Pick a check-in range, then search again.</span></div>`;
+    container.innerHTML = `<div class="fs-empty"><strong>Best-deal sort needs stay dates.</strong><span>Pick check-in and check-out, then search again.</span></div>`;
     return;
   }
   // Price columns only appear once at least one row has price data,
@@ -1469,7 +1543,11 @@ function renderTable(
   const hasPrices =
     hasDates(form ?? DEFAULT_HOTEL_FORM) ||
     rows.some((r) => stayTotalUsd(r) != null || r.deal_pct != null);
-  const columnCount = hasPrices ? 6 : 4;
+  const columnCount = hasPrices ? 7 : 5;
+  const searchedStay =
+    form?.checkInStart && hasDates(form)
+      ? formatDateRange(form.checkInStart, checkOutDate(form))
+      : "";
   const body = rows
     .map((r, i) => {
       const href = datedHotelUrl(r.googleHotelsUrl, form);
@@ -1477,27 +1555,34 @@ function renderTable(
       const stayDates = r.bestStay
         ? formatDateRange(r.bestStay.checkIn, r.bestStay.checkOut)
         : "";
+      // The caption covers the searched stay; only flag a cached other window.
+      const rowStay = stayDates && stayDates !== searchedStay ? stayDates : "";
       const deal = r.deal_pct != null ? dealChip(r.deal_pct, r.dealMethod) : "—";
+      const name = displayHotelName(r.name);
       const priceContent =
         total != null
-          ? `$${Math.round(total)}${stayDates ? `<div class="fs-muted">${escapeHtml(stayDates)}</div>` : ""}`
+          ? `$${Math.round(total)}${rowStay ? `<div class="fs-muted">${escapeHtml(rowStay)}</div>` : ""}`
           : form?.checkInStart
             ? r.priceResolved
               ? `<span class="fs-muted">No availability</span>`
-              : `<button type="button" class="fs-btn" data-check-price data-token="${escapeHtml(r.token)}" title="Retry this exact hotel's price for the selected dates (about 1 credit)">Retry price</button>`
+              : `<span class="hs-price-pending">Checking…</span><button type="button" class="fs-btn hs-btn-mini" data-check-price data-token="${escapeHtml(r.token)}" title="Look up this hotel's exact price for the selected dates (about 1 credit)">Check price</button>`
             : "—";
+      // Only mark genuinely blank cells: the mobile card layout hides these,
+      // and hiding a lookup button would strand the row with no price at all.
+      const priceIsBlank = total == null && !form?.checkInStart;
       const priceCells = hasPrices
-        ? `<td class="hs-cell-price hs-cell-num ${total == null ? "hs-cell-empty" : ""}">${priceContent}</td>
+        ? `<td class="hs-cell-price hs-cell-num ${priceIsBlank ? "hs-cell-empty" : ""}">${priceContent}</td>
         <td class="hs-cell-deal ${deal === "—" ? "hs-cell-empty" : ""}">${deal}</td>`
         : "";
       return `<tr data-token="${escapeHtml(r.token)}">
         <td class="hs-cell-rank">${i + 1}</td>
         <td class="hs-cell-score"><strong>${Number(r.score ?? 0).toFixed(1)}</strong></td>
-        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayHotelName(r.name))}</a></td>
+        <td class="hs-cell-hotel"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a></td>
         <td class="hs-cell-rating hs-cell-num">${r.rating?.toFixed(1) ?? "—"} <span class="fs-muted">(${formatReviewCount(r.reviews)})</span></td>
         ${priceCells}
+        <td class="hs-cell-toggle"><button type="button" class="hs-detail-toggle" data-detail-toggle aria-expanded="false" aria-controls="hs-detail-${i}" aria-label="Comfort details for ${escapeHtml(name)}">▾</button></td>
       </tr>
-      <tr class="hs-detail" hidden>
+      <tr class="hs-detail" id="hs-detail-${i}" hidden>
         <td colspan="${columnCount}">${detailCard(r, form)}</td>
       </tr>`;
     })
@@ -1506,18 +1591,28 @@ function renderTable(
   const priceHead = hasPrices
     ? `<th class="hs-cell-num">Total stay $</th><th>Deal</th>`
     : "";
+  // States the stay once instead of repeating it on every row, and stays visible
+  // in the mobile card layout, where the table header is hidden.
+  const nights = form?.nightsMin ?? 0;
+  const adults = form?.adults ?? DEFAULT_HOTEL_FORM.adults;
+  const caption = searchedStay
+    ? `<caption class="hs-table-caption">Total stay $ for ${escapeHtml(searchedStay)} · ${nights} night${nights === 1 ? "" : "s"} · ${adults} adult${adults === 1 ? "" : "s"}</caption>`
+    : "";
   container.innerHTML = `<div class="hs-table-wrap"><table class="hs-table">
+    ${caption}
     <thead><tr>
-      <th class="hs-cell-rank">#</th><th>Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th>${priceHead}
+      <th class="hs-cell-rank">#</th><th title="Guest rating adjusted for room-condition and consistency signals; higher is better">Comfort</th><th>Hotel</th><th class="hs-cell-num">Rating</th>${priceHead}<th><span class="hs-sr-only">Details</span></th>
     </tr></thead>
     <tbody>${body}</tbody>
   </table></div>`;
 
   container.querySelectorAll<HTMLTableRowElement>("tr[data-token]").forEach((tr) => {
-    const toggleDetail = async () => {
+    const toggle = tr.querySelector<HTMLButtonElement>("[data-detail-toggle]");
+    const toggleDetail = () => {
       const detail = tr.nextElementSibling as HTMLTableRowElement | null;
       if (!detail?.classList.contains("hs-detail")) return;
       detail.hidden = !detail.hidden;
+      toggle?.setAttribute("aria-expanded", String(!detail.hidden));
       if (!detail.hidden) {
         const token = tr.dataset.token;
         if (token) {
@@ -1528,7 +1623,12 @@ function renderTable(
     };
     tr.addEventListener("click", (event) => {
       if ((event.target as HTMLElement).closest("a,button")) return;
-      void toggleDetail();
+      toggleDetail();
+    });
+    // The row click is a pointer shortcut; this button is the keyboard path.
+    toggle?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleDetail();
     });
   });
 }
