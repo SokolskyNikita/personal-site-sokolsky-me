@@ -5,6 +5,8 @@ import {
   MAX_CREDITS_PER_SCAN,
   SCAN_PAGES_HIGHEST_RATING,
   SCAN_PAGES_MOST_REVIEWED,
+  SCAN_PAGES_NEIGHBORHOOD_HIGHEST_RATING,
+  SCAN_PAGES_NEIGHBORHOOD_MOST_REVIEWED,
   qualityScanDates,
 } from "./constants";
 import type {
@@ -183,6 +185,55 @@ export async function runCityScan(opts: ScanOptions): Promise<ScanResult> {
   for (const p of [...most.raw, ...highest.raw]) {
     if (p.property_token && !byToken.has(p.property_token)) {
       byToken.set(p.property_token, p);
+    }
+  }
+
+  // City-wide most_reviewed / highest_rating lists bury some high-end hotels
+  // (e.g. Four Seasons Tokyo at Otemachi). When this is a full-city scan, also
+  // page each configured neighborhood bbox so local inventory is merged in.
+  const neighborhoodBoxes =
+    !opts.bbox && !opts.q
+      ? (city?.neighborhoods ?? []).flatMap((n) => {
+          if (!n.bbox || n.bbox.length !== 4) return [];
+          return [
+            n.bbox as [number, number, number, number],
+          ];
+        })
+      : [];
+  for (const nbBox of neighborhoodBoxes) {
+    if (getCredits() >= maxCredits) break;
+    const nbMost = await fetchListPages(
+      opts.provider,
+      {
+        bbox: nbBox,
+        checkIn,
+        checkOut,
+        adults,
+        sortBy: "most_reviewed",
+        gl,
+      },
+      SCAN_PAGES_NEIGHBORHOOD_MOST_REVIEWED,
+      maxCredits,
+      getCredits,
+    );
+    const nbHighest = await fetchListPages(
+      opts.provider,
+      {
+        bbox: nbBox,
+        checkIn,
+        checkOut,
+        adults,
+        sortBy: "highest_rating",
+        gl,
+      },
+      SCAN_PAGES_NEIGHBORHOOD_HIGHEST_RATING,
+      maxCredits,
+      getCredits,
+    );
+    for (const p of [...nbMost.raw, ...nbHighest.raw]) {
+      if (p.property_token && !byToken.has(p.property_token)) {
+        byToken.set(p.property_token, p);
+      }
     }
   }
 

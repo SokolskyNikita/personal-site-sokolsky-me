@@ -1,6 +1,9 @@
 export const INDEX_TTL_DAYS = 30;
 export const SCAN_PAGES_MOST_REVIEWED = 8;
 export const SCAN_PAGES_HIGHEST_RATING = 4;
+/** Extra list pages per configured neighborhood (city-wide sorts miss local luxury). */
+export const SCAN_PAGES_NEIGHBORHOOD_MOST_REVIEWED = 3;
+export const SCAN_PAGES_NEIGHBORHOOD_HIGHEST_RATING = 2;
 export const MAX_CREDITS_PER_SCAN = 80;
 export const ENRICH_TOP_N = 30;
 export const CITY_MEAN_FALLBACK = 4.2;

@@ -7,6 +7,8 @@ import {
   PRICE_TOPUP_MAX_CALLS,
   SCAN_PAGES_HIGHEST_RATING,
   SCAN_PAGES_MOST_REVIEWED,
+  SCAN_PAGES_NEIGHBORHOOD_HIGHEST_RATING,
+  SCAN_PAGES_NEIGHBORHOOD_MOST_REVIEWED,
   WINDOW_CAP,
 } from "./constants";
 import { createD1HotelsRepository, type HotelsD1 } from "./db";
@@ -157,12 +159,18 @@ async function handlePlan(
   const propertyRows = row && db ? await db.listRawByCity(row.id) : [];
   const propertiesOnHand = propertyRows.length;
 
-  // Scan cost: most_reviewed pages + highest_rating pages (enrichment skipped).
+  // Scan cost: city pages + per-neighborhood top-up pages (enrichment skipped).
   const requestedScanPages = Math.min(
     SCAN_PAGES_MOST_REVIEWED,
     Math.max(1, Number(url.searchParams.get("scanPages") ?? SCAN_PAGES_MOST_REVIEWED)),
   );
-  const scanCreditsEstimate = requestedScanPages + SCAN_PAGES_HIGHEST_RATING;
+  const neighborhoodCount = getCityConfig(citySlug)?.neighborhoods?.length ?? 0;
+  const scanCreditsEstimate =
+    requestedScanPages +
+    SCAN_PAGES_HIGHEST_RATING +
+    neighborhoodCount *
+      (SCAN_PAGES_NEIGHBORHOOD_MOST_REVIEWED +
+        SCAN_PAGES_NEIGHBORHOOD_HIGHEST_RATING);
 
   const checkInStart = url.searchParams.get("checkInStart");
   const checkInEnd = url.searchParams.get("checkInEnd") ?? checkInStart;
