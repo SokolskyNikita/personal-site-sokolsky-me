@@ -64,10 +64,11 @@ describe("spec ↔ URL round-trip", () => {
     expect(spec.currency).toBe("USD");
   });
 
-  it("restores first cabin via URL params without a UI preset", () => {
+  it("restores first cabin via the First class UI preset", () => {
     const params = new URLSearchParams({
       origin: "CDG",
       dest: "JFK",
+      mode: "first",
       cabin: "first",
       lieFlatPolicy: "none",
       start: "2026-08-01",
@@ -79,6 +80,7 @@ describe("spec ↔ URL round-trip", () => {
       hl: "en",
     });
     const form = formStateFromSearchParams(params);
+    expect(form.mode).toBe("first");
     expect(form.cabin).toBe("first");
     expect(form.lieFlatPolicy).toBe("none");
     expect(formStateToLegSearch(form).cabin).toBe("first");

@@ -1,0 +1,1450 @@
+---
+import pageData from "../../data/lie-flat-rankings.json";
+
+export const prerender = true;
+
+const pageTitle = "Lie-flat rankings";
+const pageDescription =
+  "A scored ranking of long-haul first and business class products by seat privacy, service, ground experience, and fleet consistency.";
+const themeColorLight = "#f5f5f1";
+const themeColorDark = "#121412";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Cabin = "First" | "Business";
+type Tier = "S++" | "S+" | "S" | "A+" | "A" | "B+" | "B" | "C+" | "C";
+
+type RankingEntry = {
+  rank: number;
+  airline: string;
+  product: string;
+  cabin: Cabin;
+  aircraft: string;
+  layout: string;
+  seatPrivacy: number;
+  serviceCatering: number;
+  ground: number;
+  consistency: number;
+  score: number;
+  tier: Tier;
+  why: string;
+};
+
+const entries = pageData.entries as RankingEntry[];
+const weights = pageData.weights;
+
+const airlines = [...new Set(entries.map((entry) => entry.airline))].sort(
+  (a, b) => a.localeCompare(b, "en", { sensitivity: "base" }),
+);
+
+const aircraftOptions = [
+  ...new Set(entries.map((entry) => entry.aircraft)),
+].sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
+
+const formatScore = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(value);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: {
+    "@type": "Thing",
+    name: "Airline lie-flat first and business class products",
+  },
+  inLanguage: "en",
+  dateModified: pageData.updated,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="subject" content="Airline lie-flat product rankings" />
+    <meta
+      name="keywords"
+      content="lie-flat ranking, business class ranking, first class ranking, Qsuite, Delta One, Polaris, airline suites"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;650&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <div class="header-top">
+          <a class="home-link" href="/">
+            <span aria-hidden="true">←</span>
+            sokolsky.me
+          </a>
+          <a class="related-link" href="/flights/search/">Flight search</a>
+        </div>
+
+        <div class="header-grid">
+          <div class="headline">
+            <p class="eyebrow">Cabin guide</p>
+            <h1>{pageTitle}</h1>
+          </div>
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Filter rankings">
+        <label class="search-field">
+          <span>Search</span>
+          <input
+            id="rank-search"
+            type="search"
+            name="q"
+            placeholder="Airline, product, aircraft…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+
+        <fieldset class="filter-group">
+          <legend>Cabin</legend>
+          <div class="chip-row" role="group" aria-label="Cabin filter">
+            <button type="button" class="chip is-active" data-cabin="all">
+              All
+            </button>
+            <button type="button" class="chip" data-cabin="First">First</button>
+            <button type="button" class="chip" data-cabin="Business">
+              Business
+            </button>
+          </div>
+        </fieldset>
+
+        <div class="select-filters">
+          <label class="select-field" for="airline-filter">
+            <span>Airline</span>
+            <select id="airline-filter" name="airline" autocomplete="off">
+              <option value="all" selected>All airlines</option>
+              {
+                airlines.map((airline) => (
+                  <option value={airline}>{airline}</option>
+                ))
+              }
+            </select>
+          </label>
+
+          <label class="select-field" for="aircraft-filter">
+            <span>Aircraft</span>
+            <select id="aircraft-filter" name="aircraft" autocomplete="off">
+              <option value="all" selected>All aircraft</option>
+              {
+                aircraftOptions.map((aircraft) => (
+                  <option value={aircraft}>{aircraft}</option>
+                ))
+              }
+            </select>
+          </label>
+        </div>
+
+        <p class="result-count" id="result-count" aria-live="polite">
+          Showing {entries.length} of {entries.length}
+        </p>
+      </section>
+
+      <section class="ranking" aria-labelledby="ranking-heading">
+        <div class="ranking-head">
+          <h2 id="ranking-heading">Full ranking</h2>
+          <label class="mobile-sort" for="mobile-sort">
+            <span>Sort by</span>
+            <select id="mobile-sort" name="sort" autocomplete="off">
+              <option value="rank:asc" selected>Rank · best</option>
+              <option value="rank:desc">Rank · worst</option>
+              <option value="score:desc">Score · high</option>
+              <option value="score:asc">Score · low</option>
+              <option value="airline:asc">Airline · A–Z</option>
+              <option value="airline:desc">Airline · Z–A</option>
+              <option value="seatPrivacy:desc">Seat · high</option>
+              <option value="serviceCatering:desc">Service · high</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="sortable-table">
+            <thead>
+              <tr>
+                <th scope="col" class="rank-column" aria-sort="ascending">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="rank"
+                    data-sort-default="asc"
+                  >
+                    Rank
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="airline"
+                    data-sort-default="asc"
+                  >
+                    Airline
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="product"
+                    data-sort-default="asc"
+                  >
+                    Product
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="cabin"
+                    data-sort-default="asc"
+                  >
+                    Cabin
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="aircraft"
+                    data-sort-default="asc"
+                  >
+                    Aircraft
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="layout"
+                    data-sort-default="asc"
+                  >
+                    Layout
+                  </button>
+                </th>
+                <th scope="col" class="score-column" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="seatPrivacy"
+                    data-sort-default="desc"
+                  >
+                    Seat /{weights.seatPrivacy}
+                  </button>
+                </th>
+                <th scope="col" class="score-column" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="serviceCatering"
+                    data-sort-default="desc"
+                  >
+                    Service /{weights.serviceCatering}
+                  </button>
+                </th>
+                <th scope="col" class="score-column" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="ground"
+                    data-sort-default="desc"
+                  >
+                    Ground /{weights.ground}
+                  </button>
+                </th>
+                <th scope="col" class="score-column" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="consistency"
+                    data-sort-default="desc"
+                  >
+                    Consistency /{weights.consistency}
+                  </button>
+                </th>
+                <th scope="col" class="score-column" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="score"
+                    data-sort-default="desc"
+                  >
+                    Score
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <button
+                    class="sort-button"
+                    type="button"
+                    data-sort-key="tier"
+                    data-sort-default="desc"
+                  >
+                    Tier
+                  </button>
+                </th>
+                <th scope="col" aria-sort="none">
+                  <span class="why-heading">Why</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                entries.map((entry) => (
+                  <tr
+                    data-rank={entry.rank}
+                    data-airline={entry.airline}
+                    data-product={entry.product}
+                    data-cabin={entry.cabin}
+                    data-aircraft={entry.aircraft}
+                    data-layout={entry.layout}
+                    data-seat-privacy={entry.seatPrivacy}
+                    data-service-catering={entry.serviceCatering}
+                    data-ground={entry.ground}
+                    data-consistency={entry.consistency}
+                    data-score={entry.score}
+                    data-tier={entry.tier}
+                    data-search={`${entry.airline} ${entry.product} ${entry.cabin} ${entry.aircraft} ${entry.layout} ${entry.tier} ${entry.why}`.toLowerCase()}
+                  >
+                    <td class="rank-cell">{entry.rank}</td>
+                    <td class="airline-cell">{entry.airline}</td>
+                    <td class="product-cell">{entry.product}</td>
+                    <td
+                      class="cabin-cell"
+                      data-mobile-meta={`${entry.aircraft} · ${entry.layout}`}
+                    >
+                      <span
+                        class:list={[
+                          "cabin-tag",
+                          entry.cabin === "First" && "cabin-first",
+                          entry.cabin === "Business" && "cabin-business",
+                        ]}
+                      >
+                        {entry.cabin}
+                      </span>
+                    </td>
+                    <td class="aircraft-cell">{entry.aircraft}</td>
+                    <td class="layout-cell">{entry.layout}</td>
+                    <td class="score-cell">{formatScore(entry.seatPrivacy)}</td>
+                    <td class="score-cell">
+                      {formatScore(entry.serviceCatering)}
+                    </td>
+                    <td class="score-cell">{formatScore(entry.ground)}</td>
+                    <td class="score-cell">
+                      {formatScore(entry.consistency)}
+                    </td>
+                    <td class="score-cell total-cell">
+                      {formatScore(entry.score)}
+                    </td>
+                    <td>
+                      <span
+                        class={`tier-badge tier-${entry.tier.replaceAll("+", "p")}`}
+                      >
+                        {entry.tier}
+                      </span>
+                    </td>
+                    <td class="why-cell">{entry.why}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <aside class="methodology" aria-label="Scoring criteria">
+          <p class="methodology-title">How the score works</p>
+          <ul class="criteria-list">
+            <li>
+              <strong>Seat &amp; privacy</strong> (/{weights.seatPrivacy}) —
+              bed length and width, enclosure, aisle access, storage, and how
+              well the seat supports sleep.
+            </li>
+            <li>
+              <strong>Service &amp; catering</strong> (/{weights.serviceCatering}
+              ) — dining quality, bedding, crew polish, and soft-product
+              consistency.
+            </li>
+            <li>
+              <strong>Ground</strong> (/{weights.ground}) — lounges, check-in,
+              and terminal experience that shape the full journey.
+            </li>
+            <li>
+              <strong>Consistency</strong> (/{weights.consistency}) — how often
+              the listed hard product is actually assigned, versus a thin
+              subfleet or mixed retrofit.
+            </li>
+          </ul>
+          <p class="methodology-note">
+            Tiers are score bands, not marketing labels: S++ for the absolute
+            peak suites, then S+/S, A+/A, B+/B, and C+/C as privacy and
+            consistency fall away. First and business compete in one list
+            because the question is sleep quality on a long sector, not cabin
+            name.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <script is:inline>
+      const tableBody = document.querySelector("tbody");
+      const rows = [...document.querySelectorAll("tbody tr")];
+      const sortButtons = [...document.querySelectorAll(".sort-button")];
+      const cabinButtons = [...document.querySelectorAll("[data-cabin]")];
+      const searchInput = document.querySelector("#rank-search");
+      const airlineFilterSelect = document.querySelector("#airline-filter");
+      const aircraftFilterSelect = document.querySelector("#aircraft-filter");
+      const mobileSort = document.querySelector("#mobile-sort");
+      const resultCount = document.querySelector("#result-count");
+      const collator = new Intl.Collator("en", {
+        sensitivity: "base",
+        numeric: true,
+      });
+      const tierOrder = {
+        "S++": 9,
+        "S+": 8,
+        S: 7,
+        "A+": 6,
+        A: 5,
+        "B+": 4,
+        B: 3,
+        "C+": 2,
+        C: 1,
+      };
+
+      let currentSort = { key: "rank", direction: "asc" };
+      let cabinFilter = "all";
+      let airlineFilter = "all";
+      let aircraftFilter = "all";
+      let searchQuery = "";
+
+      const getSortValue = (row, key) => {
+        if (key === "airline") return row.dataset.airline ?? "";
+        if (key === "product") return row.dataset.product ?? "";
+        if (key === "cabin") return row.dataset.cabin ?? "";
+        if (key === "aircraft") return row.dataset.aircraft ?? "";
+        if (key === "layout") return row.dataset.layout ?? "";
+        if (key === "tier") return tierOrder[row.dataset.tier] ?? 0;
+        if (key === "seatPrivacy") return Number(row.dataset.seatPrivacy ?? 0);
+        if (key === "serviceCatering")
+          return Number(row.dataset.serviceCatering ?? 0);
+        if (key === "ground") return Number(row.dataset.ground ?? 0);
+        if (key === "consistency") return Number(row.dataset.consistency ?? 0);
+        if (key === "score") return Number(row.dataset.score ?? 0);
+        return Number(row.dataset.rank ?? 0);
+      };
+
+      const compareRows = (firstRow, secondRow) => {
+        const firstValue = getSortValue(firstRow, currentSort.key);
+        const secondValue = getSortValue(secondRow, currentSort.key);
+        const multiplier = currentSort.direction === "asc" ? 1 : -1;
+
+        if (typeof firstValue === "string" || typeof secondValue === "string") {
+          const byText =
+            multiplier *
+            collator.compare(String(firstValue), String(secondValue));
+          if (byText !== 0) return byText;
+        } else {
+          const byNumber = Number(firstValue) - Number(secondValue);
+          if (byNumber !== 0) return multiplier * byNumber;
+        }
+
+        return Number(firstRow.dataset.rank ?? 0) - Number(secondRow.dataset.rank ?? 0);
+      };
+
+      const syncMobileSelect = () => {
+        if (!mobileSort) return;
+        mobileSort.value = `${currentSort.key}:${currentSort.direction}`;
+      };
+
+      const updateSortState = () => {
+        for (const button of sortButtons) {
+          const isActive = button.dataset.sortKey === currentSort.key;
+          button.dataset.sortDirection = isActive ? currentSort.direction : "";
+          button.closest("th")?.setAttribute(
+            "aria-sort",
+            isActive
+              ? currentSort.direction === "asc"
+                ? "ascending"
+                : "descending"
+              : "none",
+          );
+        }
+        syncMobileSelect();
+      };
+
+      const matchesFilters = (row) => {
+        if (cabinFilter !== "all" && row.dataset.cabin !== cabinFilter) {
+          return false;
+        }
+        if (airlineFilter !== "all" && row.dataset.airline !== airlineFilter) {
+          return false;
+        }
+        if (
+          aircraftFilter !== "all" &&
+          row.dataset.aircraft !== aircraftFilter
+        ) {
+          return false;
+        }
+        if (searchQuery && !(row.dataset.search ?? "").includes(searchQuery)) {
+          return false;
+        }
+        return true;
+      };
+
+      const renderRows = () => {
+        if (!tableBody || !resultCount) return;
+
+        const visible = [];
+        for (const row of rows) {
+          const show = matchesFilters(row);
+          row.hidden = !show;
+          if (show) visible.push(row);
+        }
+
+        visible.sort(compareRows);
+        for (const row of visible) {
+          tableBody.append(row);
+        }
+
+        resultCount.textContent = `Showing ${visible.length} of ${rows.length}`;
+        updateSortState();
+      };
+
+      for (const button of sortButtons) {
+        button.addEventListener("click", () => {
+          const sortKey = button.dataset.sortKey;
+          if (!sortKey) return;
+
+          const defaultDirection = button.dataset.sortDefault ?? "desc";
+          currentSort =
+            currentSort.key === sortKey
+              ? {
+                  key: sortKey,
+                  direction: currentSort.direction === "asc" ? "desc" : "asc",
+                }
+              : {
+                  key: sortKey,
+                  direction: defaultDirection,
+                };
+
+          renderRows();
+        });
+      }
+
+      for (const button of cabinButtons) {
+        button.addEventListener("click", () => {
+          cabinFilter = button.dataset.cabin ?? "all";
+          for (const chip of cabinButtons) {
+            chip.classList.toggle("is-active", chip === button);
+          }
+          renderRows();
+        });
+      }
+
+      searchInput?.addEventListener("input", () => {
+        searchQuery = (searchInput.value || "").trim().toLowerCase();
+        renderRows();
+      });
+
+      airlineFilterSelect?.addEventListener("change", () => {
+        airlineFilter = airlineFilterSelect.value || "all";
+        renderRows();
+      });
+
+      aircraftFilterSelect?.addEventListener("change", () => {
+        aircraftFilter = aircraftFilterSelect.value || "all";
+        renderRows();
+      });
+
+      mobileSort?.addEventListener("change", () => {
+        const [key, direction] = (mobileSort.value || "rank:asc").split(":");
+        currentSort = { key, direction };
+        renderRows();
+      });
+
+      renderRows();
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f5f1;
+    --panel: #fbfbf8;
+    --panel-strong: #eef2ee;
+    --text: #18201d;
+    --muted: #64706b;
+    --border: #d7dcd6;
+    --border-strong: #b9c2bc;
+    --accent: #12644b;
+    --accent-soft: #e6f0eb;
+    --shadow: 0 16px 40px rgb(24 32 29 / 0.08);
+    --radius: 12px;
+    --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121412;
+      --panel: #1c1f1c;
+      --panel-strong: #242924;
+      --text: #ecece8;
+      --muted: #a3a39a;
+      --border: #333832;
+      --border-strong: #4b554e;
+      --accent: #79d5ae;
+      --accent-soft: #20352b;
+      --shadow: 0 16px 40px rgb(0 0 0 / 0.35);
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+    background-image:
+      radial-gradient(
+        circle at top right,
+        color-mix(in srgb, var(--accent) 12%, transparent),
+        transparent 28rem
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent) 5%, var(--bg)) 0,
+        var(--bg) 18rem
+      );
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  .page {
+    width: min(100% - clamp(1rem, 3vw, 2.5rem), 1480px);
+    max-width: 100%;
+    margin: 0 auto;
+    padding:
+      max(clamp(1rem, 2.5vw, 1.75rem), env(safe-area-inset-top))
+      0
+      max(2.5rem, env(safe-area-inset-bottom));
+  }
+
+  .page-header {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .header-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .home-link,
+  .related-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.5rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .home-link:hover,
+  .related-link:hover {
+    color: var(--accent);
+  }
+
+  .header-grid {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.4rem;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    color: var(--text);
+    letter-spacing: -0.035em;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+    font-weight: 650;
+    line-height: 0.98;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .controls {
+    display: grid;
+    gap: 0.9rem;
+    margin-bottom: 1.1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  .search-field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .search-field span,
+  .select-field span,
+  .filter-group legend,
+  .mobile-sort span {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .search-field input,
+  .select-field select,
+  .mobile-sort select {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .select-filters {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 720px) {
+    .select-filters {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .select-field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .search-field input:focus,
+  .select-field select:focus,
+  .mobile-sort select:focus,
+  .chip:focus-visible,
+  .sort-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .filter-group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+
+  .chip {
+    min-height: 2.25rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .chip.is-active {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .result-count {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.84rem;
+  }
+
+  .ranking {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .ranking-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .mobile-sort {
+    display: none;
+    gap: 0.35rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 2px);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    min-width: 1280px;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th:first-child,
+  td:first-child {
+    border-left: 0;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--panel-strong);
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--panel-strong) 45%, transparent);
+  }
+
+  tbody tr:hover {
+    background: var(--accent-soft);
+  }
+
+  tbody tr[hidden] {
+    display: none;
+  }
+
+  .sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 2.5rem;
+    margin: -0.35rem;
+    padding: 0.35rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+  }
+
+  .sort-button::after {
+    content: "↕";
+    opacity: 0.35;
+    font-size: 0.8em;
+  }
+
+  th[aria-sort="ascending"] .sort-button::after {
+    content: "↑";
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  th[aria-sort="descending"] .sort-button::after {
+    content: "↓";
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .why-heading {
+    display: inline-block;
+    padding: 0.35rem;
+  }
+
+  .rank-column,
+  .rank-cell,
+  .airline-cell,
+  th:nth-child(2) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--panel);
+  }
+
+  .rank-column,
+  th:nth-child(2) {
+    z-index: 4;
+    background: var(--panel-strong);
+  }
+
+  .airline-cell,
+  th:nth-child(2) {
+    left: 4.4rem;
+    box-shadow: 8px 0 16px rgb(24 32 29 / 0.05);
+  }
+
+  .rank-cell,
+  .total-cell,
+  .score-cell {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .rank-cell,
+  .total-cell {
+    font-weight: 600;
+  }
+
+  .total-cell {
+    color: var(--accent);
+  }
+
+  .product-cell {
+    font-weight: 600;
+  }
+
+  .aircraft-cell,
+  .layout-cell {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .why-cell {
+    min-width: 18rem;
+    max-width: 28rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .cabin-tag,
+  .tier-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.55rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cabin-tag {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--panel-strong) 70%, transparent);
+  }
+
+  .cabin-first {
+    border-color: color-mix(in srgb, #8a6a16 40%, var(--border));
+    background: color-mix(in srgb, #8a6a16 12%, transparent);
+  }
+
+  .cabin-business {
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+    background: var(--accent-soft);
+  }
+
+  .tier-badge {
+    font-family: var(--mono);
+    background: var(--panel-strong);
+  }
+
+  .tier-Spp,
+  .tier-Sp,
+  .tier-S {
+    color: #0f6b3a;
+    background: color-mix(in srgb, #0f6b3a 12%, transparent);
+  }
+
+  .tier-Ap,
+  .tier-A {
+    color: #12644b;
+    background: var(--accent-soft);
+  }
+
+  .tier-Bp,
+  .tier-B {
+    color: #8a4b00;
+    background: color-mix(in srgb, #8a4b00 12%, transparent);
+  }
+
+  .tier-Cp,
+  .tier-C {
+    color: #7a3f3f;
+    background: color-mix(in srgb, #7a3f3f 12%, transparent);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tier-Spp,
+    .tier-Sp,
+    .tier-S {
+      color: #7ddea8;
+    }
+
+    .tier-Ap,
+    .tier-A {
+      color: #79d5ae;
+    }
+
+    .tier-Bp,
+    .tier-B {
+      color: #ffc266;
+    }
+
+    .tier-Cp,
+    .tier-C {
+      color: #ff8f8f;
+    }
+
+    .cabin-first {
+      color: #ffd58a;
+    }
+  }
+
+  .methodology {
+    max-width: 90ch;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .methodology-title {
+    margin: 0 0 0.45rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 650;
+  }
+
+  .criteria-list {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+
+  .methodology strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .methodology-note {
+    margin: 0.85rem 0 0;
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      width: min(100% - 1rem, 1480px);
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .page-header,
+    .controls,
+    .ranking-head,
+    .methodology {
+      padding-left: 0.15rem;
+      padding-right: 0.15rem;
+    }
+
+    h1 {
+      font-size: clamp(1.85rem, 9vw, 2.6rem);
+    }
+
+    .controls {
+      gap: 0.7rem;
+      padding: 0.8rem;
+    }
+
+    .chip {
+      min-height: 2rem;
+      padding: 0.28rem 0.62rem;
+      font-size: 0.82rem;
+    }
+
+    .mobile-sort {
+      display: grid;
+      width: 100%;
+    }
+
+    .table-wrap {
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    table {
+      display: block;
+      width: 100%;
+      min-width: 0 !important;
+      max-width: 100%;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: grid;
+      gap: 0.65rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    tbody tr,
+    tbody tr:nth-child(even),
+    tbody tr:hover {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "rank airline score tier"
+        "product product product product"
+        "meta meta meta meta"
+        "seat service ground consistency"
+        "why why why why";
+      column-gap: 0.45rem;
+      row-gap: 0.35rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin: 0;
+      padding: 0.75rem 0.8rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    tbody tr[hidden] {
+      display: none;
+    }
+
+    td,
+    .rank-cell,
+    .airline-cell,
+    .product-cell,
+    .aircraft-cell,
+    .layout-cell,
+    .why-cell,
+    .score-cell,
+    .total-cell {
+      position: static !important;
+      left: auto !important;
+      z-index: auto !important;
+      display: block;
+      width: auto;
+      min-width: 0;
+      max-width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent !important;
+      box-shadow: none !important;
+      font-size: 0.88rem;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    td::before {
+      display: block;
+      margin-bottom: 0.1rem;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: 650;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    td:nth-child(1) {
+      grid-area: rank;
+      align-self: center;
+      color: var(--accent);
+      font-size: 1.05rem;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    td:nth-child(1)::before,
+    td:nth-child(2)::before,
+    td:nth-child(3)::before,
+    td:nth-child(11)::before,
+    td:nth-child(12)::before {
+      display: none;
+    }
+
+    td:nth-child(2) {
+      grid-area: airline;
+      align-self: center;
+      min-width: 0;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    td:nth-child(3) {
+      grid-area: product;
+      font-size: 0.95rem;
+      font-weight: 650;
+      line-height: 1.3;
+    }
+
+    td:nth-child(4) {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    td:nth-child(4)::before,
+    td:nth-child(5)::before,
+    td:nth-child(6)::before {
+      display: none;
+    }
+
+    td:nth-child(4),
+    td:nth-child(5),
+    td:nth-child(6) {
+      grid-area: meta;
+    }
+
+    td:nth-child(5),
+    td:nth-child(6) {
+      display: none;
+    }
+
+    td:nth-child(4) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 0.55rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    td:nth-child(4)::after {
+      content: attr(data-mobile-meta);
+      min-width: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      overflow-wrap: anywhere;
+    }
+
+    td:nth-child(7) {
+      grid-area: seat;
+    }
+
+    td:nth-child(8) {
+      grid-area: service;
+    }
+
+    td:nth-child(9) {
+      grid-area: ground;
+    }
+
+    td:nth-child(10) {
+      grid-area: consistency;
+    }
+
+    td:nth-child(7),
+    td:nth-child(8),
+    td:nth-child(9),
+    td:nth-child(10) {
+      padding: 0.4rem 0.35rem;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--panel-strong) 75%, transparent) !important;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    td:nth-child(7)::before {
+      content: "Seat";
+    }
+
+    td:nth-child(8)::before {
+      content: "Service";
+    }
+
+    td:nth-child(9)::before {
+      content: "Ground";
+    }
+
+    td:nth-child(10)::before {
+      content: "Consist.";
+    }
+
+    td:nth-child(11) {
+      grid-area: score;
+      align-self: center;
+      color: var(--accent);
+      font-size: 1.05rem;
+      font-weight: 650;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    td:nth-child(12) {
+      grid-area: tier;
+      align-self: center;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    td:nth-child(13) {
+      grid-area: why;
+      padding-top: 0.15rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    td:nth-child(13)::before {
+      content: "Why";
+      margin-bottom: 0.2rem;
+    }
+
+    .why-cell {
+      min-width: 0;
+      max-width: none;
+    }
+
+    .cabin-tag,
+    .tier-badge {
+      max-width: 100%;
+    }
+
+    .methodology {
+      font-size: 0.88rem;
+    }
+  }
+</style>

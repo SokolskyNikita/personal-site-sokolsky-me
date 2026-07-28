@@ -1,4 +1,5 @@
 import type {
+  Cabin,
   ItineraryOption,
   LieFlatPolicy,
   MaxTotalHours,
@@ -121,4 +122,19 @@ export function filterByMaxTotalHours(
       (option.returnDurationMinutes === undefined ||
         option.returnDurationMinutes <= maxMinutes),
   );
+}
+
+/** Keep itineraries with at least one segment explicitly marked as `cabin`. */
+export function filterByAnySegmentCabin(
+  options: ItineraryOption[],
+  cabin: Cabin,
+): ItineraryOption[] {
+  return options.filter((option) => {
+    if (option.segments.some((segment) => segment.cabin === cabin)) {
+      return true;
+    }
+    return (option.returnSegments ?? []).some(
+      (segment) => segment.cabin === cabin,
+    );
+  });
 }

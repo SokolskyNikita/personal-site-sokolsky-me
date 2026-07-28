@@ -15,6 +15,7 @@ import {
 } from "./kv";
 import { planSearch } from "./planner";
 import {
+  filterByAnySegmentCabin,
   filterByDirectionalLieFlatPolicy,
   filterByMaxTotalHours,
 } from "./policy";
@@ -332,10 +333,15 @@ async function handleQuery(
     parsedOptions,
     spec.maxTotalHours,
   );
-  const options = filterByDirectionalLieFlatPolicy(
+  const lieFlatFilteredOptions = filterByDirectionalLieFlatPolicy(
     durationFilteredOptions,
     spec.lieFlatPolicy,
   );
+  // First-class mode keeps only itineraries with an explicitly marked First leg.
+  const options =
+    spec.cabin === "first"
+      ? filterByAnySegmentCabin(lieFlatFilteredOptions, "first")
+      : lieFlatFilteredOptions;
 
   const publicOptions = options.map(toPublicOption);
 

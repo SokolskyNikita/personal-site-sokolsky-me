@@ -1219,7 +1219,7 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
 
 /**
  * Read the form. Cabin/policy follow the mode select when the mode changes;
- * otherwise preserve explicit cabin/policy (e.g. first via URL).
+ * otherwise preserve explicit cabin/policy from the previous form state.
  */
 function readForm(root: HTMLElement, prev: FormState): FormState {
   const originIata = (

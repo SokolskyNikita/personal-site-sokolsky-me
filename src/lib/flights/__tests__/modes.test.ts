@@ -10,8 +10,8 @@ describe("SEARCH_MODES", () => {
     expect(DEFAULT_SEARCH_MODE_ID).toBe("business-any-lie-flat");
   });
 
-  it("ships five rows with correct cabin/policy mappings", () => {
-    expect(SEARCH_MODES).toHaveLength(5);
+  it("ships six rows with correct cabin/policy mappings", () => {
+    expect(SEARCH_MODES).toHaveLength(6);
     expect(getSearchMode("economy")).toEqual(
       expect.objectContaining({ cabin: "economy", lieFlatPolicy: "none" }),
     );
@@ -35,6 +35,9 @@ describe("SEARCH_MODES", () => {
         cabin: "business",
         lieFlatPolicy: "all_segments",
       }),
+    );
+    expect(getSearchMode("first")).toEqual(
+      expect.objectContaining({ cabin: "first", lieFlatPolicy: "none" }),
     );
   });
 });

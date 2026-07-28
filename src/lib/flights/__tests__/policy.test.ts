@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyLieFlatPolicy,
+  filterByAnySegmentCabin,
   filterByDirectionalLieFlatPolicy,
   filterByLieFlatPolicy,
   filterByMaxTotalHours,
@@ -146,5 +147,33 @@ describe("filterByDirectionalLieFlatPolicy", () => {
         "any_segment",
       ),
     ).toEqual([valid]);
+  });
+});
+
+describe("filterByAnySegmentCabin", () => {
+  it("keeps options with at least one outbound segment in the cabin", () => {
+    const withFirst = option([
+      seg({ seatClassification: "lie_flat", cabin: "business" }),
+      seg({ seatClassification: "lie_flat", cabin: "first" }),
+    ]);
+    const businessOnly = option([
+      seg({ seatClassification: "lie_flat", cabin: "business" }),
+    ]);
+    const unmarked = option([seg({ seatClassification: "lie_flat" })]);
+
+    expect(
+      filterByAnySegmentCabin([withFirst, businessOnly, unmarked], "first"),
+    ).toEqual([withFirst]);
+  });
+
+  it("accepts a First segment on the return direction", () => {
+    const returnFirst = {
+      ...option([seg({ seatClassification: "lie_flat", cabin: "business" })]),
+      returnSegments: [seg({ seatClassification: "lie_flat", cabin: "first" })],
+    };
+
+    expect(filterByAnySegmentCabin([returnFirst], "first")).toEqual([
+      returnFirst,
+    ]);
   });
 });
