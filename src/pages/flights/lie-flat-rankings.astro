@@ -16,7 +16,7 @@ const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
-type Cabin = "First" | "Business";
+type Cabin = "First" | "Business" | "Premium Economy";
 type Tier = "S++" | "S+" | "S" | "A+" | "A" | "B+" | "B" | "C+" | "C";
 
 type RankingEntry = {
@@ -54,10 +54,14 @@ for (const airline of new Set(entries.map((entry) => entry.airline))) {
 
 const regionOptions = LIE_FLAT_REGIONS.filter(
   (region) => (regionAirlineCounts.get(region) ?? 0) > 0,
-).map((region) => ({
-  region,
-  airlineCount: regionAirlineCounts.get(region) ?? 0,
-}));
+)
+  .map((region) => ({
+    region,
+    airlineCount: regionAirlineCounts.get(region) ?? 0,
+  }))
+  .sort((a, b) =>
+    a.region.localeCompare(b.region, "en", { sensitivity: "base" }),
+  );
 
 const aircraftOptions = [
   ...new Set(entries.flatMap((entry) => entry.aircraft)),
@@ -199,6 +203,9 @@ const structuredData = {
             <button type="button" class="chip" data-cabin="First">First</button>
             <button type="button" class="chip" data-cabin="Business">
               Business
+            </button>
+            <button type="button" class="chip" data-cabin="Premium Economy">
+              Premium Economy
             </button>
           </div>
         </fieldset>
@@ -427,6 +434,8 @@ const structuredData = {
                           "cabin-tag",
                           entry.cabin === "First" && "cabin-first",
                           entry.cabin === "Business" && "cabin-business",
+                          entry.cabin === "Premium Economy" &&
+                            "cabin-premium-economy",
                         ]}
                       >
                         {entry.cabin}
@@ -1175,6 +1184,11 @@ const structuredData = {
   .cabin-business {
     border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
     background: var(--accent-soft);
+  }
+
+  .cabin-premium-economy {
+    border-color: color-mix(in srgb, #3d5a80 40%, var(--border));
+    background: color-mix(in srgb, #3d5a80 12%, transparent);
   }
 
   .tier-badge {
