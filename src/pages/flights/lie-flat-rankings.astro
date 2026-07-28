@@ -20,7 +20,7 @@ type RankingEntry = {
   airline: string;
   product: string;
   cabin: Cabin;
-  aircraft: string;
+  aircraft: string[];
   layout: string;
   seatPrivacy: number;
   serviceCatering: number;
@@ -34,12 +34,15 @@ type RankingEntry = {
 const entries = pageData.entries as RankingEntry[];
 const weights = pageData.weights;
 
+const formatAircraft = (aircraft: string[]) => aircraft.join("/");
+const formatAircraftLines = (aircraft: string[]) => aircraft.join("\n");
+
 const airlines = [...new Set(entries.map((entry) => entry.airline))].sort(
   (a, b) => a.localeCompare(b, "en", { sensitivity: "base" }),
 );
 
 const aircraftOptions = [
-  ...new Set(entries.map((entry) => entry.aircraft)),
+  ...new Set(entries.flatMap((entry) => entry.aircraft)),
 ].sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
 
 const formatScore = (value: number) =>
@@ -361,7 +364,8 @@ const structuredData = {
                     data-airline={entry.airline}
                     data-product={entry.product}
                     data-cabin={entry.cabin}
-                    data-aircraft={entry.aircraft}
+                    data-aircraft={formatAircraft(entry.aircraft)}
+                    data-aircraft-models={JSON.stringify(entry.aircraft)}
                     data-layout={entry.layout}
                     data-seat-privacy={entry.seatPrivacy}
                     data-service-catering={entry.serviceCatering}
@@ -369,14 +373,14 @@ const structuredData = {
                     data-consistency={entry.consistency}
                     data-score={entry.score}
                     data-tier={entry.tier}
-                    data-search={`${entry.airline} ${entry.product} ${entry.cabin} ${entry.aircraft} ${entry.layout} ${entry.tier} ${entry.why}`.toLowerCase()}
+                    data-search={`${entry.airline} ${entry.product} ${entry.cabin} ${formatAircraft(entry.aircraft)} ${entry.layout} ${entry.tier} ${entry.why}`.toLowerCase()}
                   >
                     <td class="rank-cell">{entry.rank}</td>
                     <td class="airline-cell">{entry.airline}</td>
                     <td class="product-cell">{entry.product}</td>
                     <td
                       class="cabin-cell"
-                      data-mobile-meta={`${entry.aircraft} · ${entry.layout}`}
+                      data-mobile-meta={`${formatAircraft(entry.aircraft)} · ${entry.layout}`}
                     >
                       <span
                         class:list={[
@@ -388,7 +392,7 @@ const structuredData = {
                         {entry.cabin}
                       </span>
                     </td>
-                    <td class="aircraft-cell">{entry.aircraft}</td>
+                    <td class="aircraft-cell">{formatAircraftLines(entry.aircraft)}</td>
                     <td class="layout-cell">{entry.layout}</td>
                     <td class="score-cell metric-cell">
                       {formatScore(entry.seatPrivacy)}
@@ -550,7 +554,9 @@ const structuredData = {
         }
         if (
           aircraftFilter !== "all" &&
-          row.dataset.aircraft !== aircraftFilter
+          !JSON.parse(row.dataset.aircraftModels || "[]").includes(
+            aircraftFilter,
+          )
         ) {
           return false;
         }
@@ -1058,9 +1064,9 @@ const structuredData = {
 
   .aircraft-column,
   .aircraft-cell {
-    width: 4.75rem;
-    max-width: 4.75rem;
-    white-space: normal;
+    width: 7.125rem;
+    max-width: 7.125rem;
+    white-space: pre-line;
     overflow-wrap: anywhere;
     word-break: break-word;
     line-height: 1.35;
@@ -1079,8 +1085,8 @@ const structuredData = {
   }
 
   .why-cell {
-    min-width: 18rem;
-    max-width: 28rem;
+    min-width: 15.625rem;
+    max-width: 25.625rem;
     color: var(--muted);
     font-size: 0.9rem;
     line-height: 1.4;
