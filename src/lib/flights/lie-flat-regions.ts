@@ -84,7 +84,6 @@ const AIRLINE_REGIONS: Record<string, LieFlatRegion> = {
   "Air Côte d'Ivoire": "Africa",
   "Air Mauritius": "Africa",
   "Air Peace": "Africa",
-  "Air Seychelles": "Africa",
   "Air Tanzania": "Africa",
   "Air Austral": "Africa",
   Egyptair: "Africa",
