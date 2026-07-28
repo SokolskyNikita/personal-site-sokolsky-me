@@ -21,6 +21,42 @@ function loadFixture(name: string): unknown {
 }
 
 describe("parseSearchApiResponse", () => {
+  it("maps First_class travel_class to cabin first", () => {
+    const options = parseSearchApiResponse(
+      {
+        best_flights: [
+          {
+            flights: [
+              {
+                departure_airport: {
+                  id: "JFK",
+                  date: "2026-09-10",
+                  time: "18:00",
+                },
+                arrival_airport: {
+                  id: "LHR",
+                  date: "2026-09-11",
+                  time: "06:00",
+                },
+                duration: 420,
+                airline: "British Airways",
+                flight_number: "BA 178",
+                airplane: "Boeing 777",
+                travel_class: "First_class",
+                extensions: ["Seat type Lie Flat"],
+              },
+            ],
+            price: 5000,
+            total_duration: 420,
+          },
+        ],
+      },
+      { currency: "USD", departureDate: "2026-09-10" },
+    );
+    expect(options).toHaveLength(1);
+    expect(options[0]!.segments[0]!.cabin).toBe("first");
+  });
+
   it("parses SearchAPI date and time fields with seat classifications", () => {
     const raw = loadFixture("business-eze-jfk.json");
     const options = parseSearchApiResponse(raw, {

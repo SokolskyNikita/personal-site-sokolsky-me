@@ -56,9 +56,12 @@ type SearchApiResponse = {
 const TRAVEL_CLASS_TO_CABIN: Record<string, Cabin> = {
   economy: "economy",
   "premium economy": "premium_economy",
+  premium_economy: "premium_economy",
   "business class": "business",
+  business_class: "business",
   business: "business",
   "first class": "first",
+  first_class: "first",
   first: "first",
 };
 

@@ -5,6 +5,7 @@ export * from "./airport-coords";
 export * from "./currency";
 export * from "./resolver";
 export * from "./classifier";
+export * from "./lie-flat-tiers";
 export * from "./policy";
 export * from "./modes";
 export * from "./group";

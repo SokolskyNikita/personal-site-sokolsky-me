@@ -26,6 +26,10 @@ import {
   modeInvolvesLieFlat,
 } from "../../lib/flights/modes";
 import {
+  lookupLieFlatTiersForSegments,
+  tierBadgeClass,
+} from "../../lib/flights/lie-flat-tiers";
+import {
   MAX_TOTAL_HOURS_OPTIONS,
   type CityGroupSide,
   type CityGroupSort,
@@ -1054,6 +1058,7 @@ function renderResultLeg(
       )}</span>`,
     );
   }
+  const tierMarkup = renderLieFlatTierBadges(option, spec.cabin);
   return `
     <div class="${className}">
       ${
@@ -1072,6 +1077,7 @@ function renderResultLeg(
         )}">${airportsMarkup}</div>
       </div>
       <div class="fs-result-meta">${metaParts.join("")}</div>
+      ${tierMarkup}
     </div>
   `;
 }
@@ -1104,6 +1110,29 @@ function formatLieFlatSegments(option: ItineraryOption): string {
       return `${segment.departureAirport}–${segment.arrivalAirport}${aircraft}`;
     })
     .join(" / ")}`;
+}
+
+function renderLieFlatTierBadges(
+  option: ItineraryOption,
+  fallbackCabin: LegSearch["cabin"],
+): string {
+  const matches = lookupLieFlatTiersForSegments(option.segments, fallbackCabin);
+  if (matches.length === 0) return "";
+  const badges = matches
+    .map((match) => {
+      const title =
+        match.products.length > 0
+          ? ` title="${escapeAttr(match.products.join(", "))}"`
+          : "";
+      return `<span class="${tierBadgeClass(match.tier)}"${title}>${escapeHtml(
+        match.tier,
+      )}</span>`;
+    })
+    .join('<span class="fs-lie-flat-tier-sep" aria-hidden="true"> / </span>');
+  const label = `Lie-flat tier: ${matches.map((match) => match.tier).join(" / ")}`;
+  return `<div class="fs-lie-flat-tiers" aria-label="${escapeAttr(
+    label,
+  )}"><span class="fs-lie-flat-tiers-label">Lie-flat tier:</span> ${badges}</div>`;
 }
 
 function formatCabinDetail(option: ItineraryOption): string {
