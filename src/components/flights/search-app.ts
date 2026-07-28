@@ -346,6 +346,7 @@ export function mountFlightSearch(root: HTMLElement): void {
 
   function setSearchBusy(busy: boolean, label = "Search flights"): void {
     isRunning = busy;
+    const focused = document.activeElement;
     for (const control of Array.from(formEl.elements)) {
       if (
         control instanceof HTMLInputElement ||
@@ -357,11 +358,18 @@ export function mountFlightSearch(root: HTMLElement): void {
     }
     cancelBtn.hidden = !busy;
     runBtn.textContent = label;
-    if (busy) runBtn.setAttribute("aria-busy", "true");
-    else {
+    if (busy) {
+      runBtn.setAttribute("aria-busy", "true");
+      // Disabling the focused control would drop focus to the body.
+      if (focused instanceof HTMLElement && formEl.contains(focused)) {
+        cancelBtn.focus();
+      }
+    } else {
       runBtn.removeAttribute("aria-busy");
       // Keep Search disabled if the current route is Anywhere→Anywhere.
       runBtn.disabled = Boolean(routeBlockedMessage(form));
+      // Hiding Cancel while it holds focus would drop focus to the body.
+      if (focused === cancelBtn && !runBtn.disabled) runBtn.focus();
     }
   }
 
