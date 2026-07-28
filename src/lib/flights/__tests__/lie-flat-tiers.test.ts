@@ -41,6 +41,24 @@ describe("airlinesMatch", () => {
     expect(airlineCore("China Eastern")).toBe("china eastern");
     expect(airlineCore("China Airlines")).toBe("china");
   });
+
+  it("matches either side of slash-combined ranking airlines", () => {
+    expect(airlinesMatch("Alaska", "Alaska/Hawaiian")).toBe(true);
+    expect(airlinesMatch("Hawaiian", "Alaska/Hawaiian")).toBe(true);
+    expect(airlinesMatch("Hawaiian Airlines", "Alaska/Hawaiian")).toBe(true);
+    expect(airlinesMatch("United", "Alaska/Hawaiian")).toBe(false);
+  });
+
+  it("maps short Google Flights names that drop geographic qualifiers", () => {
+    expect(airlinesMatch("Biman", "Biman Bangladesh")).toBe(true);
+    expect(airlinesMatch("MIAT", "MIAT Mongolian")).toBe(true);
+    expect(airlinesMatch("TAAG", "TAAG Angola")).toBe(true);
+    expect(airlinesMatch("Garuda", "Garuda Indonesia")).toBe(true);
+    expect(airlinesMatch("Edelweiss", "Edelweiss Air")).toBe(true);
+    expect(airlinesMatch("Juneyao", "Juneyao Air")).toBe(true);
+    expect(airlinesMatch("Xiamen Airlines", "XiamenAir")).toBe(true);
+    expect(airlinesMatch("XiamenAir", "XiamenAir")).toBe(true);
+  });
 });
 
 describe("aircraftMatch", () => {
@@ -68,6 +86,44 @@ describe("lookupLieFlatTiers", () => {
     expect(tiers).toContain("A");
     expect(tiers).toContain("B+");
     expect(tiers).not.toContain("S++");
+  });
+
+  it("maps short Biman search name to Biman Bangladesh 787 tier", () => {
+    const matches = lookupLieFlatTiers("Biman", "Boeing 787", "business");
+    expect(matches.map((m) => m.tier)).toEqual(["C+"]);
+    expect(matches[0]?.products).toEqual(["787 Business"]);
+  });
+
+  it("maps Alaska and Hawaiian search names to Alaska/Hawaiian ranking products", () => {
+    const alaska787 = lookupLieFlatTiers("Alaska", "Boeing 787", "business");
+    expect(alaska787.map((m) => m.tier)).toEqual(["A"]);
+    expect(alaska787[0]?.products).toEqual(["International Business Class"]);
+
+    const alaska787Exact = lookupLieFlatTiers(
+      "Alaska",
+      "Boeing 787-9",
+      "business",
+    );
+    expect(alaska787Exact.map((m) => m.tier)).toEqual(["A"]);
+
+    const hawaiianA330 = lookupLieFlatTiers(
+      "Hawaiian",
+      "Airbus A330",
+      "business",
+    );
+    expect(hawaiianA330.map((m) => m.tier)).toEqual(["B+"]);
+    expect(hawaiianA330[0]?.products).toEqual(["A330 First Class"]);
+
+    const alaskaA330 = lookupLieFlatTiers(
+      "Alaska",
+      "Airbus A330-200",
+      "business",
+    );
+    expect(alaskaA330.map((m) => m.tier)).toEqual(["B+"]);
+    expect(alaskaA330[0]?.products).toEqual(["A330 First Class"]);
+
+    // Narrowbody Alaska cabin is not a ranked lie-flat product
+    expect(lookupLieFlatTiers("Alaska", "Boeing 737", "business")).toEqual([]);
   });
 
   it("returns Copa Dreams Business tier for 737 MAX 9", () => {

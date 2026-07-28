@@ -63,6 +63,15 @@ const AIRLINE_ALIASES: Record<string, string> = {
   boliviana: "boliviana de aviacion",
   ethiopian: "ethiopian",
   etihad: "etihad",
+  // Google often drops geographic qualifiers / expands compound brands
+  biman: "biman bangladesh",
+  miat: "miat mongolian",
+  taag: "taag angola",
+  garuda: "garuda indonesia",
+  edelweiss: "edelweiss air",
+  juneyao: "juneyao air",
+  xiamen: "xiamenair",
+  "xiamen air": "xiamenair",
 };
 
 type AircraftParts = {
@@ -72,7 +81,7 @@ type AircraftParts = {
 };
 
 type IndexedEntry = {
-  airlineCore: string;
+  airlineCores: string[];
   cabin: RankingCabin;
   aircraft: AircraftParts[];
   tier: LieFlatTier;
@@ -83,7 +92,7 @@ type IndexedEntry = {
 const indexedEntries: IndexedEntry[] = (
   rankingsData.entries as RankingEntry[]
 ).map((entry) => ({
-  airlineCore: airlineCore(entry.airline),
+  airlineCores: airlineCores(entry.airline),
   cabin: entry.cabin,
   aircraft: entry.aircraft.map(parseAircraft),
   tier: entry.tier,
@@ -106,10 +115,22 @@ export function airlineCore(value: string): string {
   return AIRLINE_ALIASES[normalized] ?? normalized;
 }
 
+/**
+ * Ranking rows may combine carriers after mergers (e.g. "Alaska/Hawaiian").
+ * Split on "/" so either Google Flights name can match.
+ */
+export function airlineCores(value: string): string[] {
+  const parts = value
+    .split("/")
+    .map((part) => airlineCore(part))
+    .filter(Boolean);
+  return [...new Set(parts)];
+}
+
 export function airlinesMatch(searchAirline: string, rankingAirline: string): boolean {
   const left = airlineCore(searchAirline);
-  const right = airlineCore(rankingAirline);
-  return Boolean(left && right && left === right);
+  if (!left) return false;
+  return airlineCores(rankingAirline).includes(left);
 }
 
 export function parseAircraft(raw: string): AircraftParts {
@@ -241,7 +262,7 @@ export function lookupLieFlatTiers(
   const byTier = new Map<LieFlatTier, { products: Set<string>; bestRank: number }>();
 
   for (const entry of indexedEntries) {
-    if (entry.airlineCore !== carrierCore) continue;
+    if (!entry.airlineCores.includes(carrierCore)) continue;
     if (entry.cabin !== wantedCabin) continue;
     if (!entry.aircraft.some((model) => aircraftPartsMatch(searchAircraft, model))) {
       continue;

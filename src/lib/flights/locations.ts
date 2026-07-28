@@ -12,8 +12,7 @@ export type ContinentGroup =
   | "Europe"
   | "North America"
   | "Oceania"
-  | "South America"
-  | "Worldwide";
+  | "South America";
 
 /** Alphabetical continent order for the origin/destination selects. */
 export const CONTINENT_GROUP_ORDER: ContinentGroup[] = [
@@ -23,7 +22,6 @@ export const CONTINENT_GROUP_ORDER: ContinentGroup[] = [
   "North America",
   "Oceania",
   "South America",
-  "Worldwide",
 ];
 
 export type LocationEntry = {
@@ -32,7 +30,7 @@ export type LocationEntry = {
   label: string;
   /**
    * Dropdown continent group. `null` pins the entry above all groups
-   * (used for Anywhere).
+   * (used for Anywhere and other worldwide options like LCC).
    */
   continent: ContinentGroup | null;
   /** Direct IATA codes owned by this entry. */
@@ -519,7 +517,7 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     id: "lcc-airports",
     type: "region",
     label: "LCC airports",
-    continent: "Worldwide",
+    continent: null,
     // Major low-cost carrier hubs / secondary airports by approximate
     // annual passengers and dominant LCC presence.
     airports: [

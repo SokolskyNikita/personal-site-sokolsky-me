@@ -1,5 +1,9 @@
 ---
 import pageData from "../../data/lie-flat-rankings.json";
+import {
+  airlineRegion,
+  LIE_FLAT_REGIONS,
+} from "../../lib/flights/lie-flat-regions";
 
 export const prerender = true;
 
@@ -41,9 +45,25 @@ const airlines = [...new Set(entries.map((entry) => entry.airline))].sort(
   (a, b) => a.localeCompare(b, "en", { sensitivity: "base" }),
 );
 
+const regionAirlineCounts = new Map<string, number>();
+for (const airline of new Set(entries.map((entry) => entry.airline))) {
+  const region = airlineRegion(airline);
+  if (!region) continue;
+  regionAirlineCounts.set(region, (regionAirlineCounts.get(region) ?? 0) + 1);
+}
+
+const regionOptions = LIE_FLAT_REGIONS.filter(
+  (region) => (regionAirlineCounts.get(region) ?? 0) > 0,
+).map((region) => ({
+  region,
+  airlineCount: regionAirlineCounts.get(region) ?? 0,
+}));
+
 const aircraftOptions = [
   ...new Set(entries.flatMap((entry) => entry.aircraft)),
 ].sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
+
+const regionFor = (airline: string) => airlineRegion(airline) ?? "";
 
 const formatScore = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -148,6 +168,11 @@ const structuredData = {
           <div class="headline">
             <p class="eyebrow">Cabin guide</p>
             <h1>{pageTitle}</h1>
+            <p class="header-blurb">
+              Interested in a flight search engine that takes lie-flat rankings
+              into account? Check out my
+              <a href="/flights/search/">flight search engine</a>.
+            </p>
           </div>
         </div>
       </header>
@@ -179,6 +204,20 @@ const structuredData = {
         </fieldset>
 
         <div class="select-filters">
+          <label class="select-field" for="region-filter">
+            <span>Region</span>
+            <select id="region-filter" name="region" autocomplete="off">
+              <option value="all" selected>All regions</option>
+              {
+                regionOptions.map(({ region, airlineCount }) => (
+                  <option value={region}>
+                    {region} ({airlineCount})
+                  </option>
+                ))
+              }
+            </select>
+          </label>
+
           <label class="select-field" for="airline-filter">
             <span>Airline</span>
             <select id="airline-filter" name="airline" autocomplete="off">
@@ -362,6 +401,7 @@ const structuredData = {
                   <tr
                     data-rank={entry.rank}
                     data-airline={entry.airline}
+                    data-region={regionFor(entry.airline)}
                     data-product={entry.product}
                     data-cabin={entry.cabin}
                     data-aircraft={formatAircraft(entry.aircraft)}
@@ -373,7 +413,7 @@ const structuredData = {
                     data-consistency={entry.consistency}
                     data-score={entry.score}
                     data-tier={entry.tier}
-                    data-search={`${entry.airline} ${entry.product} ${entry.cabin} ${formatAircraft(entry.aircraft)} ${entry.layout} ${entry.tier} ${entry.why}`.toLowerCase()}
+                    data-search={`${entry.airline} ${entry.product} ${entry.cabin} ${formatAircraft(entry.aircraft)} ${entry.layout} ${entry.tier} ${entry.why} ${regionFor(entry.airline)}`.toLowerCase()}
                   >
                     <td class="rank-cell">{entry.rank}</td>
                     <td class="airline-cell">{entry.airline}</td>
@@ -464,6 +504,7 @@ const structuredData = {
       const sortButtons = [...document.querySelectorAll(".sort-button")];
       const cabinButtons = [...document.querySelectorAll("[data-cabin]")];
       const searchInput = document.querySelector("#rank-search");
+      const regionFilterSelect = document.querySelector("#region-filter");
       const airlineFilterSelect = document.querySelector("#airline-filter");
       const aircraftFilterSelect = document.querySelector("#aircraft-filter");
       const mobileSort = document.querySelector("#mobile-sort");
@@ -486,6 +527,7 @@ const structuredData = {
 
       let currentSort = { key: "rank", direction: "asc" };
       let cabinFilter = "all";
+      let regionFilter = "all";
       let airlineFilter = "all";
       let aircraftFilter = "all";
       let searchQuery = "";
@@ -547,6 +589,9 @@ const structuredData = {
 
       const matchesFilters = (row) => {
         if (cabinFilter !== "all" && row.dataset.cabin !== cabinFilter) {
+          return false;
+        }
+        if (regionFilter !== "all" && row.dataset.region !== regionFilter) {
           return false;
         }
         if (airlineFilter !== "all" && row.dataset.airline !== airlineFilter) {
@@ -618,6 +663,11 @@ const structuredData = {
 
       searchInput?.addEventListener("input", () => {
         searchQuery = (searchInput.value || "").trim().toLowerCase();
+        renderRows();
+      });
+
+      regionFilterSelect?.addEventListener("change", () => {
+        regionFilter = regionFilterSelect.value || "all";
         renderRows();
       });
 
@@ -780,6 +830,14 @@ const structuredData = {
     line-height: 0.98;
   }
 
+  .header-blurb {
+    max-width: 40rem;
+    margin: 0.75rem 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
   h2 {
     font-size: 1.15rem;
     font-weight: 600;
@@ -832,7 +890,7 @@ const structuredData = {
 
   @media (min-width: 720px) {
     .select-filters {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 

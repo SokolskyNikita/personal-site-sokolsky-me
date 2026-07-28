@@ -1,3 +1,4 @@
+import { airportDistanceKm } from "../../lib/flights/airport-coords";
 import {
   convertCurrency,
   parseSearchCurrency,
@@ -862,8 +863,18 @@ function renderCityGroupedResults(
         !best || entry.option.price < best.price ? entry.option : best,
       undefined as ItineraryOption | undefined,
     );
+    const originIata = cheapest?.segments[0]?.departureAirport;
+    const destIata = cheapest?.destinationAirport;
+    const distanceKm =
+      originIata && destIata
+        ? airportDistanceKm(originIata, destIata)
+        : null;
+    const distanceLabel =
+      distanceKm !== null && distanceKm > 0
+        ? ` · ${Math.round(distanceKm).toLocaleString("en-US")} km`
+        : "";
     const cityMeta = cheapest
-      ? `${cityGroup.dates.length} ${dayLabel} · from ${formatDisplayPrice(cheapest.price, cheapest.currency, currency)}`
+      ? `${cityGroup.dates.length} ${dayLabel}${distanceLabel} · from ${formatDisplayPrice(cheapest.price, cheapest.currency, currency)}`
       : `${cityGroup.dates.length} ${dayLabel}`;
     const [first, ...rest] = cityGroup.dates;
     html.push(`

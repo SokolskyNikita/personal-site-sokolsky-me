@@ -230,14 +230,14 @@ describe("resolveLocation", () => {
       id: "cycle-a",
       type: "region",
       label: "Cycle A",
-      continent: "Worldwide",
+      continent: "Africa",
       refs: ["cycle-b"],
     };
     LOCATION_REGISTRY["cycle-b"] = {
       id: "cycle-b",
       type: "region",
       label: "Cycle B",
-      continent: "Worldwide",
+      continent: "Africa",
       refs: ["cycle-a"],
     };
     try {
@@ -273,7 +273,7 @@ describe("registry options", () => {
         options.map(({ id }) => id),
       ]),
     ).toEqual([
-      [null, ["anywhere"]],
+      [null, ["anywhere", "lcc-airports"]],
       [
         "Africa",
         ["africa-gateways", "sub-saharan-africa-gateways"],
@@ -307,7 +307,6 @@ describe("registry options", () => {
         "South America",
         ["buenos-aires", "south-america-gateways"],
       ],
-      ["Worldwide", ["lcc-airports"]],
     ]);
 
     expect(listRegistryOptions()[0]).toEqual({
