@@ -268,7 +268,7 @@ const structuredData = {
                     Cabin
                   </button>
                 </th>
-                <th scope="col" aria-sort="none">
+                <th scope="col" class="aircraft-column" aria-sort="none">
                   <button
                     class="sort-button"
                     type="button"
@@ -288,7 +288,7 @@ const structuredData = {
                     Layout
                   </button>
                 </th>
-                <th scope="col" class="score-column" aria-sort="none">
+                <th scope="col" class="score-column metric-column" aria-sort="none">
                   <button
                     class="sort-button"
                     type="button"
@@ -298,7 +298,7 @@ const structuredData = {
                     Seat /{weights.seatPrivacy}
                   </button>
                 </th>
-                <th scope="col" class="score-column" aria-sort="none">
+                <th scope="col" class="score-column metric-column" aria-sort="none">
                   <button
                     class="sort-button"
                     type="button"
@@ -308,24 +308,24 @@ const structuredData = {
                     Service /{weights.serviceCatering}
                   </button>
                 </th>
-                <th scope="col" class="score-column" aria-sort="none">
+                <th scope="col" class="score-column metric-column" aria-sort="none">
                   <button
                     class="sort-button"
                     type="button"
                     data-sort-key="ground"
                     data-sort-default="desc"
                   >
-                    Ground /{weights.ground}
+                    Ground
                   </button>
                 </th>
-                <th scope="col" class="score-column" aria-sort="none">
+                <th scope="col" class="score-column metric-column" aria-sort="none">
                   <button
                     class="sort-button"
                     type="button"
                     data-sort-key="consistency"
                     data-sort-default="desc"
                   >
-                    Consistency /{weights.consistency}
+                    Consistency
                   </button>
                 </th>
                 <th scope="col" class="score-column" aria-sort="none">
@@ -390,12 +390,16 @@ const structuredData = {
                     </td>
                     <td class="aircraft-cell">{entry.aircraft}</td>
                     <td class="layout-cell">{entry.layout}</td>
-                    <td class="score-cell">{formatScore(entry.seatPrivacy)}</td>
-                    <td class="score-cell">
+                    <td class="score-cell metric-cell">
+                      {formatScore(entry.seatPrivacy)}
+                    </td>
+                    <td class="score-cell metric-cell">
                       {formatScore(entry.serviceCatering)}
                     </td>
-                    <td class="score-cell">{formatScore(entry.ground)}</td>
-                    <td class="score-cell">
+                    <td class="score-cell metric-cell">
+                      {formatScore(entry.ground)}
+                    </td>
+                    <td class="score-cell metric-cell">
                       {formatScore(entry.consistency)}
                     </td>
                     <td class="score-cell total-cell">
@@ -1019,6 +1023,26 @@ const structuredData = {
     white-space: nowrap;
   }
 
+  .metric-column,
+  .metric-cell {
+    width: 4.25rem;
+    max-width: 4.25rem;
+    box-sizing: border-box;
+  }
+
+  .metric-column {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.25;
+  }
+
+  .metric-column .sort-button {
+    white-space: normal;
+    align-items: flex-start;
+    text-align: left;
+  }
+
   .rank-cell,
   .total-cell {
     font-weight: 600;
@@ -1030,6 +1054,22 @@ const structuredData = {
 
   .product-cell {
     font-weight: 600;
+  }
+
+  .aircraft-column,
+  .aircraft-cell {
+    width: 4.75rem;
+    max-width: 4.75rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.35;
+  }
+
+  .aircraft-column .sort-button {
+    white-space: normal;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .aircraft-cell,
