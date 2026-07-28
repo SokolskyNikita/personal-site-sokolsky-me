@@ -1,5 +1,6 @@
 ---
 import pageData from "../../data/lie-flat-rankings.json";
+import reviewData from "../../data/lie-flat-product-reviews.json";
 import {
   airlineRegion,
   LIE_FLAT_REGIONS,
@@ -35,8 +36,22 @@ type RankingEntry = {
   why: string;
 };
 
+type ProductReview = {
+  url: string;
+  title?: string | null;
+  source?: string | null;
+  date?: string | null;
+};
+
 const entries = pageData.entries as RankingEntry[];
 const weights = pageData.weights;
+const productReviews = (reviewData.reviews ?? {}) as Record<
+  string,
+  Record<string, ProductReview>
+>;
+
+const reviewFor = (airline: string, product: string) =>
+  productReviews[airline]?.[product];
 
 const formatAircraft = (aircraft: string[]) => aircraft.join("/");
 const formatAircraftLines = (aircraft: string[]) => aircraft.join("\n");
@@ -424,7 +439,33 @@ const structuredData = {
                   >
                     <td class="rank-cell">{entry.rank}</td>
                     <td class="airline-cell">{entry.airline}</td>
-                    <td class="product-cell">{entry.product}</td>
+                    <td class="product-cell">
+                      {
+                        (() => {
+                          const review = reviewFor(entry.airline, entry.product);
+                          if (!review?.url) return entry.product;
+                          const label = [
+                            review.title?.trim() ||
+                              `${entry.airline} ${entry.product} review`,
+                            review.source?.trim(),
+                            review.date?.trim(),
+                          ]
+                            .filter(Boolean)
+                            .join(" · ");
+                          return (
+                            <a
+                              class="product-review-link"
+                              href={review.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={label}
+                            >
+                              {entry.product}
+                            </a>
+                          );
+                        })()
+                      }
+                    </td>
                     <td
                       class="cabin-cell"
                       data-mobile-meta={`${formatAircraft(entry.aircraft)} · ${entry.layout}`}
@@ -511,7 +552,7 @@ const structuredData = {
       const tableBody = document.querySelector("tbody");
       const rows = [...document.querySelectorAll("tbody tr")];
       const sortButtons = [...document.querySelectorAll(".sort-button")];
-      const cabinButtons = [...document.querySelectorAll("[data-cabin]")];
+      const cabinButtons = [...document.querySelectorAll(".chip[data-cabin]")];
       const searchInput = document.querySelector("#rank-search");
       const regionFilterSelect = document.querySelector("#region-filter");
       const airlineFilterSelect = document.querySelector("#airline-filter");
@@ -840,7 +881,7 @@ const structuredData = {
   }
 
   .header-blurb {
-    max-width: 40rem;
+    max-width: min(100%, 56rem);
     margin: 0.75rem 0 0;
     color: var(--muted);
     font-size: 0.95rem;
@@ -1127,6 +1168,16 @@ const structuredData = {
 
   .product-cell {
     font-weight: 600;
+  }
+
+  .product-review-link {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  .product-review-link:hover,
+  .product-review-link:focus-visible {
+    color: var(--accent);
   }
 
   .aircraft-column,
