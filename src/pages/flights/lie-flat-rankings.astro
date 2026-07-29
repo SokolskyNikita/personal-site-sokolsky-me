@@ -524,18 +524,18 @@ const structuredData = {
                     </td>
                     <td class="aircraft-cell">{formatAircraftLines(entry.aircraft)}</td>
                     <td class="layout-cell">{entry.layout}</td>
-                    <td class="score-cell metric-cell">
-                      {formatScore(entry.seatPrivacy)}
-                    </td>
-                    <td class="score-cell metric-cell">
-                      {formatScore(entry.serviceCatering)}
-                    </td>
-                    <td class="score-cell metric-cell">
-                      {formatScore(entry.ground)}
-                    </td>
-                    <td class="score-cell metric-cell">
-                      {formatScore(entry.consistency)}
-                    </td>
+                    <td class="score-cell metric-cell"
+                      >{formatScore(entry.seatPrivacy)}</td
+                    >
+                    <td class="score-cell metric-cell"
+                      >{formatScore(entry.serviceCatering)}</td
+                    >
+                    <td class="score-cell metric-cell"
+                      >{formatScore(entry.ground)}</td
+                    >
+                    <td class="score-cell metric-cell"
+                      >{formatScore(entry.consistency)}</td
+                    >
                     <td class="score-cell total-cell">
                       {formatScore(entry.score)}
                     </td>
@@ -1395,23 +1395,38 @@ const structuredData = {
 
   .metric-column,
   .metric-cell {
-    width: 4.5rem;
-    min-width: 4.5rem;
-    max-width: 4.5rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
+    width: 2.75rem;
+    min-width: 2.75rem;
+    max-width: 2.75rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
     box-sizing: border-box;
-    text-align: center;
-  }
-
-  .metric-column {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: normal;
     white-space: nowrap;
+    text-align: center;
   }
 
   .metric-column .sort-button {
+    position: relative;
+    gap: 0;
+    width: 100%;
+    margin-left: -0.15rem;
+    margin-right: -0.15rem;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
     white-space: nowrap;
     justify-content: center;
     text-align: center;
+  }
+
+  .metric-column .sort-button::after {
+    position: absolute;
+    top: 0.15rem;
+    right: -0.05rem;
+    font-size: 0.65em;
+    line-height: 1;
   }
 
   .rank-cell,
