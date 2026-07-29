@@ -286,11 +286,13 @@ describe("registry options", () => {
       [
         "Europe",
         [
+          "belarus-gateways",
           "germany-gateways",
           "london",
           "madrid",
           "paris",
           "prague",
+          "russia-gateways",
           "schengen-eu-gateways",
           "uk-ireland-gateways",
         ],
