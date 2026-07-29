@@ -27,6 +27,9 @@ export class LocationResolveError extends Error {
   }
 }
 
+/** Registry id for Belarus gateways. */
+export const BELARUS_LOCATION_ID = "belarus-gateways";
+
 /** True when both endpoints resolve to the Anywhere registry entry. */
 export function isAnywhereToAnywhere(
   origin: LocationRef,
@@ -35,6 +38,41 @@ export function isAnywhereToAnywhere(
   return (
     normalizeLocationRef(origin) === ANYWHERE_LOCATION_ID &&
     normalizeLocationRef(dest) === ANYWHERE_LOCATION_ID
+  );
+}
+
+/**
+ * True for U.S. dropdown locations (usa-gateways and U.S. city groups).
+ * Ignores raw IATA overrides and non-U.S. North America entries (Canada,
+ * Mexico).
+ */
+export function isUsaRegistryLocation(ref: LocationRef): boolean {
+  const id = normalizeLocationRef(ref);
+  if (id === "usa-gateways") return true;
+  const entry = LOCATION_REGISTRY[id];
+  if (!entry || entry.type !== "city" || entry.continent !== "North America") {
+    return false;
+  }
+  // Vancouver is the only Canadian city group in the registry today.
+  return id !== "vancouver";
+}
+
+/** True for the Belarus gateways dropdown option. */
+export function isBelarusRegistryLocation(ref: LocationRef): boolean {
+  return normalizeLocationRef(ref) === BELARUS_LOCATION_ID;
+}
+
+/**
+ * True when the dropdown route is U.S. ↔ Belarus (either direction).
+ * Custom IATA overrides are ignored — only registry ids match.
+ */
+export function isUsaBelarusPair(
+  origin: LocationRef,
+  dest: LocationRef,
+): boolean {
+  return (
+    (isUsaRegistryLocation(origin) && isBelarusRegistryLocation(dest)) ||
+    (isBelarusRegistryLocation(origin) && isUsaRegistryLocation(dest))
   );
 }
 

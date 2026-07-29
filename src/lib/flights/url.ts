@@ -33,8 +33,16 @@ export const DEFAULT_FORM = {
   hl: "en",
 };
 
-function todayUtc(): string {
-  return new Date().toISOString().slice(0, 10);
+/** Calendar days after "today" used for the default search start date. */
+export const DEFAULT_START_OFFSET_DAYS = 7;
+
+/** Default flight-search start date: today (UTC) plus {@link DEFAULT_START_OFFSET_DAYS}. */
+export function defaultStartDate(now = new Date()): string {
+  const d = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+  );
+  d.setUTCDate(d.getUTCDate() + DEFAULT_START_OFFSET_DAYS);
+  return d.toISOString().slice(0, 10);
 }
 
 export type FormState = {
@@ -59,7 +67,7 @@ export type FormState = {
   hl: string;
 };
 
-export function defaultFormState(start = todayUtc()): FormState {
+export function defaultFormState(start = defaultStartDate()): FormState {
   const mode = getSearchMode(DEFAULT_FORM.mode)!;
   return {
     origin: DEFAULT_FORM.origin,
@@ -136,7 +144,7 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
 
 export function formStateFromSearchParams(
   params: URLSearchParams,
-  fallbackStart = todayUtc(),
+  fallbackStart = defaultStartDate(),
 ): FormState {
   const base = defaultFormState(fallbackStart);
   const modeId = params.get("mode") ?? base.mode;

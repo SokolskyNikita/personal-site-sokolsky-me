@@ -6,8 +6,11 @@ import {
   defaultCityGroupSide,
   isAnywhereOrGateway,
   isAnywhereToAnywhere,
+  isBelarusRegistryLocation,
   isRawIata,
   isSingleCityLocation,
+  isUsaBelarusPair,
+  isUsaRegistryLocation,
   listRegistryOptionSections,
   listRegistryOptions,
   normalizeLocationRef,
@@ -81,6 +84,38 @@ describe("resolveLocation", () => {
     expect(() =>
       assertValidLocationPair("buenos-aires", "anywhere"),
     ).not.toThrow();
+  });
+
+  it("detects U.S.↔Belarus dropdown pairs only", () => {
+    expect(isUsaRegistryLocation("usa-gateways")).toBe(true);
+    expect(isUsaRegistryLocation("new-york")).toBe(true);
+    expect(isUsaRegistryLocation("seattle")).toBe(true);
+    expect(isUsaRegistryLocation("san-francisco")).toBe(true);
+    expect(isUsaRegistryLocation("vancouver")).toBe(false);
+    expect(isUsaRegistryLocation("canada-gateways")).toBe(false);
+    expect(isUsaRegistryLocation("mexico-gateways")).toBe(false);
+    expect(isUsaRegistryLocation("JFK")).toBe(false);
+    expect(isUsaRegistryLocation("anywhere")).toBe(false);
+
+    expect(isBelarusRegistryLocation("belarus-gateways")).toBe(true);
+    expect(isBelarusRegistryLocation("MSQ")).toBe(false);
+    expect(isBelarusRegistryLocation("russia-gateways")).toBe(false);
+
+    expect(isUsaBelarusPair("usa-gateways", "belarus-gateways")).toBe(true);
+    expect(isUsaBelarusPair("belarus-gateways", "new-york")).toBe(true);
+    expect(isUsaBelarusPair("seattle", "belarus-gateways")).toBe(true);
+    expect(isUsaBelarusPair("belarus-gateways", "usa-gateways")).toBe(true);
+
+    expect(isUsaBelarusPair("canada-gateways", "belarus-gateways")).toBe(
+      false,
+    );
+    expect(isUsaBelarusPair("russia-gateways", "belarus-gateways")).toBe(
+      false,
+    );
+    expect(isUsaBelarusPair("usa-gateways", "russia-gateways")).toBe(false);
+    expect(isUsaBelarusPair("JFK", "belarus-gateways")).toBe(false);
+    expect(isUsaBelarusPair("usa-gateways", "MSQ")).toBe(false);
+    expect(isUsaBelarusPair("anywhere", "belarus-gateways")).toBe(false);
   });
 
   it("resolves gateway registries", () => {

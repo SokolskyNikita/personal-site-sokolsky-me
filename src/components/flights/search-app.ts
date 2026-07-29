@@ -18,6 +18,7 @@ import { airportCity, airportLabel } from "../../lib/flights/locations";
 import {
   defaultCityGroupSide,
   isAnywhereToAnywhere,
+  isUsaBelarusPair,
   listRegistryOptionSections,
 } from "../../lib/flights/resolver";
 import {
@@ -42,6 +43,7 @@ import {
 } from "../../lib/flights/types";
 import {
   DEFAULT_FORM,
+  DEFAULT_START_OFFSET_DAYS,
   defaultFormState,
   formStateFromSearchParams,
   formStateToLegSearch,
@@ -112,7 +114,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   populateSelects(root);
   let form = formStateFromSearchParams(
     new URLSearchParams(location.search),
-    todayLocalDate(),
+    defaultLocalStartDate(),
   );
   applyFormToDom(root, form);
   syncDaysLabel(daysInput, daysValue);
@@ -425,10 +427,26 @@ export function mountFlightSearch(root: HTMLElement): void {
       return;
     }
 
+    syncUrl(form);
+
+    // U.S.↔Belarus dropdown routes: DOT Order 2021-7-1 blocks ticket sales,
+    // so Google Flights returns nothing. Warn after Search; skip the API.
+    if (isUsaBelarusPair(form.origin, form.dest)) {
+      hideSearchProgress();
+      results.innerHTML = "";
+      footer.innerHTML = "";
+      resultsToolbar.hidden = true;
+      latestOptions = [];
+      latestSpec = null;
+      progress.textContent = "";
+      searchSummary.textContent = "This route cannot be searched.";
+      banners.innerHTML = usaBelarusWarningHtml();
+      return;
+    }
+
     const controller = new AbortController();
     activeController = controller;
     const spec = formStateToLegSearch(form);
-    syncUrl(form);
     setSearchBusy(true, "Checking…");
     showSearchProgress("Preparing search");
     banners.innerHTML = "";
@@ -654,6 +672,11 @@ export function mountFlightSearch(root: HTMLElement): void {
 
 function outOfCreditBanner(reason: string): string {
   return `<div class="fs-banner fs-banner-warn">${escapeHtml(reason)} Limits reset daily.<span class="fs-banner-contact">Need larger limits? Email <a href="mailto:sokolx@gmail.com">sokolx@gmail.com</a> or DM <a href="https://x.com/nsokolsky" target="_blank" rel="noopener noreferrer">@nsokolsky</a> on X.</span></div>`;
+}
+
+/** Shown after Search for U.S.↔Belarus dropdown routes (DOT Order 2021-7-1). */
+function usaBelarusWarningHtml(): string {
+  return `<div class="fs-banner fs-banner-warn" role="status"><strong>U.S.–Belarus tickets cannot be sold.</strong> A 2021 U.S. DOT order (Order 2021-7-1) prohibits selling passenger air transportation between the United States and Belarus — including connecting tickets — so Google Flights will not show this route. Run two separate searches here instead: U.S. → a hub such as Dubai, Istanbul, Moscow, or Baku, then that hub → Belarus.<span class="fs-banner-contact"><a href="https://downloads.regulations.gov/DOT-OST-2021-0074-0190/attachment_1.pdf" target="_blank" rel="noopener noreferrer">DOT Order 2021-7-1 (PDF)</a></span></div>`;
 }
 
 function friendlyStepError(message: string): string {
@@ -1389,6 +1412,16 @@ function todayLocalDate(): string {
   const y = today.getFullYear();
   const m = String(today.getMonth() + 1).padStart(2, "0");
   const d = String(today.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+/** Default start date in local calendar days (today + offset). */
+function defaultLocalStartDate(): string {
+  const date = new Date();
+  date.setDate(date.getDate() + DEFAULT_START_OFFSET_DAYS);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 

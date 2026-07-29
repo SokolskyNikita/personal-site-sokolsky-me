@@ -12,14 +12,14 @@ afterEach(() => {
 });
 
 describe("spec ↔ URL round-trip", () => {
-  it("uses today and four results by default", () => {
+  it("defaults start to seven days from today with four results", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
 
     expect(defaultFormState()).toMatchObject({
       origin: "anywhere",
       dest: "usa-gateways",
-      start: "2026-07-16",
+      start: "2026-07-23",
       topN: 4,
       adults: 1,
       deepSearch: false,

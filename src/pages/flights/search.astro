@@ -1,7 +1,7 @@
 ---
 import "../../styles/flights-search.css";
 import { MAX_TOTAL_HOURS_OPTIONS } from "../../lib/flights/types";
-import { DEFAULT_FORM } from "../../lib/flights/url";
+import { DEFAULT_FORM, defaultStartDate } from "../../lib/flights/url";
 
 export const prerender = true;
 
@@ -15,7 +15,7 @@ const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
   "",
 );
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-const defaultStart = new Date().toISOString().slice(0, 10);
+const defaultStart = defaultStartDate();
 ---
 
 <!doctype html>
