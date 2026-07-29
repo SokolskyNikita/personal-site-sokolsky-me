@@ -439,7 +439,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       latestOptions = [];
       latestSpec = null;
       progress.textContent = "";
-      searchSummary.textContent = "This route cannot be searched.";
+      searchSummary.textContent = "";
       banners.innerHTML = usaBelarusWarningHtml();
       return;
     }
@@ -676,7 +676,16 @@ function outOfCreditBanner(reason: string): string {
 
 /** Shown after Search for U.S.↔Belarus dropdown routes (DOT Order 2021-7-1). */
 function usaBelarusWarningHtml(): string {
-  return `<div class="fs-banner fs-banner-warn" role="status"><strong>U.S.–Belarus tickets cannot be sold.</strong> A 2021 U.S. DOT order (Order 2021-7-1) prohibits selling passenger air transportation between the United States and Belarus — including connecting tickets — so Google Flights will not show this route. Run two separate searches here instead: U.S. → a hub such as Dubai, Istanbul, Moscow, or Baku, then that hub → Belarus.<span class="fs-banner-contact"><a href="https://downloads.regulations.gov/DOT-OST-2021-0074-0190/attachment_1.pdf" target="_blank" rel="noopener noreferrer">DOT Order 2021-7-1 (PDF)</a></span></div>`;
+  return `<aside class="fs-banner fs-banner-warn fs-banner-route" role="status" aria-labelledby="fs-usa-belarus-title">
+  <p class="fs-banner-title" id="fs-usa-belarus-title">U.S.–Belarus tickets cannot be sold</p>
+  <p class="fs-banner-body">A 2021 U.S. DOT order blocks selling passenger tickets on this route, including connections — so Google Flights returns no results.</p>
+  <p class="fs-banner-action-label">Search it as two tickets here instead:</p>
+  <ol class="fs-banner-steps">
+    <li><span class="fs-banner-step-content"><span class="fs-banner-step-route">U.S. → hub</span><span class="fs-banner-step-note">Dubai, Istanbul, Moscow, or Baku</span></span></li>
+    <li><span class="fs-banner-step-content"><span class="fs-banner-step-route">Hub → Belarus</span></span></li>
+  </ol>
+  <p class="fs-banner-contact"><a href="https://downloads.regulations.gov/DOT-OST-2021-0074-0190/attachment_1.pdf" target="_blank" rel="noopener noreferrer">DOT Order 2021-7-1 (PDF)</a></p>
+</aside>`;
 }
 
 function friendlyStepError(message: string): string {

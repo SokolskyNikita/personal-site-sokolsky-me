@@ -715,6 +715,10 @@ a {
   margin: 0;
 }
 
+.fs-search-summary:empty {
+  display: none;
+}
+
 .fs-search-summary strong {
   color: var(--fs-ink);
   font-weight: 650;
@@ -810,6 +814,98 @@ a {
   color: var(--fs-danger);
 }
 
+.fs-banner-route {
+  padding: 0.85rem 1rem;
+  border-left: 3px solid color-mix(in srgb, var(--fs-warn) 70%, transparent);
+  line-height: 1.45;
+}
+
+.fs-banner-route > :first-child {
+  margin-top: 0;
+}
+
+.fs-banner-route > :last-child {
+  margin-bottom: 0;
+}
+
+.fs-banner-title {
+  margin: 0;
+  color: var(--fs-ink);
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.fs-banner-body {
+  margin: 0.4rem 0 0;
+  max-width: 42rem;
+  color: color-mix(in srgb, var(--fs-warn) 72%, var(--fs-ink));
+  font-size: 0.84rem;
+}
+
+.fs-banner-action-label {
+  margin: 0.75rem 0 0;
+  color: var(--fs-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fs-banner-steps {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+  counter-reset: fs-banner-step;
+}
+
+.fs-banner-steps li {
+  display: grid;
+  grid-template-columns: 1.35rem minmax(0, 1fr);
+  column-gap: 0.55rem;
+  align-items: start;
+  padding: 0.5rem 0.65rem;
+  border-radius: calc(var(--fs-radius) - 3px);
+  background: color-mix(in srgb, var(--fs-bg-elevated) 78%, transparent);
+  color: var(--fs-ink);
+  font-size: 0.84rem;
+}
+
+.fs-banner-steps li::before {
+  counter-increment: fs-banner-step;
+  content: counter(fs-banner-step);
+  width: 1.35rem;
+  height: 1.35rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--fs-warn) 16%, var(--fs-bg-elevated));
+  color: var(--fs-warn);
+  font-family: var(--fs-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1;
+  margin-top: 0.08rem;
+}
+
+.fs-banner-step-content {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.fs-banner-step-route {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.fs-banner-step-note {
+  color: var(--fs-muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
 .fs-banner-contact {
   display: block;
   margin-top: 0.25rem;
@@ -817,10 +913,19 @@ a {
   opacity: 0.85;
 }
 
+.fs-banner-route .fs-banner-contact {
+  margin-top: 0.7rem;
+  opacity: 1;
+}
+
 .fs-banner a,
 .fs-banner-contact a {
   color: inherit;
   font-weight: 600;
+}
+
+.fs-banner-route .fs-banner-contact a {
+  text-underline-offset: 0.12em;
 }
 
 .fs-progress {
