@@ -1,9 +1,11 @@
 import { parseSearchCurrency, type SearchCurrency } from "./currency";
 import { DEFAULT_SEARCH_MODE_ID, getSearchMode } from "./modes";
 import {
+  AdultsSchema,
   LegSearchSchema,
   MAX_TOTAL_HOURS_OPTIONS,
   MaxStopsSchema,
+  type Adults,
   type Cabin,
   type LegSearch,
   type LieFlatPolicy,
@@ -25,6 +27,7 @@ export const DEFAULT_FORM = {
   maxTotalHours: 24 as MaxTotalHours,
   deepSearch: false,
   topN: 4,
+  adults: 1 as Adults,
   currency: "USD" as SearchCurrency,
   gl: "us",
   hl: "en",
@@ -49,6 +52,7 @@ export type FormState = {
   maxTotalHours: MaxTotalHours;
   deepSearch: boolean;
   topN: number;
+  adults: Adults;
   /** Display currency; API searches always run in USD for cache reuse. */
   currency: SearchCurrency;
   gl: string;
@@ -72,6 +76,7 @@ export function defaultFormState(start = todayUtc()): FormState {
     maxTotalHours: DEFAULT_FORM.maxTotalHours,
     deepSearch: DEFAULT_FORM.deepSearch,
     topN: DEFAULT_FORM.topN,
+    adults: DEFAULT_FORM.adults,
     currency: DEFAULT_FORM.currency,
     gl: DEFAULT_FORM.gl,
     hl: DEFAULT_FORM.hl,
@@ -97,6 +102,7 @@ export function formStateToLegSearch(form: FormState): LegSearch {
     hl: form.hl,
     deepSearch: form.deepSearch,
     topN: form.topN,
+    adults: form.adults,
   });
 }
 
@@ -119,6 +125,9 @@ export function formStateToSearchParams(form: FormState): URLSearchParams {
   params.set("maxStops", String(form.maxStops));
   params.set("maxTotalHours", String(form.maxTotalHours));
   params.set("topN", String(form.topN));
+  if (form.adults !== DEFAULT_FORM.adults) {
+    params.set("adults", String(form.adults));
+  }
   params.set("currency", form.currency);
   params.set("gl", form.gl);
   params.set("hl", form.hl);
@@ -178,10 +187,16 @@ export function formStateFromSearchParams(
         ? base.deepSearch
         : params.get("deepSearch") === "1",
     topN: clampInt(params.get("topN"), 1, 20, base.topN),
+    adults: parseAdults(params.get("adults"), base.adults),
     currency: parseSearchCurrency(params.get("currency"), base.currency),
     gl: params.get("gl") ?? base.gl,
     hl: params.get("hl") ?? base.hl,
   };
+}
+
+function parseAdults(raw: string | null, fallback: Adults): Adults {
+  const parsed = AdultsSchema.safeParse(Number(raw));
+  return parsed.success ? parsed.data : fallback;
 }
 
 function parseMaxTotalHours(

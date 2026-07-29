@@ -180,8 +180,27 @@ describe("SearchAPI request mapping", () => {
     expect(url.searchParams.get("arrival_id")).toBe("JFK,EWR");
     expect(url.searchParams.get("travel_class")).toBe("business");
     expect(url.searchParams.get("stops")).toBe("one_stop_or_fewer");
+    expect(url.searchParams.get("adults")).toBe("1");
     expect(url.searchParams.has("deep_search")).toBe(false);
     expect(url.searchParams.has("no_cache")).toBe(false);
+  });
+
+  it("passes traveler count through to SearchAPI", () => {
+    const url = new URL(
+      buildSearchApiUrl({
+        departureId: "EZE",
+        arrivalId: "JFK",
+        outboundDate: "2026-08-15",
+        cabin: "economy",
+        maxStops: 1,
+        currency: "USD",
+        gl: "us",
+        hl: "en",
+        adults: 3,
+        apiKey: "test",
+      }),
+    );
+    expect(url.searchParams.get("adults")).toBe("3");
   });
 
   it("versions cache keys independently from legacy provider data", () => {
@@ -196,6 +215,32 @@ describe("SearchAPI request mapping", () => {
       hl: "en",
     });
     expect(key.startsWith("searchapi-v1|")).toBe(true);
+    expect(key).toBe(
+      searchApiCacheKey({
+        departureId: "EZE",
+        arrivalId: "JFK",
+        outboundDate: "2026-08-15",
+        cabin: "business",
+        maxStops: 1,
+        currency: "USD",
+        gl: "us",
+        hl: "en",
+        adults: 1,
+      }),
+    );
+    expect(
+      searchApiCacheKey({
+        departureId: "EZE",
+        arrivalId: "JFK",
+        outboundDate: "2026-08-15",
+        cabin: "business",
+        maxStops: 1,
+        currency: "USD",
+        gl: "us",
+        hl: "en",
+        adults: 2,
+      }),
+    ).toBe(`${key}|2`);
   });
 });
 
@@ -209,6 +254,7 @@ describe("SearchApiProvider", () => {
     currency: "USD",
     gl: "us",
     hl: "en",
+    adults: 1,
   };
 
   it("treats an empty Google Flights result as a completed search", async () => {

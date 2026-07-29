@@ -276,6 +276,7 @@ export function buildSearchApiUrl(
     currency: string;
     gl: string;
     hl: string;
+    adults?: number;
     tripType?: "one_way" | "round_trip";
     returnDate?: string;
     departureToken?: string;
@@ -303,7 +304,7 @@ export function buildSearchApiUrl(
   url.searchParams.set("currency", params.currency);
   url.searchParams.set("gl", params.gl);
   url.searchParams.set("hl", params.hl);
-  url.searchParams.set("adults", "1");
+  url.searchParams.set("adults", String(params.adults ?? 1));
   url.searchParams.set("api_key", params.apiKey);
   return url.toString();
 }
@@ -318,6 +319,7 @@ export function searchApiCacheKey(params: {
   currency: string;
   gl: string;
   hl: string;
+  adults?: number;
   tripType?: "one_way" | "round_trip";
   returnDate?: string;
   topN?: number;
@@ -335,7 +337,11 @@ export function searchApiCacheKey(params: {
     params.gl,
     params.hl,
     params.tripType === "round_trip" ? String(params.topN ?? "-") : "-",
-  ].join("|");
+    // Keep adults=1 cache-compatible with keys written before traveler count existed.
+    String(params.adults ?? 1) === "1" ? undefined : String(params.adults),
+  ]
+    .filter((part) => part !== undefined)
+    .join("|");
 }
 
 type SearchStep = {
@@ -347,6 +353,7 @@ type SearchStep = {
   currency: string;
   gl: string;
   hl: string;
+  adults: number;
 };
 
 export class SearchApiProvider implements FlightProvider {
@@ -380,6 +387,7 @@ export class SearchApiProvider implements FlightProvider {
       currency: spec.currency,
       gl: spec.gl,
       hl: spec.hl,
+      adults: spec.adults,
     });
     return options;
   }
@@ -399,6 +407,7 @@ export class SearchApiProvider implements FlightProvider {
         currency: step.currency,
         gl: step.gl,
         hl: step.hl,
+        adults: step.adults,
         apiKey: this.apiKey,
       },
       this.baseUrl,
@@ -437,6 +446,7 @@ export class SearchApiProvider implements FlightProvider {
       currency: step.currency,
       gl: step.gl,
       hl: step.hl,
+      adults: step.adults,
       apiKey: this.apiKey,
     };
     const initial = await this.fetchWithRetry(

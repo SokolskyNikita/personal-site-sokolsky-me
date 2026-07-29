@@ -55,6 +55,9 @@ export const MaxStopsSchema = z.union([
 ]);
 export type MaxStops = z.infer<typeof MaxStopsSchema>;
 
+export const AdultsSchema = z.number().int().min(1).max(4);
+export type Adults = z.infer<typeof AdultsSchema>;
+
 export const LegSearchSchema = z.object({
   origin: LocationRefSchema,
   dest: LocationRefSchema,
@@ -72,6 +75,7 @@ export const LegSearchSchema = z.object({
   hl: z.string().min(2).max(5).default("en"),
   deepSearch: z.boolean().default(false),
   topN: z.number().int().min(1).max(20).default(2),
+  adults: AdultsSchema.default(1),
 });
 export type LegSearch = z.infer<typeof LegSearchSchema>;
 

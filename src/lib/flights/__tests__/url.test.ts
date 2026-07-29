@@ -21,6 +21,7 @@ describe("spec ↔ URL round-trip", () => {
       dest: "usa-gateways",
       start: "2026-07-16",
       topN: 4,
+      adults: 1,
       deepSearch: false,
     });
   });
@@ -142,6 +143,32 @@ describe("spec ↔ URL round-trip", () => {
     expect(params.has("tripLengthDays")).toBe(false);
     expect(params.has("flexibleTripLength")).toBe(false);
     expect(formStateToLegSearch(form).tripType).toBe("one_way");
+  });
+
+  it("defaults to one traveler and omits adults from the URL", () => {
+    const form = defaultFormState("2026-07-20");
+    expect(form.adults).toBe(1);
+    expect(formStateToSearchParams(form).has("adults")).toBe(false);
+    expect(formStateToLegSearch(form).adults).toBe(1);
+  });
+
+  it("round-trips traveler counts from 1 to 4", () => {
+    const form = defaultFormState("2026-07-20");
+    form.adults = 3;
+
+    const params = formStateToSearchParams(form);
+    expect(params.get("adults")).toBe("3");
+
+    const restored = formStateFromSearchParams(params);
+    expect(restored.adults).toBe(3);
+    expect(formStateToLegSearch(restored).adults).toBe(3);
+
+    expect(
+      formStateFromSearchParams(new URLSearchParams({ adults: "0" })).adults,
+    ).toBe(1);
+    expect(
+      formStateFromSearchParams(new URLSearchParams({ adults: "5" })).adults,
+    ).toBe(1);
   });
 
   it("round-trips round-trip searches with a flexible trip length", () => {

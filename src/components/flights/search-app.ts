@@ -9,7 +9,6 @@ import {
   formatDuration,
   formatPrice,
 } from "../../lib/flights/format";
-import { SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD } from "../../lib/flights/constants";
 import {
   groupCheapestByCityAndDate,
   groupResults,
@@ -328,9 +327,7 @@ export function mountFlightSearch(root: HTMLElement): void {
     const blocked = routeBlockedMessage(form);
     runBtn.disabled = isRunning || Boolean(blocked);
     hideSearchProgress();
-    searchSummary.textContent = blocked
-      ? blocked
-      : "Ready to search. Cached results are reused automatically.";
+    searchSummary.textContent = blocked ? blocked : "Ready to search.";
     banners.innerHTML = blocked
       ? `<div class="fs-banner fs-banner-warn">${escapeHtml(blocked)}</div>`
       : "";
@@ -441,9 +438,10 @@ export function mountFlightSearch(root: HTMLElement): void {
     latestOptions = [];
     latestSpec = null;
     progress.textContent = "";
-    searchSummary.textContent = `Checking cache for ${spec.dateRange.days + 1} dates (start date + ${spec.dateRange.days} ${
-      spec.dateRange.days === 1 ? "day" : "days"
-    }) and daily budget…`;
+    const dateCount = spec.dateRange.days + 1;
+    searchSummary.textContent = `Preparing search across ${dateCount} ${
+      dateCount === 1 ? "date" : "dates"
+    }…`;
 
     let planData: PlanResponse;
     try {
@@ -474,27 +472,17 @@ export function mountFlightSearch(root: HTMLElement): void {
       return;
     }
 
-    const cached = planData.cachedSteps ?? 0;
-    const uncached = planData.uncachedCalls ?? planData.plan.callCount;
-    const remaining = planData.budget?.remaining ?? 0;
     if (!planData.canRun) {
       searchSummary.textContent = "Search not started.";
-      banners.innerHTML = `<div class="fs-banner fs-banner-danger">Uncached calls (${uncached}) exceed remaining daily budget (${remaining}). Reduce the date range or try again later.</div>`;
+      banners.innerHTML = `<div class="fs-banner fs-banner-danger">This search is too large for today's remaining search limit. Reduce the date range or try again later.</div>`;
       hideSearchProgress();
       setSearchBusy(false);
       return;
     }
 
     const totalSteps = planData.plan.callCount;
-    if (spec.tripType === "round_trip") {
-      const callLabel = uncached === 1 ? "call" : "calls";
-      const batchLabel = totalSteps === 1 ? "date batch" : "date batches";
-      searchSummary.textContent = `Up to ${uncached} new ${callLabel} · ${cached} cached · ${totalSteps} ${batchLabel} total · ${remaining} daily budget remaining.`;
-    } else {
-      const newLabel = uncached === 1 ? "search" : "searches";
-      const totalLabel = totalSteps === 1 ? "search" : "searches";
-      searchSummary.textContent = `${uncached} new ${newLabel} · ${cached} cached · ${totalSteps} total ${totalLabel} · ${remaining} daily budget remaining.`;
-    }
+    const batchLabel = totalSteps === 1 ? "batch" : "batches";
+    searchSummary.textContent = `Searching ${totalSteps} ${batchLabel}…`;
     setSearchBusy(true, "Searching…");
     showSearchProgress("Searching flights", 0, planData.plan.callCount);
     results.setAttribute("aria-busy", "true");
@@ -537,7 +525,7 @@ export function mountFlightSearch(root: HTMLElement): void {
         banners.insertAdjacentHTML(
           "beforeend",
           outOfCreditBanner(
-            "The site-wide daily search quota was reached — showing cached results only.",
+            "The site-wide daily search limit was reached — some dates may be missing.",
           ),
         );
       }
@@ -554,7 +542,7 @@ export function mountFlightSearch(root: HTMLElement): void {
           banners.insertAdjacentHTML(
             "beforeend",
             outOfCreditBanner(
-              "Your daily search limit was reached — dates without cached results are skipped.",
+              "Your daily search limit was reached — some dates may be missing.",
             ),
           );
         }
@@ -575,7 +563,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       }
 
       progress.textContent = formatSearchProgress(
-        `Progress: ${completedSteps}/${planData.plan!.callCount} · cache hits ${stats.cacheHits} · live calls ${stats.callsMade}`,
+        `Progress: ${completedSteps}/${planData.plan!.callCount}`,
         allOptions,
       );
       showSearchProgress(
@@ -608,7 +596,7 @@ export function mountFlightSearch(root: HTMLElement): void {
         .slice(0, 12)
         .map(
           (error) =>
-            `<li>Batch ${error.stepIndex + 1}: ${escapeHtml(error.message)}</li>`,
+            `<li>Batch ${error.stepIndex + 1}: ${escapeHtml(friendlyStepError(error.message))}</li>`,
         )
         .join("");
       banners.insertAdjacentHTML(
@@ -627,11 +615,10 @@ export function mountFlightSearch(root: HTMLElement): void {
       stepErrors,
     };
 
+    const resultLabel =
+      allOptions.length === 1 ? "matching flight" : "matching flights";
     footer.innerHTML = `
-      <span>Calls made: ${stats.callsMade}</span>
-      <span>Cache hits: ${stats.cacheHits}</span>
-      <span>Options parsed: ${stats.optionsParsed}</span>
-      <span>Passing filters: ${stats.optionsPassingFilters}</span>
+      <span>${allOptions.length} ${resultLabel}</span>
       <a id="fs-download" href="#">Download JSON</a>
     `;
     footer.querySelector("#fs-download")?.addEventListener("click", (e) => {
@@ -649,10 +636,15 @@ export function mountFlightSearch(root: HTMLElement): void {
     progress.textContent = formatSearchProgress(
       wasCancelled
         ? `Cancelled after ${completedSteps} of ${planData.plan.callCount} batches. Partial results are shown.`
-        : `Done. ${stats.callsMade} live calls, ${stats.cacheHits} cache hits.`,
+        : "Done.",
       allOptions,
     );
-    renderCostSummary(searchSummary, stats.callsMade, stats.cacheHits);
+    searchSummary.textContent = wasCancelled
+      ? "Search cancelled. Partial results are shown."
+      : formatSearchProgress(
+          `Found ${allOptions.length} ${resultLabel}.`,
+          allOptions,
+        );
     results.removeAttribute("aria-busy");
     if (wasCancelled) hideSearchProgress();
     else completeSearchProgress(planData.plan.callCount);
@@ -662,6 +654,16 @@ export function mountFlightSearch(root: HTMLElement): void {
 
 function outOfCreditBanner(reason: string): string {
   return `<div class="fs-banner fs-banner-warn">${escapeHtml(reason)} Limits reset daily.<span class="fs-banner-contact">Need larger limits? Email <a href="mailto:sokolx@gmail.com">sokolx@gmail.com</a> or DM <a href="https://x.com/nsokolsky" target="_blank" rel="noopener noreferrer">@nsokolsky</a> on X.</span></div>`;
+}
+
+function friendlyStepError(message: string): string {
+  if (message === "rate_limited") {
+    return "Daily search limit reached";
+  }
+  if (message === "daily_quota_reached") {
+    return "Site-wide search limit reached";
+  }
+  return message;
 }
 
 function optionCity(option: ItineraryOption, side: CityGroupSide): string {
@@ -700,30 +702,6 @@ function formatSearchProgress(
   const cities = countCitiesFound(options);
   if (cities <= 2) return base;
   return `${base} · Cities found: ${cities}`;
-}
-
-function renderCostSummary(
-  container: HTMLElement,
-  searchesUsed: number,
-  cacheHits: number,
-): void {
-  const estimatedCost =
-    searchesUsed * SEARCHAPI_ESTIMATED_COST_PER_SEARCH_USD;
-  const formattedCost = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
-  }).format(estimatedCost);
-  const searchLabel = searchesUsed === 1 ? "search" : "searches";
-
-  container.replaceChildren();
-  const cost = document.createElement("strong");
-  cost.textContent = `Approx. SearchAPI cost: ${formattedCost}`;
-  const detail = document.createTextNode(
-    ` · ${searchesUsed} billable ${searchLabel} at $4 / 1,000 · ${cacheHits} cached (free)`,
-  );
-  container.append(cost, detail);
 }
 
 async function runStep(
@@ -938,6 +916,8 @@ function renderResultCard(
   const origin = airportLabel(firstSegment.departureAirport);
   const dest = option.destinationLabel ?? option.destinationAirport;
   const price = formatDisplayPrice(option.price, option.currency, currency);
+  const priceNote =
+    spec.adults > 1 ? `total for ${spec.adults} travelers` : "";
   const tripDurationDays = option.returnDate
     ? differenceInCalendarDays(option.departureDate, option.returnDate)
     : undefined;
@@ -972,6 +952,11 @@ function renderResultCard(
     <${tag} class="fs-result${unavailableClass}"${href}>
       <div class="fs-result-price">
         <strong>${escapeHtml(price)}</strong>
+        ${
+          priceNote
+            ? `<span class="fs-result-price-note">${escapeHtml(priceNote)}</span>`
+            : ""
+        }
         <span class="fs-result-od">
           <span>${escapeHtml(origin)}</span>
           <span class="fs-result-od-arrow" aria-hidden="true">→</span>
@@ -1231,6 +1216,7 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
   setVal(root, "#fs-trip-length", String(form.tripLengthDays));
   setVal(root, "#fs-days", String(form.days));
   setVal(root, "#fs-max-stops", String(form.maxStops));
+  setVal(root, "#fs-adults", String(form.adults));
   setVal(root, "#fs-max-hours", String(form.maxTotalHours));
   setVal(root, "#fs-topn", String(form.topN));
   setVal(root, "#fs-start", form.start);
@@ -1337,6 +1323,13 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
       ? maxTotalHoursValue
       : base.maxTotalHours,
     topN: Number(root.querySelector<HTMLInputElement>("#fs-topn")?.value) || 2,
+    adults: (() => {
+      const raw = Number(
+        root.querySelector<HTMLSelectElement>("#fs-adults")?.value,
+      );
+      if (raw === 2 || raw === 3 || raw === 4) return raw;
+      return 1;
+    })(),
     deepSearch: prev.deepSearch,
     currency: parseSearchCurrency(
       root.querySelector<HTMLInputElement>('input[name="fs-currency"]:checked')

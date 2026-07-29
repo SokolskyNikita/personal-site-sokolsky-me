@@ -169,6 +169,22 @@ const defaultStart = new Date().toISOString().slice(0, 10);
           </div>
 
           <div class="fs-field">
+            <label for="fs-adults">Travelers</label>
+            <select id="fs-adults">
+              {
+                [1, 2, 3, 4].map((count) => (
+                  <option
+                    value={String(count)}
+                    selected={count === DEFAULT_FORM.adults}
+                  >
+                    {count}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div class="fs-field">
             <label for="fs-max-hours">Max total hours</label>
             <select id="fs-max-hours">
               {
@@ -269,7 +285,7 @@ const defaultStart = new Date().toISOString().slice(0, 10);
 
       <div class="fs-status" aria-live="polite">
         <p class="fs-search-summary" id="fs-search-summary">
-          Ready to search. Cached results are reused automatically.
+          Ready to search.
         </p>
         <div id="fs-banners"></div>
         <p class="fs-progress" id="fs-progress"></p>

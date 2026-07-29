@@ -277,6 +277,7 @@ async function handleQuery(
               currency: spec.currency,
               gl: spec.gl,
               hl: spec.hl,
+              adults: spec.adults,
               topN: spec.topN,
             })
           : await provider.searchStep({
@@ -288,6 +289,7 @@ async function handleQuery(
               currency: spec.currency,
               gl: spec.gl,
               hl: spec.hl,
+              adults: spec.adults,
             });
       raw = result.raw;
       if (
@@ -464,6 +466,7 @@ function stepCacheKey(spec: LegSearch, step: PlanStep): string {
     currency: spec.currency,
     gl: spec.gl,
     hl: spec.hl,
+    adults: spec.adults,
     tripType: spec.tripType,
     returnDate: step.returnDate,
     topN: spec.topN,
