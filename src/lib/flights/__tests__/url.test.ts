@@ -17,7 +17,7 @@ describe("spec ↔ URL round-trip", () => {
     vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
 
     expect(defaultFormState()).toMatchObject({
-      origin: "buenos-aires",
+      origin: "anywhere",
       dest: "usa-gateways",
       start: "2026-07-16",
       topN: 4,

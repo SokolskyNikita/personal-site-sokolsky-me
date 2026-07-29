@@ -16,7 +16,7 @@ import {
 
 /** Flight-search form defaults. */
 export const DEFAULT_FORM = {
-  origin: "buenos-aires",
+  origin: "anywhere",
   dest: "usa-gateways",
   mode: DEFAULT_SEARCH_MODE_ID,
   tripType: "one_way" as TripType,
