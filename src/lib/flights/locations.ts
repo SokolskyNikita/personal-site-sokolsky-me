@@ -203,6 +203,13 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     continent: "Europe",
     airports: ["MAD"],
   },
+  paris: {
+    id: "paris",
+    type: "city",
+    label: "Paris (all airports)",
+    continent: "Europe",
+    airports: ["CDG", "ORY", "BVA"],
+  },
   seattle: {
     id: "seattle",
     type: "city",

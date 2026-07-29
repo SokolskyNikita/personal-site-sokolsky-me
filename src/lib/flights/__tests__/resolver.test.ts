@@ -56,6 +56,10 @@ describe("resolveLocation", () => {
     expect(resolveLocation("madrid")).toEqual(["MAD"]);
   });
 
+  it("resolves Paris to all three commercial airports", () => {
+    expect(resolveLocation("paris")).toEqual(["CDG", "ORY", "BVA"]);
+  });
+
   it("resolves Anywhere to the top 125 airports by passenger traffic", () => {
     const airports = resolveLocation(ANYWHERE_LOCATION_ID);
     expect(airports).toHaveLength(125);
@@ -285,6 +289,7 @@ describe("registry options", () => {
           "germany-gateways",
           "london",
           "madrid",
+          "paris",
           "prague",
           "schengen-eu-gateways",
           "uk-ireland-gateways",
