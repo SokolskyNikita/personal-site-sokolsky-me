@@ -265,14 +265,46 @@ const structuredData = {
           </label>
         </div>
 
-        <p class="result-count" id="result-count" aria-live="polite">
-          Showing {entries.length} of {entries.length}
-        </p>
+        <div class="filter-footer">
+          <p class="result-count" id="result-count" aria-live="polite">
+            Showing {entries.length} of {entries.length}
+          </p>
+          <button
+            type="button"
+            class="clear-filters"
+            id="clear-filters"
+            hidden
+          >
+            Clear filters
+          </button>
+        </div>
       </section>
 
       <section class="ranking" aria-labelledby="ranking-heading">
         <div class="ranking-head">
-          <h2 id="ranking-heading">Full ranking</h2>
+          <div class="ranking-title-row">
+            <h2 id="ranking-heading">Full ranking</h2>
+            <p class="metric-legend" aria-label="Score column abbreviations">
+              <span>
+                <abbr title={`Seat & privacy /${weights.seatPrivacy}`}>SP</abbr>
+                {" "}Seat/{weights.seatPrivacy}
+              </span>
+              <span>
+                <abbr title={`Service & catering /${weights.serviceCatering}`}>
+                  SC
+                </abbr>
+                {" "}Service/{weights.serviceCatering}
+              </span>
+              <span>
+                <abbr title={`Ground /${weights.ground}`}>GR</abbr>
+                {" "}Ground/{weights.ground}
+              </span>
+              <span>
+                <abbr title={`Consistency /${weights.consistency}`}>CO</abbr>
+                {" "}Consistency/{weights.consistency}
+              </span>
+            </p>
+          </div>
           <label class="mobile-sort" for="mobile-sort">
             <span>Sort by</span>
             <select id="mobile-sort" name="sort" autocomplete="off">
@@ -358,8 +390,10 @@ const structuredData = {
                     type="button"
                     data-sort-key="seatPrivacy"
                     data-sort-default="desc"
+                    aria-label={`Seat /${weights.seatPrivacy}`}
+                    title={`Seat & privacy /${weights.seatPrivacy}`}
                   >
-                    Seat /{weights.seatPrivacy}
+                    SP
                   </button>
                 </th>
                 <th scope="col" class="score-column metric-column" aria-sort="none">
@@ -368,8 +402,10 @@ const structuredData = {
                     type="button"
                     data-sort-key="serviceCatering"
                     data-sort-default="desc"
+                    aria-label={`Service /${weights.serviceCatering}`}
+                    title={`Service & catering /${weights.serviceCatering}`}
                   >
-                    Service /{weights.serviceCatering}
+                    SC
                   </button>
                 </th>
                 <th scope="col" class="score-column metric-column" aria-sort="none">
@@ -378,8 +414,10 @@ const structuredData = {
                     type="button"
                     data-sort-key="ground"
                     data-sort-default="desc"
+                    aria-label="Ground"
+                    title={`Ground /${weights.ground}`}
                   >
-                    Ground
+                    GR
                   </button>
                 </th>
                 <th scope="col" class="score-column metric-column" aria-sort="none">
@@ -388,8 +426,10 @@ const structuredData = {
                     type="button"
                     data-sort-key="consistency"
                     data-sort-default="desc"
+                    aria-label="Consistency"
+                    title={`Consistency /${weights.consistency}`}
                   >
-                    Consistency
+                    CO
                   </button>
                 </th>
                 <th scope="col" class="score-column" aria-sort="none">
@@ -557,6 +597,7 @@ const structuredData = {
       const regionFilterSelect = document.querySelector("#region-filter");
       const airlineFilterSelect = document.querySelector("#airline-filter");
       const aircraftFilterSelect = document.querySelector("#aircraft-filter");
+      const clearFiltersButton = document.querySelector("#clear-filters");
       const mobileSort = document.querySelector("#mobile-sort");
       const resultCount = document.querySelector("#result-count");
       const collator = new Intl.Collator("en", {
@@ -575,12 +616,36 @@ const structuredData = {
         C: 1,
       };
 
+      const allRegionOptions = regionFilterSelect
+        ? [...regionFilterSelect.options]
+            .slice(1)
+            .map((option) => option.value)
+        : [];
+      const allAirlineOptions = airlineFilterSelect
+        ? [...airlineFilterSelect.options]
+            .slice(1)
+            .map((option) => option.value)
+        : [];
+      const allAircraftOptions = aircraftFilterSelect
+        ? [...aircraftFilterSelect.options]
+            .slice(1)
+            .map((option) => option.value)
+        : [];
+
       let currentSort = { key: "rank", direction: "asc" };
       let cabinFilter = "all";
       let regionFilter = "all";
       let airlineFilter = "all";
       let aircraftFilter = "all";
       let searchQuery = "";
+
+      const getAircraftModels = (row) => {
+        try {
+          return JSON.parse(row.dataset.aircraftModels || "[]");
+        } catch {
+          return [];
+        }
+      };
 
       const getSortValue = (row, key) => {
         if (key === "airline") return row.dataset.airline ?? "";
@@ -637,32 +702,140 @@ const structuredData = {
         syncMobileSelect();
       };
 
-      const matchesFilters = (row) => {
-        if (cabinFilter !== "all" && row.dataset.cabin !== cabinFilter) {
-          return false;
-        }
-        if (regionFilter !== "all" && row.dataset.region !== regionFilter) {
-          return false;
-        }
-        if (airlineFilter !== "all" && row.dataset.airline !== airlineFilter) {
-          return false;
-        }
+      const matchesFilters = (row, overrides = {}) => {
+        const cabin = overrides.cabin ?? cabinFilter;
+        const region = overrides.region ?? regionFilter;
+        const airline = overrides.airline ?? airlineFilter;
+        const aircraft = overrides.aircraft ?? aircraftFilter;
+        const search =
+          "search" in overrides ? overrides.search : searchQuery;
+
+        if (cabin !== "all" && row.dataset.cabin !== cabin) return false;
+        if (region !== "all" && row.dataset.region !== region) return false;
+        if (airline !== "all" && row.dataset.airline !== airline) return false;
         if (
-          aircraftFilter !== "all" &&
-          !JSON.parse(row.dataset.aircraftModels || "[]").includes(
-            aircraftFilter,
-          )
+          aircraft !== "all" &&
+          !getAircraftModels(row).includes(aircraft)
         ) {
           return false;
         }
-        if (searchQuery && !(row.dataset.search ?? "").includes(searchQuery)) {
+        if (search && !(row.dataset.search ?? "").includes(search)) {
           return false;
         }
         return true;
       };
 
+      const filtersActive = () =>
+        cabinFilter !== "all" ||
+        regionFilter !== "all" ||
+        airlineFilter !== "all" ||
+        aircraftFilter !== "all" ||
+        searchQuery !== "";
+
+      const syncClearButton = () => {
+        if (!clearFiltersButton) return;
+        clearFiltersButton.hidden = !filtersActive();
+      };
+
+      const replaceSelectOptions = (select, options, selectedValue) => {
+        if (!select) return "all";
+
+        const allOption = select.options[0];
+        select.replaceChildren(allOption);
+
+        for (const option of options) {
+          const element = document.createElement("option");
+          element.value = option.value;
+          element.textContent = option.label;
+          select.append(element);
+        }
+
+        const stillValid = options.some(
+          (option) => option.value === selectedValue,
+        );
+        const nextValue =
+          selectedValue !== "all" && stillValid ? selectedValue : "all";
+        select.value = nextValue;
+        return nextValue;
+      };
+
+      const updateFilterOptions = () => {
+        // Re-run if a selection is cleared as incompatible so sibling menus expand.
+        for (let pass = 0; pass < 3; pass++) {
+          const before = `${regionFilter}|${airlineFilter}|${aircraftFilter}`;
+
+          // Faceted options ignore free-text search so typing doesn't collapse menus.
+          const regionCandidates = rows.filter((row) =>
+            matchesFilters(row, { region: "all", search: "" }),
+          );
+          const airlineCandidates = rows.filter((row) =>
+            matchesFilters(row, { airline: "all", search: "" }),
+          );
+          const aircraftCandidates = rows.filter((row) =>
+            matchesFilters(row, { aircraft: "all", search: "" }),
+          );
+
+          const regionAirlinePairs = new Set();
+          const regionAirlineCounts = new Map();
+          for (const row of regionCandidates) {
+            const region = row.dataset.region;
+            const airline = row.dataset.airline;
+            if (!region || !airline) continue;
+            const key = `${region}\0${airline}`;
+            if (regionAirlinePairs.has(key)) continue;
+            regionAirlinePairs.add(key);
+            regionAirlineCounts.set(
+              region,
+              (regionAirlineCounts.get(region) ?? 0) + 1,
+            );
+          }
+
+          const availableRegions = new Set(regionAirlineCounts.keys());
+          const availableAirlines = new Set(
+            airlineCandidates
+              .map((row) => row.dataset.airline)
+              .filter(Boolean),
+          );
+          const availableAircraft = new Set(
+            aircraftCandidates.flatMap((row) => getAircraftModels(row)),
+          );
+
+          regionFilter = replaceSelectOptions(
+            regionFilterSelect,
+            allRegionOptions
+              .filter((region) => availableRegions.has(region))
+              .map((region) => ({
+                value: region,
+                label: `${region} (${regionAirlineCounts.get(region) ?? 0})`,
+              })),
+            regionFilter,
+          );
+
+          airlineFilter = replaceSelectOptions(
+            airlineFilterSelect,
+            allAirlineOptions
+              .filter((airline) => availableAirlines.has(airline))
+              .map((airline) => ({ value: airline, label: airline })),
+            airlineFilter,
+          );
+
+          aircraftFilter = replaceSelectOptions(
+            aircraftFilterSelect,
+            allAircraftOptions
+              .filter((aircraft) => availableAircraft.has(aircraft))
+              .map((aircraft) => ({ value: aircraft, label: aircraft })),
+            aircraftFilter,
+          );
+
+          const after = `${regionFilter}|${airlineFilter}|${aircraftFilter}`;
+          if (before === after) break;
+        }
+      };
+
       const renderRows = () => {
         if (!tableBody || !resultCount) return;
+
+        updateFilterOptions();
 
         const visible = [];
         for (const row of rows) {
@@ -678,6 +851,29 @@ const structuredData = {
 
         resultCount.textContent = `Showing ${visible.length} of ${rows.length}`;
         updateSortState();
+        syncClearButton();
+      };
+
+      const clearFilters = () => {
+        cabinFilter = "all";
+        regionFilter = "all";
+        airlineFilter = "all";
+        aircraftFilter = "all";
+        searchQuery = "";
+
+        if (searchInput) searchInput.value = "";
+        if (regionFilterSelect) regionFilterSelect.value = "all";
+        if (airlineFilterSelect) airlineFilterSelect.value = "all";
+        if (aircraftFilterSelect) aircraftFilterSelect.value = "all";
+
+        for (const chip of cabinButtons) {
+          chip.classList.toggle(
+            "is-active",
+            (chip.dataset.cabin ?? "all") === "all",
+          );
+        }
+
+        renderRows();
       };
 
       for (const button of sortButtons) {
@@ -729,6 +925,10 @@ const structuredData = {
       aircraftFilterSelect?.addEventListener("change", () => {
         aircraftFilter = aircraftFilterSelect.value || "all";
         renderRows();
+      });
+
+      clearFiltersButton?.addEventListener("click", () => {
+        clearFilters();
       });
 
       mobileSort?.addEventListener("change", () => {
@@ -991,11 +1191,42 @@ const structuredData = {
     color: var(--accent);
   }
 
+  .filter-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+
   .result-count {
     margin: 0;
     color: var(--muted);
     font-family: var(--mono);
     font-size: 0.84rem;
+  }
+
+  .clear-filters {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 550;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    cursor: pointer;
+  }
+
+  .clear-filters:hover {
+    color: var(--text);
+  }
+
+  .clear-filters:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .ranking {
@@ -1009,6 +1240,31 @@ const structuredData = {
     align-items: end;
     justify-content: space-between;
     gap: 0.75rem;
+  }
+
+  .ranking-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.45rem 1rem;
+    min-width: 0;
+  }
+
+  .metric-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.7rem;
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    line-height: 1.35;
+  }
+
+  .metric-legend abbr {
+    color: var(--text);
+    font-weight: 650;
+    text-decoration: none;
   }
 
   .mobile-sort {
@@ -1139,22 +1395,21 @@ const structuredData = {
 
   .metric-column,
   .metric-cell {
-    width: 4.25rem;
-    max-width: 4.25rem;
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem;
     box-sizing: border-box;
+    text-align: center;
   }
 
   .metric-column {
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    line-height: 1.25;
+    white-space: nowrap;
   }
 
   .metric-column .sort-button {
-    white-space: normal;
-    align-items: flex-start;
-    text-align: left;
+    white-space: nowrap;
+    justify-content: center;
+    text-align: center;
   }
 
   .rank-cell,
@@ -1182,11 +1437,12 @@ const structuredData = {
 
   .aircraft-column,
   .aircraft-cell {
-    width: 7.125rem;
-    max-width: 7.125rem;
+    width: 7.5rem;
+    min-width: 7.5rem;
+    max-width: 7.5rem;
     white-space: pre-line;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: normal;
+    word-break: normal;
     line-height: 1.35;
   }
 
@@ -1342,6 +1598,10 @@ const structuredData = {
     .methodology {
       padding-left: 0.15rem;
       padding-right: 0.15rem;
+    }
+
+    .metric-legend {
+      display: none;
     }
 
     h1 {
