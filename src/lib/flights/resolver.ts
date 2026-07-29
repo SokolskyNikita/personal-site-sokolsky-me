@@ -41,38 +41,21 @@ export function isAnywhereToAnywhere(
   );
 }
 
-/**
- * True for U.S. dropdown locations (usa-gateways and U.S. city groups).
- * Ignores raw IATA overrides and non-U.S. North America entries (Canada,
- * Mexico).
- */
-export function isUsaRegistryLocation(ref: LocationRef): boolean {
-  const id = normalizeLocationRef(ref);
-  if (id === "usa-gateways") return true;
-  const entry = LOCATION_REGISTRY[id];
-  if (!entry || entry.type !== "city" || entry.continent !== "North America") {
-    return false;
-  }
-  // Vancouver is the only Canadian city group in the registry today.
-  return id !== "vancouver";
-}
-
 /** True for the Belarus gateways dropdown option. */
 export function isBelarusRegistryLocation(ref: LocationRef): boolean {
   return normalizeLocationRef(ref) === BELARUS_LOCATION_ID;
 }
 
 /**
- * True when the dropdown route is U.S. ↔ Belarus (either direction).
- * Custom IATA overrides are ignored — only registry ids match.
+ * True when either dropdown side is Belarus gateways.
+ * Custom IATA overrides are ignored — only the registry id matches.
  */
-export function isUsaBelarusPair(
+export function involvesBelarusRegistry(
   origin: LocationRef,
   dest: LocationRef,
 ): boolean {
   return (
-    (isUsaRegistryLocation(origin) && isBelarusRegistryLocation(dest)) ||
-    (isBelarusRegistryLocation(origin) && isUsaRegistryLocation(dest))
+    isBelarusRegistryLocation(origin) || isBelarusRegistryLocation(dest)
   );
 }
 

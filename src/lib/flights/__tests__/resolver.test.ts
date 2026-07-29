@@ -6,11 +6,10 @@ import {
   defaultCityGroupSide,
   isAnywhereOrGateway,
   isAnywhereToAnywhere,
+  involvesBelarusRegistry,
   isBelarusRegistryLocation,
   isRawIata,
   isSingleCityLocation,
-  isUsaBelarusPair,
-  isUsaRegistryLocation,
   listRegistryOptionSections,
   listRegistryOptions,
   normalizeLocationRef,
@@ -86,36 +85,33 @@ describe("resolveLocation", () => {
     ).not.toThrow();
   });
 
-  it("detects U.S.↔Belarus dropdown pairs only", () => {
-    expect(isUsaRegistryLocation("usa-gateways")).toBe(true);
-    expect(isUsaRegistryLocation("new-york")).toBe(true);
-    expect(isUsaRegistryLocation("seattle")).toBe(true);
-    expect(isUsaRegistryLocation("san-francisco")).toBe(true);
-    expect(isUsaRegistryLocation("vancouver")).toBe(false);
-    expect(isUsaRegistryLocation("canada-gateways")).toBe(false);
-    expect(isUsaRegistryLocation("mexico-gateways")).toBe(false);
-    expect(isUsaRegistryLocation("JFK")).toBe(false);
-    expect(isUsaRegistryLocation("anywhere")).toBe(false);
-
+  it("detects any Belarus dropdown route", () => {
     expect(isBelarusRegistryLocation("belarus-gateways")).toBe(true);
     expect(isBelarusRegistryLocation("MSQ")).toBe(false);
     expect(isBelarusRegistryLocation("russia-gateways")).toBe(false);
 
-    expect(isUsaBelarusPair("usa-gateways", "belarus-gateways")).toBe(true);
-    expect(isUsaBelarusPair("belarus-gateways", "new-york")).toBe(true);
-    expect(isUsaBelarusPair("seattle", "belarus-gateways")).toBe(true);
-    expect(isUsaBelarusPair("belarus-gateways", "usa-gateways")).toBe(true);
+    expect(involvesBelarusRegistry("usa-gateways", "belarus-gateways")).toBe(
+      true,
+    );
+    expect(involvesBelarusRegistry("belarus-gateways", "new-york")).toBe(true);
+    expect(involvesBelarusRegistry("canada-gateways", "belarus-gateways")).toBe(
+      true,
+    );
+    expect(involvesBelarusRegistry("russia-gateways", "belarus-gateways")).toBe(
+      true,
+    );
+    expect(involvesBelarusRegistry("anywhere", "belarus-gateways")).toBe(true);
+    expect(involvesBelarusRegistry("belarus-gateways", "london")).toBe(true);
 
-    expect(isUsaBelarusPair("canada-gateways", "belarus-gateways")).toBe(
+    // Custom IATA + Belarus dropdown still counts — Belarus side is selected.
+    expect(involvesBelarusRegistry("JFK", "belarus-gateways")).toBe(true);
+
+    expect(involvesBelarusRegistry("usa-gateways", "russia-gateways")).toBe(
       false,
     );
-    expect(isUsaBelarusPair("russia-gateways", "belarus-gateways")).toBe(
-      false,
-    );
-    expect(isUsaBelarusPair("usa-gateways", "russia-gateways")).toBe(false);
-    expect(isUsaBelarusPair("JFK", "belarus-gateways")).toBe(false);
-    expect(isUsaBelarusPair("usa-gateways", "MSQ")).toBe(false);
-    expect(isUsaBelarusPair("anywhere", "belarus-gateways")).toBe(false);
+    // Raw MSQ alone is ignored (custom-airport scenario).
+    expect(involvesBelarusRegistry("usa-gateways", "MSQ")).toBe(false);
+    expect(involvesBelarusRegistry("london", "paris")).toBe(false);
   });
 
   it("resolves gateway registries", () => {

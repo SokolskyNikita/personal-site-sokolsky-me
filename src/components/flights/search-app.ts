@@ -17,8 +17,8 @@ import {
 import { airportCity, airportLabel } from "../../lib/flights/locations";
 import {
   defaultCityGroupSide,
+  involvesBelarusRegistry,
   isAnywhereToAnywhere,
-  isUsaBelarusPair,
   listRegistryOptionSections,
 } from "../../lib/flights/resolver";
 import {
@@ -429,9 +429,8 @@ export function mountFlightSearch(root: HTMLElement): void {
 
     syncUrl(form);
 
-    // U.S.↔Belarus dropdown routes: DOT Order 2021-7-1 blocks ticket sales,
-    // so Google Flights returns nothing. Warn after Search; skip the API.
-    if (isUsaBelarusPair(form.origin, form.dest)) {
+    // Belarus dropdown routes are futile via Google Flights — block search.
+    if (involvesBelarusRegistry(form.origin, form.dest)) {
       hideSearchProgress();
       results.innerHTML = "";
       footer.innerHTML = "";
@@ -440,7 +439,7 @@ export function mountFlightSearch(root: HTMLElement): void {
       latestSpec = null;
       progress.textContent = "";
       searchSummary.textContent = "";
-      banners.innerHTML = usaBelarusWarningHtml();
+      banners.innerHTML = belarusRouteWarningHtml();
       return;
     }
 
@@ -674,16 +673,29 @@ function outOfCreditBanner(reason: string): string {
   return `<div class="fs-banner fs-banner-warn">${escapeHtml(reason)} Limits reset daily.<span class="fs-banner-contact">Need larger limits? Email <a href="mailto:sokolx@gmail.com">sokolx@gmail.com</a> or DM <a href="https://x.com/nsokolsky" target="_blank" rel="noopener noreferrer">@nsokolsky</a> on X.</span></div>`;
 }
 
-/** Shown after Search for U.S.↔Belarus dropdown routes (DOT Order 2021-7-1). */
-function usaBelarusWarningHtml(): string {
-  return `<aside class="fs-banner fs-banner-warn fs-banner-route" role="status" aria-labelledby="fs-usa-belarus-title">
-  <p class="fs-banner-title" id="fs-usa-belarus-title">U.S.–Belarus tickets cannot be sold</p>
-  <p class="fs-banner-body">A 2021 U.S. DOT order blocks selling passenger tickets on this route, including connections — so Google Flights returns no results.</p>
-  <p class="fs-banner-action-label">Search it as two tickets here instead:</p>
-  <ol class="fs-banner-steps">
-    <li><span class="fs-banner-step-content"><span class="fs-banner-step-route">U.S. → hub</span><span class="fs-banner-step-note">Dubai, Istanbul, Moscow, or Baku</span></span></li>
-    <li><span class="fs-banner-step-content"><span class="fs-banner-step-route">Hub → Belarus</span></span></li>
-  </ol>
+/** Shown after Search for any Belarus dropdown route (DOT Order 2021-7-1). */
+function belarusRouteWarningHtml(): string {
+  const airlines = [
+    { name: "Belavia", href: "https://en.belavia.by/" },
+    { name: "flydubai", href: "https://www.flydubai.com/" },
+    { name: "Azerbaijan Airlines", href: "https://www.azal.az/en/" },
+    { name: "Air China", href: "https://www.airchina.com/" },
+    { name: "Uzbekistan Airways", href: "https://www.uzairways.com/" },
+    { name: "Aeroflot", href: "https://www.aeroflot.com/us-en" },
+    { name: "SCAT Airlines", href: "https://www.scat.kz/" },
+  ];
+  const airlineLinks = airlines
+    .map(
+      ({ name, href }) =>
+        `<li><a href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a></li>`,
+    )
+    .join("");
+
+  return `<aside class="fs-banner fs-banner-warn fs-banner-route" role="status" aria-labelledby="fs-belarus-route-title">
+  <p class="fs-banner-title" id="fs-belarus-route-title">Belarus searches are not available here</p>
+  <p class="fs-banner-body">A 2021 U.S. DOT order restricts selling U.S.–Belarus tickets. Google Flights seems to interpret that restriction very broadly, so Belarus-involved searches are futile here — even when neither side is in the U.S.</p>
+  <p class="fs-banner-action-label">Book direct with an airline that still flies internationally to Minsk:</p>
+  <ul class="fs-banner-airlines">${airlineLinks}</ul>
   <p class="fs-banner-contact"><a href="https://downloads.regulations.gov/DOT-OST-2021-0074-0190/attachment_1.pdf" target="_blank" rel="noopener noreferrer">DOT Order 2021-7-1 (PDF)</a></p>
 </aside>`;
 }
