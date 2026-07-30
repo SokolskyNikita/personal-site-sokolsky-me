@@ -1,0 +1,1353 @@
+---
+export const prerender = true;
+
+const pageTitle = "Pane & Suffering — the GTA III glass bugs";
+const pageDescription =
+  "GTA III's breakable glass only worked when every pane was square and axis-aligned. Two bugs in CGlass, caught by comparing GTA III against Vice City, with a simulation you can shoot.";
+const themeColor = "#0a0d12";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: [
+    { "@type": "Thing", name: "Grand Theft Auto III" },
+    { "@type": "Thing", name: "SilentPatch" },
+    { "@type": "Thing", name: "Breakable glass" },
+  ],
+  inLanguage: "en",
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="subject"
+      content="GTA III glass shattering bugs: a wrong-length normalize and world-space window extents."
+    />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="GTA III, breakable glass, CGlass, SilentPatch, Upstate Liberty, Obbe Vermeij, Vice City, re3"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColor} />
+    <meta name="msapplication-TileColor" content={themeColor} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColor} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    ></script>
+
+    <style is:global>
+      :root {
+        --bg: #0a0d12;
+        --panel: #11151c;
+        --line: #212832;
+        --ink: #e9edf2;
+        --dim: #95a0ad;
+        --gold: #f0a13c; /* PS2 HUD chrome */
+        --teal: #2fd6c3; /* ground truth  */
+        --red: #ff5d5d; /* what the code believes */
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.6 ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 22px 14px 70px;
+      }
+
+      .home-link {
+        display: inline-block;
+        margin-bottom: 14px;
+        font:
+          700 11px/1 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--dim);
+        text-decoration: none;
+      }
+      .home-link:hover {
+        color: var(--gold);
+      }
+
+      /* header — PS2 HUD voice */
+      .kicker {
+        font:
+          700 11px/1 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        letter-spacing: 0.22em;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0.25em 0 0;
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: clamp(27px, 6vw, 44px);
+        line-height: 0.98;
+        letter-spacing: -0.01em;
+        text-shadow: 3px 3px 0 #000;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--gold);
+      }
+      .lede {
+        color: var(--dim);
+        margin: 0.7em 0 0;
+        max-width: 62ch;
+      }
+      .lede b {
+        color: var(--ink);
+      }
+      a {
+        color: var(--gold);
+      }
+
+      /* stage */
+      .stage {
+        position: relative;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #080a0e;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        touch-action: none;
+        cursor: crosshair;
+      }
+      .hud {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        text-align: right;
+        pointer-events: none;
+        font:
+          700 12px/1.7 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        color: var(--gold);
+        text-shadow: 2px 2px 0 #000;
+        letter-spacing: 0.04em;
+      }
+      .hud .t {
+        color: var(--teal);
+      }
+      .hud .r {
+        color: var(--red);
+      }
+      .hint {
+        position: absolute;
+        left: 50%;
+        bottom: 12px;
+        transform: translateX(-50%);
+        font:
+          600 12px/1 ui-monospace,
+          monospace;
+        color: #cdd6df;
+        background: rgba(8, 10, 14, 0.72);
+        border: 1px solid var(--line);
+        padding: 7px 12px;
+        border-radius: 999px;
+        pointer-events: none;
+        transition: opacity 0.4s;
+        white-space: nowrap;
+      }
+      .hint.off {
+        opacity: 0;
+      }
+      .noscript {
+        margin: 18px 0 0;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 14px 16px;
+        color: var(--dim);
+      }
+
+      /* controls */
+      .controls {
+        margin-top: 14px;
+        display: grid;
+        gap: 14px;
+      }
+      .glabel {
+        font:
+          700 11px/1 ui-monospace,
+          monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--dim);
+        display: block;
+        margin-bottom: 8px;
+      }
+      .seg {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      @media (min-width: 640px) {
+        .seg {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      .seg button {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        border-radius: 10px;
+        padding: 10px 8px;
+        cursor: pointer;
+        font:
+          700 13px/1.2 inherit;
+        text-align: left;
+        transition: border-color 0.15s;
+      }
+      .seg button span {
+        display: block;
+        font:
+          400 11px/1.4 ui-monospace,
+          monospace;
+        color: var(--dim);
+        margin-top: 3px;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+      .seg button[aria-pressed="true"] {
+        border-color: var(--gold);
+        box-shadow: inset 0 0 0 1px var(--gold);
+      }
+      .seg button:focus-visible,
+      button:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+
+      .sliders {
+        display: grid;
+        gap: 10px;
+      }
+      @media (min-width: 640px) {
+        .sliders {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .sliders label {
+        display: block;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font:
+          700 12px/1 ui-monospace,
+          monospace;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      .sliders output {
+        float: right;
+        color: var(--ink);
+      }
+      .sliders input {
+        width: 100%;
+        margin: 10px 0 2px;
+        accent-color: var(--gold);
+      }
+
+      .btns {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .btns button {
+        appearance: none;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 11px 18px;
+        cursor: pointer;
+        font:
+          800 13px/1 inherit;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--panel);
+        color: var(--ink);
+      }
+      .btns .primary {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: #14100a;
+        text-shadow: none;
+      }
+      .btns .primary:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font:
+          12px/1 ui-monospace,
+          monospace;
+        color: var(--dim);
+        align-items: center;
+      }
+      .sw {
+        display: inline-block;
+        width: 14px;
+        height: 8px;
+        border-radius: 2px;
+        vertical-align: -1px;
+        margin-right: 6px;
+      }
+      .sw.teal {
+        background: var(--teal);
+      }
+      .sw.red {
+        background: transparent;
+        border: 1.5px dashed var(--red);
+        height: 5px;
+      }
+      .sw.glass {
+        background: rgba(200, 224, 240, 0.55);
+        border: 1px solid rgba(235, 248, 255, 0.9);
+      }
+
+      /* case files */
+      .cases {
+        margin-top: 34px;
+        display: grid;
+        gap: 16px;
+      }
+      .case {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 16px 14px;
+      }
+      .case h2 {
+        margin: 0 0 8px;
+        font-size: 16px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .case h2 .tag {
+        font:
+          700 10px/1 ui-monospace,
+          monospace;
+        letter-spacing: 0.18em;
+        color: var(--gold);
+        display: block;
+        margin-bottom: 6px;
+      }
+      .case p {
+        margin: 0.5em 0;
+        color: #c6ced7;
+      }
+      .case p b {
+        color: var(--ink);
+      }
+      pre {
+        background: #0a0d12;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        overflow-x: auto;
+        font:
+          12.5px/1.6 ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+        color: #cdd6df;
+        margin: 0.8em 0 0.2em;
+      }
+      pre .c {
+        color: #6b7683;
+      }
+      pre .bad {
+        color: var(--red);
+      }
+      pre .good {
+        color: var(--teal);
+      }
+      .foot {
+        margin-top: 26px;
+        color: var(--dim);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .foot b {
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+      <header>
+        <div class="kicker">Bug autopsy · Rockstar North, 2001 → found 2026</div>
+        <h1>Pane &amp; <em>suffering</em></h1>
+        <p class="lede">
+          GTA III's shatter code only works if every pane is <b>square</b> and
+          <b>lying on a world axis</b>. Every breakable pane in Liberty City is
+          both, so two bugs sat in the game for 25 years — until
+          <b>Upstate Liberty</b>, a map expansion mod, put tilted rectangular
+          windows on the map. Pick a code variant, drag to orbit, shoot the
+          glass.
+        </p>
+      </header>
+
+      <div class="stage">
+        <canvas
+          id="cv"
+          role="img"
+          aria-label="A 3D window pane you can orbit and shoot, showing where GTA III's code thinks the glass is versus where it actually is."></canvas>
+        <div class="hud" id="hud"></div>
+        <div class="hint" id="hint">
+          tap the glass to shoot · drag to orbit · scroll to zoom
+        </div>
+      </div>
+
+      <noscript>
+        <p class="noscript">
+          The pane simulation needs JavaScript. The write-up below does not.
+        </p>
+      </noscript>
+
+      <div class="controls">
+        <div>
+          <span class="glabel">Code variant</span>
+          <div class="seg" id="seg">
+            <button type="button" data-v="gta3" aria-pressed="true"
+              >GTA III<span>both bugs</span></button
+            >
+            <button type="button" data-v="bug1" aria-pressed="false"
+              >Bug 1 only<span>wrong normalize</span></button
+            >
+            <button type="button" data-v="bug2" aria-pressed="false"
+              >Bug 2 only<span>world-space extents</span></button
+            >
+            <button type="button" data-v="vc" aria-pressed="false"
+              >Vice City<span>fixed — Silent's backport</span></button
+            >
+          </div>
+        </div>
+
+        <div class="sliders">
+          <label
+            >Width <output id="wOut">3.0 m</output>
+            <input
+              id="wIn"
+              type="range"
+              min="1"
+              max="4"
+              step="0.5"
+              value="3"
+              aria-label="Pane width in metres"
+            /></label
+          >
+          <label
+            >Height <output id="hOut">1.5 m</output>
+            <input
+              id="hIn"
+              type="range"
+              min="1"
+              max="3"
+              step="0.5"
+              value="1.5"
+              aria-label="Pane height in metres"
+            /></label
+          >
+          <label
+            >Rotation <output id="rOut">+25°</output>
+            <input
+              id="rIn"
+              type="range"
+              min="-90"
+              max="90"
+              step="1"
+              value="25"
+              aria-label="Pane rotation in degrees"
+            /></label
+          >
+        </div>
+
+        <div class="btns">
+          <button type="button" id="shootBtn" class="primary">Shoot</button>
+          <button type="button" id="resetBtn">Reset glass</button>
+          <div class="legend">
+            <span><i class="sw teal"></i>actual window</span>
+            <span><i class="sw red"></i>pane as the code rebuilds it</span>
+            <span><i class="sw glass"></i>shards</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="cases">
+        <div class="case">
+          <h2
+            ><span class="tag">The system · Obbe Vermeij</span>How the shatter
+            works</h2
+          >
+          <p>
+            A breakable pane is handed to the shatter code as three vectors: a
+            corner <b>pos</b>, a <b>right</b> vector spanning its width and an
+            <b>up</b> vector spanning its height. The pane is cut into a grid —
+            each axis gets <b>length + 0.75</b> steps, truncated to an integer,
+            at least one and at most three — so segments of roughly a metre, nine
+            of them at most. Every segment is then split into the same fixed five
+            triangles, which caps a window at 45 shards — the size of the
+            falling-pane pool.
+          </p>
+          <p>
+            Each shard gets a release timer. A hard enough hit releases all of
+            them on the same frame; anything softer — a bullet — delays each
+            shard by <b>100 ms per metre</b> of distance from the impact point,
+            so the break spreads from the hole while the outer shards hang in
+            mid-air. Obbe Vermeij, who wrote the system, says that stagger is why
+            a real break looks far less wrong than a screenshot of the shard
+            layout does.
+          </p>
+        </div>
+
+        <div class="case">
+          <h2
+            ><span class="tag">Bug 1 · breaks rectangles</span>Normalised by the
+            wrong length</h2
+          >
+          <p>
+            Each shard gets its own frame: a right axis and an up axis, each one
+            segment long. The up axis is divided by the length of <b>right</b> —
+            a copy-paste of the line above it — so it only comes out a segment
+            tall when the pane is square.
+          </p>
+          <pre><span class="c">// CGlass::GeneratePanesForWindow — GTA III</span>
+pane-&gt;GetRight() = (right * rightScl) / rightLen;
+<span class="bad">pane-&gt;GetUp()    = (up    * upScl)    / rightLen;   // copypaste bug</span>
+<span class="good">pane-&gt;GetUp()    = (up    * upScl)    / upLen;     // Vice City, and re3 under FIX_BUGS</span>
+
+<span class="c">// the shard's position on the grid, which divides by upLen correctly</span>
+pane-&gt;GetPosition() = right / rightLen * (rightScl * center.x + stepx)
+                    + up    / upLen    * (upScl    * center.y + stepy)
+                    + pos;</pre>
+          <p>
+            Only the shard's own frame is wrong; the grid it sits on is fine. So
+            every shard stays in the right place and is scaled vertically about
+            its own centre by <b>height ÷ width</b>: on a wide pane the shards
+            shrink and leave gaps, on a tall one they overlap and hang past the
+            glass. Invisible in GTA III — every stock pane is square, so the
+            factor is 1.
+          </p>
+        </div>
+
+        <div class="case">
+          <h2
+            ><span class="tag">Bug 2 · breaks tilted panes</span>Extents measured
+            in world space</h2
+          >
+          <p>
+            GTA III transforms the window's four collision vertices into
+            <b>world space</b> first and only then takes their min and max — so
+            the box it measures is axis-aligned, and the pane gets rebuilt from
+            that box.
+          </p>
+          <pre><span class="c">// CGlass::WindowRespondsToCollision — GTA III</span>
+<span class="bad">CVector a = object-&gt;GetMatrix() * col-&gt;vertices[0].Get();   // ... b, c, d
+// minx/maxx/miny/maxy/minz/maxz over the four world-space corners
+GeneratePanesForWindow(type,
+    CVector(minx,      miny,      minz),
+    CVector(0.0f,      0.0f,      maxz-minz),
+    CVector(maxx-minx, maxy-miny, 0.0f),   // the box diagonal — always +X, +Y
+    speed, point, 0.1f, cracked, explosion);</span>
+
+<span class="c">// CGlass::WindowRespondsToCollision — Vice City: extents first, transform after</span>
+<span class="good">CVector a = col-&gt;vertices[0].Get();   // ... b, c, d — model space, where the pane is axis-aligned
+// minx/maxx/miny/maxy/minz/maxz over the four model-space corners
+CVector pa = object-&gt;GetMatrix() * CVector(minx, miny, minz);
+CVector pb = object-&gt;GetMatrix() * CVector(maxx, maxy, minz);
+GeneratePanesForWindow(type, pa, CVector(0.0f, 0.0f, maxz-minz), pb - pa,
+    speed, point, 0.1f, cracked, explosion, 1, false);</span></pre>
+          <p>
+            The <b>length</b> survives — the diagonal of the box is as long as
+            the glass — but both components are forced positive, so the pane is
+            always rebuilt along the box's <b>ascending</b> diagonal from the
+            (minx, miny) corner. Glass that happens to run that way is
+            reproduced exactly. Glass running along the other diagonal gets a
+            <b>mirrored</b> pane: right size, wrong tilt, cutting through the
+            window. The error is twice the tilt angle, so it peaks at 45°, where
+            the shards are laid out at a right angle to the glass they came from,
+            and it disappears at 0° and 90°, where the box collapses onto the
+            glass and both diagonals are the same line. That is why Liberty City
+            never showed it.
+          </p>
+          <p>
+            Drag rotation through zero and watch the top-view inset: one half of
+            the sweep is exact, the other mirrors. Vice City takes min and max in
+            <b>model space</b>, where the pane is axis-aligned, then transforms
+            the two corners and subtracts them, so <b>right</b> keeps its
+            direction at any yaw. That is the code Silent backported. Both games
+            still take <b>up</b> as a world-vertical from the box height, so
+            neither handles a pane that is pitched or rolled.
+          </p>
+        </div>
+      </section>
+
+      <p class="foot">
+        <b>Context.</b> <a href="https://x.com/ObbeVermeij">Obbe Vermeij</a> wrote
+        this system at Rockstar North for GTA III (2001) and says he never knew
+        about the axis-aligned limitation — there was no good reason for it and
+        it would not have been hard to fix.
+        <a href="https://x.com/__silent_">Silent</a>, author of
+        <a href="https://silentsblog.com/mods/gta-iii/">SilentPatch</a>,
+        <a href="https://x.com/__silent_/status/2082546502895894561">hit both bugs</a>
+        in July 2026 while building Upstate Liberty, whose windows are tilted and
+        rectangular, and fixed them by backporting Vice City's code. Obbe wonders
+        whether GTA III's artists found the tilt bug and just stopped putting
+        breakable glass on non-aligned walls; Silent suspects Vice City's version
+        got written once artists started putting glass in the North Point Mall.
+        The snippets above are trimmed from the re3 / reVC decompilations — also
+        where the <code>copypaste bug</code> comment comes from. Rockstar never
+        shipped the original source.
+      </p>
+    </div>
+
+    <script is:inline>
+      (() => {
+        "use strict";
+
+        /* ---------- vector helpers (this sim is Y-up; the game is Z-up) ------ */
+        const V = (x, y, z) => ({ x, y, z });
+        const add = (a, b) => V(a.x + b.x, a.y + b.y, a.z + b.z);
+        const sub = (a, b) => V(a.x - b.x, a.y - b.y, a.z - b.z);
+        const mul = (a, s) => V(a.x * s, a.y * s, a.z * s);
+        const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+        const cross = (a, b) =>
+          V(
+            a.y * b.z - a.z * b.y,
+            a.z * b.x - a.x * b.z,
+            a.x * b.y - a.y * b.x,
+          );
+        const vlen = (a) => Math.hypot(a.x, a.y, a.z);
+        const norm = (a) => {
+          const l = vlen(a) || 1;
+          return mul(a, 1 / l);
+        };
+        const rotAA = (v, ax, t) => {
+          const c = Math.cos(t),
+            s = Math.sin(t);
+          return add(
+            add(mul(v, c), mul(cross(ax, v), s)),
+            mul(ax, dot(ax, v) * (1 - c)),
+          );
+        };
+        const rnd = (lo, hi) => lo + Math.random() * (hi - lo);
+
+        /* ---------- constants lifted from CGlass ---------------------------- */
+        /* CoorsWithTriangle: the fixed 5-triangle split every segment gets. */
+        const TRIS = [
+          [[0, 0], [0, 1], [0.4, 0.5]],
+          [[0, 1], [1, 1], [0.4, 0.5]],
+          [[0, 0], [0.4, 0.5], [0.7, 0]],
+          [[0.7, 0], [0.4, 0.5], [1, 1]],
+          [[0.7, 0], [1, 1], [1, 0]],
+        ];
+        const CENTERS = TRIS.map((t) => [
+          (t[0][0] + t[1][0] + t[2][0]) / 3,
+          (t[0][1] + t[1][1] + t[2][1]) / 3,
+        ]);
+        /* steps = length + 0.75, truncated, clamped to 1..3 */
+        const stepCount = (len) => Math.min(3, Math.trunc(Math.max(1, len + 0.75)));
+        /* m_nTimer = distance from the impact point * 100 ms */
+        const DELAY_PER_METRE = 0.1;
+        const SILL = 0.9;
+
+        const VARIANTS = {
+          gta3: { wrongNorm: true, worldExtents: true },
+          bug1: { wrongNorm: true, worldExtents: false },
+          bug2: { wrongNorm: false, worldExtents: true },
+          vc: { wrongNorm: false, worldExtents: false },
+        };
+
+        const st = {
+          w: 3,
+          h: 1.5,
+          yawDeg: 25,
+          variant: "gta3",
+          shards: [],
+          broken: false,
+        };
+
+        /* ---------- the window the artist built ----------------------------- */
+        function trueGeom() {
+          const t = (st.yawDeg * Math.PI) / 180,
+            c = Math.cos(t),
+            s = Math.sin(t);
+          const right = V(st.w * c, 0, -st.w * s);
+          const up = V(0, st.h, 0);
+          const pos = add(V(0, SILL, 0), mul(right, -0.5));
+          const br = add(pos, right);
+          return {
+            pos,
+            right,
+            up,
+            corners: [pos, br, add(br, up), add(pos, up)],
+            rn: norm(right),
+            un: norm(up),
+            normal: norm(cross(right, up)),
+          };
+        }
+
+        /* ---------- the pane the shatter code rebuilds ----------------------- */
+        function computedPane(tg) {
+          if (!VARIANTS[st.variant].worldExtents)
+            return { pos: tg.pos, right: tg.right, up: tg.up };
+          let mn = V(Infinity, Infinity, Infinity);
+          let mx = V(-Infinity, -Infinity, -Infinity);
+          for (const p of tg.corners) {
+            mn = V(
+              Math.min(mn.x, p.x),
+              Math.min(mn.y, p.y),
+              Math.min(mn.z, p.z),
+            );
+            mx = V(
+              Math.max(mx.x, p.x),
+              Math.max(mx.y, p.y),
+              Math.max(mx.z, p.z),
+            );
+          }
+          /* pos = (minx, miny, minz), right = the box diagonal, both extents
+             positive by construction, up = the box height. */
+          return {
+            pos: mn,
+            right: V(mx.x - mn.x, 0, mx.z - mn.z),
+            up: V(0, mx.y - mn.y, 0),
+          };
+        }
+
+        function paneBasis(pane) {
+          const rightLen = vlen(pane.right),
+            upLen = vlen(pane.up);
+          const xsteps = stepCount(rightLen),
+            ysteps = stepCount(upLen);
+          const rightScl = rightLen / xsteps,
+            upScl = upLen / ysteps;
+          /* bug 1: the shard's up axis is divided by rightLen, not upLen */
+          const upDiv = VARIANTS[st.variant].wrongNorm ? rightLen : upLen;
+          const rn = mul(pane.right, 1 / rightLen);
+          const un = mul(pane.up, 1 / upLen);
+          return {
+            rightLen,
+            upLen,
+            xsteps,
+            ysteps,
+            rightScl,
+            upScl,
+            rn,
+            un,
+            shardR: mul(pane.right, rightScl / rightLen),
+            shardU: mul(pane.up, upScl / upDiv),
+            shardScale: upLen / upDiv,
+            normal: norm(cross(rn, un)),
+          };
+        }
+
+        /* ---------- shards -------------------------------------------------- */
+        function buildShards() {
+          const tg = trueGeom(),
+            pane = computedPane(tg),
+            pb = paneBasis(pane);
+          const out = [];
+          for (let y = 0; y < pb.ysteps; y++) {
+            for (let x = 0; x < pb.xsteps; x++) {
+              const stepx = (x * pb.rightLen) / pb.xsteps;
+              const stepy = (y * pb.upLen) / pb.ysteps;
+              for (let i = 0; i < TRIS.length; i++) {
+                const c = CENTERS[i];
+                const cen = add(
+                  add(
+                    add(pane.pos, mul(pb.rn, pb.rightScl * c[0] + stepx)),
+                    mul(pb.un, pb.upScl * c[1] + stepy),
+                  ),
+                  mul(pb.normal, 0.01),
+                );
+                const loc = TRIS[i].map((p) =>
+                  add(
+                    mul(pb.shardR, p[0] - c[0]),
+                    mul(pb.shardU, p[1] - c[1]),
+                  ),
+                );
+                out.push({
+                  cen,
+                  loc,
+                  verts: loc.map((l) => add(cen, l)),
+                  phase: "intact",
+                  vel: V(0, 0, 0),
+                  ax: norm(V(rnd(-1, 1), rnd(-1, 1), rnd(-1, 1))),
+                  spin: 0,
+                  ang: 0,
+                  relAt: 0,
+                  t0: 0,
+                  alpha: 1,
+                });
+              }
+            }
+          }
+          st.shards = out;
+          st.broken = false;
+          shootBtn.disabled = false;
+          hint.classList.remove("off");
+          frameCamera();
+          updateHud(tg, pane, pb);
+        }
+
+        function doShoot(impact, dir) {
+          if (st.broken) return;
+          st.broken = true;
+          shootBtn.disabled = true;
+          hint.classList.add("off");
+          const now = performance.now() / 1000;
+          for (const sh of st.shards) {
+            const away = norm(sub(sh.cen, impact));
+            sh.phase = "frozen";
+            sh.relAt = now + DELAY_PER_METRE * vlen(sub(sh.cen, impact));
+            sh.vel = add(
+              add(mul(away, rnd(1.2, 2.2)), mul(dir, 0.8)),
+              V(rnd(-0.2, 0.2), 0, rnd(-0.2, 0.2)),
+            );
+            sh.spin = rnd(2, 8);
+          }
+        }
+
+        /* ---------- camera & projection ------------------------------------- */
+        const cv = document.getElementById("cv"),
+          ctx = cv.getContext("2d");
+        const hud = document.getElementById("hud"),
+          hint = document.getElementById("hint");
+        const shootBtn = document.getElementById("shootBtn");
+        let Wpx = 0,
+          Hpx = 0,
+          DPR = 1;
+        function resize() {
+          DPR = Math.min(2, window.devicePixelRatio || 1);
+          const w = cv.parentElement.clientWidth;
+          const h = Math.max(320, Math.min(540, Math.round(w * 0.62)));
+          cv.width = Math.round(w * DPR);
+          cv.height = Math.round(h * DPR);
+          cv.style.height = h + "px";
+          Wpx = w;
+          Hpx = h;
+        }
+        window.addEventListener("resize", () => {
+          resize();
+          frameCamera();
+        });
+        const cam = { yaw: -0.5, pitch: 0.2, dist: 4.6, tgt: V(0, 1.6, 0) };
+        const FOV_TAN = Math.tan((27.5 * Math.PI) / 180);
+        /* Frame the window snugly; the wall's side panels are allowed to run off
+           the edges. Stops adjusting once the reader zooms by hand. */
+        let camAuto = true;
+        function frameCamera() {
+          cam.tgt = V(0, SILL + st.h / 2, 0);
+          if (!camAuto) return;
+          const aspect = Wpx / Hpx || 1.6;
+          const vert = (SILL + st.h + 0.8) / (2 * FOV_TAN);
+          const horiz = (st.w + 1.2) / (2 * FOV_TAN * aspect);
+          cam.dist = Math.min(14, Math.max(3.6, 1.5 * Math.max(vert, horiz)));
+        }
+        function basis() {
+          const cp = Math.cos(cam.pitch),
+            sp = Math.sin(cam.pitch);
+          const cy = Math.cos(cam.yaw),
+            sy = Math.sin(cam.yaw);
+          const eye = add(
+            cam.tgt,
+            V(cam.dist * cp * sy, cam.dist * sp, cam.dist * cp * cy),
+          );
+          const fwd = norm(sub(cam.tgt, eye));
+          const r = norm(cross(fwd, V(0, 1, 0)));
+          const u = cross(r, fwd);
+          return {
+            eye,
+            fwd,
+            r,
+            u,
+            f: (0.5 * Hpx) / Math.tan((27.5 * Math.PI) / 180),
+          };
+        }
+        function proj(p, B) {
+          const d = sub(p, B.eye);
+          const z = dot(d, B.fwd);
+          if (z < 0.15) return null;
+          return {
+            x: Wpx / 2 + (dot(d, B.r) / z) * B.f,
+            y: Hpx / 2 - (dot(d, B.u) / z) * B.f,
+            z,
+          };
+        }
+
+        /* ---------- drawing ------------------------------------------------- */
+        function line3(a, b, B) {
+          const p = proj(a, B),
+            q = proj(b, B);
+          if (!p || !q) return;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+        function drawGround(B) {
+          ctx.strokeStyle = "rgba(120,135,150,0.13)";
+          ctx.lineWidth = 1;
+          for (let i = -6; i <= 6; i++) {
+            line3(V(i, 0, -6), V(i, 0, 6), B);
+            line3(V(-6, 0, i), V(6, 0, i), B);
+          }
+        }
+        function pushWall(polys, tg) {
+          const h = st.h,
+            EX = 1.4,
+            TOP = 0.8;
+          const at = (u, v) => add(add(tg.pos, mul(tg.rn, u)), mul(tg.un, v));
+          const quad = (u0, v0, u1, v1, col) =>
+            polys.push({
+              pts: [at(u0, v0), at(u1, v0), at(u1, v1), at(u0, v1)],
+              fill: col,
+              stroke: "rgba(0,0,0,0.28)",
+              lw: 1,
+              bias: 0,
+            });
+          quad(-EX, -SILL, 0, h + TOP, "#3b4149");
+          quad(st.w, -SILL, st.w + EX, h + TOP, "#3b4149");
+          quad(0, h, st.w, h + TOP, "#343a41");
+          quad(0, -SILL, st.w, 0, "#343a41");
+        }
+        function rrect(x, y, w, h, r) {
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + w, y, x + w, y + h, r);
+          ctx.arcTo(x + w, y + h, x, y + h, r);
+          ctx.arcTo(x, y + h, x, y, r);
+          ctx.arcTo(x, y, x + w, y, r);
+          ctx.closePath();
+        }
+        function drawInset(tg, pane) {
+          const S = Math.min(140, Math.round(Wpx * 0.32)),
+            pad = 16;
+          const x0 = Wpx - S - 10,
+            y0 = Hpx - S - 10;
+          ctx.save();
+          ctx.fillStyle = "rgba(8,10,14,0.78)";
+          ctx.strokeStyle = "#2a313a";
+          ctx.lineWidth = 1;
+          rrect(x0, y0, S, S, 8);
+          ctx.fill();
+          ctx.stroke();
+          const sc = (S - 2 * pad) / 9;
+          const M = (p) => ({
+            x: x0 + S / 2 + p.x * sc,
+            y: y0 + S / 2 + p.z * sc,
+          });
+          let mnx = Infinity,
+            mnz = Infinity,
+            mxx = -Infinity,
+            mxz = -Infinity;
+          for (const p of tg.corners) {
+            mnx = Math.min(mnx, p.x);
+            mnz = Math.min(mnz, p.z);
+            mxx = Math.max(mxx, p.x);
+            mxz = Math.max(mxz, p.z);
+          }
+          const a = M(V(mnx, 0, mnz)),
+            b = M(V(mxx, 0, mxz));
+          ctx.setLineDash([4, 3]);
+          ctx.strokeStyle = "rgba(154,164,176,0.6)";
+          ctx.strokeRect(
+            a.x,
+            a.y,
+            Math.max(1, b.x - a.x),
+            Math.max(1, b.y - a.y),
+          );
+          ctx.setLineDash([]);
+          const t0 = M(tg.pos),
+            t1 = M(add(tg.pos, tg.right));
+          ctx.strokeStyle = "#2fd6c3";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(t0.x, t0.y);
+          ctx.lineTo(t1.x, t1.y);
+          ctx.stroke();
+          const c0 = M(pane.pos),
+            c1 = M(add(pane.pos, pane.right));
+          ctx.strokeStyle = "#ff5d5d";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(c0.x, c0.y);
+          ctx.lineTo(c1.x, c1.y);
+          ctx.stroke();
+          ctx.fillStyle = "rgba(154,164,176,0.9)";
+          ctx.font = "10px ui-monospace,monospace";
+          ctx.fillText("TOP VIEW", x0 + 9, y0 + 15);
+          ctx.restore();
+        }
+
+        /* Angle of a line, folded into (-90, 90] so a flipped pane that spans
+           the same glass doesn't read as a different tilt. */
+        function lineDeg(v) {
+          let d = (Math.atan2(-v.z, v.x) * 180) / Math.PI;
+          while (d <= -90) d += 180;
+          while (d > 90) d -= 180;
+          return d;
+        }
+        const signed = (d) => {
+          const r = Math.round(d);
+          return (r > 0 ? "+" : "") + r + "&deg;";
+        };
+        const near = (a, b) => vlen(sub(a, b)) < 1e-4;
+        function sameSpan(pane, tg) {
+          const a0 = pane.pos,
+            a1 = add(pane.pos, pane.right);
+          const b0 = tg.pos,
+            b1 = add(tg.pos, tg.right);
+          return (
+            (near(a0, b0) && near(a1, b1)) || (near(a0, b1) && near(a1, b0))
+          );
+        }
+        function updateHud(tg, pane, pb) {
+          const paneCls = sameSpan(pane, tg) ? "t" : "r";
+          const shardCls = Math.abs(pb.shardScale - 1) < 1e-6 ? "t" : "r";
+          hud.innerHTML =
+            '<span class="t">GLASS ' +
+            st.w.toFixed(1) +
+            "&times;" +
+            st.h.toFixed(1) +
+            "M @ " +
+            signed(lineDeg(tg.right)) +
+            "</span><br>" +
+            '<span class="' +
+            paneCls +
+            '">PANE&nbsp; ' +
+            pb.rightLen.toFixed(1) +
+            "&times;" +
+            pb.upLen.toFixed(1) +
+            "M @ " +
+            signed(lineDeg(pane.right)) +
+            "</span><br>" +
+            '<span class="' +
+            shardCls +
+            '">SHARD H &times;' +
+            pb.shardScale.toFixed(2) +
+            "</span><br>" +
+            "SHARDS " +
+            String(st.shards.length).padStart(2, "0") +
+            " &middot; " +
+            pb.xsteps +
+            "&times;" +
+            pb.ysteps +
+            " SEG";
+        }
+
+        function draw() {
+          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          const g = ctx.createLinearGradient(0, 0, 0, Hpx);
+          g.addColorStop(0, "#0f141c");
+          g.addColorStop(1, "#080a0e");
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, Wpx, Hpx);
+          const B = basis();
+          const tg = trueGeom(),
+            pane = computedPane(tg),
+            pb = paneBasis(pane);
+          drawGround(B);
+          const polys = [];
+          pushWall(polys, tg);
+          if (st.broken) {
+            for (const sh of st.shards) {
+              if (sh.phase === "gone") continue;
+              const verts =
+                sh.phase === "flying"
+                  ? sh.loc.map((l) => add(sh.cen, rotAA(l, sh.ax, sh.ang)))
+                  : sh.verts;
+              const a = sh.alpha;
+              polys.push({
+                pts: verts,
+                fill: "rgba(200,224,240," + 0.55 * a + ")",
+                stroke: "rgba(235,248,255," + 0.9 * a + ")",
+                lw: 1,
+                bias: 0.05,
+              });
+            }
+          } else {
+            polys.push({
+              pts: tg.corners.map((p) => add(p, mul(tg.normal, 0.002))),
+              fill: "rgba(70,160,190,0.16)",
+              stroke: null,
+              bias: 0.02,
+            });
+          }
+          {
+            const p0 = pane.pos,
+              p1 = add(p0, pane.right);
+            polys.push({
+              pts: [p0, p1, add(p1, pane.up), add(p0, pane.up)],
+              fill: null,
+              stroke: "rgba(255,93,93,0.95)",
+              lw: 1.6,
+              dash: [6, 5],
+              bias: 0.07,
+            });
+          }
+          polys.push({
+            pts: tg.corners,
+            fill: null,
+            stroke: "rgba(47,214,195,0.95)",
+            lw: 2.4,
+            bias: 0.06,
+          });
+          const items = [];
+          for (const p of polys) {
+            const scr = p.pts.map((q) => proj(q, B));
+            if (scr.some((s) => !s)) continue;
+            const z =
+              scr.reduce((acc, s) => acc + s.z, 0) / scr.length - (p.bias || 0);
+            items.push({ p, scr, z });
+          }
+          items.sort((a, b) => b.z - a.z);
+          for (const it of items) {
+            ctx.beginPath();
+            it.scr.forEach((s, i) =>
+              i ? ctx.lineTo(s.x, s.y) : ctx.moveTo(s.x, s.y),
+            );
+            ctx.closePath();
+            if (it.p.fill) {
+              ctx.fillStyle = it.p.fill;
+              ctx.fill();
+            }
+            if (it.p.stroke) {
+              ctx.strokeStyle = it.p.stroke;
+              ctx.lineWidth = it.p.lw || 1;
+              ctx.setLineDash(it.p.dash || []);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+          }
+          drawInset(tg, pane);
+        }
+
+        /* ---------- sim loop ------------------------------------------------ */
+        let last = performance.now();
+        function tick() {
+          const now = performance.now(),
+            dt = Math.min(0.05, (now - last) / 1000);
+          last = now;
+          const t = now / 1000;
+          for (const sh of st.shards) {
+            if (sh.phase === "frozen" && t >= sh.relAt) {
+              sh.phase = "flying";
+              sh.t0 = t;
+            }
+            if (sh.phase === "flying") {
+              sh.vel = add(sh.vel, V(0, -9.8 * dt, 0));
+              sh.cen = add(sh.cen, mul(sh.vel, dt));
+              sh.ang += sh.spin * dt;
+              sh.alpha = Math.max(0, 1 - Math.max(0, t - sh.t0 - 1) / 0.7);
+              if (sh.cen.y < 0.03 || sh.alpha <= 0) sh.phase = "gone";
+            }
+          }
+          draw();
+          requestAnimationFrame(tick);
+        }
+
+        /* ---------- input --------------------------------------------------- */
+        let pd = null,
+          orbiting = false;
+        cv.addEventListener("pointerdown", (e) => {
+          pd = { x: e.clientX, y: e.clientY, cy: cam.yaw, cp: cam.pitch };
+          orbiting = false;
+          cv.setPointerCapture(e.pointerId);
+        });
+        cv.addEventListener("pointermove", (e) => {
+          if (!pd) return;
+          const dx = e.clientX - pd.x,
+            dy = e.clientY - pd.y;
+          if (!orbiting && Math.hypot(dx, dy) > 7) orbiting = true;
+          if (orbiting) {
+            cam.yaw = pd.cy - dx * 0.008;
+            cam.pitch = Math.max(0.05, Math.min(1.25, pd.cp + dy * 0.006));
+          }
+        });
+        cv.addEventListener("pointerup", (e) => {
+          if (pd && !orbiting) tryShootAt(e);
+          pd = null;
+          orbiting = false;
+        });
+        cv.addEventListener("pointercancel", () => {
+          pd = null;
+          orbiting = false;
+        });
+        cv.addEventListener(
+          "wheel",
+          (e) => {
+            e.preventDefault();
+            camAuto = false;
+            cam.dist = Math.max(2.6, Math.min(14, cam.dist + e.deltaY * 0.008));
+          },
+          { passive: false },
+        );
+
+        /* The bullet hits the glass the artist built — the shards are what the
+           code gets wrong, so the raycast uses the real window. */
+        function tryShootAt(e) {
+          const r = cv.getBoundingClientRect();
+          const sx = e.clientX - r.left,
+            sy = e.clientY - r.top;
+          const B = basis();
+          const dir = norm(
+            add(
+              add(B.fwd, mul(B.r, (sx - Wpx / 2) / B.f)),
+              mul(B.u, -(sy - Hpx / 2) / B.f),
+            ),
+          );
+          const tg = trueGeom();
+          const den = dot(dir, tg.normal);
+          if (Math.abs(den) < 1e-4) return;
+          const tHit = dot(sub(tg.pos, B.eye), tg.normal) / den;
+          if (tHit <= 0) return;
+          const p = add(B.eye, mul(dir, tHit));
+          const rel = sub(p, tg.pos);
+          const u = dot(rel, tg.rn),
+            v = dot(rel, tg.un);
+          if (u < 0 || u > st.w || v < 0 || v > st.h) return;
+          doShoot(p, dir);
+        }
+        shootBtn.addEventListener("click", () => {
+          const B = basis();
+          const tg = trueGeom();
+          const centre = add(
+            add(tg.pos, mul(tg.right, 0.5)),
+            mul(tg.up, 0.5),
+          );
+          doShoot(centre, B.fwd);
+        });
+        document
+          .getElementById("resetBtn")
+          .addEventListener("click", buildShards);
+
+        /* ---------- controls ------------------------------------------------ */
+        const wIn = document.getElementById("wIn"),
+          hIn = document.getElementById("hIn"),
+          rIn = document.getElementById("rIn");
+        const wOut = document.getElementById("wOut"),
+          hOut = document.getElementById("hOut"),
+          rOut = document.getElementById("rOut");
+        function syncSliders() {
+          st.w = parseFloat(wIn.value);
+          st.h = parseFloat(hIn.value);
+          st.yawDeg = parseInt(rIn.value, 10);
+          wOut.textContent = st.w.toFixed(1) + " m";
+          hOut.textContent = st.h.toFixed(1) + " m";
+          rOut.textContent =
+            (st.yawDeg > 0 ? "+" : "") + st.yawDeg + "\u00B0";
+          buildShards();
+        }
+        [wIn, hIn, rIn].forEach((el) =>
+          el.addEventListener("input", syncSliders),
+        );
+        document.getElementById("seg").addEventListener("click", (e) => {
+          const b = e.target.closest("button[data-v]");
+          if (!b) return;
+          document
+            .querySelectorAll("#seg button")
+            .forEach((x) =>
+              x.setAttribute("aria-pressed", String(x === b)),
+            );
+          st.variant = b.dataset.v;
+          buildShards();
+        });
+
+        resize();
+        syncSliders();
+        requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>
