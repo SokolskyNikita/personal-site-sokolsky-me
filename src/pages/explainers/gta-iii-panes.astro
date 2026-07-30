@@ -472,8 +472,7 @@ const structuredData = {
           <b>lying on a world axis</b>. Every breakable pane in Liberty City is
           both, so two bugs sat in the game for 25 years — until
           <b>Upstate Liberty</b>, a map expansion mod, put tilted rectangular
-          windows on the map. Pick a code variant, drag to orbit, shoot the
-          glass.
+          windows on the map. Pick a code variant below and shoot the glass.
         </p>
       </header>
 
@@ -572,12 +571,12 @@ const structuredData = {
           <p>
             A breakable pane is handed to the shatter code as three vectors: a
             corner <b>pos</b>, a <b>right</b> vector spanning its width and an
-            <b>up</b> vector spanning its height. The pane is cut into a grid —
-            each axis gets <b>length + 0.75</b> steps, truncated to an integer,
-            at least one and at most three — so segments of roughly a metre, nine
-            of them at most. Every segment is then split into the same fixed five
-            triangles, which caps a window at 45 shards — the size of the
-            falling-pane pool.
+            <b>up</b> vector spanning its height. The pane is cut into a grid:
+            each axis gets <b>length + 0.75</b> steps (truncated to an integer,
+            at least one and at most three), so segments of roughly a metre,
+            nine of them at most. Every segment is then split into the same
+            fixed five triangles, which caps a window at 45 shards, the size of
+            the falling-pane pool.
           </p>
           <p>
             Each shard gets a release timer. A hard enough hit releases all of
@@ -596,10 +595,15 @@ const structuredData = {
             wrong length</h2
           >
           <p>
-            Each shard gets its own frame: a right axis and an up axis, each one
-            segment long. The up axis is divided by the length of <b>right</b> —
-            a copy-paste of the line above it — so it only comes out a segment
-            tall when the pane is square.
+            Each shard carries its own frame: a right axis and an up axis that
+            should each come out <b>one segment</b> long. The code builds them
+            from the pane's full <b>right</b> and <b>up</b> vectors, dividing
+            each by its own length to cancel the pane's dimension back out of
+            the result. Except the up axis is divided by the length of
+            <b>right</b> — a copy-paste of the line above it — and that
+            cancellation only works when the two lengths are equal. On any
+            non-square pane, a leftover factor of <b>height ÷ width</b> stays
+            in every shard's up axis.
           </p>
           <pre><span class="c">// CGlass::GeneratePanesForWindow — GTA III</span>
 pane-&gt;GetRight() = (right * rightScl) / rightLen;
@@ -611,12 +615,13 @@ pane-&gt;GetPosition() = right / rightLen * (rightScl * center.x + stepx)
                     + up    / upLen    * (upScl    * center.y + stepy)
                     + pos;</pre>
           <p>
-            Only the shard's own frame is wrong; the grid it sits on is fine. So
-            every shard stays in the right place and is scaled vertically about
-            its own centre by <b>height ÷ width</b>: on a wide pane the shards
-            shrink and leave gaps, on a tall one they overlap and hang past the
-            glass. Invisible in GTA III — every stock pane is square, so the
-            factor is 1.
+            Only the shard's own frame is wrong; the grid of positions it sits
+            on divides by upLen correctly. So every shard stays centred on its
+            proper cell and is stretched or squashed vertically in place, about
+            its own centre. On a wide pane the shards come out too short and
+            gaps open between them; on a tall one they come out too tall,
+            overlapping their neighbours and hanging past the glass. Invisible
+            in GTA III, where every stock pane is square and the factor is 1.
           </p>
         </div>
 
@@ -626,51 +631,85 @@ pane-&gt;GetPosition() = right / rightLen * (rightScl * center.x + stepx)
             in world space</h2
           >
           <p>
-            GTA III transforms the window's four collision vertices into
-            <b>world space</b> first and only then takes their min and max — so
-            the box it measures is axis-aligned, and the pane gets rebuilt from
-            that box.
+            The shatter code never sees the pane directly; it rebuilds it from
+            the window's four collision vertices. GTA III transforms those
+            vertices into <b>world space</b> first and only then takes their min
+            and max. What that measures is the
+            <b>axis-aligned box around the glass</b>, and it is the box the pane
+            gets rebuilt from.
           </p>
-          <pre><span class="c">// CGlass::WindowRespondsToCollision — GTA III</span>
-<span class="bad">CVector a = object-&gt;GetMatrix() * col-&gt;vertices[0].Get();  // ... b, c, d — world space
-// minx/maxx/miny/maxy/minz/maxz over the four world-space corners
+          <pre><span class="c">// CGlass::WindowRespondsToCollision — GTA III
+// col-&gt;vertices[0..3]: the window's four collision corners, in model
+// space (the coordinates the artist built the window with).
+// object-&gt;GetMatrix(): the transform that places the object in the
+// world. GTA's Z axis is up; X and Y are the ground plane.</span>
+<span class="bad">CVector a = object-&gt;GetMatrix() * col-&gt;vertices[0].Get();  // into the world first...</span>
+CVector b = object-&gt;GetMatrix() * col-&gt;vertices[1].Get();
+CVector c = object-&gt;GetMatrix() * col-&gt;vertices[2].Get();
+CVector d = object-&gt;GetMatrix() * col-&gt;vertices[3].Get();
+
+<span class="bad">float minx = Min(Min(a.x, b.x), Min(c.x, d.x));            // ...measured after</span>
+float maxx = Max(Max(a.x, b.x), Max(c.x, d.x));
+<span class="c">// miny/maxy and minz/maxz the same way — together they are the
+// axis-aligned box around the glass</span>
+
+<span class="c">// rebuild the pane from the box: corner + up + right</span>
 GeneratePanesForWindow(type,
-    CVector(minx,      miny,      minz),
-    CVector(0.0f,      0.0f,      maxz-minz),
-    CVector(maxx-minx, maxy-miny, 0.0f),   // box diagonal — always +X, +Y
-    speed, point, 0.1f, cracked, explosion);</span>
+    CVector(minx,      miny,      minz),       <span class="c">// corner: bottom of the box</span>
+    CVector(0.0f,      0.0f,      maxz-minz),  <span class="c">// up:     world-vertical</span>
+    <span class="bad">CVector(maxx-minx, maxy-miny, 0.0f),       // right:  box diagonal — always +X, +Y</span>
+    speed, point, 0.1f, cracked, explosion);
 
 <span class="c">// CGlass::WindowRespondsToCollision — Vice City: extents first, transform after</span>
-<span class="good">CVector a = col-&gt;vertices[0].Get();                       // ... b, c, d — model space
-// minx/maxx/miny/maxy/minz/maxz over the four model-space corners
+<span class="good">CVector a = col-&gt;vertices[0].Get();                        // still model space...</span>
+CVector b = col-&gt;vertices[1].Get();
+CVector c = col-&gt;vertices[2].Get();
+CVector d = col-&gt;vertices[3].Get();
+
+<span class="good">float minx = Min(Min(a.x, b.x), Min(c.x, d.x));            // ...so the box fits the glass exactly</span>
+float maxx = Max(Max(a.x, b.x), Max(c.x, d.x));
+<span class="c">// miny/maxy and minz/maxz the same way</span>
+
+<span class="c">// only now do the two bottom corners go into the world</span>
 CVector pa = object-&gt;GetMatrix() * CVector(minx, miny, minz);
 CVector pb = object-&gt;GetMatrix() * CVector(maxx, maxy, minz);
+
 GeneratePanesForWindow(type,
-    pa,
-    CVector(0.0f, 0.0f, maxz-minz),
-    pb - pa,                              // true pane edge, keeps its tilt
-    speed, point, 0.1f, cracked, explosion, 1, false);</span></pre>
+    pa,                                  <span class="c">// corner: bottom of the glass</span>
+    CVector(0.0f, 0.0f, maxz-minz),      <span class="c">// up:     still world-vertical</span>
+    <span class="good">pb - pa,                             // right:  true bottom edge, keeps its tilt</span>
+    speed, point, 0.1f, cracked, explosion, 1, false);</pre>
           <p>
-            The <b>length</b> survives — the diagonal of the box is as long as
-            the glass — but both components are forced positive, so the pane is
-            always rebuilt along the box's <b>ascending</b> diagonal from the
-            (minx, miny) corner. Glass that happens to run that way is
-            reproduced exactly. Glass running along the other diagonal gets a
-            <b>mirrored</b> pane: right size, wrong tilt, cutting through the
-            window. The error is twice the tilt angle, so it peaks at 45°, where
-            the shards are laid out at a right angle to the glass they came from,
-            and it disappears at 0° and 90°, where the box collapses onto the
-            glass and both diagonals are the same line. That is why Liberty City
-            never showed it.
+            Seen from above, a vertical pane is a <b>line segment</b>, and the
+            box around it is the rectangle that has the glass as its
+            <b>diagonal</b>. The length survives for exactly that reason: a
+            rectangle's diagonal is as long as the segment it encloses. But a
+            rectangle has two diagonals, and the code can only ever rebuild one
+            of them: <b>right</b> is (maxx−minx, maxy−miny), and both
+            differences are positive by construction, so the pane always runs
+            along the <b>ascending</b> diagonal, from the (minx, miny) corner up
+            and to the right.
+          </p>
+          <p>
+            Glass that happens to run that way is reproduced exactly. Glass
+            running along the <b>other</b> diagonal gets its mirror image: the
+            right size at the wrong tilt, cutting through the window. A pane
+            tilted −θ is rebuilt at +θ, so the error is
+            <b>twice the tilt angle</b> — it peaks at 45°, where the shards sit
+            at a right angle to the glass they came from, and vanishes at 0°
+            and 90°, where the rectangle collapses onto the glass and its two
+            diagonals become the same line. Liberty City's stock windows all
+            sit flat at 0° or 90°, so the wrong diagonal never came up.
           </p>
           <p>
             Drag rotation through zero and watch the top-view inset: one half of
-            the sweep is exact, the other mirrors. Vice City takes min and max in
-            <b>model space</b>, where the pane is axis-aligned, then transforms
-            the two corners and subtracts them, so <b>right</b> keeps its
-            direction at any yaw. That is the code Silent backported. Both games
-            still take <b>up</b> as a world-vertical from the box height, so
-            neither handles a pane that is pitched or rolled.
+            the sweep is exact, the other mirrors. Vice City takes min and max
+            in <b>model space</b>, where the pane is axis-aligned and the box
+            fits it exactly, then transforms the two corners into the world and
+            subtracts them, so <b>right</b> keeps its true direction at any
+            yaw. Silent backported exactly that code. Both games still take
+            <b>up</b> as a world-vertical built from the box height, so neither
+            handles a pane that is pitched or rolled.
           </p>
         </div>
       </section>
@@ -688,9 +727,9 @@ GeneratePanesForWindow(type,
         whether GTA III's artists found the tilt bug and just stopped putting
         breakable glass on non-aligned walls; Silent suspects Vice City's version
         got written once artists started putting glass in the North Point Mall.
-        The snippets above are trimmed from the re3 / reVC decompilations — also
-        where the <code>copypaste bug</code> comment comes from. Rockstar never
-        shipped the original source.
+        The snippets above are trimmed from the re3 / reVC decompilations
+        (also where the <code>copypaste bug</code> comment comes from).
+        Rockstar never shipped the original source.
       </p>
     </div>
 
