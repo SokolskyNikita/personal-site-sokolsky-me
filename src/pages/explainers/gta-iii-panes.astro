@@ -632,20 +632,23 @@ pane-&gt;GetPosition() = right / rightLen * (rightScl * center.x + stepx)
             that box.
           </p>
           <pre><span class="c">// CGlass::WindowRespondsToCollision — GTA III</span>
-<span class="bad">CVector a = object-&gt;GetMatrix() * col-&gt;vertices[0].Get();   // ... b, c, d
+<span class="bad">CVector a = object-&gt;GetMatrix() * col-&gt;vertices[0].Get();  // ... b, c, d — world space
 // minx/maxx/miny/maxy/minz/maxz over the four world-space corners
 GeneratePanesForWindow(type,
     CVector(minx,      miny,      minz),
     CVector(0.0f,      0.0f,      maxz-minz),
-    CVector(maxx-minx, maxy-miny, 0.0f),   // the box diagonal — always +X, +Y
+    CVector(maxx-minx, maxy-miny, 0.0f),   // box diagonal — always +X, +Y
     speed, point, 0.1f, cracked, explosion);</span>
 
 <span class="c">// CGlass::WindowRespondsToCollision — Vice City: extents first, transform after</span>
-<span class="good">CVector a = col-&gt;vertices[0].Get();   // ... b, c, d — model space, where the pane is axis-aligned
+<span class="good">CVector a = col-&gt;vertices[0].Get();                       // ... b, c, d — model space
 // minx/maxx/miny/maxy/minz/maxz over the four model-space corners
 CVector pa = object-&gt;GetMatrix() * CVector(minx, miny, minz);
 CVector pb = object-&gt;GetMatrix() * CVector(maxx, maxy, minz);
-GeneratePanesForWindow(type, pa, CVector(0.0f, 0.0f, maxz-minz), pb - pa,
+GeneratePanesForWindow(type,
+    pa,
+    CVector(0.0f, 0.0f, maxz-minz),
+    pb - pa,                              // true pane edge, keeps its tilt
     speed, point, 0.1f, cracked, explosion, 1, false);</span></pre>
           <p>
             The <b>length</b> survives — the diagonal of the box is as long as
