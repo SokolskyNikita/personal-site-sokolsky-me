@@ -391,6 +391,84 @@ const structuredData = {
         background: rgba(200, 224, 240, 0.55);
         border: 1px solid rgba(235, 248, 255, 0.9);
       }
+      .sw.gbox {
+        background: transparent;
+        border: 1.5px dashed rgba(154, 164, 176, 0.8);
+        height: 6px;
+      }
+      .sw.gdot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--gold);
+      }
+
+      /* inline figures inside case files */
+      .fig {
+        margin: 0.9em 0 0.3em;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #080a0e;
+        padding: 12px;
+        /* the readout text changes while the slider is dragged; keep the
+           browser from re-anchoring scroll to content inside the figure */
+        overflow-anchor: none;
+      }
+      .fig svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+      }
+      .fig-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .fig-row input {
+        flex: 1;
+        min-width: 130px;
+        margin: 0;
+        accent-color: var(--gold);
+      }
+      .fig-mode {
+        display: flex;
+        gap: 6px;
+      }
+      .fig-mode button {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 7px 10px;
+        cursor: pointer;
+        font:
+          700 11px/1 ui-monospace,
+          monospace;
+        letter-spacing: 0.04em;
+      }
+      .fig-mode button[aria-pressed="true"] {
+        border-color: var(--gold);
+        box-shadow: inset 0 0 0 1px var(--gold);
+      }
+      .fig-readout {
+        /* full row of its own: the text length changes during the drag and
+           must not resize the slider next to it or re-wrap the row */
+        flex: 0 0 100%;
+        min-height: 1.6em;
+        white-space: nowrap;
+        font:
+          700 11px/1.6 ui-monospace,
+          monospace;
+        color: var(--gold);
+        letter-spacing: 0.06em;
+      }
+      .fig .legend {
+        margin-top: 10px;
+      }
 
       /* case files */
       .cases {
@@ -690,6 +768,67 @@ GeneratePanesForWindow(type,
             along the <b>ascending</b> diagonal, from the (minx, miny) corner up
             and to the right.
           </p>
+          <div class="fig">
+            <svg
+              id="fgSvg"
+              viewBox="0 0 320 210"
+              role="img"
+              aria-label="Top view of a tilted pane: the teal glass line, the dashed axis-aligned box measured around it, and the red diagonal pane the code rebuilds from that box.">
+              <rect
+                id="fgBox"
+                fill="none"
+                stroke="rgba(154,164,176,0.6)"
+                stroke-width="1"
+                stroke-dasharray="4 3"></rect>
+              <path id="fgArc" fill="none" stroke="#f0a13c" stroke-width="1.5"
+              ></path>
+              <line
+                id="fgGlass"
+                stroke="#2fd6c3"
+                stroke-width="3.5"
+                stroke-linecap="round"></line>
+              <line
+                id="fgPane"
+                stroke="#ff5d5d"
+                stroke-width="2"
+                stroke-dasharray="6 5"
+                stroke-linecap="round"></line>
+              <circle id="fgDot" r="3.5" fill="#f0a13c"></circle>
+              <text
+                x="10"
+                y="17"
+                fill="rgba(154,164,176,0.9)"
+                font-family="ui-monospace,monospace"
+                font-size="10">TOP VIEW</text>
+            </svg>
+            <div class="fig-row">
+              <div class="fig-mode" id="fgMode" role="group" aria-label="Which game's extents code">
+                <button type="button" data-m="gta3" aria-pressed="true"
+                  >GTA III · world box</button
+                >
+                <button type="button" data-m="vc" aria-pressed="false"
+                  >Vice City · model box</button
+                >
+              </div>
+              <input
+                id="fgIn"
+                type="range"
+                min="-90"
+                max="90"
+                step="1"
+                value="-35"
+                aria-label="Glass tilt in degrees"
+              />
+              <output id="fgOut" class="fig-readout" aria-live="polite"
+              ></output>
+            </div>
+            <div class="legend">
+              <span><i class="sw teal"></i>glass, seen from above</span>
+              <span><i class="sw red"></i>pane the code rebuilds</span>
+              <span><i class="sw gbox"></i>measured box</span>
+              <span><i class="sw gdot"></i>(minx, miny) corner</span>
+            </div>
+          </div>
           <p>
             Glass that happens to run that way is reproduced exactly. Glass
             running along the <b>other</b> diagonal gets its mirror image: the
@@ -1389,6 +1528,128 @@ GeneratePanesForWindow(type,
         resize();
         syncSliders();
         requestAnimationFrame(tick);
+      })();
+    </script>
+
+    <script is:inline>
+      /* Bug 2 figure: top view of the glass, the measured box and the
+         rebuilt pane, with a tilt slider and a GTA III / VC mode toggle. */
+      (() => {
+        "use strict";
+        const $ = (id) => document.getElementById(id);
+        const box = $("fgBox"),
+          glass = $("fgGlass"),
+          pane = $("fgPane"),
+          arc = $("fgArc"),
+          dot = $("fgDot"),
+          input = $("fgIn"),
+          out = $("fgOut"),
+          modeGrp = $("fgMode");
+        if (!box) return;
+
+        const CX = 160,
+          CY = 110,
+          R = 85;
+        let theta = -35,
+          mode = "gta3";
+
+        const set = (el, attrs) => {
+          for (const k in attrs) el.setAttribute(k, attrs[k]);
+        };
+        const fmt = (d) => (d > 0 ? "+" : "") + Math.round(d) + "\u00B0";
+        const pt = (deg, r) => {
+          const a = (deg * Math.PI) / 180;
+          return [CX + r * Math.cos(a), CY - r * Math.sin(a)];
+        };
+
+        function draw() {
+          const t = (theta * Math.PI) / 180;
+          const dx = Math.cos(t) * R,
+            dy = Math.sin(t) * R;
+          const ax = Math.abs(dx),
+            ay = Math.abs(dy);
+          /* screen y grows downward, world y grows upward */
+          set(glass, { x1: CX - dx, y1: CY + dy, x2: CX + dx, y2: CY - dy });
+
+          if (mode === "gta3") {
+            box.removeAttribute("transform");
+            set(box, { x: CX - ax, y: CY - ay, width: 2 * ax, height: 2 * ay });
+            /* the rebuilt pane: always the ascending diagonal of the box */
+            set(pane, { x1: CX - ax, y1: CY + ay, x2: CX + ax, y2: CY - ay });
+            set(dot, { cx: CX - ax, cy: CY + ay });
+            const err = Math.min(
+              2 * Math.abs(theta),
+              180 - 2 * Math.abs(theta),
+            );
+            const mirrored = theta < 0 && err > 0.5;
+            if (mirrored) {
+              /* arc between the pane and the nearer end of the glass line */
+              const paneA = Math.abs(theta);
+              const glassA =
+                Math.abs(theta - paneA) <= Math.abs(theta + 180 - paneA)
+                  ? theta
+                  : theta + 180;
+              let d = "";
+              const steps = 24;
+              for (let i = 0; i <= steps; i++) {
+                const a = glassA + ((paneA - glassA) * i) / steps;
+                const [x, y] = pt(a, 34);
+                d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+              }
+              arc.setAttribute("d", d);
+              arc.style.display = "";
+            } else {
+              arc.style.display = "none";
+            }
+            out.textContent =
+              "GLASS " +
+              fmt(theta) +
+              " \u00B7 PANE " +
+              fmt(Math.abs(theta)) +
+              " \u00B7 " +
+              (mirrored
+                ? "MIRRORED, ERROR " + Math.round(err) + "\u00B0"
+                : "EXACT");
+          } else {
+            /* Vice City: the box is taken in model space, so it hugs the
+               glass and rotates with it; the pane is the glass again. */
+            set(box, {
+              x: CX - R - 7,
+              y: CY - 9,
+              width: 2 * R + 14,
+              height: 18,
+            });
+            box.setAttribute(
+              "transform",
+              "rotate(" + -theta + " " + CX + " " + CY + ")",
+            );
+            set(pane, { x1: CX - dx, y1: CY + dy, x2: CX + dx, y2: CY - dy });
+            set(dot, { cx: CX - dx, cy: CY + dy });
+            arc.style.display = "none";
+            out.textContent =
+              "GLASS " +
+              fmt(theta) +
+              " \u00B7 PANE " +
+              fmt(theta) +
+              " \u00B7 EXACT AT ANY TILT";
+          }
+        }
+
+        input.addEventListener("input", () => {
+          theta = parseInt(input.value, 10);
+          draw();
+        });
+        modeGrp.addEventListener("click", (e) => {
+          const b = e.target.closest("button[data-m]");
+          if (!b) return;
+          modeGrp
+            .querySelectorAll("button")
+            .forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          mode = b.dataset.m;
+          draw();
+        });
+
+        draw();
       })();
     </script>
   </body>
