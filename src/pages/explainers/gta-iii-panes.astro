@@ -306,7 +306,12 @@ const structuredData = {
       }
       @media (min-width: 640px) {
         .sliders {
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 820px) {
+        .sliders {
+          grid-template-columns: repeat(4, 1fr);
         }
       }
       .sliders label {
@@ -627,6 +632,18 @@ const structuredData = {
               aria-label="Pane rotation in degrees"
             /></label
           >
+          <label
+            >Speed <output id="sOut">0.5×</output>
+            <input
+              id="sIn"
+              type="range"
+              min="0.1"
+              max="2"
+              step="0.1"
+              value="0.5"
+              aria-label="Animation speed multiplier"
+            /></label
+          >
         </div>
 
         <div class="btns">
@@ -934,6 +951,7 @@ GeneratePanesForWindow(type,
           h: 1.5,
           yawDeg: 25,
           variant: "gta3",
+          speed: 0.5,
           shards: [],
           broken: false,
         };
@@ -1066,7 +1084,7 @@ GeneratePanesForWindow(type,
           st.broken = true;
           shootBtn.disabled = true;
           hint.classList.add("off");
-          const now = performance.now() / 1000;
+          const now = simT;
           for (const sh of st.shards) {
             const away = norm(sub(sh.cen, impact));
             sh.phase = "frozen";
@@ -1344,6 +1362,17 @@ GeneratePanesForWindow(type,
               stroke: null,
               bias: 0.02,
             });
+            /* seams of the shards-to-be, so the wrong sizes (bug 1) and the
+               wrong pane (bug 2) are visible before the shot */
+            for (const sh of st.shards) {
+              polys.push({
+                pts: sh.verts,
+                fill: null,
+                stroke: "rgba(235,248,255,0.28)",
+                lw: 1,
+                bias: 0.04,
+              });
+            }
           }
           {
             const p0 = pane.pos,
@@ -1395,12 +1424,17 @@ GeneratePanesForWindow(type,
         }
 
         /* ---------- sim loop ------------------------------------------------ */
+        /* The sim runs on its own clock, advanced at st.speed times real
+           time, so the speed slider scales release timers, physics and
+           fade-out together. */
         let last = performance.now();
+        let simT = 0;
         function tick() {
           const now = performance.now(),
-            dt = Math.min(0.05, (now - last) / 1000);
+            dt = Math.min(0.05, (now - last) / 1000) * st.speed;
           last = now;
-          const t = now / 1000;
+          simT += dt;
+          const t = simT;
           for (const sh of st.shards) {
             if (sh.phase === "frozen" && t >= sh.relAt) {
               sh.phase = "flying";
@@ -1513,6 +1547,13 @@ GeneratePanesForWindow(type,
         [wIn, hIn, rIn].forEach((el) =>
           el.addEventListener("input", syncSliders),
         );
+        /* speed only scales the clock; it must not rebuild the glass */
+        const sIn = document.getElementById("sIn"),
+          sOut = document.getElementById("sOut");
+        sIn.addEventListener("input", () => {
+          st.speed = parseFloat(sIn.value);
+          sOut.textContent = st.speed.toFixed(1) + "\u00D7";
+        });
         document.getElementById("seg").addEventListener("click", (e) => {
           const b = e.target.closest("button[data-v]");
           if (!b) return;
