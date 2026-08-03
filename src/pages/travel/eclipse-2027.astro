@@ -152,28 +152,28 @@ const visa2egypt = book(
   "visa2egypt.gov.eg",
 );
 const wsLuxor = book(
-  "https://weatherspark.com/m/97258/8/Average-Weather-in-August-in-Luxor-Egypt",
-  "WeatherSpark (Luxor)",
+  "https://weatherspark.com/d/97258/8/2/Average-Weather-on-August-2-in-Luxor-Egypt",
+  "WeatherSpark Aug 2 (Luxor)",
 );
 const wsSfax = book(
-  "https://weatherspark.com/m/65622/8/Average-Weather-in-August-in-Sfax-Tunisia",
-  "WeatherSpark (Sfax)",
+  "https://weatherspark.com/d/65622/8/2/Average-Weather-on-August-2-in-Sfax-Tunisia",
+  "WeatherSpark Aug 2 (Sfax)",
 );
 const wsMarsaAlam = book(
-  "https://weatherspark.com/m/98148/8/Average-Weather-in-August-in-Marsa-Alam-Egypt",
-  "WeatherSpark (Marsa Alam)",
+  "https://weatherspark.com/d/98148/8/2/Average-Weather-on-August-2-in-Marsa-Alam-Egypt",
+  "WeatherSpark Aug 2 (Marsa Alam)",
 );
 const wsAlgeciras = book(
-  "https://weatherspark.com/m/34142/8/Average-Weather-in-August-in-Algeciras-Spain",
-  "WeatherSpark (Algeciras)",
+  "https://weatherspark.com/d/34142/8/2/Average-Weather-on-August-2-in-Algeciras-Spain",
+  "WeatherSpark Aug 2 (Algeciras)",
 );
 const wsTetouan = book(
-  "https://weatherspark.com/m/34068/8/Average-Weather-in-August-in-T%C3%A9touan-Morocco",
-  "WeatherSpark (Tétouan)",
+  "https://weatherspark.com/d/34068/8/2/Average-Weather-on-August-2-in-T%C3%A9touan-Morocco",
+  "WeatherSpark Aug 2 (Tétouan)",
 );
 const wsJeddah = book(
-  "https://weatherspark.com/m/101171/8/Average-Weather-in-August-in-Jeddah-Saudi-Arabia",
-  "WeatherSpark (Jeddah)",
+  "https://weatherspark.com/d/101171/8/2/Average-Weather-on-August-2-in-Jeddah-Saudi-Arabia",
+  "WeatherSpark Aug 2 (Jeddah)",
 );
 
 type RegionId =
@@ -212,27 +212,27 @@ type RegionGuide = {
 const optimalPlan: RegionGuide = {
   id: "optimal",
   label: "Optimal plan",
-  short: "Istanbul → Luxor or Sfax",
+  short: "Istanbul → Sfax or Luxor",
   takeaways: [
-    "<strong>Recommended approach:</strong> fly Seattle→Istanbul ~26 Jul, hold <strong>two Flex/refundable ≥5-minute branches</strong> (Luxor default + Sfax dust exit), and pick the cleaner country from Istanbul by <strong>~30 Jul noon</strong>. Do not Cairo-first, and do not lock a single country months out.",
-    "<strong>Branch rule:</strong> both look clean → <strong>Luxor</strong> (~6m20–22s). Egypt dusty / Tunisia clean → <strong>Sfax</strong> (~5m40–45s). The hedge’s job is Saharan dust, not correlated double cloud-out (matched Aug-2 samples almost never fail both).",
+    "<strong>Recommended approach:</strong> fly Seattle→Istanbul ~26 Jul, hold <strong>two Flex/refundable ≥5-minute branches</strong> (Sfax comfort default + Luxor duration option), and pick from Istanbul by <strong>~30 Jul noon</strong>. Do not Cairo-first, and do not lock a single country months out.",
+    `<strong>Branch rule:</strong> both look clean → <strong>Sfax</strong> (~5m40–45s, ~<strong>30&nbsp;°C</strong> at totality per ${wsSfax}). Want the extra ~40s and near-zenith sun → <strong>Luxor</strong> (~6m20–22s) but expect ~<strong>38&nbsp;°C</strong> dry heat at ~13:05 (${wsLuxor}). Egypt dusty / Tunisia clean → <strong>Sfax</strong>. The hedge’s job is Saharan dust, not correlated double cloud-out.`,
     "<strong>Keep sunk cost under ~$1,000 for two</strong> through 29 Jul so the switch stays real. No CFAR covers abandoning one operable branch. Exact Flex flights, hotels, cars, and rejects are under <strong>What to book</strong>.",
     "<strong>Planning odds:</strong> correlation-aware end-to-end ~<strong>95.5–97.8%</strong> (mid ~97%) for ≥4 minutes opaque-free; strict ≥5 minutes unobscured ~88–94% (mid ~91%). Fixed Luxor alone is only ~76–80% central end-to-end (WeatherSpark cloud prior ~92%, then dust + logistics)—not a lab measurement. Country tabs are detail after you commit to this architecture.",
   ],
   whereIntro: [
-    `This plan parks you in <strong>Istanbul</strong> until the forecasts are real, then sends you to one ≥5-minute cell: <strong>Luxor</strong> (Branch A default) or <strong>Sfax / Chaffar</strong> (Branch B). SEA→IST is ~12–13h ${turkishSeaIst} nonstop (TK-only on that route). From IST: ~11–12/day to Cairo (TK/MS/SM + SAW LCCs) then same-day ${egyptAir} <strong>CAI→LXR</strong>; ~4–7/day IST→TUN only (TK/TU/BJ—no SAW→TUN). Rome is a weaker backup hub; Athens fails late Tunis.`,
+    `This plan parks you in <strong>Istanbul</strong> until the forecasts are real, then sends you to one ≥5-minute cell: <strong>Sfax / Chaffar</strong> (comfort + cloud default) or <strong>Luxor</strong> (duration-max). SEA→IST is ~12–13h ${turkishSeaIst} nonstop (TK-only on that route). From IST: ~4–7/day IST→TUN (TK/TU/BJ—no SAW→TUN); ~11–12/day to Cairo then same-day ${egyptAir} <strong>CAI→LXR</strong>. Rome is a weaker backup hub; Athens fails late Tunis.`,
     "Optional desert SE of Luxor adds only ~1–3s and needs a MoTA desert program (≥21 days)—not required for the recommended path. Red Sea and Spain are not peer branches here.",
   ],
   durations: [
     {
-      place: "Luxor (Branch A — default)",
-      totality: "~6m 20–22s",
-      note: "Go here when both look clean",
+      place: "Sfax / Chaffar (comfort default)",
+      totality: "~5m 40–45s",
+      note: "~30°C at ~10:11; go here when both clean or Egypt dusty",
     },
     {
-      place: "Sfax / Chaffar (Branch B)",
-      totality: "~5m 40–45s",
-      note: "Go here when Egypt is dusty",
+      place: "Luxor (duration option)",
+      totality: "~6m 20–22s",
+      note: "~38°C at ~13:05; pick when you want max total",
     },
     {
       place: "Desert SE of Luxor (optional)",
@@ -241,7 +241,7 @@ const optimalPlan: RegionGuide = {
     },
   ],
   weather: [
-    `${wsLuxor} / ${wsSfax} (MERRA-2 cloud categories): on <strong>2 Aug</strong>, Luxor is clear / mostly clear / partly cloudy ~<strong>92%</strong> of the time; Sfax ~<strong>95%</strong>. That is the cloud prior we trust. Why still hold both: Saharan dust (not in WeatherSpark) can dirty Upper Egypt while Tunisia stays clean; matched Aug-2 years almost never opaque-cloud-out both countries together.`,
+    `${wsLuxor} / ${wsSfax}: clearer-sky share on <strong>2 Aug</strong> ~<strong>92%</strong> Luxor / ~<strong>95%</strong> Sfax. Eclipse-hour air temperature ~<strong>38&nbsp;°C</strong> in Luxor (~13:05; dry, climbing toward a ~40&nbsp;°C daily high) vs ~<strong>30&nbsp;°C</strong> in Sfax (~10:11; least-muggy hour of that day). Comfort favors Sfax; dust is why you still hold both.`,
     "Week-of tools WeatherSpark does not cover: from ~27 Jul, ECMWF 51-member ensemble (cloud layers + spread)—T−5 is a synoptic screen, not a site lock. By ~30 Jul, Barcelona SDS-WAS 72h dust as a <strong>regional Egypt↔Tunisia comparator</strong> (refresh T−48/T−24). Comfortable: opaque cloud P &lt;20% and AOD &lt;0.3. Marginal: AOD 0.3–0.8. Switch pressure: AOD ~0.8–1.0.",
   ],
   quote: {
@@ -251,28 +251,28 @@ const optimalPlan: RegionGuide = {
   },
   planIntro: [
     `<strong>Timeline:</strong> SEA→IST ~26 Jul (${turkishSeaIst} window ~5 Aug 2026). Stay Istanbul 27–29 Jul. By <strong>30 Jul ~noon</strong> pick Luxor or Sfax (Egypt hard limit ~31 Jul morning for same-day LXR; Tunisia has ~24h more slack). Eclipse 2 Aug; home via Istanbul 4–5 Aug.`,
-    "Concrete flights, hotels, and ground transport are listed once under <strong>What to book</strong> below. On the ground after the country call: Luxor private roof + driver, or Sfax car with Chaffar–Mahares / RN1 west haze escape.",
+    "Concrete flights, hotels, and ground transport are listed once under <strong>What to book</strong> below. On the ground after the country call: Sfax car with Chaffar–Mahares / RN1 west haze escape, or Luxor private roof + driver (shade and water for the heat).",
   ],
   decisions: [
     {
       title: "Both clean",
-      body: "<strong>Luxor.</strong> Longer totality and higher sun (WeatherSpark cloud priors are close; Sfax even edges Luxor on 2 Aug clearer skies). “Both clean” at T−72h is not a cirrus-free guarantee.",
+      body: "<strong>Sfax</strong> by default: ~30&nbsp;°C at totality, slightly better WeatherSpark cloud, still ≥5 minutes. Take <strong>Luxor</strong> only if you want ~40s more totality / higher sun and accept ~38&nbsp;°C dry heat. “Both clean” at T−72h is not a cirrus-free guarantee.",
     },
     {
       title: "Egypt dusty, Tunisia clean",
-      body: "<strong>Sfax.</strong> A car in Upper Egypt will not outrun a broad mid-atmosphere Saharan plume.",
+      body: "<strong>Sfax.</strong> A car in Upper Egypt will not outrun a broad mid-atmosphere Saharan plume—and you keep the cooler site.",
     },
     {
       title: "Tunisia messy, Egypt clean",
-      body: "<strong>Luxor.</strong>",
+      body: "<strong>Luxor</strong> (~38&nbsp;°C). Hydrate, shade cameras, private roof if you can.",
     },
     {
       title: "Both threatened",
-      body: "Pick the lower ensemble cloud risk and the lower modeled AOD. Do not treat Red Sea (~0–4 pp vs Luxor alone) or Spain (~+0.35 pp, 4m+) as a third ≥5-minute branch.",
+      body: "Pick the lower ensemble cloud risk and the lower modeled AOD; break ties toward the cooler site. Do not treat Red Sea (~0–4 pp vs Luxor alone; ~33&nbsp;°C but muggy) or Spain (~+0.35 pp, 4m+, coolest air) as a third ≥5-minute branch.",
     },
   ],
   planNote:
-    "Not in the recommended core: Cairo-first (burns Tunisia early), fixed Luxor with no Branch B, non-refundable Red Sea packages, or Spain/Morocco as primaries. Optional only—pre-held refundable Hamata-band room as a small Egypt cell; AGP if you drop the 5-minute floor.",
+    "Not in the recommended core: Cairo-first (burns Tunisia early), fixed Luxor with no Sfax hold, non-refundable Red Sea packages, or Spain/Morocco as primaries. Optional only—pre-held refundable Hamata-band room as a small Egypt cell; AGP if you drop the 5-minute floor.",
   oddsIntro:
     "Headline planning number first. Architecture aims at a ≥5-minute site; the end-to-end band is ≥4 minutes opaque-free because Sfax only has ~40s above five. Do not multiply near-99% logistics into a fake 98%.",
   odds: [
@@ -323,7 +323,7 @@ const optimalPlan: RegionGuide = {
       items: [
         `Egypt e-visa $30 each on ${visa2egypt} (≥7 days ahead; Sinai waiver ≠ Luxor). Tunisia + Turkey visa-free ≤90 days for Czech passports (passport only)`,
         "Loss cap through 29 Jul for two: Egypt anchor ~$500 + Sfax night ~$150 + deposits ~$150 + Flex cancel ~$50–200 (or ~$140 Miles&Smiles). Floor non-Flex abandon ~$440–524 per unused country ticket",
-        `Reject: ${farAndBeyond}-style 100% non-refundable Luxor packages; sold-out ${belugaWadi} deposits as hedges; CFAR as Branch A→B insurance`,
+        `Reject: ${farAndBeyond}-style 100% non-refundable Luxor packages; sold-out ${belugaWadi} deposits as hedges; CFAR as Sfax↔Luxor switch insurance`,
       ],
     },
   ],
@@ -335,7 +335,7 @@ const optimalPlan: RegionGuide = {
     "<strong>27 Jul:</strong> ECMWF ensemble (cloud layers, spread, Saharan winds). Keep both branches unless Egypt is clearly broken.",
     "<strong>29 Jul:</strong> provisional Luxor vs Sfax call. Ignore single deterministic runs.",
     "<strong>30 Jul:</strong> final call with SDS-WAS as regional dust comparator; fly the chosen branch.",
-    "<strong>1–2 Aug:</strong> EUMETSAT / local models; last tens of km inside the ≥5-minute band (Luxor paved Nile; Sfax RN1 west for haze).",
+    "<strong>1–2 Aug:</strong> EUMETSAT / local models; last tens of km inside the ≥5-minute band (Luxor along the Nile highway; Sfax RN1 west for haze).",
   ],
   protocolOutro:
     "After 30 Jul you are executing one country—not shopping continents.",
@@ -354,7 +354,7 @@ const egyptInland: RegionGuide = {
   short: "Luxor / desert · 6m+",
   takeaways: [
     "<strong>Stay in Luxor</strong> for ~6m20–22s (East Bank hotel roofs, Al Baghdādī, or West Bank fringe near Kurna). The NASA GD desert point SE (~6m23s) adds only ~1–3s and needs a <strong>MoTA-licensed desert program ≥21 days</strong>—not a DIY rental 4×4. Do not count on Karnak or Luxor Temple; the May 2026 tourism committee targets overcrowding at unnamed “main observation areas,” with no site-level rules published yet.",
-    `${wsLuxor}: on <strong>2 Aug</strong>, Luxor skies are clear / mostly clear / partly cloudy ~<strong>92%</strong> of the time. Leftover risk is thin cirrus plus Saharan dust (severe AOD roughly ~2–4% of early-August afternoons—not a WeatherSpark metric). A wide plume is why you keep the Istanbul→Tunisia exit open.`,
+    `${wsLuxor}: clearer skies ~<strong>92%</strong> on 2 Aug; at totality (~13:05) average air temp is already ~<strong>38&nbsp;°C</strong> (99°F at 12:15 → 105°F / ~41&nbsp;°C by 16:00; daily high ~40&nbsp;°C). Dry heat (~2% muggy)—still brutal for standing gear. Leftover sky risk is thin cirrus plus Saharan dust. Sfax is ~8&nbsp;°C cooler at its eclipse hour.`,
     "<strong>Keep forfeitable cash small</strong> through ~29 Jul 2027 so a Tunisia switch stays real. Binding gap: written private viewing confirmation, not the OTA rate — named hotels and rejects under <strong>What to book</strong>.",
   ],
   whereIntro: [
@@ -375,21 +375,21 @@ const egyptInland: RegionGuide = {
     {
       place: "Qena / Nile corridor",
       totality: "~6m+",
-      note: "Paved morning moves still ≥5m",
+      note: "Short highway hops still ≥5m",
     },
   ],
   weather: [
-    `${wsLuxor}: <strong>2 Aug</strong> clearer-sky share (clear / mostly clear / partly cloudy) ~<strong>92%</strong>. That is the fixed-site cloud prior. Tour “80–82% clear” language is packaging cushion, not a better climatology.`,
-    "What WeatherSpark skips: Saharan dust often loads SE Egypt harder than Luxor itself; AOD near <strong>0.8–1.0</strong> on SDS-WAS is a country-switch signal, not a Luxor pin-point. Morning paved mobility helps patchy cloud (~+4 pp in Aug-2 samples) but does not outrun a regional dust sheet. Midday heat ~42&nbsp;°C—shade cameras.",
+    `${wsLuxor}: clearer-sky share ~<strong>92%</strong>; eclipse-hour temperature ~<strong>38&nbsp;°C</strong> (~100°F) in the warm window that runs ~12:15–18:45. Tour “80–82% clear” is packaging. Shade cameras and people—heat is part of the Luxor bet.`,
+    "What WeatherSpark skips for sky: Saharan dust often loads SE Egypt harder than Luxor itself; AOD near <strong>0.8–1.0</strong> on SDS-WAS is a country-switch signal. A short morning drive on normal Nile roads helps patchy cloud (~+4 pp) but does not outrun a regional dust sheet.",
   ],
   planIntro: [
     "If Egypt is your country call from Istanbul: same-day IST→CAI→LXR (morning/midday IST arrivals only). Summer IST/SAW→LXR nonstops are basically useless. Cairo-first only after Tunisia is dropped.",
-    `On the ground: private hotel roof + licensed driver for paved Nile hops. ${belugaDesert} is the turnkey MoTA path if you want SE desert seconds. Specific vendors under <strong>What to book</strong>.`,
+    `On the ground: private hotel roof + licensed driver for short Nile-road hops (normal highways, not desert tracks). ${belugaDesert} is the turnkey MoTA path if you want SE desert seconds. Specific vendors under <strong>What to book</strong>.`,
   ],
   decisions: [
     {
-      title: "Luxor hotel + paved mobility",
-      body: "WeatherSpark ~92% clearer on 2 Aug, longest easy land total, sun near zenith. Daylight paved hops with a licensed Arabic-speaking driver; leave routing flexible. Off-road desert-max is a separate MoTA stack.",
+      title: "Luxor hotel + Nile-road driver",
+      body: "Longest easy land total, sun near zenith, WeatherSpark ~92% clearer—paid for with ~38&nbsp;°C at totality. Keep a licensed Arabic-speaking driver for short daylight hops on public roads; leave routing flexible. Eastern Desert max-duration needs a separate MoTA desert program.",
     },
     {
       title: "Desert-maximum package",
@@ -406,9 +406,9 @@ const egyptInland: RegionGuide = {
     "Fixed Luxor end-to-end (≥4 min opaque-free with hotel + vehicle) is about <strong>~69–89%</strong> (central ~76–80%), not ~98%. WeatherSpark’s ~92% clearer-sky share is the cloud prior, not the full trip rate (dust + logistics).",
   odds: [
     {
-      label: "Fixed Luxor cloud prior (WeatherSpark)",
-      odds: "~92%",
-      plan: "2 Aug clearer-sky share on WeatherSpark. Not a guarantee after dust and travel friction.",
+      label: "Fixed Luxor cloud + heat (WeatherSpark)",
+      odds: "~92% / ~38°C",
+      plan: "2 Aug clearer-sky share + ~38°C dry heat at totality. Not a guarantee after dust and travel friction.",
     },
     {
       label: "Luxor + morning mobility (cloud)",
@@ -422,7 +422,7 @@ const egyptInland: RegionGuide = {
     },
   ],
   oddsOutro:
-    "Pick the country from Istanbul by ~30 Jul (Egypt hard limit ~31 Jul morning for same-day LXR). After that, only short paved inland moves still make sense.",
+    "Pick the country from Istanbul by ~30 Jul (Egypt hard limit ~31 Jul morning for same-day LXR). After that, only short Nile-highway hops still make sense.",
   toBook: [
     {
       label: "Flights",
@@ -461,7 +461,7 @@ const egyptInland: RegionGuide = {
     "Luxor totality is early afternoon (~13:02–13:08 EEST). By then the country choice should already be settled.",
   protocol: [
     "<strong>T−120h → T−72h:</strong> ECMWF 51-member ensemble plus Barcelona SDS-WAS as a regional dust comparator. Egypt vs Tunisia call.",
-    "<strong>T−48h / T−24h:</strong> lock the inland paved target inside the ≥5-minute corridor.",
+    "<strong>T−48h / T−24h:</strong> lock the inland viewing target on normal roads inside the ≥5-minute corridor.",
     "<strong>T−6h:</strong> EUMETSAT rapid-scan; last tens of km with the driver.",
   ],
   protocolOutro:
@@ -482,7 +482,7 @@ const egyptRedSea: RegionGuide = {
   short: "Hamata / Marsa Alam · 5m30s–6m15s",
   takeaways: [
     `<strong>${belugaWadi} / Hamata</strong> (~6m13–15s) is the only well-evidenced ordinary-tourism ≥6-minute coastal land stay. <strong>Marsa Nakari / Marsa Alam / Port Ghalib</strong> (~5m28–42s) still clear five minutes. Sleep inside that band.`,
-    `${wsMarsaAlam}: on <strong>2 Aug</strong>, overcast / mostly cloudy peaks at ~<strong>18%</strong> (clearer ~82%)—a clear step behind Luxor’s ~92% on the same WeatherSpark metric. Worth it for diving + length, not as the clearer Egyptian sky.`,
+    `${wsMarsaAlam}: clearer skies ~<strong>82%</strong> on 2 Aug (vs Luxor ~92%). Eclipse-hour temp ~<strong>33&nbsp;°C</strong> (91°F near 13:15)—cooler than Luxor’s ~38&nbsp;°C but <strong>muggy</strong> (~60% muggy by mid-afternoon). Worth it for diving + length, not as the clearer or more comfortable Egyptian sky.`,
     "<strong>Skip Berenice</strong> for ordinary tourism. Duration looks great; the naval/air base (~150k feddans) does not. Marketing “Berenice Road” ≠ the military town.",
     `<strong>Sold-out rooms are a trap if you wanted a cancellable hedge.</strong> ${belugaEgypt} shows ${belugaWadi} (and often Marsa Nakari) sold out. ${rsdsWadi} wants 20% non-refundable plus the balance by 28 Feb 2027 on packages at €1,546–1,891&nbsp;pp. For a paper backup, hunt refundable Port Ghalib / Marsa Alam (or Hamata-band) rates instead.`,
     "Mostly <strong>one correlated Egyptian weather cell</strong> with Luxor (holding both adds ~0–4 pp). Tunisia is a much better dust exit than another Egyptian coastline. Late switch from Istanbul is conditional: IST→CAI→HRG + daylight drive, with a pre-held refundable room—not a walk-up T−72h scramble.",
@@ -509,8 +509,8 @@ const egyptRedSea: RegionGuide = {
     },
   ],
   weather: [
-    `${wsMarsaAlam}: on <strong>2 Aug</strong> the chance of overcast / mostly cloudy peaks at ~<strong>18%</strong> (clearer-sky share ~82%)—a step behind Luxor’s ~92% on the same WeatherSpark metric. Failure modes are sea-breeze cloud and coastal humidity, not Atlantic morning stratus.`,
-    "Dust (not in WeatherSpark): SE-Egypt plumes sometimes reach the coast when Luxor stays cleaner. Use SDS-WAS AOD with the week-of cloud fields. Heat is a bit less brutal than Luxor and still hard at noon.",
+    `${wsMarsaAlam}: clearer-sky share ~<strong>82%</strong>; eclipse-hour ~<strong>33&nbsp;°C</strong> with sticky humidity (muggy chance spikes ~60% mid-afternoon). Cooler dry-bulb than Luxor, often worse felt heat. Failure modes: sea-breeze cloud and coastal humidity, not Atlantic morning stratus.`,
+    "Dust (not in WeatherSpark): SE-Egypt plumes sometimes reach the coast when Luxor stays cleaner. Use SDS-WAS AOD with the week-of cloud fields.",
   ],
   planIntro: [
     "European charters into <strong>Marsa Alam (RMF)</strong> when they publish, or CAI→HRG + daylight transfer, only if the bed is already inside the ≥5-minute coastal band. Do not invent an eclipse-morning drive from farther north.",
@@ -538,7 +538,7 @@ const egyptRedSea: RegionGuide = {
     {
       label: "Fixed Marsa Alam cloud prior (WeatherSpark)",
       odds: "~82%",
-      plan: "2 Aug clearer-sky share (~18% overcast/mostly cloudy). Long coastal total at Hamata/Wadi Lahami; leftover risk is sea-breeze cloud and dust.",
+      plan: "2 Aug clearer-sky share (~18% overcast/mostly cloudy) + ~33°C muggy at eclipse hour. Long coastal total at Hamata/Wadi Lahami; leftover risk is sea-breeze cloud and dust.",
     },
     {
       label: "Refundable coastal hold + Luxor",
@@ -611,8 +611,8 @@ const tunisia: RegionGuide = {
   takeaways: [
     "<strong>Sfax city (~5m40s) and the Chaffar–Mahares strip (~5m45s)</strong> are the ≥5-minute Tunisian plan. Concrete views: Chaffar Beach, GP1 mid-corridor, Mahares GP1 (avoid Miskar LPG north). Shorter path towns stay off this page on purpose.",
     "<strong>From Istanbul:</strong> Flex IST→TUN ~30 Jul (IST only; no SAW→TUN), free-cancel car, A1 to Sfax. Hold two refundable Sfax rooms before you leave Turkey — vendors under <strong>What to book</strong>.",
-    `<strong>Go alone, not on a tour bus.</strong> Groups pile onto the same coastal pull-off. ${capAstro}’s “98% clear” is sales copy—${wsSfax} puts 2 Aug clearer skies at ~<strong>95%</strong>.`,
-    "What Tunisia buys you is a <strong>dust-decoupled ≥5-minute cell</strong> plus modest coast↔inland haze mobility (material benefit ~5% of mornings). On WeatherSpark cloud alone it even edges Luxor; Luxor still wins on duration and sun height.",
+    `<strong>Go alone, not on a tour bus.</strong> Groups pile onto the same coastal pull-off. ${capAstro}’s “98% clear” is sales copy—${wsSfax} puts 2 Aug clearer skies at ~<strong>95%</strong> and eclipse-hour temp at ~<strong>30&nbsp;°C</strong> (86°F at 10:00; least-muggy hour of that day).`,
+    "What Tunisia buys you: <strong>dust-decoupled ≥5-minute cell</strong>, better WeatherSpark cloud than Luxor, and ~8&nbsp;°C cooler air at totality. Luxor still wins only on duration and sun height.",
   ],
   whereIntro: [
     "Tunisia’s longest totality, about <strong>5 minutes 45 seconds</strong>, sits in the <strong>Chaffar</strong> area of Sfax governorate (INM via Arabic press, Apr 2026). Sfax city is ~5m 39–41s near 10:11 local with the sun ~56° up.",
@@ -636,8 +636,8 @@ const tunisia: RegionGuide = {
     },
   ],
   weather: [
-    `${wsSfax}: on <strong>2 Aug</strong>, clear / mostly clear / partly cloudy ~<strong>95%</strong> of the time (early August is near the clearest part of the month). That is the cloud prior.`,
-    "Residual risk WeatherSpark does not score well: sirocco, thin coastal haze, and rare dust. A few tens of km west on RN1 inside the ≥5-minute band is the cheap haze fix. Highs near 34&nbsp;°C feel almost gentle after Luxor.",
+    `${wsSfax}: clearer-sky share ~<strong>95%</strong>; at totality (~10:11) average air temp ~<strong>30&nbsp;°C</strong> (86°F at 10:00; daily high ~32&nbsp;°C / 89°F). That is the comfort default vs Luxor’s ~38&nbsp;°C afternoon. Coastal humidity is real (~55% muggy even at the least-muggy hour)—still far easier than Upper Egypt dry heat.`,
+    "Residual sky risk WeatherSpark does not score well: sirocco, thin coastal haze, and rare dust. A few tens of km west on RN1 inside the ≥5-minute band is the cheap haze fix.",
   ],
   planIntro: [
     "From Istanbul: IST→TUN (~4–7 nonstops/day now on TK/TU/BJ; 2027 counts not locked; no SAW substitute), then ~270&nbsp;km on the A1 to Sfax (~3–3.5h). Land 30–31 Jul for a scouting day. Tunisia-only: fly TUN (DJE/NBE only with slack to Sfax); skip domestic turboprops on eclipse week.",
@@ -650,7 +650,7 @@ const tunisia: RegionGuide = {
     },
     {
       title: "Escape corridor",
-      body: "West/NW on RN1 and paved routes communales inside the ≥5-minute Sfax-governorate band (Bir Ali Ben Khalifa ~61&nbsp;km). 40–80&nbsp;km in the last 2–3 hours is realistic.",
+      body: "West/NW on RN1 and local public roads inside the ≥5-minute Sfax-governorate band (Bir Ali Ben Khalifa ~61&nbsp;km). 40–80&nbsp;km in the last 2–3 hours is realistic.",
     },
     {
       title: "Tours",
@@ -660,12 +660,12 @@ const tunisia: RegionGuide = {
   planNote:
     "National coordination committee launched 16 Apr 2026; as of Aug 2026 no published Chaffar/Mahares access, closure, or parking rules. Scout day still earns its keep. Recheck through spring 2027.",
   oddsIntro:
-    `Tunisia alone is not a calibrated ~98%. ${wsSfax}’s ~95% Aug-2 clearer-sky share even edges Luxor; it earns the trip as Egypt’s dust exit plus a separate ≥5-minute cell—not because ${capAstro} said so.`,
+    `Tunisia alone is not a calibrated ~98%. ${wsSfax} edges Luxor on cloud (~95% vs ~92%) and wins hard on comfort (~30&nbsp;°C vs ~38&nbsp;°C at totality)—not because ${capAstro} said so.`,
   odds: [
     {
-      label: "Fixed Sfax cloud prior (WeatherSpark)",
-      odds: "~95%",
-      plan: "2 Aug clearer-sky share on WeatherSpark (edges Luxor’s ~92%). Hourly opaque-free near ~10:10 reads a touch higher (~97–98%) in the same MERRA-2 stack.",
+      label: "Fixed Sfax cloud + comfort (WeatherSpark)",
+      odds: "~95% / ~30°C",
+      plan: "2 Aug clearer-sky share + ~86°F at 10:00 near totality. Hourly opaque-free near ~10:10 reads a touch higher (~97–98%) in the same MERRA-2 stack.",
     },
     {
       label: "Coast↔inland mobility",
@@ -679,7 +679,7 @@ const tunisia: RegionGuide = {
     },
   ],
   oddsOutro:
-    "Take Tunisia when Egypt is under a regional dust plume, or when you want cooler mornings and open roads at 5m40s+.",
+    "Take Tunisia when Egypt is dusty, when both look clean and you want comfort, or when you want open roads at 5m40s+ without Luxor heat.",
   toBook: [
     {
       label: "Flights",
@@ -737,7 +737,7 @@ const spain: RegionGuide = {
   short: "Ceuta / inland · max 4m48s",
   takeaways: [
     "Spain’s national maximum is <strong>4m 48s at Ceuta</strong> (IGN). That fails a hard 5-minute floor and still works as a cool, Schengen-friendly total.",
-    `${wsAlgeciras} early-August clearer-sky share (~<strong>93%</strong>) looks close to Luxor on paper. Morning <strong>marine stratus</strong> is how Spain loses—WeatherSpark’s monthly average understates that failure mode. Inland / Strait-adjacent beats Atlantic beach hotels.`,
+    `${wsAlgeciras}: clearer skies look fine (~<strong>93%</strong> early Aug) and morning eclipse air is the <strong>coolest</strong> on this page (~<strong>24&nbsp;°C</strong> / ~75°F near mid-morning). Morning <strong>marine stratus</strong> is still how Spain loses the sky—and you only get 4m+. Inland / Strait-adjacent beats Atlantic beach hotels.`,
     `${astroAficion} and similar outfits run waitlisted events around Algeciras / Castellar (mid-band, 4m+).`,
     "<strong>Not a weather hedge for Luxor+Sfax.</strong> Joint desert cloud failure is essentially zero in the matched record; Spain adds only ~+0.2–0.5 pp (mid ~+0.35 pp) and often shares synoptic mess. Optional IST→AGP is a 4m+ tertiary exit only—do not fund it like the Tunisia hold.",
   ],
@@ -767,7 +767,7 @@ const spain: RegionGuide = {
     },
   ],
   weather: [
-    `${wsAlgeciras}: early August clearer-sky share starts near ~<strong>93%</strong> (overcast / mostly cloudy ~7%) and worsens through the month—close to Luxor’s ~92% on the same monthly metric. Do not read that as “as good as Luxor/Sfax”: morning marine stratus along the Strait is the failure mode WeatherSpark’s day-average understates, and totality is shorter with a lower sun.`,
+    `${wsAlgeciras}: early-August clearer-sky share ~<strong>93%</strong>; eclipse-morning temps sit near ~<strong>24&nbsp;°C</strong> (cool until ~09:30 at ~23&nbsp;°C / 73°F; ~26&nbsp;°C / 79°F by early afternoon). Comfort wins; sky risk is morning marine stratus WeatherSpark’s day-average understates, plus only 4m+ totality.`,
     "Morning timing leaves less room to wait out stratus. Keep the car pointed inland at dawn if needed.",
   ],
   planIntro: [
@@ -784,16 +784,16 @@ const spain: RegionGuide = {
     },
     {
       title: "vs Egypt / Tunisia",
-      body: "Spain loses on duration. Monthly WeatherSpark looks fine; morning stratus + lower sun still make it a weaker operational bet than Luxor/Sfax—not a desert weather spare.",
+      body: "Spain wins on comfort (~24&nbsp;°C) and loses on duration (4m+). Morning stratus still makes it a weaker sky bet than Luxor/Sfax—not a desert weather spare.",
     },
   ],
   oddsIntro:
-    "Spain is a workable 4-minute total if you stay inland. It is not a desert 5-minute play and not a meaningful third weather option.",
+    "Spain is a workable 4-minute total if you stay inland. Coolest air on the page; not a desert 5-minute play and not a meaningful third weather option.",
   odds: [
     {
-      label: "Algeciras cloud prior (WeatherSpark)",
-      odds: "~93%",
-      plan: "Early-August clearer-sky share. Operational risk is morning marine stratus (refuse the beach), not a worse monthly average than Luxor.",
+      label: "Algeciras cloud + comfort (WeatherSpark)",
+      odds: "~93% / ~24°C",
+      plan: "Cool morning air. Operational sky risk is marine stratus (refuse the beach), not heat.",
     },
     {
       label: "Incremental vs Luxor+Sfax hub",
@@ -854,9 +854,9 @@ const morocco: RegionGuide = {
   short: "Far north · ~4m25s–4m52s",
   takeaways: [
     "Totality only clips far-northern Morocco (roughly Tanger–Tétouan–Mediterranean). National max is about <strong>4m 52s</strong> around Tétouan / Fnideq. Stick to 4m+ sites.",
-    `${wsTetouan} early-August clearer-sky share (~<strong>93%</strong>) looks close to Luxor on paper—same catch as Spain: morning marine stratus, not a worse monthly average. Mediterranean-north / slight inland beats a pure Atlantic beach.`,
+    `${wsTetouan}: clearer skies ~<strong>93%</strong> early Aug; morning eclipse air ~<strong>27–28&nbsp;°C</strong> (82°F by 11:00)—cooler than Sfax, far cooler than Luxor. Same catch as Spain: morning marine stratus. Mediterranean-north / slight inland beats a pure Atlantic beach.`,
     "Cooler and simpler than Egypt; shorter than Tunisia’s 5m40s+ and Luxor’s 6m+. Many passports including Czech/EU are visa-free.",
-    "Fine as a cool 4m+ total. Do not treat the WeatherSpark monthly share as Luxor/Sfax-class eclipse-hour odds.",
+    "Fine as a cool 4m+ total. Comfort is excellent; do not treat WeatherSpark cloud share as Luxor/Sfax-class eclipse-hour odds.",
   ],
   whereIntro: [
     "The umbra clips Morocco’s far north in the morning, then runs east. Stay in that northern total band: Tétouan, Fnideq, Martil, Tangier, Larache.",
@@ -884,7 +884,7 @@ const morocco: RegionGuide = {
     },
   ],
   weather: [
-    `${wsTetouan}: early August clearer-sky share starts near ~<strong>93%</strong> (overcast / mostly cloudy ~7%), similar to Algeciras. Coastal fog/stratus can still hang near the water when the monthly average looks fine—have the car ready to move inland inside the 4m+ band.`,
+    `${wsTetouan}: clearer-sky share ~<strong>93%</strong>; eclipse-morning ~<strong>27–28&nbsp;°C</strong>. Comfort sits between Spain and Sfax. Coastal fog/stratus can still hang near the water—have the car ready to move inland inside the 4m+ band.`,
     "The sun is still low compared with Egypt’s near-zenith shot, so leftover haze hurts more.",
   ],
   planIntro: [
@@ -905,12 +905,12 @@ const morocco: RegionGuide = {
     },
   ],
   oddsIntro:
-    "A solid 4m+ total if you stay mobile in the morning. Monthly WeatherSpark is fine; duration and morning stratus still put it below Luxor/Sfax as an eclipse bet.",
+    "A solid 4m+ total if you stay mobile in the morning. Comfort is excellent (~27–28&nbsp;°C); duration and morning stratus still put it below Luxor/Sfax as an eclipse bet.",
   odds: [
     {
-      label: "Tétouan cloud prior (WeatherSpark)",
-      odds: "~93%",
-      plan: "Early-August clearer-sky share. Keep a car—do not get stuck on an Atlantic beach under stratus.",
+      label: "Tétouan cloud + comfort (WeatherSpark)",
+      odds: "~93% / ~28°C",
+      plan: "Cool morning air. Keep a car—do not get stuck on an Atlantic beach under stratus.",
     },
     {
       label: "Fixed coastal bed only",
@@ -969,9 +969,9 @@ const other: RegionGuide = {
   label: "Other options",
   short: "Jeddah 5m50s+ · Libya out",
   takeaways: [
-    `<strong>Jeddah (~5m50s+)</strong> is the main leftover ≥5-minute land option east of Egypt—legal for non-Muslims (not Mecca). ${wsJeddah} already shows a weaker cloud prior than Luxor/Sfax, and dust on the Tihamah is worse still.`,
+    `<strong>Jeddah (~5m50s+)</strong> is the main leftover ≥5-minute land option east of Egypt—legal for non-Muslims (not Mecca). ${wsJeddah}: weaker cloud (~63% clearer early Aug), ~<strong>38&nbsp;°C</strong> at afternoon totality, and often muggy—heat without Luxor’s dry-air upside.`,
     "<strong>Libya</strong> has excellent weather and long totality; extreme travel bans put it out.",
-    "For a real dust exit, use the <strong>Optimal plan</strong> (Istanbul → Luxor ↔ Sfax). Spain and Morocco are their own 4m+ tabs.",
+    "For a real dust exit + comfort default, use the <strong>Optimal plan</strong> (Istanbul → Sfax or Luxor). Spain and Morocco are their own 4m+ tabs.",
   ],
   whereIntro: [
     "East of the Red Sea, long totality reaches Saudi Arabia near Jeddah. West of Egypt, Libya is climatologically superb and off-limits.",
@@ -989,7 +989,7 @@ const other: RegionGuide = {
     },
   ],
   weather: [
-    `${wsJeddah}: early August overcast / mostly cloudy starts near ~<strong>37%</strong> (clearer-sky share ~63%)—far behind Luxor/Sfax. Cloud also jumps inland toward the Hijaz after the Red Sea crossing.`,
+    `${wsJeddah}: clearer-sky share ~<strong>63%</strong> early Aug; afternoon eclipse air ~<strong>38&nbsp;°C</strong> (97°F by 10:45, 101°F / ~38&nbsp;°C peak ~13:45) with high muggy odds. Worst comfort among ≥5-minute leftovers on this page.`,
     "Dust (not in WeatherSpark): the Tihamah carries some of the highest average AOD on the track. Libya through western Egypt is still the clearest stretch on paper. It is not a trip you can book.",
   ],
   planIntro: [
@@ -1078,34 +1078,34 @@ const regions: RegionGuide[] = [
 
 const sources: Source[] = [
   {
-    label: "WeatherSpark — Luxor August",
-    href: "https://weatherspark.com/m/97258/8/Average-Weather-in-August-in-Luxor-Egypt",
-    note: "Primary cloud prior: ~92% clearer skies on 2 Aug (MERRA-2)",
+    label: "WeatherSpark — Luxor 2 Aug",
+    href: "https://weatherspark.com/d/97258/8/2/Average-Weather-on-August-2-in-Luxor-Egypt",
+    note: "~92% clearer; ~38°C at ~13:05 eclipse hour (dry)",
   },
   {
-    label: "WeatherSpark — Sfax August",
-    href: "https://weatherspark.com/m/65622/8/Average-Weather-in-August-in-Sfax-Tunisia",
-    note: "Primary cloud prior: ~95% clearer skies on 2 Aug (MERRA-2)",
+    label: "WeatherSpark — Sfax 2 Aug",
+    href: "https://weatherspark.com/d/65622/8/2/Average-Weather-on-August-2-in-Sfax-Tunisia",
+    note: "~95% clearer; ~30°C at ~10:11 eclipse hour",
   },
   {
-    label: "WeatherSpark — Marsa Alam August",
-    href: "https://weatherspark.com/m/98148/8/Average-Weather-in-August-in-Marsa-Alam-Egypt",
-    note: "Red Sea cloud prior: ~18% overcast/mostly cloudy on 2 Aug",
+    label: "WeatherSpark — Marsa Alam 2 Aug",
+    href: "https://weatherspark.com/d/98148/8/2/Average-Weather-on-August-2-in-Marsa-Alam-Egypt",
+    note: "~82% clearer; ~33°C muggy at afternoon eclipse hour",
   },
   {
-    label: "WeatherSpark — Algeciras August",
-    href: "https://weatherspark.com/m/34142/8/Average-Weather-in-August-in-Algeciras-Spain",
-    note: "Spain mid-band cloud prior (~93% clearer early August)",
+    label: "WeatherSpark — Algeciras 2 Aug",
+    href: "https://weatherspark.com/d/34142/8/2/Average-Weather-on-August-2-in-Algeciras-Spain",
+    note: "~93% clearer early Aug; ~24°C morning eclipse air",
   },
   {
-    label: "WeatherSpark — Tétouan August",
-    href: "https://weatherspark.com/m/34068/8/Average-Weather-in-August-in-T%C3%A9touan-Morocco",
-    note: "Morocco north cloud prior (~93% clearer early August)",
+    label: "WeatherSpark — Tétouan 2 Aug",
+    href: "https://weatherspark.com/d/34068/8/2/Average-Weather-on-August-2-in-T%C3%A9touan-Morocco",
+    note: "~93% clearer early Aug; ~28°C morning eclipse air",
   },
   {
-    label: "WeatherSpark — Jeddah August",
-    href: "https://weatherspark.com/m/101171/8/Average-Weather-in-August-in-Jeddah-Saudi-Arabia",
-    note: "Weaker cloud prior (~37% overcast/mostly cloudy early August)",
+    label: "WeatherSpark — Jeddah 2 Aug",
+    href: "https://weatherspark.com/d/101171/8/2/Average-Weather-on-August-2-in-Jeddah-Saudi-Arabia",
+    note: "~63% clearer; ~38°C muggy afternoon",
   },
   {
     label: "NASA — SE2027Aug02 Google map",
@@ -1344,18 +1344,17 @@ const sources: Source[] = [
             <strong>≥4 minutes</strong> (both top out under five).
           </p>
           <p>
-            Cloud priors come from <strong>WeatherSpark</strong> first (2 Aug
-            clearer-sky share: Luxor ~92%, Sfax ~95%, Marsa Alam ~82%).
-            <strong>Luxor</strong> still leads on duration and sun height; the
-            Red Sea is close on length but a step behind on that cloud metric.
-            <strong>Sfax</strong> is the <strong>dust hedge</strong> (AOD /
-            sandstorm odds WeatherSpark does not cover), not a third-rate sky.
-            Inland Spain / northern Morocco (4m+) show ~93% early-August
-            clearer skies on WeatherSpark but lose on morning marine stratus and
-            duration. Jeddah is weaker on cloud (~63%) plus dust. Libya’s skies
-            are excellent and off the table. The recommended approach is the
-            <strong>Optimal plan</strong> tab: Istanbul → Luxor or Sfax, ~97%
-            planning for ≥4 minutes opaque-free. Other tabs are country detail.
+            Cloud and comfort priors come from <strong>WeatherSpark Aug 2</strong>
+            day pages first (clearer-sky share / eclipse-hour air): Sfax ~95% /
+            ~30&nbsp;°C, Luxor ~92% / ~38&nbsp;°C, Marsa Alam ~82% / ~33&nbsp;°C
+            muggy, Algeciras ~93% / ~24&nbsp;°C, Tétouan ~93% / ~28&nbsp;°C,
+            Jeddah ~63% / ~38&nbsp;°C muggy. <strong>Sfax</strong> is the comfort
+            + dust-hedge default; <strong>Luxor</strong> wins duration and sun
+            height if you accept the heat. Spain/Morocco are coolest but 4m+ with
+            morning stratus. Libya’s skies are excellent and off the table. The
+            recommended approach is the <strong>Optimal plan</strong> tab:
+            Istanbul → Sfax or Luxor, ~97% planning for ≥4 minutes opaque-free.
+            Other tabs are country detail.
           </p>
         </section>
 
