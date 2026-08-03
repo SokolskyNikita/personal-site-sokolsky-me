@@ -26,6 +26,14 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 const pageTitle = "Travel";
 const pageDescription = "Travel pages by region and site count.";
 
+const guides = [
+  {
+    title: "Clear skies for the 2027 eclipse",
+    href: "/travel/eclipse-2027/",
+    note: "Aug 2, 2027 · Egypt / Tunisia / other",
+  },
+] as const;
+
 const formatRegionName = (slug: string) =>
   slug
     .replace(/^best-of-/, "")
@@ -128,16 +136,34 @@ const structuredData = {
   <body>
     <main class="page">
       <h1>Travel</h1>
-      <ul class="region-list">
-        {regions.map((region) => (
-          <li>
-            <a href={region.href}>
-              <span>{region.region}</span>
-              <span>{region.spotCount.toLocaleString("en-US")} sites</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+
+      <section class="guides" aria-labelledby="guides-heading">
+        <h2 id="guides-heading">Guides</h2>
+        <ul class="region-list">
+          {guides.map((guide) => (
+            <li>
+              <a href={guide.href}>
+                <span>{guide.title}</span>
+                <span>{guide.note}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="regions-heading">
+        <h2 id="regions-heading">Regions</h2>
+        <ul class="region-list">
+          {regions.map((region) => (
+            <li>
+              <a href={region.href}>
+                <span>{region.region}</span>
+                <span>{region.spotCount.toLocaleString("en-US")} sites</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   </body>
 </html>
@@ -196,6 +222,19 @@ const structuredData = {
     font-size: clamp(2.4rem, 8vw, 4.5rem);
     letter-spacing: -0.05em;
     line-height: 1;
+  }
+
+  h2 {
+    margin: 0 0 10px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .guides {
+    margin-bottom: 28px;
   }
 
   .region-list {

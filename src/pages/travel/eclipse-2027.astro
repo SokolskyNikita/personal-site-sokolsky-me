@@ -1,0 +1,1441 @@
+---
+export const prerender = true;
+
+const pageTitle = "Clear skies for the 2027 total solar eclipse";
+const pageDescription =
+  "How to maximize odds of seeing the August 2, 2027 total solar eclipse under clear skies — Egypt’s Red Sea coast, independent Tunisia around Sfax, or inland Spain and other path hedges.";
+const themeColorLight = "#fbf8f2";
+const themeColorDark = "#16120e";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  datePublished: "2026-08-03",
+  dateModified: "2026-08-03",
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: [
+    { "@type": "Thing", name: "Total solar eclipse of August 2, 2027" },
+    { "@type": "Place", name: "Wadi Lahami" },
+    { "@type": "Place", name: "Sfax" },
+    { "@type": "Place", name: "Luxor" },
+  ],
+  inLanguage: "en",
+};
+
+type DurationRow = {
+  place: string;
+  totality: string;
+  note: string;
+};
+
+type OddsTier = {
+  label: string;
+  odds: string;
+  plan: string;
+};
+
+type DecisionCard = {
+  title: string;
+  body: string;
+};
+
+type Source = {
+  label: string;
+  href: string;
+  note: string;
+};
+
+type RegionId = "egypt" | "tunisia" | "other";
+
+type RegionGuide = {
+  id: RegionId;
+  label: string;
+  short: string;
+  takeaways: string[];
+  whereIntro: string[];
+  durations: DurationRow[];
+  weather: string[];
+  quote?: { text: string; cite: string; href: string };
+  planIntro: string[];
+  decisions: DecisionCard[];
+  planNote?: string;
+  oddsIntro: string;
+  odds: OddsTier[];
+  oddsOutro: string;
+  booking: string[];
+  bookingNote?: string;
+  protocolIntro: string;
+  protocol: string[];
+  protocolOutro: string;
+  pitfalls: string[];
+};
+
+const egypt: RegionGuide = {
+  id: "egypt",
+  label: "Egypt options",
+  short: "Longest totality, near-zero cloud, harder mobility",
+  takeaways: [
+    "<strong>Base at Hamata / Wadi Lahami</strong> on the southern Red Sea — ~6m 13–15s of totality, near-zero August cloud, land resorts you wake up in.",
+    "<strong>Do not chase Berenice</strong> for an extra ~6 seconds past a military checkpoint that historically needs an advance permit.",
+    "<strong>Dust, not cloud, is the residual threat.</strong> Hold a refundable Luxor bed; true ~98% needs a second country on the path.",
+    "<strong>Book refundable rooms now</strong> in three clusters: deep south, Marsa Alam, Luxor. Pay deposits by credit card.",
+  ],
+  whereIntro: [
+    "Greatest eclipse is in Egypt — about <strong>6 minutes 23 seconds</strong> near Luxor / the eastern desert, the longest land totality until 2114. For a land traveler who wants long darkness without Luxor’s crowd machine, the southern Red Sea is the sweet spot: Marsa Nakari and points south clear five minutes; Hamata / Wadi Lahami clears six.",
+  ],
+  durations: [
+    {
+      place: "Greatest eclipse",
+      totality: "6m 23s",
+      note: "Near Luxor / eastern desert",
+    },
+    {
+      place: "Luxor",
+      totality: "~6m 20–22s",
+      note: "Crowds, heat, supply stress",
+    },
+    {
+      place: "Berenice coast",
+      totality: "~6m 20s",
+      note: "Permit / checkpoint risk",
+    },
+    {
+      place: "Hamata / Wadi Lahami",
+      totality: "~6m 13–15s",
+      note: "Best land base for most travelers",
+    },
+    {
+      place: "Marsa Alam town",
+      totality: "~5m 28–30s",
+      note: "Big hotel supply, shorter totality",
+    },
+    {
+      place: "Port Ghalib",
+      totality: "~4m 33s",
+      note: "Convenient, well short of the long track",
+    },
+  ],
+  weather: [
+    "Jay Anderson’s August climatology for eastern Libya and western Egypt is unusually clean — parts of the track show near-zero cloud frequency; Luxor sits around <strong>0.7%</strong>. He has described it as the first time his cloud graphs reach zero.",
+    "The leftover risk is airborne <strong>dust and haze</strong>, not marine stratus. Dust events are often short-lived and usually visible in model guidance a few days out — enough to move if you planned for mobility.",
+    "Heat is a parallel hazard. Luxor’s early-August highs average around 42&nbsp;°C; the deep-south coast is in the same ballpark. Shade cameras on tripods — they can overheat in full sun.",
+  ],
+  quote: {
+    text: "In Egypt and Libya, dust and haze are more significant concerns than clouds.",
+    cite: "Jay Anderson, via Sky & Telescope",
+    href: "https://skyandtelescope.org/astronomy-news/plan-for-the-2027-eclipse-of-the-century-one-year-from-now/",
+  },
+  planIntro: [
+    "Fly into <strong>Marsa Alam (RMF)</strong> — the practical charter and tourist gateway. Do not plan around Berenice airport; it is dual-use and not a useful scheduled civil hub.",
+    "Sleep at the <strong>Hamata / Wadi Lahami</strong> cluster so eclipse morning starts inside 6m+ totality. Driving ~110&nbsp;km south from Marsa Alam town that morning adds breakdown, traffic, and heat risk for no gain. The coastal tourist corridor north of the Wadi Lahami checkpoint is generally free-moving; south of it is not.",
+  ],
+  decisions: [
+    {
+      title: "Primary",
+      body: "Wadi Lahmy Azur, Red Sea Diving Safari Wadi Lahami, or nearby Hamata resorts. Long totality, near-zero cloud, land beds, house-reef diving if you want it.",
+    },
+    {
+      title: "Skip as primary",
+      body: "<strong>Luxor</strong> wins ~1 second of totality and loses on crowds, heat, sold-out inventory, and a ministry committee tasked with crowd control. Use it as a dust hedge, not home base.",
+    },
+    {
+      title: "Skip unless pre-arranged",
+      body: "<strong>Berenice / Ras Banas</strong> for the extra handful of seconds. Historical trip reports describe a hard checkpoint south of Wadi Lahami. Re-verify 2027 access; do not treat it as a same-morning option.",
+    },
+    {
+      title: "Hotel caveat",
+      body: "Sofitel Winter Palace is closed for Mandarin Oriental restoration (July 2027 reopen target). Treat it as uncertain for eclipse week; hold other Nile-view rooms refundable.",
+    },
+  ],
+  oddsIntro:
+    "Getting ≥5 minutes of totality is easy once you are on the Marsa Nakari–Berenice coast or in Luxor. Clear, transparent sky is the hard term. These are planning estimates — dust is the largest remaining uncertainty.",
+  odds: [
+    {
+      label: "Fixed south-coast bed",
+      odds: "~90–93%",
+      plan: "Sleep at Hamata / Wadi Lahami. Wake up already in 6m+ totality. Do not drive south on eclipse morning.",
+    },
+    {
+      label: "Egypt + mobility",
+      odds: "~96–97%",
+      plan: "Add a refundable Marsa Alam room, a refundable Luxor room, and a 4×4 driver with Eastern Desert permits. Reposition only if dust threatens.",
+    },
+    {
+      label: "Two-segment hedge",
+      odds: "~98%+",
+      plan: "Keep a parallel booking in Tunisia (Sfax) or inland southern Spain, with flexibility to switch by about T−4 days. Roughly doubles airfare and logistics.",
+    },
+  ],
+  oddsOutro:
+    "A single fixed Egyptian site does not get you to ~98%. That needs an independent second segment on the path. For most people, Egypt Red Sea + coastal mobility + a Luxor refundable is the value peak.",
+  booking: [
+    "<strong>Now.</strong> Hold fully refundable beds in three clusters: two deep-south options, one Marsa Alam / Port Ghalib anchor, one Luxor Nile-view room. Pay deposits by credit card — never wire Egyptian ground operators.",
+    "<strong>Within ~14 days of first deposit.</strong> Buy travel insurance with supplier-default / insolvency cover, medevac, and CFAR if you want cancellation flexibility.",
+    "<strong>Aug–Oct 2026.</strong> Book long-haul and, when published, RMF charters or EgyptAir via Cairo. Keep a Cairo-hub domestic fallback.",
+    "<strong>Late 2026.</strong> Contract a private driver / 4×4 with Eastern Desert permits if you want inland reposition options.",
+    "<strong>Q1 2027.</strong> Lock Wadi Lahami as primary; release redundant refundable rooms by their free-cancellation deadlines. Keep Luxor until the coastal ~5-day dust outlook is clean.",
+  ],
+  bookingNote:
+    "German package operators with statutory insolvency insurance are safer than weakly bonded land-only packages, which are safer than unbacked local ground operators. Your backstop is credit-card chargeback plus your own insurance.",
+  protocolIntro:
+    "From about <strong>T−4 days</strong>, watch synoptic cloud and dust daily:",
+  protocol: [
+    "<strong>Cloud:</strong> ECMWF / ICON / GFS via Windy or Meteoblue — useful ~3–5 days out.",
+    "<strong>Dust:</strong> ECMWF-CAMS and ICON-ART dust fields (Windy’s dust layer) — useful ~2–4 days out.",
+    "<strong>Nowcast:</strong> EUMETSAT rapid-scan, Sat24, Egyptian Met Authority for the last 12–36 hours.",
+  ],
+  protocolOutro:
+    "If the coast looks dusty, reposition along the tourist coast first. Use a permitted 4×4 for inland desert sites only if pre-arranged. Do not count on a same-morning coast↔Luxor dash.",
+  pitfalls: [
+    "Hotel cancels or reprices — hold ≥2 refundable deep-south rooms.",
+    "Operator insolvency — statutory cover where available; otherwise card + insurance.",
+    "Charter never publishes — EgyptAir via Cairo is the fallback.",
+    "Eclipse-day road controls in Luxor — expect friction at iconic sites.",
+    "Drones — banned for tourists in Egypt; leave them home.",
+    "Checkpoint rules south of Wadi Lahami — older trip reports are clear; confirm close to travel.",
+  ],
+};
+
+const tunisia: RegionGuide = {
+  id: "tunisia",
+  label: "Tunisia options",
+  short: "Cooler, open roads, shorter totality — go independent",
+  takeaways: [
+    "<strong>Base in Sfax city, drive south on eclipse morning</strong> to the Chaffar–Mahares strip near the centerline (~5m 40–45s).",
+    "<strong>Go independent.</strong> Tours converge on the same café/beach site and destroy your ability to dodge cloud or dust. A free-cancellation rental car is the plan.",
+    "<strong>Fixed-site odds are excellent, not Egypt-tier.</strong> Anderson ranks Sfax and south Tunisia as the clearest stretch on the western track; mobility is what pushes you toward ~95%.",
+    "<strong>Hold 2–3 parallel Sfax-area rooms</strong> on free cancellation, lock a car now, and ticket flights the moment Aug 2027 schedules load (Aug–Sep 2026).",
+  ],
+  whereIntro: [
+    "In Tunisia the centerline crosses land southwest of Sfax. Tunisia’s Institut National de la Météorologie (INM), relayed widely in Arabic media in April 2026, puts the country’s longest totality — about <strong>5 minutes 45 seconds</strong> — in the <strong>Chaffar</strong> area of Sfax governorate. Sfax city itself is ~5m 39–41s with the sun ~56° up around 10:11 local.",
+    "Practical geography: sleep in Sfax (best hotels, A1/GP1 access), drive ~30–40&nbsp;km south for the view. Inland escapes stay inside Sfax governorate; do not treat remote interior towns as casual backup bases.",
+  ],
+  durations: [
+    {
+      place: "Chaffar area (Sfax gov.)",
+      totality: "~5m 45s",
+      note: "INM’s Tunisian maximum",
+    },
+    {
+      place: "Sfax city",
+      totality: "~5m 39–41s",
+      note: "Best hotel base; drive south",
+    },
+    {
+      place: "El Jem",
+      totality: "~4m 21–23s",
+      note: "On path, shorter; amphitheatre crowds likely",
+    },
+    {
+      place: "Gabès area",
+      totality: "~4m+",
+      note: "South of centerline; shorter",
+    },
+    {
+      place: "Kairouan city",
+      totality: "~2m 45s",
+      note: "Edge of path — skip for duration",
+    },
+    {
+      place: "Djerba",
+      totality: "~4m+",
+      note: "Comfort fallback + airport, not max duration",
+    },
+  ],
+  weather: [
+    "Anderson rates Tunisia as among the safest western-track options once you leave the Atlantic marine-stratus zone: Sfax and the region to its south carry the <strong>lowest average cloud</strong> on that western stretch. Residual risk is still <strong>dust / sirocco</strong> more than solid overcast — usually forecastable 3–5 days out.",
+    "The Gulf of Gabès is a warm, semi-enclosed sea, so classic Atlantic morning stratus is not the main worry; a thin coastal haze or sea-breeze cloud is still possible. Moving a few tens of kilometers inland on eclipse morning is the cheap hedge.",
+    "Heat is kinder than Egypt: early-August Sfax highs around ~34&nbsp;°C, mornings ~23&nbsp;°C — hot, but roughly 8–10&nbsp;°C cooler than Luxor.",
+  ],
+  quote: {
+    text: "Once you get into Tunisia, I think it's very much safe from cloud cover… Sfax would be a nice base.",
+    cite: "Jay Anderson",
+    href: "https://eclipsophile.com/tse2027/",
+  },
+  planIntro: [
+    "Fly into <strong>Tunis (TUN)</strong>, or into <strong>Djerba (DJE) / Enfidha (NBE)</strong> on European summer charters if the routing wins, then <strong>drive</strong>. Tunis–Sfax is ~270&nbsp;km on the A1 (~3–3.5h). Thin Tunisair Express turboprops to Sfax/Gafsa/Gabès are a trap for a fixed-date event — one cancellation can cost the eclipse.",
+    "US citizens need no visa for stays up to 90 days. Get an International Driving Permit anyway — some agencies ask even when the letter of the law does not. Bring euros/USD cash: the dinar is a closed currency. Leave drones home (multi-ministry authorization; confiscation risk).",
+  ],
+  decisions: [
+    {
+      title: "Primary",
+      body: "Sfax city hotel + rental car. Primary view: Chaffar–Mahares coastal strip near centerline. Operators and French tours also converge there — arrive early or keep an alternate pull-off.",
+    },
+    {
+      title: "Escape corridor",
+      body: "GP1 coast (Sfax↔Mahares↔Skhira) and inland C-roads still inside <strong>Sfax governorate</strong>. You can realistically reposition 40–80&nbsp;km in the final 2–3 hours.",
+    },
+    {
+      title: "Do not use as bases",
+      body: "US Level 4 includes the <strong>Orbata Mountains in Gafsa</strong> and other interior mountain/border strips. Some other governments warn on parts of the interior including Sidi Bouzid. Stick to normal tourist roads around Sfax.",
+    },
+    {
+      title: "Tours",
+      body: "Useful if you want logistics done for you — not if you want max clear-sky odds. TravelQuest has been waitlist-only; several mid-tier Tunisia packages were already filling in 2026. There is essentially no day-only land ticket for Chaffar.",
+    },
+  ],
+  planNote:
+    "A higher-education ministry coordination committee for the eclipse met at the Cité des Sciences in April 2026 (widely reported in Arabic). National planning is real; a specific managed Chaffar car-park was not solidly confirmed in Arabic press — treat local site management as evolving.",
+  oddsIntro:
+    "Tunisia alone does not realistically hit ~98% from a fixed bed. It wins on mobility and comfort relative to Egypt.",
+  odds: [
+    {
+      label: "Fixed Sfax / Chaffar bed",
+      odds: "Excellent, not Egypt-tier",
+      plan: "Wake in Sfax, drive to a pre-scouted Chaffar–Mahares pull-off. Strong climatology; still room for haze or a dust day.",
+    },
+    {
+      label: "Independent + mobility",
+      odds: "~95%",
+      plan: "Rental car, live forecasts, coastal↔inland reposition inside Sfax governorate. This is the Tunisia plan that actually uses the country’s advantages.",
+    },
+    {
+      label: "Tunisia + Egypt hedge",
+      odds: "Toward ~98%",
+      plan: "Keep refundable Sfax rooms + car as primary, plus one refundable or one-deposit Egypt option. Decide by about T−90. Hedge cost can stay well under $1,000 if you are disciplined.",
+    },
+  ],
+  oddsOutro:
+    "Choose Tunisia if you value open roads, cooler mornings, and a flexible independent trip. Choose Egypt if raw duration and near-zero cloud are non-negotiable.",
+  booking: [
+    "<strong>Now.</strong> Reserve a free-cancellation rental car at TUN (and/or DJE). Hold 2–3 parallel Sfax-area rooms on free cancellation for ~31 Jul–3 Aug 2027 (e.g. Les Oliviers Palace + another city hotel + optional Djerba fallback).",
+    "<strong>Now.</strong> Get IDPs; renew passports if validity is thin past Aug 2027.",
+    "<strong>Aug–Sep 2026.</strong> Airline schedules for early Aug 2027 load on the usual ~330–360 day window. Book TUN or DJE the moment fares/awards appear — refundable or 24-hour-cancellable first.",
+    "<strong>~6 months out.</strong> Narrow to one primary Sfax hotel; consider prepaying one night with written confirmation against eclipse-driven rebooking. Keep one free-cancellation backup.",
+    "<strong>T−90.</strong> Make the Tunisia-vs-Egypt call. Release the unused hedge before its non-refundable deadline. Confirm car, hotel, and SIM plan (Ooredoo / Orange / Tunisie Telecom on arrival).",
+  ],
+  bookingNote:
+    "Arrive at least two full days early. Scout Chaffar/Mahares pull-offs and an inland C-road escape while you still have slack.",
+  protocolIntro:
+    "Totality around <strong>10:11 local</strong>; partial begins ~08:56. Be set up by ~09:30. Stop driving by ~09:15.",
+  protocol: [
+    "<strong>T−72h / 48h:</strong> ECMWF, ICON, and Météo-France AROME (covers Tunisia) plus INM bulletins. Identify cloud/dust trend.",
+    "<strong>T−24h:</strong> Firm coast vs inland. Any sirocco/dust signal → shift inland inside Sfax governorate or north/south along GP1.",
+    "<strong>T−6h (dawn):</strong> EUMETSAT / Meteosat rapid-scan, Sat24, Windy. Coastal haze over the Gulf of Gabès → drive inland.",
+    "<strong>T−2h:</strong> Final position. Find a pull-off, avoid the densest tour cluster, set up.",
+  ],
+  protocolOutro:
+    "Your cloud-dodging plan depends on a working phone — get a local SIM or eSIM on arrival and pre-download offline maps/forecasts.",
+  pitfalls: [
+    "Thin Sfax hotel inventory — operators already hold blocks (Radisson / Ibis appear on English tour sheets). Parallel free-cancellation holds matter.",
+    "Domestic flights to Sfax on eclipse week — drive instead.",
+    "Closed dinar — arrive with hard currency to exchange; ATMs thin outside cities.",
+    "Drones — effectively banned for tourists without advance authorization.",
+    "Tour deposits can be large and non-refundable early — prefer independent if you want mobility.",
+    "Interior Level-4 / warned zones — do not improvise inland escapes toward Orbata or poorly signed interior roads.",
+  ],
+};
+
+const other: RegionGuide = {
+  id: "other",
+  label: "Other options",
+  short: "Spain inland, Morocco caveats, Libya out, true hedges",
+  takeaways: [
+    "<strong>Inland southern Spain</strong> beats the Atlantic/Alboran coast — morning marine stratus is the Spanish failure mode.",
+    "<strong>Morocco’s coast</strong> has the same morning-cloud problem; inland burn-off is the bet, with a morning eclipse and less time to wait.",
+    "<strong>Libya is out</strong> for ordinary travelers despite the best climatology on the track (do-not-travel).",
+    "<strong>A second country is how you buy ~98%.</strong> Egypt + Tunisia or Egypt + inland Spain — not a third hotel in the same weather cell.",
+  ],
+  whereIntro: [
+    "The umbra makes landfall in southern Spain and Morocco in the morning, then runs across Tunisia, Libya, and Egypt. West of Tunisia you trade duration and climatology for cooler weather and easier European logistics. East of Egypt you are into the Arabian track with rising cloud and dust.",
+  ],
+  durations: [
+    {
+      place: "Inland Andalucía / Cádiz hinterland",
+      totality: "Shorter morning",
+      note: "Best western hedge if you stay inland",
+    },
+    {
+      place: "Spanish / Moroccan Atlantic coast",
+      totality: "Morning",
+      note: "Marine stratus / fog risk — avoid as primary",
+    },
+    {
+      place: "Tangier area",
+      totality: "Morning",
+      note: "Coastal cloud burn-off is the gamble",
+    },
+    {
+      place: "Libya track",
+      totality: "Long, clear",
+      note: "Climatology excellent; travel advisory forbids it",
+    },
+    {
+      place: "Sfax / Chaffar (Tunisia)",
+      totality: "~5m 40–45s",
+      note: "Best independent western-track land base",
+    },
+    {
+      place: "Egypt Red Sea / Luxor",
+      totality: "~5m 30s–6m 23s",
+      note: "Peak duration + peak clear-sky odds",
+    },
+  ],
+  weather: [
+    "Anderson’s western-track maps show inland Spain often under <strong>~15% average cloud</strong>, while Cádiz-area sun-visible days are high and Gibraltar’s coast is worse (~74%). The failure mode is low morning stratus off the Atlantic — go inland, not to the beach.",
+    "Morocco shares that coastal stratus story around Tangier; the question on eclipse morning is how fast it burns off before a relatively early totality.",
+    "Libya through western Egypt is the climatological jackpot (near-zero cloud in Anderson’s charts) and is not a recreational itinerary under current US and German travel warnings.",
+  ],
+  planIntro: [
+    "Treat Spain and Morocco as <strong>hedges or cool-weather primaries</strong>, not as upgrades on Egypt’s clear-sky odds. If Spain is your only plan, book refundable inland lodging within easy dawn driving of several centerline pull-offs, and keep a coastal booking only if you are willing to abandon it for inland air.",
+  ],
+  decisions: [
+    {
+      title: "Best non-Egypt / non-Tunisia pick",
+      body: "<strong>Inland southern Spain</strong> — cooler, EU logistics, morning eclipse. Accept shorter totality and actively dodge marine cloud.",
+    },
+    {
+      title: "Morocco",
+      body: "Viable with an inland bias and a very early setup. Coastal Tangier/Atlantic nights are the wrong bet if clear skies are the goal.",
+    },
+    {
+      title: "Libya",
+      body: "Ruled out. Excellent weather on paper is irrelevant under Level-4 / do-not-travel advisories.",
+    },
+    {
+      title: "True ~98% plan",
+      body: "Two widely separated path segments that fail independently — typically <strong>Egypt + Tunisia</strong> or <strong>Egypt + inland Spain</strong> — with a decision gate around T−4 to T−90 depending on how you booked.",
+    },
+  ],
+  oddsIntro:
+    "Other options are about tradeoffs, not a secret clearer sky than Egypt.",
+  odds: [
+    {
+      label: "Inland Spain only",
+      odds: "Good if inland",
+      plan: "Strong if you refuse the coast. Still higher cloud risk than Tunisia’s Sfax stretch or Egypt’s Red Sea.",
+    },
+    {
+      label: "Morocco coastal primary",
+      odds: "Weaker",
+      plan: "Morning stratus can erase the event. Only sensible with a rehearsed inland move before totality.",
+    },
+    {
+      label: "Two-country hedge",
+      odds: "~98%+",
+      plan: "Egypt (duration + climatology) plus Tunisia or inland Spain (independent weather cell). This is what “maximize odds” actually means at the top end.",
+    },
+  ],
+  oddsOutro:
+    "If you will only book one country, Egypt still wins on raw clear-sky probability and duration; Tunisia wins on independent mobility and heat; inland Spain wins on EU ease and cooler mornings.",
+  booking: [
+    "<strong>Spain:</strong> refundable inland lodging near the path, rental car, and a second inland option on a different road. Do not lock a beach hotel as your only bed.",
+    "<strong>Morocco:</strong> same logic — inland flexibility over coastal resort convenience.",
+    "<strong>Hedge:</strong> keep forfeitable exposure small (refundable rooms, one modest tour deposit). Decide which country to drop before non-refundable deadlines, not on eclipse morning.",
+    "<strong>Flights:</strong> European hubs make Spain/Morocco easy; Tunisia is one connection from most long-haul cities; Egypt Red Sea often wants an RMF charter or Cairo domestic.",
+  ],
+  protocolIntro: "Morning eclipses leave less time to wait out stratus.",
+  protocol: [
+    "<strong>Spain / Morocco:</strong> watch coastal vs inland stratus from T−48h; be ready to drive inland at dawn.",
+    "<strong>Shared tools:</strong> ECMWF/ICON via Windy, EUMETSAT rapid-scan, local met offices.",
+    "<strong>Dust:</strong> Saharan dust palls can affect Spain and Tunisia too — check CAMS/aerosol layers, not only cloud.",
+  ],
+  protocolOutro:
+    "If your “other” option is really a hedge on Egypt or Tunisia, rehearse the decision date when deposits go hard — not the morning of 2 August.",
+  pitfalls: [
+    "Booking the Spanish or Moroccan coast because the hotels are nicer — that is how marine stratus wins.",
+    "Assuming Libya’s weather is somehow accessible — it is not for ordinary itineraries.",
+    "Calling a second hotel in the same city a “hedge” — weather cells are larger than that.",
+    "Underestimating morning timing in Spain/Morocco — less sun altitude and less time to reposition than Egypt’s midday eclipse.",
+  ],
+};
+
+const regions: RegionGuide[] = [egypt, tunisia, other];
+
+const sources: Source[] = [
+  {
+    label: "Eclipsophile — TSE 2027",
+    href: "https://eclipsophile.com/tse2027/",
+    note: "Jay Anderson cloud, dust, and track climatology",
+  },
+  {
+    label: "EclipseWise / Espenak",
+    href: "https://eclipsewise.com/solar/SEprime/2001-2100/SE2027Aug02Tprime.html",
+    note: "Greatest eclipse 6m 23s",
+  },
+  {
+    label: "Sky & Telescope",
+    href: "https://skyandtelescope.org/astronomy-news/plan-for-the-2027-eclipse-of-the-century-one-year-from-now/",
+    note: "Path overview; dust as residual risk",
+  },
+  {
+    label: "Space.com guide",
+    href: "https://www.space.com/total-solar-eclipse-2027-complete-guide-where-when-how-to-see-it",
+    note: "Duration figures; Anderson quotes",
+  },
+  {
+    label: "Jawhara FM (AR) — INM",
+    href: "https://www.jawharafm.net/ar/article/%D9%85%D8%B9%D9%87%D8%AF-%D8%A7%D9%84%D8%B1%D8%B5%D8%AF-%D8%A7%D9%84%D8%AC%D9%88%D9%8A-%D8%AA%D9%88%D9%86%D8%B3-%D8%B9%D9%84%D9%89-%D9%85%D9%88%D8%B9%D8%AF-%D9%85%D8%B9-%D8%B8%D8%A7%D9%87%D8%B1%D8%A9-%D9%81%D9%84%D9%83%D9%8A%D8%A9-%D9%84%D9%85-%D8%AA%D8%B4%D9%87%D8%AF%D9%87%D8%A7-%D9%85%D9%86%D8%B0-%D8%B3%D9%86%D8%A9-1905/105/291232",
+    note: "INM: ~5m 45s at Chaffar, Sfax",
+  },
+  {
+    label: "La Presse de Tunisie (FR)",
+    href: "https://www.lapresse.tn/2026/04/08/eclipse-solaire-historique-en-tunisie-en-2027-un-spectacle-rare-apres-122-ans-et-un-potentiel-de-milliers-de-visiteurs/",
+    note: "Tunisian press on Chaffar duration and visitor potential",
+  },
+  {
+    label: "timeanddate — Luxor",
+    href: "https://www.timeanddate.com/eclipse/in/egypt/luxor?iso=20270802",
+    note: "Local totality near 6m 22s",
+  },
+  {
+    label: "TheSkyLive — Sfax",
+    href: "https://theskylive.com/solar-eclipse?id=2027-08-02&geoid=2467454",
+    note: "Sfax ~5m 41s",
+  },
+  {
+    label: "US State Dept — Tunisia",
+    href: "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/tunisia-travel-advisory.html",
+    note: "Level 2; Level-4 mountain/border strips incl. Orbata",
+  },
+  {
+    label: "France Diplomatie — Tunisie",
+    href: "https://www.diplomatie.gouv.fr/fr/information-par-pays/tunisie/conseils-aux-voyageurs-securite",
+    note: "French security advice; Sfax not specially barred",
+  },
+  {
+    label: "Auswärtiges Amt — Tunesien",
+    href: "https://www.auswaertiges-amt.de/de/reiseundsicherheit/tunesiensicherheit-219024",
+    note: "German advisory; no Sfax-specific ban",
+  },
+  {
+    label: "Red Sea Diving Safari",
+    href: "https://www.redsea-divingsafari.com/news/solar-eclipse-2027/21235",
+    note: "Wadi Lahami ~6m 14s",
+  },
+  {
+    label: "Ahram Online",
+    href: "https://english.ahram.org.eg/News/569499.aspx",
+    note: "Egypt tourism ministry eclipse committee",
+  },
+  {
+    label: "Mandarin Oriental",
+    href: "https://press.mandarinoriental.com/?p=18656",
+    note: "Winter Palace restoration / July 2027 target",
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="subject"
+      content="How to maximize clear-sky odds for the August 2, 2027 total solar eclipse across Egypt, Tunisia, and other path options."
+    />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="2027 total solar eclipse, clear skies, Egypt, Tunisia, Sfax, Chaffar, Wadi Lahami, Luxor, Spain, Jay Anderson"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link
+      rel="mask-icon"
+      href="/safari-pinned-tab.svg"
+      color={themeColorDark}
+    />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
+        <p class="eyebrow">Travel · August 2, 2027</p>
+        <h1>Clear skies for the eclipse of the century</h1>
+        <p class="dek">
+          Totality lasts over six minutes in Egypt and nearly six in Tunisia.
+          Cloud is rarely the problem. Dust, mobility, and where you sleep are.
+        </p>
+      </header>
+
+      <article class="article">
+        <section id="tradeoff" aria-labelledby="tradeoff-heading">
+          <h2 id="tradeoff-heading">Pick the tradeoff</h2>
+          <p>
+            On Monday, 2 August 2027, the Moon’s umbra crosses southern Spain
+            and Morocco in the morning, then Tunisia, Libya, and Egypt near
+            midday. Greatest eclipse is in Egypt (~6m 23s). The clear-sky
+            ranking on usable land is roughly
+            <strong>Egypt / western desert track &gt; Tunisia (Sfax) &gt; inland
+              Spain &gt; Atlantic coasts</strong
+            >; Libya’s weather is excellent and off-limits.
+          </p>
+          <p>
+            Egypt maximizes duration and climatology. Tunisia maximizes
+            independent mobility and cooler mornings. Everything else is a hedge
+            or a logistics preference. Use the switcher for the plan that
+            matches your constraint.
+          </p>
+        </section>
+
+        <div class="region-shell" data-region-shell>
+          <div
+            class="region-switch"
+            role="tablist"
+            aria-label="Eclipse destination options"
+          >
+            {
+              regions.map((region, index) => (
+                <button
+                  type="button"
+                  class="region-tab"
+                  role="tab"
+                  id={`tab-${region.id}`}
+                  aria-controls={`panel-${region.id}`}
+                  aria-selected={index === 0 ? "true" : "false"}
+                  tabindex={index === 0 ? 0 : -1}
+                  data-region={region.id}
+                >
+                  <span class="region-tab-label">{region.label}</span>
+                  <span class="region-tab-short">{region.short}</span>
+                </button>
+              ))
+            }
+          </div>
+
+          {
+            regions.map((region, index) => (
+              <div
+                class="region-panel"
+                role="tabpanel"
+                id={`panel-${region.id}`}
+                aria-labelledby={`tab-${region.id}`}
+                data-panel={region.id}
+                hidden={index !== 0}
+              >
+                <aside class="takeaways" aria-labelledby={`${region.id}-takeaways`}>
+                  <h2 id={`${region.id}-takeaways`}>The short version</h2>
+                  <ol>
+                    {region.takeaways.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ol>
+                </aside>
+
+                <section
+                  id={`${region.id}-where`}
+                  aria-labelledby={`${region.id}-where-heading`}
+                >
+                  <h2 id={`${region.id}-where-heading`}>Where to stand</h2>
+                  {region.whereIntro.map((para) => (
+                    <p set:html={para} />
+                  ))}
+                  <div class="table-wrap">
+                    <table>
+                      <caption>Indicative totality</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Place</th>
+                          <th scope="col">Totality</th>
+                          <th scope="col">Role</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {region.durations.map((row) => (
+                          <tr>
+                            <th scope="row">{row.place}</th>
+                            <td>{row.totality}</td>
+                            <td>{row.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="source-note">
+                    Figures vary by a few seconds by exact GPS point. Fix your
+                    site on Xavier Jubier’s interactive map before you commit.
+                  </p>
+                </section>
+
+                <section
+                  id={`${region.id}-weather`}
+                  aria-labelledby={`${region.id}-weather-heading`}
+                >
+                  <h2 id={`${region.id}-weather-heading`}>Sky odds</h2>
+                  {region.weather.map((para) => (
+                    <p set:html={para} />
+                  ))}
+                  {region.quote && (
+                    <blockquote>
+                      <p>
+                        <em>“{region.quote.text}”</em>
+                        {" — "}
+                        <a
+                          href={region.quote.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {region.quote.cite}
+                        </a>
+                      </p>
+                    </blockquote>
+                  )}
+                </section>
+
+                <section
+                  id={`${region.id}-plan`}
+                  aria-labelledby={`${region.id}-plan-heading`}
+                >
+                  <h2 id={`${region.id}-plan-heading`}>The working plan</h2>
+                  {region.planIntro.map((para) => (
+                    <p set:html={para} />
+                  ))}
+                  <div class="decision-grid" aria-label="Plan choices">
+                    {region.decisions.map((card) => (
+                      <article>
+                        <h3>{card.title}</h3>
+                        <p set:html={card.body} />
+                      </article>
+                    ))}
+                  </div>
+                  {region.planNote && <p set:html={region.planNote} />}
+                </section>
+
+                <section
+                  id={`${region.id}-odds`}
+                  aria-labelledby={`${region.id}-odds-heading`}
+                >
+                  <h2 id={`${region.id}-odds-heading`}>How odds scale</h2>
+                  <p>{region.oddsIntro}</p>
+                  <ol class="tier-list">
+                    {region.odds.map((tier) => (
+                      <li>
+                        <div class="tier-head">
+                          <strong>{tier.label}</strong>
+                          <span>{tier.odds}</span>
+                        </div>
+                        <p>{tier.plan}</p>
+                      </li>
+                    ))}
+                  </ol>
+                  <p>{region.oddsOutro}</p>
+                </section>
+
+                <section
+                  id={`${region.id}-booking`}
+                  aria-labelledby={`${region.id}-booking-heading`}
+                >
+                  <h2 id={`${region.id}-booking-heading`}>Booking sequence</h2>
+                  <ol class="steps">
+                    {region.booking.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ol>
+                  {region.bookingNote && <p set:html={region.bookingNote} />}
+                </section>
+
+                <section
+                  id={`${region.id}-protocol`}
+                  aria-labelledby={`${region.id}-protocol-heading`}
+                >
+                  <h2 id={`${region.id}-protocol-heading`}>
+                    Eclipse-week protocol
+                  </h2>
+                  <p set:html={region.protocolIntro} />
+                  <ul class="plain-list">
+                    {region.protocol.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ul>
+                  <p>{region.protocolOutro}</p>
+                </section>
+
+                <section
+                  id={`${region.id}-pitfalls`}
+                  aria-labelledby={`${region.id}-pitfalls-heading`}
+                >
+                  <h2 id={`${region.id}-pitfalls-heading`}>
+                    Failure modes
+                  </h2>
+                  <ul class="plain-list">
+                    {region.pitfalls.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ul>
+                </section>
+              </div>
+            ))
+          }
+        </div>
+
+        <section id="sources" aria-labelledby="sources-heading">
+          <h2 id="sources-heading">Sources</h2>
+          <ul class="source-list">
+            {
+              sources.map((source) => (
+                <li>
+                  <a
+                    href={source.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {source.label}
+                  </a>
+                  <span>{source.note}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="source-note">
+            Probabilities are planning estimates. No booking strategy fully
+            eliminates dust — only geographic hedging across independent weather
+            cells does.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <script>
+      const shell = document.querySelector("[data-region-shell]");
+      if (shell) {
+        const tabs = Array.from(
+          shell.querySelectorAll(".region-tab"),
+        );
+        const panels = Array.from(
+          shell.querySelectorAll(".region-panel"),
+        );
+        const valid = new Set(["egypt", "tunisia", "other"]);
+
+        const activate = (id, { focus = false, pushHash = true } = {}) => {
+          if (!valid.has(id)) id = "egypt";
+          for (const tab of tabs) {
+            const on = tab.dataset.region === id;
+            tab.setAttribute("aria-selected", on ? "true" : "false");
+            tab.tabIndex = on ? 0 : -1;
+            if (on && focus) tab.focus();
+          }
+          for (const panel of panels) {
+            panel.hidden = panel.dataset.panel !== id;
+          }
+          if (pushHash) {
+            const next = `#${id}`;
+            if (location.hash !== next) {
+              history.replaceState(null, "", next);
+            }
+          }
+        };
+
+        for (const tab of tabs) {
+          tab.addEventListener("click", () => {
+            activate(tab.dataset.region || "egypt", { focus: false });
+          });
+          tab.addEventListener("keydown", (event) => {
+            const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+            if (!keys.includes(event.key)) return;
+            event.preventDefault();
+            const i = tabs.indexOf(tab);
+            let next = i;
+            if (event.key === "ArrowRight") next = (i + 1) % tabs.length;
+            if (event.key === "ArrowLeft")
+              next = (i - 1 + tabs.length) % tabs.length;
+            if (event.key === "Home") next = 0;
+            if (event.key === "End") next = tabs.length - 1;
+            const target = tabs[next]?.dataset.region || "egypt";
+            activate(target, { focus: true });
+          });
+        }
+
+        const fromHash = () => {
+          const id = location.hash.replace(/^#/, "");
+          activate(valid.has(id) ? id : "egypt", { pushHash: false });
+        };
+        window.addEventListener("hashchange", fromHash);
+        fromHash();
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbf8f2;
+    --paper: #fffdf8;
+    --text: #1c1712;
+    --text-soft: #3f352b;
+    --muted: #746556;
+    --rule: #e0d4c4;
+    --accent: #9a4e1a;
+    --accent-soft: #f3e6d4;
+    --ok: #2f6b45;
+    --selection: #ecd7b8;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+      Georgia, serif;
+    --sans: "Avenir Next", "Segoe UI", ui-sans-serif, -apple-system,
+      BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16120e;
+      --paper: #1e1914;
+      --text: #f3ebe1;
+      --text-soft: #d4c6b4;
+      --muted: #a8947d;
+      --rule: #3d3228;
+      --accent: #e0a06a;
+      --accent-soft: #3a2818;
+      --ok: #8fd0ad;
+      --selection: #4a3420;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--text);
+  }
+
+  html {
+    max-width: 100%;
+    overflow-x: clip;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    background:
+      radial-gradient(
+        ellipse 80% 50% at 88% -10%,
+        color-mix(in srgb, var(--accent-soft) 55%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 55% 40% at 8% 0%,
+        color-mix(in srgb, var(--accent-soft) 28%, transparent),
+        transparent 52%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bg) 92%, #d8b896) 0%,
+        var(--bg) 32%
+      );
+  }
+
+  .page {
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    overflow-x: clip;
+  }
+
+  .hero {
+    min-width: 0;
+    display: grid;
+    gap: 0.3rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 0.85rem;
+  }
+
+  .home-link,
+  .eyebrow,
+  .takeaways h2,
+  .tier-head span,
+  th,
+  .source-list span,
+  .source-note,
+  .region-tab {
+    font-family: var(--sans);
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-underline-offset: 0.28em;
+  }
+
+  .home-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.4rem 0 0;
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(1.45rem, 3.4vw, 2rem);
+    font-weight: 650;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+
+  .dek {
+    max-width: 40rem;
+    margin: 0.15rem 0 0;
+    color: var(--text-soft);
+    font-size: clamp(0.95rem, 1.35vw, 1.08rem);
+    line-height: 1.42;
+    letter-spacing: -0.01em;
+  }
+
+  .article {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    gap: 1.55rem;
+    max-width: 100%;
+    margin: 0;
+    padding: 0.95rem 0 2.4rem;
+  }
+
+  section {
+    min-width: 0;
+    scroll-margin-top: 1.25rem;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem;
+    color: var(--text);
+    font-size: clamp(1.08rem, 1.9vw, 1.28rem);
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  h3 {
+    margin: 0 0 0.3rem;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  p,
+  li {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    overflow-wrap: break-word;
+  }
+
+  p + p,
+  p + .table-wrap,
+  .table-wrap + p,
+  p + .decision-grid,
+  .decision-grid + p,
+  p + .tier-list,
+  .tier-list + p,
+  p + .steps,
+  .steps + p,
+  p + .plain-list,
+  .plain-list + p,
+  p + blockquote,
+  blockquote + p {
+    margin-top: 0.7rem;
+  }
+
+  a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    text-underline-offset: 0.17em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  .region-shell {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .region-switch {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+    padding: 0.3rem;
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+  }
+
+  .region-tab {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0.65rem 0.55rem 0.7rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .region-tab:hover {
+    color: var(--text);
+    background: color-mix(in srgb, var(--accent-soft) 40%, transparent);
+  }
+
+  .region-tab[aria-selected="true"] {
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--rule));
+    background: color-mix(in srgb, var(--accent-soft) 70%, transparent);
+    color: var(--text);
+  }
+
+  .region-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .region-tab-label {
+    font-size: 0.82rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+  }
+
+  .region-tab-short {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .region-tab[aria-selected="true"] .region-tab-short {
+    color: var(--text-soft);
+  }
+
+  .region-panel {
+    display: grid;
+    gap: 1.45rem;
+  }
+
+  .region-panel[hidden] {
+    display: none;
+  }
+
+  .takeaways {
+    border-block: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--accent-soft) 58%, transparent);
+    padding: 0.9rem 0.85rem 1rem;
+  }
+
+  .takeaways h2 {
+    margin: 0 0 0.5rem;
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .takeaways ol {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+
+  .takeaways li {
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+
+  .takeaways li + li {
+    margin-top: 0.4rem;
+  }
+
+  blockquote {
+    margin: 0;
+    border-block: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--paper) 80%, transparent);
+    padding: 0.85rem 0.95rem;
+  }
+
+  blockquote p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  caption {
+    caption-side: top;
+    padding: 0.65rem 0.75rem 0.35rem;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  th,
+  td {
+    padding: 0.55rem 0.75rem;
+    border-top: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+  }
+
+  tbody th {
+    color: var(--text);
+    font-weight: 650;
+    font-family: var(--serif);
+  }
+
+  td {
+    color: var(--text-soft);
+  }
+
+  .decision-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  .decision-grid article {
+    min-width: 0;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .decision-grid article:nth-child(odd) {
+    border-right: 1px solid var(--rule);
+  }
+
+  .decision-grid article:nth-child(n + 3) {
+    border-top: 1px solid var(--rule);
+  }
+
+  .decision-grid p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .tier-list,
+  .steps,
+  .plain-list,
+  .source-list {
+    margin: 0.55rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tier-list {
+    border-top: 1px solid var(--rule);
+  }
+
+  .tier-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tier-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.35rem 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tier-head span {
+    color: var(--ok);
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+  }
+
+  .steps,
+  .plain-list {
+    padding-left: 1.2rem;
+    list-style: decimal;
+  }
+
+  .plain-list {
+    list-style: disc;
+  }
+
+  .steps li,
+  .plain-list li {
+    padding-left: 0.15rem;
+  }
+
+  .steps li + li,
+  .plain-list li + li {
+    margin-top: 0.55rem;
+  }
+
+  .source-list {
+    border-top: 1px solid var(--rule);
+  }
+
+  .source-list li {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .source-list span {
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .source-note {
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      padding: 0.65rem 0.7rem 1.25rem;
+    }
+
+    h1 {
+      font-size: clamp(1.32rem, 6vw, 1.65rem);
+    }
+
+    .article {
+      gap: 1.25rem;
+    }
+
+    .region-switch {
+      grid-template-columns: 1fr;
+    }
+
+    .decision-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .decision-grid article:nth-child(odd) {
+      border-right: 0;
+    }
+
+    .decision-grid article + article {
+      border-top: 1px solid var(--rule);
+    }
+
+    .tier-head {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+  }
+</style>
