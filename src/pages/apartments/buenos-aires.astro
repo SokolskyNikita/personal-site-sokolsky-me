@@ -730,6 +730,34 @@ const structuredData = {
             </div>
           </fieldset>
         </div>
+        <div class="toolbar-row toolbar-airbnb-price">
+          <div class="airbnb-price-filter">
+            <span id="airbnb-price-filter-label">Max Airbnb price for size in USD</span>
+            <div class="airbnb-price-filter-controls">
+              <label class="visually-hidden" for="airbnb-size-filter">Apartment size</label>
+              <select id="airbnb-size-filter" name="airbnb-size" autocomplete="off">
+                <option value="">Size</option>
+                <option value="studio">Studio</option>
+                <option value="1br">1BR</option>
+                <option value="2br">2BR</option>
+                <option value="3br">3BR</option>
+                <option value="4br">4BR</option>
+                <option value="5br+">5BR+</option>
+              </select>
+              <label class="visually-hidden" for="airbnb-max-price">Max monthly price in USD</label>
+              <input
+                id="airbnb-max-price"
+                name="airbnb-max-price"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                step="50"
+                placeholder="Max $/mo"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="building-list" aria-label="List of fancy Buenos Aires apartment buildings">
@@ -1082,6 +1110,9 @@ const structuredData = {
   const cinemaOnlyToggle = document.querySelector("#cinema-only");
   const neighborhoodFilter = document.querySelector("#neighborhood-filter");
   const buildingSort = document.querySelector("#building-sort");
+  const airbnbSizeFilter = document.querySelector("#airbnb-size-filter");
+  const airbnbMaxPriceInput = document.querySelector("#airbnb-max-price");
+  const airbnbPriceFilterLabel = document.querySelector("#airbnb-price-filter-label");
   const buildingList = document.querySelector(".building-list");
   const areaUnitInputs = [...document.querySelectorAll('input[name="area-unit"]')];
   const areaValueLabels = [...document.querySelectorAll(".area-value")];
@@ -1090,6 +1121,14 @@ const structuredData = {
   const mapElement = document.querySelector("#apartment-map");
   const mapStatus = document.querySelector("#apartment-map-status");
   const buenosAiresCenter = { lat: -34.595, lng: -58.435 };
+  const airbnbSizeLabels = {
+    studio: "Studio",
+    "1br": "1BR",
+    "2br": "2BR",
+    "3br": "3BR",
+    "4br": "4BR",
+    "5br+": "5BR+",
+  };
   const markerRecords = [];
   let apartmentMap;
   let infoWindow;
@@ -1111,12 +1150,44 @@ const structuredData = {
     cinemaOnly: Boolean(cinemaOnlyToggle?.checked),
   });
 
+  const getAirbnbPriceFilter = () => {
+    const size = airbnbSizeFilter?.value ?? "";
+    const rawPrice = airbnbMaxPriceInput?.value?.trim() ?? "";
+    const maxPriceUsd = rawPrice === "" ? null : Number(rawPrice);
+    const isActive =
+      Boolean(size) && maxPriceUsd != null && Number.isFinite(maxPriceUsd) && maxPriceUsd >= 0;
+    return { size, maxPriceUsd: isActive ? maxPriceUsd : null, isActive };
+  };
+
+  const updateAirbnbPriceFilterLabel = () => {
+    if (!airbnbPriceFilterLabel) return;
+    const size = airbnbSizeFilter?.value ?? "";
+    const sizeLabel = airbnbSizeLabels[size] ?? "size";
+    airbnbPriceFilterLabel.textContent = `Max Airbnb price for ${sizeLabel} in USD`;
+  };
+
   const matchesCheckboxFilters = (building, filters) =>
     (!filters.airbnbOnly || building.airbnbConfirmed) &&
     (!filters.twentyPlusFloorsOnly || building.has20PlusFloors) &&
     (!filters.builtSince2016Only || building.isBuiltSince2016) &&
     (!filters.pilatesOnly || building.hasPilates) &&
     (!filters.cinemaOnly || building.hasCinema);
+
+  const matchesAirbnbPriceFilter = (building, airbnbPriceFilter) => {
+    if (!airbnbPriceFilter.isActive) return true;
+    return (building.airbnbListings ?? []).some(
+      (listing) =>
+        listing.size === airbnbPriceFilter.size &&
+        listing.priceUsdMonthly != null &&
+        Number.isFinite(listing.priceUsdMonthly) &&
+        listing.priceUsdMonthly <= airbnbPriceFilter.maxPriceUsd,
+    );
+  };
+
+  const matchesAllFilters = (building, filters, airbnbPriceFilter, selectedNeighborhood = "") =>
+    (!selectedNeighborhood || building.neighborhood === selectedNeighborhood) &&
+    matchesCheckboxFilters(building, filters) &&
+    matchesAirbnbPriceFilter(building, airbnbPriceFilter);
 
   const formatAreaLabel = (areaSqm, unit) => {
     const amount = unit === "sqft" ? Math.round(areaSqm * 10.7639) : Math.round(areaSqm);
@@ -1253,11 +1324,12 @@ const structuredData = {
     if (!neighborhoodFilter) return;
 
     const filters = getCheckboxFilters();
+    const airbnbPriceFilter = getAirbnbPriceFilter();
     const counts = new Map();
     let total = 0;
 
     for (const building of apartmentMapData) {
-      if (!matchesCheckboxFilters(building, filters)) continue;
+      if (!matchesAllFilters(building, filters, airbnbPriceFilter)) continue;
       total += 1;
       counts.set(building.neighborhood, (counts.get(building.neighborhood) ?? 0) + 1);
     }
@@ -1271,11 +1343,11 @@ const structuredData = {
 
   const visibleMapBuildings = () => {
     const filters = getCheckboxFilters();
+    const airbnbPriceFilter = getAirbnbPriceFilter();
     const selectedNeighborhood = neighborhoodFilter?.value ?? "";
 
     return apartmentMapData.filter((building) =>
-      (!selectedNeighborhood || building.neighborhood === selectedNeighborhood) &&
-      matchesCheckboxFilters(building, filters)
+      matchesAllFilters(building, filters, airbnbPriceFilter, selectedNeighborhood)
     );
   };
 
@@ -1308,16 +1380,16 @@ const structuredData = {
 
   const applyFilters = () => {
     const filters = getCheckboxFilters();
+    const airbnbPriceFilter = getAirbnbPriceFilter();
     const selectedNeighborhood = neighborhoodFilter?.value ?? "";
+    updateAirbnbPriceFilterLabel();
     updateNeighborhoodCounts();
     const sortedRows = sortRows();
 
     for (const row of sortedRows) {
       const building = buildingById.get(row.dataset.buildingId);
       row.hidden = !(
-        building &&
-        (!selectedNeighborhood || building.neighborhood === selectedNeighborhood) &&
-        matchesCheckboxFilters(building, filters)
+        building && matchesAllFilters(building, filters, airbnbPriceFilter, selectedNeighborhood)
       );
     }
 
@@ -1327,9 +1399,12 @@ const structuredData = {
 
     const visibleRecords = [];
     for (const record of markerRecords) {
-      const isVisible =
-        (!selectedNeighborhood || record.building.neighborhood === selectedNeighborhood) &&
-        matchesCheckboxFilters(record.building, filters);
+      const isVisible = matchesAllFilters(
+        record.building,
+        filters,
+        airbnbPriceFilter,
+        selectedNeighborhood,
+      );
       record.marker.setMap(isVisible ? apartmentMap : null);
       if (isVisible) visibleRecords.push(record);
     }
@@ -1404,10 +1479,14 @@ const structuredData = {
   cinemaOnlyToggle?.addEventListener("change", applyFilters);
   neighborhoodFilter?.addEventListener("change", applyFilters);
   buildingSort?.addEventListener("change", applyFilters);
+  airbnbSizeFilter?.addEventListener("change", applyFilters);
+  airbnbMaxPriceInput?.addEventListener("input", applyFilters);
+  airbnbMaxPriceInput?.addEventListener("change", applyFilters);
   for (const input of areaUnitInputs) {
     input.addEventListener("change", updateAreaUnits);
   }
   updateAreaUnits();
+  updateAirbnbPriceFilterLabel();
   applyFilters();
   window.addEventListener("pageshow", applyFilters);
   initApartmentMap().catch((error) => {
@@ -1574,6 +1653,78 @@ const structuredData = {
 
   .toolbar-controls {
     justify-content: flex-start;
+  }
+
+  .toolbar-airbnb-price {
+    align-items: end;
+  }
+
+  .airbnb-price-filter {
+    display: grid;
+    flex: 1 1 22rem;
+    width: min(100%, 28rem);
+    max-width: 34rem;
+    gap: 0.32rem;
+  }
+
+  .airbnb-price-filter > span {
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .airbnb-price-filter-controls {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 10rem) minmax(7rem, 1fr);
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .airbnb-price-filter-controls select,
+  .airbnb-price-filter-controls input {
+    width: 100%;
+    min-height: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: var(--surface-soft);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 750;
+  }
+
+  .airbnb-price-filter-controls select {
+    padding: 0 2.5rem 0 0.9rem;
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 1rem center / 0.42rem 0.42rem no-repeat,
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%) right 0.7rem center / 0.42rem 0.42rem no-repeat,
+      var(--surface-soft);
+    cursor: pointer;
+  }
+
+  .airbnb-price-filter-controls input {
+    padding: 0 0.9rem;
+  }
+
+  .airbnb-price-filter-controls select:focus-visible,
+  .airbnb-price-filter-controls input:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 35%);
+    outline-offset: 2px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .filter-chip-group {
@@ -2241,7 +2392,8 @@ const structuredData = {
     }
 
     .toolbar-filters,
-    .toolbar-controls {
+    .toolbar-controls,
+    .toolbar-airbnb-price {
       gap: 0.7rem;
     }
 
@@ -2250,8 +2402,17 @@ const structuredData = {
     }
 
     .filter-chip-group,
-    .area-unit-toggle {
+    .area-unit-toggle,
+    .airbnb-price-filter {
       width: 100%;
+    }
+
+    .airbnb-price-filter {
+      max-width: none;
+    }
+
+    .airbnb-price-filter-controls {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 
     .filter-chip-group span {
