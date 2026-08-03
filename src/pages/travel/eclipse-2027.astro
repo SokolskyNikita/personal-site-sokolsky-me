@@ -843,19 +843,24 @@ const sources: Source[] = [
       </article>
     </main>
 
-    <script>
-      const shell = document.querySelector("[data-region-shell]");
-      if (shell) {
+    <script is:inline>
+      (() => {
+        const shell = document.querySelector("[data-region-shell]");
+        if (!(shell instanceof HTMLElement)) return;
+
         const tabs = Array.from(
           shell.querySelectorAll(".region-tab"),
-        );
+        ).filter((el) => el instanceof HTMLElement);
         const panels = Array.from(
           shell.querySelectorAll(".region-panel"),
-        );
+        ).filter((el) => el instanceof HTMLElement);
         const valid = new Set(["egypt", "tunisia", "other"]);
 
-        const activate = (id, { focus = false, pushHash = true } = {}) => {
-          if (!valid.has(id)) id = "egypt";
+        const activate = (rawId, options = {}) => {
+          const focus = Boolean(options.focus);
+          const pushHash = options.pushHash !== false;
+          let id = valid.has(rawId) ? rawId : "egypt";
+
           for (const tab of tabs) {
             const on = tab.dataset.region === id;
             tab.setAttribute("aria-selected", on ? "true" : "false");
@@ -878,6 +883,7 @@ const sources: Source[] = [
             activate(tab.dataset.region || "egypt", { focus: false });
           });
           tab.addEventListener("keydown", (event) => {
+            if (!(event instanceof KeyboardEvent)) return;
             const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
             if (!keys.includes(event.key)) return;
             event.preventDefault();
@@ -899,7 +905,7 @@ const sources: Source[] = [
         };
         window.addEventListener("hashchange", fromHash);
         fromHash();
-      }
+      })();
     </script>
   </body>
 </html>
