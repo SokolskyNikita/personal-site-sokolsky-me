@@ -1,9 +1,9 @@
 ---
 export const prerender = true;
 
-const pageTitle = "Clear skies for the 2027 total solar eclipse";
+const pageTitle = "Best way to see the 2027 Eclipse";
 const pageDescription =
-  "How to maximize odds of seeing the August 2, 2027 total solar eclipse under clear skies — Egypt’s Red Sea coast, independent Tunisia around Sfax, or inland Spain and other path hedges.";
+  "Recommended 2027 eclipse plan: Istanbul forecast hub, then Flex Luxor or Sfax (≥5 min). Also covers Egyptian Red Sea, Spain, and Morocco (4+ min).";
 const themeColorLight = "#fbf8f2";
 const themeColorDark = "#16120e";
 const siteUrl =
@@ -23,9 +23,9 @@ const structuredData = {
   },
   about: [
     { "@type": "Thing", name: "Total solar eclipse of August 2, 2027" },
-    { "@type": "Place", name: "Wadi Lahami" },
-    { "@type": "Place", name: "Sfax" },
+    { "@type": "Place", name: "Istanbul" },
     { "@type": "Place", name: "Luxor" },
+    { "@type": "Place", name: "Sfax" },
   ],
   inLanguage: "en",
 };
@@ -53,7 +53,14 @@ type Source = {
   note: string;
 };
 
-type RegionId = "egypt" | "tunisia" | "other";
+type RegionId =
+  | "optimal"
+  | "egypt-inland"
+  | "egypt-red-sea"
+  | "tunisia"
+  | "spain"
+  | "morocco"
+  | "other";
 
 type RegionGuide = {
   id: RegionId;
@@ -78,182 +85,356 @@ type RegionGuide = {
   pitfalls: string[];
 };
 
-const egypt: RegionGuide = {
-  id: "egypt",
-  label: "Egypt options",
-  short: "Longest totality, near-zero cloud, harder mobility",
+const optimalPlan: RegionGuide = {
+  id: "optimal",
+  label: "Optimal plan",
+  short: "Istanbul → Luxor or Sfax",
   takeaways: [
-    "<strong>Base at Hamata / Wadi Lahami</strong> on the southern Red Sea — ~6m 13–15s of totality, near-zero August cloud, land resorts you wake up in.",
-    "<strong>Do not chase Berenice</strong> for an extra ~6 seconds past a military checkpoint that historically needs an advance permit.",
-    "<strong>Dust, not cloud, is the residual threat.</strong> Hold a refundable Luxor bed; true ~98% needs a second country on the path.",
-    "<strong>Book refundable rooms now</strong> in three clusters: deep south, Marsa Alam, Luxor. Pay deposits by credit card.",
+    "<strong>Recommended approach:</strong> fly Seattle→Istanbul ~26 Jul, hold <strong>two Flex/refundable ≥5-minute branches</strong> (Luxor default + Sfax dust exit), and pick the cleaner country from Istanbul by <strong>~30 Jul noon</strong>. Do not Cairo-first, and do not lock a single country months out.",
+    "<strong>Branch rule:</strong> both look clean → <strong>Luxor</strong> (~6m20–22s). Egypt dusty / Tunisia clean → <strong>Sfax</strong> (~5m40–45s). The hedge’s job is Saharan dust, not correlated double cloud-out (matched Aug-2 samples almost never fail both).",
+    "<strong>Keep sunk cost under ~$1,000 for two</strong> through 29 Jul so the switch stays real: Flex fares (not cheapest non-refundable), duplicate refundable hotels, free-cancel TUN car. No CFAR covers abandoning one operable branch. Skip non-refundable Luxor packages and sold-out Red Sea dive deposits as “hedges.”",
+    "<strong>Planning odds:</strong> correlation-aware end-to-end ~<strong>95.5–97.8%</strong> (mid ~97%) for ≥4 minutes opaque-free; strict ≥5 minutes unobscured ~88–94% (mid ~91%). Fixed Luxor alone is only ~76–80% central. Not a lab measurement—country tabs are detail after you commit to this architecture.",
   ],
   whereIntro: [
-    "Greatest eclipse is in Egypt — about <strong>6 minutes 23 seconds</strong> near Luxor / the eastern desert, the longest land totality until 2114. For a land traveler who wants long darkness without Luxor’s crowd machine, the southern Red Sea is the sweet spot: Marsa Nakari and points south clear five minutes; Hamata / Wadi Lahami clears six.",
+    "This plan parks you in <strong>Istanbul</strong> until the forecasts are real, then sends you to one ≥5-minute cell: <strong>Luxor</strong> (Branch A default) or <strong>Sfax / Chaffar</strong> (Branch B). SEA→IST is ~12–13h Turkish nonstop (TK-only on that route). From IST: ~11–12/day to Cairo (TK/MS/SM + SAW LCCs) then same-day <strong>CAI→LXR</strong>; ~4–7/day IST→TUN only (TK/TU/BJ—no SAW→TUN). Rome is a weaker backup hub; Athens fails late Tunis.",
+    "Optional desert SE of Luxor adds only ~1–3s and needs a MoTA desert program (≥21 days)—not required for the recommended path. Red Sea and Spain are not peer branches here.",
   ],
   durations: [
     {
-      place: "Greatest eclipse",
-      totality: "6m 23s",
-      note: "Near Luxor / eastern desert",
-    },
-    {
-      place: "Luxor",
+      place: "Luxor (Branch A — default)",
       totality: "~6m 20–22s",
-      note: "Crowds, heat, supply stress",
+      note: "Go here when both look clean",
     },
     {
-      place: "Berenice coast",
-      totality: "~6m 20s",
-      note: "Permit / checkpoint risk",
+      place: "Sfax / Chaffar (Branch B)",
+      totality: "~5m 40–45s",
+      note: "Go here when Egypt is dusty",
     },
     {
-      place: "Hamata / Wadi Lahami",
-      totality: "~6m 13–15s",
-      note: "Best land base for most travelers",
-    },
-    {
-      place: "Marsa Alam town",
-      totality: "~5m 28–30s",
-      note: "Big hotel supply, shorter totality",
-    },
-    {
-      place: "Port Ghalib",
-      totality: "~4m 33s",
-      note: "Convenient, well short of the long track",
+      place: "Desert SE of Luxor (optional)",
+      totality: "~6m 22–23s",
+      note: "Only after Egypt is locked; MoTA program",
     },
   ],
   weather: [
-    "Jay Anderson’s August climatology for eastern Libya and western Egypt is unusually clean — parts of the track show near-zero cloud frequency; Luxor sits around <strong>0.7%</strong>. He has described it as the first time his cloud graphs reach zero.",
-    "The leftover risk is airborne <strong>dust and haze</strong>, not marine stratus. Dust events are often short-lived and usually visible in model guidance a few days out — enough to move if you planned for mobility.",
-    "Heat is a parallel hazard. Luxor’s early-August highs average around 42&nbsp;°C; the deep-south coast is in the same ballpark. Shade cameras on tripods — they can overheat in full sun.",
+    "Why this pair: Luxor has the best inland sunshine prior (<strong>92% daylight hours</strong>); Sfax is excellent at eclipse hour (~<strong>97–98% opaque-free</strong> near 10:10) and usually stays clean when Luxor is under a regional dust plume (~89% of a short CAMS sample when Luxor AOD is high). Joint opaque cloud failure on matched Aug-2 ERA5 years is ~0%. Anderson’s ~0.7% Luxor figure is mean satellite cloudiness, not a 99% guarantee.",
+    "Decision tools: from ~27 Jul, ECMWF 51-member ensemble (cloud layers + spread)—T−5 is a synoptic screen, not a site lock. By ~30 Jul, Barcelona SDS-WAS 72h dust as a <strong>regional Egypt↔Tunisia comparator</strong> (refresh T−48/T−24). Comfortable: opaque cloud P &lt;20% and AOD &lt;0.3. Marginal: AOD 0.3–0.8. Switch pressure: AOD ~0.8–1.0.",
   ],
   quote: {
-    text: "In Egypt and Libya, dust and haze are more significant concerns than clouds.",
-    cite: "Jay Anderson, via Sky & Telescope",
-    href: "https://skyandtelescope.org/astronomy-news/plan-for-the-2027-eclipse-of-the-century-one-year-from-now/",
+    text: "It's much more important to watch the weather forecasts a day or two before the eclipse and choose a location with the best chance of a cloud-free sky… better to see a shorter eclipse from clear sky than a longer eclipse under clouds.",
+    cite: "NASA Eclipse (SE2027Aug02)",
+    href: "https://eclipse.gsfc.nasa.gov/SEgoogle/SEgoogle2001/SE2027Aug02Tgoogle.html",
   },
   planIntro: [
-    "Fly into <strong>Marsa Alam (RMF)</strong> — the practical charter and tourist gateway. Do not plan around Berenice airport; it is dual-use and not a useful scheduled civil hub.",
-    "Sleep at the <strong>Hamata / Wadi Lahami</strong> cluster so eclipse morning starts inside 6m+ totality. Driving ~110&nbsp;km south from Marsa Alam town that morning adds breakdown, traffic, and heat risk for no gain. The coastal tourist corridor north of the Wadi Lahami checkpoint is generally free-moving; south of it is not.",
+    "<strong>The trip, in order:</strong> book SEA→IST for ~26 Jul (Turkish window opens ~5 Aug 2026). Hold Flex IST→CAI→LXR and Flex IST→TUN for ~30 Jul on different carriers. Hold refundable Luxor + Sfax rooms and a free-cancel TUN car. Stay Istanbul 27–29 Jul reading ensembles.",
+    "<strong>By 30 Jul ~noon:</strong> final Luxor vs Sfax call (Egypt hard limit ~31 Jul morning for same-day LXR; Tunisia has ~24h more slack). Fly. On the ground—Luxor: private roof/garden (Sunflower / Cleopatra / Gaddis class) + Luxor Travels or Emo Tours driver. Sfax: ibis + Borj Dhiafa, Camel or Avis car, Chaffar–Mahares view with RN1 west haze escape. Eclipse 2 Aug; home via Istanbul 4–5 Aug.",
   ],
   decisions: [
     {
-      title: "Primary",
-      body: "Wadi Lahmy Azur, Red Sea Diving Safari Wadi Lahami, or nearby Hamata resorts. Long totality, near-zero cloud, land beds, house-reef diving if you want it.",
+      title: "Both clean",
+      body: "<strong>Luxor.</strong> Longer totality, higher sun, stronger fixed-site climate. “Both clean” at T−72h is not a cirrus-free guarantee.",
     },
     {
-      title: "Skip as primary",
-      body: "<strong>Luxor</strong> wins ~1 second of totality and loses on crowds, heat, sold-out inventory, and a ministry committee tasked with crowd control. Use it as a dust hedge, not home base.",
+      title: "Egypt dusty, Tunisia clean",
+      body: "<strong>Sfax.</strong> A car in Upper Egypt will not outrun a broad mid-atmosphere Saharan plume.",
     },
     {
-      title: "Skip unless pre-arranged",
-      body: "<strong>Berenice / Ras Banas</strong> for the extra handful of seconds. Historical trip reports describe a hard checkpoint south of Wadi Lahami. Re-verify 2027 access; do not treat it as a same-morning option.",
+      title: "Tunisia messy, Egypt clean",
+      body: "<strong>Luxor.</strong>",
     },
     {
-      title: "Hotel caveat",
-      body: "Sofitel Winter Palace is closed for Mandarin Oriental restoration (July 2027 reopen target). Treat it as uncertain for eclipse week; hold other Nile-view rooms refundable.",
+      title: "Both threatened",
+      body: "Pick the lower ensemble cloud risk and the lower modeled AOD. Do not treat Red Sea (~0–4 pp vs Luxor alone) or Spain (~+0.35 pp, 4m+) as a third ≥5-minute branch.",
     },
   ],
+  planNote:
+    "Not in the recommended core: Cairo-first (burns Tunisia early), fixed Luxor with no Branch B, non-refundable Red Sea packages, or Spain/Morocco as primaries. Optional only—pre-held refundable Hamata-band room as a small Egypt cell; AGP if you drop the 5-minute floor.",
   oddsIntro:
-    "Getting ≥5 minutes of totality is easy once you are on the Marsa Nakari–Berenice coast or in Luxor. Clear, transparent sky is the hard term. These are planning estimates — dust is the largest remaining uncertainty.",
+    "Headline planning number first. Architecture aims at a ≥5-minute site; the end-to-end band is ≥4 minutes opaque-free because Sfax only has ~40s above five. Do not multiply near-99% logistics into a fake 98%.",
   odds: [
     {
-      label: "Fixed south-coast bed",
-      odds: "~90–93%",
-      plan: "Sleep at Hamata / Wadi Lahami. Wake up already in 6m+ totality. Do not drive south on eclipse morning.",
+      label: "End-to-end hub (recommended architecture)",
+      odds: "~95.5–97.8%",
+      plan: "≥4 min opaque-free; midpoint ~97%. Fixed Luxor alone ~69–89% (central ~76–80%). Strict ≥5 min unobscured hub ~88–94% (mid ~91%).",
     },
     {
-      label: "Egypt + mobility",
-      odds: "~96–97%",
-      plan: "Add a refundable Marsa Alam room, a refundable Luxor room, and a 4×4 driver with Eastern Desert permits. Reposition only if dust threatens.",
+      label: "Forecast-selected weather (Luxor or Sfax)",
+      odds: "~97–99%",
+      plan: "ENS + SDS-WAS country pick. Persistence-only back-tests ~90–91%; oracle best-of-two ~96–100%.",
     },
     {
-      label: "Two-segment hedge",
-      odds: "~98%+",
-      plan: "Keep a parallel booking in Tunisia (Sfax) or inland southern Spain, with flexibility to switch by about T−4 days. Roughly doubles airfare and logistics.",
+      label: "Reach country by 31 Jul + lodging/view",
+      odds: "~98.5–99.5% each",
+      plan: "Istanbul buffer + Flex branches + duplicate refundable rooms / written private viewing. Caveats: same-day LXR, IST-only Tunis.",
     },
   ],
   oddsOutro:
-    "A single fixed Egyptian site does not get you to ~98%. That needs an independent second segment on the path. For most people, Egypt Red Sea + coastal mobility + a Luxor refundable is the value peak.",
+    "Operator “80–82% clear” and Cap Astro “98% Sfax” are packaging. Sunshine-hour priors ≠ event probabilities.",
   booking: [
-    "<strong>Now.</strong> Hold fully refundable beds in three clusters: two deep-south options, one Marsa Alam / Port Ghalib anchor, one Luxor Nile-view room. Pay deposits by credit card — never wire Egyptian ground operators.",
-    "<strong>Within ~14 days of first deposit.</strong> Buy travel insurance with supplier-default / insolvency cover, medevac, and CFAR if you want cancellation flexibility.",
-    "<strong>Aug–Oct 2026.</strong> Book long-haul and, when published, RMF charters or EgyptAir via Cairo. Keep a Cairo-hub domestic fallback.",
-    "<strong>Late 2026.</strong> Contract a private driver / 4×4 with Eastern Desert permits if you want inland reposition options.",
-    "<strong>Q1 2027.</strong> Lock Wadi Lahami as primary; release redundant refundable rooms by their free-cancellation deadlines. Keep Luxor until the coastal ~5-day dust outlook is clean.",
+    "<strong>~5 Aug 2026:</strong> refundable or Miles&Smiles/Aeroplan SEA–IST for 26 Jul 2027 (Turkish ~355-day window). Flying Blue is not viable for these hub legs.",
+    "<strong>As branch dates open:</strong> Flex IST→CAI (prefer MS/SM) and Flex IST→TUN (prefer TU/BJ)—never two cheapest same-day TK outbounds (duplicate/impossible-itinerary risk). Not one conventional round trip.",
+    "<strong>Now / soon:</strong> Luxor refundable pair with private viewing in writing (Sunflower Nile Gardens, Cleopatra Hotel Luxor, New Memnon / Gaddis); Sfax pair (ibis Sfax + Borj Dhiafa); free-cancel Camel or Avis at TUN; Luxor Travels or Emo Tours driver with viewpoint open.",
+    "<strong>Loss cap through 29 Jul:</strong> Egypt anchor ~$500, prepaid Sfax night ~$150, deposits ~$150, Flex cancel ~$50–200 (or ~$140 Miles&Smiles for two). Floor non-Flex abandon ~$440–524 per unused branch.",
+    "<strong>Reject:</strong> 100% non-refundable Luxor packages; sold-out Wadi Lahami deposits as hedges; CFAR as Branch A→B insurance.",
   ],
   bookingNote:
-    "German package operators with statutory insolvency insurance are safer than weakly bonded land-only packages, which are safer than unbacked local ground operators. Your backstop is credit-card chargeback plus your own insurance.",
+    "Any booking that goes hard before 29 Jul defeats the switch. Czech passports: Egypt e-visa $30 each (≥7 days ahead; Sinai waiver ≠ Luxor); Tunisia and Turkey visa-free ≤90 days (passport only—not Czech ID).",
   protocolIntro:
-    "From about <strong>T−4 days</strong>, watch synoptic cloud and dust daily:",
+    "Country choice in Istanbul. Day-of moves are local only.",
   protocol: [
-    "<strong>Cloud:</strong> ECMWF / ICON / GFS via Windy or Meteoblue — useful ~3–5 days out.",
-    "<strong>Dust:</strong> ECMWF-CAMS and ICON-ART dust fields (Windy’s dust layer) — useful ~2–4 days out.",
-    "<strong>Nowcast:</strong> EUMETSAT rapid-scan, Sat24, Egyptian Met Authority for the last 12–36 hours.",
+    "<strong>27 Jul:</strong> ECMWF ensemble (cloud layers, spread, Saharan winds). Keep both branches unless Egypt is clearly broken.",
+    "<strong>29 Jul:</strong> provisional Luxor vs Sfax call. Ignore single deterministic runs.",
+    "<strong>30 Jul:</strong> final call with SDS-WAS as regional dust comparator; fly the chosen branch.",
+    "<strong>1–2 Aug:</strong> EUMETSAT / local models; last tens of km inside the ≥5-minute band (Luxor paved Nile; Sfax RN1 west for haze).",
   ],
   protocolOutro:
-    "If the coast looks dusty, reposition along the tourist coast first. Use a permitted 4×4 for inland desert sites only if pre-arranged. Do not count on a same-morning coast↔Luxor dash.",
+    "After 30 Jul you are executing one country—not shopping continents.",
   pitfalls: [
-    "Hotel cancels or reprices — hold ≥2 refundable deep-south rooms.",
-    "Operator insolvency — statutory cover where available; otherwise card + insurance.",
-    "Charter never publishes — EgyptAir via Cairo is the fallback.",
-    "Eclipse-day road controls in Luxor — expect friction at iconic sites.",
-    "Drones — banned for tourists in Egypt; leave them home.",
-    "Checkpoint rules south of Wadi Lahami — older trip reports are clear; confirm close to travel.",
+    "Fixed Luxor (or Cairo-first) with no live Tunisia branch.",
+    "Two Turkish IST→CAI and IST→TUN tickets the same day.",
+    "Calling Red Sea or Spain the international dust hedge.",
+    "Chasing centerline seconds under bad sky.",
+    "Spain or Morocco as a ≥5-minute primary.",
+  ],
+};
+
+const egyptInland: RegionGuide = {
+  id: "egypt-inland",
+  label: "Egypt - inland",
+  short: "Luxor / desert · 6m+",
+  takeaways: [
+    "<strong>Stay in Luxor</strong> for ~6m20–22s (East Bank hotel roofs, Al Baghdādī, or West Bank fringe near Kurna). The NASA GD desert point SE (~6m23s) adds only ~1–3s and needs a <strong>MoTA-licensed desert program ≥21 days</strong>—not a DIY rental 4×4. Do not count on Karnak or Luxor Temple; the May 2026 tourism committee targets overcrowding at unnamed “main observation areas,” with no site-level rules published yet.",
+    "<strong>0.7% on Anderson’s maps is mean satellite cloudiness, not a 99% guarantee.</strong> Trust TravelQuest’s <strong>92% sunshine daylight hours</strong>. Leftovers are thin cirrus and dust (severe AOD ~2–4% of early-August afternoons). A wide Saharan plume is why you keep the Istanbul→Tunisia branch open.",
+    "<strong>Skip full-prepay Luxor packages</strong> that take a bank transfer and refuse refunds (Far and Beyond quotes roughly $4k–12k per room under those terms). Keep forfeitable cash small so the rest can cancel through ~29 Jul 2027. Binding gap: written private viewing confirmation, not the $150–250/night OTA rate.",
+  ],
+  whereIntro: [
+    "Inland Egypt has the longest land totality on this track. NASA’s map page gives Greatest Duration as <strong>6m23.2s</strong> and tells you to chase clear sky over a few extra centerline seconds. Luxor city already sits near ~6m20–22s with the sun ~82° up.",
+    "Keep the viewing plan inside the ≥5-minute Nile/desert corridor: private East Bank roofs (~25.687°N 32.640°E), Al Baghdādī / Nile hops, West Bank fringe, or a licensed desert-max operator toward ~25.505°N 33.183°E. Coastal resorts are under Egypt - Red Sea.",
+  ],
+  durations: [
+    {
+      place: "Desert SE of Luxor (max)",
+      totality: "~6m 22–23s",
+      note: "MoTA desert program + company 4×4",
+    },
+    {
+      place: "Luxor city / East Bank",
+      totality: "~6m 20–22s",
+      note: "Default inland base",
+    },
+    {
+      place: "Qena / Nile corridor",
+      totality: "~6m+",
+      note: "Paved morning moves still ≥5m",
+    },
+  ],
+  weather: [
+    "Use TravelQuest’s <strong>92% sunshine daylight hours</strong>; treat Anderson’s ~0.7% as mean satellite cloudiness (mostly thin cirrus), not opaque cloud-out odds. Beluga/tour “80–82% clear” is packaging cushion.",
+    "Eclipsophile: heavy SE-Egypt dust often <strong>stops short of Luxor</strong>. ERA5 Aug-2 samples: fixed Luxor acceptable cloud ~90–92%, morning mobility ~+4 pp (~96% cloud-only)—still not end-to-end ~98%. SDS-WAS AOD near <strong>0.8–1.0</strong> is a country-switch signal, not a Luxor pin-point. Midday heat ~42&nbsp;°C—shade cameras.",
+  ],
+  planIntro: [
+    "Fly SEA→IST, then IST→CAI and EgyptAir <strong>CAI→LXR</strong> the same day (morning/midday IST arrivals; evening arrivals miss same-day LXR). Summer nonstops from IST or SAW into Luxor are basically useless. Cairo-first works if you have already dropped Tunisia.",
+    "Hold two refundable Luxor rooms for 30 Jul–4 Aug with private viewing space confirmed in writing—prefer Sunflower Nile Gardens, Cleopatra Hotel Luxor, or New Memnon / Gaddis-class. Hire Luxor Travels or Emo Tours (Arabic-speaking driver) from 31 Jul through eclipse afternoon with the viewpoint left open. Beluga’s desert-maximum camp is the turnkey permit path if you want SE seconds handled for you.",
+  ],
+  decisions: [
+    {
+      title: "Luxor hotel + paved mobility",
+      body: "Cleanest inland climate and a full minute above the 5-minute floor. Daylight paved hops with a licensed Arabic-speaking driver; leave routing flexible. Off-road desert-max is a separate MoTA stack.",
+    },
+    {
+      title: "Desert-maximum package",
+      body: "Beluga’s Land Cruiser camp near the max point starts around €5,000&nbsp;pp. Book the desert program by mid-Jul 2027 (≥21 days). You trade flexibility for logistics certainty.",
+    },
+    {
+      title: "Hotel reality",
+      body: "Winter Palace is a Mandarin Oriental rebuild aimed at July 2027; do not make it load-bearing. Expect temple-area friction once any ministry crowd plan publishes.",
+    },
+  ],
+  planNote:
+    "Private sedan + driver runs about $65–100/day; an eclipse-morning 4×4 deposit is often $100–150. Czech (and other) travelers: Egypt e-visa is <strong>$30</strong> single-entry on visa2egypt.gov.eg (≥7 days ahead; passport ≥6 months; Sinai waiver does not cover Luxor).",
+  oddsIntro:
+    "Fixed Luxor end-to-end (≥4 min opaque-free with hotel + vehicle) is about <strong>~69–89%</strong> (central ~76–80%), not ~98%. Weather alone is mid-80s; sunshine-hour 92% is a prior, not the trip rate.",
+  odds: [
+    {
+      label: "Fixed Luxor (sunshine hours)",
+      odds: "~92%",
+      plan: "TravelQuest/Anderson daylight-hours figure. The 0.7% mean satellite cloudiness is real; it still is not a 99.3% event probability.",
+    },
+    {
+      label: "Luxor + morning mobility (cloud)",
+      odds: "~96%",
+      plan: "+~4 pp vs fixed site on ERA5 Aug-2 samples. Helps patchy cloud; does not outrun a regional dust sheet.",
+    },
+    {
+      label: "As Istanbul Branch A",
+      odds: "See Optimal",
+      plan: "Hub end-to-end ~95.5–97.8%. Tunisia is the dust exit through ~30 Jul.",
+    },
+  ],
+  oddsOutro:
+    "Pick the country from Istanbul by ~30 Jul (Egypt hard limit ~31 Jul morning for same-day LXR). After that, only short paved inland moves still make sense.",
+  booking: [
+    "<strong>Hub dates first:</strong> SEA–IST ~26 Jul, Flex branch ~30 Jul IST–CAI/LXR (prefer MS/SM operating carrier).",
+    "<strong>Luxor rooms:</strong> two free-cancellation holds, 30 Jul–4 Aug, private viewing in writing. Cap any forced deposit around $500.",
+    "<strong>Driver:</strong> Luxor Travels or Emo Tours quote with flexible viewpoint; time payment after the ~29 Jul country call if possible.",
+    "<strong>Avoid:</strong> full bank-transfer packages that are 100% non-refundable; DIY Eastern Desert off-road.",
+  ],
+  bookingNote:
+    "Two people should keep sunk cost under ~$1,000 through 29 Jul 2027.",
+  protocolIntro:
+    "Luxor totality is early afternoon (~13:02–13:08 EEST). By then the country choice should already be settled.",
+  protocol: [
+    "<strong>T−120h → T−72h:</strong> ECMWF 51-member ensemble plus Barcelona SDS-WAS as a regional dust comparator. Egypt vs Tunisia call.",
+    "<strong>T−48h / T−24h:</strong> lock the inland paved target inside the ≥5-minute corridor.",
+    "<strong>T−6h:</strong> EUMETSAT rapid-scan; last tens of km with the driver.",
+  ],
+  protocolOutro:
+    "Anderson again: mid-level dust often blankets a huge area. Local miles help cloud more than dust.",
+  pitfalls: [
+    "Reading 0.7% cloud as a near-sure thing—or calling fixed Luxor ~98%.",
+    "Building the plan around Winter Palace or Karnak access.",
+    "Full-prepay, zero-refund Luxor room packages.",
+    "Banking on a summer Istanbul→Luxor nonstop.",
+    "DIY off-road into the Eastern Desert without a MoTA desert program.",
+    "Bringing a tourist drone.",
+  ],
+};
+
+const egyptRedSea: RegionGuide = {
+  id: "egypt-red-sea",
+  label: "Egypt - Red Sea",
+  short: "Hamata / Marsa Alam · 5m30s–6m15s",
+  takeaways: [
+    "<strong>Wadi Lahami / Hamata</strong> (~6m13–15s) is the only well-evidenced ordinary-tourism ≥6-minute coastal land stay. <strong>Marsa Nakari / Marsa Alam / Port Ghalib</strong> (~5m28–42s) still clear five minutes. Sleep inside that band.",
+    "<strong>Skip Berenice</strong> for ordinary tourism. Duration looks great; the naval/air base (~150k feddans) does not. Marketing “Berenice Road” ≠ the military town.",
+    "<strong>Sold-out rooms are a trap if you wanted a cancellable hedge.</strong> Beluga shows Wadi Lahami (and often Marsa Nakari) sold out. Red Sea Diving Safari wants 20% non-refundable plus the balance by 28 Feb 2027 on packages at €1,546–1,891&nbsp;pp. For a paper backup, hunt refundable Port Ghalib / Marsa Alam (or Hamata-band) rates instead.",
+    "Mostly <strong>one correlated Egyptian weather cell</strong> with Luxor (holding both adds ~0–4 pp). Tunisia is a much better dust exit than another Egyptian coastline. Late switch from Istanbul is conditional: IST→CAI→HRG + daylight drive, with a pre-held refundable room—not a walk-up T−72h scramble.",
+  ],
+  whereIntro: [
+    "Long totality hits the southern Red Sea tourist strip. Stay on open resort roads from Marsa Alam toward Hamata / Wadi Lahami. That is the ≥5-minute coastal band you can use without special clearance.",
+    "Two honest uses: wake up on site for diving plus the eclipse, or hold a refundable coastal room as a small Nile/coast cell. When dust is regional, Tunisia still matters more than another Egyptian coastline.",
+  ],
+  durations: [
+    {
+      place: "Hamata / Wadi Lahami",
+      totality: "~6m 13–15s",
+      note: "Best open Red Sea land base",
+    },
+    {
+      place: "Marsa Nakari",
+      totality: "~5m 42s",
+      note: "RSDS resort; often sold out",
+    },
+    {
+      place: "Marsa Alam / Port Ghalib",
+      totality: "~5m 28–30s+",
+      note: "RMF gateway; refundable hotels",
+    },
+  ],
+  weather: [
+    "August on this coast is still very dry by global eclipse standards, just a step behind inland Luxor. Failure modes are sea-breeze cloud and the extra humidity SE of Luxor, not Atlantic morning stratus.",
+    "SE-Egypt dust shows up often in the satellite history; sometimes it reaches the coast when Luxor stays cleaner. Watch Barcelona SDS-WAS AOD with the cloud fields. Heat is a bit less brutal than Luxor and still hard at noon.",
+  ],
+  planIntro: [
+    "European charters into <strong>Marsa Alam (RMF)</strong> when they publish, or a long transfer south from CAI, only if the bed is already inside the ≥5-minute coastal band. Do not invent an eclipse-morning drive down from farther north unless you slept in-band.",
+    "Beluga / RSDS packages glue you to one resort. Independent refundable hotels at Port Ghalib / Marsa Alam leave the Istanbul hub strategy intact.",
+  ],
+  decisions: [
+    {
+      title: "Hamata / Wadi Lahami",
+      body: "Longest easy coastal totality. Book early. If Beluga says sold out, treat any package you do land as committed inventory.",
+    },
+    {
+      title: "Marsa Alam / Nakari / Port Ghalib",
+      body: "Still ≥5 minutes, more hotel depth, RMF access. Nakari’s RSDS eclipse terms match the hard Wadi Lahami deposit schedule.",
+    },
+    {
+      title: "Berenice",
+      body: "Long on the map, military on the ground. Skip.",
+    },
+  ],
+  planNote:
+    "Egypt e-visa as under Optimal / Egypt - inland. Stay on the Hamata tourist axis; Shalateen-style deep-south permits are a separate headache.",
+  oddsIntro:
+    "Red Sea alone is a strong ≥5-minute plan. Fixed Luxor still wins on climatology.",
+  odds: [
+    {
+      label: "Fixed Hamata / Wadi Lahami",
+      odds: "Strong",
+      plan: "Wake on site in the long coastal band. Leftover risk: sea-breeze cloud and dust.",
+    },
+    {
+      label: "Refundable coastal hold + Luxor",
+      odds: "~0–4 pp",
+      plan: "Correlated Egyptian branch. Decide by T−48h only if the room was already held. A non-refundable “hold” does nothing.",
+    },
+    {
+      label: "Coast only vs Istanbul hub",
+      odds: "Hub better for dust",
+      plan: "A broad Saharan plume can dirty Luxor and the coast together. Tunisia is the separate exit.",
+    },
+  ],
+  oddsOutro:
+    "Pick the Red Sea when diving and ≥5 minutes matter more than Nile heat—or as a pre-positioned Egypt cell, not a Tunisia substitute.",
+  booking: [
+    "<strong>Availability:</strong> check Beluga/RSDS; if sold out, look for refundable Port Ghalib / Marsa Alam / Hamata-band for 27 Jul–3 Aug.",
+    "<strong>Deposits:</strong> RSDS 20% non-refundable + balance 28 Feb 2027 only if this is your real primary.",
+    "<strong>Flights:</strong> RMF charters when loaded (often Thu/Sun only—do not bank Fri 30 Jul CAI→RMF); otherwise CAI→HRG plus daylight transfer with slack.",
+    "<strong>Dust hedge:</strong> keep refundable Sfax rooms if Red Sea is Plan A.",
+  ],
+  bookingNote:
+    "Sold-out dive packages do not cancel cleanly. Free-cancellation coastal hotels do.",
+  protocolIntro:
+    "Coastal totality is early afternoon, same ballpark as Luxor. Be there the night before.",
+  protocol: [
+    "<strong>T−72h:</strong> ECMWF/ICON + SDS-WAS. Stay coastal or, if you still hold Luxor, switch inland.",
+    "<strong>T−24h:</strong> sea-breeze / haze check; short north–south hops only inside the ≥5-minute resort belt.",
+    "<strong>Eclipse morning:</strong> no first-time Luxor↔coast transfer.",
+  ],
+  protocolOutro:
+    "If both Egyptian options look dusty at T−72h, leave for Tunisia from Istanbul. More Red Sea miles will not save you.",
+  pitfalls: [
+    "Calling a sold-out or 20%-deposit Wadi Lahami package a hedge.",
+    "Sleeping north of the ≥5-minute band and planning to drive in at dawn.",
+    "Counting on Berenice without clearance.",
+    "Assuming the coast always beats Luxor on dust (Eclipsophile often shows the reverse).",
   ],
 };
 
 const tunisia: RegionGuide = {
   id: "tunisia",
-  label: "Tunisia options",
-  short: "Cooler, open roads, shorter totality — go independent",
+  label: "Tunisia",
+  short: "Sfax / Chaffar · 5m40s–5m45s",
   takeaways: [
-    "<strong>Base in Sfax city, drive south on eclipse morning</strong> to the Chaffar–Mahares strip near the centerline (~5m 40–45s).",
-    "<strong>Go independent.</strong> Tours converge on the same café/beach site and destroy your ability to dodge cloud or dust. A free-cancellation rental car is the plan.",
-    "<strong>Fixed-site odds are excellent, not Egypt-tier.</strong> Anderson ranks Sfax and south Tunisia as the clearest stretch on the western track; mobility is what pushes you toward ~95%.",
-    "<strong>Hold 2–3 parallel Sfax-area rooms</strong> on free cancellation, lock a car now, and ticket flights the moment Aug 2027 schedules load (Aug–Sep 2026).",
+    "<strong>Sfax city (~5m40s) and the Chaffar–Mahares strip (~5m45s)</strong> are the ≥5-minute Tunisian plan. Concrete views: Chaffar Beach, GP1 mid-corridor, Mahares GP1 (avoid Miskar LPG north). Shorter path towns stay off this page on purpose.",
+    "<strong>Istanbul Branch B:</strong> IST→TUN ~30 Jul (IST only; no SAW→TUN), Camel or Avis free-cancel car, drive A1 to Sfax. Park ibis Sfax + Borj Dhiafa (or Les Oliviers) before you leave Turkey.",
+    "<strong>Go alone, not on a tour bus.</strong> Groups pile onto the same coastal pull-off. Cap Astro’s “98% clear” is sales copy. TravelQuest/Anderson <strong>~88% cloud-free daytime hours</strong> is a daytime climatology; WeatherSpark puts ~10:10 opaque-free nearer ~97–98%.",
+    "What Tunisia buys you is a <strong>dust-decoupled ≥5-minute cell</strong> plus modest coast↔inland haze mobility (material benefit ~5% of mornings). It does not beat Luxor’s fixed-site climate record.",
   ],
   whereIntro: [
-    "In Tunisia the centerline crosses land southwest of Sfax. Tunisia’s Institut National de la Météorologie (INM), relayed widely in Arabic media in April 2026, puts the country’s longest totality — about <strong>5 minutes 45 seconds</strong> — in the <strong>Chaffar</strong> area of Sfax governorate. Sfax city itself is ~5m 39–41s with the sun ~56° up around 10:11 local.",
-    "Practical geography: sleep in Sfax (best hotels, A1/GP1 access), drive ~30–40&nbsp;km south for the view. Inland escapes stay inside Sfax governorate; do not treat remote interior towns as casual backup bases.",
+    "Tunisia’s longest totality, about <strong>5 minutes 45 seconds</strong>, sits in the <strong>Chaffar</strong> area of Sfax governorate (INM via Arabic press, Apr 2026). Sfax city is ~5m 39–41s near 10:11 local with the sun ~56° up.",
+    "Sleep in Sfax. Drive 30–40&nbsp;km south on GP1 to view. If coastal haze shows up, escape <strong>west/NW on RN1</strong> (Bir Ali Ben Khalifa / Agareb) inside the ≥5-minute band—not south toward Gabès.",
   ],
   durations: [
     {
-      place: "Chaffar area (Sfax gov.)",
-      totality: "~5m 45s",
-      note: "INM’s Tunisian maximum",
+      place: "Chaffar–Mahares strip",
+      totality: "~5m 44–45s",
+      note: "Centerline; Tunisian maximum",
     },
     {
       place: "Sfax city",
       totality: "~5m 39–41s",
-      note: "Best hotel base; drive south",
+      note: "Hotel base; drive south",
     },
     {
-      place: "El Jem",
-      totality: "~4m 21–23s",
-      note: "On path, shorter; amphitheatre crowds likely",
-    },
-    {
-      place: "Gabès area",
-      totality: "~4m+",
-      note: "South of centerline; shorter",
-    },
-    {
-      place: "Kairouan city",
-      totality: "~2m 45s",
-      note: "Edge of path — skip for duration",
-    },
-    {
-      place: "Djerba",
-      totality: "~4m+",
-      note: "Comfort fallback + airport, not max duration",
+      place: "Inland Sfax (RN1 west)",
+      totality: "≥5m on-band",
+      note: "Haze escape; stay ≥5m",
     },
   ],
   weather: [
-    "Anderson rates Tunisia as among the safest western-track options once you leave the Atlantic marine-stratus zone: Sfax and the region to its south carry the <strong>lowest average cloud</strong> on that western stretch. Residual risk is still <strong>dust / sirocco</strong> more than solid overcast — usually forecastable 3–5 days out.",
-    "The Gulf of Gabès is a warm, semi-enclosed sea, so classic Atlantic morning stratus is not the main worry; a thin coastal haze or sea-breeze cloud is still possible. Moving a few tens of kilometers inland on eclipse morning is the cheap hedge.",
-    "Heat is kinder than Egypt: early-August Sfax highs around ~34&nbsp;°C, mornings ~23&nbsp;°C — hot, but roughly 8–10&nbsp;°C cooler than Luxor.",
+    "Anderson puts Sfax and the land just south of it at the <strong>lowest average cloud</strong> on the western track, with fairly low aerosol. Keep <strong>~88% cloud-free daytime hours</strong> as the TravelQuest station metric; do not read it as a 12% ruined-eclipse chance at 10:10.",
+    "Dust, sirocco and thin coastal haze beat solid overcast as the residual (TravelQuest: 0/24 Aug-2 dust days since 2000 at Sfax). A few tens of km west on RN1 inside the ≥5-minute band is the cheap haze fix. Highs near 34&nbsp;°C feel almost gentle after Luxor.",
   ],
   quote: {
     text: "Once you get into Tunisia, I think it's very much safe from cloud cover… Sfax would be a nice base.",
@@ -261,200 +442,406 @@ const tunisia: RegionGuide = {
     href: "https://eclipsophile.com/tse2027/",
   },
   planIntro: [
-    "Fly into <strong>Tunis (TUN)</strong>, or into <strong>Djerba (DJE) / Enfidha (NBE)</strong> on European summer charters if the routing wins, then <strong>drive</strong>. Tunis–Sfax is ~270&nbsp;km on the A1 (~3–3.5h). Thin Tunisair Express turboprops to Sfax/Gafsa/Gabès are a trap for a fixed-date event — one cancellation can cost the eclipse.",
-    "US citizens need no visa for stays up to 90 days. Get an International Driving Permit anyway — some agencies ask even when the letter of the law does not. Bring euros/USD cash: the dinar is a closed currency. Leave drones home (multi-ministry authorization; confiscation risk).",
+    "From Istanbul: IST→TUN (~4–7 nonstops/day now on TK/TU/BJ; 2027 counts not locked; no SAW substitute), then ~270&nbsp;km on the A1 to Sfax (~3–3.5h). Land 30–31 Jul so you get a scouting day.",
+    "Tunisia-only: fly TUN (DJE/NBE only if the drive still puts you in Sfax with slack). Skip flimsy domestic turboprops on eclipse week. Czech citizens are visa-free up to 90 days (passport only—Czech ID invalid for entry since 2025); national licence + green card usually suffice at the border; carry hard currency for the closed dinar.",
   ],
   decisions: [
     {
       title: "Primary",
-      body: "Sfax city hotel + rental car. Primary view: Chaffar–Mahares coastal strip near centerline. Operators and French tours also converge there — arrive early or keep an alternate pull-off.",
+      body: "Sfax hotel + rental car. View from Chaffar Beach or GP1 mid-corridor; Mahares as fallback. Get there early; tours aim at the same dirt.",
     },
     {
       title: "Escape corridor",
-      body: "GP1 coast (Sfax↔Mahares↔Skhira) and inland C-roads still inside <strong>Sfax governorate</strong>. You can realistically reposition 40–80&nbsp;km in the final 2–3 hours.",
-    },
-    {
-      title: "Do not use as bases",
-      body: "US Level 4 includes the <strong>Orbata Mountains in Gafsa</strong> and other interior mountain/border strips. Some other governments warn on parts of the interior including Sidi Bouzid. Stick to normal tourist roads around Sfax.",
+      body: "West/NW on RN1 and paved routes communales inside the ≥5-minute Sfax-governorate band (Bir Ali Ben Khalifa ~61&nbsp;km). 40–80&nbsp;km in the last 2–3 hours is realistic.",
     },
     {
       title: "Tours",
-      body: "Useful if you want logistics done for you — not if you want max clear-sky odds. TravelQuest has been waitlist-only; several mid-tier Tunisia packages were already filling in 2026. There is essentially no day-only land ticket for Chaffar.",
+      body: "Fine for logistics. Cap Astro’s day-of choice is between Tunisian sites, not a late hop to Egypt.",
     },
   ],
   planNote:
-    "A higher-education ministry coordination committee for the eclipse met at the Cité des Sciences in April 2026 (widely reported in Arabic). National planning is real; a specific managed Chaffar car-park was not solidly confirmed in Arabic press — treat local site management as evolving.",
+    "National coordination committee launched 16 Apr 2026; as of Aug 2026 no published Chaffar/Mahares access, closure, or parking rules. Scout day still earns its keep. Recheck through spring 2027.",
   oddsIntro:
-    "Tunisia alone does not realistically hit ~98% from a fixed bed. It wins on mobility and comfort relative to Egypt.",
+    "Tunisia alone is not a calibrated ~98%. It earns its keep as Egypt’s dust exit and a separate ≥5-minute cell—not because Cap Astro said so.",
   odds: [
     {
-      label: "Fixed Sfax / Chaffar bed",
-      odds: "Excellent, not Egypt-tier",
-      plan: "Wake in Sfax, drive to a pre-scouted Chaffar–Mahares pull-off. Strong climatology; still room for haze or a dust day.",
+      label: "Fixed Sfax / Chaffar (eclipse hour)",
+      odds: "~97–98%",
+      plan: "WeatherSpark/MERRA-2 opaque-free near ~10:10. TravelQuest ~88% is daytime cloud-free hours—a different metric.",
     },
     {
-      label: "Independent + mobility",
-      odds: "~95%",
-      plan: "Rental car, live forecasts, coastal↔inland reposition inside Sfax governorate. This is the Tunisia plan that actually uses the country’s advantages.",
+      label: "Coast↔inland mobility",
+      odds: "~5% of mornings",
+      plan: "Material haze/low-cloud rescue rate in ERA5 samples—not a jump from 88% to 95% eclipse success.",
     },
     {
-      label: "Tunisia + Egypt hedge",
-      odds: "Toward ~98%",
-      plan: "Keep refundable Sfax rooms + car as primary, plus one refundable or one-deposit Egypt option. Decide by about T−90. Hedge cost can stay well under $1,000 if you are disciplined.",
+      label: "As Istanbul Branch B",
+      odds: "See Optimal",
+      plan: "Hub end-to-end ~95.5–97.8% (≥4 min opaque-free). Pick the cleaner country from IST by ~30 Jul.",
     },
   ],
   oddsOutro:
-    "Choose Tunisia if you value open roads, cooler mornings, and a flexible independent trip. Choose Egypt if raw duration and near-zero cloud are non-negotiable.",
+    "Take Tunisia when Egypt is under a regional dust plume, or when you want cooler mornings and open roads at 5m40s+.",
   booking: [
-    "<strong>Now.</strong> Reserve a free-cancellation rental car at TUN (and/or DJE). Hold 2–3 parallel Sfax-area rooms on free cancellation for ~31 Jul–3 Aug 2027 (e.g. Les Oliviers Palace + another city hotel + optional Djerba fallback).",
-    "<strong>Now.</strong> Get IDPs; renew passports if validity is thin past Aug 2027.",
-    "<strong>Aug–Sep 2026.</strong> Airline schedules for early Aug 2027 load on the usual ~330–360 day window. Book TUN or DJE the moment fares/awards appear — refundable or 24-hour-cancellable first.",
-    "<strong>~6 months out.</strong> Narrow to one primary Sfax hotel; consider prepaying one night with written confirmation against eclipse-driven rebooking. Keep one free-cancellation backup.",
-    "<strong>T−90.</strong> Make the Tunisia-vs-Egypt call. Release the unused hedge before its non-refundable deadline. Confirm car, hotel, and SIM plan (Ooredoo / Orange / Tunisie Telecom on arrival).",
+    "<strong>With the hub:</strong> Flex IST–TUN ~30 Jul (prefer TU/BJ if TK already covers SEA–IST); SEA–IST booking window under Optimal plan.",
+    "<strong>Ground:</strong> two free-cancellation Sfax rooms (ibis + Borj Dhiafa); free-cancellation Camel or Avis at TUN; soft IDP optional—passport + national licence + green card first.",
+    "<strong>T−5 to T−3:</strong> Egypt vs Tunisia call from Istanbul (Tunisia has ~24h more flight slack than Luxor).",
   ],
   bookingNote:
-    "Arrive at least two full days early. Scout Chaffar/Mahares pull-offs and an inland C-road escape while you still have slack.",
+    "Scout Chaffar/Mahares pull-offs on Jubier the day before while you still have slack. ~$150/night was a planning ceiling; live refundable quotes sit nearer ~$82–111.",
   protocolIntro:
-    "Totality around <strong>10:11 local</strong>; partial begins ~08:56. Be set up by ~09:30. Stop driving by ~09:15.",
+    "Totality around <strong>10:11 local</strong>. Be set up by ~09:30. Stop driving by ~09:15.",
   protocol: [
-    "<strong>T−72h / 48h:</strong> ECMWF, ICON, and Météo-France AROME (covers Tunisia) plus INM bulletins. Identify cloud/dust trend.",
-    "<strong>T−24h:</strong> Firm coast vs inland. Any sirocco/dust signal → shift inland inside Sfax governorate or north/south along GP1.",
-    "<strong>T−6h (dawn):</strong> EUMETSAT / Meteosat rapid-scan, Sat24, Windy. Coastal haze over the Gulf of Gabès → drive inland.",
-    "<strong>T−2h:</strong> Final position. Find a pull-off, avoid the densest tour cluster, set up.",
+    "<strong>T−72h / 48h:</strong> ECMWF ensemble + AROME + INM, compared with Luxor dust/cloud (SDS-WAS as regional comparator).",
+    "<strong>T−24h:</strong> coast vs RN1 inland inside the ≥5-minute band.",
+    "<strong>T−6h:</strong> Meteosat rapid-scan; coastal haze means drive west on-band.",
   ],
   protocolOutro:
-    "Your cloud-dodging plan depends on a working phone — get a local SIM or eSIM on arrival and pre-download offline maps/forecasts.",
+    "Buy a local SIM or eSIM on arrival. Mobility without maps is cosplay.",
   pitfalls: [
-    "Thin Sfax hotel inventory — operators already hold blocks (Radisson / Ibis appear on English tour sheets). Parallel free-cancellation holds matter.",
-    "Domestic flights to Sfax on eclipse week — drive instead.",
-    "Closed dinar — arrive with hard currency to exchange; ATMs thin outside cities.",
-    "Drones — effectively banned for tourists without advance authorization.",
-    "Tour deposits can be large and non-refundable early — prefer independent if you want mobility.",
-    "Interior Level-4 / warned zones — do not improvise inland escapes toward Orbata or poorly signed interior roads.",
+    "Treating Cap Astro’s “98%” as an INM number—or reading 88% daytime hours as a 12% eclipse fail rate.",
+    "One Sfax hotel hold in a thin market.",
+    "Domestic flights to Sfax on eclipse week.",
+    "Closed dinar without cash; drones without paperwork.",
+  ],
+};
+
+const spain: RegionGuide = {
+  id: "spain",
+  label: "Spain",
+  short: "Ceuta / inland · max 4m48s",
+  takeaways: [
+    "Spain’s national maximum is <strong>4m 48s at Ceuta</strong> (IGN). That fails a hard 5-minute floor and still works as a cool, Schengen-friendly total.",
+    "Inland and Strait-adjacent sites beat Atlantic beach hotels. Morning marine stratus is how Spain loses.",
+    "AstroAfición and similar outfits run waitlisted events around Algeciras / Castellar (mid-band, 4m+).",
+    "<strong>Not a weather hedge for Luxor+Sfax.</strong> Joint desert cloud failure is essentially zero in the matched record; Spain adds only ~+0.2–0.5 pp (mid ~+0.35 pp) and often shares synoptic mess. Optional IST→AGP is a 4m+ tertiary exit only—do not fund it like Branch B.",
+  ],
+  whereIntro: [
+    "The umbra crosses southern Spain and the autonomous cities in the morning. In scope here: total sites with about <strong>4 minutes or more</strong> (Ceuta, Melilla, Algeciras / Castellar and the inland mid-band near the centerline).",
+  ],
+  durations: [
+    {
+      place: "Ceuta",
+      totality: "4m 48s",
+      note: "IGN Spain national max",
+    },
+    {
+      place: "Melilla",
+      totality: "~4m 34s",
+      note: "On path; Mediterranean",
+    },
+    {
+      place: "Algeciras / Castellar",
+      totality: "~4m 25s+",
+      note: "Mid-band; tour sites",
+    },
+    {
+      place: "Inland mid-band Andalucía",
+      totality: "4m+ near centerline",
+      note: "Dodge marine stratus inland",
+    },
+  ],
+  weather: [
+    "Anderson has inland Spain often under <strong>~15% average cloud</strong> in the summer dry season; Gibraltar and the Atlantic coasts run worse. IGN sees low cloud odds along the Strait with a slight Atlantic-humidity bump in western Cádiz.",
+    "Morning timing leaves less room to wait out stratus. Keep the car pointed inland at dawn if needed.",
+  ],
+  planIntro: [
+    "Fly into Málaga (AGP)—TK nonstops ~4h35m from IST plus ~1.5h to Algeciras/Castellar—or Seville/Gibraltar if timing works. Sleep inland or near the mid-band and keep a free-cancel rental car. A beach hotel as your only bed is how you buy stratus.",
+  ],
+  decisions: [
+    {
+      title: "Ceuta / Melilla",
+      body: "Longest Spanish totals. Ferry and border friction; still under 5 minutes.",
+    },
+    {
+      title: "Algeciras / Castellar inland",
+      body: "Practical mid-band with organized events. Best IST→AGP late-switch landing zone.",
+    },
+    {
+      title: "vs Egypt / Tunisia",
+      body: "Spain loses on duration and usually on climate. It wins on EU ease and cooler mornings—not as a Luxor/Sfax weather spare.",
+    },
+  ],
+  oddsIntro:
+    "Spain is a workable 4-minute total if you stay inland. It is not a desert 5-minute play and not a meaningful third weather branch.",
+  odds: [
+    {
+      label: "Inland mid-band",
+      odds: "Good if inland",
+      plan: "Refuse the beach. Cloud risk still sits above Sfax or Luxor.",
+    },
+    {
+      label: "Incremental vs Luxor+Sfax hub",
+      odds: "~+0.35 pp",
+      plan: "Trigger only if both desert countries forecast bad. Hold cost ~$650–1,100; not worth a ≥5-minute Branch C.",
+    },
+  ],
+  oddsOutro:
+    "Need ≥5 minutes? Egypt, Tunisia or Jeddah. Spain is the EU 4m+ total / tertiary exit.",
+  booking: [
+    "<strong>Lodging:</strong> refundable Castellar / Algeciras inland room + AGP free-cancel car if you want the tertiary exit.",
+    "<strong>Events:</strong> AstroAfición-style waitlists if you want a managed site.",
+    "<strong>Budget:</strong> do not dump your only forfeitable cash here while Egypt/Tunisia are still open.",
+  ],
+  protocolIntro:
+    "Morning totality. Make the coastal vs inland call by T−48h; move at dawn if you must.",
+  protocol: [
+    "<strong>T−48h:</strong> stratus / Levante on ECMWF + AROME.",
+    "<strong>Dawn:</strong> satellite, then drive inland while staying in the 4m+ total band.",
+  ],
+  protocolOutro:
+    "If the deck is stuck onshore, stop chasing beachfront seconds.",
+  pitfalls: [
+    "Using Spain as a ≥5-minute primary or as Branch C weather insurance.",
+    "One bed on the Atlantic or Alboran coast.",
+    "Edge towns under 4 minutes dressed up as “close enough.”",
+  ],
+};
+
+const morocco: RegionGuide = {
+  id: "morocco",
+  label: "Morocco",
+  short: "Far north · ~4m25s–4m52s",
+  takeaways: [
+    "Totality only clips far-northern Morocco (roughly Tanger–Tétouan–Mediterranean). National max is about <strong>4m 52s</strong> around Tétouan / Fnideq. Stick to 4m+ sites.",
+    "Mediterranean-north and slight inland spots beat a pure Atlantic beach bet for morning marine cloud. Same failure mode as Spain.",
+    "Cooler and simpler than Egypt; shorter than Tunisia’s 5m40s+ and Luxor’s 6m+. Many passports including Czech/EU are visa-free.",
+    "Fine as a cool-weather total. Do not expect Luxor/Sfax clear-sky odds.",
+  ],
+  whereIntro: [
+    "The umbra clips Morocco’s far north in the morning, then runs east. Stay in that northern total band: Tétouan, Fnideq, Martil, Tangier, Larache.",
+  ],
+  durations: [
+    {
+      place: "Tétouan / Gueznaya",
+      totality: "~4m 52s",
+      note: "Near Moroccan max",
+    },
+    {
+      place: "Fnideq / Martil",
+      totality: "~4m 52s",
+      note: "Mediterranean coast",
+    },
+    {
+      place: "Tangier",
+      totality: "~4m 51s",
+      note: "Flights / Strait logistics",
+    },
+    {
+      place: "Larache",
+      totality: "~4m 25s",
+      note: "Atlantic; south edge of band",
+    },
+  ],
+  weather: [
+    "Eclipsophile: coastal fog/stratus can hang near the water; about <strong>100 km inland</strong> it often burns off before totality. Atlantic Morocco shares Spain’s morning-cloud problem.",
+    "The sun is still low compared with Egypt’s near-zenith shot, so leftover haze hurts more.",
+  ],
+  planIntro: [
+    "Fly into Tangier (TNG) or come via Spain/ferry. Sleep inside the northern 4m+ band and keep a car for dawn tweaks. One Atlantic beach hotel as the whole plan is asking for stratus.",
+  ],
+  decisions: [
+    {
+      title: "Tétouan / Mediterranean north",
+      body: "Longest Moroccan totals with a mild inland/Med bias versus pure Atlantic stratus.",
+    },
+    {
+      title: "Tangier base",
+      body: "Best flights and ferries. Drive to a clearer 4m+ site at dawn if the coast is socked in.",
+    },
+    {
+      title: "vs Spain",
+      body: "Same duration class (both under 5 minutes). Choose on hotels, ferries and which side of the Strait looks clearer at T−48h.",
+    },
+  ],
+  oddsIntro:
+    "A solid 4m+ total if you stay mobile in the morning. Below Egypt/Tunisia on climate.",
+  odds: [
+    {
+      label: "Northern mid-band + car",
+      odds: "Good",
+      plan: "Do not get stuck on an Atlantic beach under stratus.",
+    },
+    {
+      label: "Fixed coastal bed only",
+      odds: "Weaker",
+      plan: "Same marine failure mode as southern Spain.",
+    },
+  ],
+  oddsOutro:
+    "Need ≥5 minutes? Egypt or Tunisia. Morocco is the Maghreb 4m+ cool option.",
+  booking: [
+    "<strong>Lodging:</strong> refundable room in the Tétouan / Tangier 4m+ band plus a rental car.",
+    "<strong>Ferries / flights:</strong> keep them cancellable until stratus forecasts settle.",
+    "<strong>Money:</strong> do not let this cool-weather branch eat the Egypt/Tunisia deposit budget.",
+  ],
+  protocolIntro:
+    "Morning eclipse. Coastal vs inland-north call by T−48h; move at dawn.",
+  protocol: [
+    "<strong>T−48h:</strong> ECMWF/AROME stratus vs burn-off.",
+    "<strong>Dawn:</strong> satellite; relocate inside the 4m+ northern total band.",
+  ],
+  protocolOutro:
+    "Stop at a clear in-band pull-off. Do not drift toward cities outside the northern total strip.",
+  pitfalls: [
+    "Basing outside the far-northern total band.",
+    "Atlantic beach lodging with no car.",
+    "Expecting Egypt-like odds or 5+ minutes.",
   ],
 };
 
 const other: RegionGuide = {
   id: "other",
   label: "Other options",
-  short: "Spain inland, Morocco caveats, Libya out, true hedges",
+  short: "Jeddah 5m50s+ · Libya out",
   takeaways: [
-    "<strong>Inland southern Spain</strong> beats the Atlantic/Alboran coast — morning marine stratus is the Spanish failure mode.",
-    "<strong>Morocco’s coast</strong> has the same morning-cloud problem; inland burn-off is the bet, with a morning eclipse and less time to wait.",
-    "<strong>Libya is out</strong> for ordinary travelers despite the best climatology on the track (do-not-travel).",
-    "<strong>A second country is how you buy ~98%.</strong> Egypt + Tunisia or Egypt + inland Spain — not a third hotel in the same weather cell.",
+    "<strong>Jeddah (~5m50s+)</strong> is the main leftover ≥5-minute land option east of Egypt—legal for non-Muslims (not Mecca), but Anderson’s Tihamah is the dustiest stretch on the track.",
+    "<strong>Libya</strong> has excellent weather and long totality; extreme travel bans put it out.",
+    "For a real dust exit, use the <strong>Optimal plan</strong> (Istanbul → Luxor ↔ Sfax). Spain and Morocco are their own 4m+ tabs.",
   ],
   whereIntro: [
-    "The umbra makes landfall in southern Spain and Morocco in the morning, then runs across Tunisia, Libya, and Egypt. West of Tunisia you trade duration and climatology for cooler weather and easier European logistics. East of Egypt you are into the Arabian track with rising cloud and dust.",
+    "East of the Red Sea, long totality reaches Saudi Arabia near Jeddah. West of Egypt, Libya is climatologically superb and off-limits.",
   ],
   durations: [
     {
-      place: "Inland Andalucía / Cádiz hinterland",
-      totality: "Shorter morning",
-      note: "Best western hedge if you stay inland",
-    },
-    {
-      place: "Spanish / Moroccan Atlantic coast",
-      totality: "Morning",
-      note: "Marine stratus / fog risk — avoid as primary",
-    },
-    {
-      place: "Tangier area",
-      totality: "Morning",
-      note: "Coastal cloud burn-off is the gamble",
+      place: "Jeddah (Saudi)",
+      totality: "~5m 50s+",
+      note: "≥5m; high dust; non-Muslim OK",
     },
     {
       place: "Libya track",
-      totality: "Long, clear",
-      note: "Climatology excellent; travel advisory forbids it",
-    },
-    {
-      place: "Sfax / Chaffar (Tunisia)",
-      totality: "~5m 40–45s",
-      note: "Best independent western-track land base",
-    },
-    {
-      place: "Egypt Red Sea / Luxor",
-      totality: "~5m 30s–6m 23s",
-      note: "Peak duration + peak clear-sky odds",
+      totality: "Long total",
+      note: "Excluded: extreme ban",
     },
   ],
   weather: [
-    "Anderson’s western-track maps show inland Spain often under <strong>~15% average cloud</strong>, while Cádiz-area sun-visible days are high and Gibraltar’s coast is worse (~74%). The failure mode is low morning stratus off the Atlantic — go inland, not to the beach.",
-    "Morocco shares that coastal stratus story around Tangier; the question on eclipse morning is how fast it burns off before a relatively early totality.",
-    "Libya through western Egypt is the climatological jackpot (near-zero cloud in Anderson’s charts) and is not a recreational itinerary under current US and German travel warnings.",
+    "Jeddah’s Tihamah plain stays fairly sunny (~10% cloud) and carries <strong>the highest average AOD on the track</strong>. Cloud also jumps inland toward the Hijaz after the Red Sea crossing.",
+    "Libya through western Egypt is still the clearest stretch on paper. It is not a trip you can book.",
   ],
   planIntro: [
-    "Treat Spain and Morocco as <strong>hedges or cool-weather primaries</strong>, not as upgrades on Egypt’s clear-sky odds. If Spain is your only plan, book refundable inland lodging within easy dawn driving of several centerline pull-offs, and keep a coastal booking only if you are willing to abandon it for inland air.",
+    "Treat Jeddah as a last-resort ≥5-minute switch only if Egypt and Tunisia both look broken—and decide from Istanbul before you burn those branches.",
   ],
   decisions: [
     {
-      title: "Best non-Egypt / non-Tunisia pick",
-      body: "<strong>Inland southern Spain</strong> — cooler, EU logistics, morning eclipse. Accept shorter totality and actively dodge marine cloud.",
-    },
-    {
-      title: "Morocco",
-      body: "Viable with an inland bias and a very early setup. Coastal Tangier/Atlantic nights are the wrong bet if clear skies are the goal.",
+      title: "Jeddah",
+      body: "E-visa path, tours exist, dustier than Egypt. Do not plan Mecca.",
     },
     {
       title: "Libya",
-      body: "Ruled out. Excellent weather on paper is irrelevant under Level-4 / do-not-travel advisories.",
-    },
-    {
-      title: "True ~98% plan",
-      body: "Two widely separated path segments that fail independently — typically <strong>Egypt + Tunisia</strong> or <strong>Egypt + inland Spain</strong> — with a decision gate around T−4 to T−90 depending on how you booked.",
+      body: "Whole-country bans from European ministries. Out.",
     },
   ],
   oddsIntro:
-    "Other options are about tradeoffs, not a secret clearer sky than Egypt.",
+    "Neither leftover beats forecast-selected Luxor/Sfax on clear sky. Hub odds live under Optimal plan.",
   odds: [
     {
-      label: "Inland Spain only",
-      odds: "Good if inland",
-      plan: "Strong if you refuse the coast. Still higher cloud risk than Tunisia’s Sfax stretch or Egypt’s Red Sea.",
+      label: "Jeddah",
+      odds: "Viable, dustier",
+      plan: "Legal ≥5m total; weather worse than Luxor/Sfax.",
     },
     {
-      label: "Morocco coastal primary",
-      odds: "Weaker",
-      plan: "Morning stratus can erase the event. Only sensible with a rehearsed inland move before totality.",
-    },
-    {
-      label: "Two-country hedge",
-      odds: "~98%+",
-      plan: "Egypt (duration + climatology) plus Tunisia or inland Spain (independent weather cell). This is what “maximize odds” actually means at the top end.",
+      label: "Libya",
+      odds: "Unbookable",
+      plan: "Best paper climate; not a plan.",
     },
   ],
   oddsOutro:
-    "If you will only book one country, Egypt still wins on raw clear-sky probability and duration; Tunisia wins on independent mobility and heat; inland Spain wins on EU ease and cooler mornings.",
+    "If you need ≥5 minutes with a dust exit, go back to Optimal plan.",
   booking: [
-    "<strong>Spain:</strong> refundable inland lodging near the path, rental car, and a second inland option on a different road. Do not lock a beach hotel as your only bed.",
-    "<strong>Morocco:</strong> same logic — inland flexibility over coastal resort convenience.",
-    "<strong>Hedge:</strong> keep forfeitable exposure small (refundable rooms, one modest tour deposit). Decide which country to drop before non-refundable deadlines, not on eclipse morning.",
-    "<strong>Flights:</strong> European hubs make Spain/Morocco easy; Tunisia is one connection from most long-haul cities; Egypt Red Sea often wants an RMF charter or Cairo domestic.",
+    "<strong>Saudi:</strong> e-visa before travel; skip Mecca.",
+    "<strong>Timing:</strong> do not abandon Luxor/Sfax holds for a late Jeddah scramble.",
   ],
-  protocolIntro: "Morning eclipses leave less time to wait out stratus.",
+  protocolIntro:
+    "Same tools as the hub if you ever activate this: ECMWF ensemble and Barcelona dust AOD.",
   protocol: [
-    "<strong>Spain / Morocco:</strong> watch coastal vs inland stratus from T−48h; be ready to drive inland at dawn.",
-    "<strong>Shared tools:</strong> ECMWF/ICON via Windy, EUMETSAT rapid-scan, local met offices.",
-    "<strong>Dust:</strong> Saharan dust palls can affect Spain and Tunisia too — check CAMS/aerosol layers, not only cloud.",
+    "<strong>Saudi:</strong> read AOD before cloud on the Tihamah.",
+    "<strong>Tools:</strong> ECMWF ENS, EUMETSAT, Barcelona Dust Center.",
   ],
   protocolOutro:
-    "If your “other” option is really a hedge on Egypt or Tunisia, rehearse the decision date when deposits go hard — not the morning of 2 August.",
+    "Jeddah is a contingency, not a parallel Branch C.",
   pitfalls: [
-    "Booking the Spanish or Moroccan coast because the hotels are nicer — that is how marine stratus wins.",
-    "Assuming Libya’s weather is somehow accessible — it is not for ordinary itineraries.",
-    "Calling a second hotel in the same city a “hedge” — weather cells are larger than that.",
-    "Underestimating morning timing in Spain/Morocco — less sun altitude and less time to reposition than Egypt’s midday eclipse.",
+    "Treating Jeddah as clearer than Luxor.",
+    "Assuming Libya is somehow bookable.",
+    "Skipping the Istanbul buffer and hoping to rebook on 1 Aug.",
   ],
 };
 
-const regions: RegionGuide[] = [egypt, tunisia, other];
+const regions: RegionGuide[] = [
+  optimalPlan,
+  egyptInland,
+  egyptRedSea,
+  tunisia,
+  spain,
+  morocco,
+  other,
+];
+
 
 const sources: Source[] = [
   {
     label: "Eclipsophile — TSE 2027",
     href: "https://eclipsophile.com/tse2027/",
-    note: "Jay Anderson cloud, dust, and track climatology",
+    note: "Jay Anderson cloud, dust and track climatology",
+  },
+  {
+    label: "NASA — SE2027Aug02 Google map",
+    href: "https://eclipse.gsfc.nasa.gov/SEgoogle/SEgoogle2001/SE2027Aug02Tgoogle.html",
+    note: "Greatest Duration 6m23.2s; weather over centerline seconds",
+  },
+  {
+    label: "TravelQuest — Egypt Anderson weather",
+    href: "https://travelquesttours.com/2027-egypt-total-solar-eclipse-southbound/",
+    note: "Luxor: sunshine on 92% of daylight hours; dust residual",
+  },
+  {
+    label: "TravelQuest — Tunisia Anderson weather",
+    href: "https://travelquesttours.com/2027-tunisia-total-solar-eclipse/",
+    note: "Sfax: cloud-free Sun on 88% of daytime hours",
+  },
+  {
+    label: "WeatherSpark — Luxor August",
+    href: "https://weatherspark.com/m/97258/8/Average-Weather-in-August-in-Luxor-Egypt",
+    note: "MERRA-2 cloud categories for Luxor in August",
+  },
+  {
+    label: "WeatherSpark — Sfax August",
+    href: "https://weatherspark.com/m/65622/8/Average-Weather-in-August-in-Sfax-Tunisia",
+    note: "MERRA-2 cloud categories for Sfax in August",
+  },
+  {
+    label: "Open-Meteo Historical (ERA5)",
+    href: "https://open-meteo.com/en/docs/historical-weather-api",
+    note: "Matched Aug-2 Luxor/Sfax cloud samples",
+  },
+  {
+    label: "Turkish Airlines — SEA–IST",
+    href: "https://www.turkishairlines.com/en/flights-from-seattle-to-istanbul",
+    note: "Nonstop ~13h SEA→IST (TK-only nonstop)",
+  },
+  {
+    label: "Turkish Airlines — online booking window",
+    href: "https://www.turkishairlines.com/en-us/legal-notice/conditions-of-online-services/",
+    note: "Reservations up to 355 days ahead",
+  },
+  {
+    label: "ECMWF — medium-range ENS",
+    href: "https://www.ecmwf.int/en/forecasts/documentation-and-support/medium-range-forecasts",
+    note: "51-member ensemble out to 15 days",
+  },
+  {
+    label: "Ahram Online — Luxor eclipse committee",
+    href: "https://english.ahram.org.eg/News/569499.aspx",
+    note: "May 2026 ministry committee; overcrowding / movement",
+  },
+  {
+    label: "RSDS — Wadi Lahami eclipse",
+    href: "https://www.redsea-divingsafari.com/price-lists/wadi-lahami/solar-eclipse-2027",
+    note: "~6m 14s; €1,546–1,891 pp; 20% non-refundable; balance 28 Feb 2027",
+  },
+  {
+    label: "Far and Beyond — Luxor package",
+    href: "https://www.farandbeyondtravel.com/eclipse-2027-luxor-package",
+    note: "Full bank-transfer prepay; 100% non-refundable (caution)",
   },
   {
     label: "EclipseWise / Espenak",
@@ -464,7 +851,7 @@ const sources: Source[] = [
   {
     label: "Sky & Telescope",
     href: "https://skyandtelescope.org/astronomy-news/plan-for-the-2027-eclipse-of-the-century-one-year-from-now/",
-    note: "Path overview; dust as residual risk",
+    note: "Path overview; dust residual; Luxor tour pages still push ~80% clear / Winter Palace",
   },
   {
     label: "Space.com guide",
@@ -492,34 +879,64 @@ const sources: Source[] = [
     note: "Sfax ~5m 41s",
   },
   {
-    label: "US State Dept — Tunisia",
-    href: "https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/tunisia-travel-advisory.html",
-    note: "Level 2; Level-4 mountain/border strips incl. Orbata",
+    label: "Egypt Presidency — Berenice base (AR)",
+    href: "https://www.presidency.eg/ar/%D8%A7%D9%84%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%D8%B9-%D8%A7%D9%84%D9%82%D9%88%D9%85%D9%8A%D8%A9/%D9%82%D8%A7%D8%B9%D8%AF%D8%A9-%D8%A8%D8%B1%D9%86%D9%8A%D8%B3-%D8%A7%D9%84%D8%B9%D8%B3%D9%83%D8%B1%D9%8A%D8%A9/",
+    note: "~150,000 feddans; naval + air + Berenice airport",
   },
   {
-    label: "France Diplomatie — Tunisie",
-    href: "https://www.diplomatie.gouv.fr/fr/information-par-pays/tunisie/conseils-aux-voyageurs-securite",
-    note: "French security advice; Sfax not specially barred",
+    label: "Barcelona Dust Center / SDS-WAS",
+    href: "https://dust.aemet.es/",
+    note: "72h MONARCH dust AOD for N. Africa / Middle East",
   },
   {
-    label: "Auswärtiges Amt — Tunesien",
-    href: "https://www.auswaertiges-amt.de/de/reiseundsicherheit/tunesiensicherheit-219024",
-    note: "German advisory; no Sfax-specific ban",
+    label: "visa2egypt.gov.eg",
+    href: "https://www.visa2egypt.gov.eg/eVisa/FAQ",
+    note: "Official e-visa fees ($30 single / $65 multiple); Czechs eligible",
   },
   {
-    label: "Red Sea Diving Safari",
-    href: "https://www.redsea-divingsafari.com/news/solar-eclipse-2027/21235",
-    note: "Wadi Lahami ~6m 14s",
+    label: "Visa requirements for Czech citizens (Tunisia)",
+    href: "https://en.wikipedia.org/wiki/Visa_requirements_for_Czech_citizens",
+    note: "Czech visa-free tourism ≤90 days; recheck official wording before travel",
   },
   {
-    label: "Ahram Online",
-    href: "https://english.ahram.org.eg/News/569499.aspx",
-    note: "Egypt tourism ministry eclipse committee",
+    label: "Republic of Türkiye MFA — visa",
+    href: "https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa",
+    note: "Czech visa-free tourist entry for IST hub",
+  },
+  {
+    label: "Beluga / solareclipseegypt",
+    href: "https://www.solareclipseegypt.com/en/hotels/wadi-lahami-village-hamata",
+    note: "Wadi Lahami often sold out; desert-max camps; ~82% clear marketing",
+  },
+  {
+    label: "IGN España — eclipse 2027",
+    href: "https://astronomia.ign.es/eclipses-de-sol-y-luna/eclipse-total-sol-de-2-de-agosto-2027",
+    note: "Spain max totality 4m 48s at Ceuta",
+  },
+  {
+    label: "Al-Masry Al-Youm (AR)",
+    href: "https://www.almasryalyoum.com/news/details/4327709",
+    note: "US operators: 2027 bookings above prior two years’ rates",
+  },
+  {
+    label: "Cap Astro — Tunisie 2027",
+    href: "https://www.stagesdecouverteastronomie.com/sejour-eclipse-totale-de-soleil-2-aout-2027-tunisie",
+    note: "Operator “98% clear” claim; Egypt checkpoint warning",
+  },
+  {
+    label: "Luxor2027.es",
+    href: "https://luxor2027.es/",
+    note: "ES package deposit / cancellation ladder",
   },
   {
     label: "Mandarin Oriental",
     href: "https://press.mandarinoriental.com/?p=18656",
-    note: "Winter Palace restoration / July 2027 target",
+    note: "Winter Palace closed early 2026; July 2027 MO reopen target",
+  },
+  {
+    label: "Wikivoyage DE — Shalateen",
+    href: "https://de.wikivoyage.org/wiki/Schal%C4%81t%C4%ABn",
+    note: "Military permit for Shalateen groups",
   },
 ];
 ---
@@ -534,7 +951,7 @@ const sources: Source[] = [
     <meta name="description" content={pageDescription} />
     <meta
       name="subject"
-      content="How to maximize clear-sky odds for the August 2, 2027 total solar eclipse across Egypt, Tunisia, and other path options."
+      content={pageDescription}
     />
     <meta name="application-name" content={pageTitle} />
     <meta
@@ -547,7 +964,7 @@ const sources: Source[] = [
     />
     <meta
       name="keywords"
-      content="2027 total solar eclipse, clear skies, Egypt, Tunisia, Sfax, Chaffar, Wadi Lahami, Luxor, Spain, Jay Anderson"
+      content="2027 total solar eclipse, 5+ minutes, Luxor, Red Sea, Tunisia, Sfax, Spain, Morocco, Ceuta, Jeddah, Istanbul hub, Jay Anderson"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -599,10 +1016,10 @@ const sources: Source[] = [
       <header class="hero">
         <a class="home-link" href="/" aria-label="Back to home">sokolsky.me</a>
         <p class="eyebrow">Travel · August 2, 2027</p>
-        <h1>Clear skies for the eclipse of the century</h1>
+        <h1>{pageTitle}</h1>
         <p class="dek">
-          Totality lasts over six minutes in Egypt and nearly six in Tunisia.
-          Cloud is rarely the problem. Dust, mobility, and where you sleep are.
+          Recommended: Istanbul hub, Flex Luxor (default) and Sfax (dust exit),
+          decide by 30 July. Country tabs below are detail.
         </p>
       </header>
 
@@ -610,21 +1027,26 @@ const sources: Source[] = [
         <section id="tradeoff" aria-labelledby="tradeoff-heading">
           <h2 id="tradeoff-heading">Pick the tradeoff</h2>
           <p>
-            On Monday, 2 August 2027, the Moon’s umbra crosses southern Spain
-            and Morocco in the morning, then Tunisia, Libya, and Egypt near
-            midday. Greatest eclipse is in Egypt (~6m 23s). The clear-sky
-            ranking on usable land is roughly
-            <strong>Egypt / western desert track &gt; Tunisia (Sfax) &gt; inland
-              Spain &gt; Atlantic coasts</strong
-            >; Libya’s weather is excellent and off-limits.
+            On Monday 2 August 2027 the umbra crosses southern Spain and
+            northern Morocco in the morning, then Tunisia, Libya, Egypt and
+            Saudi Arabia. Greatest eclipse is in Egypt (~6m 23s; NASA Greatest
+            Duration 6m23.2s). Egypt and Tunisia coverage here is
+            <strong>≥5 minutes of totality</strong>. Spain and Morocco are
+            <strong>≥4 minutes</strong> (both top out under five).
           </p>
           <p>
-            Egypt maximizes duration and climatology. Tunisia maximizes
-            independent mobility and cooler mornings. Everything else is a hedge
-            or a logistics preference. Use the switcher for the plan that
-            matches your constraint.
+            For duration and inland sunshine,
+            <strong>Luxor</strong> leads; the Egyptian Red Sea is close on length
+            but a step behind on climate. <strong>Sfax</strong> is slightly less
+            sunny on daytime-hour stats and is the <strong>dust hedge</strong>,
+            not a third-rate sky. Then inland Spain / northern Morocco (4m+),
+            then Jeddah (dustier). Libya’s skies are excellent and off the
+            table. The recommended approach is the
+            <strong>Optimal plan</strong> tab: Istanbul → Luxor or Sfax, ~97%
+            planning for ≥4 minutes opaque-free. Other tabs are country detail.
           </p>
         </section>
+
 
         <div class="region-shell" data-region-shell>
           <div
@@ -662,7 +1084,7 @@ const sources: Source[] = [
                 hidden={index !== 0}
               >
                 <aside class="takeaways" aria-labelledby={`${region.id}-takeaways`}>
-                  <h2 id={`${region.id}-takeaways`}>The short version</h2>
+                  <h2 id={`${region.id}-takeaways`}>In short</h2>
                   <ol>
                     {region.takeaways.map((item) => (
                       <li set:html={item} />
@@ -680,7 +1102,7 @@ const sources: Source[] = [
                   ))}
                   <div class="table-wrap">
                     <table>
-                      <caption>Indicative totality</caption>
+                      <caption>Indicative totality (total eclipse, in-scope durations)</caption>
                       <thead>
                         <tr>
                           <th scope="col">Place</th>
@@ -753,7 +1175,7 @@ const sources: Source[] = [
                   id={`${region.id}-odds`}
                   aria-labelledby={`${region.id}-odds-heading`}
                 >
-                  <h2 id={`${region.id}-odds-heading`}>How odds scale</h2>
+                  <h2 id={`${region.id}-odds-heading`}>Odds tiers</h2>
                   <p>{region.oddsIntro}</p>
                   <ol class="tier-list">
                     {region.odds.map((tier) => (
@@ -787,7 +1209,7 @@ const sources: Source[] = [
                   aria-labelledby={`${region.id}-protocol-heading`}
                 >
                   <h2 id={`${region.id}-protocol-heading`}>
-                    Eclipse-week protocol
+                    Week-of weather calls
                   </h2>
                   <p set:html={region.protocolIntro} />
                   <ul class="plain-list">
@@ -816,29 +1238,67 @@ const sources: Source[] = [
           }
         </div>
 
+        <section id="recheck" aria-labelledby="recheck-heading">
+          <h2 id="recheck-heading">Recheck before you book hard</h2>
+          <ul class="plain-list">
+            <li>
+              Jul 2027 IST→CAI / IST→TUN schedules and Flex fares when inventory
+              opens (~Aug–Nov 2026); confirm operating carriers, not just flight
+              numbers.
+            </li>
+            <li>
+              Egypt e-visa fee/eligible list and Tunisia passport-validity floor
+              (3 vs 6 months wording) for Czech travelers before Jul 2027.
+            </li>
+            <li>
+              MoTA / SIS Luxor eclipse access rules and Tunisia gouvernorat Sfax
+              / Interior guidance—committees exist; site ops rules mostly
+              unpublished as of Aug 2026.
+            </li>
+            <li>
+              Desert SE program lead times (≥21 days), hotel free-cancel-by
+              dates, and RSDS / Beluga deposit ladders if Red Sea becomes
+              primary.
+            </li>
+            <li>
+              Jubier interactive map for exact Chaffar–Mahares and Luxor
+              corridor GPS the week before.
+            </li>
+          </ul>
+        </section>
+
         <section id="sources" aria-labelledby="sources-heading">
           <h2 id="sources-heading">Sources</h2>
-          <ul class="source-list">
-            {
-              sources.map((source) => (
-                <li>
-                  <a
-                    href={source.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {source.label}
-                  </a>
-                  <span>{source.note}</span>
-                </li>
-              ))
-            }
-          </ul>
           <p class="source-note">
-            Probabilities are planning estimates. No booking strategy fully
-            eliminates dust — only geographic hedging across independent weather
-            cells does.
+            Probabilities here are planning estimates from climatology,
+            reanalysis samples, and forecast-skill literature—not a calibrated
+            trip probability. Dust is the leftover you cannot cancel with a
+            hotel voucher; you cancel it by holding a second weather cell.
           </p>
+          <details class="sources-disclosure">
+            <summary>
+              <span class="sources-disclosure-closed">
+                Show all sources ({sources.length})
+              </span>
+              <span class="sources-disclosure-open">Hide sources</span>
+            </summary>
+            <ul class="source-list">
+              {
+                sources.map((source) => (
+                  <li>
+                    <a
+                      href={source.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {source.label}
+                    </a>
+                    <span>{source.note}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </details>
         </section>
       </article>
     </main>
@@ -854,12 +1314,12 @@ const sources: Source[] = [
         const panels = Array.from(
           shell.querySelectorAll(".region-panel"),
         ).filter((el) => el instanceof HTMLElement);
-        const valid = new Set(["egypt", "tunisia", "other"]);
+        const valid = new Set(["optimal", "egypt-inland", "egypt-red-sea", "tunisia", "spain", "morocco", "other"]);
 
         const activate = (rawId, options = {}) => {
           const focus = Boolean(options.focus);
           const pushHash = options.pushHash !== false;
-          let id = valid.has(rawId) ? rawId : "egypt";
+          let id = valid.has(rawId) ? rawId : "optimal";
 
           for (const tab of tabs) {
             const on = tab.dataset.region === id;
@@ -880,7 +1340,7 @@ const sources: Source[] = [
 
         for (const tab of tabs) {
           tab.addEventListener("click", () => {
-            activate(tab.dataset.region || "egypt", { focus: false });
+            activate(tab.dataset.region || "optimal", { focus: false });
           });
           tab.addEventListener("keydown", (event) => {
             if (!(event instanceof KeyboardEvent)) return;
@@ -894,14 +1354,14 @@ const sources: Source[] = [
               next = (i - 1 + tabs.length) % tabs.length;
             if (event.key === "Home") next = 0;
             if (event.key === "End") next = tabs.length - 1;
-            const target = tabs[next]?.dataset.region || "egypt";
+            const target = tabs[next]?.dataset.region || "optimal";
             activate(target, { focus: true });
           });
         }
 
         const fromHash = () => {
           const id = location.hash.replace(/^#/, "");
-          activate(valid.has(id) ? id : "egypt", { pushHash: false });
+          activate(valid.has(id) ? id : "optimal", { pushHash: false });
         };
         window.addEventListener("hashchange", fromHash);
         fromHash();
@@ -1150,11 +1610,23 @@ const sources: Source[] = [
 
   .region-switch {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.35rem;
     padding: 0.3rem;
     border: 1px solid var(--rule);
     background: color-mix(in srgb, var(--paper) 88%, transparent);
+  }
+
+  @media (max-width: 900px) {
+    .region-switch {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .region-switch {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .region-tab {
@@ -1385,6 +1857,65 @@ const sources: Source[] = [
   .steps li + li,
   .plain-list li + li {
     margin-top: 0.55rem;
+  }
+
+  .sources-disclosure {
+    margin-top: 0.85rem;
+  }
+
+  .sources-disclosure > summary {
+    width: fit-content;
+    cursor: pointer;
+    list-style: none;
+    color: var(--accent);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    text-underline-offset: 0.28em;
+  }
+
+  .sources-disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sources-disclosure > summary::before {
+    content: "";
+    display: inline-block;
+    width: 0.45em;
+    height: 0.45em;
+    margin-right: 0.45em;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(-45deg) translateY(-0.05em);
+    transition: transform 160ms ease;
+  }
+
+  .sources-disclosure[open] > summary::before {
+    transform: rotate(45deg) translateY(-0.1em);
+  }
+
+  .sources-disclosure > summary:hover,
+  .sources-disclosure > summary:focus-visible {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .sources-disclosure > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .sources-disclosure-open {
+    display: none;
+  }
+
+  .sources-disclosure[open] .sources-disclosure-closed {
+    display: none;
+  }
+
+  .sources-disclosure[open] .sources-disclosure-open {
+    display: inline;
   }
 
   .source-list {
