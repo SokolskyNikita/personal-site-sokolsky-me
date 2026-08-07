@@ -6,8 +6,8 @@ import {
 } from "../modes";
 
 describe("SEARCH_MODES", () => {
-  it("defaults to business with at least one lie-flat segment", () => {
-    expect(DEFAULT_SEARCH_MODE_ID).toBe("business-any-lie-flat");
+  it("defaults to economy", () => {
+    expect(DEFAULT_SEARCH_MODE_ID).toBe("economy");
   });
 
   it("ships six rows with correct cabin/policy mappings", () => {

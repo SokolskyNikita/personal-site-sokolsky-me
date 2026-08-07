@@ -58,7 +58,7 @@ export const SEARCH_MODES: readonly SearchMode[] = [
   },
 ] as const;
 
-export const DEFAULT_SEARCH_MODE_ID: SearchModeId = "business-any-lie-flat";
+export const DEFAULT_SEARCH_MODE_ID: SearchModeId = "economy";
 
 export function getSearchMode(id: string): SearchMode | undefined {
   return SEARCH_MODES.find((mode) => mode.id === id);
