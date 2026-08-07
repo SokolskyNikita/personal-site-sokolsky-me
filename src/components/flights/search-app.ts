@@ -86,6 +86,9 @@ type QueryResponse = {
 const ONE_WAY_CONCURRENCY = 6;
 const ROUND_TRIP_CONCURRENCY = 3;
 
+/** Marks per-leg times in the route line as flight durations. */
+const PLANE_ICON = `<svg class="fs-result-route-plane" viewBox="0 0 24 24" width="10" height="10" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 16v-2l-8-5V3.5C13 2.67 12.33 2 11.5 2S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z"/></svg>`;
+
 export function mountFlightSearch(root: HTMLElement): void {
   const formEl = root.querySelector<HTMLFormElement>("#fs-form")!;
   const searchSummary = root.querySelector<HTMLElement>("#fs-search-summary")!;
@@ -1126,7 +1129,7 @@ function renderResultLeg(
       const legMinutes = segmentLegMinutes(segment);
       const sep =
         legMinutes > 0
-          ? `<span class="fs-result-route-sep" aria-hidden="true"><span class="fs-result-route-leg">${escapeHtml(
+          ? `<span class="fs-result-route-sep" aria-hidden="true"><span class="fs-result-route-leg">${PLANE_ICON}${escapeHtml(
               formatDuration(legMinutes),
             )}</span></span>`
           : `<span class="fs-result-route-sep" aria-hidden="true"></span>`;
