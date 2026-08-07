@@ -14,10 +14,19 @@ import {
   type TripType,
 } from "./types";
 
+/**
+ * Default registry selections when a side opts into airport groupings.
+ * Autocomplete mode (default) starts with empty origin/dest.
+ */
+export const DEFAULT_GROUPING_ORIGIN = "anywhere";
+export const DEFAULT_GROUPING_DEST = "usa-gateways";
+
 /** Flight-search form defaults. */
 export const DEFAULT_FORM = {
-  origin: "anywhere",
-  dest: "usa-gateways",
+  origin: "",
+  dest: "",
+  originLabel: "",
+  destLabel: "",
   mode: DEFAULT_SEARCH_MODE_ID,
   tripType: "one_way" as TripType,
   tripLengthDays: 7,
@@ -48,6 +57,9 @@ export function defaultStartDate(now = new Date()): string {
 export type FormState = {
   origin: string;
   dest: string;
+  /** Display label for autocomplete selections (city name or airport title). */
+  originLabel: string;
+  destLabel: string;
   mode: string;
   cabin: Cabin;
   lieFlatPolicy: LieFlatPolicy;
@@ -72,6 +84,8 @@ export function defaultFormState(start = defaultStartDate()): FormState {
   return {
     origin: DEFAULT_FORM.origin,
     dest: DEFAULT_FORM.dest,
+    originLabel: DEFAULT_FORM.originLabel,
+    destLabel: DEFAULT_FORM.destLabel,
     mode: mode.id,
     cabin: mode.cabin,
     lieFlatPolicy: mode.lieFlatPolicy,
@@ -117,8 +131,10 @@ export function formStateToLegSearch(form: FormState): LegSearch {
 /** Serialize the full search spec to URL query params (invariant 7). */
 export function formStateToSearchParams(form: FormState): URLSearchParams {
   const params = new URLSearchParams();
-  params.set("origin", form.origin);
-  params.set("dest", form.dest);
+  if (form.origin) params.set("origin", form.origin);
+  if (form.dest) params.set("dest", form.dest);
+  if (form.originLabel) params.set("originLabel", form.originLabel);
+  if (form.destLabel) params.set("destLabel", form.destLabel);
   params.set("mode", form.mode);
   params.set("cabin", form.cabin);
   params.set("lieFlatPolicy", form.lieFlatPolicy);
@@ -169,6 +185,8 @@ export function formStateFromSearchParams(
   return {
     origin: params.get("origin") ?? base.origin,
     dest: params.get("dest") ?? base.dest,
+    originLabel: params.get("originLabel") ?? base.originLabel,
+    destLabel: params.get("destLabel") ?? base.destLabel,
     mode: mode?.id ?? base.mode,
     cabin,
     lieFlatPolicy,

@@ -19,6 +19,7 @@ import {
   defaultCityGroupSide,
   involvesBelarusRegistry,
   isAnywhereToAnywhere,
+  isRegistryLocation,
   listRegistryOptionSections,
 } from "../../lib/flights/resolver";
 import {
@@ -30,6 +31,7 @@ import {
   lookupLieFlatTiersForSegments,
   tierBadgeClass,
 } from "../../lib/flights/lie-flat-tiers";
+import type { AirportLocationSuggestion } from "../../lib/flights/searchapi";
 import {
   MAX_TOTAL_HOURS_OPTIONS,
   type CityGroupSide,
@@ -43,6 +45,8 @@ import {
 } from "../../lib/flights/types";
 import {
   DEFAULT_FORM,
+  DEFAULT_GROUPING_DEST,
+  DEFAULT_GROUPING_ORIGIN,
   DEFAULT_START_OFFSET_DAYS,
   defaultFormState,
   formStateFromSearchParams,
@@ -87,6 +91,7 @@ export function mountFlightSearch(root: HTMLElement): void {
   const results = root.querySelector<HTMLElement>("#fs-results")!;
   const footer = root.querySelector<HTMLElement>("#fs-footer")!;
   const runBtn = root.querySelector<HTMLButtonElement>("#fs-run")!;
+  const clearBtn = root.querySelector<HTMLButtonElement>("#fs-clear")!;
   const cancelBtn = root.querySelector<HTMLButtonElement>("#fs-cancel")!;
   const daysInput = root.querySelector<HTMLInputElement>("#fs-days")!;
   const daysValue = root.querySelector<HTMLElement>("#fs-days-value")!;
@@ -222,42 +227,51 @@ export function mountFlightSearch(root: HTMLElement): void {
   )) {
     input.addEventListener("change", () => {
       form = { ...form, currency: currentCurrency() };
-      syncUrl(form);
       rerenderLatestResults();
     });
   }
 
-  // Registry select wins over leftover IATA text.
   for (const id of ["#fs-origin-reg", "#fs-dest-reg"] as const) {
-    root.querySelector(id)?.addEventListener("change", (event) => {
-      const select = event.target as HTMLSelectElement;
-      const iataId = select.id === "fs-origin-reg" ? "#fs-origin-iata" : "#fs-dest-iata";
-      const iata = root.querySelector<HTMLInputElement>(iataId);
-      if (iata) iata.value = "";
+    root.querySelector(id)?.addEventListener("change", () => onFormChanged());
+  }
+
+  for (const side of ["origin", "destination"] as const) {
+    const checkbox = root.querySelector<HTMLInputElement>(
+      side === "origin" ? "#fs-origin-groupings" : "#fs-dest-groupings",
+    );
+    checkbox?.addEventListener("change", () => {
+      const checked = Boolean(checkbox.checked);
+      if (checked) {
+        const select = root.querySelector<HTMLSelectElement>(
+          side === "origin" ? "#fs-origin-reg" : "#fs-dest-reg",
+        );
+        const fallback =
+          side === "origin" ? DEFAULT_GROUPING_ORIGIN : DEFAULT_GROUPING_DEST;
+        if (select && !isRegistryLocation(select.value)) {
+          select.value = fallback;
+        }
+        clearAirportSearchSide(root, side);
+      }
+      syncLocationMode(root, side, checked);
       onFormChanged();
+      if (checked) {
+        root
+          .querySelector<HTMLSelectElement>(
+            side === "origin" ? "#fs-origin-reg" : "#fs-dest-reg",
+          )
+          ?.focus();
+      } else {
+        root
+          .querySelector<HTMLInputElement>(
+            side === "origin" ? "#fs-origin-query" : "#fs-dest-query",
+          )
+          ?.focus();
+      }
     });
   }
 
-  // Typing a full IATA overrides the registry dropdown for that side.
-  for (const id of ["#fs-origin-iata", "#fs-dest-iata"] as const) {
-    root.querySelector(id)?.addEventListener("input", (event) => {
-      const input = event.target as HTMLInputElement;
-      input.value = input.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3);
-      onFormChanged();
-    });
-  }
-
-  root.querySelector("#fs-custom-airports")?.addEventListener("change", (event) => {
-    const checked = (event.target as HTMLInputElement).checked;
-    syncCustomAirportFields(root, checked);
-    if (checked) {
-      root.querySelector<HTMLInputElement>("#fs-origin-iata")?.focus();
-      return;
-    }
-    setVal(root, "#fs-origin-iata", "");
-    setVal(root, "#fs-dest-iata", "");
-    onFormChanged();
-  });
+  mountAirportSearch(root, "origin", () => onFormChanged());
+  mountAirportSearch(root, "destination", () => onFormChanged());
 
   root.querySelector("#fs-mode")?.addEventListener("change", () => {
     const modeId =
@@ -286,24 +300,40 @@ export function mountFlightSearch(root: HTMLElement): void {
 
   root.querySelector("#fs-swap")?.addEventListener("click", () => {
     form = readForm(root, form);
-    const tmp = form.origin;
-    form.origin = form.dest;
-    form.dest = tmp;
+    const next: FormState = {
+      ...form,
+      origin: form.dest,
+      dest: form.origin,
+      originLabel: form.destLabel,
+      destLabel: form.originLabel,
+    };
+    form = next;
     applyFormToDom(root, form);
-    syncUrl(form);
+    syncCitySideDefault();
+    invalidateSearch();
+  });
+
+  clearBtn.addEventListener("click", () => {
+    if (isRunning) return;
+    form = defaultFormState(defaultLocalStartDate());
+    applyFormToDom(root, form);
+    clearUrl();
     syncCitySideDefault();
     invalidateSearch();
   });
 
   formEl.addEventListener("change", (event) => {
     const target = event.target as HTMLElement | null;
-    // Registry/mode/days handled above with dedicated listeners.
+    // Registry/mode/days/groupings/autocomplete handled above.
     if (
       target?.id === "fs-origin-reg" ||
       target?.id === "fs-dest-reg" ||
       target?.id === "fs-mode" ||
       target?.id === "fs-round-trip" ||
-      target?.id === "fs-custom-airports" ||
+      target?.id === "fs-origin-groupings" ||
+      target?.id === "fs-dest-groupings" ||
+      target?.id === "fs-origin-query" ||
+      target?.id === "fs-dest-query" ||
       target?.id === "fs-days"
     ) {
       return;
@@ -313,12 +343,14 @@ export function mountFlightSearch(root: HTMLElement): void {
 
   function onFormChanged(): void {
     form = readForm(root, form);
-    syncUrl(form);
     syncCitySideDefault();
     invalidateSearch();
   }
 
   function routeBlockedMessage(state: FormState): string | null {
+    if (!state.origin || !state.dest) {
+      return "Choose an origin and destination to search.";
+    }
     if (isAnywhereToAnywhere(state.origin, state.dest)) {
       return "Anywhere to Anywhere is not supported. Choose a specific origin or destination.";
     }
@@ -1222,36 +1254,46 @@ function populateSelects(root: HTMLElement): void {
 }
 
 function applyFormToDom(root: HTMLElement, form: FormState): void {
-  const registryIds = new Set(
-    [...root.querySelectorAll<HTMLSelectElement>("[data-registry]")[0]?.options ?? []].map(
-      (o) => o.value,
-    ),
-  );
+  const originGrouped = Boolean(form.origin && isRegistryLocation(form.origin));
+  const destGrouped = Boolean(form.dest && isRegistryLocation(form.dest));
 
-  // Registry ids (including airport entries like EZE) live in the dropdown.
-  // The IATA box is only for raw override codes that aren't a registry selection.
-  if (registryIds.has(form.origin)) {
+  const originGroupings = root.querySelector<HTMLInputElement>(
+    "#fs-origin-groupings",
+  );
+  const destGroupings = root.querySelector<HTMLInputElement>(
+    "#fs-dest-groupings",
+  );
+  if (originGroupings) originGroupings.checked = originGrouped;
+  if (destGroupings) destGroupings.checked = destGrouped;
+
+  if (originGrouped) {
     setVal(root, "#fs-origin-reg", form.origin);
-    setVal(root, "#fs-origin-iata", "");
+    clearAirportSearchSide(root, "origin");
   } else {
-    setVal(root, "#fs-origin-reg", DEFAULT_FORM.origin);
-    setVal(root, "#fs-origin-iata", looksLikeIata(form.origin) ? form.origin : "");
+    setVal(root, "#fs-origin-reg", DEFAULT_GROUPING_ORIGIN);
+    setAirportSearchSide(
+      root,
+      "origin",
+      form.origin,
+      form.originLabel || form.origin,
+    );
   }
 
-  if (registryIds.has(form.dest)) {
+  if (destGrouped) {
     setVal(root, "#fs-dest-reg", form.dest);
-    setVal(root, "#fs-dest-iata", "");
+    clearAirportSearchSide(root, "destination");
   } else {
-    setVal(root, "#fs-dest-reg", DEFAULT_FORM.dest);
-    setVal(root, "#fs-dest-iata", looksLikeIata(form.dest) ? form.dest : "");
+    setVal(root, "#fs-dest-reg", DEFAULT_GROUPING_DEST);
+    setAirportSearchSide(
+      root,
+      "destination",
+      form.dest,
+      form.destLabel || form.dest,
+    );
   }
-  const hasCustomAirport =
-    !registryIds.has(form.origin) || !registryIds.has(form.dest);
-  const customAirports = root.querySelector<HTMLInputElement>(
-    "#fs-custom-airports",
-  );
-  if (customAirports) customAirports.checked = hasCustomAirport;
-  syncCustomAirportFields(root, hasCustomAirport);
+
+  syncLocationMode(root, "origin", originGrouped);
+  syncLocationMode(root, "destination", destGrouped);
 
   const matchingMode = SEARCH_MODES.find(
     (m) => m.cabin === form.cabin && m.lieFlatPolicy === form.lieFlatPolicy,
@@ -1300,22 +1342,20 @@ function applyFormToDom(root: HTMLElement, form: FormState): void {
  * otherwise preserve explicit cabin/policy from the previous form state.
  */
 function readForm(root: HTMLElement, prev: FormState): FormState {
-  const originIata = (
-    root.querySelector<HTMLInputElement>("#fs-origin-iata")?.value ?? ""
-  )
-    .trim()
-    .toUpperCase();
-  const destIata = (
-    root.querySelector<HTMLInputElement>("#fs-dest-iata")?.value ?? ""
-  )
-    .trim()
-    .toUpperCase();
+  const originGrouped = Boolean(
+    root.querySelector<HTMLInputElement>("#fs-origin-groupings")?.checked,
+  );
+  const destGrouped = Boolean(
+    root.querySelector<HTMLInputElement>("#fs-dest-groupings")?.checked,
+  );
+  const originSearch = readAirportSearchSide(root, "origin");
+  const destSearch = readAirportSearchSide(root, "destination");
   const originReg =
     root.querySelector<HTMLSelectElement>("#fs-origin-reg")?.value ??
-    DEFAULT_FORM.origin;
+    DEFAULT_GROUPING_ORIGIN;
   const destReg =
     root.querySelector<HTMLSelectElement>("#fs-dest-reg")?.value ??
-    DEFAULT_FORM.dest;
+    DEFAULT_GROUPING_DEST;
   const modeId =
     root.querySelector<HTMLSelectElement>("#fs-mode")?.value ??
     DEFAULT_FORM.mode;
@@ -1333,8 +1373,10 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
   );
   return {
     ...base,
-    origin: looksLikeIata(originIata) ? originIata : originReg,
-    dest: looksLikeIata(destIata) ? destIata : destReg,
+    origin: originGrouped ? originReg : originSearch.id,
+    dest: destGrouped ? destReg : destSearch.id,
+    originLabel: originGrouped ? "" : originSearch.label,
+    destLabel: destGrouped ? "" : destSearch.label,
     mode: mode.id,
     cabin,
     lieFlatPolicy,
@@ -1391,26 +1433,251 @@ function syncTripFields(
   if (controls) controls.hidden = tripType !== "round_trip";
 }
 
-function syncCustomAirportFields(
-  root: HTMLElement,
-  visible: boolean,
-): void {
-  root
-    .querySelector<HTMLInputElement>("#fs-custom-airports")
-    ?.setAttribute("aria-expanded", String(visible));
-  for (const selector of ["#fs-origin-iata", "#fs-dest-iata"] as const) {
-    const input = root.querySelector<HTMLInputElement>(selector);
-    if (input) input.hidden = !visible;
-  }
-  for (const location of root.querySelectorAll<HTMLElement>(".fs-loc")) {
-    location.classList.toggle("has-custom-airport", visible);
-  }
+type AirportSearchSide = "origin" | "destination";
+
+function sideSelectors(side: AirportSearchSide) {
+  return side === "origin"
+    ? {
+        query: "#fs-origin-query",
+        id: "#fs-origin-id",
+        list: "#fs-origin-suggestions",
+        select: "#fs-origin-reg",
+        groupings: "#fs-origin-groupings",
+        searchType: "departure" as const,
+      }
+    : {
+        query: "#fs-dest-query",
+        id: "#fs-dest-id",
+        list: "#fs-dest-suggestions",
+        select: "#fs-dest-reg",
+        groupings: "#fs-dest-groupings",
+        searchType: "arrival" as const,
+      };
 }
 
+function syncLocationMode(
+  root: HTMLElement,
+  side: AirportSearchSide,
+  grouped: boolean,
+): void {
+  const sel = sideSelectors(side);
+  const search = root.querySelector<HTMLElement>(
+    `.fs-airport-search[data-airport-search="${side}"]`,
+  );
+  const select = root.querySelector<HTMLSelectElement>(sel.select);
+  const query = root.querySelector<HTMLInputElement>(sel.query);
+  if (search) search.hidden = grouped;
+  if (select) select.hidden = !grouped;
+  if (query) query.tabIndex = grouped ? -1 : 0;
+  root
+    .querySelector<HTMLInputElement>(sel.groupings)
+    ?.setAttribute("aria-expanded", String(grouped));
+}
+
+function clearAirportSearchSide(
+  root: HTMLElement,
+  side: AirportSearchSide,
+): void {
+  setAirportSearchSide(root, side, "", "");
+  hideSuggestions(root, side);
+}
+
+function setAirportSearchSide(
+  root: HTMLElement,
+  side: AirportSearchSide,
+  id: string,
+  label: string,
+): void {
+  const sel = sideSelectors(side);
+  setVal(root, sel.id, id);
+  setVal(root, sel.query, label);
+}
+
+function readAirportSearchSide(
+  root: HTMLElement,
+  side: AirportSearchSide,
+): { id: string; label: string } {
+  const sel = sideSelectors(side);
+  const id = (
+    root.querySelector<HTMLInputElement>(sel.id)?.value ?? ""
+  ).trim();
+  const label = (
+    root.querySelector<HTMLInputElement>(sel.query)?.value ?? ""
+  ).trim();
+  if (id) return { id, label: label || id };
+  // Accept a typed 3-letter IATA even if the user never clicked a suggestion.
+  const typed = label.toUpperCase();
+  if (looksLikeIata(typed)) return { id: typed, label: typed };
+  return { id: "", label };
+}
+
+function hideSuggestions(root: HTMLElement, side: AirportSearchSide): void {
+  const sel = sideSelectors(side);
+  const list = root.querySelector<HTMLElement>(sel.list);
+  const query = root.querySelector<HTMLInputElement>(sel.query);
+  if (list) {
+    list.hidden = true;
+    list.innerHTML = "";
+  }
+  query?.setAttribute("aria-expanded", "false");
+}
+
+function mountAirportSearch(
+  root: HTMLElement,
+  side: AirportSearchSide,
+  onChanged: () => void,
+): void {
+  const sel = sideSelectors(side);
+  const query = root.querySelector<HTMLInputElement>(sel.query);
+  const list = root.querySelector<HTMLUListElement>(sel.list);
+  const idInput = root.querySelector<HTMLInputElement>(sel.id);
+  if (!query || !list || !idInput) return;
+
+  let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+  let activeIndex = -1;
+  let latestSuggestions: AirportLocationSuggestion[] = [];
+  let requestSeq = 0;
+
+  const renderSuggestions = (suggestions: AirportLocationSuggestion[]) => {
+    latestSuggestions = suggestions;
+    activeIndex = -1;
+    if (suggestions.length === 0) {
+      hideSuggestions(root, side);
+      return;
+    }
+    list.innerHTML = suggestions
+      .map((suggestion, index) => {
+        const meta = suggestion.description
+          ? `<span class="fs-suggestion-meta">${escapeHtml(suggestion.description)}</span>`
+          : "";
+        const kind =
+          suggestion.kind === "city" ? "fs-suggestion-city" : "fs-suggestion-airport";
+        return `<li class="fs-suggestion ${kind}" role="option" id="${side}-opt-${index}" data-index="${index}" aria-selected="false"><span class="fs-suggestion-label">${escapeHtml(suggestion.label)}</span>${meta}</li>`;
+      })
+      .join("");
+    list.hidden = false;
+    query.setAttribute("aria-expanded", "true");
+  };
+
+  const selectSuggestion = (suggestion: AirportLocationSuggestion) => {
+    idInput.value = suggestion.id;
+    query.value =
+      suggestion.kind === "city"
+        ? `${suggestion.label} (all airports)`
+        : suggestion.label;
+    hideSuggestions(root, side);
+    onChanged();
+  };
+
+  const setActive = (index: number) => {
+    const options = list.querySelectorAll<HTMLElement>(".fs-suggestion");
+    activeIndex = index;
+    options.forEach((option, i) => {
+      const selected = i === index;
+      option.classList.toggle("is-active", selected);
+      option.setAttribute("aria-selected", String(selected));
+      if (selected) query.setAttribute("aria-activedescendant", option.id);
+    });
+    if (index < 0) query.removeAttribute("aria-activedescendant");
+  };
+
+  const fetchSuggestions = async (q: string) => {
+    const seq = ++requestSeq;
+    try {
+      const params = new URLSearchParams({
+        q,
+        search_type: sel.searchType,
+      });
+      const res = await fetch(`/api/flights/locations?${params.toString()}`);
+      const data = (await res.json()) as {
+        ok?: boolean;
+        suggestions?: AirportLocationSuggestion[];
+      };
+      if (seq !== requestSeq) return;
+      if (!res.ok || !data.ok || !Array.isArray(data.suggestions)) {
+        hideSuggestions(root, side);
+        return;
+      }
+      renderSuggestions(data.suggestions);
+    } catch {
+      if (seq === requestSeq) hideSuggestions(root, side);
+    }
+  };
+
+  query.addEventListener("input", () => {
+    // Typing invalidates a previously confirmed selection.
+    idInput.value = "";
+    const q = query.value.trim();
+    if (debounceTimer) clearTimeout(debounceTimer);
+    if (q.length < 2) {
+      hideSuggestions(root, side);
+      onChanged();
+      return;
+    }
+    debounceTimer = setTimeout(() => {
+      void fetchSuggestions(q);
+    }, 250);
+    onChanged();
+  });
+
+  query.addEventListener("keydown", (event) => {
+    if (list.hidden || latestSuggestions.length === 0) {
+      if (event.key === "Enter" && looksLikeIata(query.value.trim().toUpperCase())) {
+        idInput.value = query.value.trim().toUpperCase();
+        onChanged();
+      }
+      return;
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActive(Math.min(latestSuggestions.length - 1, activeIndex + 1));
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActive(Math.max(0, activeIndex - 1));
+    } else if (event.key === "Enter" && activeIndex >= 0) {
+      event.preventDefault();
+      const suggestion = latestSuggestions[activeIndex];
+      if (suggestion) selectSuggestion(suggestion);
+    } else if (event.key === "Escape") {
+      hideSuggestions(root, side);
+    }
+  });
+
+  list.addEventListener("mousedown", (event) => {
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>(
+      ".fs-suggestion",
+    );
+    if (!target) return;
+    event.preventDefault();
+    const index = Number(target.dataset.index);
+    const suggestion = latestSuggestions[index];
+    if (suggestion) selectSuggestion(suggestion);
+  });
+
+  query.addEventListener("blur", () => {
+    // Delay so suggestion mousedown can run first.
+    setTimeout(() => {
+      hideSuggestions(root, side);
+      const typed = query.value.trim().toUpperCase();
+      if (!idInput.value && looksLikeIata(typed)) {
+        idInput.value = typed;
+        query.value = typed;
+        onChanged();
+      }
+    }, 120);
+  });
+}
+
+/** Persist the search spec to the URL only after an explicit Search. */
 function syncUrl(form: FormState): void {
   const params = formStateToSearchParams(form);
   const next = `${location.pathname}?${params.toString()}`;
   history.replaceState(null, "", next);
+}
+
+/** Strip query params after Clear (back to a clean `/flights/search/`). */
+function clearUrl(): void {
+  history.replaceState(null, "", location.pathname);
 }
 
 function syncDaysLabel(

@@ -6,7 +6,7 @@ import {
 } from "../constants";
 import { LocationResolveError } from "../resolver";
 import { planSearch } from "../planner";
-import { DEFAULT_FORM } from "../url";
+import { DEFAULT_GROUPING_DEST } from "../url";
 
 describe("planSearch", () => {
   it("covers the selected date plus seven days after it", () => {
@@ -98,7 +98,7 @@ describe("planSearch", () => {
     const plan = planSearch(
       {
         origin: "EZE",
-        dest: DEFAULT_FORM.dest,
+        dest: DEFAULT_GROUPING_DEST,
         dateRange: { start: "2026-07-20", days: 7 },
       },
       MAX_AIRPORTS_PER_BATCH,

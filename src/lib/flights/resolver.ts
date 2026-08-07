@@ -7,9 +7,16 @@ import {
 import type { CityGroupSide, LocationRef } from "./types";
 
 const IATA_RE = /^[A-Z]{3}$/;
+/** Google Knowledge Graph mid used as a multi-airport city id. */
+const KGMID_RE = /^\/[mg]\/[\w.]+$/i;
 
 export function isRawIata(ref: string): boolean {
   return IATA_RE.test(ref);
+}
+
+/** True for Google Flights city/region ids like `/m/02_286`. */
+export function isKgmid(ref: string): boolean {
+  return KGMID_RE.test(ref);
 }
 
 export function normalizeLocationRef(ref: string): string {
@@ -17,7 +24,13 @@ export function normalizeLocationRef(ref: string): string {
   if (IATA_RE.test(trimmed.toUpperCase()) && trimmed.length === 3) {
     return trimmed.toUpperCase();
   }
+  if (isKgmid(trimmed)) return trimmed;
   return trimmed;
+}
+
+/** True when `ref` is a known LOCATION_REGISTRY id. */
+export function isRegistryLocation(ref: string): boolean {
+  return Boolean(LOCATION_REGISTRY[normalizeLocationRef(ref)]);
 }
 
 export class LocationResolveError extends Error {
@@ -120,6 +133,16 @@ export function resolveLocation(ref: LocationRef): string[] {
       return;
     }
 
+    // City kgmid is passed through to SearchAPI as a single departure/arrival id.
+    if (isKgmid(id)) {
+      if (!seen.has(id)) {
+        seen.add(id);
+        airports.push(id);
+      }
+      visiting.delete(id);
+      return;
+    }
+
     visiting.delete(id);
     throw new LocationResolveError(`Unknown location ref "${id}"`);
   }
@@ -139,12 +162,16 @@ export type RegistryOptionSection = {
 /**
  * Origin/destination dropdown sections: Anywhere first, then continent
  * optgroups with alphabetized options.
+ *
+ * City/airport entries are omitted — those come from SearchAPI autocomplete.
+ * Groupings keep multi-airport custom sets (Anywhere, gateways, regions).
  */
 export function listRegistryOptionSections(): RegistryOptionSection[] {
   const pinned: RegistryOption[] = [];
   const byContinent = new Map<ContinentGroup, RegistryOption[]>();
 
   for (const entry of Object.values(LOCATION_REGISTRY)) {
+    if (entry.type === "city" || entry.type === "airport") continue;
     const option = { id: entry.id, label: entry.label };
     if (entry.continent === null) {
       pinned.push(option);
@@ -184,10 +211,10 @@ export function isAnywhereOrGateway(ref: LocationRef): boolean {
   return entry.type !== "city" && entry.type !== "airport";
 }
 
-/** True for a city registry entry or a raw single-airport IATA code. */
+/** True for a city registry entry, raw IATA, or Google Flights city kgmid. */
 export function isSingleCityLocation(ref: LocationRef): boolean {
   const id = normalizeLocationRef(ref);
-  if (isRawIata(id)) return true;
+  if (isRawIata(id) || isKgmid(id)) return true;
   return LOCATION_REGISTRY[id]?.type === "city";
 }
 

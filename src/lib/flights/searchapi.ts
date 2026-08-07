@@ -53,6 +53,46 @@ type SearchApiResponse = {
   error?: string;
 };
 
+type SearchApiLocationAirport = {
+  type?: string;
+  kgmid?: string;
+  airport_code?: string;
+  title?: string;
+  city?: string;
+  distance?: string;
+};
+
+type SearchApiLocation = {
+  type?: string;
+  kgmid?: string;
+  full_name?: string;
+  short_name?: string;
+  description?: string;
+  /** Present when `type` is `airport` (direct IATA / airport-name hits). */
+  airport_code?: string;
+  title?: string;
+  airports?: SearchApiLocationAirport[];
+};
+
+type SearchApiLocationResponse = {
+  search_metadata?: { status?: string };
+  search_parameters?: Record<string, unknown>;
+  locations?: SearchApiLocation[];
+  error?: string;
+};
+
+export type LocationSearchType = "departure" | "arrival";
+
+export type AirportLocationSuggestion = {
+  /** Value stored in the form / passed to SearchAPI (`JFK` or `/m/02_286`). */
+  id: string;
+  kind: "city" | "airport";
+  label: string;
+  description?: string;
+  airportCode?: string;
+  cityName?: string;
+};
+
 const TRAVEL_CLASS_TO_CABIN: Record<string, Cabin> = {
   economy: "economy",
   "premium economy": "premium_economy",
@@ -309,6 +349,138 @@ export function buildSearchApiUrl(
   return url.toString();
 }
 
+/** Location search uses Google Travel `hl` values (`en-US`), not bare `en`. */
+export function normalizeLocationSearchHl(hl?: string): string {
+  const value = (hl ?? "en-US").trim();
+  if (!value || value === "en") return "en-US";
+  return value;
+}
+
+export function buildLocationSearchUrl(
+  params: {
+    q: string;
+    searchType?: LocationSearchType;
+    hl?: string;
+    apiKey: string;
+  },
+  baseUrl = "https://www.searchapi.io/api/v1/search",
+): string {
+  const url = new URL(baseUrl);
+  url.searchParams.set("engine", "google_flights_location_search");
+  url.searchParams.set("q", params.q);
+  url.searchParams.set("search_type", params.searchType ?? "departure");
+  url.searchParams.set("hl", normalizeLocationSearchHl(params.hl));
+  url.searchParams.set("api_key", params.apiKey);
+  return url.toString();
+}
+
+export function locationSearchCacheKey(params: {
+  q: string;
+  searchType?: LocationSearchType;
+  hl?: string;
+}): string {
+  return [
+    "searchapi-loc-v1",
+    params.q.trim().toLowerCase(),
+    params.searchType ?? "departure",
+    normalizeLocationSearchHl(params.hl),
+  ].join("|");
+}
+
+/**
+ * Flatten SearchAPI location results into Google Flights-style suggestions:
+ * city "all airports" rows (kgmid) plus individual airport rows (IATA).
+ */
+export function parseLocationSearchResponse(
+  raw: unknown,
+): AirportLocationSuggestion[] {
+  if (!raw || typeof raw !== "object") return [];
+  const locations = (raw as SearchApiLocationResponse).locations;
+  if (!Array.isArray(locations)) return [];
+
+  const suggestions: AirportLocationSuggestion[] = [];
+  const seen = new Set<string>();
+
+  const push = (suggestion: AirportLocationSuggestion): void => {
+    if (!suggestion.id || seen.has(suggestion.id)) return;
+    seen.add(suggestion.id);
+    suggestions.push(suggestion);
+  };
+
+  for (const location of locations) {
+    const airports = Array.isArray(location.airports) ? location.airports : [];
+    const cityName =
+      location.short_name?.trim() ||
+      location.full_name?.trim() ||
+      undefined;
+    const cityKgmid = location.kgmid?.trim();
+
+    // Direct airport hits (e.g. q=JFK) arrive as top-level type=airport rows
+    // with no nested airports array.
+    if (location.type === "airport") {
+      const code = location.airport_code?.trim().toUpperCase();
+      if (code && /^[A-Z]{3}$/.test(code)) {
+        const title =
+          location.full_name?.trim() ||
+          location.short_name?.trim() ||
+          undefined;
+        push({
+          id: code,
+          kind: "airport",
+          label: title && title.toUpperCase() !== code ? `${code} · ${title}` : code,
+          description: cityName && cityName !== title ? cityName : undefined,
+          airportCode: code,
+          cityName: cityName && cityName !== title ? cityName : undefined,
+        });
+      }
+      continue;
+    }
+
+    if (
+      location.type === "city" &&
+      cityKgmid &&
+      cityKgmid.startsWith("/") &&
+      airports.length > 0
+    ) {
+      const codes = airports
+        .map((airport) => airport.airport_code?.trim().toUpperCase())
+        .filter((code): code is string => Boolean(code && /^[A-Z]{3}$/.test(code)));
+      const suffix =
+        codes.length > 1
+          ? `All airports · ${codes.join(", ")}`
+          : codes[0]
+            ? `All airports · ${codes[0]}`
+            : "All airports";
+      push({
+        id: cityKgmid,
+        kind: "city",
+        label: cityName ? `${cityName}` : "City",
+        description: suffix,
+        cityName,
+      });
+    }
+
+    for (const airport of airports) {
+      const code = airport.airport_code?.trim().toUpperCase();
+      if (!code || !/^[A-Z]{3}$/.test(code)) continue;
+      const title = airport.title?.trim();
+      const airportCity = airport.city?.trim() || cityName;
+      push({
+        id: code,
+        kind: "airport",
+        label: title ? `${code} · ${title}` : code,
+        description: [airportCity, airport.distance?.trim()]
+          .filter(Boolean)
+          .join(" · "),
+        airportCode: code,
+        cityName: airportCity,
+      });
+    }
+  }
+
+  return suggestions;
+}
+
 /** Provider-versioned cache key. Excludes the API key and ignored legacy flags. */
 export function searchApiCacheKey(params: {
   departureId: string;
@@ -390,6 +562,32 @@ export class SearchApiProvider implements FlightProvider {
       adults: spec.adults,
     });
     return options;
+  }
+
+  async searchLocations(params: {
+    q: string;
+    searchType?: LocationSearchType;
+    hl?: string;
+  }): Promise<{
+    suggestions: AirportLocationSuggestion[];
+    raw: unknown;
+    searchesUsed: number;
+  }> {
+    const url = buildLocationSearchUrl(
+      {
+        q: params.q,
+        searchType: params.searchType,
+        hl: params.hl,
+        apiKey: this.apiKey,
+      },
+      this.baseUrl,
+    );
+    const { raw, searchesUsed } = await this.fetchWithRetry(url);
+    return {
+      suggestions: parseLocationSearchResponse(raw),
+      raw,
+      searchesUsed,
+    };
   }
 
   async searchStep(step: SearchStep): Promise<{

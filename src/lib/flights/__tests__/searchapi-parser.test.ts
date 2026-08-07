@@ -4,8 +4,11 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { classifySeat } from "../classifier";
 import {
+  buildLocationSearchUrl,
   buildSearchApiUrl,
   dedupeItineraries,
+  locationSearchCacheKey,
+  parseLocationSearchResponse,
   parseSearchApiResponse,
   SearchApiProvider,
   searchApiCacheKey,
@@ -154,6 +157,66 @@ describe("parseSearchApiResponse", () => {
     expect(dedupeItineraries([...options, ...options])).toHaveLength(
       options.length,
     );
+  });
+});
+
+describe("location search mapping", () => {
+  it("builds google_flights_location_search URLs", () => {
+    const url = new URL(
+      buildLocationSearchUrl({
+        q: "New York",
+        searchType: "arrival",
+        hl: "en",
+        apiKey: "test",
+      }),
+    );
+    expect(url.searchParams.get("engine")).toBe(
+      "google_flights_location_search",
+    );
+    expect(url.searchParams.get("q")).toBe("New York");
+    expect(url.searchParams.get("search_type")).toBe("arrival");
+    expect(url.searchParams.get("hl")).toBe("en-US");
+    expect(locationSearchCacheKey({ q: "New York", searchType: "arrival" })).toBe(
+      "searchapi-loc-v1|new york|arrival|en-US",
+    );
+    expect(
+      locationSearchCacheKey({ q: "New York", searchType: "arrival", hl: "en" }),
+    ).toBe("searchapi-loc-v1|new york|arrival|en-US");
+  });
+
+  it("flattens city and airport suggestions from SearchAPI", () => {
+    const suggestions = parseLocationSearchResponse(
+      loadFixture("location-new-york.json"),
+    );
+    expect(suggestions[0]).toMatchObject({
+      id: "/m/02_286",
+      kind: "city",
+      label: "New York",
+      description: "All airports · JFK, LGA, EWR",
+    });
+    expect(suggestions.map((item) => item.id)).toEqual([
+      "/m/02_286",
+      "JFK",
+      "LGA",
+      "EWR",
+    ]);
+    expect(suggestions.some((item) => item.id === "/m/0ctw_b")).toBe(false);
+  });
+
+  it("parses top-level airport hits for IATA queries", () => {
+    const suggestions = parseLocationSearchResponse(
+      loadFixture("location-jfk.json"),
+    );
+    expect(suggestions).toEqual([
+      {
+        id: "JFK",
+        kind: "airport",
+        label: "JFK · John F. Kennedy International Airport",
+        description: "New York",
+        airportCode: "JFK",
+        cityName: "New York",
+      },
+    ]);
   });
 });
 

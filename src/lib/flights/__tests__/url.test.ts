@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  DEFAULT_FORM,
   defaultFormState,
   formStateFromSearchParams,
   formStateToLegSearch,
@@ -17,8 +16,10 @@ describe("spec ↔ URL round-trip", () => {
     vi.setSystemTime(new Date("2026-07-16T12:00:00Z"));
 
     expect(defaultFormState()).toMatchObject({
-      origin: "anywhere",
-      dest: "usa-gateways",
+      origin: "",
+      dest: "",
+      originLabel: "",
+      destLabel: "",
       start: "2026-07-23",
       topN: 4,
       adults: 1,
@@ -28,8 +29,10 @@ describe("spec ↔ URL round-trip", () => {
 
   it("round-trips cabin and lieFlatPolicy explicitly", () => {
     const form = defaultFormState("2026-07-20");
-    form.origin = DEFAULT_FORM.origin;
-    form.dest = DEFAULT_FORM.dest;
+    form.origin = "EZE";
+    form.dest = "JFK";
+    form.originLabel = "Buenos Aires";
+    form.destLabel = "New York";
     form.mode = "business-lie-flat";
     form.cabin = "business";
     form.lieFlatPolicy = "all_segments";
@@ -53,9 +56,13 @@ describe("spec ↔ URL round-trip", () => {
     expect(restored.maxTotalHours).toBe(36);
     expect(restored.mode).toBe("business-lie-flat");
     expect(restored.deepSearch).toBe(false);
-    expect(restored.origin).toBe(DEFAULT_FORM.origin);
-    expect(restored.dest).toBe(DEFAULT_FORM.dest);
+    expect(restored.origin).toBe("EZE");
+    expect(restored.dest).toBe("JFK");
+    expect(restored.originLabel).toBe("Buenos Aires");
+    expect(restored.destLabel).toBe("New York");
     expect(restored.currency).toBe("EUR");
+    expect(params.get("originLabel")).toBe("Buenos Aires");
+    expect(params.get("destLabel")).toBe("New York");
 
     const spec = formStateToLegSearch(restored);
     expect(spec.cabin).toBe("business");
@@ -63,6 +70,23 @@ describe("spec ↔ URL round-trip", () => {
     expect(spec.maxTotalHours).toBe(36);
     // Display currency is EUR, but API searches stay in USD for cache reuse.
     expect(spec.currency).toBe("USD");
+  });
+
+  it("round-trips Google Flights city kgmid selections", () => {
+    const form = defaultFormState("2026-07-20");
+    form.origin = "/m/02_286";
+    form.dest = "LHR";
+    form.originLabel = "New York (all airports)";
+    form.destLabel = "LHR · Heathrow";
+
+    const params = formStateToSearchParams(form);
+    expect(params.get("origin")).toBe("/m/02_286");
+    expect(params.get("originLabel")).toBe("New York (all airports)");
+
+    const restored = formStateFromSearchParams(params);
+    expect(restored.origin).toBe("/m/02_286");
+    expect(restored.originLabel).toBe("New York (all airports)");
+    expect(formStateToLegSearch(restored).origin).toBe("/m/02_286");
   });
 
   it("restores first cabin via the First class UI preset", () => {
@@ -89,7 +113,7 @@ describe("spec ↔ URL round-trip", () => {
 
   it("never enables unverified seat results from URL parameters", () => {
     const form = formStateFromSearchParams(
-      new URLSearchParams({ includeUnverified: "1" }),
+      new URLSearchParams({ includeUnverified: "1", origin: "EZE", dest: "JFK" }),
     );
 
     expect(formStateToSearchParams(form).has("includeUnverified")).toBe(false);
@@ -106,6 +130,8 @@ describe("spec ↔ URL round-trip", () => {
 
   it("round-trips a 0-stops (nonstop) filter", () => {
     const form = defaultFormState("2026-07-20");
+    form.origin = "EZE";
+    form.dest = "JFK";
     form.maxStops = 0;
 
     const params = formStateToSearchParams(form);
@@ -118,7 +144,11 @@ describe("spec ↔ URL round-trip", () => {
 
   it("accepts an 18-hour itinerary limit", () => {
     const form = formStateFromSearchParams(
-      new URLSearchParams({ maxTotalHours: "18" }),
+      new URLSearchParams({
+        maxTotalHours: "18",
+        origin: "EZE",
+        dest: "JFK",
+      }),
     );
 
     expect(form.maxTotalHours).toBe(18);
@@ -135,6 +165,8 @@ describe("spec ↔ URL round-trip", () => {
 
   it("defaults to one-way without persisting trip params", () => {
     const form = defaultFormState("2026-07-20");
+    form.origin = "EZE";
+    form.dest = "JFK";
     const params = formStateToSearchParams(form);
 
     expect(form.tripType).toBe("one_way");
@@ -147,13 +179,23 @@ describe("spec ↔ URL round-trip", () => {
 
   it("defaults to one traveler and omits adults from the URL", () => {
     const form = defaultFormState("2026-07-20");
+    form.origin = "EZE";
+    form.dest = "JFK";
     expect(form.adults).toBe(1);
     expect(formStateToSearchParams(form).has("adults")).toBe(false);
     expect(formStateToLegSearch(form).adults).toBe(1);
   });
 
+  it("omits empty origin and destination from the URL", () => {
+    const params = formStateToSearchParams(defaultFormState("2026-07-20"));
+    expect(params.has("origin")).toBe(false);
+    expect(params.has("dest")).toBe(false);
+  });
+
   it("round-trips traveler counts from 1 to 4", () => {
     const form = defaultFormState("2026-07-20");
+    form.origin = "EZE";
+    form.dest = "JFK";
     form.adults = 3;
 
     const params = formStateToSearchParams(form);
@@ -173,6 +215,8 @@ describe("spec ↔ URL round-trip", () => {
 
   it("round-trips round-trip searches with a flexible trip length", () => {
     const form = defaultFormState("2026-07-20");
+    form.origin = "EZE";
+    form.dest = "JFK";
     form.tripType = "round_trip";
     form.tripLengthDays = 10;
     form.flexibleTripLength = true;

@@ -23,8 +23,11 @@ export const SeatClassificationSchema = z.enum([
 ]);
 export type SeatClassification = z.infer<typeof SeatClassificationSchema>;
 
-/** Registry id or a raw validated IATA code (3 uppercase letters). */
-export const LocationRefSchema = z.string().min(1).max(64);
+/**
+ * Registry id, raw IATA (3 letters), or Google Flights city kgmid
+ * (e.g. `/m/02_286` for New York — all airports).
+ */
+export const LocationRefSchema = z.string().min(1).max(96);
 export type LocationRef = z.infer<typeof LocationRefSchema>;
 
 export const DateRangeSchema = z.object({

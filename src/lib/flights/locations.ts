@@ -189,6 +189,13 @@ export const LOCATION_REGISTRY: Record<string, LocationEntry> = {
     continent: "South America",
     airports: ["EZE", "AEP"],
   },
+  santiago: {
+    id: "santiago",
+    type: "city",
+    label: "Santiago, Chile (SCL)",
+    continent: "South America",
+    airports: ["SCL"],
+  },
   london: {
     id: "london",
     type: "city",

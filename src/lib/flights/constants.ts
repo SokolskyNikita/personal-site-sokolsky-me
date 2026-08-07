@@ -37,3 +37,13 @@ export const DEFAULT_DAILY_BUDGET = 4_000;
  * Caps a single client at ~24 typical Buenos Aires→gateway searches per day.
  */
 export const DEFAULT_RATE_LIMIT_PER_DAY = 800;
+
+/** KV TTL for Google Flights location-search autocomplete responses. */
+export const LOCATION_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
+
+/**
+ * Per-IP daily rate limit on uncached /api/flights/locations lookups.
+ * Autocomplete is debounced client-side; this caps abuse without touching
+ * the main flight-search budget.
+ */
+export const LOCATION_RATE_LIMIT_PER_DAY = 300;

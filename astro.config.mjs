@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { loadEnv } from 'vite';
+import { flightApiDevIntegration } from './scripts/astro-flight-api-dev.mjs';
 
 const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '');
 const site = process.env.SITE_URL || 'https://sokolsky.me';
@@ -60,6 +61,9 @@ export default defineConfig({
   compressHTML: true,
   integrations: [
     posthogAnalytics,
+    // Worker APIs are not part of the static Astro output; expose them in
+    // `astro dev` so flight search / airport autocomplete work locally.
+    flightApiDevIntegration(),
     sitemap({
       filter: (page) => !isPrivatePage(page) && !isTrackedRedirectPage(page),
     }),

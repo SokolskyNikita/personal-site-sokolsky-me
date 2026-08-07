@@ -8,7 +8,9 @@ import {
   isAnywhereToAnywhere,
   involvesBelarusRegistry,
   isBelarusRegistryLocation,
+  isKgmid,
   isRawIata,
+  isRegistryLocation,
   isSingleCityLocation,
   listRegistryOptionSections,
   listRegistryOptions,
@@ -22,8 +24,19 @@ describe("resolveLocation", () => {
     expect(resolveLocation("JFK")).toEqual(["JFK"]);
   });
 
+  it("passes Google Flights city kgmid through for SearchAPI", () => {
+    expect(isKgmid("/m/02_286")).toBe(true);
+    expect(isKgmid("/g/11b6b5h2k")).toBe(true);
+    expect(isKgmid("JFK")).toBe(false);
+    expect(resolveLocation("/m/02_286")).toEqual(["/m/02_286"]);
+    expect(isSingleCityLocation("/m/02_286")).toBe(true);
+    expect(isRegistryLocation("/m/02_286")).toBe(false);
+    expect(isRegistryLocation("usa-gateways")).toBe(true);
+  });
+
   it("resolves a flat registry entry", () => {
     expect(resolveLocation("buenos-aires")).toEqual(["EZE", "AEP"]);
+    expect(resolveLocation("santiago")).toEqual(["SCL"]);
   });
 
   it("resolves London to all six commercial airports", () => {
@@ -313,16 +326,12 @@ describe("registry options", () => {
         "Africa",
         ["africa-gateways", "sub-saharan-africa-gateways"],
       ],
-      ["Asia", ["east-asia-gateways", "tashkent", "vietnam"]],
+      ["Asia", ["east-asia-gateways", "vietnam"]],
       [
         "Europe",
         [
           "belarus-gateways",
           "germany-gateways",
-          "london",
-          "madrid",
-          "paris",
-          "prague",
           "russia-gateways",
           "schengen-eu-gateways",
           "uk-ireland-gateways",
@@ -330,21 +339,10 @@ describe("registry options", () => {
       ],
       [
         "North America",
-        [
-          "canada-gateways",
-          "mexico-gateways",
-          "new-york",
-          "san-francisco",
-          "seattle",
-          "usa-gateways",
-          "vancouver",
-        ],
+        ["canada-gateways", "mexico-gateways", "usa-gateways"],
       ],
       ["Oceania", ["oceania-gateways"]],
-      [
-        "South America",
-        ["buenos-aires", "south-america-gateways"],
-      ],
+      ["South America", ["south-america-gateways"]],
     ]);
 
     expect(listRegistryOptions()[0]).toEqual({

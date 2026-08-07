@@ -2,6 +2,8 @@ import {
   DEFAULT_CACHE_TTL_SECONDS,
   DEFAULT_DAILY_BUDGET,
   DEFAULT_RATE_LIMIT_PER_DAY,
+  LOCATION_CACHE_TTL_SECONDS,
+  LOCATION_RATE_LIMIT_PER_DAY,
 } from "./constants";
 import {
   cacheGet,
@@ -21,10 +23,13 @@ import {
 } from "./policy";
 import { assertValidLocationPair } from "./resolver";
 import {
+  locationSearchCacheKey,
+  parseLocationSearchResponse,
   parseSearchApiResponse,
   SearchApiProvider,
   SearchApiRequestError,
   searchApiCacheKey,
+  type LocationSearchType,
 } from "./searchapi";
 import {
   LegSearchSchema,
@@ -46,9 +51,14 @@ export type FlightEnv = {
 
 const PLAN_PATH = "/api/flights/plan";
 const QUERY_PATH = "/api/flights/query";
+const LOCATIONS_PATH = "/api/flights/locations";
 
 export function isFlightApiPath(pathname: string): boolean {
-  return pathname === PLAN_PATH || pathname === QUERY_PATH;
+  return (
+    pathname === PLAN_PATH ||
+    pathname === QUERY_PATH ||
+    pathname === LOCATIONS_PATH
+  );
 }
 
 export async function handleFlightApi(
@@ -62,7 +72,106 @@ export async function handleFlightApi(
   if (url.pathname === QUERY_PATH) {
     return handleQuery(request, env, url);
   }
+  if (url.pathname === LOCATIONS_PATH) {
+    return handleLocations(request, env, url);
+  }
   return json({ ok: false, error: "not_found" }, 404);
+}
+
+async function handleLocations(
+  request: Request,
+  env: FlightEnv,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "GET") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+
+  if (!isAllowedOrigin(request, url, { allowMissingOrigin: true })) {
+    return json({ ok: false, error: "origin_not_allowed" }, 403);
+  }
+
+  const q = (url.searchParams.get("q") ?? "").trim();
+  if (q.length < 2 || q.length > 80) {
+    return json({ ok: false, error: "invalid_query" }, 400);
+  }
+
+  const searchTypeRaw = url.searchParams.get("search_type") ?? "departure";
+  const searchType: LocationSearchType =
+    searchTypeRaw === "arrival" ? "arrival" : "departure";
+  const hl = (url.searchParams.get("hl") ?? "en-US").slice(0, 8);
+
+  const cacheKey = locationSearchCacheKey({ q, searchType, hl });
+  const kv = env.FLIGHT_CACHE;
+  if (kv) {
+    const cached = await cacheGet(kv, cacheKey);
+    if (cached.hit && cached.value) {
+      try {
+        const suggestions = parseLocationSearchResponse(
+          JSON.parse(cached.value),
+        );
+        return json({
+          ok: true,
+          suggestions,
+          cacheHit: true,
+        });
+      } catch {
+        // Fall through to a live lookup when cache JSON is corrupt.
+      }
+    }
+  }
+
+  const ip =
+    request.headers.get("CF-Connecting-IP") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
+  if (kv) {
+    const rate = env.FLIGHT_QUOTA
+      ? await consumeDurableRateLimit(
+          env,
+          `loc:${ip}`,
+          LOCATION_RATE_LIMIT_PER_DAY,
+        )
+      : await checkAndIncrementRateLimit(
+          kv,
+          `loc:${ip}`,
+          LOCATION_RATE_LIMIT_PER_DAY,
+        );
+    if (!rate.allowed) {
+      return json({ ok: false, error: "rate_limited" }, 429);
+    }
+  }
+
+  if (!env.SEARCH_API_IO_KEY) {
+    return json({ ok: false, error: "searchapi_key_missing" }, 503);
+  }
+
+  const provider = new SearchApiProvider({ apiKey: env.SEARCH_API_IO_KEY });
+  try {
+    const result = await provider.searchLocations({ q, searchType, hl });
+    if (kv) {
+      await cachePut(
+        kv,
+        cacheKey,
+        JSON.stringify(result.raw),
+        LOCATION_CACHE_TTL_SECONDS,
+      );
+    }
+    return json({
+      ok: true,
+      suggestions: result.suggestions,
+      cacheHit: false,
+    });
+  } catch (err) {
+    return json(
+      {
+        ok: false,
+        error: "location_search_failed",
+        message: err instanceof Error ? err.message : String(err),
+      },
+      502,
+    );
+  }
 }
 
 async function handlePlan(
@@ -503,10 +612,31 @@ function json(body: unknown, status = 200): Response {
 }
 
 /** Allow same-origin and local wrangler (Host may differ from rewritten url.origin). */
-function isAllowedOrigin(request: Request, url: URL): boolean {
+function isAllowedOrigin(
+  request: Request,
+  url: URL,
+  options?: { allowMissingOrigin?: boolean },
+): boolean {
   const origin = request.headers.get("Origin");
   // Browser fetch always sends Origin on POST; reject bare curl/script abuse.
-  if (!origin) return false;
+  // Same-origin GET autocomplete may omit Origin — allow when Referer matches.
+  if (!origin) {
+    if (!options?.allowMissingOrigin) return false;
+    const referer = request.headers.get("Referer");
+    if (!referer) return false;
+    try {
+      const ref = new URL(referer);
+      const host = request.headers.get("Host");
+      return (
+        ref.origin === url.origin ||
+        (Boolean(host) &&
+          (ref.host === host || ref.origin === `http://${host}` ||
+            ref.origin === `https://${host}`))
+      );
+    } catch {
+      return false;
+    }
+  }
   if (origin === url.origin) return true;
   const host = request.headers.get("Host");
   if (!host) return false;

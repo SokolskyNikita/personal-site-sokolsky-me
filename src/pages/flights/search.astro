@@ -72,59 +72,98 @@ const defaultStart = defaultStartDate();
       <form class="fs-form" id="fs-form">
         <section class="fs-form-section" aria-labelledby="fs-route-heading">
           <header class="fs-section-heading">
-            <div class="fs-section-heading-row">
-              <h2 id="fs-route-heading">Route and dates</h2>
-              <label class="fs-check fs-custom-airports">
-                <input
-                  id="fs-custom-airports"
-                  type="checkbox"
-                  aria-controls="fs-origin-iata fs-dest-iata"
-                  aria-expanded="false"
-                />
-                <span>Enter airport codes</span>
-              </label>
-            </div>
+            <h2 id="fs-route-heading">Route and dates</h2>
             <p>
-              Choose an airport group (including Anywhere — the 125 busiest
-              airports), or enter a specific IATA code. Anywhere cannot be used
-              on both sides.
+              Search cities or airports like Google Flights. Turn on airport
+              groupings for custom sets (Anywhere, regional gateways, and more).
+              Anywhere cannot be used on both sides.
             </p>
           </header>
 
           <div class="fs-primary">
             <div class="fs-field fs-field-origin">
-              <label for="fs-origin-reg">Origin</label>
-              <div class="fs-loc">
-                <select id="fs-origin-reg" data-registry aria-label="Origin location"></select>
-                <input
-                  id="fs-origin-iata"
-                  type="text"
-                  maxlength="3"
-                  placeholder="IATA"
-                  aria-label="Origin IATA override"
-                  autocomplete="off"
-                  spellcheck="false"
+              <div class="fs-field-label-row">
+                <label for="fs-origin-query">Origin</label>
+                <label class="fs-check fs-airport-groupings">
+                  <input
+                    id="fs-origin-groupings"
+                    type="checkbox"
+                    aria-controls="fs-origin-reg fs-origin-query"
+                  />
+                  <span>Airport groupings</span>
+                </label>
+              </div>
+              <div class="fs-loc" data-side="origin">
+                <div class="fs-airport-search" data-airport-search="origin">
+                  <input
+                    id="fs-origin-query"
+                    type="text"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-controls="fs-origin-suggestions"
+                    aria-expanded="false"
+                    placeholder="City or airport"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <input id="fs-origin-id" type="hidden" value="" />
+                  <ul
+                    id="fs-origin-suggestions"
+                    class="fs-suggestions"
+                    role="listbox"
+                    hidden
+                  ></ul>
+                </div>
+                <select
+                  id="fs-origin-reg"
+                  data-registry
+                  aria-label="Origin airport grouping"
                   hidden
-                />
+                ></select>
               </div>
             </div>
 
             <button type="button" class="fs-swap" id="fs-swap" title="Swap origin and destination" aria-label="Swap origin and destination">⇄</button>
 
             <div class="fs-field fs-field-destination">
-              <label for="fs-dest-reg">Destination</label>
-              <div class="fs-loc">
-                <select id="fs-dest-reg" data-registry aria-label="Destination location"></select>
-                <input
-                  id="fs-dest-iata"
-                  type="text"
-                  maxlength="3"
-                  placeholder="IATA"
-                  aria-label="Destination IATA override"
-                  autocomplete="off"
-                  spellcheck="false"
+              <div class="fs-field-label-row">
+                <label for="fs-dest-query">Destination</label>
+                <label class="fs-check fs-airport-groupings">
+                  <input
+                    id="fs-dest-groupings"
+                    type="checkbox"
+                    aria-controls="fs-dest-reg fs-dest-query"
+                  />
+                  <span>Airport groupings</span>
+                </label>
+              </div>
+              <div class="fs-loc" data-side="destination">
+                <div class="fs-airport-search" data-airport-search="destination">
+                  <input
+                    id="fs-dest-query"
+                    type="text"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-controls="fs-dest-suggestions"
+                    aria-expanded="false"
+                    placeholder="City or airport"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <input id="fs-dest-id" type="hidden" value="" />
+                  <ul
+                    id="fs-dest-suggestions"
+                    class="fs-suggestions"
+                    role="listbox"
+                    hidden
+                  ></ul>
+                </div>
+                <select
+                  id="fs-dest-reg"
+                  data-registry
+                  aria-label="Destination airport grouping"
                   hidden
-                />
+                ></select>
               </div>
             </div>
 
@@ -278,6 +317,7 @@ const defaultStart = defaultStartDate();
 
           <div class="fs-actions">
             <button type="submit" class="fs-btn fs-btn-primary" id="fs-run">Search flights</button>
+            <button type="button" class="fs-btn" id="fs-clear">Clear</button>
             <button type="button" class="fs-btn" id="fs-cancel" hidden>
               Cancel
             </button>
