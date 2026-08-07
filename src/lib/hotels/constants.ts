@@ -22,6 +22,14 @@ export const PRICE_CACHE_HIT_THRESHOLD = 12;
 export const PRICE_TOPUP_TOP_N = 20;
 export const PRICE_TOPUP_MAX_CALLS = 15;
 
+/**
+ * Hotel price-heatmap window length. UI exposes "months" for a future
+ * variable span; day count stays fixed until that lands.
+ */
+export const HEATMAP_DAYS = 30;
+/** Parallel exact-property price lookups while building a heatmap. */
+export const HEATMAP_CONCURRENCY = 4;
+
 /** Quality-scan stay: nearest Tue→Thu ≥ 21 days out (computed at call time). */
 export function qualityScanDates(now = new Date()): {
   checkIn: string;

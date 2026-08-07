@@ -1,5 +1,7 @@
 import type {
   GetPropertyQuery,
+  HotelAutocompleteResult,
+  HotelAutocompleteSuggestion,
   HotelDataProvider,
   HotelListPage,
   HotelPropertyPage,
@@ -147,6 +149,51 @@ export class SearchApiHotelProvider implements HotelDataProvider {
     return {
       property: data.property,
       requestUrl: data.search_metadata?.request_url,
+      searchId: data.search_metadata?.id,
+      raw: data,
+    };
+  }
+
+  async autocompleteHotels(q: string): Promise<HotelAutocompleteResult> {
+    this.assertLive();
+    const url = new URL(this.baseUrl);
+    url.searchParams.set("engine", "google_hotels_autocomplete");
+    url.searchParams.set("q", q);
+    url.searchParams.set("hl", "en-US");
+
+    const data = (await this.fetchJson(url, "google_hotels_autocomplete")) as {
+      suggestions?: Array<{
+        type?: string;
+        title?: string;
+        value?: string;
+        subtitle?: string;
+        location?: string;
+        thumbnail?: string;
+        kgmid?: string;
+        ludocid?: string;
+        data_cid?: string;
+        property_token?: string;
+      }>;
+      search_metadata?: { id?: string };
+    };
+
+    const suggestions: HotelAutocompleteSuggestion[] = [];
+    for (const raw of data.suggestions ?? []) {
+      const title = (raw.title ?? raw.value ?? "").trim();
+      if (!title) continue;
+      suggestions.push({
+        type: raw.type ?? "query",
+        title,
+        subtitle: raw.subtitle ?? raw.location ?? null,
+        thumbnail: raw.thumbnail ?? null,
+        kgmid: raw.kgmid ?? null,
+        ludocid: raw.ludocid ?? raw.data_cid ?? null,
+        propertyToken: raw.property_token ?? null,
+      });
+    }
+
+    return {
+      suggestions,
       searchId: data.search_metadata?.id,
       raw: data,
     };

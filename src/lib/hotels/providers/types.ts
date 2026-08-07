@@ -169,6 +169,24 @@ export type TripadvisorSearchResult = {
   raw: unknown;
 };
 
+/** google_hotels_autocomplete suggestion (consumed fields only). */
+export type HotelAutocompleteSuggestion = {
+  type: "hotel" | "airport" | "query" | string;
+  title: string;
+  subtitle?: string | null;
+  thumbnail?: string | null;
+  kgmid?: string | null;
+  ludocid?: string | null;
+  /** Present on some providers / future SearchAPI payloads; often null. */
+  propertyToken?: string | null;
+};
+
+export type HotelAutocompleteResult = {
+  suggestions: HotelAutocompleteSuggestion[];
+  searchId?: string;
+  raw: unknown;
+};
+
 export type ProviderReview = {
   id: string;
   title?: string;
@@ -195,6 +213,9 @@ export interface HotelDataProvider {
   ): Promise<HotelListPage>;
 
   getProperty(query: GetPropertyQuery): Promise<HotelPropertyPage>;
+
+  /** Optional — hotel name autocomplete for heatmap / pickers. */
+  autocompleteHotels?(q: string): Promise<HotelAutocompleteResult>;
 
   /** Optional — P2 TA concordance. */
   searchTripadvisor?(q: string): Promise<TripadvisorSearchResult>;

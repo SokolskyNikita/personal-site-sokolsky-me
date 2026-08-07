@@ -1,0 +1,208 @@
+#hh-app.fs-page {
+  max-width: 1120px;
+  padding-top: clamp(1rem, 2vw, 1.5rem);
+}
+
+#hh-app .fs-top {
+  margin-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
+}
+
+#hh-app .fs-title {
+  font-size: clamp(1.35rem, 1.8vw, 1.55rem);
+  letter-spacing: -0.025em;
+}
+
+#hh-app .fs-heading p {
+  max-width: 48rem;
+  margin-top: 0.3rem;
+  font-size: 0.86rem;
+}
+
+#hh-app .hh-section-query .fs-primary {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.55rem 0.75rem;
+  align-items: start;
+}
+
+#hh-app .hh-field-hotel {
+  grid-column: span 5;
+  position: relative;
+}
+
+#hh-app .hh-field-start {
+  grid-column: span 2;
+}
+
+#hh-app .hh-field-months {
+  grid-column: span 2;
+}
+
+#hh-app .hh-field-nights,
+#hh-app .hh-field-adults {
+  grid-column: span 1;
+}
+
+#hh-app .hh-field-hint {
+  margin: 0.35rem 0 0;
+  color: var(--fs-muted);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+#hh-app .hh-hotel-search {
+  width: 100%;
+}
+
+#hh-app .hh-heatmap {
+  margin-top: 0.35rem;
+}
+
+#hh-app .hh-heatmap-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 0.85rem;
+}
+
+#hh-app .hh-heatmap-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+#hh-app .hh-heatmap-meta {
+  margin: 0.2rem 0 0;
+  color: var(--fs-muted);
+  font-size: 0.8rem;
+}
+
+#hh-app .hh-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--fs-muted);
+  font-family: var(--fs-mono);
+  font-size: 0.72rem;
+}
+
+#hh-app .hh-legend-bar {
+  width: 7rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #2f6f4e 0%,
+    #7ea86a 35%,
+    #d2b15a 65%,
+    #b45a3c 100%
+  );
+}
+
+#hh-app .hh-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+#hh-app .hh-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-height: 4.4rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--fs-line) 80%, transparent);
+  border-radius: calc(var(--fs-radius) - 1px);
+  background: var(--fs-bg-elevated);
+  color: var(--fs-ink);
+  text-align: left;
+  cursor: default;
+  font: inherit;
+}
+
+#hh-app .hh-cell:disabled {
+  opacity: 0.7;
+}
+
+#hh-app .hh-cell-dow {
+  color: var(--fs-muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#hh-app .hh-cell-day {
+  font-family: var(--fs-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+#hh-app .hh-cell-price {
+  margin-top: auto;
+  font-family: var(--fs-mono);
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+#hh-app .hh-tone-low {
+  background: color-mix(in srgb, #2f6f4e 22%, var(--fs-bg-elevated));
+  border-color: color-mix(in srgb, #2f6f4e 35%, var(--fs-line));
+}
+
+#hh-app .hh-tone-low-mid {
+  background: color-mix(in srgb, #7ea86a 20%, var(--fs-bg-elevated));
+  border-color: color-mix(in srgb, #7ea86a 30%, var(--fs-line));
+}
+
+#hh-app .hh-tone-mid {
+  background: color-mix(in srgb, #d2b15a 18%, var(--fs-bg-elevated));
+  border-color: color-mix(in srgb, #d2b15a 28%, var(--fs-line));
+}
+
+#hh-app .hh-tone-high-mid {
+  background: color-mix(in srgb, #c47a45 18%, var(--fs-bg-elevated));
+  border-color: color-mix(in srgb, #c47a45 30%, var(--fs-line));
+}
+
+#hh-app .hh-tone-high {
+  background: color-mix(in srgb, #b45a3c 22%, var(--fs-bg-elevated));
+  border-color: color-mix(in srgb, #b45a3c 36%, var(--fs-line));
+}
+
+#hh-app .hh-tone-empty {
+  background: color-mix(in srgb, var(--fs-muted) 8%, var(--fs-bg-elevated));
+}
+
+@media (max-width: 720px) {
+  #hh-app .hh-section-query .fs-primary {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  #hh-app .hh-field-hotel {
+    grid-column: 1 / -1;
+  }
+
+  #hh-app .hh-field-start,
+  #hh-app .hh-field-months {
+    grid-column: span 3;
+  }
+
+  #hh-app .hh-field-nights,
+  #hh-app .hh-field-adults {
+    grid-column: span 3;
+  }
+
+  #hh-app .hh-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  #hh-app .hh-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

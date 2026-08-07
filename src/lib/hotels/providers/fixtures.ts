@@ -5,6 +5,7 @@ import propertyFourSeasons from "../../../../fixtures/hotels/property-fourseason
 import tripadvisorFourSeasons from "../../../../fixtures/hotels/tripadvisor-fourseasons.json";
 import type {
   GetPropertyQuery,
+  HotelAutocompleteResult,
   HotelDataProvider,
   HotelListPage,
   HotelPropertyPage,
@@ -90,15 +91,64 @@ export class FixtureProvider implements HotelDataProvider {
     if (!property?.property_token) {
       throw new Error("fixture_property_missing");
     }
+    // Vary nightly slightly by check-in day so heatmap demos aren't flat.
+    const base =
+      typeof property.price_per_night?.extracted_price === "number"
+        ? property.price_per_night.extracted_price
+        : 420;
+    const day = Number((query.checkIn ?? "01").slice(-2)) || 1;
+    const nightly = Math.round(base * (0.82 + ((day % 9) + 1) * 0.035));
+    const nights =
+      query.checkIn && query.checkOut
+        ? Math.max(
+            1,
+            Math.round(
+              (Date.parse(`${query.checkOut}T00:00:00Z`) -
+                Date.parse(`${query.checkIn}T00:00:00Z`)) /
+                86_400_000,
+            ),
+          )
+        : 1;
     return {
       property: {
         ...property,
         property_token: query.propertyToken || property.property_token,
+        price_per_night: {
+          ...property.price_per_night,
+          extracted_price: nightly,
+        },
+        total_price: {
+          ...property.total_price,
+          extracted_price: nightly * nights,
+        },
       },
       requestUrl: data.search_metadata?.request_url,
       searchId: data.search_metadata?.id,
       raw: data,
     };
+  }
+
+  async autocompleteHotels(q: string): Promise<HotelAutocompleteResult> {
+    const needle = q.trim().toLowerCase();
+    const page = toListPage(mostReviewedP1 as ListFixture);
+    const suggestions = page.properties
+      .filter(
+        (p) =>
+          p.property_token &&
+          p.name &&
+          (!needle || p.name.toLowerCase().includes(needle)),
+      )
+      .slice(0, 8)
+      .map((p) => ({
+        type: "hotel" as const,
+        title: p.name!,
+        subtitle: p.city ?? "Buenos Aires",
+        thumbnail: null,
+        kgmid: null,
+        ludocid: null,
+        propertyToken: p.property_token ?? null,
+      }));
+    return { suggestions, raw: { suggestions } };
   }
 
   async searchTripadvisor(_q: string): Promise<TripadvisorSearchResult> {

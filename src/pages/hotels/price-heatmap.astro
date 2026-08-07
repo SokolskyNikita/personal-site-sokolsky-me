@@ -1,0 +1,219 @@
+---
+import "../../styles/flights-search.css";
+import "../../styles/hotels-search.css";
+import "../../styles/hotels-price-heatmap.css";
+import { HEATMAP_DAYS } from "../../lib/hotels/constants";
+import { DEFAULT_HEATMAP_FORM } from "../../lib/hotels/heatmap-url";
+
+export const prerender = true;
+
+const pageTitle = "Hotel price heatmap";
+const pageDescription =
+  "Scan nightly rates for one hotel across the next month and see cheap vs expensive check-in days.";
+const themeColorLight = "#f7f6f3";
+const themeColorDark = "#121412";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;650&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="fs-page" id="hh-app">
+      <header class="fs-top">
+        <div class="fs-heading">
+          <span class="fs-eyebrow">Hotels</span>
+          <h1 class="fs-title">Hotel price heatmap</h1>
+          <p>
+            Pick a hotel, then scan one check-in day at a time for the next
+            {HEATMAP_DAYS} days. Cheaper nights show cooler; expensive nights
+            run warmer.
+          </p>
+        </div>
+        <a class="fs-home" href="/">sokolsky.me</a>
+      </header>
+
+      <form class="fs-form" id="hh-form">
+        <section
+          class="fs-form-section hh-section-query"
+          aria-labelledby="hh-query-heading"
+        >
+          <header class="fs-section-heading">
+            <h2 id="hh-query-heading">Hotel &amp; window</h2>
+          </header>
+          <div class="fs-primary">
+            <div class="fs-field hh-field-hotel">
+              <label for="hh-hotel-query">Hotel</label>
+              <div class="fs-airport-search hh-hotel-search">
+                <input
+                  id="hh-hotel-query"
+                  type="text"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-controls="hh-hotel-suggestions"
+                  aria-expanded="false"
+                  placeholder="Type a hotel name"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <span
+                  class="fs-airport-search-spinner"
+                  id="hh-hotel-spinner"
+                  aria-hidden="true"
+                  hidden
+                ></span>
+                <input id="hh-hotel-token" type="hidden" value="" />
+                <input id="hh-hotel-name" type="hidden" value="" />
+                <ul
+                  id="hh-hotel-suggestions"
+                  class="fs-suggestions"
+                  role="listbox"
+                  hidden
+                ></ul>
+              </div>
+            </div>
+            <div class="fs-field hh-field-start">
+              <label for="hh-start">Start date</label>
+              <input id="hh-start" type="date" />
+            </div>
+            <div class="fs-field hh-field-months">
+              <label for="hh-months">Months</label>
+              <select id="hh-months" aria-describedby="hh-months-hint">
+                <option value="1" selected>1 month</option>
+                <option value="2">2 months</option>
+                <option value="3">3 months</option>
+              </select>
+              <p class="hh-field-hint" id="hh-months-hint">
+                Scans {HEATMAP_DAYS} days for now; months will widen the window
+                later.
+              </p>
+            </div>
+            <div class="fs-field hh-field-nights">
+              <label for="hh-nights">Nights</label>
+              <input
+                id="hh-nights"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max="14"
+                value={String(DEFAULT_HEATMAP_FORM.nights)}
+              />
+            </div>
+            <div class="fs-field hh-field-adults">
+              <label for="hh-adults">Adults</label>
+              <input
+                id="hh-adults"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max="8"
+                value={String(DEFAULT_HEATMAP_FORM.adults)}
+              />
+            </div>
+          </div>
+          <div class="hs-run-row">
+            <p class="hs-credit-hint" id="hh-credit-hint">
+              About {HEATMAP_DAYS} credits when nothing is cached (1 per day).
+            </p>
+            <div class="fs-actions">
+              <button
+                type="submit"
+                class="fs-btn fs-btn-primary"
+                id="hh-run"
+                aria-describedby="hh-credit-hint"
+                >Build heatmap</button
+              >
+              <button
+                type="button"
+                class="fs-btn hs-btn-secondary"
+                id="hh-cancel"
+                hidden
+                >Cancel</button
+              >
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <div class="fs-status" aria-live="polite">
+        <p class="fs-search-summary" id="hh-search-summary"></p>
+        <div class="fs-banner fs-banner-warn" id="hh-offline-banner" hidden>
+          You're offline. Reconnect to look up hotel names and prices.
+        </div>
+        <div id="hh-banners"></div>
+        <p class="fs-progress" id="hh-progress"></p>
+      </div>
+
+      <div class="fs-search-progress" id="hh-search-progress" hidden>
+        <div class="fs-search-progress-copy">
+          <strong id="hh-search-progress-label">Preparing</strong>
+          <span id="hh-search-progress-count"></span>
+        </div>
+        <div
+          class="fs-search-progress-track"
+          id="hh-search-progress-track"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-label="Heatmap scan progress"
+        >
+          <span id="hh-search-progress-fill"></span>
+        </div>
+      </div>
+
+      <div id="hh-results">
+        <div class="fs-empty">
+          <strong>No heatmap yet.</strong>
+          <span>
+            Choose a hotel from autocomplete, set a start date, then build the
+            {HEATMAP_DAYS}-day price grid.
+          </span>
+        </div>
+      </div>
+      <p class="fs-trust-note">
+        Each cell is one stay starting that check-in day for the selected night
+        count. Prices come from Google Hotels via SearchAPI; cached days reuse
+        recent lookups and skip a credit.
+      </p>
+      <div class="fs-footer-stats" id="hh-footer"></div>
+    </main>
+
+    <script>
+      import { mountHotelPriceHeatmap } from "../../components/hotels/price-heatmap-app";
+      const root = document.getElementById("hh-app");
+      if (root) mountHotelPriceHeatmap(root);
+    </script>
+  </body>
+</html>

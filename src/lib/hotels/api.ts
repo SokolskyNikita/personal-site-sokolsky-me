@@ -5,6 +5,7 @@ import {
   PRICE_CACHE_HIT_THRESHOLD,
   PRICE_CACHE_TTL_HOURS,
   PRICE_TOPUP_MAX_CALLS,
+  qualityScanDates,
   SCAN_PAGES_HIGHEST_RATING,
   SCAN_PAGES_MOST_REVIEWED,
   SCAN_PAGES_NEIGHBORHOOD_HIGHEST_RATING,
@@ -52,6 +53,8 @@ const SCAN_PATH = "/api/hotels/scan";
 const INDEX_PATH = "/api/hotels/index";
 const RESCORE_PATH = "/api/hotels/rescore";
 const PRICES_PATH = "/api/hotels/prices";
+const AUTOCOMPLETE_PATH = "/api/hotels/autocomplete";
+const RESOLVE_PATH = "/api/hotels/resolve";
 
 export function isHotelsApiPath(pathname: string): boolean {
   return (
@@ -60,6 +63,8 @@ export function isHotelsApiPath(pathname: string): boolean {
     pathname === INDEX_PATH ||
     pathname === RESCORE_PATH ||
     pathname === PRICES_PATH ||
+    pathname === AUTOCOMPLETE_PATH ||
+    pathname === RESOLVE_PATH ||
     pathname.startsWith("/api/hotels/property/") ||
     pathname.startsWith("/api/hotels/reviews/")
   );
@@ -79,6 +84,12 @@ export async function handleHotelsApi(
     }
     if (url.pathname === PRICES_PATH) {
       return await handlePrices(request, env, url);
+    }
+    if (url.pathname === AUTOCOMPLETE_PATH) {
+      return await handleAutocomplete(request, env, url);
+    }
+    if (url.pathname === RESOLVE_PATH) {
+      return await handleResolve(request, env, url);
     }
     if (url.pathname.startsWith("/api/hotels/property/")) {
       return await handleProperty(request, env, url);
@@ -840,6 +851,209 @@ async function handleProperty(
       500,
     );
   }
+}
+
+async function handleAutocomplete(
+  request: Request,
+  env: HotelsEnv,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "GET") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+  const q = (url.searchParams.get("q") ?? "").trim();
+  if (q.length < 2 || q.length > 80) {
+    return json({ ok: false, error: "invalid_query" }, 400);
+  }
+
+  try {
+    const provider = hotelProvider(env, request);
+    if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
+      return json({ ok: false, error: "searchapi_key_missing" }, 503);
+    }
+    if (!provider.autocompleteHotels) {
+      return json({ ok: false, error: "autocomplete_unsupported" }, 501);
+    }
+    const result = await provider.autocompleteHotels(q);
+    const hotels = result.suggestions.filter(
+      (s) => s.type === "hotel" || s.type === "accommodation",
+    );
+    return json({
+      ok: true,
+      suggestions: (hotels.length ? hotels : result.suggestions).slice(0, 10),
+      credits_used: useFixtures(env)
+        ? 0
+        : (provider as SearchApiHotelProvider).creditsUsed,
+    });
+  } catch (e) {
+    if (e instanceof HotelQuotaExceededError) throw e;
+    if (e instanceof LiveModeDisabledError) {
+      return json({ ok: false, error: "live_mode_disabled" }, 403);
+    }
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : "autocomplete_failed",
+      },
+      500,
+    );
+  }
+}
+
+async function handleResolve(
+  request: Request,
+  env: HotelsEnv,
+  url: URL,
+): Promise<Response> {
+  if (request.method !== "POST" && request.method !== "GET") {
+    return json({ ok: false, error: "method_not_allowed" }, 405);
+  }
+
+  let body: {
+    title?: string;
+    subtitle?: string;
+    propertyToken?: string;
+    adults?: number;
+  } = {};
+  if (request.method === "POST") {
+    try {
+      body = (await request.json()) as typeof body;
+    } catch {
+      body = {};
+    }
+  }
+
+  const title = (
+    body.title ??
+    url.searchParams.get("title") ??
+    url.searchParams.get("q") ??
+    ""
+  ).trim();
+  const subtitle = (
+    body.subtitle ??
+    url.searchParams.get("subtitle") ??
+    ""
+  ).trim();
+  const existingToken = (
+    body.propertyToken ??
+    url.searchParams.get("propertyToken") ??
+    url.searchParams.get("token") ??
+    ""
+  ).trim();
+  const adults = Number(
+    body.adults ?? url.searchParams.get("adults") ?? 2,
+  );
+  const normalizedAdults = Number.isFinite(adults) ? adults : 2;
+
+  if (!title && !existingToken) {
+    return json({ ok: false, error: "title_required" }, 400);
+  }
+
+  try {
+    if (existingToken) {
+      return json({
+        ok: true,
+        token: existingToken,
+        name: title || null,
+        subtitle: subtitle || null,
+        resolved: "token",
+        credits_used: 0,
+      });
+    }
+
+    const provider = hotelProvider(env, request);
+    if (!useFixtures(env) && !env.SEARCH_API_IO_KEY) {
+      return json({ ok: false, error: "searchapi_key_missing" }, 503);
+    }
+
+    const dates = qualityScanDates();
+    const q = subtitle ? `${title} ${subtitle}` : title;
+    const page = await provider.listProperties({
+      q,
+      checkIn: dates.checkIn,
+      checkOut: dates.checkOut,
+      adults: normalizedAdults,
+      sortBy: "relevance",
+    });
+    const match = pickBestPropertyMatch(title, page.properties);
+    if (!match?.property_token) {
+      return json(
+        {
+          ok: false,
+          error: "property_not_found",
+          credits_used: useFixtures(env)
+            ? 0
+            : (provider as SearchApiHotelProvider).creditsUsed,
+        },
+        404,
+      );
+    }
+
+    return json({
+      ok: true,
+      token: match.property_token,
+      name: match.name ?? title,
+      subtitle: subtitle || match.city || null,
+      rating: match.rating ?? null,
+      reviews: match.reviews ?? null,
+      resolved: "list",
+      credits_used: useFixtures(env)
+        ? 0
+        : (provider as SearchApiHotelProvider).creditsUsed,
+    });
+  } catch (e) {
+    if (e instanceof HotelQuotaExceededError) throw e;
+    if (e instanceof LiveModeDisabledError) {
+      return json({ ok: false, error: "live_mode_disabled" }, 403);
+    }
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : "resolve_failed",
+      },
+      500,
+    );
+  }
+}
+
+function normalizeHotelLabel(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function pickBestPropertyMatch(
+  title: string,
+  properties: SearchApiListProperty[],
+): SearchApiListProperty | null {
+  const target = normalizeHotelLabel(title);
+  if (!target) return null;
+  let best: SearchApiListProperty | null = null;
+  let bestScore = -1;
+  for (const property of properties) {
+    if (!property.property_token || !property.name) continue;
+    const name = normalizeHotelLabel(property.name);
+    let score = 0;
+    if (name === target) score = 100;
+    else if (name.includes(target) || target.includes(name)) score = 80;
+    else {
+      const targetParts = new Set(target.split(" ").filter(Boolean));
+      const nameParts = name.split(" ").filter(Boolean);
+      const overlap = nameParts.filter((p) => targetParts.has(p)).length;
+      if (overlap === 0) continue;
+      score = Math.round((overlap / Math.max(targetParts.size, 1)) * 60);
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = property;
+    }
+  }
+  if (bestScore >= 40) return best;
+  // Relevance-sorted list: first hit is usually the intended property.
+  return properties.find((property) => property.property_token) ?? null;
 }
 
 async function handleReviews(
