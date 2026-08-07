@@ -529,10 +529,29 @@ a {
 
 .fs-airport-search input[type="text"] {
   width: 100%;
+  padding-right: 2.35rem;
   text-transform: none;
   text-align: left;
   font-family: var(--fs-font);
   letter-spacing: normal;
+}
+
+.fs-airport-search-spinner {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-top: -0.45rem;
+  border: 2px solid color-mix(in srgb, var(--fs-muted) 35%, transparent);
+  border-top-color: var(--fs-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: fs-spin 700ms linear infinite;
+}
+
+.fs-airport-search-spinner[hidden] {
+  display: none;
 }
 
 .fs-suggestions {
@@ -1813,7 +1832,8 @@ a {
     transform: scaleX(1);
   }
 
-  .fs-btn-primary[aria-busy="true"]::before {
+  .fs-btn-primary[aria-busy="true"]::before,
+  .fs-airport-search-spinner {
     animation: none;
   }
 }

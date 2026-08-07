@@ -1480,6 +1480,17 @@ function clearAirportSearchSide(
 ): void {
   setAirportSearchSide(root, side, "", "");
   hideSuggestions(root, side);
+  const searchWrap = root.querySelector<HTMLElement>(
+    `.fs-airport-search[data-airport-search="${side}"]`,
+  );
+  searchWrap?.classList.remove("is-loading");
+  const spinner = searchWrap?.querySelector<HTMLElement>(
+    ".fs-airport-search-spinner",
+  );
+  if (spinner) spinner.hidden = true;
+  root
+    .querySelector<HTMLInputElement>(sideSelectors(side).query)
+    ?.setAttribute("aria-busy", "false");
 }
 
 function setAirportSearchSide(
@@ -1531,6 +1542,12 @@ function mountAirportSearch(
   const query = root.querySelector<HTMLInputElement>(sel.query);
   const list = root.querySelector<HTMLUListElement>(sel.list);
   const idInput = root.querySelector<HTMLInputElement>(sel.id);
+  const searchWrap = root.querySelector<HTMLElement>(
+    `.fs-airport-search[data-airport-search="${side}"]`,
+  );
+  const spinner = searchWrap?.querySelector<HTMLElement>(
+    ".fs-airport-search-spinner",
+  );
   if (!query || !list || !idInput) return;
 
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
@@ -1538,9 +1555,16 @@ function mountAirportSearch(
   let latestSuggestions: AirportLocationSuggestion[] = [];
   let requestSeq = 0;
 
+  const setLoading = (loading: boolean) => {
+    searchWrap?.classList.toggle("is-loading", loading);
+    if (spinner) spinner.hidden = !loading;
+    query.setAttribute("aria-busy", loading ? "true" : "false");
+  };
+
   const renderSuggestions = (suggestions: AirportLocationSuggestion[]) => {
     latestSuggestions = suggestions;
     activeIndex = -1;
+    setLoading(false);
     if (suggestions.length === 0) {
       hideSuggestions(root, side);
       return;
@@ -1565,6 +1589,7 @@ function mountAirportSearch(
       suggestion.kind === "city"
         ? `${suggestion.label} (all airports)`
         : suggestion.label;
+    setLoading(false);
     hideSuggestions(root, side);
     onChanged();
   };
@@ -1583,6 +1608,7 @@ function mountAirportSearch(
 
   const fetchSuggestions = async (q: string) => {
     const seq = ++requestSeq;
+    setLoading(true);
     try {
       const params = new URLSearchParams({
         q,
@@ -1594,13 +1620,23 @@ function mountAirportSearch(
         suggestions?: AirportLocationSuggestion[];
       };
       if (seq !== requestSeq) return;
+      // Field may have been cleared or switched while the request was in flight.
+      if (query.value.trim().length < 2) {
+        setLoading(false);
+        hideSuggestions(root, side);
+        return;
+      }
       if (!res.ok || !data.ok || !Array.isArray(data.suggestions)) {
+        setLoading(false);
         hideSuggestions(root, side);
         return;
       }
       renderSuggestions(data.suggestions);
     } catch {
-      if (seq === requestSeq) hideSuggestions(root, side);
+      if (seq === requestSeq) {
+        setLoading(false);
+        hideSuggestions(root, side);
+      }
     }
   };
 
@@ -1610,10 +1646,14 @@ function mountAirportSearch(
     const q = query.value.trim();
     if (debounceTimer) clearTimeout(debounceTimer);
     if (q.length < 2) {
+      requestSeq += 1;
+      setLoading(false);
       hideSuggestions(root, side);
       onChanged();
       return;
     }
+    // Show spinner through the debounce gap so the field doesn't look frozen.
+    setLoading(true);
     debounceTimer = setTimeout(() => {
       void fetchSuggestions(q);
     }, 250);
