@@ -1,4 +1,7 @@
-import { airportDistanceKm } from "../../lib/flights/airport-coords";
+import {
+  airportDistanceKm,
+  estimateFlightMinutes,
+} from "../../lib/flights/airport-coords";
 import {
   convertCurrency,
   parseSearchCurrency,
@@ -1119,9 +1122,26 @@ function renderResultLeg(
     .map((code, index) => {
       const codeHtml = `<span>${escapeHtml(code)}</span>`;
       if (index === 0) return codeHtml;
-      return `<span class="fs-result-route-sep" aria-hidden="true"></span>${codeHtml}`;
+      const segment = option.segments[index - 1];
+      const legMinutes = segmentLegMinutes(segment);
+      const sep =
+        legMinutes > 0
+          ? `<span class="fs-result-route-sep" aria-hidden="true"><span class="fs-result-route-leg">${escapeHtml(
+              formatDuration(legMinutes),
+            )}</span></span>`
+          : `<span class="fs-result-route-sep" aria-hidden="true"></span>`;
+      return `${sep}${codeHtml}`;
     })
     .join("");
+  const airportsAria = airportCodes
+    .map((code, index) => {
+      if (index === 0) return code;
+      const legMinutes = segmentLegMinutes(option.segments[index - 1]);
+      return legMinutes > 0
+        ? `${formatDuration(legMinutes)} to ${code}`
+        : `to ${code}`;
+    })
+    .join(" ");
   const metaParts = [
     `<span class="fs-result-stops">${escapeHtml(stopDetail)}</span>`,
     `<span class="fs-result-carrier">${escapeHtml(carriers.join(" + "))}</span>`,
@@ -1153,7 +1173,7 @@ function renderResultLeg(
           <time>${escapeHtml(formatClock(last.arrivalTime))}</time>
         </div>
         <div class="fs-result-airports" aria-label="${escapeAttr(
-          airportCodes.join(" to "),
+          airportsAria,
         )}">${airportsMarkup}</div>
       </div>
       <div class="fs-result-meta">${metaParts.join("")}</div>
@@ -1175,6 +1195,24 @@ function formatStops(option: ItineraryOption): string {
 function formatClock(value: string): string {
   const match = value.match(/(?:^|\s)(\d{1,2}:\d{2})$/);
   return match?.[1] ?? (value || "—");
+}
+
+/** Prefer SearchAPI duration; else estimate from great-circle distance. */
+function segmentLegMinutes(
+  segment:
+    | {
+        departureAirport: string;
+        arrivalAirport: string;
+        durationMinutes: number;
+      }
+    | undefined,
+): number {
+  if (!segment) return 0;
+  if (segment.durationMinutes > 0) return segment.durationMinutes;
+  return (
+    estimateFlightMinutes(segment.departureAirport, segment.arrivalAirport) ??
+    0
+  );
 }
 
 function formatLieFlatSegments(option: ItineraryOption): string {

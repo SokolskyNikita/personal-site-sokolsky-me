@@ -312,3 +312,23 @@ export function airportDistanceKm(
   return greatCircleDistanceKm(a, b);
 }
 
+/**
+ * Estimate block time (gate-to-gate minutes) from great-circle distance.
+ *
+ * Uses ~800 km/h jet cruise plus a fixed overhead for taxi / climb / descent.
+ * Tuned to be in the ballpark for both short-haul and long-haul; not a
+ * schedule substitute — only a UI fallback when SearchAPI omits duration.
+ */
+export function estimateFlightMinutes(
+  origin: string,
+  destination: string,
+): number | null {
+  const km = airportDistanceKm(origin, destination);
+  if (km === null) return null;
+  if (km === 0) return 0;
+  const CRUISE_KMH = 800;
+  const OVERHEAD_MIN = 35;
+  const cruiseMin = (km / CRUISE_KMH) * 60;
+  return Math.max(25, Math.round(OVERHEAD_MIN + cruiseMin));
+}
+

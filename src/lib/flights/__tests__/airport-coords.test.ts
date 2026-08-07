@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   AIRPORT_COORDS,
   airportDistanceKm,
+  estimateFlightMinutes,
   greatCircleDistanceKm,
 } from "../airport-coords";
 
@@ -27,5 +28,18 @@ describe("airport coords", () => {
     const a = greatCircleDistanceKm(AIRPORT_COORDS.EZE!, AIRPORT_COORDS.MAD!);
     const b = greatCircleDistanceKm(AIRPORT_COORDS.MAD!, AIRPORT_COORDS.EZE!);
     expect(a).toBeCloseTo(b, 6);
+  });
+
+  it("estimates plausible block times from distance", () => {
+    const ezeJfk = estimateFlightMinutes("EZE", "JFK");
+    expect(ezeJfk).toBeGreaterThan(9 * 60);
+    expect(ezeJfk).toBeLessThan(13 * 60);
+
+    const denIah = estimateFlightMinutes("DEN", "IAH");
+    expect(denIah).toBeGreaterThan(90);
+    expect(denIah).toBeLessThan(4 * 60);
+
+    expect(estimateFlightMinutes("EZE", "EZE")).toBe(0);
+    expect(estimateFlightMinutes("EZE", "ZZZ")).toBeNull();
   });
 });
