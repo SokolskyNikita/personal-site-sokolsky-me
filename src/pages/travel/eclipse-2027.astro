@@ -1,10 +1,10 @@
 ---
 export const prerender = true;
 
-const pageTitle = "Best way to see the 2027 Eclipse";
+const pageTitle = "Where to see the 2027 eclipse";
 const pageDescription =
-  "Recommended 2027 eclipse plan: Istanbul forecast hub, then Flex Luxor or Sfax (≥5 min). Also covers Egyptian Red Sea, Spain, and Morocco (4+ min).";
-const themeColorLight = "#fbf8f2";
+  "A practical comparison of Tunisia, Egypt, Spain, Morocco, and Saudi Arabia for the total solar eclipse on August 2, 2027.";
+const themeColorLight = "#fcfaf5";
 const themeColorDark = "#16120e";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
@@ -16,7 +16,7 @@ const structuredData = {
   description: pageDescription,
   url: canonicalUrl,
   datePublished: "2026-08-03",
-  dateModified: "2026-08-03",
+  dateModified: "2026-08-10",
   author: {
     "@type": "Person",
     name: "Nikita Sokolsky",
@@ -177,7 +177,6 @@ const wsJeddah = book(
 );
 
 type RegionId =
-  | "optimal"
   | "egypt-inland"
   | "egypt-red-sea"
   | "tunisia"
@@ -193,14 +192,12 @@ type RegionGuide = {
   whereIntro: string[];
   durations: DurationRow[];
   weather: string[];
-  quote?: { text: string; cite: string; href: string };
   planIntro: string[];
   decisions: DecisionCard[];
   planNote?: string;
   oddsIntro: string;
   odds: OddsTier[];
   oddsOutro: string;
-  /** Single consolidated “what to book” list for this tab (no duplicates elsewhere). */
   toBook: BookCategory[];
   toBookNote?: string;
   protocolIntro: string;
@@ -209,148 +206,9 @@ type RegionGuide = {
   pitfalls: string[];
 };
 
-const optimalPlan: RegionGuide = {
-  id: "optimal",
-  label: "Optimal plan",
-  short: "Istanbul → Sfax or Luxor",
-  takeaways: [
-    "<strong>Recommended approach:</strong> fly Seattle→Istanbul ~26 Jul, hold <strong>two Flex/refundable ≥5-minute branches</strong> (Sfax comfort default + Luxor duration option), and pick from Istanbul by <strong>~30 Jul noon</strong>. Do not Cairo-first, and do not lock a single country months out.",
-    `<strong>Branch rule:</strong> both look clean → <strong>Sfax</strong> (~5m40–45s, ~<strong>30&nbsp;°C</strong> at totality per ${wsSfax}). Want the extra ~40s and near-zenith sun → <strong>Luxor</strong> (~6m20–22s) but expect ~<strong>38&nbsp;°C</strong> dry heat at ~13:05 (${wsLuxor}). Egypt dusty / Tunisia clean → <strong>Sfax</strong>. The hedge’s job is Saharan dust, not correlated double cloud-out.`,
-    "<strong>Keep sunk cost under ~$1,000 for two</strong> through 29 Jul so the switch stays real. No CFAR covers abandoning one operable branch. Exact Flex flights, hotels, cars, and rejects are under <strong>What to book</strong>.",
-    "<strong>Planning odds:</strong> with this Istanbul setup, roughly <strong>~97%</strong> chance of ≥4 clear minutes (range ~95.5–97.8%). Locking Luxor alone with no Tunisia exit is only ~76–80%. Those are planning estimates, not lab measurements. Country tabs are detail after you commit to this setup.",
-  ],
-  whereIntro: [
-    `This plan parks you in <strong>Istanbul</strong> until the forecasts are real, then sends you to one ≥5-minute cell: <strong>Sfax / Chaffar</strong> (comfort + cloud default) or <strong>Luxor</strong> (duration-max). SEA→IST is ~12–13h ${turkishSeaIst} nonstop (TK-only on that route). From IST: ~4–7/day IST→TUN (TK/TU/BJ—no SAW→TUN); ~11–12/day to Cairo then same-day ${egyptAir} <strong>CAI→LXR</strong>. Rome is a weaker backup hub; Athens fails late Tunis.`,
-    "Optional desert SE of Luxor adds only ~1–3s and needs a MoTA desert program (≥21 days)—not required for the recommended path. Red Sea and Spain are not peer branches here.",
-  ],
-  durations: [
-    {
-      place: "Sfax / Chaffar (comfort default)",
-      totality: "~5m 40–45s",
-      note: "~30°C at ~10:11; go here when both clean or Egypt dusty",
-    },
-    {
-      place: "Luxor (duration option)",
-      totality: "~6m 20–22s",
-      note: "~38°C at ~13:05; pick when you want max total",
-    },
-    {
-      place: "Desert SE of Luxor (optional)",
-      totality: "~6m 22–23s",
-      note: "Only after Egypt is locked; MoTA program",
-    },
-  ],
-  weather: [
-    `${wsLuxor} / ${wsSfax}: on a typical <strong>2 Aug</strong>, skies look clear-ish ~<strong>92%</strong> of the time in Luxor and ~<strong>95%</strong> in Sfax. At eclipse time the air is ~<strong>38&nbsp;°C</strong> in Luxor vs ~<strong>30&nbsp;°C</strong> in Sfax. Comfort favors Sfax; Saharan dust is why you still hold both.`,
-    "The week before: watch ordinary cloud forecasts and dust/haze maps for Egypt vs Tunisia. A few days out is only a rough read—decide for real around <strong>30 Jul</strong>. Prefer the country that looks clearer and less dusty; if it’s a toss-up, pick the cooler one (usually Sfax).",
-  ],
-  quote: {
-    text: "It's much more important to watch the weather forecasts a day or two before the eclipse and choose a location with the best chance of a cloud-free sky… better to see a shorter eclipse from clear sky than a longer eclipse under clouds.",
-    cite: "NASA Eclipse (SE2027Aug02)",
-    href: "https://eclipse.gsfc.nasa.gov/SEgoogle/SEgoogle2001/SE2027Aug02Tgoogle.html",
-  },
-  planIntro: [
-    `<strong>Timeline:</strong> SEA→IST ~26 Jul (${turkishSeaIst} window ~5 Aug 2026). Stay Istanbul 27–29 Jul. By <strong>30 Jul ~noon</strong> pick Luxor or Sfax (Egypt hard limit ~31 Jul morning for same-day LXR; Tunisia has ~24h more slack). Eclipse 2 Aug; home via Istanbul 4–5 Aug.`,
-    "Concrete flights, hotels, and ground transport are listed once under <strong>What to book</strong> below. On the ground after the country call: Sfax car with Chaffar–Mahares / RN1 west haze escape, or Luxor private roof + driver (shade and water for the heat).",
-  ],
-  decisions: [
-    {
-      title: "Both clean",
-      body: "<strong>Sfax</strong> by default: ~30&nbsp;°C at totality, slightly better WeatherSpark cloud, still ≥5 minutes. Take <strong>Luxor</strong> only if you want ~40s more totality / higher sun and accept ~38&nbsp;°C dry heat. A “looks fine” forecast three days out is not a promise.",
-    },
-    {
-      title: "Egypt dusty, Tunisia clean",
-      body: "<strong>Sfax.</strong> Driving around Luxor will not outrun a wide Saharan dust plume—and you keep the cooler site.",
-    },
-    {
-      title: "Tunisia messy, Egypt clean",
-      body: "<strong>Luxor</strong> (~38&nbsp;°C). Hydrate, shade cameras, private roof if you can.",
-    },
-    {
-      title: "Both threatened",
-      body: "Pick whichever looks less cloudy and less dusty; break ties toward the cooler site. Do not treat the Red Sea or Spain as a third ≥5-minute backup.",
-    },
-  ],
-  planNote:
-    "Not in the recommended core: Cairo-first (burns Tunisia early), fixed Luxor with no Sfax hold, non-refundable Red Sea packages, or Spain/Morocco as primaries. Optional only—pre-held refundable Hamata-band room as a small Egypt cell; AGP if you drop the 5-minute floor.",
-  oddsIntro:
-    "Big number first. The plan aims at a ≥5-minute site; the success band below is ≥4 clear minutes because Sfax only has ~40s above five. Do not stack every “99%” logistics claim into a fake overall 98%.",
-  odds: [
-    {
-      label: "Whole Istanbul plan (recommended)",
-      odds: "~95.5–97.8%",
-      plan: "Chance of ≥4 clear minutes; midpoint ~97%. Luxor alone with no exit is only ~76–80%. Want a full clear ≥5 minutes? Closer to ~88–94%.",
-    },
-    {
-      label: "Picking the better country the week before",
-      odds: "~97–99%",
-      plan: "Using live cloud + dust forecasts from Istanbul. Looking only at past Aug 2 weather without forecasts is closer to ~90–91%.",
-    },
-    {
-      label: "Actually getting there + a place to watch",
-      odds: "~98.5–99.5% each",
-      plan: "Istanbul buffer + cancellable tickets/rooms. Watch-outs: same-day Luxor connection; Tunis flights only from IST (not SAW).",
-    },
-  ],
-  oddsOutro:
-    `Usual August picture: ${wsLuxor} / ${wsSfax}. Week before: live cloud + dust forecasts only.`,
-  toBook: [
-    {
-      label: "Flights",
-      items: [
-        `${turkishSeaIst} SEA→IST ~26 Jul 2027 — refundable cash or ${milesSmiles} / ${aeroplan} (window ~5 Aug 2026; Flying Blue not viable for these hub legs)`,
-        `Flex IST→CAI ~30 Jul (prefer MS/SM operating carrier) + same-day ${egyptAir} CAI→LXR (morning/midday IST arrival)`,
-        `Flex IST→TUN ~30 Jul (prefer TU/BJ) — <strong>not</strong> a second same-day cheapest TK outbound (duplicate-ticket risk)`,
-        "Return via Istanbul ~4–5 Aug; do not glue hub + both countries into one conventional round trip",
-      ],
-    },
-    {
-      label: "Hotels",
-      items: [
-        `Luxor 30 Jul–4 Aug, two free-cancel rooms with <strong>private viewing in writing</strong>: ${sunflower}, ${cleopatra}, or ${newMemnon} / ${gaddis}`,
-        `Sfax 30 Jul–3 Aug hedge pair: ${ibisSfax} + ${borjDhiafa} (alt ${lesOliviers})`,
-      ],
-    },
-    {
-      label: "Cars / drivers",
-      items: [
-        `Luxor: ${luxorTravels} or ${emoTours} private driver 31 Jul–eclipse afternoon; viewpoint left open; pay after country call if possible`,
-        `Tunis airport: free-cancel ${camelCar} (DiscoverCars) or ${avisTun} for the A1 drive to Sfax`,
-      ],
-    },
-    {
-      label: "Other",
-      items: [
-        `Egypt e-visa $30 each on ${visa2egypt} (≥7 days ahead; Sinai waiver ≠ Luxor). Tunisia + Turkey visa-free ≤90 days for Czech passports (passport only)`,
-        "Loss cap through 29 Jul for two: Egypt anchor ~$500 + Sfax night ~$150 + deposits ~$150 + Flex cancel ~$50–200 (or ~$140 Miles&Smiles). Floor non-Flex abandon ~$440–524 per unused country ticket",
-        `Reject: ${farAndBeyond}-style 100% non-refundable Luxor packages; sold-out ${belugaWadi} deposits as hedges; CFAR as Sfax↔Luxor switch insurance`,
-      ],
-    },
-  ],
-  toBookNote:
-    "Any hold that goes hard before 29 Jul defeats the Luxor↔Sfax switch. Book both countries; cancel the unused one after the ~30 Jul call.",
-  protocolIntro:
-    "Pick the country from Istanbul. On eclipse day, only short local moves.",
-  protocol: [
-    "<strong>27 Jul:</strong> check cloud and dust forecasts. Keep both options open unless Egypt looks clearly bad.",
-    "<strong>29 Jul:</strong> lean Luxor or Sfax. Do not trust one flashy “sunny” app screenshot.",
-    "<strong>30 Jul:</strong> final pick; fly there.",
-    "<strong>1–2 Aug:</strong> if haze or patchy cloud shows up, move a short way inside the ≥5-minute band (Luxor along the Nile highway; Sfax west on RN1).",
-  ],
-  protocolOutro:
-    "After 30 Jul you are committed to one country—not shopping continents.",
-  pitfalls: [
-    "Fixed Luxor (or Cairo-first) with no live Tunisia branch.",
-    "Two Turkish IST→CAI and IST→TUN tickets the same day.",
-    "Calling Red Sea or Spain the international dust hedge.",
-    "Chasing centerline seconds under bad sky.",
-    "Spain or Morocco as a ≥5-minute primary.",
-  ],
-};
-
 const egyptInland: RegionGuide = {
   id: "egypt-inland",
-  label: "Egypt - inland",
+  label: "Egypt — inland",
   short: "Luxor / desert · 6m+",
   takeaways: [
     "<strong>Stay in Luxor</strong> for ~6m20–22s (East Bank hotel roofs, Al Baghdādī, or West Bank fringe near Kurna). The NASA GD desert point SE (~6m23s) adds only ~1–3s and needs a <strong>MoTA-licensed desert program ≥21 days</strong>—not a DIY rental 4×4. Do not count on Karnak or Luxor Temple; the May 2026 tourism committee targets overcrowding at unnamed “main observation areas,” with no site-level rules published yet.",
@@ -417,7 +275,7 @@ const egyptInland: RegionGuide = {
     },
     {
       label: "Via Istanbul plan (default)",
-      odds: "See Optimal",
+      odds: "~95.5–97.8%",
       plan: "Whole plan ~95.5–97.8%. Tunisia is the dust exit through ~30 Jul.",
     },
   ],
@@ -427,7 +285,7 @@ const egyptInland: RegionGuide = {
     {
       label: "Flights",
       items: [
-        `SEA→IST hub under <strong>Optimal plan</strong> (${turkishSeaIst} ~26 Jul)`,
+        `SEA→IST on ${turkishSeaIst} ~26 Jul, then hold Tunisia until the forecast decision`,
         `Flex IST→CAI ~30 Jul (prefer MS/SM) + same-day ${egyptAir} CAI→LXR — evening IST arrivals miss same-day LXR`,
         "Do not bank on summer IST/SAW→LXR nonstops",
       ],
@@ -456,7 +314,7 @@ const egyptInland: RegionGuide = {
     },
   ],
   toBookNote:
-    "If you are still running the Istanbul dual-country hold, book Luxor inventory here and keep Sfax under Optimal / Tunisia — sunk cost for two under ~$1,000 through 29 Jul.",
+    "For the Istanbul dual-country plan, keep a refundable Sfax room until the 30 July decision. Keep total sunk cost below about $1,000 for two.",
   protocolIntro:
     "Luxor totality is early afternoon (~13:02–13:08). By then you should already be in Egypt or Tunisia—not still choosing.",
   protocol: [
@@ -478,7 +336,7 @@ const egyptInland: RegionGuide = {
 
 const egyptRedSea: RegionGuide = {
   id: "egypt-red-sea",
-  label: "Egypt - Red Sea",
+  label: "Egypt — Red Sea",
   short: "Hamata / Marsa Alam · 5m30s–6m15s",
   takeaways: [
     `<strong>${belugaWadi} / Hamata</strong> (~6m13–15s) is the only well-evidenced ordinary-tourism ≥6-minute coastal land stay. <strong>Marsa Nakari / Marsa Alam / Port Ghalib</strong> (~5m28–42s) still clear five minutes. Sleep inside that band.`,
@@ -531,7 +389,7 @@ const egyptRedSea: RegionGuide = {
     },
   ],
   planNote:
-    `Egypt e-visa as under Optimal / Egypt - inland (${visa2egypt}). Stay on the Hamata tourist axis; Shalateen-style deep-south permits are a separate headache.`,
+    `Use the standard Egypt e-visa (${visa2egypt}). Stay on the Hamata tourist axis; Shalateen-style deep-south permits are a separate issue.`,
   oddsIntro:
     "Red Sea alone is a solid ≥5-minute plan. WeatherSpark still prefers Luxor on cloud (~92% vs ~82% clearer on 2 Aug).",
   odds: [
@@ -581,7 +439,7 @@ const egyptRedSea: RegionGuide = {
       items: [
         `Egypt e-visa $30 on ${visa2egypt} (same as inland)`,
         `${rsdsWadi} terms: 20% non-refundable + balance by 28 Feb 2027 — only if this is your real primary`,
-        "If Red Sea is Plan A, keep refundable Sfax rooms under Optimal / Tunisia as the dust exit",
+        "If the Red Sea is Plan A, keep refundable Sfax rooms as the dust exit",
       ],
     },
   ],
@@ -609,10 +467,9 @@ const tunisia: RegionGuide = {
   label: "Tunisia",
   short: "Sfax / Chaffar · 5m40s–5m45s",
   takeaways: [
-    "<strong>Sfax city (~5m40s) and the Chaffar–Mahares strip (~5m45s)</strong> are the ≥5-minute Tunisian plan. Concrete views: Chaffar Beach, GP1 mid-corridor, Mahares GP1 (avoid Miskar LPG north). Shorter path towns stay off this page on purpose.",
-    "<strong>From Istanbul:</strong> Flex IST→TUN ~30 Jul (IST only; no SAW→TUN), free-cancel car, A1 to Sfax. Hold two refundable Sfax rooms before you leave Turkey — vendors under <strong>What to book</strong>.",
-    `<strong>Go alone, not on a tour bus.</strong> Groups pile onto the same coastal pull-off. ${wsSfax}: 2 Aug clearer skies ~<strong>95%</strong>; eclipse-hour ~<strong>30&nbsp;°C</strong> (86°F at 10:00; least-muggy hour of that day).`,
-    "What Tunisia buys you: <strong>dust-decoupled ≥5-minute cell</strong>, better WeatherSpark cloud than Luxor, and ~8&nbsp;°C cooler air at totality. Luxor still wins only on duration and sun height.",
+    "<strong>Start with Sfax.</strong> It offers about 5m40s of totality, roughly 95% clearer skies historically, and a 30&nbsp;°C eclipse morning.",
+    "<strong>Stay in Sfax and drive south</strong> to Chaffar or Mahares. Keep a car for a westward move if coastal haze develops.",
+    "<strong>For more flexibility:</strong> wait in Istanbul with refundable Tunisia and Luxor bookings, then choose around 30 July using cloud and dust forecasts.",
   ],
   whereIntro: [
     "Tunisia’s longest totality, about <strong>5 minutes 45 seconds</strong>, sits in the <strong>Chaffar</strong> area of Sfax governorate (local press citing the national weather service, Apr 2026). Sfax city is ~5m 39–41s near 10:11 local with the sun ~56° up.",
@@ -641,7 +498,6 @@ const tunisia: RegionGuide = {
   ],
   planIntro: [
     "From Istanbul: IST→TUN (~4–7 nonstops/day now on TK/TU/BJ; 2027 counts not locked; no SAW substitute), then ~270&nbsp;km on the A1 to Sfax (~3–3.5h). Land 30–31 Jul for a scouting day. Tunisia-only: fly TUN (DJE/NBE only with slack to Sfax); skip domestic turboprops on eclipse week.",
-    "Concrete flights, hotels, car, and entry cash sit under <strong>What to book</strong>.",
   ],
   decisions: [
     {
@@ -674,7 +530,7 @@ const tunisia: RegionGuide = {
     },
     {
       label: "Via Istanbul plan (dust exit)",
-      odds: "See Optimal",
+      odds: "~95.5–97.8%",
       plan: "Whole plan ~95.5–97.8% for ≥4 clear minutes. Pick the cleaner country from IST by ~30 Jul.",
     },
   ],
@@ -684,7 +540,7 @@ const tunisia: RegionGuide = {
     {
       label: "Flights",
       items: [
-        `SEA→IST hub under <strong>Optimal plan</strong>`,
+        `${turkishSeaIst} SEA→IST ~26 Jul; refundable cash or ${milesSmiles} / ${aeroplan}`,
         "Flex IST→TUN ~30 Jul (prefer TU/BJ if TK already covers SEA–IST); IST only — no SAW→TUN",
         "Tunisia-only trip: fly into TUN; DJE/NBE only if the drive still lands you in Sfax with slack",
       ],
@@ -971,7 +827,7 @@ const other: RegionGuide = {
   takeaways: [
     `<strong>Jeddah (~5m50s+)</strong> is the main leftover ≥5-minute land option east of Egypt—legal for non-Muslims (not Mecca). ${wsJeddah}: weaker cloud (~63% clearer early Aug), ~<strong>38&nbsp;°C</strong> at afternoon totality, and often muggy—heat without Luxor’s dry-air upside.`,
     "<strong>Libya</strong> has excellent weather and long totality; extreme travel bans put it out.",
-    "For a real dust exit + comfort default, use the <strong>Optimal plan</strong> (Istanbul → Sfax or Luxor). Spain and Morocco are their own 4m+ tabs.",
+    "For a better balance of clear sky, comfort, and duration, start with Tunisia or Luxor.",
   ],
   whereIntro: [
     "East of the Red Sea, long totality reaches Saudi Arabia near Jeddah. West of Egypt, Libya looks excellent for weather on paper and is off-limits.",
@@ -1006,7 +862,7 @@ const other: RegionGuide = {
     },
   ],
   oddsIntro:
-    "Neither leftover beats forecast-selected Luxor/Sfax on clear sky. Hub odds live under Optimal plan.",
+    "Neither option beats a forecast-selected Sfax or Luxor plan on clear sky.",
   odds: [
     {
       label: "Jeddah",
@@ -1020,7 +876,7 @@ const other: RegionGuide = {
     },
   ],
   oddsOutro:
-    "If you need ≥5 minutes with a dust exit, go back to Optimal plan.",
+    "If you need ≥5 minutes with a dust exit, compare Tunisia and Luxor.",
   toBook: [
     {
       label: "Flights",
@@ -1049,9 +905,9 @@ const other: RegionGuide = {
     },
   ],
   toBookNote:
-    "These leftovers are contingencies. The bookable dual-country recipe lives under Optimal plan.",
+    "These are contingencies, not parallel holds.",
   protocolIntro:
-    "Same idea as the Optimal plan if you ever activate this: watch cloud and dust forecasts the week before.",
+    "Watch cloud and dust forecasts during the week before the eclipse.",
   protocol: [
     "<strong>Saudi:</strong> check dust/haze first—cloud alone understates the risk here.",
     "<strong>Decide early:</strong> do not abandon Luxor/Sfax holds for a last-minute scramble.",
@@ -1066,7 +922,6 @@ const other: RegionGuide = {
 };
 
 const regions: RegionGuide[] = [
-  optimalPlan,
   tunisia,
   egyptInland,
   egyptRedSea,
@@ -1074,7 +929,6 @@ const regions: RegionGuide[] = [
   morocco,
   other,
 ];
-
 
 const sources: Source[] = [
   {
@@ -1327,25 +1181,13 @@ const sources: Source[] = [
         <p class="eyebrow">Travel · August 2, 2027</p>
         <h1>{pageTitle}</h1>
         <p class="dek">
-          Recommended: Istanbul hub, Flex Luxor (default) and Sfax (dust exit),
-          decide by 30 July. Country tabs below are detail.
+          Start with Tunisia for 5m40s of totality, favorable weather, and
+          manageable heat. Compare Luxor for longer totality or the other
+          destinations below.
         </p>
       </header>
 
       <article class="article">
-        <section id="tradeoff" aria-labelledby="tradeoff-heading">
-          <h2 id="tradeoff-heading">Pick the tradeoff</h2>
-          <p>
-            On 2 Aug 2027: Spain/Morocco 4m+ morning, then Tunisia–Egypt–Saudi
-            (Egypt ~6m23s). Covering <strong>≥5m</strong> Egypt/Tunisia and
-            <strong>≥4m</strong> Spain/Morocco. WeatherSpark: <strong>Sfax</strong>
-            ~95%/30&nbsp;°C comfort+dust default; <strong>Luxor</strong>
-            ~92%/38&nbsp;°C for duration. Start with the
-            <strong>Optimal plan</strong> (Istanbul → Sfax or Luxor).
-          </p>
-        </section>
-
-
         <div class="region-shell" data-region-shell>
           <div
             class="region-switch"
@@ -1419,35 +1261,29 @@ const sources: Source[] = [
                       </tbody>
                     </table>
                   </div>
-                  <p class="source-note">
-                    Figures vary by a few seconds by exact GPS point. Fix your
-                    site on Xavier Jubier’s interactive map before you commit.
-                  </p>
                 </section>
 
                 <section
                   id={`${region.id}-weather`}
                   aria-labelledby={`${region.id}-weather-heading`}
                 >
-                  <h2 id={`${region.id}-weather-heading`}>Cloud, heat, dust</h2>
+                  <h2 id={`${region.id}-weather-heading`}>Weather and odds</h2>
                   {region.weather.map((para) => (
                     <p set:html={para} />
                   ))}
-                  {region.quote && (
-                    <blockquote>
-                      <p>
-                        <em>“{region.quote.text}”</em>
-                        {" — "}
-                        <a
-                          href={region.quote.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {region.quote.cite}
-                        </a>
-                      </p>
-                    </blockquote>
-                  )}
+                  <p set:html={region.oddsIntro} />
+                  <ol class="tier-list">
+                    {region.odds.map((tier) => (
+                      <li>
+                        <div class="tier-head">
+                          <strong>{tier.label}</strong>
+                          <span>{tier.odds}</span>
+                        </div>
+                        <p set:html={tier.plan} />
+                      </li>
+                    ))}
+                  </ol>
+                  <p set:html={region.oddsOutro} />
                 </section>
 
                 <section
@@ -1474,10 +1310,6 @@ const sources: Source[] = [
                   aria-labelledby={`${region.id}-booking-heading`}
                 >
                   <h2 id={`${region.id}-booking-heading`}>What to book</h2>
-                  <p class="book-lede">
-                    Exact inventory for this tab — flights, hotels, ground, and
-                    other holds. Not repeated elsewhere on the page.
-                  </p>
                   <div class="book-grid">
                     {region.toBook.map((cat) => (
                       <article class="book-cat">
@@ -1491,26 +1323,6 @@ const sources: Source[] = [
                     ))}
                   </div>
                   {region.toBookNote && <p set:html={region.toBookNote} />}
-                </section>
-
-                <section
-                  id={`${region.id}-odds`}
-                  aria-labelledby={`${region.id}-odds-heading`}
-                >
-                  <h2 id={`${region.id}-odds-heading`}>Your chances</h2>
-                  <p set:html={region.oddsIntro} />
-                  <ol class="tier-list">
-                    {region.odds.map((tier) => (
-                      <li>
-                        <div class="tier-head">
-                          <strong>{tier.label}</strong>
-                          <span>{tier.odds}</span>
-                        </div>
-                        <p set:html={tier.plan} />
-                      </li>
-                    ))}
-                  </ol>
-                  <p set:html={region.oddsOutro} />
                 </section>
 
                 <section
@@ -1551,23 +1363,15 @@ const sources: Source[] = [
           <h2 id="recheck-heading">Recheck before you book hard</h2>
           <ul class="plain-list">
             <li>
-              Jul 2027 IST→CAI / IST→TUN schedules and Flex fares when inventory
-              opens (~Aug–Nov 2026); confirm operating carriers, not just flight
-              numbers.
+              July 2027 flight schedules, operating carriers, and refund rules.
             </li>
             <li>
-              Egypt e-visa fee/eligible list and Tunisia passport-validity floor
-              (3 vs 6 months wording) for Czech travelers before Jul 2027.
+              Entry rules for Egypt and Tunisia, plus any Luxor or Sfax eclipse
+              access restrictions.
             </li>
             <li>
-              MoTA / SIS Luxor eclipse access rules and Tunisia gouvernorat Sfax
-              / Interior guidance—committees exist; site ops rules mostly
-              unpublished as of Aug 2026.
-            </li>
-            <li set:html={`Desert SE program lead times (≥21 days), hotel free-cancel-by dates, and ${rsdsWadi} / ${belugaEgypt} deposit ladders if Red Sea becomes primary.`} />
-            <li>
-              Jubier interactive map for exact Chaffar–Mahares and Luxor
-              corridor GPS the week before.
+              Exact viewing coordinates, cancellation deadlines, and live cloud
+              and dust forecasts.
             </li>
           </ul>
         </section>
@@ -1575,10 +1379,8 @@ const sources: Source[] = [
         <section id="sources" aria-labelledby="sources-heading">
           <h2 id="sources-heading">Sources</h2>
           <p class="source-note">
-            Usual August cloud and temperature lean on WeatherSpark first. Dust
-            and last-week forecasts need other tools. Numbers here are planning
-            estimates, not guarantees. Dust is the leftover you cannot cancel
-            with a hotel voucher—you cancel it by holding a second country.
+            Historical weather is context, not a forecast. Check cloud and dust
+            models during the week before the eclipse.
           </p>
           <details class="sources-disclosure">
             <summary>
@@ -1619,12 +1421,12 @@ const sources: Source[] = [
         const panels = Array.from(
           shell.querySelectorAll(".region-panel"),
         ).filter((el) => el instanceof HTMLElement);
-        const valid = new Set(["optimal", "egypt-inland", "egypt-red-sea", "tunisia", "spain", "morocco", "other"]);
+        const valid = new Set(["tunisia", "egypt-inland", "egypt-red-sea", "spain", "morocco", "other"]);
 
         const activate = (rawId, options = {}) => {
           const focus = Boolean(options.focus);
           const pushHash = options.pushHash !== false;
-          let id = valid.has(rawId) ? rawId : "optimal";
+          const id = valid.has(rawId) ? rawId : "tunisia";
 
           for (const tab of tabs) {
             const on = tab.dataset.region === id;
@@ -1645,7 +1447,7 @@ const sources: Source[] = [
 
         for (const tab of tabs) {
           tab.addEventListener("click", () => {
-            activate(tab.dataset.region || "optimal", { focus: false });
+            activate(tab.dataset.region || "tunisia", { focus: false });
           });
           tab.addEventListener("keydown", (event) => {
             if (!(event instanceof KeyboardEvent)) return;
@@ -1659,14 +1461,14 @@ const sources: Source[] = [
               next = (i - 1 + tabs.length) % tabs.length;
             if (event.key === "Home") next = 0;
             if (event.key === "End") next = tabs.length - 1;
-            const target = tabs[next]?.dataset.region || "optimal";
+            const target = tabs[next]?.dataset.region || "tunisia";
             activate(target, { focus: true });
           });
         }
 
         const fromHash = () => {
           const id = location.hash.replace(/^#/, "");
-          activate(valid.has(id) ? id : "optimal", { pushHash: false });
+          activate(valid.has(id) ? id : "tunisia", { pushHash: false });
         };
         window.addEventListener("hashchange", fromHash);
         fromHash();
@@ -1678,7 +1480,7 @@ const sources: Source[] = [
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #fbf8f2;
+    --bg: #fcfaf5;
     --paper: #fffdf8;
     --text: #1c1712;
     --text-soft: #3f352b;
@@ -1735,22 +1537,7 @@ const sources: Source[] = [
     max-width: 100%;
     margin: 0;
     overflow-x: clip;
-    background:
-      radial-gradient(
-        ellipse 80% 50% at 88% -10%,
-        color-mix(in srgb, var(--accent-soft) 55%, transparent),
-        transparent 58%
-      ),
-      radial-gradient(
-        ellipse 55% 40% at 8% 0%,
-        color-mix(in srgb, var(--accent-soft) 28%, transparent),
-        transparent 52%
-      ),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--bg) 92%, #d8b896) 0%,
-        var(--bg) 32%
-      );
+    background: var(--bg);
   }
 
   .page {
@@ -1876,9 +1663,7 @@ const sources: Source[] = [
   p + .book-grid,
   .book-grid + p,
   p + .plain-list,
-  .plain-list + p,
-  p + blockquote,
-  blockquote + p {
+  .plain-list + p {
     margin-top: 0.7rem;
   }
 
@@ -1902,10 +1687,6 @@ const sources: Source[] = [
   strong {
     color: var(--text);
     font-weight: 700;
-  }
-
-  em {
-    font-style: italic;
   }
 
   .region-shell {
@@ -2022,19 +1803,6 @@ const sources: Source[] = [
     margin-top: 0.4rem;
   }
 
-  blockquote {
-    margin: 0;
-    border-block: 1px solid var(--rule);
-    background: color-mix(in srgb, var(--paper) 80%, transparent);
-    padding: 0.85rem 0.95rem;
-  }
-
-  blockquote p {
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-
   .table-wrap {
     overflow-x: auto;
     border: 1px solid var(--rule);
@@ -2118,11 +1886,6 @@ const sources: Source[] = [
     margin: 0.55rem 0 0;
     padding: 0;
     list-style: none;
-  }
-
-  .book-lede {
-    color: var(--muted);
-    font-size: 0.92rem;
   }
 
   .book-grid {
