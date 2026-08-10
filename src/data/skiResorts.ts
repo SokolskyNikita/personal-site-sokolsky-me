@@ -1,5 +1,6 @@
 // Generated from English Wikipedia ski-area sources and targeted Skiresort.info audits on 2026-08-07.
 // Vertical-drop inclusion comes from each source page or comparison-list row's vertical field. Lap-time and snowpack columns are estimates unless explicit peak snow averages are listed.
+// South America lap-time classes re-audited 2026-08-10 against Spanish and English lift-time sources.
 
 export type SkiResort = {
   id: string;
@@ -29,28 +30,165 @@ export type SkiResort = {
 };
 
 export const skiResortSource = {
-  generatedAt: "2026-08-07",
-  wikipediaInfoboxPagesChecked: 881,
-  wikipediaListPagesChecked: ["Comparison of North American ski resorts", "List of ski areas and resorts in South America", "List of ski areas and resorts in Europe", "List of ski areas and resorts in Asia"],
-  skiresortInfoPagesChecked: ["https://www.skiresort.info/ski-resort/zermatt-breuil-cervinia-valtournenche-matterhorn/", "https://www.skiresort.info/ski-resort/kitzsteinhorn-maiskogel-kaprun/", "https://www.skiresort.info/ski-resort/les-3-vallees-val-thorens-les-menuires-meribel-courchevel/", "https://www.skiresort.info/ski-resort/la-grave-la-meije/", "https://www.skiresort.info/ski-resort/alagna-valsesia-gressoney-la-trinite-champoluc-frachey-monterosa-ski/", "https://www.skiresort.info/ski-resort/titlis-engelberg/", "https://www.skiresort.info/ski-resort/4-vallees-verbier-la-tzoumaz-nendaz-veysonnaz-thyon/", "https://www.skiresort.info/ski-resort/la-plagne-paradiski/", "https://www.skiresort.info/ski-resort/tignes-val-disere/", "https://www.skiresort.info/ski-resort/laax-flims-falera/", "https://www.skiresort.info/ski-resort/le-grand-massif-flaine-les-carroz-morillon-samoens-sixt/", "https://www.skiresort.info/ski-resort/saas-fee/", "https://www.skiresort.info/ski-resort/hintertux-glacier-hintertuxer-gletscher/", "https://www.skiresort.info/ski-resort/grands-montets-argentiere-chamonix/", "https://www.skiresort.info/ski-resort/st-anton-st-christoph-stuben-lech-zuers-warth-schroecken-ski-arlberg/", "https://www.skiresort.info/ski-resort/ischgl-samnaun-silvretta-arena/", "https://www.skiresort.info/ski-resort/gemsstock-andermatt/", "https://www.skiresort.info/ski-resort/st-moritz-corviglia/", "https://www.skiresort.info/ski-resort/kitzski-kitzbuehelkirchberg/", "https://www.skiresort.info/ski-resort/sierra-nevada-pradollano/", "https://www.skiresort.info/ski-resort/baqueira-beret/", "https://www.skiresort.info/ski-resort/grandvalira-pas-de-la-casa-grau-roig-soldeu-el-tarter-canillo-encamp/", "https://www.skiresort.info/ski-resort/aare/", "https://www.skiresort.info/ski-resort/hemsedal/", "https://www.skiresort.info/ski-resorts/south-america/sorted/altitude-difference/", "https://www.skiresort.info/ski-resort/catedral-alta-patagonia/", "https://www.skiresort.info/ski-resort/nevados-de-chillan/", "https://www.skiresort.info/ski-resort/corralco/", "https://www.skiresort.info/ski-resort/valle-nevado/", "https://www.skiresort.info/ski-resort/el-colorado-farellones/"],
-  inclusionRule: "English Wikipedia ski-area infobox/list rows plus targeted Skiresort.info source pages, with at least 1,000 ft of lift-served vertical drop and current/recent operating evidence.",
-  operatingWindowRule: "Included resorts must have evidence of operating in 2024, 2025, 2026 or a projected 2027 season.",
-  snowDepthRule: "Included resorts must have at least 3 ft of estimated or source-listed peak-season snow at the top and at least 2 ft at the base.",
-  excludedNonResortPages: ["Alpine skiing at the ", "FIS Alpine World Ski Championships", "Lauberhorn ski races"],
-  liftServedVerticalCorrections: ["Whistler Blackcomb", "Crystal Mountain (Washington)", "Pebble Creek, Idaho", "Åre ski resort", "Telluride Ski Resort"],
-  comparisonListAudit: {
-    addedFromComparisonPages: ["Bolton Valley", "Pajarito Mountain", "Mount Ashland", "Mount Shasta Ski Park", "Sugar Bowl", "China Peak", "Wolf Creek", "Big White", "Deer Valley", "Brighton", "Mt. Baker Ski Area", "Angel Fire", "Discovery Ski Area", "Loup Loup Ski Bowl", "White Pine Ski Resort", "Pine Creek Ski Resort", "Red River Ski Area", "Mount Hood Skibowl", "Granby Ranch", "Monarch Mountain", "Silverton Mountain", "Eagle Point Resort", "Middlebury College Snow Bowl", "Serre Chevalier", "Les Arcs", "Sainte-Foy-Tarentaise", "Candanchú", "Astún", "Cerler", "Alto Campoo", "La Pinilla", "Valdesquí"],
-    alreadyRepresented: ["Steamboat Ski Resort", "Stevens Pass Ski Area", "Sundance Resort", "Formigal-Panticosa"],
-    excludedBySnowThresholdExamples: ["Killington Ski Resort", "Stowe Mountain Resort", "Sugarbush Resort", "Sugarloaf", "Ski Bromont", "Marble Mountain Ski Resort"],
+  "generatedAt": "2026-08-07",
+  "wikipediaInfoboxPagesChecked": 881,
+  "wikipediaListPagesChecked": [
+    "Comparison of North American ski resorts",
+    "List of ski areas and resorts in South America",
+    "List of ski areas and resorts in Europe",
+    "List of ski areas and resorts in Asia"
+  ],
+  "skiresortInfoPagesChecked": [
+    "https://www.skiresort.info/ski-resort/zermatt-breuil-cervinia-valtournenche-matterhorn/",
+    "https://www.skiresort.info/ski-resort/kitzsteinhorn-maiskogel-kaprun/",
+    "https://www.skiresort.info/ski-resort/les-3-vallees-val-thorens-les-menuires-meribel-courchevel/",
+    "https://www.skiresort.info/ski-resort/la-grave-la-meije/",
+    "https://www.skiresort.info/ski-resort/alagna-valsesia-gressoney-la-trinite-champoluc-frachey-monterosa-ski/",
+    "https://www.skiresort.info/ski-resort/titlis-engelberg/",
+    "https://www.skiresort.info/ski-resort/4-vallees-verbier-la-tzoumaz-nendaz-veysonnaz-thyon/",
+    "https://www.skiresort.info/ski-resort/la-plagne-paradiski/",
+    "https://www.skiresort.info/ski-resort/tignes-val-disere/",
+    "https://www.skiresort.info/ski-resort/laax-flims-falera/",
+    "https://www.skiresort.info/ski-resort/le-grand-massif-flaine-les-carroz-morillon-samoens-sixt/",
+    "https://www.skiresort.info/ski-resort/saas-fee/",
+    "https://www.skiresort.info/ski-resort/hintertux-glacier-hintertuxer-gletscher/",
+    "https://www.skiresort.info/ski-resort/grands-montets-argentiere-chamonix/",
+    "https://www.skiresort.info/ski-resort/st-anton-st-christoph-stuben-lech-zuers-warth-schroecken-ski-arlberg/",
+    "https://www.skiresort.info/ski-resort/ischgl-samnaun-silvretta-arena/",
+    "https://www.skiresort.info/ski-resort/gemsstock-andermatt/",
+    "https://www.skiresort.info/ski-resort/st-moritz-corviglia/",
+    "https://www.skiresort.info/ski-resort/kitzski-kitzbuehelkirchberg/",
+    "https://www.skiresort.info/ski-resort/sierra-nevada-pradollano/",
+    "https://www.skiresort.info/ski-resort/baqueira-beret/",
+    "https://www.skiresort.info/ski-resort/grandvalira-pas-de-la-casa-grau-roig-soldeu-el-tarter-canillo-encamp/",
+    "https://www.skiresort.info/ski-resort/aare/",
+    "https://www.skiresort.info/ski-resort/hemsedal/",
+    "https://www.skiresort.info/ski-resorts/south-america/sorted/altitude-difference/",
+    "https://www.skiresort.info/ski-resort/catedral-alta-patagonia/",
+    "https://www.skiresort.info/ski-resort/nevados-de-chillan/",
+    "https://www.skiresort.info/ski-resort/corralco/",
+    "https://www.skiresort.info/ski-resort/valle-nevado/",
+    "https://www.skiresort.info/ski-resort/el-colorado-farellones/"
+  ],
+  "inclusionRule": "English Wikipedia ski-area infobox/list rows plus targeted Skiresort.info source pages, with at least 1,000 ft of lift-served vertical drop and current/recent operating evidence.",
+  "operatingWindowRule": "Included resorts must have evidence of operating in 2024, 2025, 2026 or a projected 2027 season.",
+  "snowDepthRule": "Included resorts must have at least 3 ft of estimated or source-listed peak-season snow at the top and at least 2 ft at the base.",
+  "excludedNonResortPages": [
+    "Alpine skiing at the ",
+    "FIS Alpine World Ski Championships",
+    "Lauberhorn ski races"
+  ],
+  "liftServedVerticalCorrections": [
+    "Whistler Blackcomb",
+    "Crystal Mountain (Washington)",
+    "Pebble Creek, Idaho",
+    "Åre ski resort",
+    "Telluride Ski Resort"
+  ],
+  "comparisonListAudit": {
+    "addedFromComparisonPages": [
+      "Bolton Valley",
+      "Pajarito Mountain",
+      "Mount Ashland",
+      "Mount Shasta Ski Park",
+      "Sugar Bowl",
+      "China Peak",
+      "Wolf Creek",
+      "Big White",
+      "Deer Valley",
+      "Brighton",
+      "Mt. Baker Ski Area",
+      "Angel Fire",
+      "Discovery Ski Area",
+      "Loup Loup Ski Bowl",
+      "White Pine Ski Resort",
+      "Pine Creek Ski Resort",
+      "Red River Ski Area",
+      "Mount Hood Skibowl",
+      "Granby Ranch",
+      "Monarch Mountain",
+      "Silverton Mountain",
+      "Eagle Point Resort",
+      "Middlebury College Snow Bowl",
+      "Serre Chevalier",
+      "Les Arcs",
+      "Sainte-Foy-Tarentaise",
+      "Candanchú",
+      "Astún",
+      "Cerler",
+      "Alto Campoo",
+      "La Pinilla",
+      "Valdesquí"
+    ],
+    "alreadyRepresented": [
+      "Steamboat Ski Resort",
+      "Stevens Pass Ski Area",
+      "Sundance Resort",
+      "Formigal-Panticosa"
+    ],
+    "excludedBySnowThresholdExamples": [
+      "Killington Ski Resort",
+      "Stowe Mountain Resort",
+      "Sugarbush Resort",
+      "Sugarloaf",
+      "Ski Bromont",
+      "Marble Mountain Ski Resort"
+    ]
   },
-  skiresortInfoAudit: {
-    addedFromUserProvidedEuropeanList: ["Zermatt/Breuil-Cervinia/Valtournenche – Matterhorn", "Les 3 Vallées – Val Thorens/Les Menuires/Méribel/Courchevel", "La Grave – La Meije", "Monterosa Ski", "Titlis – Engelberg", "4 Vallées – Verbier/La Tzoumaz/Nendaz/Veysonnaz/Thyon", "La Plagne (Paradiski)", "Tignes/Val d'Isère", "Laax/Flims/Falera", "Le Grand Massif – Flaine/Les Carroz/Morillon/Samoëns/Sixt", "Saas-Fee", "Hintertux Glacier", "Grands Montets – Argentière (Chamonix)", "Ski Arlberg – St. Anton/St. Christoph/Stuben/Lech/Zürs/Warth/Schröcken", "Ischgl/Samnaun – Silvretta Arena", "Gemsstock – Andermatt", "St. Moritz – Corviglia", "Sierra Nevada – Pradollano", "Baqueira/Beret", "Grandvalira – Pas de la Casa/Grau Roig/Soldeu/El Tarter/Canillo/Encamp"],
-    addedFromUserProvidedSouthAmericaList: ["Catedral Alta Patagonia (Cerro Catedral)", "Nevados de Chillán", "Corralco", "Valle Nevado"],
-    correctedFromUserProvidedSouthAmericaList: ["El Colorado/Farellones"],
-    alreadyRepresented: ["Les 2 Alpes", "Alpe d'Huez", "Les Arcs", "Serre Chevalier", "Las Leñas", "Portillo", "La Parva"],
-    excludedBySnowThresholdExamples: ["Sölden", "Kitzsteinhorn/Maiskogel – Kaprun", "KitzSki – Kitzbühel/Kirchberg", "Åre", "Hemsedal", "Chapelco", "Cerro Castor", "Cerro Bayo", "Caviahue"],
+  "skiresortInfoAudit": {
+    "addedFromUserProvidedEuropeanList": [
+      "Zermatt/Breuil-Cervinia/Valtournenche – Matterhorn",
+      "Les 3 Vallées – Val Thorens/Les Menuires/Méribel/Courchevel",
+      "La Grave – La Meije",
+      "Monterosa Ski",
+      "Titlis – Engelberg",
+      "4 Vallées – Verbier/La Tzoumaz/Nendaz/Veysonnaz/Thyon",
+      "La Plagne (Paradiski)",
+      "Tignes/Val d'Isère",
+      "Laax/Flims/Falera",
+      "Le Grand Massif – Flaine/Les Carroz/Morillon/Samoëns/Sixt",
+      "Saas-Fee",
+      "Hintertux Glacier",
+      "Grands Montets – Argentière (Chamonix)",
+      "Ski Arlberg – St. Anton/St. Christoph/Stuben/Lech/Zürs/Warth/Schröcken",
+      "Ischgl/Samnaun – Silvretta Arena",
+      "Gemsstock – Andermatt",
+      "St. Moritz – Corviglia",
+      "Sierra Nevada – Pradollano",
+      "Baqueira/Beret",
+      "Grandvalira – Pas de la Casa/Grau Roig/Soldeu/El Tarter/Canillo/Encamp"
+    ],
+    "addedFromUserProvidedSouthAmericaList": [
+      "Catedral Alta Patagonia (Cerro Catedral)",
+      "Nevados de Chillán",
+      "Corralco",
+      "Valle Nevado"
+    ],
+    "correctedFromUserProvidedSouthAmericaList": [
+      "El Colorado/Farellones"
+    ],
+    "alreadyRepresented": [
+      "Les 2 Alpes",
+      "Alpe d'Huez",
+      "Les Arcs",
+      "Serre Chevalier",
+      "Las Leñas",
+      "Portillo",
+      "La Parva"
+    ],
+    "excludedBySnowThresholdExamples": [
+      "Sölden",
+      "Kitzsteinhorn/Maiskogel – Kaprun",
+      "KitzSki – Kitzbühel/Kirchberg",
+      "Åre",
+      "Hemsedal",
+      "Chapelco",
+      "Cerro Castor",
+      "Cerro Bayo",
+      "Caviahue"
+    ]
   },
-  excludedClosedOrInaccessibleResorts: {
+  "excludedClosedOrInaccessibleResorts": {
     "Milwaukee Ski Bowl": "Defunct; operated 1937-1950.",
     "Geneva Basin Ski Area": "Defunct; closed in 1984.",
     "Fortress Mountain Resort": "Closed since 2004; redevelopment proposed but not open in 2024-2027.",
@@ -58,8 +196,36 @@ export const skiResortSource = {
     "Brodie (ski area)": "Defunct; closed in 2002/2007 and remains non-operating.",
     "Stagecoach, Colorado": "Ski area closed after the 1974 season; future redevelopment only.",
     "Canyons Resort": "Merged into Park City Mountain Resort in 2015; use park-city-mountain-resort.",
-    "Iizuna Kogen Ski Area": "Permanently closed 16 Feb 2020; not to be confused with operating Iizuna Resort.",
+    "Iizuna Kogen Ski Area": "Permanently closed 16 Feb 2020; not to be confused with operating Iizuna Resort."
   },
+  "southAmericaLapTimeAudit": {
+    "auditedAt": "2026-08-10",
+    "method": "Per-resort Spanish+English source check of published lift ride times and operating lift classes; model times recalculated from verticalFt and corrected liftRouteAssumption.",
+    "updated": [
+      {
+        "id": "catedral-alta-patagonia",
+        "to": "gondola-led route",
+        "note": "Cable Carril tram is mid-mountain/often pedestrian; skier full-vertical path is Amancay gondola + Nubes."
+      },
+      {
+        "id": "las-lenas",
+        "to": "fixed-grip chair route",
+        "note": "No operating gondola; Planai telecabina still planned/abandoned. Full vertical is fixed-grip chairs (Caris+Marte)."
+      },
+      {
+        "id": "valle-nevado",
+        "to": "detachable chair route",
+        "note": "Bajo Cero gondola is parking/access (~157 m only); main continuous mountain spine is Andes Express detachable."
+      }
+    ],
+    "confirmedUnchanged": [
+      "corralco",
+      "el-colorado-chile",
+      "la-parva",
+      "nevados-de-chillan",
+      "portillo-chile"
+    ]
+  }
 } as const;
 
 export const skiResorts = [
@@ -584,32 +750,6 @@ export const skiResorts = [
     "rank": 20
   },
   {
-    "id": "catedral-alta-patagonia",
-    "name": "Catedral Alta Patagonia (Cerro Catedral)",
-    "wikiTitle": "Skiresort.info: Catedral Alta Patagonia",
-    "location": "Bariloche, Río Negro, Argentina",
-    "country": "Argentina",
-    "continent": "South America",
-    "wikiUrl": "https://www.skiresort.info/ski-resort/catedral-alta-patagonia/",
-    "verticalFt": 3773,
-    "topElevationFt": 7152,
-    "baseElevationFt": 3379,
-    "liftSystem": "29 total|1 aerial tramway|1 gondola|4 detachable chairs|15 fixed-grip chairs|2 T-bar|1 J-bar|5 moving carpets",
-    "liftRouteAssumption": "tram/cable car route",
-    "ascentMinutes": 7.2,
-    "descentMinutes": 5,
-    "skiingShare": 0.41,
-    "snowAtBaseFt": 2.1,
-    "snowAtTopFt": 3.7,
-    "annualSnowfallFt": 10,
-    "snowEstimateSource": "wiki annual snowfall field",
-    "wikiVerticalField": "1150 m (1030 m - 2180 m), Skiresort.info South America elevation-difference page",
-    "wikiTopField": "2180 m, Skiresort.info elevation info",
-    "wikiBaseField": "1030 m, Skiresort.info elevation info",
-    "wikiSnowfallField": "",
-    "rank": 21
-  },
-  {
     "id": "snowbird-utah",
     "name": "Snowbird",
     "wikiTitle": "Snowbird, Utah",
@@ -633,7 +773,7 @@ export const skiResorts = [
     "wikiTopField": "11000 ft",
     "wikiBaseField": "7760 ft, lowest chairlift, 8100 ft, main base area",
     "wikiSnowfallField": "500 in, average, record: 838 in, (2023, as of the 4th of June)",
-    "rank": 22
+    "rank": 21
   },
   {
     "id": "alpe-d-huez",
@@ -659,7 +799,7 @@ export const skiResorts = [
     "wikiTopField": "3330 m",
     "wikiBaseField": "1120 m",
     "wikiSnowfallField": "5.48 m /yr",
-    "rank": 23
+    "rank": 22
   },
   {
     "id": "les-arcs",
@@ -685,7 +825,7 @@ export const skiResorts = [
     "wikiTopField": "3250 m",
     "wikiBaseField": "1250 m",
     "wikiSnowfallField": "",
-    "rank": 24
+    "rank": 23
   },
   {
     "id": "titlis-engelberg",
@@ -711,7 +851,7 @@ export const skiResorts = [
     "wikiTopField": "3020 m, Skiresort.info elevation info",
     "wikiBaseField": "1003 m, Skiresort.info elevation info",
     "wikiSnowfallField": "peak-season top/base snow: 303 cm / 94 cm",
-    "rank": 25
+    "rank": 24
   },
   {
     "id": "la-plagne-paradiski",
@@ -737,7 +877,7 @@ export const skiResorts = [
     "wikiTopField": "3167 m, Skiresort.info elevation info",
     "wikiBaseField": "1207 m, Skiresort.info elevation info",
     "wikiSnowfallField": "peak-season top/base snow: 199 cm / 133 cm",
-    "rank": 26
+    "rank": 25
   },
   {
     "id": "tignes-val-d-isere",
@@ -763,7 +903,7 @@ export const skiResorts = [
     "wikiTopField": "3456 m, Skiresort.info elevation info",
     "wikiBaseField": "1550 m, Skiresort.info elevation info",
     "wikiSnowfallField": "peak-season top/base snow: 183 cm / 123 cm",
-    "rank": 27
+    "rank": 26
   },
   {
     "id": "hintertux-glacier",
@@ -789,7 +929,7 @@ export const skiResorts = [
     "wikiTopField": "3250 m, Skiresort.info elevation info",
     "wikiBaseField": "1500 m, Skiresort.info elevation info",
     "wikiSnowfallField": "peak-season top/base snow: 245 cm / 71 cm",
-    "rank": 28
+    "rank": 27
   },
   {
     "id": "cortina-d-ampezzo",
@@ -815,7 +955,7 @@ export const skiResorts = [
     "wikiTopField": "2828 m",
     "wikiBaseField": "1217 m",
     "wikiSnowfallField": "",
-    "rank": 29
+    "rank": 28
   },
   {
     "id": "st-moritz-corviglia",
@@ -841,7 +981,7 @@ export const skiResorts = [
     "wikiTopField": "3057 m, Skiresort.info elevation info",
     "wikiBaseField": "1772 m, Skiresort.info elevation info",
     "wikiSnowfallField": "",
-    "rank": 30
+    "rank": 29
   },
   {
     "id": "vogel-ski-resort",
@@ -867,7 +1007,7 @@ export const skiResorts = [
     "wikiTopField": "1800 m",
     "wikiBaseField": "560 m",
     "wikiSnowfallField": "800 cm",
-    "rank": 31
+    "rank": 30
   },
   {
     "id": "yamagata-zao-onsen-ski-resort",
@@ -893,7 +1033,7 @@ export const skiResorts = [
     "wikiTopField": "1661 m",
     "wikiBaseField": "780 m",
     "wikiSnowfallField": "",
-    "rank": 32
+    "rank": 31
   },
   {
     "id": "alta-badia",
@@ -919,7 +1059,7 @@ export const skiResorts = [
     "wikiTopField": "2550 m (Sella)",
     "wikiBaseField": "1324 m (Pedraces)",
     "wikiSnowfallField": "",
-    "rank": 33
+    "rank": 32
   },
   {
     "id": "jasna",
@@ -945,7 +1085,7 @@ export const skiResorts = [
     "wikiTopField": "2024 m",
     "wikiBaseField": "943 m",
     "wikiSnowfallField": "",
-    "rank": 34
+    "rank": 33
   },
   {
     "id": "alyeska-resort",
@@ -971,7 +1111,7 @@ export const skiResorts = [
     "wikiTopField": "2750 ft lift served;, 3939 ft (summit)",
     "wikiBaseField": "250 ft",
     "wikiSnowfallField": "650 in - top, 512 in - mid, 208 in - base",
-    "rank": 35
+    "rank": 34
   },
   {
     "id": "snowbasin",
@@ -997,7 +1137,7 @@ export const skiResorts = [
     "wikiTopField": "9350 ft",
     "wikiBaseField": "6391 ft",
     "wikiSnowfallField": "350 in",
-    "rank": 36
+    "rank": 35
   },
   {
     "id": "jay-peak-resort",
@@ -1023,7 +1163,7 @@ export const skiResorts = [
     "wikiTopField": "3862 ft",
     "wikiBaseField": "1815 ft",
     "wikiSnowfallField": "359 in; 29.9 ft",
-    "rank": 37
+    "rank": 36
   },
   {
     "id": "sugar-bowl",
@@ -1049,7 +1189,7 @@ export const skiResorts = [
     "wikiTopField": "8383 ft (North America comparison table)",
     "wikiBaseField": "6883 ft (North America comparison table)",
     "wikiSnowfallField": "500 in (North America comparison table)",
-    "rank": 38
+    "rank": 37
   },
   {
     "id": "hunter-mountain-shiobara",
@@ -1075,7 +1215,7 @@ export const skiResorts = [
     "wikiTopField": "1638 m",
     "wikiBaseField": "1138 m",
     "wikiSnowfallField": "",
-    "rank": 39
+    "rank": 38
   },
   {
     "id": "snow-king-mountain",
@@ -1101,7 +1241,7 @@ export const skiResorts = [
     "wikiTopField": "7808 ft",
     "wikiBaseField": "6237 ft",
     "wikiSnowfallField": "500 in",
-    "rank": 40
+    "rank": 39
   },
   {
     "id": "krvavec-ski-resort",
@@ -1127,7 +1267,7 @@ export const skiResorts = [
     "wikiTopField": "1971 m",
     "wikiBaseField": "1450 m",
     "wikiSnowfallField": "600 cm",
-    "rank": 41
+    "rank": 40
   },
   {
     "id": "telluride-ski-resort",
@@ -1153,7 +1293,7 @@ export const skiResorts = [
     "wikiTopField": "13150 ft",
     "wikiBaseField": "8725 ft",
     "wikiSnowfallField": "330 in/year (838 cm/year)",
-    "rank": 42
+    "rank": 41
   },
   {
     "id": "steamboat-ski-resort",
@@ -1179,7 +1319,7 @@ export const skiResorts = [
     "wikiTopField": "10568 ft",
     "wikiBaseField": "6900 ft",
     "wikiSnowfallField": "400 in",
-    "rank": 43
+    "rank": 42
   },
   {
     "id": "hakuba-happoone-winter-resort",
@@ -1205,7 +1345,7 @@ export const skiResorts = [
     "wikiTopField": "1831 m",
     "wikiBaseField": "760 m",
     "wikiSnowfallField": "11 m (prose)",
-    "rank": 44
+    "rank": 43
   },
   {
     "id": "banff-sunshine",
@@ -1231,7 +1371,7 @@ export const skiResorts = [
     "wikiTopField": "2730 m",
     "wikiBaseField": "1660 m",
     "wikiSnowfallField": "914 cm",
-    "rank": 45
+    "rank": 44
   },
   {
     "id": "vail-ski-resort",
@@ -1257,7 +1397,7 @@ export const skiResorts = [
     "wikiTopField": "11570 ft",
     "wikiBaseField": "8120 ft",
     "wikiSnowfallField": "354 in",
-    "rank": 46
+    "rank": 45
   },
   {
     "id": "silver-star-mountain-resort",
@@ -1283,7 +1423,7 @@ export const skiResorts = [
     "wikiTopField": "1915 m",
     "wikiBaseField": "1155 m",
     "wikiSnowfallField": "700 cm",
-    "rank": 47
+    "rank": 46
   },
   {
     "id": "northstar-california",
@@ -1309,7 +1449,7 @@ export const skiResorts = [
     "wikiTopField": "8610 ft",
     "wikiBaseField": "6330 ft",
     "wikiSnowfallField": "350 in",
-    "rank": 48
+    "rank": 47
   },
   {
     "id": "silver-mountain-idaho",
@@ -1335,7 +1475,7 @@ export const skiResorts = [
     "wikiTopField": "6297 ft, Kellogg Peak",
     "wikiBaseField": "4100 ft, lowest chairlift - (#4), 5650 ft, Mountain Haus, (gondola summit & lodge), 2300 ft, (gondola base & village)",
     "wikiSnowfallField": "300 in",
-    "rank": 49
+    "rank": 48
   },
   {
     "id": "revelstoke-mountain-resort",
@@ -1361,7 +1501,7 @@ export const skiResorts = [
     "wikiTopField": "7300 ft",
     "wikiBaseField": "1680 ft",
     "wikiSnowfallField": "10.5 m per year",
-    "rank": 50
+    "rank": 49
   },
   {
     "id": "sierra-nevada-pradollano",
@@ -1387,7 +1527,7 @@ export const skiResorts = [
     "wikiTopField": "3300 m, Skiresort.info elevation info",
     "wikiBaseField": "2100 m, Skiresort.info elevation info",
     "wikiSnowfallField": "",
-    "rank": 51
+    "rank": 50
   },
   {
     "id": "naeba-ski-resort",
@@ -1413,7 +1553,7 @@ export const skiResorts = [
     "wikiTopField": "1789 m",
     "wikiBaseField": "900 m",
     "wikiSnowfallField": "",
-    "rank": 52
+    "rank": 51
   },
   {
     "id": "la-tzoumaz",
@@ -1439,7 +1579,7 @@ export const skiResorts = [
     "wikiTopField": "2354 m",
     "wikiBaseField": "1535 m",
     "wikiSnowfallField": "",
-    "rank": 53
+    "rank": 52
   },
   {
     "id": "big-white",
@@ -1465,7 +1605,7 @@ export const skiResorts = [
     "wikiTopField": "7606 ft (North America comparison table)",
     "wikiBaseField": "4950 ft (North America comparison table)",
     "wikiSnowfallField": "294 in (North America comparison table)",
-    "rank": 54
+    "rank": 53
   },
   {
     "id": "whistler-blackcomb",
@@ -1491,7 +1631,7 @@ export const skiResorts = [
     "wikiTopField": "* Whistler: 2,182 m (7,160 ft) * Blackcomb: 2,240 m (7,347 ft) }}",
     "wikiBaseField": "* Creekside: 653 m (2,140 ft) * Village: 675 m (2,214 ft) }}",
     "wikiSnowfallField": "11.7 m/year (415 in.)",
-    "rank": 55
+    "rank": 54
   },
   {
     "id": "meribel",
@@ -1516,6 +1656,32 @@ export const skiResorts = [
     "wikiVerticalField": "1502 m",
     "wikiTopField": "2952 m",
     "wikiBaseField": "1450 m",
+    "wikiSnowfallField": "",
+    "rank": 55
+  },
+  {
+    "id": "catedral-alta-patagonia",
+    "name": "Catedral Alta Patagonia (Cerro Catedral)",
+    "wikiTitle": "Skiresort.info: Catedral Alta Patagonia",
+    "location": "Bariloche, Río Negro, Argentina",
+    "country": "Argentina",
+    "continent": "South America",
+    "wikiUrl": "https://www.skiresort.info/ski-resort/catedral-alta-patagonia/",
+    "verticalFt": 3773,
+    "topElevationFt": 7152,
+    "baseElevationFt": 3379,
+    "liftSystem": "29 total|1 aerial tramway|1 gondola|4 detachable chairs|15 fixed-grip chairs|2 T-bar|1 J-bar|5 moving carpets",
+    "liftRouteAssumption": "gondola-led route",
+    "ascentMinutes": 10.6,
+    "descentMinutes": 5.4,
+    "skiingShare": 0.338,
+    "snowAtBaseFt": 2.1,
+    "snowAtTopFt": 3.7,
+    "annualSnowfallFt": 10,
+    "snowEstimateSource": "wiki annual snowfall field",
+    "wikiVerticalField": "1150 m (1030 m - 2180 m), Skiresort.info South America elevation-difference page",
+    "wikiTopField": "2180 m, Skiresort.info elevation info",
+    "wikiBaseField": "1030 m, Skiresort.info elevation info",
     "wikiSnowfallField": "",
     "rank": 56
   },
@@ -2066,32 +2232,6 @@ export const skiResorts = [
     "rank": 77
   },
   {
-    "id": "las-lenas",
-    "name": "Las Leñas",
-    "wikiTitle": "Las Leñas",
-    "location": "Mendoza, Cuyo, Argentina",
-    "country": "Argentina",
-    "continent": "South America",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Las_Le%C3%B1as",
-    "verticalFt": 3904,
-    "topElevationFt": 11253,
-    "baseElevationFt": 7349,
-    "liftSystem": "14 total|1 gondola|7 chair lifts|6 surface lifts|2 people movers",
-    "liftRouteAssumption": "gondola-led route",
-    "ascentMinutes": 11,
-    "descentMinutes": 5.6,
-    "skiingShare": 0.337,
-    "snowAtBaseFt": 2.4,
-    "snowAtTopFt": 3.7,
-    "annualSnowfallFt": 16,
-    "snowEstimateSource": "regional/elevation fallback",
-    "wikiVerticalField": "1190 m",
-    "wikiTopField": "3430 m",
-    "wikiBaseField": "2240 m",
-    "wikiSnowfallField": "",
-    "rank": 78
-  },
-  {
     "id": "appi-kogen-ski-resort",
     "name": "Appi Kogen Ski Resort",
     "wikiTitle": "Appi Kogen Ski Resort",
@@ -2115,7 +2255,7 @@ export const skiResorts = [
     "wikiTopField": "1328 m",
     "wikiBaseField": "620 m",
     "wikiSnowfallField": "1200 cm",
-    "rank": 79
+    "rank": 78
   },
   {
     "id": "arizona-snowbowl",
@@ -2141,7 +2281,7 @@ export const skiResorts = [
     "wikiTopField": "11500 ft",
     "wikiBaseField": "9200 ft",
     "wikiSnowfallField": "260 in / year",
-    "rank": 80
+    "rank": 79
   },
   {
     "id": "sapporo-teine",
@@ -2167,7 +2307,7 @@ export const skiResorts = [
     "wikiTopField": "1023 m",
     "wikiBaseField": "340 m",
     "wikiSnowfallField": "",
-    "rank": 81
+    "rank": 80
   },
   {
     "id": "jahorina-ski-resort",
@@ -2193,7 +2333,7 @@ export const skiResorts = [
     "wikiTopField": "1916 m",
     "wikiBaseField": "1300 m",
     "wikiSnowfallField": "175 days",
-    "rank": 82
+    "rank": 81
   },
   {
     "id": "takasu-snow-park",
@@ -2219,7 +2359,7 @@ export const skiResorts = [
     "wikiTopField": "1550 m",
     "wikiBaseField": "950 m",
     "wikiSnowfallField": "",
-    "rank": 83
+    "rank": 82
   },
   {
     "id": "rusutsu-resort",
@@ -2245,7 +2385,7 @@ export const skiResorts = [
     "wikiTopField": "994 m",
     "wikiBaseField": "400 m",
     "wikiSnowfallField": "",
-    "rank": 84
+    "rank": 83
   },
   {
     "id": "grands-montets-argentiere-chamonix",
@@ -2271,7 +2411,7 @@ export const skiResorts = [
     "wikiTopField": "2765 m, Skiresort.info elevation info",
     "wikiBaseField": "1252 m, Skiresort.info elevation info",
     "wikiSnowfallField": "",
-    "rank": 85
+    "rank": 84
   },
   {
     "id": "niseko-mt-resort-grand-hirafu",
@@ -2297,7 +2437,7 @@ export const skiResorts = [
     "wikiTopField": "1200 m",
     "wikiBaseField": "260 m",
     "wikiSnowfallField": "",
-    "rank": 86
+    "rank": 85
   },
   {
     "id": "shymbulak",
@@ -2323,7 +2463,7 @@ export const skiResorts = [
     "wikiTopField": "3200 m",
     "wikiBaseField": "2200 m",
     "wikiSnowfallField": "average snowfall ~1.5 m; snow base ~1.5–1.8 m (Wikipedia)",
-    "rank": 87
+    "rank": 86
   },
   {
     "id": "saint-etienne-de-tinee",
@@ -2349,7 +2489,7 @@ export const skiResorts = [
     "wikiTopField": "2452 m",
     "wikiBaseField": "1600 m",
     "wikiSnowfallField": "",
-    "rank": 88
+    "rank": 87
   },
   {
     "id": "chamrousse",
@@ -2375,33 +2515,7 @@ export const skiResorts = [
     "wikiTopField": "2250 m",
     "wikiBaseField": "1400 m",
     "wikiSnowfallField": "",
-    "rank": 89
-  },
-  {
-    "id": "valle-nevado",
-    "name": "Valle Nevado",
-    "wikiTitle": "Valle Nevado",
-    "location": "Santiago Metropolitan Region, Chile",
-    "country": "Chile",
-    "continent": "South America",
-    "wikiUrl": "https://en.wikipedia.org/wiki/Valle_Nevado",
-    "verticalFt": 2657,
-    "topElevationFt": 12041,
-    "baseElevationFt": 9383,
-    "liftSystem": "17 total|1 gondola|1 detachable 4-pers chair|4 fixed-grip chairs|1 T-bar|7 J-bars",
-    "liftRouteAssumption": "gondola-led route",
-    "ascentMinutes": 7.5,
-    "descentMinutes": 3.8,
-    "skiingShare": 0.336,
-    "snowAtBaseFt": 3,
-    "snowAtTopFt": 6,
-    "annualSnowfallFt": 24,
-    "snowEstimateSource": "skiresort.info peak snow average",
-    "wikiVerticalField": "810 m (2860 m - 3670 m), skiresort.info / Spanish Wikipedia",
-    "wikiTopField": "3670 m, skiresort.info / Spanish Wikipedia",
-    "wikiBaseField": "2860 m, skiresort.info / Spanish Wikipedia",
-    "wikiSnowfallField": "~743.8 cm annual average snowfall at 2,871 m, English Wikipedia climate table (~290 in)",
-    "rank": 90
+    "rank": 88
   },
   {
     "id": "crystal-mountain-washington",
@@ -2427,7 +2541,7 @@ export const skiResorts = [
     "wikiTopField": "7012 ft, 6992 ft - lifts",
     "wikiBaseField": "3912 ft, 4400 ft - lifts",
     "wikiSnowfallField": "350 in",
-    "rank": 91
+    "rank": 89
   },
   {
     "id": "isola-2000",
@@ -2453,7 +2567,7 @@ export const skiResorts = [
     "wikiTopField": "2610 m",
     "wikiBaseField": "1840 m",
     "wikiSnowfallField": "",
-    "rank": 92
+    "rank": 90
   },
   {
     "id": "melchsee-frutt",
@@ -2479,7 +2593,7 @@ export const skiResorts = [
     "wikiTopField": "2255 m",
     "wikiBaseField": "1080 m",
     "wikiSnowfallField": "",
-    "rank": 93
+    "rank": 91
   },
   {
     "id": "baqueira-beret",
@@ -2505,7 +2619,7 @@ export const skiResorts = [
     "wikiTopField": "2610 m, Skiresort.info elevation info",
     "wikiBaseField": "1500 m, Skiresort.info elevation info",
     "wikiSnowfallField": "",
-    "rank": 94
+    "rank": 92
   },
   {
     "id": "ski-apache",
@@ -2531,7 +2645,7 @@ export const skiResorts = [
     "wikiTopField": "11500 ft",
     "wikiBaseField": "9600 ft",
     "wikiSnowfallField": "fifteen feet",
-    "rank": 95
+    "rank": 93
   },
   {
     "id": "zauberberg-ski-area",
@@ -2557,7 +2671,7 @@ export const skiResorts = [
     "wikiTopField": "1344 m",
     "wikiBaseField": "996 m",
     "wikiSnowfallField": "",
-    "rank": 96
+    "rank": 94
   },
   {
     "id": "granby-ranch",
@@ -2583,7 +2697,7 @@ export const skiResorts = [
     "wikiTopField": "9202 ft (North America comparison table)",
     "wikiBaseField": "8202 ft (North America comparison table)",
     "wikiSnowfallField": "220 in (North America comparison table)",
-    "rank": 97
+    "rank": 95
   },
   {
     "id": "timberline-mountain",
@@ -2609,7 +2723,7 @@ export const skiResorts = [
     "wikiTopField": "4268 ft",
     "wikiBaseField": "",
     "wikiSnowfallField": "200 in",
-    "rank": 98
+    "rank": 96
   },
   {
     "id": "mission-ridge-ski-area",
@@ -2635,7 +2749,7 @@ export const skiResorts = [
     "wikiTopField": "6820 ft",
     "wikiBaseField": "4570 ft",
     "wikiSnowfallField": "200 in",
-    "rank": 99
+    "rank": 97
   },
   {
     "id": "mount-rose-ski-tahoe",
@@ -2661,7 +2775,7 @@ export const skiResorts = [
     "wikiTopField": "9700 ft",
     "wikiBaseField": "8260 ft",
     "wikiSnowfallField": "350 in",
-    "rank": 100
+    "rank": 98
   },
   {
     "id": "stevens-pass-ski-area",
@@ -2687,7 +2801,7 @@ export const skiResorts = [
     "wikiTopField": "5845 ft, Cowboy Mountain, 5600 ft, Big Chief Mountain",
     "wikiBaseField": "4061 ft, main base area, 3821 ft, Mill Valley",
     "wikiSnowfallField": "450 in",
-    "rank": 101
+    "rank": 99
   },
   {
     "id": "marmot-basin",
@@ -2713,7 +2827,7 @@ export const skiResorts = [
     "wikiTopField": "2612 m",
     "wikiBaseField": "1698 m",
     "wikiSnowfallField": "440 cm",
-    "rank": 102
+    "rank": 100
   },
   {
     "id": "brighton",
@@ -2739,7 +2853,7 @@ export const skiResorts = [
     "wikiTopField": "10500 ft (North America comparison table)",
     "wikiBaseField": "8755 ft (North America comparison table)",
     "wikiSnowfallField": "500 in (North America comparison table)",
-    "rank": 103
+    "rank": 101
   },
   {
     "id": "brian-head-ski-resort",
@@ -2765,7 +2879,7 @@ export const skiResorts = [
     "wikiTopField": "10920 ft",
     "wikiBaseField": "9600 ft",
     "wikiSnowfallField": "360 in per year",
-    "rank": 104
+    "rank": 102
   },
   {
     "id": "grouse-mountain",
@@ -2791,7 +2905,7 @@ export const skiResorts = [
     "wikiTopField": "1231 m",
     "wikiBaseField": "274 m",
     "wikiSnowfallField": "",
-    "rank": 105
+    "rank": 103
   },
   {
     "id": "cerler",
@@ -2817,7 +2931,7 @@ export const skiResorts = [
     "wikiTopField": "2630 m lift-served (Gallinero chair); English Wikipedia 2650 m is geographic peak AMSL",
     "wikiBaseField": "1500 m",
     "wikiSnowfallField": "",
-    "rank": 106
+    "rank": 104
   },
   {
     "id": "aspen-highlands",
@@ -2843,7 +2957,7 @@ export const skiResorts = [
     "wikiTopField": "12392 ft",
     "wikiBaseField": "8040 ft",
     "wikiSnowfallField": "300 in/year (7.62 m/year)",
-    "rank": 107
+    "rank": 105
   },
   {
     "id": "sun-peaks-resort",
@@ -2869,7 +2983,7 @@ export const skiResorts = [
     "wikiTopField": "2152 m",
     "wikiBaseField": "1198 m",
     "wikiSnowfallField": "559 cm",
-    "rank": 108
+    "rank": 106
   },
   {
     "id": "mount-hood-meadows",
@@ -2895,7 +3009,7 @@ export const skiResorts = [
     "wikiTopField": "7300 ft",
     "wikiBaseField": "4523 ft",
     "wikiSnowfallField": "430 in",
-    "rank": 109
+    "rank": 107
   },
   {
     "id": "crested-butte-mountain-resort",
@@ -2921,7 +3035,7 @@ export const skiResorts = [
     "wikiTopField": "12162 ft",
     "wikiBaseField": "9375 ft",
     "wikiSnowfallField": "300 in per year",
-    "rank": 110
+    "rank": 108
   },
   {
     "id": "tamarack-resort",
@@ -2947,7 +3061,7 @@ export const skiResorts = [
     "wikiTopField": "7660 ft",
     "wikiBaseField": "4900 ft",
     "wikiSnowfallField": "300 in",
-    "rank": 111
+    "rank": 109
   },
   {
     "id": "formigal-ski-resort",
@@ -2973,7 +3087,7 @@ export const skiResorts = [
     "wikiTopField": "2250 m",
     "wikiBaseField": "1510 m",
     "wikiSnowfallField": "",
-    "rank": 112
+    "rank": 110
   },
   {
     "id": "solitude-mountain-resort",
@@ -2999,7 +3113,7 @@ export const skiResorts = [
     "wikiTopField": "10488 ft",
     "wikiBaseField": "7988 ft",
     "wikiSnowfallField": "500 in",
-    "rank": 113
+    "rank": 111
   },
   {
     "id": "schweitzer-mountain",
@@ -3025,7 +3139,7 @@ export const skiResorts = [
     "wikiTopField": "6400 ft",
     "wikiBaseField": "3960 ft, lowest chair - Stella, 4700 ft, main village",
     "wikiSnowfallField": "300 in",
-    "rank": 114
+    "rank": 112
   },
   {
     "id": "red-lodge-mountain",
@@ -3051,7 +3165,7 @@ export const skiResorts = [
     "wikiTopField": "9416 ft",
     "wikiBaseField": "7016 ft",
     "wikiSnowfallField": "250 in",
-    "rank": 115
+    "rank": 113
   },
   {
     "id": "angel-fire",
@@ -3077,7 +3191,7 @@ export const skiResorts = [
     "wikiTopField": "10677 ft (North America comparison table)",
     "wikiBaseField": "8600 ft (North America comparison table)",
     "wikiSnowfallField": "210 in (North America comparison table)",
-    "rank": 116
+    "rank": 114
   },
   {
     "id": "cypress-mountain-ski-area",
@@ -3103,7 +3217,7 @@ export const skiResorts = [
     "wikiTopField": "1440 m",
     "wikiBaseField": "826 m",
     "wikiSnowfallField": "622 cm",
-    "rank": 117
+    "rank": 115
   },
   {
     "id": "kirkwood-mountain-resort",
@@ -3129,7 +3243,7 @@ export const skiResorts = [
     "wikiTopField": "9800 ft",
     "wikiBaseField": "7800 ft",
     "wikiSnowfallField": "~500 in",
-    "rank": 118
+    "rank": 116
   },
   {
     "id": "saddleback-maine",
@@ -3155,7 +3269,7 @@ export const skiResorts = [
     "wikiTopField": "4120 ft",
     "wikiBaseField": "2120 ft",
     "wikiSnowfallField": "225 in (annual)",
-    "rank": 119
+    "rank": 117
   },
   {
     "id": "white-pass-ski-area",
@@ -3181,7 +3295,7 @@ export const skiResorts = [
     "wikiTopField": "6500 ft",
     "wikiBaseField": "4500 ft",
     "wikiSnowfallField": "350 in",
-    "rank": 120
+    "rank": 118
   },
   {
     "id": "eldora-mountain-resort",
@@ -3207,7 +3321,7 @@ export const skiResorts = [
     "wikiTopField": "10600 ft",
     "wikiBaseField": "9360 ft",
     "wikiSnowfallField": "300 in",
-    "rank": 121
+    "rank": 119
   },
   {
     "id": "timberline-lodge-ski-area",
@@ -3233,7 +3347,7 @@ export const skiResorts = [
     "wikiTopField": "8540 ft",
     "wikiBaseField": "4000 ft",
     "wikiSnowfallField": "yearly snowfall: 45 ft (14 m), average pack: 15 ft (4.6 m)",
-    "rank": 122
+    "rank": 120
   },
   {
     "id": "sainte-foy-tarentaise",
@@ -3259,7 +3373,33 @@ export const skiResorts = [
     "wikiTopField": "2622 m",
     "wikiBaseField": "1550 m",
     "wikiSnowfallField": "",
-    "rank": 123
+    "rank": 121
+  },
+  {
+    "id": "valle-nevado",
+    "name": "Valle Nevado",
+    "wikiTitle": "Valle Nevado",
+    "location": "Santiago Metropolitan Region, Chile",
+    "country": "Chile",
+    "continent": "South America",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Valle_Nevado",
+    "verticalFt": 2657,
+    "topElevationFt": 12041,
+    "baseElevationFt": 9383,
+    "liftSystem": "17 total|1 gondola|1 detachable 4-pers chair|4 fixed-grip chairs|1 T-bar|7 J-bars",
+    "liftRouteAssumption": "detachable chair route",
+    "ascentMinutes": 9.1,
+    "descentMinutes": 4.2,
+    "skiingShare": 0.316,
+    "snowAtBaseFt": 3,
+    "snowAtTopFt": 6,
+    "annualSnowfallFt": 24,
+    "snowEstimateSource": "skiresort.info peak snow average",
+    "wikiVerticalField": "810 m (2860 m - 3670 m), skiresort.info / Spanish Wikipedia",
+    "wikiTopField": "3670 m, skiresort.info / Spanish Wikipedia",
+    "wikiBaseField": "2860 m, skiresort.info / Spanish Wikipedia",
+    "wikiSnowfallField": "~743.8 cm annual average snowfall at 2,871 m, English Wikipedia climate table (~290 in)",
+    "rank": 122
   },
   {
     "id": "the-summit-at-snoqualmie",
@@ -3285,7 +3425,7 @@ export const skiResorts = [
     "wikiTopField": "5420 ft (Alpental)",
     "wikiBaseField": "2610 ft, (Summit East)",
     "wikiSnowfallField": "435 in",
-    "rank": 124
+    "rank": 123
   },
   {
     "id": "arapahoe-basin",
@@ -3311,7 +3451,7 @@ export const skiResorts = [
     "wikiTopField": "13050 ft",
     "wikiBaseField": "10780 ft",
     "wikiSnowfallField": "350 in",
-    "rank": 125
+    "rank": 124
   },
   {
     "id": "grand-targhee-resort",
@@ -3337,7 +3477,7 @@ export const skiResorts = [
     "wikiTopField": "9862 ft",
     "wikiBaseField": "7408 ft",
     "wikiSnowfallField": "500 in",
-    "rank": 126
+    "rank": 125
   },
   {
     "id": "bear-valley-mountain-resort",
@@ -3363,7 +3503,7 @@ export const skiResorts = [
     "wikiTopField": "8500 ft",
     "wikiBaseField": "6600 ft",
     "wikiSnowfallField": "359 in",
-    "rank": 127
+    "rank": 126
   },
   {
     "id": "sunrise-park-resort",
@@ -3389,7 +3529,7 @@ export const skiResorts = [
     "wikiTopField": "11100 ft",
     "wikiBaseField": "9200 ft",
     "wikiSnowfallField": "250 in/year ( 6.35 m/year)",
-    "rank": 128
+    "rank": 127
   },
   {
     "id": "willamette-pass-resort",
@@ -3415,7 +3555,7 @@ export const skiResorts = [
     "wikiTopField": "6683 ft",
     "wikiBaseField": "5120 ft",
     "wikiSnowfallField": "430 in per year",
-    "rank": 129
+    "rank": 128
   },
   {
     "id": "alto-campoo",
@@ -3441,7 +3581,7 @@ export const skiResorts = [
     "wikiTopField": "2250 m",
     "wikiBaseField": "1650 m",
     "wikiSnowfallField": "",
-    "rank": 130
+    "rank": 129
   },
   {
     "id": "snowshoe-mountain",
@@ -3467,7 +3607,7 @@ export const skiResorts = [
     "wikiTopField": "4848 ft",
     "wikiBaseField": "3348 ft",
     "wikiSnowfallField": "180 in",
-    "rank": 131
+    "rank": 130
   },
   {
     "id": "panorama-mountain-resort",
@@ -3493,7 +3633,7 @@ export const skiResorts = [
     "wikiTopField": "2450 m",
     "wikiBaseField": "1150 m",
     "wikiSnowfallField": "520 cm",
-    "rank": 132
+    "rank": 131
   },
   {
     "id": "fernie-alpine-resort",
@@ -3519,7 +3659,7 @@ export const skiResorts = [
     "wikiTopField": "2149 m",
     "wikiBaseField": "1068 m",
     "wikiSnowfallField": "875 cm (28.71 ft)/year",
-    "rank": 133
+    "rank": 132
   },
   {
     "id": "castle-mountain-resort",
@@ -3545,7 +3685,7 @@ export const skiResorts = [
     "wikiTopField": "2377 m",
     "wikiBaseField": "1453 m",
     "wikiSnowfallField": "8.5 m",
-    "rank": 134
+    "rank": 133
   },
   {
     "id": "copper-mountain-colorado",
@@ -3571,7 +3711,7 @@ export const skiResorts = [
     "wikiTopField": "12313 ft",
     "wikiBaseField": "9712 ft",
     "wikiSnowfallField": "310 in",
-    "rank": 135
+    "rank": 134
   },
   {
     "id": "june-mountain-ski-area",
@@ -3597,7 +3737,7 @@ export const skiResorts = [
     "wikiTopField": "10090 ft",
     "wikiBaseField": "7545 ft",
     "wikiSnowfallField": "250 in",
-    "rank": 136
+    "rank": 135
   },
   {
     "id": "alta-ski-area",
@@ -3623,7 +3763,7 @@ export const skiResorts = [
     "wikiTopField": "11068 ft",
     "wikiBaseField": "8530 ft",
     "wikiSnowfallField": "545 in",
-    "rank": 137
+    "rank": 136
   },
   {
     "id": "kimberley-alpine-resort",
@@ -3649,7 +3789,7 @@ export const skiResorts = [
     "wikiTopField": "1982 m",
     "wikiBaseField": "1231 m",
     "wikiSnowfallField": "400 cm",
-    "rank": 138
+    "rank": 137
   },
   {
     "id": "sierra-at-tahoe",
@@ -3675,7 +3815,7 @@ export const skiResorts = [
     "wikiTopField": "8852 ft",
     "wikiBaseField": "6640 ft",
     "wikiSnowfallField": "480 in",
-    "rank": 139
+    "rank": 138
   },
   {
     "id": "loveland-ski-area",
@@ -3701,7 +3841,7 @@ export const skiResorts = [
     "wikiTopField": "13010 ft (Basin), 11250 ft (Valley)",
     "wikiBaseField": "10800 ft (Basin), 10400 ft (Valley)",
     "wikiSnowfallField": "422 in",
-    "rank": 140
+    "rank": 139
   },
   {
     "id": "powder-mountain",
@@ -3727,7 +3867,7 @@ export const skiResorts = [
     "wikiTopField": "8900 ft lift-served, 9422 ft via hiking",
     "wikiBaseField": "6900 ft",
     "wikiSnowfallField": "360 in per year",
-    "rank": 141
+    "rank": 140
   },
   {
     "id": "sundance-resort",
@@ -3753,7 +3893,7 @@ export const skiResorts = [
     "wikiTopField": "8250 ft",
     "wikiBaseField": "6100 ft",
     "wikiSnowfallField": "",
-    "rank": 142
+    "rank": 141
   },
   {
     "id": "diamond-peak-ski-area",
@@ -3779,7 +3919,7 @@ export const skiResorts = [
     "wikiTopField": "8540 ft AMSL",
     "wikiBaseField": "6700 ft",
     "wikiSnowfallField": "",
-    "rank": 143
+    "rank": 142
   },
   {
     "id": "mount-seymour",
@@ -3805,7 +3945,7 @@ export const skiResorts = [
     "wikiTopField": "1265 m",
     "wikiBaseField": "935 m",
     "wikiSnowfallField": "1200 cm",
-    "rank": 144
+    "rank": 143
   },
   {
     "id": "mount-bachelor-ski-area",
@@ -3831,7 +3971,7 @@ export const skiResorts = [
     "wikiTopField": "9065 ft, Summit Express",
     "wikiBaseField": "5700 ft, Northwest Express, 6350 ft, Pine Marten Express",
     "wikiSnowfallField": "462 in",
-    "rank": 145
+    "rank": 144
   },
   {
     "id": "mammoth-mountain-resort",
@@ -3857,7 +3997,7 @@ export const skiResorts = [
     "wikiTopField": "11053 ft",
     "wikiBaseField": "7953 ft at Eagle Lodge",
     "wikiSnowfallField": "400 in",
-    "rank": 146
+    "rank": 145
   },
   {
     "id": "corralco",
@@ -3883,7 +4023,7 @@ export const skiResorts = [
     "wikiTopField": "2400 m, Skiresort.info elevation info",
     "wikiBaseField": "1550 m, Skiresort.info elevation info",
     "wikiSnowfallField": "",
-    "rank": 147
+    "rank": 146
   },
   {
     "id": "whitefish-mountain-resort",
@@ -3909,7 +4049,7 @@ export const skiResorts = [
     "wikiTopField": "6817 ft",
     "wikiBaseField": "4464 ft",
     "wikiSnowfallField": "300 in",
-    "rank": 148
+    "rank": 147
   },
   {
     "id": "piancavallo",
@@ -3935,7 +4075,7 @@ export const skiResorts = [
     "wikiTopField": "2251 m",
     "wikiBaseField": "1280 m",
     "wikiSnowfallField": "",
-    "rank": 149
+    "rank": 148
   },
   {
     "id": "buttermilk-ski-area",
@@ -3961,7 +4101,7 @@ export const skiResorts = [
     "wikiTopField": "9900 ft",
     "wikiBaseField": "7870 ft",
     "wikiSnowfallField": "200 in/year (5.08 m/year)",
-    "rank": 150
+    "rank": 149
   },
   {
     "id": "purgatory-resort",
@@ -3987,7 +4127,7 @@ export const skiResorts = [
     "wikiTopField": "10822 ft",
     "wikiBaseField": "8793 ft",
     "wikiSnowfallField": "260 inches",
-    "rank": 151
+    "rank": 150
   },
   {
     "id": "astun",
@@ -4013,7 +4153,7 @@ export const skiResorts = [
     "wikiTopField": "2300 m",
     "wikiBaseField": "1700 m",
     "wikiSnowfallField": "",
-    "rank": 152
+    "rank": 151
   },
   {
     "id": "ski-santa-fe",
@@ -4039,7 +4179,7 @@ export const skiResorts = [
     "wikiTopField": "12075 ft",
     "wikiBaseField": "10350 ft",
     "wikiSnowfallField": "225 in",
-    "rank": 153
+    "rank": 152
   },
   {
     "id": "apex-mountain-resort",
@@ -4065,7 +4205,7 @@ export const skiResorts = [
     "wikiTopField": "2178 m",
     "wikiBaseField": "1575 m",
     "wikiSnowfallField": "600 cm",
-    "rank": 154
+    "rank": 153
   },
   {
     "id": "pico-mountain",
@@ -4091,7 +4231,7 @@ export const skiResorts = [
     "wikiTopField": "3967 ft",
     "wikiBaseField": "2000 ft",
     "wikiSnowfallField": "250 in",
-    "rank": 155
+    "rank": 154
   },
   {
     "id": "brundage-mountain",
@@ -4117,7 +4257,7 @@ export const skiResorts = [
     "wikiTopField": "7640 ft",
     "wikiBaseField": "5840 ft, Centennial, 6000 ft, main base area",
     "wikiSnowfallField": "300",
-    "rank": 156
+    "rank": 155
   },
   {
     "id": "pamporovo",
@@ -4143,7 +4283,7 @@ export const skiResorts = [
     "wikiTopField": "1928 m",
     "wikiBaseField": "1420 m, Stoykite ski centre, 1471 m, Malina (ski centre 2)",
     "wikiSnowfallField": "",
-    "rank": 157
+    "rank": 156
   },
   {
     "id": "mount-washington-alpine-resort",
@@ -4169,7 +4309,7 @@ export const skiResorts = [
     "wikiTopField": "1,590 m (5,216 ft)",
     "wikiBaseField": "1,083 m (3,558 ft)",
     "wikiSnowfallField": "avg. 9 m (29.5276 ft)/year",
-    "rank": 158
+    "rank": 157
   },
   {
     "id": "homewood-mountain-resort",
@@ -4195,7 +4335,7 @@ export const skiResorts = [
     "wikiTopField": "2402 m",
     "wikiBaseField": "1899 m",
     "wikiSnowfallField": "400 in",
-    "rank": 159
+    "rank": 158
   },
   {
     "id": "powderhorn-resort",
@@ -4221,7 +4361,7 @@ export const skiResorts = [
     "wikiTopField": "9850 ft",
     "wikiBaseField": "8200 ft",
     "wikiSnowfallField": "250 in/year",
-    "rank": 160
+    "rank": 159
   },
   {
     "id": "wolf-creek",
@@ -4247,7 +4387,7 @@ export const skiResorts = [
     "wikiTopField": "11904 ft (North America comparison table)",
     "wikiBaseField": "10300 ft (North America comparison table)",
     "wikiSnowfallField": "465 in (North America comparison table)",
-    "rank": 161
+    "rank": 160
   },
   {
     "id": "mountain-high",
@@ -4273,7 +4413,7 @@ export const skiResorts = [
     "wikiTopField": "8200 ft (East), 8000 ft (West), 7800 ft (North)",
     "wikiBaseField": "6600 ft (East), 7000 ft (West), 7200 ft (North)",
     "wikiSnowfallField": "",
-    "rank": 162
+    "rank": 161
   },
   {
     "id": "port-del-comte",
@@ -4299,7 +4439,7 @@ export const skiResorts = [
     "wikiTopField": "2400 m",
     "wikiBaseField": "1700 m",
     "wikiSnowfallField": "",
-    "rank": 163
+    "rank": 162
   },
   {
     "id": "49-degrees-north-ski-area",
@@ -4325,7 +4465,7 @@ export const skiResorts = [
     "wikiTopField": "5774 ft",
     "wikiBaseField": "3923 ft",
     "wikiSnowfallField": "301 in",
-    "rank": 164
+    "rank": 163
   },
   {
     "id": "bogus-basin",
@@ -4351,7 +4491,7 @@ export const skiResorts = [
     "wikiTopField": "7582 ft AMSL",
     "wikiBaseField": "5790 ft, Pine Creek - (Chair 6), 6150 ft, main base area - (Chair 1)",
     "wikiSnowfallField": "250 in",
-    "rank": 165
+    "rank": 164
   },
   {
     "id": "terry-peak",
@@ -4377,7 +4517,7 @@ export const skiResorts = [
     "wikiTopField": "7064 ft",
     "wikiBaseField": "5900 ft",
     "wikiSnowfallField": "<!-- ((convert| |in|cm}}",
-    "rank": 166
+    "rank": 165
   },
   {
     "id": "ski-bluewood",
@@ -4403,7 +4543,7 @@ export const skiResorts = [
     "wikiTopField": "5670 ft",
     "wikiBaseField": "4545 ft",
     "wikiSnowfallField": "300 in",
-    "rank": 167
+    "rank": 166
   },
   {
     "id": "pomerelle",
@@ -4429,7 +4569,7 @@ export const skiResorts = [
     "wikiTopField": "8762 ft",
     "wikiBaseField": "7760 ft",
     "wikiSnowfallField": "500 in",
-    "rank": 168
+    "rank": 167
   },
   {
     "id": "kelly-canyon",
@@ -4455,7 +4595,7 @@ export const skiResorts = [
     "wikiTopField": "6600 ft",
     "wikiBaseField": "5600 ft",
     "wikiSnowfallField": "200 in",
-    "rank": 169
+    "rank": 168
   },
   {
     "id": "middlebury-college-snow-bowl",
@@ -4481,7 +4621,7 @@ export const skiResorts = [
     "wikiTopField": "2720 ft (North America comparison table)",
     "wikiBaseField": "1720 ft (North America comparison table)",
     "wikiSnowfallField": "250 in (North America comparison table)",
-    "rank": 170
+    "rank": 169
   },
   {
     "id": "teton-pass-ski-area",
@@ -4507,7 +4647,7 @@ export const skiResorts = [
     "wikiTopField": "7200 ft",
     "wikiBaseField": "6190 ft",
     "wikiSnowfallField": "250 in",
-    "rank": 171
+    "rank": 170
   },
   {
     "id": "silverton-mountain",
@@ -4533,7 +4673,7 @@ export const skiResorts = [
     "wikiTopField": "13487 ft (North America comparison table)",
     "wikiBaseField": "10400 ft (North America comparison table)",
     "wikiSnowfallField": "450 in (North America comparison table)",
-    "rank": 172
+    "rank": 171
   },
   {
     "id": "hudson-bay-mountain",
@@ -4559,7 +4699,7 @@ export const skiResorts = [
     "wikiTopField": "1650m, 5413ft",
     "wikiBaseField": "1142m, 3747ft",
     "wikiSnowfallField": "Indy Ski Pass ~400 cm/yr; snow-online seasonal avg depth ~386 cm summit",
-    "rank": 173
+    "rank": 172
   },
   {
     "id": "shames-mountain-ski-area",
@@ -4585,7 +4725,7 @@ export const skiResorts = [
     "wikiTopField": "1189 m",
     "wikiBaseField": "700 m",
     "wikiSnowfallField": "1200 cm",
-    "rank": 174
+    "rank": 173
   },
   {
     "id": "beaver-mountain",
@@ -4611,7 +4751,7 @@ export const skiResorts = [
     "wikiTopField": "8800 ft",
     "wikiBaseField": "7200 ft",
     "wikiSnowfallField": "400 in",
-    "rank": 175
+    "rank": 174
   },
   {
     "id": "dodge-ridge-ski-area",
@@ -4637,7 +4777,7 @@ export const skiResorts = [
     "wikiTopField": "8200 ft",
     "wikiBaseField": "6600 ft",
     "wikiSnowfallField": "300 to 500 in (760 to 1,270 cm)",
-    "rank": 176
+    "rank": 175
   },
   {
     "id": "red-river-ski-area",
@@ -4663,7 +4803,7 @@ export const skiResorts = [
     "wikiTopField": "10350 ft (North America comparison table)",
     "wikiBaseField": "8750 ft (North America comparison table)",
     "wikiSnowfallField": "214 in (North America comparison table)",
-    "rank": 177
+    "rank": 176
   },
   {
     "id": "valdesqui",
@@ -4689,7 +4829,7 @@ export const skiResorts = [
     "wikiTopField": "2280 m",
     "wikiBaseField": "1860 m",
     "wikiSnowfallField": "",
-    "rank": 178
+    "rank": 177
   },
   {
     "id": "mount-baldy-ski-area",
@@ -4715,7 +4855,7 @@ export const skiResorts = [
     "wikiTopField": "2123 m (6,965 ft), + 180 m skiable peak",
     "wikiBaseField": "1726 m (5700 ft)",
     "wikiSnowfallField": "256 in",
-    "rank": 179
+    "rank": 178
   },
   {
     "id": "loup-loup-ski-bowl",
@@ -4741,7 +4881,7 @@ export const skiResorts = [
     "wikiTopField": "5280 ft (North America comparison table)",
     "wikiBaseField": "4040 ft (North America comparison table)",
     "wikiSnowfallField": "150 in (North America comparison table)",
-    "rank": 180
+    "rank": 179
   },
   {
     "id": "discovery-ski-area",
@@ -4767,7 +4907,7 @@ export const skiResorts = [
     "wikiTopField": "8158 ft (North America comparison table)",
     "wikiBaseField": "5770 ft (North America comparison table)",
     "wikiSnowfallField": "150 in (North America comparison table)",
-    "rank": 181
+    "rank": 180
   },
   {
     "id": "praz-de-lys-sommand",
@@ -4793,7 +4933,7 @@ export const skiResorts = [
     "wikiTopField": "2000 m",
     "wikiBaseField": "1500 m",
     "wikiSnowfallField": "",
-    "rank": 182
+    "rank": 181
   },
   {
     "id": "massif-du-sud",
@@ -4819,7 +4959,7 @@ export const skiResorts = [
     "wikiTopField": "915 m",
     "wikiBaseField": "515 m",
     "wikiSnowfallField": "600 cm",
-    "rank": 183
+    "rank": 182
   },
   {
     "id": "ohau-skifield",
@@ -4844,6 +4984,32 @@ export const skiResorts = [
     "wikiVerticalField": "400 m",
     "wikiTopField": "1925 m",
     "wikiBaseField": "1425 m",
+    "wikiSnowfallField": "",
+    "rank": 183
+  },
+  {
+    "id": "las-lenas",
+    "name": "Las Leñas",
+    "wikiTitle": "Las Leñas",
+    "location": "Mendoza, Cuyo, Argentina",
+    "country": "Argentina",
+    "continent": "South America",
+    "wikiUrl": "https://en.wikipedia.org/wiki/Las_Le%C3%B1as",
+    "verticalFt": 3904,
+    "topElevationFt": 11253,
+    "baseElevationFt": 7349,
+    "liftSystem": "14 total|7 chair lifts (fixed-grip)|6 surface lifts|1 people mover (Planai gondola planned/not operating)",
+    "liftRouteAssumption": "fixed-grip chair route",
+    "ascentMinutes": 31.7,
+    "descentMinutes": 6.5,
+    "skiingShare": 0.17,
+    "snowAtBaseFt": 2.4,
+    "snowAtTopFt": 3.7,
+    "annualSnowfallFt": 16,
+    "snowEstimateSource": "regional/elevation fallback",
+    "wikiVerticalField": "1190 m",
+    "wikiTopField": "3430 m",
+    "wikiBaseField": "2240 m",
     "wikiSnowfallField": "",
     "rank": 184
   },
