@@ -45,7 +45,7 @@ type Props = {
   keywords: string;
   eyebrow: string;
   dek: string;
-  criteriaText: string;
+  criteriaText?: string;
   tripOriginLabel: string;
   mapHeading: string;
   mapAriaLabel: string;
@@ -54,6 +54,7 @@ type Props = {
   mapErrorLabel: string;
   spots: TravelSpot[];
   showMap?: boolean;
+  mapEngine?: "google" | "polar-south";
   themeColorLight?: string;
   themeColorDark?: string;
 };
@@ -65,7 +66,6 @@ const {
   keywords,
   eyebrow,
   dek,
-  criteriaText,
   tripOriginLabel,
   mapHeading,
   mapAriaLabel,
@@ -74,6 +74,7 @@ const {
   mapErrorLabel,
   spots,
   showMap = true,
+  mapEngine = "google",
   themeColorLight = "#fcfaf6",
   themeColorDark = "#15120e",
 } = Astro.props;
@@ -81,12 +82,14 @@ const {
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const usesPolarMap = mapEngine === "polar-south";
 const googleMapsApiKey =
-  showMap
+  showMap && !usesPolarMap
     ? (import.meta.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
       process.env.GOOGLE_MAPS_API_KEY_PUBLIC ??
       "")
     : "";
+const showMapCanvas = showMap && (usesPolarMap || Boolean(googleMapsApiKey));
 
 const getScoreTotal = (spot: TravelSpot) =>
   spot.scores.globallyUnique +
@@ -99,8 +102,6 @@ const scoreEntries = [
   ["Ease of access", "easeOfAccess"],
   ["Low tourist crowds", "lowTouristCrowds"],
 ] as const;
-const scoringCriteriaText =
-  "Ranking score is the straight sum of four 0-10 criteria: globally unique, laymen interest, ease of access and low tourist crowds. Low tourist crowds is positive: 0 means Venice-level crowding, 10 means effectively no one goes there. Ties break by laymen interest.";
 const validateScore = (spot: TravelSpot, key: keyof TravelSpot["scores"]) => {
   const score = spot.scores[key];
   if (!Number.isInteger(score) || score < 0 || score > 10) {
@@ -264,6 +265,13 @@ const structuredData = {
     <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:url" content={canonicalUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+    {usesPolarMap && (
+      <>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.6.1/ol.css" />
+        <script is:inline src="https://cdn.jsdelivr.net/npm/proj4@2.19.7/dist/proj4.js"></script>
+        <script is:inline src="https://cdn.jsdelivr.net/npm/ol@10.6.1/dist/ol.js"></script>
+      </>
+    )}
   </head>
   <body>
     <main class="page">
@@ -274,14 +282,6 @@ const structuredData = {
         <p class="dek">{dek}</p>
       </header>
 
-      <section class="criteria" aria-labelledby="criteria-heading">
-        <div>
-          <p class="eyebrow">Selection rule</p>
-          <h2 id="criteria-heading">What "interesting" means here</h2>
-        </div>
-        <p>{criteriaText} {scoringCriteriaText}</p>
-      </section>
-
       {showMap && (
         <section class="map-section" aria-labelledby="map-heading">
           <div class="map-copy">
@@ -291,8 +291,22 @@ const structuredData = {
               Showing all {rankedSpotsWithTrip.length} spots.
             </p>
           </div>
-          {googleMapsApiKey ? (
-            <div id="spots-map" class="spots-map" aria-label={mapAriaLabel}></div>
+          {showMapCanvas ? (
+            <>
+              <div
+                id="spots-map"
+                class:list={["spots-map", usesPolarMap && "spots-map-polar"]}
+                aria-label={mapAriaLabel}
+              ></div>
+              {usesPolarMap && (
+                <div id="polar-popup" class="polar-popup" hidden>
+                  <button type="button" class="polar-popup-close" aria-label="Close popup">
+                    ×
+                  </button>
+                  <div id="polar-popup-content"></div>
+                </div>
+              )}
+            </>
           ) : (
             <p class="map-unavailable">
               Map unavailable because the Google Maps public key is not configured.
@@ -426,8 +440,8 @@ const structuredData = {
   </body>
 </html>
 
-<script is:inline define:vars={{ googleMapsApiKey, spotMapData, mapCenter, mapZoom, mapErrorLabel }}>
-  if (googleMapsApiKey) {
+<script is:inline define:vars={{ googleMapsApiKey, spotMapData, mapCenter, mapZoom, mapErrorLabel, mapEngine }}>
+  if (googleMapsApiKey && mapEngine !== "polar-south") {
     ((g) => {
       let h;
       let a;
@@ -475,6 +489,8 @@ const structuredData = {
   const markerRecords = [];
   let spotsMap;
   let infoWindow;
+  let polarOverlay;
+  let polarProjection;
 
   const escapeHtml = (value) =>
     String(value).replace(/[&<>"']/g, (character) => ({
@@ -484,6 +500,9 @@ const structuredData = {
       '"': "&quot;",
       "'": "&#39;",
     })[character]);
+
+  const popupHtml = (spot) =>
+    `<strong>${escapeHtml(spot.rank)}. ${escapeHtml(spot.name)}</strong><br>${escapeHtml(spot.uniqueness)}<br><a href="${escapeHtml(spot.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`;
 
   const getVisibleSpots = (selectedLocation, selectedKind) =>
     spotMapData.filter(
@@ -503,8 +522,31 @@ const structuredData = {
       : `Showing all ${visibleCount} ${label}.`;
   };
 
+  const polarCoordinate = (position) =>
+    ol.proj.fromLonLat([position.lng, position.lat], polarProjection);
+
   const fitMapToMarkers = (visibleRecords) => {
-    if (!spotsMap || !window.google?.maps || visibleRecords.length === 0) return;
+    if (!spotsMap || visibleRecords.length === 0) return;
+
+    if (mapEngine === "polar-south") {
+      if (visibleRecords.length === 1) {
+        spotsMap.getView().setCenter(polarCoordinate(visibleRecords[0].spot.position));
+        spotsMap.getView().setZoom(5);
+        return;
+      }
+
+      const extent = ol.extent.boundingExtent(
+        visibleRecords.map((record) => polarCoordinate(record.spot.position)),
+      );
+      spotsMap.getView().fit(ol.extent.buffer(extent, 180000), {
+        padding: [36, 36, 36, 36],
+        maxZoom: 5,
+        duration: 0,
+      });
+      return;
+    }
+
+    if (!window.google?.maps) return;
 
     if (visibleRecords.length === 1) {
       spotsMap.setCenter(visibleRecords[0].spot.position);
@@ -530,7 +572,12 @@ const structuredData = {
 
     for (const record of markerRecords) {
       const isVisible = visibleIds.has(record.spot.id);
-      record.marker.setMap(isVisible ? spotsMap : null);
+      if (mapEngine === "polar-south") {
+        record.feature.set("hidden", !isVisible);
+        record.feature.changed();
+      } else {
+        record.marker.setMap(isVisible ? spotsMap : null);
+      }
       if (isVisible) visibleRecords.push(record);
     }
 
@@ -617,7 +664,140 @@ const structuredData = {
     syncMapMarkers(selectedLocation, selectedKind);
   };
 
-  const initMap = async () => {
+  const initPolarMap = () => {
+    if (!mapElement || !window.ol || !window.proj4) {
+      throw new Error("Polar map libraries did not load.");
+    }
+
+    const half = 12367396.2185;
+    const extent = [-half, -half, half, half];
+    const tileSize = 512;
+    const maxZoom = 7;
+    const tileStyle = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "gbif-dark"
+      : "gbif-geyser";
+
+    proj4.defs(
+      "EPSG:3031",
+      "+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
+    );
+    ol.proj.proj4.register(proj4);
+
+    polarProjection = new ol.proj.Projection({
+      code: "EPSG:3031",
+      units: "m",
+      extent,
+      worldExtent: [-180, -90, 180, 0],
+    });
+    ol.proj.addProjection(polarProjection);
+
+    const popupElement = document.querySelector("#polar-popup");
+    const popupContent = document.querySelector("#polar-popup-content");
+    polarOverlay = new ol.Overlay({
+      element: popupElement,
+      autoPan: { animation: { duration: 180 } },
+      positioning: "bottom-center",
+      offset: [0, -14],
+    });
+
+    popupElement?.querySelector(".polar-popup-close")?.addEventListener("click", () => {
+      polarOverlay.setPosition(undefined);
+      popupElement.hidden = true;
+    });
+
+    const markerStyle = (feature) => {
+      if (feature.get("hidden")) return undefined;
+      const rank = String(feature.get("rank"));
+      return new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 13,
+          fill: new ol.style.Fill({ color: "#8a4b2a" }),
+          stroke: new ol.style.Stroke({ color: "#fffaf2", width: 2 }),
+        }),
+        text: new ol.style.Text({
+          text: rank,
+          fill: new ol.style.Fill({ color: "#fffaf2" }),
+          font: "700 12px ui-sans-serif, system-ui, sans-serif",
+        }),
+      });
+    };
+
+    const vectorSource = new ol.source.Vector();
+
+    spotsMap = new ol.Map({
+      target: mapElement,
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.XYZ({
+            projection: polarProjection,
+            tileGrid: new ol.tilegrid.TileGrid({
+              extent,
+              origin: [-half, half],
+              minZoom: 0,
+              resolutions: Array.from(
+                { length: maxZoom + 1 },
+                (_, zoom) => (2 * half) / tileSize / 2 ** zoom,
+              ),
+              tileSize,
+            }),
+            tileSize,
+            url: `https://tile.gbif.org/3031/omt/{z}/{x}/{y}@1x.png?style=${tileStyle}`,
+            attributions:
+              '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, © <a href="https://www.openmaptiles.org/copyright">OpenMapTiles</a>, © <a href="https://www.gbif.org/citation-guidelines">GBIF</a>',
+          }),
+        }),
+        new ol.layer.Vector({
+          source: vectorSource,
+          style: markerStyle,
+        }),
+      ],
+      overlays: [polarOverlay],
+      view: new ol.View({
+        projection: polarProjection,
+        center: [0, 0],
+        zoom: 2,
+        minZoom: 1,
+        maxZoom,
+        extent,
+        showFullExtent: true,
+      }),
+    });
+
+    for (const spot of spotMapData) {
+      const feature = new ol.Feature({
+        geometry: new ol.geom.Point(polarCoordinate(spot.position)),
+        rank: spot.rank,
+        hidden: false,
+      });
+      feature.setId(spot.id);
+      vectorSource.addFeature(feature);
+      markerRecords.push({ spot, feature });
+    }
+
+    spotsMap.on("click", (event) => {
+      const feature = spotsMap.forEachFeatureAtPixel(event.pixel, (hit) => hit);
+      if (!feature || !popupElement || !popupContent) {
+        polarOverlay.setPosition(undefined);
+        if (popupElement) popupElement.hidden = true;
+        return;
+      }
+
+      const spot = spotMapData.find((entry) => entry.id === feature.getId());
+      if (!spot) return;
+
+      popupContent.innerHTML = popupHtml(spot);
+      popupElement.hidden = false;
+      polarOverlay.setPosition(feature.getGeometry().getCoordinates());
+    });
+
+    spotsMap.on("pointermove", (event) => {
+      mapElement.style.cursor = spotsMap.hasFeatureAtPixel(event.pixel) ? "pointer" : "";
+    });
+
+    requestAnimationFrame(() => spotsMap.updateSize());
+  };
+
+  const initGoogleMap = async () => {
     if (!mapElement || !googleMapsApiKey || !window.google?.maps?.importLibrary) return;
 
     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
@@ -642,13 +822,21 @@ const structuredData = {
       });
 
       marker.addListener("click", () => {
-        infoWindow.setContent(
-          `<strong>${escapeHtml(spot.rank)}. ${escapeHtml(spot.name)}</strong><br>${escapeHtml(spot.uniqueness)}<br><a href="${escapeHtml(spot.googleMapsUrl)}" target="_blank" rel="noreferrer noopener">Open in Google Maps</a>`,
-        );
+        infoWindow.setContent(popupHtml(spot));
         infoWindow.open(spotsMap, marker);
       });
 
       markerRecords.push({ spot, marker });
+    }
+  };
+
+  const initMap = async () => {
+    if (!mapElement) return;
+
+    if (mapEngine === "polar-south") {
+      initPolarMap();
+    } else {
+      await initGoogleMap();
     }
 
     applyFilters();
@@ -718,13 +906,12 @@ const structuredData = {
   }
 
   .page {
-    width: min(1180px, calc(100% - 32px));
+    width: min(1180px, calc(100% - 24px));
     margin: 0 auto;
-    padding: 32px 0 72px;
+    padding: 16px 0 40px;
   }
 
   .hero,
-  .criteria,
   .map-section,
   .toolbar,
   .spot-card {
@@ -736,44 +923,33 @@ const structuredData = {
   .hero {
     position: relative;
     overflow: hidden;
-    min-height: 520px;
-    padding: clamp(28px, 7vw, 72px);
-    border-radius: 34px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 28px;
-    border-radius: 28px;
-    border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-    pointer-events: none;
+    display: grid;
+    gap: 4px;
+    padding: 14px 18px 16px;
+    border-radius: 16px;
   }
 
   .hero::after {
     content: "";
     position: absolute;
-    right: -8%;
-    top: -16%;
-    width: min(58vw, 620px);
+    right: -12%;
+    top: -40%;
+    width: min(38vw, 280px);
     aspect-ratio: 1;
     border-radius: 50%;
     background:
       linear-gradient(120deg, transparent 42%, color-mix(in srgb, var(--accent) 40%, transparent) 43% 45%, transparent 46%),
       repeating-linear-gradient(155deg, transparent 0 20px, color-mix(in srgb, var(--accent) 18%, transparent) 21px 22px);
-    opacity: 0.55;
+    opacity: 0.4;
     pointer-events: none;
   }
 
   .home-link {
-    position: absolute;
-    top: 28px;
-    left: 28px;
+    position: relative;
     z-index: 1;
-    font-size: 0.82rem;
+    width: fit-content;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-decoration: none;
@@ -782,11 +958,11 @@ const structuredData = {
 
   .eyebrow,
   .spot-area {
-    margin: 0 0 10px;
+    margin: 0 0 4px;
     color: var(--accent);
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
@@ -799,28 +975,29 @@ const structuredData = {
   h1 {
     position: relative;
     z-index: 1;
-    margin-bottom: 18px;
+    margin-bottom: 6px;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(2.75rem, 6.8vw, 6.4rem);
-    line-height: 0.96;
-    letter-spacing: -0.065em;
+    font-size: clamp(1.55rem, 2.8vw, 2.15rem);
+    line-height: 1.12;
+    letter-spacing: -0.04em;
   }
 
   h2 {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.65rem, 3vw, 2.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
+    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
   }
 
   .dek {
     position: relative;
     z-index: 1;
-    max-width: 720px;
-    margin-bottom: 28px;
+    max-width: 62ch;
+    margin-bottom: 0;
     color: var(--muted);
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+    line-height: 1.45;
   }
 
   .badges {
@@ -839,58 +1016,102 @@ const structuredData = {
     padding: 6px 10px;
   }
 
-  .criteria,
   .map-section,
   .toolbar {
-    margin-top: 22px;
-    border-radius: 26px;
-    padding: 24px;
-  }
-
-  .criteria {
-    display: grid;
-    grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.25fr);
-    gap: 24px;
-    align-items: start;
-  }
-
-  .criteria p:last-child {
-    margin-bottom: 0;
-    color: var(--muted);
-    font-size: 1.05rem;
+    margin-top: 12px;
+    border-radius: 16px;
+    padding: 14px 16px;
   }
 
   .map-section {
     display: grid;
-    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
-    gap: 18px;
-    align-items: stretch;
+    gap: 10px;
   }
 
   .map-copy {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+  }
+
+  .map-copy .eyebrow,
+  .map-copy h2 {
+    margin: 0;
   }
 
   .map-status {
-    margin-bottom: 0;
+    margin: 0 0 0 auto;
     color: var(--muted);
+    font-size: 0.9rem;
   }
 
   .spots-map {
-    min-height: 520px;
+    min-height: 360px;
+    height: 360px;
     border: 1px solid var(--border);
-    border-radius: 22px;
+    border-radius: 12px;
     overflow: hidden;
     background: var(--panel-strong);
+  }
+
+  .spots-map-polar {
+    height: 420px;
+    min-height: 420px;
+  }
+
+  .polar-popup {
+    position: relative;
+    min-width: 180px;
+    max-width: 280px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: var(--shadow);
+    font-size: 0.88rem;
+    line-height: 1.4;
+    padding: 10px 28px 10px 12px;
+  }
+
+  .polar-popup a {
+    color: var(--accent-strong);
+  }
+
+  .polar-popup-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .spots-map-polar :global(.ol-attribution) {
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    font-size: 0.68rem;
+  }
+
+  .spots-map-polar :global(.ol-zoom) {
+    top: 8px;
+    left: 8px;
+  }
+
+  .spots-map-polar :global(.ol-zoom button) {
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    color: var(--text);
   }
 
   .map-unavailable {
     margin: 0;
     border: 1px dashed var(--border);
-    border-radius: 22px;
-    padding: 24px;
+    border-radius: 12px;
+    padding: 14px;
     color: var(--muted);
   }
 
@@ -905,7 +1126,7 @@ const structuredData = {
   .filter-field {
     display: grid;
     gap: 6px;
-    min-width: min(260px, 100%);
+    min-width: min(180px, 100%);
     color: var(--muted);
     font-size: 0.82rem;
     font-weight: 800;
@@ -931,16 +1152,16 @@ const structuredData = {
 
   .spot-list {
     display: grid;
-    gap: 16px;
-    margin-top: 22px;
+    gap: 12px;
+    margin-top: 12px;
   }
 
   .spot-card {
     display: grid;
-    grid-template-columns: 86px minmax(0, 1fr);
-    gap: 18px;
-    border-radius: 26px;
-    padding: 22px;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 12px;
+    border-radius: 16px;
+    padding: 14px 16px;
   }
 
   .spot-card[hidden] {
@@ -951,13 +1172,13 @@ const structuredData = {
     display: grid;
     place-items: center;
     align-self: start;
-    width: 68px;
-    height: 68px;
+    width: 52px;
+    height: 52px;
     border: 1px solid var(--border);
     border-radius: 50%;
     color: var(--accent-strong);
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.45rem;
+    font-size: 1.15rem;
     font-weight: 700;
   }
 
@@ -966,7 +1187,7 @@ const structuredData = {
     gap: 16px;
     justify-content: space-between;
     align-items: start;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 
   .spot-heading h2 {
@@ -996,7 +1217,7 @@ const structuredData = {
   }
 
   .badges {
-    margin-bottom: 16px;
+    margin-bottom: 10px;
   }
 
   .score-panel {
@@ -1087,38 +1308,34 @@ const structuredData = {
 
   @media (max-width: 820px) {
     .page {
-      width: min(100% - 20px, 1180px);
+      width: min(100% - 16px, 1180px);
       padding-top: 10px;
     }
 
-    .hero {
-      min-height: 560px;
-      border-radius: 24px;
-      padding: 82px 22px 28px;
-    }
-
-    .hero::before {
-      inset: 12px;
-      border-radius: 20px;
-    }
-
-    .home-link {
-      top: 22px;
-      left: 22px;
-    }
-
-    .criteria,
+    .hero,
     .map-section,
+    .toolbar,
+    .spot-card {
+      border-radius: 14px;
+    }
+
+    .map-status {
+      margin-left: 0;
+    }
+
     .spot-card {
       grid-template-columns: 1fr;
+      padding: 12px 14px;
     }
 
     .spots-map {
-      min-height: 420px;
+      min-height: 280px;
+      height: 280px;
     }
 
-    .spot-card {
-      padding: 18px;
+    .spots-map-polar {
+      height: 320px;
+      min-height: 320px;
     }
 
     .score-panel,
@@ -1127,9 +1344,9 @@ const structuredData = {
     }
 
     .spot-rank {
-      width: 54px;
-      height: 54px;
-      font-size: 1.1rem;
+      width: 42px;
+      height: 42px;
+      font-size: 0.95rem;
     }
 
     .spot-heading {
