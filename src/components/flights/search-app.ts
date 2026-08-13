@@ -404,10 +404,12 @@ export function mountFlightSearch(root: HTMLElement): void {
     const blocked = routeBlockedMessage(form);
     runBtn.disabled = isRunning || Boolean(blocked);
     hideSearchProgress();
-    searchSummary.textContent = blocked ? blocked : "Ready to search.";
-    banners.innerHTML = blocked
-      ? `<div class="fs-banner fs-banner-warn">${escapeHtml(blocked)}</div>`
-      : "";
+    const missingRoute = !form.origin || !form.dest;
+    searchSummary.textContent = "";
+    banners.innerHTML =
+      blocked && !missingRoute
+        ? `<div class="fs-banner fs-banner-warn">${escapeHtml(blocked)}</div>`
+        : "";
     progress.textContent = "";
     results.innerHTML = "";
     footer.innerHTML = "";
