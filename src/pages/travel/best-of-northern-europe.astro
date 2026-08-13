@@ -1,0 +1,24 @@
+---
+import TravelSpotGuide from "../../components/travel/TravelSpotGuide.astro";
+import { europeSpotsBySubregion } from "../../data/europeSubregions";
+
+const spots = europeSpotsBySubregion["northern-europe"];
+export const travelSpots = spots;
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Northern Europe"}
+  pageDescription={"A researched field guide to Northern Europe's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Northern Europe"}
+  keywords={"Northern Europe travel, unique places Northern Europe, Nordics, Baltics, globally distinctive travel"}
+  eyebrow={"Northern Europe field guide"}
+  dek={"A Northern Europe list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby. Covers the Nordics and the Baltics."}
+  criteriaText={"Trip estimates are per person from London via Heathrow (LHR). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Cities and urban spots in metro areas over roughly 1 million people are excluded unless the spot itself is very rarely visited by Westerners. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From London"}
+  mapHeading={"Pins across Northern Europe"}
+  mapAriaLabel={"Google Map with pins for interesting places in Northern Europe"}
+  mapCenter={{ lat: 62, lng: 18 }}
+  mapZoom={4}
+  mapErrorLabel={"Northern Europe"}
+  spots={spots}
+/>

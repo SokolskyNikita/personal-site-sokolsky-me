@@ -3,7 +3,17 @@ import TravelSpotGuide, { type TravelSpot } from "../../components/travel/Travel
 import { extractTravelSpotsFromSource } from "../../data/travelRawParser";
 
 const pageSources = import.meta.glob<string>(
-  ["./best-of-*.astro", "!./best-of-world.astro", "!./best-of-europe.astro"],
+  [
+    "./best-of-*.astro",
+    "!./best-of-world.astro",
+    "!./best-of-europe.astro",
+    "!./best-of-northern-europe.astro",
+    "!./best-of-western-europe.astro",
+    "!./best-of-central-europe.astro",
+    "!./best-of-southern-europe.astro",
+    "!./best-of-southeast-europe.astro",
+    "!./best-of-eastern-europe.astro",
+  ],
   {
     eager: true,
     query: "?raw",

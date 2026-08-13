@@ -1,0 +1,24 @@
+---
+import TravelSpotGuide from "../../components/travel/TravelSpotGuide.astro";
+import { europeSpotsBySubregion } from "../../data/europeSubregions";
+
+const spots = europeSpotsBySubregion["southern-europe"];
+export const travelSpots = spots;
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Southern Europe"}
+  pageDescription={"A researched field guide to Southern Europe's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Southern Europe"}
+  keywords={"Southern Europe travel, unique places Southern Europe, Iberia, Italy, Greece, globally distinctive travel"}
+  eyebrow={"Southern Europe field guide"}
+  dek={"A Southern Europe list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby. Covers Iberia, Italy, Malta, Greece and the Mediterranean microstates."}
+  criteriaText={"Trip estimates are per person from London via Heathrow (LHR). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Cities and urban spots in metro areas over roughly 1 million people are excluded unless the spot itself is very rarely visited by Westerners. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From London"}
+  mapHeading={"Pins across Southern Europe"}
+  mapAriaLabel={"Google Map with pins for interesting places in Southern Europe"}
+  mapCenter={{ lat: 40.5, lng: 8 }}
+  mapZoom={5}
+  mapErrorLabel={"Southern Europe"}
+  spots={spots}
+/>

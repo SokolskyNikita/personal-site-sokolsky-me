@@ -1,0 +1,24 @@
+---
+import TravelSpotGuide from "../../components/travel/TravelSpotGuide.astro";
+import { europeSpotsBySubregion } from "../../data/europeSubregions";
+
+const spots = europeSpotsBySubregion["central-europe"];
+export const travelSpots = spots;
+---
+
+<TravelSpotGuide
+  pageTitle={"Most interesting spots in Central Europe"}
+  pageDescription={"A researched field guide to Central Europe's most globally distinctive places, ranked by rarity and difficulty of substitution, with Google Maps pins."}
+  subject={"Unique places to visit in Central Europe"}
+  keywords={"Central Europe travel, unique places Central Europe, Germany, Alps, Visegrad, globally distinctive travel"}
+  eyebrow={"Central Europe field guide"}
+  dek={"A Central Europe list built for travelers who care about deep rarity first: geology, ecology, archaeology, sacred sites, difficult access and places that are hard to replace with a prettier version nearby. Covers the German-speaking countries, the Alps and the Visegrád states."}
+  criteriaText={"Trip estimates are per person from London via Heathrow (LHR). The origin follows the busiest-airport methodology for this region. The order is the ranking. Higher means rarer globally, more mind-expanding or harder to replace with a similar trip. Cities and urban spots in metro areas over roughly 1 million people are excluded unless the spot itself is very rarely visited by Westerners. Estimates assume economy flights where needed, midrange lodging, meals, local transfers, required fees and the shortest realistic visit."}
+  tripOriginLabel={"From London"}
+  mapHeading={"Pins across Central Europe"}
+  mapAriaLabel={"Google Map with pins for interesting places in Central Europe"}
+  mapCenter={{ lat: 50.2, lng: 14.5 }}
+  mapZoom={5}
+  mapErrorLabel={"Central Europe"}
+  spots={spots}
+/>

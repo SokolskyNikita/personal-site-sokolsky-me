@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import { extractTravelSpotsFromSource } from "../../data/travelRawParser";
-import { europeTravelSpots } from "../../data/europeTravelSpots";
+import { europeSubregionImportedSpotCounts } from "../../data/europeSubregions";
 
 const pageSources = import.meta.glob<string>("./best-of-*.astro", {
   eager: true,
@@ -10,15 +10,63 @@ const pageSources = import.meta.glob<string>("./best-of-*.astro", {
   import: "default",
 });
 
+const continentOrder = [
+  "World",
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "South America",
+  "Oceania",
+  "Polar",
+] as const;
+
+type Continent = (typeof continentOrder)[number];
+
+const continentBySlug: Record<string, Continent> = {
+  world: "World",
+  "central-africa": "Africa",
+  "east-africa": "Africa",
+  "north-africa": "Africa",
+  "southern-africa": "Africa",
+  "west-africa": "Africa",
+  "central-asia": "Asia",
+  "east-asia": "Asia",
+  "north-asia": "Asia",
+  "south-asia": "Asia",
+  "southeast-asia": "Asia",
+  "middle-east": "Asia",
+  europe: "Europe",
+  "northern-europe": "Europe",
+  "western-europe": "Europe",
+  "central-europe": "Europe",
+  "southern-europe": "Europe",
+  "southeast-europe": "Europe",
+  "eastern-europe": "Europe",
+  canada: "North America",
+  usa: "North America",
+  mexico: "North America",
+  "central-america": "North America",
+  caribbean: "North America",
+  "south-america": "South America",
+  oceania: "Oceania",
+  "polar-regions": "Polar",
+  arctic: "Polar",
+  antarctica: "Polar",
+};
+
 type TravelRegion = {
   region: string;
   href: string;
   spotCount: number;
+  continent: Continent | "Other";
 };
 
 const importedSpotCounts: Record<string, number> = {
-  "./best-of-europe.astro": europeTravelSpots.length,
+  ...europeSubregionImportedSpotCounts,
 };
+
+const hiddenIndexSlugs = new Set(["best-of-europe"]);
 
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
@@ -43,7 +91,7 @@ const formatRegionName = (slug: string) =>
 
 const regionalSpotCounts = Object.fromEntries(
   Object.entries(pageSources)
-    .filter(([path]) => !path.endsWith("/best-of-world.astro"))
+    .filter(([path]) => !path.endsWith("/best-of-world.astro") && !path.endsWith("/best-of-europe.astro"))
     .map(([path, source]) => [
       path,
       importedSpotCounts[path] ?? extractTravelSpotsFromSource(String(source)).length,
@@ -52,20 +100,33 @@ const regionalSpotCounts = Object.fromEntries(
 const worldSpotCount = Object.values(regionalSpotCounts).reduce((sum, count) => sum + count, 0);
 
 const regions = Object.entries(pageSources)
-  .map(([path, source]) => {
+  .flatMap(([path, source]) => {
     const slug = path.replace("./", "").replace(/\.astro$/, "");
+    if (hiddenIndexSlugs.has(slug)) return [];
+
+    const regionSlug = slug.replace(/^best-of-/, "");
     const spotCount =
       slug === "best-of-world"
         ? worldSpotCount
         : (regionalSpotCounts[path] ?? extractTravelSpotsFromSource(String(source)).length);
 
-    return {
+    return [{
       region: formatRegionName(slug),
       href: `/travel/${slug}/`,
       spotCount,
-    };
+      continent: continentBySlug[regionSlug] ?? "Other",
+    }];
   })
+  .filter((region) => region.spotCount > 0)
   .sort((a, b) => a.region.localeCompare(b.region)) satisfies TravelRegion[];
+
+const continentGroups = [...continentOrder, "Other" as const]
+  .map((continent) => ({
+    continent,
+    headingId: `continent-${continent.toLowerCase().replace(/\s+/g, "-")}`,
+    regions: regions.filter((region) => region.continent === continent),
+  }))
+  .filter((group) => group.regions.length > 0);
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -76,7 +137,7 @@ const structuredData = {
   mainEntity: {
     "@type": "ItemList",
     numberOfItems: regions.length,
-    itemListElement: regions.map((region, index) => ({
+    itemListElement: continentGroups.flatMap((group) => group.regions).map((region, index) => ({
       "@type": "ListItem",
       position: index + 1,
       url: `${siteUrl}${region.href}`,
@@ -151,19 +212,21 @@ const structuredData = {
         </ul>
       </section>
 
-      <section aria-labelledby="regions-heading">
-        <h2 id="regions-heading">Regions</h2>
-        <ul class="region-list">
-          {regions.map((region) => (
-            <li>
-              <a href={region.href}>
-                <span>{region.region}</span>
-                <span>{region.spotCount.toLocaleString("en-US")} sites</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {continentGroups.map((group) => (
+        <section class="continent" aria-labelledby={group.headingId}>
+          <h2 id={group.headingId}>{group.continent}</h2>
+          <ul class="region-list">
+            {group.regions.map((region) => (
+              <li>
+                <a href={region.href}>
+                  <span>{region.region}</span>
+                  <span>{region.spotCount.toLocaleString("en-US")} sites</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </main>
   </body>
 </html>
@@ -233,8 +296,9 @@ const structuredData = {
     text-transform: uppercase;
   }
 
-  .guides {
-    margin-bottom: 20px;
+  .guides,
+  .continent {
+    margin-bottom: 28px;
   }
 
   .region-list {
