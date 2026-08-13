@@ -209,16 +209,16 @@ export const europeTravelSpots = [
     ],
     "area": "Black Sea coast",
     "kind": "Reed-bed delta ecosystem",
-    "access": "Boat-based travel from delta towns and villages",
+    "access": "Travel from delta towns and villages uses 15 water routes plus nine land routes, with ARBDD permits and route restrictions.",
     "scores": {
       "globallyUnique": 9,
       "laymenInterest": 9,
       "easeOfAccess": 4,
-      "lowTouristCrowds": 9,
+      "lowTouristCrowds": 6,
     },
     "uniqueness": "Europe’s largest continuous marshland and one of the world’s great reed-bed systems",
-    "why": "The Danube Delta ranks as a living system rather than a viewpoint: huge reedbeds, floating reed islands, channels, lakes, bird colonies and a near-intact large delta at the edge of a heavily developed continent.",
-    "realityCheck": "It is slow and seasonal. Use boat-based logistics, expect mosquitoes and weather, and check Ukraine-border realities before planning the wider delta.",
+    "why": "The delta is a network of reedbeds, floating reed islands, channels and lakes rather than a single viewpoint. More than 300 bird species use it. It is one of Europe's best-preserved deltas, but navigation, tourism and pollution are putting pressure on it.",
+    "realityCheck": "It is slow and seasonal. Expect boat-heavy logistics, mosquitoes and weather; check ARBDD permits and route rules before visiting. Treat the Ukrainian side as a separate trip: current Australian travel advice says not to travel from Romania to Ukraine.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Danube_Delta",
     "source": {
       "label": "UNESCO World Heritage Centre",
@@ -1842,18 +1842,18 @@ export const europeTravelSpots = [
       "countries": [
           "Austria"
       ],
-      "area": "Austria",
+      "area": "Lower Austria",
       "kind": "UNESCO cultural landscape",
-      "access": "Regional route or landscape access",
+      "access": "Train to Melk or Krems, then regional buses, ferries and seasonal river boats",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "The Wachau is a stretch of the Danube Valley between Melk and Krems, a landscape of high visual quality. It preserves in an intact and visible form many traces - in terms of architecture, (monasteries, castles, ruins), urban design, (towns and villages), and agricultural use, principally for the cultivation of vines - of its evolution since prehistoric.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A UNESCO-listed Danube valley where medieval settlements and vineyard terraces remain part of a working landscape",
+      "why": "The Wachau is a stretch of the Danube between Melk and Krems, with medieval towns, monasteries, castle ruins and steep vineyard terraces. UNESCO describes intact architectural, urban and agricultural traces of the valley's evolution since prehistoric times.",
+      "realityCheck": "Public transport works without a car, but schedules are seasonal: north-bank buses run hourly, south-bank buses every two hours and two of the three ferries operate only from spring to autumn. River cruises can be reduced by low water, so check the timetable before relying on a boat.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/970/"
@@ -2176,17 +2176,17 @@ export const europeTravelSpots = [
           "Bosnia and Herzegovina"
       ],
       "area": "Bosnia and Herzegovina",
-      "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "kind": "UNESCO cultural World Heritage site",
+      "access": "Walkable old-town site; the train station is five minutes from central Mostar and buses connect to Sarajevo, Split and Dubrovnik.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "The historic town of Mostar, spanning a deep valley of the Neretva River, developed in the 15th and 16th centuries as an Ottoman frontier town and during the Austro-Hungarian period in the 19th and 20th centuries.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Reconstructed 16th-century Ottoman bridge in a historic town with pre-Ottoman, Ottoman, Mediterranean and western European architectural layers",
+      "why": "Mostar grew in the 15th and 16th centuries as an Ottoman frontier town in the Neretva valley, then developed further during Austro-Hungarian rule. The Old Bridge and much of the historic town were rebuilt after the 1990s conflict.",
+      "realityCheck": "The bridge and old-town streets are open-air public spaces, but the Old Bridge Museum has seasonal hours. UNESCO reports that many visitors arrive for one day, putting pressure on the site.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/946/"
@@ -2213,17 +2213,17 @@ export const europeTravelSpots = [
           "Bosnia and Herzegovina"
       ],
       "area": "Bosnia and Herzegovina",
-      "kind": "UNESCO industrial heritage",
-      "access": "UNESCO site access; check local rules",
+      "kind": "UNESCO architectural heritage",
+      "access": "Pedestrian bridge in Višegrad; daily but limited bus service from Sarajevo",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 6,
+        "easeOfAccess": 6,
+        "lowTouristCrowds": 5,
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
+      "uniqueness": "UNESCO-listed Ottoman bridge by Mimar Koca Sinan, with 11 masonry arches and a total length of 179.5 m",
       "why": "The Mehmed Paša Sokolović Bridge of Višegrad across the Drina River in the east of Bosnia and Herzegovina was built at the end of the 16th century by the court architect Mimar Koca Sinan on the orders of Grand Vizier Mehmed Paša Sokolović.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Višegrad is about 130 km from Sarajevo, and the current bus journey takes roughly three hours. Check return transport and local access conditions before building a trip around the bridge.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1260/"
@@ -2251,15 +2251,15 @@ export const europeTravelSpots = [
       ],
       "area": "Bulgaria",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Open daily with seasonal hours; organized groups need reservations. Visits are limited to 10 minutes for up to 9 people at a time.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Located on the outskirts of Sofia, Boyana Church consists of three buildings. The eastern church was built in the 10th century, then enlarged at the beginning of the 13th century by Sebastocrator Kaloyan, who ordered a second two storey building to be erected next to it.",
+      "uniqueness": "Three-period church complex with 1259 frescoes and later painted layers",
+      "why": "Located on the outskirts of Sofia, Boyana Church consists of three buildings. The eastern church was built in the 10th century and enlarged at the beginning of the 13th century by Sebastocrator Kaloyan, who ordered a second two-storey building beside it; a third church was added at the beginning of the 19th century.",
       "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
       "source": {
           "label": "UNESCO World Heritage Centre",
@@ -2288,16 +2288,16 @@ export const europeTravelSpots = [
       ],
       "area": "Bulgaria",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Paid, seasonal access by road to the foot of the rocks, with stairs to the churches; a marked path from Ivanovo takes about 40 minutes.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 7,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "In the valley of the Roussenski Lom River, in north east Bulgaria, a complex of rock-hewn churches, chapels, monasteries and cells developed in the vicinity of the village of Ivanovo.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A medieval monastic complex carved into natural karst cavities, with 13th- and 14th-century churches and frescoes preserved in the rock.",
+      "why": "In the Rusenski Lom valley near Ivanovo, hermits first carved cells and churches into the rock in the 12th century. The complex later grew to include chapels and monasteries, with 14th-century murals by the Tarnovo School.",
+      "realityCheck": "Access is seasonal and paid. A road reaches the foot of the rocks, followed by stairs; a marked path from Ivanovo takes about 40 minutes. Published official hours differ, so confirm the schedule before going.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/45/"
@@ -2325,16 +2325,16 @@ export const europeTravelSpots = [
       ],
       "area": "Bulgaria",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Open to visitors year-round; check monastery and museum hours and transport from Sofia",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 8,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Rila Monastery was founded in the 10th century by St John of Rila, a hermit canonized by the Orthodox Church. His ascetic dwelling and tomb became a holy site and were transformed into a monastic complex which played an important role in the spiritual and social life of medieval Bulgaria.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A UNESCO-listed monastery with a 19th-century Bulgarian Renaissance complex and a functioning monastic community",
+      "why": "St John of Rila founded the monastery in the 10th century after living as a hermit in the Rila Mountains. His dwelling and tomb became a holy site, and the monastery became a spiritual and social centre in medieval Bulgaria. After a fire at the beginning of the 19th century, the complex was rebuilt between 1834 and 1862 as a characteristic example of Bulgarian Renaissance architecture.",
+      "realityCheck": "The monastery is about 120 km from Sofia and publishes rules on dress, photography and conduct; museum hours vary by season. Check the official site before travelling, especially if you plan to use public transport.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/216/"
@@ -2362,16 +2362,16 @@ export const europeTravelSpots = [
       ],
       "area": "Croatia",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Pedestrian old-town access; the city-wall walk requires a ticket.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "The 'Pearl of the Adriatic', situated on the Dalmatian coast, became an important Mediterranean sea power from the 13th century onwards. Although severely damaged by an earthquake in 1667, Dubrovnik managed to preserve its beautiful Gothic, Renaissance and Baroque churches, monasteries, palaces and fountains.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "UNESCO-listed walled city with preserved Gothic, Renaissance and Baroque buildings inside its historic fortifications.",
+      "why": "On the Dalmatian coast, Dubrovnik became an important Mediterranean sea power from the 13th century. The 1667 earthquake severely damaged the city, but it preserved Gothic, Renaissance and Baroque churches, monasteries, palaces and fountains.",
+      "realityCheck": "Cruise-day crowds are a real constraint: Dubrovnik's port recorded more than 625,000 cruise passengers across 433 ship calls in 2025. Check city-wall opening hours and current restoration or access notices before planning around the old town.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/95/"
@@ -2399,16 +2399,16 @@ export const europeTravelSpots = [
       ],
       "area": "Croatia",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable public streets in Split's historic centre; the palace itself is free to enter, while paid interiors have separate hours and admission.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "The ruins of Diocletian's Palace, built between the late 3rd and the early 4th centuries A.D., can be found throughout the city. The cathedral was built in the Middle Ages, reusing materials from the ancient mausoleum.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A Roman imperial palace whose walls and substructures are part of a living, inhabited historic centre",
+      "why": "Built for Emperor Diocletian between the late 3rd and early 4th centuries A.D., the palace now forms the core of Split. The cathedral occupies the ancient mausoleum, and later medieval, Renaissance and Baroque buildings filled out the protected centre.",
+      "realityCheck": "Most of the palace is an inhabited city centre with free public streets, not a gated attraction. The cathedral, bell tower and developed substructures have separate hours and admission. Split recorded 3.2 million tourist nights in 2025, so summer visits to the Peristyle are better early in the day.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/97/"
@@ -2436,16 +2436,16 @@ export const europeTravelSpots = [
       ],
       "area": "Croatia",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable from nearby car parks; the old town is mostly closed to traffic.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "The group of religious monuments in Porec, where Christianity was established as early as the 4th century, constitutes the most complete surviving complex of its type.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "The most complete surviving early Christian episcopal complex of its type, combining a basilica, atrium, baptistery and episcopal palace in Poreč's historic centre.",
+      "why": "Poreč had a Christian community by the 4th century. Its basilica, atrium, baptistery and episcopal palace form the most complete surviving early Christian complex of this type.",
+      "realityCheck": "Hours vary by month; the complex is closed on Sundays and Catholic holy days and religious services can interrupt visits. Check the current schedule before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/809/"
@@ -2480,9 +2480,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Trogir is a remarkable example of urban continuity. The orthogonal street plan of this island settlement dates back to the Hellenistic period and it was embellished by successive rulers with many fine public and domestic buildings and fortifications.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Hellenistic street grid and Romanesque, Renaissance and Baroque buildings survive in a compact island town.",
+      "why": "Trogir's historic island still follows a Hellenistic street grid, with Romanesque churches, Venetian Renaissance and Baroque buildings, palaces and fortifications packed into the core.",
+      "realityCheck": "The streets are free to enter, but paid sights keep separate hours. Summer cruise excursions crowd the small core, and non-resident cars must stay outside the historic island.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/810/"
@@ -2510,15 +2510,15 @@ export const europeTravelSpots = [
       ],
       "area": "Croatia",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Visitor access; hours vary by season and Mass times.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 7,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The Cathedral of St James in Šibenik (1431-1535), on the Dalmatian coast, bears witness to the considerable exchanges in the field of monumental arts between Northern Italy, Dalmatia and Tuscany in the 15th and 16th centuries.",
+      "uniqueness": "An all-stone Gothic-Renaissance cathedral with unusual vaulting, a dome and a frieze of 71 sculpted faces.",
+      "why": "Built from 1431 to 1535, the cathedral combines Gothic and Renaissance forms in an all-stone structure with unusual vaulting and a dome. UNESCO ties that combination to exchanges among Northern Italy, Dalmatia and Tuscany.",
       "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
       "source": {
           "label": "UNESCO World Heritage Centre",
@@ -2554,9 +2554,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Built between the 11th and 18th centuries, the Old Town, the Lesser Town and the New Town speak of the great architectural and cultural influence enjoyed by this city since the Middle Ages.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A preserved urban ensemble spanning Prague’s medieval town plan, Gothic monuments, Baroque buildings and modernist architecture",
+      "why": "The Old Town, Lesser Town and New Town preserve Prague’s medieval urban plan alongside major monuments such as Prague Castle, St Vitus Cathedral and Charles Bridge. UNESCO says the city’s Gothic, Baroque and modernist architecture influenced Central European architecture.",
+      "realityCheck": "Treat it as a working city centre, not a gated attraction. Prague recorded 8.27 million guests in lodging facilities in 2025, and Deutsche Welle reported overtourism pressure in 2024; the metro and tram network makes the central districts easy to reach.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/616/"
@@ -2591,9 +2591,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Situated on the banks of the Vltava river, the town was built around a 13th-century castle with Gothic, Renaissance and Baroque elements. It is an outstanding example of a small central European medieval town whose architectural heritage has remained intact thanks to its peaceful evolution over more than five centuries.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A medieval town on a Vltava meander where the castle, planned street layout and many historic buildings remain intact",
+      "why": "Built around a 13th-century castle on both banks of the Vltava, the town combines Gothic, Renaissance and Baroque elements. Its medieval street layout and many historic buildings remain largely intact, including Renaissance and Baroque facades and original interiors.",
+      "realityCheck": "Český Krumlov is heavily visited, and the historic centre is a pedestrian-only zone. Attractions use seasonal schedules, so check current opening hours and arrival or parking rules before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/617/"
@@ -2623,12 +2623,12 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
+      "uniqueness": "A triangular market square lined by Renaissance and Baroque burgher houses with continuous arcades, alongside a Renaissance castle and defensive fishponds.",
       "why": "The houses in Telc, which stands on a hilltop, were originally built of wood. After a fire in the late 14th century, the town was rebuilt in stone, surrounded by walls and further strengthened by a network of artificial ponds.",
       "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
       "source": {
@@ -2665,9 +2665,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "This pilgrimage church, built in honour of St John of Nepomuk, stands at Zelená Hora, not far from Ždár nad Sázavou in Moravia. Constructed at the beginning of the 18th century on a star-shaped plan, it is the most unusual work by the great architect Jan Blazej Santini, whose highly original style falls between neo-Gothic and Baroque.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A five-pointed church with a circular cloister and a layout built around repeated groups of five",
+      "why": "Built between 1719 and 1727 near Žďár nad Sázavou, this pilgrimage church has a five-pointed star plan and a circular cloister. Jan Blažej Santini Aichel combined Baroque composition with pointed windows, portals and ribbed vaults drawn from late Gothic architecture.",
+      "realityCheck": "Opening hours change by season and holidays, with limited winter access; check the church's current schedule and visiting rules before making it a day-trip stop.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/690/"
@@ -2695,16 +2695,16 @@ export const europeTravelSpots = [
       ],
       "area": "Czechia",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable historic centre; the Sedlec cathedral is about 1.5 km northeast, so the two UNESCO components are separate stops.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Kutná Hora developed as a result of the exploitation of the silver mines. In the 14th century it became a royal city endowed with monuments that symbolized its prosperity.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A preserved medieval silver-mining town with a late-Gothic Church of St Barbara and a Cistercian church at Sedlec restored in the early-18th-century Baroque Gothic style.",
+      "why": "Kutná Hora grew from silver mining and became a royal city in the 14th century. Its preserved medieval urban plan includes the late-Gothic Church of St Barbara, while the Sedlec cathedral was restored in the early 18th century in the Baroque Gothic style.",
+      "realityCheck": "The two UNESCO components are about 1.5 km apart. St Barbara's official hours range from 10:00–16:00 in January–February to 9:00–18:00 in April–October, with event-related closures. 2025 monitoring counted almost 339,000 visitors at the Sedlec site and 296,000 at St Barbara's, so verify schedules and expect busy periods.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/732/"
@@ -2739,9 +2739,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "Between the 17th and 20th centuries, the ruling dukes of Liechtenstein transformed their domains in southern Moravia into a striking landscape. It married Baroque architecture (mainly the work of Johann Bernhard Fischer von Erlach) and the classical and neo-Gothic style of the castles of Lednice and Valtice with countryside fashioned according to English.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "One of Europe's largest designed landscapes, linking Liechtenstein castles, parks and smaller structures with avenues, ponds and long views",
+      "why": "Between the 17th and 20th centuries, the ruling dukes of Liechtenstein reshaped their domains in southern Moravia. Valtice's Baroque rebuilding involved Johann Bernhard Fischer von Erlach and other architects, while Lednice was remodeled in Baroque, Classical and Neo-Gothic styles; parks, avenues, ponds and smaller structures follow English Romantic landscape principles.",
+      "realityCheck": "Lednice's interiors follow seasonal tour schedules, with several routes closed in winter and shorter hours outside summer. The estate is spread out, so allow time for the parks and smaller structures; some special guided-tour dates sell out, so check the official schedule before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/763/"
@@ -2768,17 +2768,17 @@ export const europeTravelSpots = [
           "Czechia"
       ],
       "area": "Czechia",
-      "kind": "UNESCO fortification",
-      "access": "Visitor-site access; check hours",
+      "kind": "UNESCO Baroque garden-and-castle ensemble",
+      "access": "Castle tours are seasonal; the Chateau Garden is free and open year-round, while the Flower Garden has separate seasonal hours.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed fortification with preserved cultural fabric",
+      "uniqueness": "UNESCO-listed Baroque princely residence with an almost-intact 17th-century Pleasure Garden",
       "why": "Kroměříž stands on the site of an earlier ford across the River Morava, at the foot of the Chriby mountain range which dominates the central part of Moravia. The gardens and castle of Kroměříž are an exceptionally complete and well-preserved example of a European Baroque princely residence and its gardens.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The chateau is not fully wheelchair accessible, and the Flower Garden is about a 15-minute walk from the chateau; check current hours before visiting.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/860/"
@@ -2804,18 +2804,18 @@ export const europeTravelSpots = [
       "countries": [
           "Czechia"
       ],
-      "area": "Czechia",
+      "area": "South Bohemia",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Regular bus from České Budějovice; walkable village green",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Holašovice is an exceptionally complete and well-preserved example of a traditional central European village. It has a large number of outstanding 18th- and 19th-century vernacular buildings in a style known as 'South Bohemian folk Baroque', and preserves a ground plan dating from the Middle Ages.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A living South Bohemian village of 23 farmsteads around a rectangular green, with façades in the South Bohemian folk Baroque style and a medieval plan.",
+      "why": "Holašovice keeps 23 farmsteads around a rectangular village green, most with U-shaped plans and stucco gables in the South Bohemian folk-Baroque style. The village also retains its medieval layout and land parcelling.",
+      "realityCheck": "The village is still inhabited, and its farmhouses are mostly private. The information centre closes from January through March; tourist numbers rise on holidays and weekends, while event notices can close the square.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/861/"
@@ -2842,17 +2842,17 @@ export const europeTravelSpots = [
           "Czechia"
       ],
       "area": "Czechia",
-      "kind": "UNESCO fortification",
-      "access": "Visitor-site access; check hours",
+      "kind": "UNESCO arcaded Renaissance castle",
+      "access": "Train/bus or road access; public transport from Prague requires a connection, and tour hours vary by season",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed fortification with preserved cultural fabric",
+      "uniqueness": "Preserved arcaded Renaissance country residence with a second square courtyard unique to Litomyšl and intact ancillary buildings",
       "why": "Litomyšl Castle was originally a Renaissance arcade-castle of the type first developed in Italy and then adopted and greatly developed in central Europe in the 16th century.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "In 2026, the basic Wallenstein Tour is closed for reconstruction, while the remaining tours run on seasonal hours. Check the official schedule before making the castle a fixed stop.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/901/"
@@ -2887,9 +2887,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
+      "uniqueness": "The world’s only hop-growing landscape on the UNESCO World Heritage List: Žatec’s medieval centre and industrial Prague Suburb sit alongside rural hop fields and villages.",
       "why": "This cultural landscape has been shaped for centuries by the living tradition of growing and trading Saaz hops, used in beer production around the globe.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The property has two components: Žatec’s historic centre and industrial Prague Suburb plus rural hop fields and villages around Stekník and Trnovany. Stekník Chateau has seasonal opening hours, so check its schedule before trying to cover the town and landscape in one day.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1558/"
@@ -2915,18 +2915,18 @@ export const europeTravelSpots = [
       "countries": [
           "Denmark"
       ],
-      "area": "Denmark",
+      "area": "Roskilde, Zealand",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "In central Roskilde; 25 minutes by train from Copenhagen, with almost all westbound trains from Copenhagen Central stopping at Roskilde",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
+      "uniqueness": "A Gothic brick cathedral that became a Danish royal mausoleum, with chapels and porches added in successive architectural styles.",
       "why": "Built in the 12th and 13th centuries, this was Scandinavia's first Gothic cathedral to be built of brick and it encouraged the spread of this style throughout northern Europe.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Entry to the royal tombs, chapels, museum and gallery is ticketed, while services and holidays can change visitor hours. Check the cathedral's calendar before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/695/"
@@ -2954,16 +2954,16 @@ export const europeTravelSpots = [
       ],
       "area": "Denmark",
       "kind": "UNESCO fortification",
-      "access": "Visitor-site access; check hours",
+      "access": "Paid visitor site; direct train from Copenhagen takes about 46 minutes, followed by a 10-minute walk from Helsingør station; check seasonal hours.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed fortification with preserved cultural fabric",
-      "why": "Located on a strategically important site commanding the Sund, the stretch of water between Denmark and Sweden, the Royal castle of Kronborg at Helsingør (Elsinore) is of immense symbolic value to the Danish people and was important in northern European history in the 16th-18th centuries.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Preserved Renaissance castle and fortress with a chapel that survived the 1629 fire and the largest Renaissance great hall of its kind in Northern Europe.",
+      "why": "Kronborg controlled the narrowest part of the Øresund, where Denmark collected Sound tolls from passing ships from 1429 to 1857. It is also Shakespeare's Elsinore in Hamlet.",
+      "realityCheck": "The paid interior has seasonal hours; the castle says mornings are quieter and summer parking fills around midday. From Copenhagen, the direct train takes about 46 minutes, followed by a 10-minute walk.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/696/"
@@ -2991,16 +2991,16 @@ export const europeTravelSpots = [
       ],
       "area": "Denmark",
       "kind": "UNESCO cultural landscape",
-      "access": "Regional route or landscape access",
+      "access": "Unrestricted public access across three forest areas; plan a route",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "Located about 30 km northeast of Copenhagen, this cultural landscape encompasses the two hunting forests of Store Dyrehave and Gribskov, as well as the hunting park of Jægersborg Hegn/Jægersborg Dyrehave.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Preserved Baroque hunting landscape with star-and-grid forest roads, numbered stone posts and a hunting lodge",
+      "why": "About 30 km northeast of Copenhagen, the site includes Store Dyrehave, Gribskov and Jægersborg Hegn/Jægersborg Dyrehave. Danish kings used these royal forests for par force hunts, whose roads and markers still shape the site.",
+      "realityCheck": "The three areas cover more than 4,500 hectares and are open to the public year-round. Jægersborg Dyrehave is Denmark's most visited natural area, so choose a section and route before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1469/"
@@ -3026,18 +3026,18 @@ export const europeTravelSpots = [
       "countries": [
           "Estonia"
       ],
-      "area": "Estonia",
-      "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "area": "Tallinn, Estonia",
+      "kind": "UNESCO historic city centre",
+      "access": "Walkable old town; airport buses 2 and 15 stop a five-minute walk away, and the main port terminals are 15–20 minutes on foot",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "The origins of Tallinn date back to the 13th century, when a castle was built there by the crusading knights of the Teutonic Order. It developed as a major centre of the Hanseatic League, and its wealth is demonstrated by the opulence of the public buildings (the churches in particular) and the domestic architecture of the merchants' houses, which have.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "An exceptionally complete medieval northern European trading city where the 13th-century street plan, building plots and long sections of the town defences remain legible",
+      "why": "Upper Toompea and the lower town preserve Tallinn's medieval urban plan, including narrow streets, churches, the town wall and merchant houses. The lower town's building plots remain virtually intact from the 13th–14th centuries, while the plan shows how a feudal seat and a Hanseatic trading centre shared a common system of walls and fortifications.",
+      "realityCheck": "Summer cruise traffic makes the centre busy: ERR reported that the Old Town remained crowded on 24 June 2026 while two ships carrying about 6,700 passengers were docked, and Port of Tallinn recorded nearly 190,000 cruise passengers in 2025. Visit Tallinn recommends early morning or afternoon visits during cruise season; check current hours for towers, churches and museums.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/822/"
@@ -3065,16 +3065,16 @@ export const europeTravelSpots = [
       ],
       "area": "Finland",
       "kind": "UNESCO fortification",
-      "access": "Visitor-site access; check hours",
+      "access": "No entrance fee; the year-round HSL ferry from Helsinki Market Square takes about 15 minutes, while museums and services keep separate hours",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed fortification with preserved cultural fabric",
-      "why": "Built in the second half of the 18th century by Sweden on a group of islands located at the entrance of Helsinki's harbour, this fortress is an especially interesting example of European military architecture of the time.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A 210-hectare sea fortress spread across six islands, with 6 km of defensive walls and 200 buildings from the Swedish and Russian periods",
+      "why": "Sweden began building Suomenlinna in 1748 on islands at the entrance to Helsinki Harbour. Vauban’s fortification ideas were adapted to the archipelago, and the fortress later served Sweden, Russia and Finland.",
+      "realityCheck": "The fortress has no entrance fee, but the HSL ferry from Market Square takes about 15 minutes and museums, cafés and other services keep separate hours. The site receives about one million visitors a year, with summer visitor pressure high enough for UNESCO to note erosion of sandbanks, so check the daily calendar before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/583/"
@@ -3102,16 +3102,16 @@ export const europeTravelSpots = [
       ],
       "area": "Finland",
       "kind": "UNESCO religious heritage",
-      "access": "Walkable historic-area access",
+      "access": "Parking by Highway 23; the church is about 200 metres from the lot, with uneven floors and steep steps; no wheelchair access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
+      "uniqueness": "Preserved pine-log Lutheran church combining Renaissance central planning, Gothic vaulting and Finnish vernacular construction",
       "why": "Petäjävesi Old Church, in central Finland, was built of logs between 1763 and 1765. This Lutheran country church is a typical example of an architectural tradition that is unique to eastern Scandinavia.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Summer visits run daily from June through August, but weddings and services can interrupt access; winter visits require a reservation at least two weeks ahead. The 200-metre approach has steep steps and the church is not barrier-free.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/584/"
@@ -3137,18 +3137,18 @@ export const europeTravelSpots = [
       "countries": [
           "Finland"
       ],
-      "area": "Finland",
+      "area": "Kymenlaakso",
       "kind": "UNESCO industrial heritage",
-      "access": "UNESCO site access; check local rules",
+      "access": "32 km from Kouvola by road; a summer weekend bus, car or taxi reaches the site, and mill visits are guided tours only.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 6,
+        "lowTouristCrowds": 7,
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "The Verla groundwood and board mill and its associated residential area is an outstanding, remarkably well-preserved example of the small-scale rural industrial settlements associated with pulp, paper and board production that flourished in northern Europe and North America in the 19th and early 20th centuries.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A preserved late-19th-century forest-industry village with original machinery, workers' housing, power plants and the surrounding rapids.",
+      "why": "The mill, workers' houses, power plants and original machinery remain in a largely intact late-19th-century forest-industry village. The guided tour follows how spruce was turned into groundwood pulp and board.",
+      "realityCheck": "The museum has a short summer season and closes in winter, while winter group tours are by request. Mill visits run as guided tours on the hour, so check the official opening-hours page before travelling.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/751/"
@@ -3174,18 +3174,18 @@ export const europeTravelSpots = [
       "countries": [
           "France"
       ],
-      "area": "France",
+      "area": "Centre-Val de Loire",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Free entry to the cathedral; direct train from Paris Montparnasse (about 1 hour), then a 10-minute walk. Check the daily calendar.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
+      "uniqueness": "An unusually complete early-13th-century Gothic cathedral with much of its 12th- and 13th-century stained glass intact.",
       "why": "Partly built starting in 1145, and then reconstructed over a 26-year period after the fire of 1194, Chartres Cathedral is a high point of French Gothic art.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Check the cathedral's daily calendar: Mass can restrict movement, while ceremonies or weather can cause partial or full closures and tower or Treasury access can be adjusted.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/81/"
@@ -3211,18 +3211,18 @@ export const europeTravelSpots = [
       "countries": [
           "France"
       ],
-      "area": "France",
+      "area": "Yvelines, Île-de-France",
       "kind": "UNESCO cultural landscape",
-      "access": "Visitor-site access; check hours",
+      "access": "Timed Palace entry; RER C to Versailles Château–Rive Gauche, then a 10-minute walk; Palace closed Mondays, with separate hours for Trianon, Gardens and Park",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 3,
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
+      "uniqueness": "A royal palace, Trianon châteaux and French formal gardens arranged along a five-kilometre royal perspective",
       "why": "The Palace of Versailles was the principal residence of the French kings from the time of Louis XIV to Louis XVI. Embellished by several generations of architects, sculptors, decorators and landscape architects, it provided Europe with a model of the ideal royal residence for over a century.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Expect crowds: the official ticketing page cites a high number of visitors and requires a timed Palace slot. Gardens, Park and Trianon have separate hours and ticket rules; check the current calendar for closures and seasonal garden charges.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/83/"
@@ -3257,9 +3257,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 7,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
+      "uniqueness": "A 12th-century Romanesque abbey church on a protected hill, with the historic village below included in the UNESCO property",
       "why": "Shortly after its foundation in the 9th century, the Benedictine abbey of Vézelay acquired the relics of St Mary Magdalene and since then it has been an important place of pilgrimage.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The basilica is open daily from 7:00 (8:00 on Mondays) to 20:00, but visits pause during prayer and Sunday Mass; check the official schedule for changes before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/84/"
@@ -3287,16 +3287,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO cultural landscape",
-      "access": "Visitor-site access; check hours",
+      "access": "Train from Paris Gare de Lyon to Fontainebleau-Avon, then bus 1 to the château; closed Tuesdays and seasonal hours",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "Used by the kings of France from the 12th century, the medieval royal hunting lodge of Fontainebleau, standing at the heart of a vast forest in the Ile-de-France, was transformed, enlarged and embellished in the 16th century by François I, who wanted to make a 'New Rome' of it.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "UNESCO-listed royal palace and park where Italian Renaissance artists influenced French Renaissance art",
+      "why": "French kings used Fontainebleau as a hunting lodge from the 12th century. François I transformed and enlarged the lodge in the 16th century because he wanted a 'New Rome'; it became a palace that combines Italian Renaissance work with French artistic traditions.",
+      "realityCheck": "The château is closed on Tuesdays and has seasonal hours; the park is open 24 hours a day, but some spaces may close early and bad weather can close the gardens.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/160/"
@@ -3324,16 +3324,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Free cathedral entry; separate paid tower and treasury tours; check seasonal hours and ceremony closures",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Amiens Cathedral, in Picardy, is one of the largest 'classic' Gothic churches of the 13th century. It is notable for the coherence of its plan, the beauty of its three-tier interior elevation and the particularly fine display of sculptures on the principal facade and in the south transept.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "One of the most complete 13th-century Gothic churches, with a coherent plan and extensive medieval sculpture",
+      "why": "Amiens Cathedral, in Picardy, is one of the largest 'classic' Gothic churches of the 13th century. Its coherent plan, three-tier interior elevation and sculpture on the principal facade and in the south transept are the features UNESCO identifies in its listing.",
+      "realityCheck": "The cathedral interior is free to visit, while the towers and treasury require separate tickets; hours vary by season and religious ceremonies, and tower access can close in bad weather.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/162/"
@@ -3359,21 +3359,21 @@ export const europeTravelSpots = [
       "countries": [
           "France"
       ],
-      "area": "France",
+      "area": "Côte-d'Or, Burgundy",
       "kind": "UNESCO religious heritage",
-      "access": "UNESCO site access; check local rules",
+      "access": "Open daily; 66-minute TGV from Paris to Montbard, then 5 km by taxi or bike; hours vary by season",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "This stark Burgundian monastery was founded by St Bernard in 1119. With its church, cloister, refectory, sleeping quarters, bakery and ironworks, it is an excellent illustration of the ideal of self-sufficiency as practised by the earliest communities of Cistercian monks.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "An unusually complete Cistercian complex whose intact site retains its Romanesque church, cloister, monastic buildings and a late-12th-century forge",
+      "why": "Fontenay was founded by Saint Bernard in 1118. Its Romanesque church, cloister, dormitory and late-12th-century forge show how a Cistercian community combined worship with agriculture and industry.",
+      "realityCheck": "The abbey is open daily, but the schedule changes sharply by season: 10am–6pm from 3 April to 1 November and split hours the rest of the year. Its official site says it welcomes over 100,000 visitors annually, so summer visits can be busy.",
       "source": {
-          "label": "UNESCO World Heritage Centre",
-          "url": "https://whc.unesco.org/en/list/165/"
+          "label": "Abbaye de Fontenay (official site)",
+          "url": "https://www.abbayedefontenay.com/en/"
       },
       "map": {
           "name": "Cistercian Abbey of Fontenay",
@@ -3398,16 +3398,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO industrial heritage",
-      "access": "UNESCO site access; check local rules",
+      "access": "Paid visitor sites; Arc-et-Senans has a TER station 100 metres from the entrance, while the underground gallery at Salins-les-Bains requires a guided tour and stair access.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 6,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "The Royal Saltworks of Arc-et-Senans, near Besançon, was built by Claude Nicolas Ledoux. Its construction, begun in 1775 during the reign of Louis XVI, was the first major achievement of industrial architecture, reflecting the ideal of progress of the Enlightenment.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A linked pair of saltworks: Salins-les-Bains preserves underground brine extraction and a working 19th-century pump, while Arc-et-Senans preserves Ledoux's semicircular 18th-century factory.",
+      "why": "The Royal Saltworks at Arc-et-Senans, 35 km from Besançon, was designed by Claude-Nicolas Ledoux and built from 1775 to 1779 under Louis XVI. UNESCO calls its semicircular complex the first architectural complex of this scale and standard designed as a place of work; Ledoux's planned ideal city around it was never built.",
+      "realityCheck": "This is a two-site visit with separate seasonal hours. The underground gallery at Salins-les-Bains is reached by stairs and can only be visited on a guided tour; Arc-et-Senans has a TER station 100 metres from the entrance.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/203/"
@@ -3442,7 +3442,7 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
+      "uniqueness": "A medieval urban ensemble that brings together the Papal Palace, the episcopal buildings, city ramparts and four surviving arches of the Saint-Bénézet Bridge.",
       "why": "In the 14th century, this city in the South of France was the seat of the papacy. The Palais des Papes, an austere-looking fortress lavishly decorated by Simone Martini and Matteo Giovanetti, dominates the city, the surrounding ramparts and the remains of a 12th-century bridge over the Rhone.",
       "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
       "source": {
@@ -3472,16 +3472,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Near Poitiers; reach it by car or bus, with self-guided visits during opening hours and guided tours varying by season and church activity",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+        "globallyUnique": 8,
+        "laymenInterest": 8,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Known as the 'Romanesque Sistine Chapel', the Abbey-Church of Saint-Savin contains many beautiful 11th- and 12th-century murals which are still in a remarkable state of preservation.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "An extensive ensemble of 11th- and 12th-century Romanesque murals preserved across the church",
+      "why": "The church contains an extensive 11th- and 12th-century biblical mural cycle, with scenes from Genesis, Exodus and the Apocalypse. Much of the painted decoration remains in situ.",
+      "realityCheck": "Hours vary by season and a religious ceremony can shift a guided visit to the monastic buildings until the church is available. Check the official schedule before going; large bags and suitcases are not allowed inside.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/230/"
@@ -3508,17 +3508,17 @@ export const europeTravelSpots = [
           "France"
       ],
       "area": "France",
-      "kind": "UNESCO industrial heritage",
-      "access": "UNESCO site access; check local rules",
+      "kind": "UNESCO cultural heritage",
+      "access": "Site open year-round; bus links from Nîmes and Avignon, with paid parking.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 8,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "The Pont du Gard was built shortly before the Christian era to allow the aqueduct of Nîmes (which is almost 50 km long) to cross the Gard river. The Roman architects and hydraulic engineers who designed this bridge, which stands almost 50 m high and is on three levels – the longest measuring 275 m – created a technical as well as an artistic masterpiece.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A well-preserved Roman aqueduct bridge with three levels of arches and a height of nearly 49 m",
+      "why": "The Pont du Gard is the three-storey crossing on the roughly 50 km Roman aqueduct that carried water from near Uzès to Nîmes in the first century AD. It rises nearly 49 m above the Gardon River, and its upper level stretches 275 m.",
+      "realityCheck": "The Pont du Gard EPCC reports nearly 1 million visitors a year. Cultural venues have seasonal hours and close Monday mornings for maintenance.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/344/"
@@ -3546,15 +3546,15 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Free 24-hour access to the Cité; ticketed castle and ramparts",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 7,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Since the pre-Roman period, a fortified settlement has existed on the hill where Carcassonne now stands. In its present form it is an outstanding example of a medieval fortified town, with its massive defences encircling the castle and the surrounding buildings, its streets and its fine Gothic cathedral.",
+      "uniqueness": "Inhabited medieval town with two concentric walls, 52 towers and 3 km of ramparts",
+      "why": "A fortified settlement has existed on this hill since the pre-Roman period. The present city has two concentric walls around its streets, castle and Gothic Saint-Nazaire Basilica; Eugène Viollet-le-Duc led a long restoration campaign here from 1853 to 1879.",
       "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
       "source": {
           "label": "UNESCO World Heritage Centre",
@@ -3583,16 +3583,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Free cathedral entry; towers require an online-booked guided tour; Palace of Tau closed for renovation until 2027; Saint-Rémi Basilica and museum are about 20 minutes on foot",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The outstanding handling of new architectural techniques in the 13th century, and the harmonious marriage of sculptural decoration with architecture, has made Notre-Dame in Reims one of the masterpieces of Gothic art.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A three-part coronation complex: a Gothic cathedral, the former royal Benedictine Abbey of Saint-Rémi and the archbishop's Palace of Tau",
+      "why": "Reims Cathedral combines 13th-century Gothic construction with sculpture integrated into the architecture. The former Abbey of Saint-Rémi and Palace of Tau complete a coronation complex tied to the French monarchy.",
+      "realityCheck": "The city reports about 1.5 million visitors a year at Reims Cathedral. The Palace of Tau is closed for renovation until 2027, while the towers run seasonal guided tours with online booking.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/601/"
@@ -3620,16 +3620,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Historic-centre site; the crypt is guided-tour only and tower visits use limited seasonal guided slots; check current hours",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The Cathedral of St Etienne of Bourges, built between the late 12th and late 13th centuries, is one of the great masterpieces of Gothic art and is admired for its proportions and the unity of its design.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A five-nave Gothic cathedral with no transept, five sculpted west portals and stained glass dating from the 13th to 17th centuries",
+      "why": "Built from 1195 in a single major phase, the cathedral has a five-nave plan without a transept and a five-level structure that brings light into the interior. The ambulatory contains 13th-century stained-glass windows.",
+      "realityCheck": "The crypt is guided-tour only and tower visits have limited seasonal slots; the official schedule also lists Sunday-morning and holiday closures. Check current times before planning.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/635/"
@@ -3664,9 +3664,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "This 360-km network of navigable waterways linking the Mediterranean and the Atlantic through 328 structures (locks, aqueducts, bridges, tunnels, etc.) is one of the most remarkable feats of civil engineering in modern times.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A 17th-century canal network still in operation, with Pierre-Paul Riquet's original route, water-supply system and many structures intact",
+      "why": "Built between 1667 and 1694, this 360-km UNESCO waterway network links the Mediterranean and the Atlantic through 328 structures, including locks, aqueducts, bridges and tunnels.",
+      "realityCheck": "Sailing is seasonal, with navigation generally possible from early April to early November; maintenance, weather damage and local access rules can close sections, so check VNF notices first.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/770/"
@@ -3768,16 +3768,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO cultural landscape",
-      "access": "Regional route or landscape access",
+      "access": "Regional roads and hiking routes; no single site entrance",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 6,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "This 302,319 ha property, in the southern part of central France, is a mountain landscape interspersed by deep valleys that is representative of the relationship between agro-pastoral systems and their biophysical environment, notably through drailles or drove roads.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "UNESCO-listed agro-pastoral landscape with drailles, stone farmhouses and traditional summer transhumance on Mont Lozère",
+      "why": "This 302,319 ha property lies in southern central France, where deep mountain valleys, drailles and drove roads show how agro-pastoral systems shaped the terrain.",
+      "realityCheck": "There is no single entrance: the property covers 302,319 ha across Aveyron, Gard, Hérault and Lozère, so choose a gateway town or trailhead before planning transport.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1153/"
@@ -3804,17 +3804,17 @@ export const europeTravelSpots = [
           "France"
       ],
       "area": "France",
-      "kind": "UNESCO industrial heritage",
-      "access": "UNESCO site access; check local rules",
+      "kind": "UNESCO historic place",
+      "access": "Walkable city-centre heritage area with a 5 km route; trams and buses connect the centre, while museums and monuments have separate hours and booking rules",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "The Port of the Moon, port city of Bordeaux in south-west France, is inscribed as an inhabited historic city, an outstanding urban and architectural ensemble, created in the age of the Enlightenment, whose values continued up to the first half of the 20th century, with more protected buildings than any other French city except Paris.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "An inhabited UNESCO historic city whose early-18th-century plans and classical and neoclassical buildings form a coherent urban ensemble",
+      "why": "The UNESCO designation covers an inhabited historic city rather than a single monument. Early-18th-century plans and classical and neoclassical buildings give Bordeaux a coherent urban form, while its port supported cultural and commercial exchange for more than 2,000 years. UNESCO says only Paris has more protected buildings among French cities.",
+      "realityCheck": "The UNESCO area is an inhabited city-centre district. Bordeaux Tourism's 5 km route is straightforward, but museums and monuments along it have separate hours, reservations and seasonal closures.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1256/"
@@ -3842,16 +3842,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable UNESCO core; daily trains from Toulouse and Paris",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "On the banks of the Tarn river in south-west France, the old city of Albi has a dense medieval architectural ensemble. Today the Old Bridge (Pont-Vieux), the Saint-Salvi quarter and its church are testimony to its initial development (10th -11th centuries).",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Rare, unusually complete medieval episcopal ensemble unified by local fired brick",
+      "why": "On the Tarn in south-west France, Albi's old city preserves a dense medieval urban ensemble. The Pont-Vieux and the Saint-Salvi quarter with its church preserve evidence of the city's early development in the 10th and 11th centuries.",
+      "realityCheck": "The historic centre is easy to walk, but cathedral visits run 10:00–18:00 Monday–Saturday and 13:00–17:15 on Sundays and feast days. Religious celebrations can restrict or interrupt entry, so check the current schedule before planning around an interior visit.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1337/"
@@ -3878,17 +3878,17 @@ export const europeTravelSpots = [
           "France"
       ],
       "area": "France",
-      "kind": "UNESCO industrial heritage",
-      "access": "UNESCO site access; check local rules",
+      "kind": "UNESCO maritime and architectural heritage",
+      "access": "Boat-only access; departures from Royan or Le Verdon-sur-Mer are timed to low tide and may be restricted by weather or sea conditions",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+        "globallyUnique": 8,
+        "laymenInterest": 8,
+        "easeOfAccess": 6,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
+      "uniqueness": "A monumental open-sea lighthouse with a Renaissance royal chapel and apartments that remains an active maritime signal",
       "why": "The Lighthouse of Cordouan rises up on a shallow rocky plateau in the Atlantic Ocean at the mouth of the Gironde estuary in the Nouvelle-Aquitaine region, in a highly exposed and hostile environment.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Visits are tide-bound boat trips. Opening begins about two hours before low tide and ends no later than one hour after low tide or one hour before sunset; weather, sea conditions and shifting sandbanks can also change access, so check the current schedule before booking.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1625/"
@@ -3916,16 +3916,16 @@ export const europeTravelSpots = [
       ],
       "area": "France",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Open urban site; central districts are walkable and Nice's tram and bus network connects the wider property",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 6,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
+      "uniqueness": "A 522-hectare UNESCO urban property whose hotels, villas, promenades and street plan record the rise of international winter tourism",
       "why": "Nice, located on the Mediterranean, at the foot of the Alps, near the Italian border, in the Provence-Alpes-Côte d’Azur region, grew as a city devoted to winter tourism, making the most of its mild climate and its coastal situation, between sea and mountains.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Nice is a major tourist city, with 2.2 million hotel and residence stays in 2024. The listed area is a 522-hectare urban district; its interpretation centre lists Monday-Friday, 10am-5pm opening in 2026, so plan around those hours if you want context beyond a walk.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1635/"
@@ -3953,16 +3953,16 @@ export const europeTravelSpots = [
       ],
       "area": "Georgia",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "About 11 km from Kutaisi; marshrutka 33 runs to the monastery, but restoration can restrict entry",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 8,
+        "laymenInterest": 6,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Founded in 1106 in the west of Georgia, the Monastery of Gelati is a masterpiece of the Golden Age of medieval Georgia, a period of political strength and economic growth between the 11th and 13th centuries.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "An Orthodox monastery whose main church has a well-preserved 12th-century apse mosaic and Georgia's largest ensemble of medieval and post-medieval wall paintings, with much of its landscape setting intact",
+      "why": "Founded in 1106 near Kutaisi, Gelati grew during Georgia's medieval Golden Age. Its main church was completed in 1130 and contains a 12th-century apse mosaic and murals from the 12th to 17th centuries; the monastery also housed an important academy.",
+      "realityCheck": "Restoration is ongoing and parts of the complex may be closed or scaffolded; confirm which buildings are open before visiting rather than relying on standard hours.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/710/"
@@ -3988,18 +3988,18 @@ export const europeTravelSpots = [
       "countries": [
           "Germany"
       ],
-      "area": "Germany",
+      "area": "Aachen, North Rhine-Westphalia",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "In central Aachen, about a 15-minute walk from the main station; cathedral entry is free, while the choir hall and imperial throne require a guided tour.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
+      "uniqueness": "A Carolingian palatine chapel with a preserved octagonal core, later enlarged by a Gothic choir and medieval chapels.",
       "why": "Construction of this palatine chapel, with its octagonal basilica and cupola, began c. 790–800 under the Emperor Charlemagne.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "Entry to the cathedral is free, but services, concerts and events can change hours at short notice. The choir hall and imperial throne are accessible only on a guided tour; check the cathedral's current calendar before visiting.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/3/"
@@ -4025,18 +4025,18 @@ export const europeTravelSpots = [
       "countries": [
           "Germany"
       ],
-      "area": "Germany",
+      "area": "Speyer, Rhineland-Palatinate",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Open to visitors, with seasonal hours; services and concerts can restrict access, and tower and Imperial Hall visits have separate hours",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Speyer Cathedral, a basilica with four towers and two domes, was founded by Conrad II in 1030 and remodelled at the end of the 11th century. It is one of the most important Romanesque monuments from the time of the Holy Roman Empire.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "The world's largest Romanesque church, with four towers, two domes and a gallery that encircles the building",
+      "why": "Speyer Cathedral was founded by Conrad II in 1030 and remodelled under Henry IV in the 1080s. Its four towers, two domes and encircling gallery define the Romanesque design; German emperors were buried here for almost 300 years.",
+      "realityCheck": "The cathedral is an active church: services and concerts can restrict access. Tower and Imperial Hall hours are seasonal, and the Imperial Hall and observation platform close to individual visitors from November through March.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/168/"
@@ -4064,16 +4064,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO cultural landscape",
-      "access": "UNESCO site access; check local rules",
+      "access": "In Würzburg; about 20 minutes on foot from the station, with buses and trams nearby. The palace rooms are ticketed and open daily on seasonal hours; the Court Garden is free until dusk.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "This magnificent Baroque palace – one of the largest and most beautiful in Germany and surrounded by wonderful gardens – was created under the patronage of the prince-bishops Lothar Franz and Friedrich Carl von Schönborn.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "An 18th-century Baroque palace whose architecture and decoration combine French, Italian, Austrian and German work, including Balthasar Neumann’s design and Tiepolo’s staircase fresco.",
+      "why": "Begun for Prince-Bishop Johann Philipp Franz von Schönborn in 1720, the Residence was completed under his brother and successor Friedrich Carl and decorated by artists from France, Italy, Austria and Germany. Tiepolo’s 18-by-30-metre staircase fresco and more than 40 visitable rooms are the main reasons to go inside.",
+      "realityCheck": "The Court Garden is free and open daily until dusk, while the palace rooms require a ticket and follow seasonal hours. English tours run at 11 am and 3 pm; online tickets let visitors skip the cash-desk queue.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/169/"
@@ -4101,16 +4101,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "In central Hildesheim and reachable on foot or by public transport; check seasonal hours and service or concert closures.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "St Michael's Church was built between 1010 and 1020 on a symmetrical plan with two apses that was characteristic of Ottonian Romanesque art in Old Saxony. Its interior, in particular the wooden ceiling and painted stucco-work, its famous bronze doors and the Bernward bronze column, are – together with the treasures of St Mary's Cathedral – of exceptional.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A rare surviving Ottonian Romanesque complex with Bernward's bronze doors and column, St Michael's painted wooden ceiling and the medieval town layout around both churches.",
+      "why": "St Michael's Church was built between 1010 and 1020 on a symmetrical plan with two apses characteristic of Ottonian Romanesque art in Old Saxony. Its painted stucco-work and wooden ceiling, together with St Mary's Cathedral's bronze doors and Bernward's bronze column, are examples of Romanesque churches in the Holy Roman Empire that UNESCO considers of exceptional interest.",
+      "realityCheck": "St Michael's is open to visitors from 1 April to 31 October: 10:00–18:00 Monday to Saturday and 12:00–18:00 on Sundays and church holidays. Services, concerts and rehearsals can restrict visits, while St Mary's Cathedral has separate hours.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/187/"
@@ -4138,16 +4138,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Open daily, but sightseeing is barred during services and may be unavailable during tours or pilgrim masses; check current hours.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 6,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Miraculously preserved in the beautiful setting of an Alpine valley, the Church of Wies (1745–54), the work of architect Dominikus Zimmermann, is a masterpiece of Bavarian Rococo – exuberant, colourful and joyful.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "UNESCO-listed Rococo pilgrimage church with an intact rural Alpine setting",
+      "why": "The Church of Wies was built from 1745 to 1754 under Dominikus Zimmermann's direction in an Alpine valley near Steingaden. Its oval plan, stucco work, frescoes and trompe-l'œil ceiling form a unified Bavarian Rococo interior.",
+      "realityCheck": "The church attracts roughly one million visitors a year. It is open daily, but sightseeing stops during services and may be restricted during tours or pilgrim masses, so check the current visiting hours.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/271/"
@@ -4182,9 +4182,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
+      "uniqueness": "UNESCO-listed Old Town island with a largely intact medieval street plan, patrician houses, churches and salt storehouses",
       "why": "Lübeck – the former capital and Queen City of the Hanseatic League – was founded in the 12th century and prospered until the 16th century as the major trading centre for northern Europe.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The Old Town is walkable, but individual sights have separate hours and closures: St. Mary's Church is scheduled to close for renovation from 1 November 2026 until May 2027.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/272/"
@@ -4210,18 +4210,18 @@ export const europeTravelSpots = [
       "countries": [
           "Germany"
       ],
-      "area": "Germany",
+      "area": "Cologne, North Rhine-Westphalia",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Beside Cologne Central Station; tourist visits require a ticket, with weekday hours generally 10:00–17:45 and shorter Sunday and holiday hours",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "Begun in 1248, the construction of this Gothic masterpiece took place in several stages and was not completed until 1880. Over seven centuries, successive builders were inspired by the same faith and a spirit of absolute fidelity to the original plans.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A 157-metre High Gothic five-aisled basilica with a large medieval stained-glass cycle and the Shrine of the Magi",
+      "why": "Construction began in 1248, stopped for more than 300 years and resumed in the 19th century, when builders completed the medieval plan in 1880. The five-aisled basilica holds the Shrine of the Magi, medieval choir fittings and a large cycle of early-14th-century stained glass.",
+      "realityCheck": "Tourist entry to the interior became ticketed on 1 July 2026; services, construction work and special events can restrict access. The tower climb requires 533 steps, and the cathedral recommends booking online to avoid waiting times.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/292/"
@@ -4286,16 +4286,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO religious heritage",
-      "access": "UNESCO site access; check local rules",
+      "access": "Train and bus access to Lorsch; the station is about a 10-minute walk from the museum center and grounds. The grounds are free until nightfall, while the Königshalle upper floor requires a public tour and museum hours vary.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 7,
+        "laymenInterest": 6,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The abbey, together with its monumental entrance, the famous 'Torhall', are rare architectural vestiges of the Carolingian era. The sculptures and paintings from this period are still in remarkably good condition.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A rare surviving Carolingian gatehouse with archaeological remains from more than 800 years of monastic life",
+      "why": "The Torhalle, also called the Königshalle, is a rare surviving Carolingian gatehouse whose original appearance is largely intact. The site also preserves Carolingian sculpture and painting and archaeological remains from more than 800 years of monastic life.",
+      "realityCheck": "The grounds and Altenmünster are open all year until nightfall, but the Königshalle's upper floor is tour-only and the Museum Center and Zehntscheune have separate seasonal hours and admission.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/515/"
@@ -4323,16 +4323,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO cultural landscape",
-      "access": "Visitor-site access; check hours",
+      "access": "Public access across Potsdam and Berlin; palace interiors have site-specific hours, and Sanssouci uses fixed admission times with limited daily tickets",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "With 500 ha of parks and 150 buildings constructed between 1730 and 1916, Potsdam's complex of palaces and parks forms an artistic whole, whose eclectic nature reinforces its sense of uniqueness.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A cross-city ensemble of Prussian palaces, parks and designed spaces along the Havel, extending across Potsdam and Berlin",
+      "why": "The original 500-hectare property included 150 buildings constructed between 1730 and 1916. After extensions in 1992 and 1999, the UNESCO property covers 2,064 hectares across Potsdam and Berlin, including Sanssouci, the New Garden, Babelsberg, Sacrow and Glienicke Park.",
+      "realityCheck": "The property spans many sites. Sanssouci Palace drew 291,363 visitors in 2025, uses fixed admission times and limits daily tickets; other interiors have separate hours and restoration closures, so check the SPSG schedule before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/532/"
@@ -4404,9 +4404,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 7,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
+      "uniqueness": "UNESCO-listed medieval town with more than 2,000 half-timbered houses, a preserved medieval town plan and the Romanesque Collegiate Church of St Servatius",
       "why": "Quedlinburg, in the Land of Sachsen-Anhalt, was a capital of the East Franconian German Empire at the time of the Saxonian-Ottonian ruling dynasty. It has been a prosperous trading town since the Middle Ages.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The castle museum is closed for renovation until 3 October 2026. The collegiate church is closed on Mondays and has scheduled visiting hours, so check current access before planning around the Stiftsberg.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/535/"
@@ -4506,18 +4506,18 @@ export const europeTravelSpots = [
       "countries": [
           "Germany"
       ],
-      "area": "Germany",
+      "area": "Bamberg, Bavaria",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable historic centre; take bus 901 or another bus from Bamberg station to the ZOB, then walk 5–10 minutes",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
+      "uniqueness": "Early-medieval town plan with three historic settlement areas and surviving medieval ecclesiastical and secular buildings",
       "why": "From the 10th century onwards, this town became an important link with the Slav peoples, especially those of Poland and Pomerania. During its period of greatest prosperity, from the 12th century onwards, the architecture of Bamberg strongly influenced northern Germany and Hungary.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The historic centre is walkable, but summer afternoons can be crowded around the Old Town Hall and cathedral. Check attraction hours before visiting.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/624/"
@@ -4545,16 +4545,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO architectural heritage",
-      "access": "UNESCO site access; check local rules",
+      "access": "Three-city serial site; access varies by component, with paid tickets at major Dessau interiors, seasonal opening at Weimar's Haus Am Horn and guided tours required for Bernau's inhabited Trade Union School.",
       "scores": {
-          "globallyUnique": 7,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 7,
+        "laymenInterest": 6,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed architectural heritage with preserved cultural fabric",
-      "why": "Between 1919 and 1933 the Bauhaus movement revolutionized architectural and aesthetic thinking and practice in the 20th century. The Bauhaus buildings in Weimar, Dessau and Bernau are fundamental representatives of Classical Modernism, directed towards a radical renewal of architecture and design.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A serial property of seven component parts across three cities, including Haus Am Horn in Weimar, the Bauhaus Building and Masters' Houses in Dessau and the ADGB Trade Union School in Bernau.",
+      "why": "The Bauhaus began in Weimar in 1919, moved to Dessau in 1925 and closed in 1933. Its surviving sites across Weimar, Dessau and Bernau show the school's use of reinforced concrete, glass and steel, along with functional planning and social-housing experiments.",
+      "realityCheck": "Treat it as a multi-city itinerary. Dessau's major buildings have fixed opening hours and paid admission, Haus Am Horn in Weimar is open only in the summer season and Bernau's inhabited Trade Union School requires a guided tour; the historic Employment Office in Dessau is currently closed to visitors.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/729/"
@@ -4582,16 +4582,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO architectural heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Central Berlin; U5 Museumsinsel or S-Bahn Friedrichstraße/Hackescher Markt; museum hours vary and the Pergamonmuseum is closed for construction",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 6,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed architectural heritage with preserved cultural fabric",
-      "why": "The museum as a social phenomenon owes its origins to the Age of Enlightenment in the 18th century. The five museums on the Museumsinsel in Berlin, built between 1824 and 1930, are the realization of a visionary project and show the evolution of approaches to museum design over the course of the 20th century.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A planned ensemble of five museums built between 1824 and 1930, with each building designed in relation to its collections",
+      "why": "The idea of the public museum emerged from the 18th-century Enlightenment. Five museums were built on the Museumsinsel between 1824 and 1930, and each was designed in relation to its collections. Together they show how museum design changed over more than a century.",
+      "realityCheck": "Expect a busy central-city complex: 2,573,641 people visited its five buildings in 2023. Hours vary by museum, most close on Mondays and the Pergamonmuseum is closed for construction, with a partial reopening planned for 2027.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/896/"
@@ -4730,16 +4730,16 @@ export const europeTravelSpots = [
       ],
       "area": "Germany",
       "kind": "UNESCO architectural heritage",
-      "access": "Walkable historic-area access",
+      "access": "Walkable city-centre access; town hall interior by guided tour",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed architectural heritage with preserved cultural fabric",
+      "uniqueness": "A Gothic and Weser Renaissance town hall beside the 1404 Roland, with its historic relationship to the market square still intact",
       "why": "The Town Hall and the statue of Roland on the marketplace of Bremen in north-west Germany are outstanding representations of civic autonomy and sovereignty, as these developed in the Holy Roman Empire in Europe.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The square and Roland are easy to see, but the town hall interior is guided-only. The standard tour is scheduled daily at noon, dates are released about a month ahead and official events can close the building.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1087/"
