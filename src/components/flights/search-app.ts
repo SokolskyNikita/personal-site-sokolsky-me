@@ -1190,7 +1190,10 @@ function renderResultLeg(
   `;
 }
 
-/** One horizontal strip: clock times, flight time on each hop, layover at each stop. */
+/** One horizontal strip: clock times, flight time on each hop, layover at each stop.
+ * Each unit is hop then airport so wrap keeps them together. The hop is first
+ * so leftover width stretches rails, not a gap after the layover chip.
+ */
 function renderRouteLine(option: ItineraryOption): string {
   const first = option.segments[0]!;
   const last = option.segments.at(-1)!;
