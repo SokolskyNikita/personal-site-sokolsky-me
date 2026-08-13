@@ -1193,6 +1193,7 @@ function renderResultLeg(
 /** One horizontal strip: clock times, flight time on each hop, layover at each stop.
  * Each unit is hop then airport so wrap keeps them together. The hop is first
  * so leftover width stretches rails, not a gap after the layover chip.
+ * Unit flex-grow follows hop minutes so short legs are not visually crushed.
  */
 function renderRouteLine(option: ItineraryOption): string {
   const first = option.segments[0]!;
@@ -1206,9 +1207,11 @@ function renderRouteLine(option: ItineraryOption): string {
 
   option.segments.forEach((segment, index) => {
     const isLast = index === option.segments.length - 1;
-    const hop = renderFlightHop(segmentLegMinutes(segment));
+    const minutes = segmentLegMinutes(segment);
+    const hop = renderFlightHop(minutes);
+    const unitStyle = ` style="flex-grow:${hopFlexGrow(minutes)}"`;
     if (isLast) {
-      parts.push(`<span class="fs-route-unit">
+      parts.push(`<span class="fs-route-unit"${unitStyle}>
         ${hop}
         <span class="fs-route-end">
           ${renderAirportCode(segment.arrivalAirport)}
@@ -1223,7 +1226,7 @@ function renderRouteLine(option: ItineraryOption): string {
       layoverMins > 0
         ? `<span class="fs-route-lay">${CLOCK_ICON}${escapeHtml(formatDuration(layoverMins))}</span>`
         : "";
-    parts.push(`<span class="fs-route-unit">
+    parts.push(`<span class="fs-route-unit"${unitStyle}>
       ${hop}
       <span class="fs-route-stop">
         ${renderAirportCode(segment.arrivalAirport)}
@@ -1259,6 +1262,11 @@ function renderFlightHop(minutes: number): string {
     ${meta}
     <span class="fs-route-rail"></span>
   </span>`;
+}
+
+/** Floor so a 30m hop still gets a readable rail next to a 10h hop. */
+function hopFlexGrow(minutes: number): number {
+  return Math.max(Math.round(minutes), 45);
 }
 
 function layoverAfterSegment(

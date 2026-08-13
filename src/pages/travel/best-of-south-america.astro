@@ -3595,19 +3595,6 @@ const structuredData = {
                   Open map
                 </a>
               </div>
-              <div class="badges" aria-label={`${spot.name} attributes`}>
-                <span>{spot.kind}</span>
-                <span>{spot.countries.join(" / ")}</span>
-                <span>{spot.access}</span>
-                <span>
-                  From BA: {spot.trip.days} days · {usdFormatter.format(spot.trip.costUsd)}
-                </span>
-                {typeof spot.map.rating === "number" && (
-                  <span>
-                    GMaps {spot.map.rating.toFixed(1)} · {formatter.format(spot.map.reviewCount ?? 0)} reviews
-                  </span>
-                )}
-              </div>
               <div class="score-panel" aria-label={`${spot.name} ranking scores`}>
                 <div class="score-total">
                   <span>Total score</span>
@@ -4022,22 +4009,6 @@ const structuredData = {
     line-height: 1.45;
   }
 
-  .badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .badges span {
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--panel) 70%, transparent);
-    color: var(--muted);
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 6px 10px;
-  }
-
   .map-section,
   .toolbar {
     margin-top: 12px;
@@ -4183,10 +4154,6 @@ const structuredData = {
     font-weight: 800;
     padding: 8px 12px;
     text-decoration: none;
-  }
-
-  .badges {
-    margin-bottom: 10px;
   }
 
   .score-panel {

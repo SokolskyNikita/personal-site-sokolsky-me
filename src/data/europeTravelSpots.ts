@@ -16,10 +16,10 @@ export const europeTravelSpots = [
       "globallyUnique": 9,
       "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 9,
+      "lowTouristCrowds": 4,
     },
-    "uniqueness": "One of the world’s deepest continuous cave-dwelling urban records",
-    "why": "Matera’s rarity is continuity: cave houses, churches, lanes and ravine-edge settlement forming a city where habitation reaches back into prehistory. The Sassi are not one monument but a whole urban fabric cut into soft tufa.",
+    "uniqueness": "A large rock-cut settlement with evidence of human occupation from the Palaeolithic to the present",
+    "why": "Matera’s rarity is the way cave houses, churches and lanes along the ravine form a city with roots in prehistory. Together the Sassi form an urban fabric built into the natural caves of the Murgia.",
     "realityCheck": "It is now polished and popular. Stay overnight or walk beyond the central lanes to see the city form rather than only the hotel version.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Sassi_di_Matera",
     "source": {
@@ -55,15 +55,15 @@ export const europeTravelSpots = [
       "globallyUnique": 9,
       "laymenInterest": 10,
       "easeOfAccess": 5,
-      "lowTouristCrowds": 10,
+      "lowTouristCrowds": 3,
     },
     "uniqueness": "A submarine canyon that helps produce some of the world’s largest surfable waves",
-    "why": "Travel Stack Exchange explains Nazaré’s giant-wave season through the North Canyon, Atlantic swell, wind, tide and sea-floor effects. The site makes ocean-floor geometry visible as extreme surf.",
+    "why": "The Nazaré Canyon focuses and refracts incoming swell toward Praia do Norte, where it can meet waves arriving from another direction. Distant Atlantic storms supply the swell, while the canyon's bathymetry helps produce surf over 20 metres high in exceptional conditions.",
     "realityCheck": "Big-wave days are weather-dependent. The season is usually autumn through winter, and a trip can miss the waves entirely.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Nazar%C3%A9,_Portugal#Surfing",
     "source": {
-      "label": "Travel Stack Exchange",
-      "url": "https://travel.stackexchange.com/questions/178545/when-can-i-see-the-giant-waves-in-nazare-portugal"
+      "label": "NASA Earth Observatory",
+      "url": "https://earthobservatory.nasa.gov/images/149486/monster-waves-of-nazare"
     },
     "map": {
       "name": "Nazare Canyon",
@@ -96,7 +96,7 @@ export const europeTravelSpots = [
       "globallyUnique": 5,
       "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 9,
+      "lowTouristCrowds": 4,
     },
     "uniqueness": "Artemy top-tier rating: medieval ridge and planned Georgian city facing each other",
     "why": "Edinburgh is a city, but below the million-person cutoff and in Artemy’s top tier. Its travel value is the paired urban form: Old Town ridge, castle rock, closes, New Town geometry and volcanic hills around the center.",
@@ -134,8 +134,8 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 5,
       "laymenInterest": 9,
-      "easeOfAccess": 10,
-      "lowTouristCrowds": 9,
+      "easeOfAccess": 8,
+      "lowTouristCrowds": 5,
     },
     "uniqueness": "Artemy top-tier rating: Corsican harbor city between Napoleonic memory and granite island coast",
     "why": "Ajaccio is included because it is in Artemy’s top tier and gives the Europe page a Corsican urban island case: harbor, citadel edge, Napoleon sites, mountain-backed coast and a different island identity from mainland France.",
@@ -174,7 +174,7 @@ export const europeTravelSpots = [
       "globallyUnique": 8,
       "laymenInterest": 9,
       "easeOfAccess": 5,
-      "lowTouristCrowds": 10,
+      "lowTouristCrowds": 7,
     },
     "uniqueness": "A dense, still-inhabited medieval tower-house landscape in the high Caucasus",
     "why": "Svaneti’s koshki towers are rare because they are not a museum village or a single skyline. Hundreds of defensive tower-houses remain woven into mountain settlements, preserved by isolation and still read against glaciers and daily village life.",
@@ -249,7 +249,7 @@ export const europeTravelSpots = [
       "Georgia"
     ],
     "area": "Imereti",
-    "kind": "Industrial cable-car transit",
+    "kind": "Urban cable-car transit",
     "access": "Local cable-car and town access",
     "scores": {
       "globallyUnique": 7,
@@ -257,13 +257,13 @@ export const europeTravelSpots = [
       "easeOfAccess": 10,
       "lowTouristCrowds": 8,
     },
-    "uniqueness": "A mining town shaped by Soviet-era cable-car commuting",
-    "why": "Travel Stack Exchange cites Chiatura’s cable cars as unusual public transport built to move mineworkers between the town and manganese mines. The transport system is tied to the town’s industrial geography.",
-    "realityCheck": "Old lines have been closed, replaced or rebuilt over time. Check current operating routes before planning around the Soviet-era cars.",
+    "uniqueness": "A manganese-mining town with cable cars linking its steep valley and outlying districts",
+    "why": "Chiatura's 1954 cable-car network moved mineworkers and ore through the steep manganese-mining valley. Modern replacement lines now connect the city centre with outlying districts, while the historic Sashevardno line reopened in late 2024.",
+    "realityCheck": "The original Soviet-era system was taken out of service as unsafe, while four modern lines reopened in 2021 and the Sashevardno historic line reopened in late 2024. Check which lines are running before you go.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Chiatura",
     "source": {
-      "label": "Travel Stack Exchange",
-      "url": "https://travel.stackexchange.com/questions/7862/what-unusual-means-of-public-share-transportation-exist-around-the-world"
+      "label": "Wander-Lush",
+      "url": "https://wander-lush.org/kutaisi-to-chiatura/"
     },
     "map": {
       "name": "Central Cable Car Station",
@@ -294,20 +294,20 @@ export const europeTravelSpots = [
     ],
     "area": "Dinaric karst",
     "kind": "Cave biodiversity",
-    "access": "Cave visits and vivarium exhibits",
+    "access": "Tourist cave tours and vivarium exhibits",
     "scores": {
       "globallyUnique": 8,
       "laymenInterest": 8,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 7,
+      "lowTouristCrowds": 4,
     },
-    "uniqueness": "Europe’s only cave-adapted vertebrate and one of the world’s great subterranean-fauna regions",
-    "why": "The olm is the rare case where a whole biological oddity has one European address: a blind, neotenic aquatic salamander adapted to underground water in the Dinaric karst. The animal is easier to understand at Postojna, but the real phenomenon is the wider cave ecosystem.",
-    "realityCheck": "Postojna is mass tourism, and wild olm habitat is sensitive. Treat public vivarium viewing as the ethical version unless you are with conservation-focused specialists.",
+    "uniqueness": "Europe’s only cave-adapted vertebrate and one of the world’s richest regions for subterranean biodiversity",
+    "why": "The olm is a blind, neotenic aquatic salamander that lives in the underground waters of the Dinaric karst, from northeastern Italy through Slovenia and Croatia to Bosnia and Herzegovina. Postojna’s Vivarium gives visitors a public view of the animal, while much of the wider cave ecosystem is physically inaccessible.",
+    "realityCheck": "Postojna is a mass-tourism site with about a million visitors a year. Wild olm habitat is sensitive to pollution and disturbance, and many caves are inaccessible, so the public vivarium is the practical low-impact way to see the species.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Olm",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Olm"
+      "label": "PLOS ONE",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0170945"
     },
     "map": {
       "name": "Vivarij- Vivarium",
@@ -335,16 +335,16 @@ export const europeTravelSpots = [
     ],
     "area": "Southwest Iceland",
     "kind": "Subaerial plate boundary",
-    "access": "Golden Circle roads; guided snorkeling or diving for Silfra",
+    "access": "Golden Circle roads; Silfra snorkeling or diving requires a buddy, a park permit and full cold-water equipment; diving also requires certification",
     "scores": {
       "globallyUnique": 8,
       "laymenInterest": 7,
-      "easeOfAccess": 10,
-      "lowTouristCrowds": 8,
+      "easeOfAccess": 8,
+      "lowTouristCrowds": 3,
     },
-    "uniqueness": "The Mid-Atlantic Ridge exposed above sea level, with a diveable fissure between plates",
-    "why": "Iceland is the one place where the Mid-Atlantic Ridge rises into open air, and Þingvellir makes that planetary structure walkable. Silfra adds the rare, literal version: cold glacial water in a fissure between the North American and Eurasian plates.",
-    "realityCheck": "Þingvellir is not obscure and Silfra is tightly guided. Book well ahead, expect cold-water rules and treat the geology as more important than the Instagram split-shot.",
+    "uniqueness": "An exposed section of Iceland’s Mid-Atlantic rift, with the clear, diveable Silfra fissure inside the rift zone",
+    "why": "Þingvellir is an onshore section of Iceland’s Mid-Atlantic rift, where the land between the North American and Eurasian plates is pulling apart and subsiding. Silfra is a water-filled fissure within that rift zone, fed by groundwater filtered through lava from Langjökull glacier and clear enough for roughly 100 metres of visibility.",
+    "realityCheck": "Þingvellir is not obscure and Silfra is tightly regulated. Book an operator well ahead or arrange the park permit yourself; expect a buddy requirement, full cold-water gear and water around 2–4°C. The geology matters more than the Instagram split-shot.",
     "wikiUrl": "https://en.wikipedia.org/wiki/%C3%9Eingvellir",
     "source": {
       "label": "Wikipedia",
@@ -375,17 +375,17 @@ export const europeTravelSpots = [
       "Greece"
     ],
     "area": "Laconia",
-    "kind": "Lebedev-loved fortress town",
-    "access": "Road access from the Peloponnese",
+    "kind": "Medieval fortress town on a sea rock",
+    "access": "Road or KTEL bus from Athens; local bus from Gefyra to the fortress",
     "scores": {
       "globallyUnique": 7,
-      "laymenInterest": 6,
-      "easeOfAccess": 10,
-      "lowTouristCrowds": 7,
+      "laymenInterest": 8,
+      "easeOfAccess": 7,
+      "lowTouristCrowds": 5,
     },
-    "uniqueness": "Artemy top-tier rating: a walled medieval town hidden on a sea rock",
-    "why": "Monemvasia earns a card because Artemy puts it in his top rating tier and because its urban form is unusually compressed: a fortified town tucked behind a causeway-linked rock, with Byzantine, Venetian and Ottoman layers.",
-    "realityCheck": "It is small and can be crowded in season. Stay overnight if you want the rock town after day traffic leaves.",
+    "uniqueness": "Artemy top-tier rating: a walled medieval town on a massive sea rock reached by a narrow causeway",
+    "why": "Lebedev's top-tier rating is one reason to include Monemvasia. The town's urban form is unusually compressed: a fortified settlement on a causeway-linked rock, with Byzantine, Venetian and Ottoman layers.",
+    "realityCheck": "The rock town is small and can be busy in summer. The upper town is reached by a steep, winding path. Stay overnight if you want the lower town after day traffic leaves.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Monemvasia",
     "source": {
       "label": "Artemy Lebedev travel rating",
@@ -419,7 +419,7 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 9,
       "laymenInterest": 6,
-      "easeOfAccess": 10,
+      "easeOfAccess": 3,
       "lowTouristCrowds": 9,
     },
     "uniqueness": "An Orthodox monastic republic with medieval continuity and strict access rules",
@@ -455,20 +455,20 @@ export const europeTravelSpots = [
     ],
     "area": "Baarle",
     "kind": "Inhabited enclave system",
-    "access": "Road or bike access",
+    "access": "Road, bike or regional bus access",
     "scores": {
-      "globallyUnique": 5,
-      "laymenInterest": 6,
+      "globallyUnique": 9,
+      "laymenInterest": 8,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 9,
+      "lowTouristCrowds": 7,
     },
     "uniqueness": "A town where Belgian and Dutch borders run through streets and buildings",
-    "why": "Travel Stack Exchange answers point to Baarle as a place where you can stand with one foot in Belgium and one in the Netherlands, with border lines cutting through houses and shopfronts. It is one of the most readable enclave systems on Earth.",
+    "why": "At Loveren 19, the border passes through a house, so one foot can be in Belgium and the other in the Netherlands. The 22 Belgian enclaves and eight Dutch enclaves put marked borders through streets, gardens and other buildings, and the 4 km enclave walk makes the arrangement easy to follow.",
     "realityCheck": "The charm is cartographic, not scenic. Go with a map or walking route and pay attention to the marked borders on the pavement.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Baarle-Hertog",
     "source": {
-      "label": "Travel Stack Exchange",
-      "url": "https://travel.stackexchange.com/questions/19941/one-foot-in-belgium-and-the-other-in-the-netherlands"
+      "label": "Visit Baarle",
+      "url": "https://m-en.visitbaarle.com/locaties/enclaves-5e43f39e38374665355357fe"
     },
     "map": {
       "name": "Baarle-Hertog",
@@ -493,16 +493,16 @@ export const europeTravelSpots = [
       "Norway"
     ],
     "area": "Vestland",
-    "kind": "Lebedev-loved harbor town",
+    "kind": "Harbor city with a Hanseatic wharf",
     "access": "Easy flight/rail access",
     "scores": {
-      "globallyUnique": 5,
+      "globallyUnique": 8,
       "laymenInterest": 10,
       "easeOfAccess": 10,
       "lowTouristCrowds": 4,
     },
-    "uniqueness": "Artemy top-tier rating: Hanseatic wharf town between harbor and steep mountains",
-    "why": "Bergen appears in Artemy’s top tier and is strongest as a harbor-and-mountain settlement: Bryggen’s timber trading quarter, fish-market edge, funicular hills and fjord weather sit tightly together.",
+    "uniqueness": "Artemy top-tier rating: UNESCO-listed Hanseatic wharf in Bergen, a harbor city between the sea and steep mountains",
+    "why": "Bergen appears in Artemy’s top tier. Around the harbor, Bryggen’s timber trading quarter, the Fish Market and the Fløibanen funicular are all within a short walk. Fjord trips leave from the city too.",
     "realityCheck": "Rain is part of the trip. Bryggen is compact, so add the hills or a fjord day rather than treating it as a one-street stop.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Bryggen",
     "source": {
@@ -535,20 +535,20 @@ export const europeTravelSpots = [
     ],
     "area": "Gobustan and Absheron",
     "kind": "Mud volcano field",
-    "access": "4x4 or rough-road day trip from Baku",
+    "access": "80 km / 1 h 20 min from Baku by car via E119; raw field routes need a 4x4 or local driver",
     "scores": {
-      "globallyUnique": 6,
+      "globallyUnique": 8,
       "laymenInterest": 9,
-      "easeOfAccess": 10,
+      "easeOfAccess": 7,
       "lowTouristCrowds": 7,
     },
-    "uniqueness": "The densest concentration of mud volcanoes on Earth",
-    "why": "Azerbaijan earns a top slot because mud volcanoes exist elsewhere, but nowhere with this national-scale density and activity. The Gobustan and Absheron fields make methane, mud, cold eruptions and Caspian geology visible in a way few places can match.",
-    "realityCheck": "Some routes are rough and informal, while the newer tourism complex is easier but less wild. Pair the pin with current local advice if you want the raw field experience.",
+    "uniqueness": "One of Earth's highest concentrations of mud volcanoes, with more than 300 on land and offshore",
+    "why": "Azerbaijan has more than 300 mud volcanoes on land and offshore, many clustered near Baku and Qobustan. The Gobustan and Absheron fields expose cold mud, methane-rich gas and sedimentary geology, while submarine eruptions can build short-lived islands in the Caspian Sea.",
+    "realityCheck": "The 2024 tourism complex has a visitor center, exhibits and guided quad-bike or golf-cart routes. Raw field sites remain off-road, so check local conditions and arrange a driver before leaving Baku.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Mud_volcanoes_in_Azerbaijan",
     "source": {
       "label": "NASA Earth Observatory",
-      "url": "https://earthobservatory.nasa.gov/images/79114/mud-volcanoes-in-azerbaijan"
+      "url": "https://science.nasa.gov/earth/earth-observatory/a-school-of-mud-volcano-islands-in-azerbaijan/"
     },
     "map": {
       "name": "Mud Volcanoes Tourism Complex",
@@ -582,11 +582,11 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 9,
       "laymenInterest": 8,
-      "easeOfAccess": 10,
+      "easeOfAccess": 8,
       "lowTouristCrowds": 4,
     },
     "uniqueness": "The largest unbroken intertidal sand-and-mud-flat system on Earth",
-    "why": "The Wadden Sea ranks this high because it is not simply a scenic coast; it is the planet’s largest continuous tidal-flat system, with twice-daily exposed seabed, immense bird migration and a functioning intertidal ecosystem in one of Europe’s densest regions.",
+    "why": "The Wadden Sea is the world's largest unbroken system of intertidal sand and mud flats. Tides expose the seabed twice a day, and up to 6.1 million birds can be present at once; 10–12 million pass through each year.",
     "realityCheck": "Timing controls everything. Use tide-aware guides for wadlopen, plan ferries carefully and expect wind, mud and weather rather than polished seaside ease.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Wadden_Sea",
     "source": {
@@ -618,7 +618,7 @@ export const europeTravelSpots = [
       "Italy"
     ],
     "area": "Bay of Naples",
-    "kind": "Buried Roman city",
+    "kind": "Buried Roman cities",
     "access": "Rail and site walking",
     "scores": {
       "globallyUnique": 8,
@@ -631,8 +631,8 @@ export const europeTravelSpots = [
     "realityCheck": "Heat and crowds can be rough. Herculaneum often gives the better preservation-to-crowd ratio.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Pompeii",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Pompeii"
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/829/"
     },
     "map": {
       "name": "Archaeological Park of Herculaneum",
@@ -665,7 +665,7 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 9,
       "laymenInterest": 10,
-      "easeOfAccess": 10,
+      "easeOfAccess": 6,
       "lowTouristCrowds": 4,
     },
     "uniqueness": "A living remnant of the laurel forests that once covered southern Europe and North Africa",
@@ -707,10 +707,10 @@ export const europeTravelSpots = [
       "globallyUnique": 5,
       "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 4,
+      "lowTouristCrowds": 3,
     },
     "uniqueness": "Artemy top-tier rating: inhabited caldera rim above a Bronze Age volcanic system",
-    "why": "Santorini is famous, but it also fits Artemy’s top tier and the global-uniqueness bar: white villages sit on the rim of a flooded volcanic caldera tied to one of the eastern Mediterranean’s major Bronze Age eruptions.",
+    "why": "Artemy's top-tier rating has a concrete basis: whitewashed villages sit on the rim of a mostly submerged volcanic caldera formed by the Late Bronze Age Minoan eruption.",
     "realityCheck": "Cruise crowds can flatten the place. Stay away from the peak-hour Oia/Fira circuit if possible.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Santorini_caldera",
     "source": {
@@ -786,20 +786,20 @@ export const europeTravelSpots = [
     ],
     "area": "Norwegian High Arctic",
     "kind": "Accessible polar archipelago",
-    "access": "Flights to Longyearbyen; guided travel outside town",
+    "access": "Direct flights from Oslo or Tromsø to Longyearbyen; guided travel recommended outside town",
     "scores": {
       "globallyUnique": 5,
       "laymenInterest": 9,
-      "easeOfAccess": 3,
-      "lowTouristCrowds": 10,
+      "easeOfAccess": 5,
+      "lowTouristCrowds": 5,
     },
     "uniqueness": "A high-Arctic settlement and wilderness edge with the Global Seed Vault nearby",
-    "why": "Svalbard is not the only polar extreme, but the mix is unusual: direct-flight access, polar bear country, months of midnight sun and darkness, a visa-free international settlement and humanity’s crop backup in the permafrost.",
-    "realityCheck": "You cannot wander outside Longyearbyen casually because of polar-bear rules and conditions. Expedition costs rise quickly once you leave town.",
+    "why": "Svalbard combines direct flights, polar-bear country, months of midnight sun and polar night, a settlement outside Schengen and the Global Seed Vault in permafrost.",
+    "realityCheck": "Outside Longyearbyen, you should travel with a professional guide because of polar-bear risk and rapidly changing conditions. Independent travel can require notification to the Governor and search-and-rescue insurance.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Svalbard",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Svalbard_Global_Seed_Vault"
+      "label": "Visit Svalbard",
+      "url": "https://en.visitsvalbard.com/inspiration/various/svalbard-global-seed-vault"
     },
     "map": {
       "name": "Longyearbyen",
@@ -825,20 +825,20 @@ export const europeTravelSpots = [
     ],
     "area": "Oświęcim",
     "kind": "Holocaust memorial museum",
-    "access": "Timed memorial and museum access",
+    "access": "Online-reserved, timed access to the memorial and museum",
     "scores": {
       "globallyUnique": 9,
       "laymenInterest": 7,
       "easeOfAccess": 10,
       "lowTouristCrowds": 3,
     },
-    "uniqueness": "A preserved central site of the Holocaust and Nazi extermination camp system",
-    "why": "Travel Stack Exchange threads on former Nazi camps and Krakow day trips repeatedly point to Auschwitz-Birkenau as a museum and memorial visit. It is not a general WWII museum; it is a preserved place of mass murder.",
-    "realityCheck": "Use sober pacing and current visitor rules. This is a memorial site first, with crowd management and guided-entry rules that change by season.",
+    "uniqueness": "The largely intact grounds of Auschwitz I and Auschwitz II-Birkenau, the principal Nazi German concentration and extermination camp complex",
+    "why": "The visit covers preserved grounds and exhibitions at Auschwitz I and Auschwitz II-Birkenau, the principal Nazi German concentration and extermination camp complex. The museum preserves victims' belongings and survivor testimonies while documenting how the Holocaust was carried out.",
+    "realityCheck": "Plan for a sober, several-hour visit. Entry passes are limited and reserved online, opening hours vary by month and the Auschwitz I and Auschwitz II-Birkenau sites are 3.5 km apart.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Auschwitz-Birkenau_State_Museum",
     "source": {
-      "label": "Travel Stack Exchange",
-      "url": "https://travel.stackexchange.com/questions/14165/where-can-i-visit-former-nazi-camps-and-prisons-in-europe"
+      "label": "Auschwitz-Birkenau State Museum",
+      "url": "https://www.auschwitz.org/en/visiting/basic-information/"
     },
     "map": {
       "name": "Memorial and Museum Auschwitz-Birkenau",
@@ -866,16 +866,16 @@ export const europeTravelSpots = [
     ],
     "area": "Zeeland",
     "kind": "Water-control infrastructure",
-    "access": "Road and cycle access",
+    "access": "Free road, cycle and foot access",
     "scores": {
-      "globallyUnique": 5,
-      "laymenInterest": 5,
-      "easeOfAccess": 10,
+      "globallyUnique": 7,
+      "laymenInterest": 6,
+      "easeOfAccess": 8,
       "lowTouristCrowds": 7,
     },
-    "uniqueness": "National-scale storm-surge and sea-defense infrastructure that visitors can cross",
-    "why": "Travel Stack Exchange points to Dutch sea-defense structures such as Afsluitdijk and Oosterscheldekering as long bridge-dam-barrier routes. Delta Works turns a national survival problem into visible infrastructure.",
-    "realityCheck": "This is infrastructure travel. Pair a crossing with the visitor center or a cycling segment to make the engineering legible.",
+    "uniqueness": "A nine-kilometre movable storm-surge barrier with 65 concrete piers, 62 gates and a public road, cycle path and footpath",
+    "why": "Travel Stack Exchange describes the 9 km Oosterscheldekering as a cycle crossing with a separate cycle path. The barrier normally leaves the Oosterschelde open to tides and closes its 62 gates when high water threatens.",
+    "realityCheck": "This is infrastructure travel. Pair the crossing with Deltapark Neeltje Jans, which explains the Delta Works, or with a cycling route; the barrier has a road, cycle path and footpath.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Delta_Works",
     "source": {
       "label": "Travel Stack Exchange",
@@ -914,13 +914,13 @@ export const europeTravelSpots = [
       "easeOfAccess": 10,
       "lowTouristCrowds": 5,
     },
-    "uniqueness": "The last year-round scheduled passenger hovercraft route",
-    "why": "Travel Stack Exchange lists the Southsea-Ryde hovercraft as an unusual public transport survivor: a hovercraft route used as scheduled transit rather than a fairground novelty.",
+    "uniqueness": "The only scheduled passenger hovercraft service in Europe.",
+    "why": "Hovertravel is Europe's only scheduled passenger hovercraft service, carrying commuters, schoolchildren and tourists between Southsea and Ryde. It is public transport, not a fairground novelty.",
     "realityCheck": "Weather can disrupt service. The ride is short, so pair it with Isle of Wight or Portsmouth context.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Hovertravel",
     "source": {
-      "label": "Travel Stack Exchange",
-      "url": "https://travel.stackexchange.com/questions/7862/what-unusual-means-of-public-share-transportation-exist-around-the-world"
+      "label": "Hovertravel: About Hovertravel",
+      "url": "https://www.hovertravel.co.uk/company/about-hovertravel/"
     },
     "map": {
       "name": "Hovertravel | Southsea",
@@ -946,18 +946,18 @@ export const europeTravelSpots = [
     "countries": [
       "Croatia"
     ],
-    "area": "Lika and Karlovac counties",
+    "area": "Lika-Senj and Karlovac counties",
     "kind": "Travertine lake system",
-    "access": "Boardwalk routes through a national park",
+    "access": "Boardwalk routes and marked trails through a national park",
     "scores": {
       "globallyUnique": 6,
       "laymenInterest": 10,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 0,
+      "lowTouristCrowds": 2,
     },
-    "uniqueness": "A spectacular self-building travertine barrier landscape, with non-European process rivals",
-    "why": "Plitvice is extraordinary visually, but it ranks below the one-address phenomena because travertine-dammed lake systems are not unique to Europe. Its value is the scale, clarity and park access to a living carbonate landscape.",
-    "realityCheck": "It is popular and route-controlled. Start early, book in season and accept that the boardwalk system is part of protecting the lakes.",
+    "uniqueness": "A cascade of 16 named lakes separated by actively growing tufa barriers, unusual for its scale and intactness.",
+    "why": "The lake system is visually arresting, but it ranks below places whose defining process has no close analogue: tufa barriers also shape Croatia's Krka River. Plitvice's case is the combination of scale, clear water and public access to an active tufa-building system.",
+    "realityCheck": "It is popular and the park uses timed entry. Start early and reserve a slot in the high season. Stay on marked routes: tufa barriers are fragile and the park prohibits straying from trails.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Plitvice_Lakes_National_Park",
     "source": {
       "label": "UNESCO World Heritage Centre",
@@ -991,10 +991,10 @@ export const europeTravelSpots = [
     "kind": "Lebedev-loved remote archipelago",
     "access": "Boat access in good weather",
     "scores": {
-      "globallyUnique": 5,
+      "globallyUnique": 8,
       "laymenInterest": 9,
       "easeOfAccess": 2,
-      "lowTouristCrowds": 10,
+      "lowTouristCrowds": 9,
     },
     "uniqueness": "Artemy top-tier rating: evacuated Atlantic island culture and seabird cliffs",
     "why": "St Kilda fits the list because Artemy places it in his top rating tier and the archipelago is also globally hard to replace: an evacuated village, sea stacks, seabird colonies and Atlantic isolation in one small group of islands.",
@@ -1034,7 +1034,7 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 6,
       "laymenInterest": 9,
-      "easeOfAccess": 10,
+      "easeOfAccess": 9,
       "lowTouristCrowds": 2,
     },
     "uniqueness": "A young lava landscape from one of the longest recorded basaltic fissure eruptions",
@@ -1042,8 +1042,8 @@ export const europeTravelSpots = [
     "realityCheck": "Much of the park is route-controlled. The demonstrations are memorable, but the stronger trip is understanding how much of Lanzarote the eruption remade.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Timanfaya_National_Park",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/Timanfaya_National_Park"
+      "label": "CACT Lanzarote",
+      "url": "https://cactlanzarote.com/en/visit/montanas-del-fuego"
     },
     "map": {
       "name": "Timanfaya National Park",
@@ -1078,8 +1078,8 @@ export const europeTravelSpots = [
       "easeOfAccess": 10,
       "lowTouristCrowds": 0,
     },
-    "uniqueness": "An iconic basalt-column coast whose geology is striking but globally common",
-    "why": "The Causeway is worth keeping, but the supplied ranking correctly demotes it: columnar basalt occurs in many places worldwide. The draw here is scale, coastal setting and mythology rather than a uniquely European process.",
+    "uniqueness": "A distinctive basalt-column coast with related formations at Staffa, Mull and Ulva in Scotland",
+    "why": "The Causeway is worth keeping, but columnar basalt is not exclusive to this coast: related formations occur at Staffa, Mull and Ulva in Scotland. The draw here is scale, coastal setting and mythology rather than a process unique to Europe.",
     "realityCheck": "It is busy and managed. Walk farther along the coast for context and do not mistake fame for rarity.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Giant%27s_Causeway",
     "source": {
@@ -1119,9 +1119,9 @@ export const europeTravelSpots = [
       "easeOfAccess": 6,
       "lowTouristCrowds": 5,
     },
-    "uniqueness": "A global reference landscape for dolomitic limestone, Triassic reefs and mountain-building",
-    "why": "The Dolomites are a strong notable mention: dramatic limestone ranges exist elsewhere, but this exact fossil-archipelago story, dolomitic rock and alpine relief make them a geological reference site as well as a scenic one.",
-    "realityCheck": "They are not obscure, especially in summer and ski season. Choose bases by the geology or hikes you want rather than by postcard peaks.",
+    "uniqueness": "A classic example of mountains in dolomitic limestone, with Triassic carbonate platforms and tectonic and glacial landforms",
+    "why": "The Dolomites merit a place here because their pale limestone peaks expose Triassic carbonate platforms, fossilized atolls and reef-and-basin relationships. Tectonic uplift and erosion shaped that record into a mountain range that remains legible from the trail.",
+    "realityCheck": "They are not obscure: the Odle trail near Seceda reportedly drew about 8,000 walkers in one day in summer 2025, and ski resorts get busy in winter. Choose a base by the geology or hikes you want rather than by a postcard peak.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Dolomites",
     "source": {
       "label": "UNESCO World Heritage Centre",
@@ -1155,18 +1155,18 @@ export const europeTravelSpots = [
     "kind": "Cave system",
     "access": "Guided cave route",
     "scores": {
-      "globallyUnique": 5,
+      "globallyUnique": 8,
       "laymenInterest": 10,
-      "easeOfAccess": 10,
+      "easeOfAccess": 6,
       "lowTouristCrowds": 3,
     },
-    "uniqueness": "A huge underground river canyon in the type region for karst",
-    "why": "Škocjan is ranked for the scale of the Reka River canyon below ground, beyond cave decoration.",
+    "uniqueness": "One of the world's largest known underground river canyons in the Classical Karst",
+    "why": "The Reka River canyon reaches up to 150 metres high and more than 120 metres wide; its scale is the main event.",
     "realityCheck": "Tours are fixed-route and damp. The surface karst nearby helps explain the cave.",
     "wikiUrl": "https://en.wikipedia.org/wiki/%C5%A0kocjan_Caves",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/%C5%A0kocjan_Caves"
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/390/"
     },
     "map": {
       "name": "Skocjan Caves",
@@ -1194,16 +1194,16 @@ export const europeTravelSpots = [
     ],
     "area": "Malta and Gozo",
     "kind": "Megalithic temple complex",
-    "access": "Timed archaeological-site visits",
+    "access": "Heritage Malta sites across Malta and Gozo; the Hypogeum requires timed entry",
     "scores": {
-      "globallyUnique": 6,
+      "globallyUnique": 7,
       "laymenInterest": 8,
-      "easeOfAccess": 10,
+      "easeOfAccess": 8,
       "lowTouristCrowds": 4,
     },
     "uniqueness": "An island-only megalithic tradition older than Stonehenge and the pyramids",
-    "why": "The Maltese temples rank high because they are not isolated stones but a distinct architectural tradition of enormous, freestanding temple complexes built on small islands with no metal tools or wheel. Ġgantija is the cleanest anchor for the set.",
-    "realityCheck": "The Hypogeum has strict caps and needs advance booking. The open-air temples are easier, but their fragility is part of the visit.",
+    "why": "The Maltese temples rank high because they form a distinct architectural tradition: enormous freestanding complexes built on small islands without metal tools or the wheel. Ġgantija is the clearest starting point for the set.",
+    "realityCheck": "The Hypogeum admits only 10 people at a time and Heritage Malta recommends booking early. The open-air temples are easier to visit, but protective shelters are part of the conservation strategy.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Megalithic_Temples_of_Malta",
     "source": {
       "label": "UNESCO World Heritage Centre",
@@ -1235,16 +1235,16 @@ export const europeTravelSpots = [
     ],
     "area": "Thessaly",
     "kind": "Monastic geology",
-    "access": "Road or train plus monastery visits",
+    "access": "Road or bus to Kalambaka, then local transfers and monastery stairs",
     "scores": {
-      "globallyUnique": 6,
+      "globallyUnique": 8,
       "laymenInterest": 8,
-      "easeOfAccess": 9,
-      "lowTouristCrowds": 0,
+      "easeOfAccess": 8,
+      "lowTouristCrowds": 2,
     },
     "uniqueness": "Orthodox monasteries perched on a localized landscape of vertical rock pillars",
-    "why": "Meteora’s global rarity is the fusion: a strange pillar landscape and a monastic world that once relied on nets, ladders and near-inaccessibility. The geology alone has cousins; the cultural-geological combination is the one-off.",
-    "realityCheck": "Dress rules and opening days matter. The viewpoints are easy; the monastery visits carry the point, and day-trip crowds are real.",
+    "why": "Meteora combines sandstone pillars with Orthodox monasteries that were once reached by ladders, ropes and a hoisting net. Similar rock formations exist elsewhere, but this combination of geology and monastic architecture is rare.",
+    "realityCheck": "Dress rules and changing opening days matter. Several monasteries involve steep stairs, and day-trip crowds are real.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Meteora",
     "source": {
       "label": "UNESCO World Heritage Centre",
@@ -1281,7 +1281,7 @@ export const europeTravelSpots = [
       "globallyUnique": 5,
       "laymenInterest": 7,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 3,
+      "lowTouristCrowds": 5,
     },
     "uniqueness": "The codebreaking campus tied to Enigma, Colossus and early computing",
     "why": "Travel Stack Exchange points visitors looking for Alan Turing sites to Bletchley Park, Hut 8, the Bombe reconstruction and the National Museum of Computing. The place is stronger than a memorial because the work happened there.",
@@ -1325,12 +1325,12 @@ export const europeTravelSpots = [
       "lowTouristCrowds": 2,
     },
     "uniqueness": "A historic salt mine with underground chapels, chambers and visitor routes",
-    "why": "Travel Stack Exchange treats Wieliczka as a major underground site near Krakow and compares it with Bochnia. The draw is a working-mine world turned into a museum route, not a normal cave.",
+    "why": "UNESCO lists Wieliczka with Bochnia as a royal salt-mining complex worked from the 13th century. The visitor route passes through former mine workings with underground chapels, statues and chambers carved from rock salt.",
     "realityCheck": "The route is structured and popular. Book the correct language tour and expect stairs, fixed timing and limited freedom underground.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Wieliczka_Salt_Mine",
     "source": {
-      "label": "Travel Stack Exchange",
-      "url": "https://travel.stackexchange.com/questions/92713/salt-mines-in-poland-differences-between-wieliczka-and-bochnia"
+      "label": "UNESCO World Heritage Centre",
+      "url": "https://whc.unesco.org/en/list/32/"
     },
     "map": {
       "name": "Wieliczka Salt Mine",
@@ -1358,7 +1358,7 @@ export const europeTravelSpots = [
     ],
     "area": "County Meath",
     "kind": "Neolithic passage-tomb landscape",
-    "access": "Visitor-centre shuttle and timed chamber access",
+    "access": "Visitor-centre shuttle and timed guided tours; Newgrange chamber access is limited and pre-booking is essential",
     "scores": {
       "globallyUnique": 8,
       "laymenInterest": 8,
@@ -1366,7 +1366,7 @@ export const europeTravelSpots = [
       "lowTouristCrowds": 5,
     },
     "uniqueness": "A dense Boyne Valley ritual landscape with chambered tombs older than Stonehenge",
-    "why": "Brú na Bóinne is Ireland’s strongest archaeology entry because Newgrange, Knowth and Dowth are not isolated monuments but a whole Neolithic landscape of mound engineering, passage alignment and carved stone. The winter-solstice alignment gives the place a precise astronomical hook without reducing it to one famous chamber.",
+    "why": "Brú na Bóinne is Ireland’s strongest archaeology entry because Newgrange, Knowth and Dowth form a connected Neolithic ritual landscape with large mounds, long passages and carved stones. Newgrange’s winter-solstice alignment gives the site a precise astronomical hook without making the whole visit about one famous chamber.",
     "realityCheck": "Newgrange chamber access is timed and capacity-controlled. Book ahead, and treat Knowth and the wider Boyne landscape as part of the point rather than only chasing the solstice story.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Br%C3%BA_na_B%C3%B3inne",
     "source": {
@@ -1405,7 +1405,7 @@ export const europeTravelSpots = [
     },
     "uniqueness": "A stone beehive monastery set on a steep Atlantic sea stack",
     "why": "Skellig Michael earns a card because the geography and monastic archaeology are inseparable: tiny cells, stairways and terraces built into a storm-exposed rock far off the Kerry coast. It has the drama of remote-island travel while remaining a regulated public visit rather than a private expedition.",
-    "realityCheck": "Landing boats are seasonal, capped and often cancelled by sea state. Book early and plan Kerry as the trip, not a one-day guaranteed landing.",
+    "realityCheck": "Landing trips run only in the season and depend on weather and sea conditions; visitor numbers are capped. Book early and plan Kerry as the trip, not a one-day guaranteed landing.",
     "wikiUrl": "https://en.wikipedia.org/wiki/Skellig_Michael",
     "source": {
       "label": "UNESCO World Heritage Centre",
@@ -1442,12 +1442,12 @@ export const europeTravelSpots = [
       "lowTouristCrowds": 6,
     },
     "uniqueness": "A glaciated limestone pavement landscape with rare flora, caves and megaliths",
-    "why": "The Burren is the Irish landscape entry that feels least replaceable: exposed limestone pavement, grikes full of unusual plants, turloughs, caves, wedge tombs and Atlantic farming all packed into one compact region. It is not just a scenic coast stop; the surface itself is the phenomenon.",
-    "realityCheck": "The Cliffs of Moher are nearby but not the same thing. Use Burren walks, Poulnabrone and the cave systems to understand why this limestone landscape is the keeper.",
+    "why": "The Burren is Ireland's least replaceable landscape entry: exposed limestone pavement, grikes full of unusual plants, turloughs, caves, wedge tombs and Atlantic farming all occupy one region. The limestone surface is the point, with the coast as a useful orientation marker.",
+    "realityCheck": "The Cliffs of Moher are nearby, but they are a separate stop. Walk the Burren National Park, visit Poulnabrone Dolmen and take a guided tour at Doolin or Aillwee Cave; the limestone pavement is what makes the Burren distinct.",
     "wikiUrl": "https://en.wikipedia.org/wiki/The_Burren",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/The_Burren"
+      "label": "Burren and Cliffs of Moher UNESCO Global Geopark",
+      "url": "https://www.burrengeopark.ie/"
     },
     "map": {
       "name": "The Burren National Park",
@@ -1472,7 +1472,7 @@ export const europeTravelSpots = [
     ],
     "area": "County Mayo",
     "kind": "Neolithic field system under blanket bog",
-    "access": "Visitor centre and cliff-top walks",
+    "access": "Visitor centre, cliff viewing platform and guided bog tours",
     "scores": {
       "globallyUnique": 7,
       "laymenInterest": 6,
@@ -1480,12 +1480,12 @@ export const europeTravelSpots = [
       "lowTouristCrowds": 8,
     },
     "uniqueness": "A Stone Age farming landscape preserved beneath Atlantic blanket bog",
-    "why": "Céide Fields adds an Ireland entry that is quieter but conceptually strong: walls, fields and settlement traces from early farming preserved under peat on a wild Mayo cliff edge. It turns an invisible prehistoric landscape into something legible without requiring special access.",
+    "why": "Céide Fields is a strong Ireland entry for the archaeology-minded: walls, fields and settlement traces from early farming lie beneath peat on the north Mayo coast. The visitor centre's exhibition and guided bog tour explain a settlement that is mostly hidden from view.",
     "realityCheck": "The site is subtle compared with Newgrange or Skellig. Go for the preserved landscape story, the bog archaeology and the north Mayo setting rather than a single spectacular ruin.",
     "wikiUrl": "https://en.wikipedia.org/wiki/C%C3%A9ide_Fields",
     "source": {
-      "label": "Wikipedia",
-      "url": "https://en.wikipedia.org/wiki/C%C3%A9ide_Fields"
+      "label": "Heritage Ireland",
+      "url": "https://heritageireland.ie/places-to-visit/ceide-fields-neolithic-site-visitor-centre/"
     },
     "map": {
       "name": "Céide Fields",
@@ -1509,18 +1509,18 @@ export const europeTravelSpots = [
       "countries": [
           "Albania"
       ],
-      "area": "Albania",
+      "area": "Central and southern Albania",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Road and bus access from Tirana; steep, uneven stone streets in both historic centres.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 6,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Berat and Gjirokastra are inscribed as rare examples of an architectural character typical of the Ottoman period. Located in central Albania, Berat bears witness to the coexistence of various religious and cultural communities down the centuries.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Two well-preserved fortified historic centres where Ottoman-era houses sit alongside Byzantine churches and mosques.",
+      "why": "Berat's Kala includes 13th-century Byzantine churches and Ottoman mosques, while Gjirokastra has 17th-century two-storey houses around its citadel, a bazaar and an 18th-century mosque.",
+      "realityCheck": "The two old centres are walkable but steep and uneven. Gjirokastra's shopping streets are touristy, while access to some Byzantine churches in Berat can depend on finding a local key-holder.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/569/"
@@ -1546,18 +1546,18 @@ export const europeTravelSpots = [
       "countries": [
           "Armenia"
       ],
-      "area": "Armenia",
+      "area": "Lori Province",
       "kind": "UNESCO cultural heritage",
-      "access": "UNESCO site access; check local rules",
+      "access": "Road access from Vanadzor or Alaverdi; local buses and marshrutka vans are possible, but schedules need checking.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 6,
+        "easeOfAccess": 6,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed cultural heritage with preserved cultural fabric",
-      "why": "These two Byzantine monasteries in the Tumanian region from the period of prosperity during the Kiurikian dynasty (10th to 13th century) were important centres of learning.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "These two complexes combine Byzantine ecclesiastical forms with traditional vernacular building styles from the Caucasus.",
+      "why": "These two Byzantine monasteries in the Tumanian region date from the Kiurikian dynasty's prosperous period, the 10th to 13th centuries. They were important centres of learning and Sanahin was known for its school of illuminators and calligraphers.",
+      "realityCheck": "Yerevan is 3.5–4 hours away by road and reliable public transport is limited. Stay in Vanadzor or Alaverdi and check local schedules and opening arrangements.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/777/"
@@ -1583,18 +1583,18 @@ export const europeTravelSpots = [
       "countries": [
           "Armenia"
       ],
-      "area": "Armenia",
+      "area": "Kotayk Province, Armenia",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Road access from Yerevan; taxi or tour is simplest, while public transport requires a marshrutka to Garni and a local taxi. Check local hours before visiting.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 8,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The monastery of Geghard contains a number of churches and tombs, most of them cut into the rock, which illustrate the very peak of Armenian medieval architecture.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "Rock-cut churches and tombs within a still-used medieval monastery at the entrance to the Azat Valley",
+      "why": "The complex combines a 1215 main church with 13th-century churches and tombs cut into the living rock, including the Proshyan princes' mausoleum.",
+      "realityCheck": "The site is commonly combined with Garni on half-day trips from Yerevan, so weekday mornings are quieter than weekend afternoons. The gorge road can be icy in January and February; check conditions before driving.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/960/"
@@ -1621,17 +1621,17 @@ export const europeTravelSpots = [
           "Armenia"
       ],
       "area": "Armenia",
-      "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "kind": "UNESCO religious and archaeological heritage",
+      "access": "The property is split across three areas around Vagharshapat; Zvartnots is a ticketed museum-reserve with fixed visitor hours.",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The cathedral and churches of Echmiatsin and the archaeological remains at Zvartnots graphically illustrate the evolution and development of the Armenian central-domed cross-hall type of church, which influenced architecture and art in the region.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A single World Heritage property joining Echmiatsin's cathedral and three churches with the ruins of Zvartnots, a seventh-century circular cathedral.",
+      "why": "The 301–303 cathedral at Echmiatsin and the seventh-century circular church at Zvartnots record the development of Armenia's central-domed cross-hall design, a form that influenced architecture and art across the region.",
+      "realityCheck": "The cathedral reopened after a six-year restoration in 2024, but the property still spans three areas and Zvartnots has fixed visitor hours. Check current hours and any church or conservation closures before planning the visit.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1011/"
@@ -1657,18 +1657,18 @@ export const europeTravelSpots = [
       "countries": [
           "Austria"
       ],
-      "area": "Austria",
-      "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "area": "Salzburg, Austria",
+      "kind": "UNESCO historic city centre",
+      "access": "Pedestrian old town; Salzburg Central Station is a 20-minute walk away, with trolleybus lines 1, 3, 5, 6 and 25 to the city centre",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 8,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 4,
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Salzburg has managed to preserve an unusually dense urban fabric, developed over the period from the Middle Ages to the 19th century when it was a city-state ruled by a prince-archbishop.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "The most completely preserved surviving example of an ecclesiastical city-state from the Holy Roman Empire, with a Baroque skyline dominated by Hohensalzburg Fortress",
+      "why": "Salzburg retains the split between the prince-archbishops' monumental district around the cathedral and the burghers' narrow streets and small plots. Italian architects Vincenzo Scamozzi and Santino Solari gave the centre much of its Baroque appearance.",
+      "realityCheck": "Salzburg is a major tourist stop: the city recorded 1,836,515 arrivals and 3,288,513 overnight stays in 2025. For summer 2026, the old town's pedestrian streets and a 1 July–31 August traffic rule limit car access in the centre, so use public transport or park-and-ride.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/784/"
@@ -1694,18 +1694,18 @@ export const europeTravelSpots = [
       "countries": [
           "Austria"
       ],
-      "area": "Austria",
+      "area": "Lower Austria and Styria, Austria",
       "kind": "UNESCO industrial heritage",
-      "access": "Regional route or landscape access",
+      "access": "Daily train service from Vienna or Graz; marked railway hiking trails and local buses",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "The Semmering Railway, built over 41 km of high mountains between 1848 and 1854, is one of the greatest feats of civil engineering from this pioneering phase of railway building.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A continuously operating 19th-century mountain railway with 14 tunnels, 16 major viaducts and nearby resort buildings",
+      "why": "Built between 1848 and 1854, the 41-km route crosses the Semmering Pass through 14 tunnels and 16 major viaducts, and the line remains in continuous use.",
+      "realityCheck": "Trains run daily, but this is an active public railway rather than a heritage excursion. The railway hiking trail is closed between Semmering and Wolfsbergkogel; use the detour via Südbahnstraße and Adlitzgrabenstraße.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/785/"
@@ -1731,18 +1731,18 @@ export const europeTravelSpots = [
       "countries": [
           "Austria"
       ],
-      "area": "Austria",
+      "area": "Vienna",
       "kind": "UNESCO cultural landscape",
-      "access": "Visitor-site access; check hours",
+      "access": "In Vienna; U4, trams 10 and 60 and bus 10A stop at the palace",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
+      "uniqueness": "The palace and gardens form a Baroque Gesamtkunstwerk; the 18th-century park layout is virtually untouched and the complex retains its original architecture, furnishings and spatial relationship.",
       "why": "From the 18th century to 1918, Schönbrunn was the residence of the Habsburg emperors. It was designed by the architects Johann Bernhard Fischer von Erlach and Nicolaus Pacassi and is full of outstanding examples of decorative art.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The park is free during opening hours, but palace admission and the special garden attractions are ticketed and follow separate seasonal schedules. Schönbrunn is heavily visited, so pre-book the palace on busy days.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/786/"
@@ -1770,16 +1770,16 @@ export const europeTravelSpots = [
       ],
       "area": "Austria",
       "kind": "UNESCO cultural landscape",
-      "access": "Regional route or landscape access",
+      "access": "Train, bus or car access; Hallstatt village has limited parking and the train station requires a ferry connection.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 7,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 3,
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "Human activity in the magnificent natural landscape of the Salzkammergut began in prehistoric times, with the salt deposits being exploited as early as the 2nd millennium BC.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A preserved Alpine cultural landscape shaped by more than 2,500 years of salt mining, timber production and transhumance.",
+      "why": "Systematic salt production began in the late 2nd millennium BC. Salt mining underpinned the region's prosperity into the 20th century and is visible in Hallstatt's architecture.",
+      "realityCheck": "Salzwelten Hallstatt and its Skywalk are closed for construction through 28 August 2026, with reopening scheduled for 29 August. Hallstatt can see up to 10,000 visitors on peak days, so check attraction hours, parking and crowd conditions before planning around it.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/806/"
@@ -1807,16 +1807,16 @@ export const europeTravelSpots = [
       ],
       "area": "Austria",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable historic centre; tram and a short walk to Schloss Eggenberg",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "The City of Graz – Historic Centre and Schloss Eggenberg bear witness to an exemplary model of the living heritage of a central European urban complex influenced by the secular presence of the Habsburgs and the cultural and artistic role played by the main aristocratic families.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "UNESCO-listed urban ensemble joining Graz's historic centre with Schloss Eggenberg, a 17th-century palace and its gardens",
+      "why": "Graz's historic centre and Schloss Eggenberg combine architectural styles from the Middle Ages through the 18th century. The Habsburgs and major aristocratic families shaped the city's political and artistic history.",
+      "realityCheck": "The historic centre is easy to walk, but Schloss Eggenberg is about 3 km west. Its state rooms are seasonal and accessible only by guided tour, so check current hours before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/931/"
@@ -1888,9 +1888,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 3
         },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Vienna developed from early Celtic and Roman settlements into a Medieval and Baroque city, the capital of the Austro-Hungarian Empire. It played an essential role as a leading European music centre, from the great age of Viennese Classicism through the early part of the 20th century.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A UNESCO-listed city centre with a medieval core, Baroque palace ensembles and the late-19th-century Ringstrasse",
+      "why": "Vienna developed from early Celtic and Roman settlements into a medieval and Baroque city and later became the capital of the Austro-Hungarian Empire. It was a leading European music centre from the age of Viennese Classicism through the early 20th century.",
+      "realityCheck": "The 371 ha property is a working city centre, not a single gated sight. UNESCO lists it as World Heritage in Danger for 2017–2026 because of development pressures, while Vienna’s Tourist Board says most museums open around 10:00–17:00 with some weekly closures.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1033/"
@@ -1925,9 +1925,9 @@ export const europeTravelSpots = [
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Built on a site inhabited since the Palaeolithic period, the Walled City of Baku reveals evidence of Zoroastrian, Sasanian, Arabic, Persian, Shirvani, Ottoman, and Russian presence in cultural continuity.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A rare medieval walled urban ensemble where 12th-century defenses, the Maiden Tower and the Shirvanshahs' Palace remain part of a living city.",
+      "why": "The Walled City of Baku occupies a site inhabited since the Palaeolithic period and preserves evidence of Zoroastrian, Sasanian, Arabic, Persian, Shirvani, Ottoman and Russian presence across its history.",
+      "realityCheck": "The inner city is walkable, but the Maiden Tower and Shirvanshahs' Palace are ticketed museums listed as open daily from 10:00 to 19:00. Check the official site before visiting for changes or restoration work.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/958/"
@@ -1953,18 +1953,18 @@ export const europeTravelSpots = [
       "countries": [
           "Azerbaijan"
       ],
-      "area": "Azerbaijan",
+      "area": "Greater Caucasus and central Azerbaijan",
       "kind": "UNESCO cultural landscape",
-      "access": "Regional route or landscape access",
+      "access": "Remote mountain access; arrange local transport for the final 55 km from Guba",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 5,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
-      "why": "This cultural landscape is comprised of the high-mountain Khinalig village in northern Azerbaijan, high-altitude summer pastures and agricultural terraces in the Greater Caucasus Mountains, winter pastures in the lowland plains in central Azerbaijan, and the connecting 200-kilometre-long seasonal transhumance route called Köç Yolu (“Migration Route”).",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A living UNESCO cultural landscape organized around a 200-kilometre vertical transhumance route",
+      "why": "This cultural landscape includes the high-mountain Khinalig village in northern Azerbaijan, high-altitude summer pastures and agricultural terraces in the Greater Caucasus Mountains, winter pastures in the lowland plains in central Azerbaijan and the connecting 200-kilometre-long seasonal transhumance route called Köç Yolu (“Migration Route”).",
+      "realityCheck": "Khinalig is 60 km from Guba, and the reserve's visitor guide says to arrange local transport for the final 55 km; mountain permits may be needed in July and August. UNESCO's 2025 conservation review lists tourism and visitor management as active factors, so check seasonal access and local rules before setting out.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1696/"
@@ -1992,16 +1992,16 @@ export const europeTravelSpots = [
       ],
       "area": "Belarus",
       "kind": "UNESCO fortification",
-      "access": "Visitor-site access; check hours",
+      "access": "Road or bus access from Minsk; museum entry is ticketed",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 6,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed fortification with preserved cultural fabric",
+      "uniqueness": "UNESCO-listed castle combining Gothic, Renaissance and Baroque architecture",
       "why": "The construction of this castle began at the end of the 15th century, in Gothic style. It was subsequently extended and reconstructed, first in the Renaissance and then in the Baroque style.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "realityCheck": "The museum is open daily from 10:00 to 19:00, with ticket sales ending at 18:20; the grounds are free, but museum entry requires a ticket.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/625/"
@@ -2029,16 +2029,16 @@ export const europeTravelSpots = [
       ],
       "area": "Belgium",
       "kind": "UNESCO industrial heritage",
-      "access": "Regional route or landscape access",
+      "access": "RAVeL loop past the four lifts; tourist and educational activities are no longer scheduled.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 9,
+        "laymenInterest": 6,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed industrial heritage with preserved cultural fabric",
-      "why": "The four hydraulic boat-lifts on this short stretch of the historic Canal du Centre are industrial monuments of the highest quality. Together with the canal itself and its associated structures, they constitute a remarkably well-preserved and complete example of a late-19th-century industrial landscape.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "The four hydraulic boat-lifts are the only ones among the eight built in the late 19th and early 20th centuries that remain in their original working condition.",
+      "why": "Over 7 km of the historic Canal du Centre, four hydraulic lifts each raise boats 15 to 16 metres. The canal, bridges, machinery buildings and staff housing remain together as a well-preserved late-19th-century industrial complex.",
+      "realityCheck": "The Canal du Centre website says its sites are closed and its tourist and educational activities ended with the 2025 season, although the lifts continue to operate. Contact Centrissime or Wallonia's waterways service before planning an interior visit; the official RAVeL loop passes the lifts.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/856/"
@@ -2066,16 +2066,16 @@ export const europeTravelSpots = [
       ],
       "area": "Belgium",
       "kind": "UNESCO historic place",
-      "access": "Walkable historic-area access",
+      "access": "Walkable historic centre; direct trains from Brussels",
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
-      "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
-      "why": "Brugge is an outstanding example of a medieval historic settlement, which has maintained its historic fabric as this has evolved over the centuries, and where original Gothic constructions form part of the town's identity.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A UNESCO-listed medieval city centre where the street plan, canals and brick-Gothic architecture remain legible",
+      "why": "Brugge keeps its medieval street pattern, canals and brick-Gothic buildings. The Market Place, belfry, churches and commercial complexes show how the city grew as a trading centre. Brugge was also the birthplace of the Flemish Primitives.",
+      "realityCheck": "Bruges is easy to walk but not quiet: Visit Bruges reported eight million day and overnight visitors in the historic centre in 2024, averaging 27,000 a day, with crowd-related pressure at certain times and places. Check current opening hours for museums and landmarks before you go.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/996/"
@@ -2103,16 +2103,16 @@ export const europeTravelSpots = [
       ],
       "area": "Belgium",
       "kind": "UNESCO religious heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Open to visitors; hours vary by day and restoration work can limit access to some sections.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+        "globallyUnique": 8,
+        "laymenInterest": 7,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed religious heritage with preserved cultural fabric",
-      "why": "The Cathedral of Notre-Dame in Tournai was built in the first half of the 12th century. It is especially distinguished by a Romanesque nave of extraordinary dimensions, a wealth of sculpture on its capitals and a transept topped by five towers, all precursors of the Gothic style.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "A rare Romanesque-Gothic cathedral with a five-tower transept and a 13th-century Gothic choir.",
+      "why": "The cathedral was built in the first half of the 12th century. Its Romanesque nave has unusual dimensions and richly sculpted capitals, while the transept carries five towers that anticipate Gothic forms. The choir, rebuilt in the 13th century, is Gothic.",
+      "realityCheck": "Hours vary by day, and a floor-renovation project begun in May 2026 is expected to run for two years; check current closures before planning around the interior.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1009/"
@@ -2140,16 +2140,16 @@ export const europeTravelSpots = [
       ],
       "area": "Belgium",
       "kind": "UNESCO architectural heritage",
-      "access": "Visitor-site access; check hours",
+      "access": "Currently closed for renovation through 4 December 2026; normally open Tuesday–Sunday 10:00–17:00 in central Antwerp.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "globallyUnique": 9,
+        "laymenInterest": 6,
+        "easeOfAccess": 10,
+        "lowTouristCrowds": 6,
       },
-      "uniqueness": "UNESCO-listed architectural heritage with preserved cultural fabric",
-      "why": "The Plantin-Moretus Museum is a printing plant and publishing house dating from the Renaissance and Baroque periods. Situated in Antwerp, one of the three leading cities of early European printing along with Paris and Venice, it is associated with the history of the invention and spread of typography.",
-      "realityCheck": "UNESCO status does not make it effortless: check opening hours, restoration closures, crowd patterns and local access rules before building a trip around it.",
+      "uniqueness": "The world's only surviving Renaissance- and Baroque-era printing workshop and publishing house, with workshop equipment and furnishings kept in situ, an extensive library, business archives and works of art.",
+      "why": "The complex preserves the Plantin-Moretus family's home, workshops, library and business archives in the same location where the firm operated from 1576 to 1867. It also holds the world's two oldest printing presses, along with books and art tied to Antwerp's role in early European typography.",
+      "realityCheck": "The museum is currently closed for renovation through 4 December 2026 and is scheduled to reopen on 5 December. Outside that closure, the official site lists Tuesday–Sunday hours of 10:00–17:00; check the museum's visitor page before planning a visit.",
       "source": {
           "label": "UNESCO World Heritage Centre",
           "url": "https://whc.unesco.org/en/list/1185/"

@@ -1419,20 +1419,16 @@ a {
 /*
  * Timeline units glue a hop to the following airport so wrap stays
  * "flight → stop". Extra width must go into hop rails — never after
- * a layover chip. Layover units shrink-wrap; only the last unit grows.
- * Do not put max-width on .fs-route-flight.
+ * a layover chip. Every unit grows (flex-grow is set from hop minutes
+ * in markup). Do not put max-width on .fs-route-flight.
  */
 .fs-route-unit {
   display: flex;
   align-items: center;
-  flex: 0 1 auto;
+  flex: 1 1 4.5rem;
   min-width: min-content;
   max-width: 100%;
   column-gap: 0.12rem;
-}
-
-.fs-route-unit:last-child {
-  flex: 1 1 6.25rem;
 }
 
 .fs-route-end {
@@ -2048,10 +2044,7 @@ a {
 
   .fs-route-unit {
     column-gap: 0.08rem;
-  }
-
-  .fs-route-unit:last-child {
-    flex-basis: 5.5rem;
+    flex-basis: 3.6rem;
   }
 
   .fs-route-flight {

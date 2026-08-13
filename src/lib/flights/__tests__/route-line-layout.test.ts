@@ -51,34 +51,29 @@ describe("flight route timeline layout invariants", () => {
     }
   });
 
-  it("shrink-wraps layover units so leftover width cannot sit after the chip", () => {
+  it("lets every hop unit grow so short legs are not crushed", () => {
     const flexRules = ruleBodies(css, ".fs-route-unit")
       .map(declarations)
       .filter((d) => d.flex);
     expect(flexRules.length).toBeGreaterThan(0);
-    expect(flexRules[0]!.flex).toMatch(/^0\s+1\s+/);
     for (const rule of flexRules) {
-      expect(rule.flex, "layover units must not grow").toMatch(/^0\s+/);
+      expect(rule.flex, "every hop unit must grow").toMatch(/^1\s+1\s+/);
     }
+    expect(ruleBodies(css, ".fs-route-unit:last-child")).toHaveLength(0);
   });
 
-  it("lets only the last hop unit grow to fill the row", () => {
-    const last = ruleBodies(css, ".fs-route-unit:last-child");
-    expect(last.length).toBeGreaterThan(0);
-    expect(declarations(last[0]!).flex).toMatch(/^1\s+1\s+/);
+  it("sets unit flex-grow from hop minutes", () => {
+    expect(app).toMatch(/flex-grow:\$\{hopFlexGrow\(minutes\)\}/);
+    expect(app).toMatch(
+      /<span class="fs-route-unit"\$\{unitStyle\}>\s*\$\{hop\}\s*<span class="fs-route-stop"/,
+    );
+    expect(app).toMatch(
+      /<span class="fs-route-unit"\$\{unitStyle\}>\s*\$\{hop\}\s*<span class="fs-route-end"/,
+    );
   });
 
   it("keeps stops and ends from absorbing extra width", () => {
     expect(declarations(ruleBodies(css, ".fs-route-stop")[0]!).flex).toBe("none");
     expect(declarations(ruleBodies(css, ".fs-route-end")[0]!).flex).toBe("none");
-  });
-
-  it("renders hop before the following airport inside each unit", () => {
-    expect(app).toMatch(
-      /<span class="fs-route-unit">\s*\$\{hop\}\s*<span class="fs-route-stop"/,
-    );
-    expect(app).toMatch(
-      /<span class="fs-route-unit">\s*\$\{hop\}\s*<span class="fs-route-end"/,
-    );
   });
 });
