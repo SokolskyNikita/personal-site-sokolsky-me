@@ -2,8 +2,7 @@
 import TravelSpotGuide from "../../components/travel/TravelSpotGuide.astro";
 import { europeSpotsBySubregion } from "../../data/europeSubregions";
 
-const spots = europeSpotsBySubregion["western-europe"];
-export const travelSpots = spots;
+export const travelSpots = europeSpotsBySubregion["western-europe"];
 ---
 
 <TravelSpotGuide
@@ -20,5 +19,5 @@ export const travelSpots = spots;
   mapCenter={{ lat: 49.5, lng: 2.5 }}
   mapZoom={5}
   mapErrorLabel={"Western Europe"}
-  spots={spots}
+  spots={travelSpots}
 />
