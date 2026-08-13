@@ -77,7 +77,7 @@ export const LegSearchSchema = z.object({
   gl: z.string().min(2).max(2).default("us"),
   hl: z.string().min(2).max(5).default("en"),
   deepSearch: z.boolean().default(false),
-  topN: z.number().int().min(1).max(20).default(2),
+  topN: z.number().int().min(1).max(10).default(4),
   adults: AdultsSchema.default(1),
 });
 export type LegSearch = z.infer<typeof LegSearchSchema>;

@@ -42,33 +42,21 @@
 }
 
 #hs-app .hs-section-where .fs-primary {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  align-items: start;
+  grid-template-columns: minmax(12rem, 1.35fr) repeat(2, minmax(9.5rem, 0.9fr)) minmax(5.5rem, 0.55fr);
+  align-items: end;
 }
 
-/* City + dates + adults share one row; Other city sits under City. */
-#hs-app .hs-section-where .hs-city-block {
-  grid-column: span 4;
-}
-
-/* Other-city mode: stack checkbox + free-text full width (no cramped side-by-side). */
-#hs-app .hs-section-where .fs-primary.is-other-city .hs-city-block,
-#hs-app .hs-section-where .fs-primary.is-other-city .hs-field-q {
-  grid-column: 1 / -1;
-}
-
-#hs-app .hs-section-where .fs-primary.is-other-city .hs-field-city {
-  display: none;
+#hs-app .hs-section-where .hs-field-city {
+  min-width: 0;
 }
 
 #hs-app .hs-section-where .hs-field-checkin,
 #hs-app .hs-section-where .hs-field-checkout {
-  grid-column: span 3;
+  min-width: 0;
 }
 
-/* Adults holds a single digit; a full-width column just wasted the row. */
 #hs-app .hs-section-where .hs-field-adults {
-  grid-column: span 2;
+  max-width: 7.5rem;
 }
 
 #hs-app #hs-checkin-start.is-invalid,
@@ -77,46 +65,53 @@
   box-shadow: 0 0 0 1px var(--fs-danger, #b42318);
 }
 
-#hs-app .hs-city-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
 #hs-app .fs-section-heading p {
   margin-top: 0.2rem;
   max-width: 40rem;
   line-height: 1.35;
 }
 
-#hs-app .hs-city-block .hs-field-city {
-  width: 100%;
+#hs-app .hs-nights-hint {
+  color: var(--fs-accent);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-/* Keep the toggle out of .fs-field so it doesn't inherit full-width input styles;
-   the checkbox itself stays identical to every other .fs-check on the page. */
+#hs-app .hs-nights-hint:empty {
+  display: none;
+}
+
+/* Same compact label-row pattern as airport groupings on flight search. */
 #hs-app .hs-other-city-toggle {
+  min-height: 0;
+  flex: none;
   justify-content: flex-start;
+  align-items: center;
+  gap: 0.35rem;
   width: max-content;
   max-width: 100%;
-  min-height: 1.9rem;
   margin: 0;
   padding: 0;
-  font-size: 0.8rem;
+  color: var(--fs-muted);
+  font-size: 0.72rem;
   font-weight: 500;
   text-transform: none;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 #hs-app .hs-other-city-toggle input {
-  min-width: 1.1rem;
-  flex: 0 0 1.1rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  min-width: 0.95rem;
+  flex: none;
   padding: 0;
 }
 
-#hs-app .hs-section-where .fs-field[hidden] {
+#hs-app .hs-field-city #hs-city[hidden],
+#hs-app .hs-field-city #hs-q[hidden] {
   display: none;
 }
 
@@ -140,8 +135,28 @@
   border-top: 0;
 }
 
-/* Show ranking and Cancel swap places, so equal widths keep the row still. */
-#hs-app .hs-btn-secondary {
+#hs-app .hs-btn-ranking {
+  min-width: 0;
+  padding-inline: 0.75rem;
+  border-color: transparent;
+  background: transparent;
+  color: var(--fs-accent);
+  font-weight: 600;
+}
+
+#hs-app .hs-btn-ranking:disabled {
+  opacity: 0.45;
+}
+
+@media (hover: hover) {
+  #hs-app .hs-btn-ranking:not(:disabled):hover {
+    border-color: transparent;
+    background: var(--fs-accent-soft);
+    color: var(--fs-accent-hover);
+  }
+}
+
+#hs-app .hs-btn-cancel {
   min-width: 8.5rem;
 }
 
@@ -164,8 +179,57 @@
   text-wrap: pretty;
 }
 
+#hs-app .hs-stale {
+  margin: 0.4rem 0 0;
+  color: var(--fs-warn);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+#hs-app .hs-stale[hidden] {
+  display: none;
+}
+
+#hs-app .hs-refine-details {
+  margin: 0;
+}
+
+#hs-app .hs-refine-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+#hs-app .hs-refine-summary::-webkit-details-marker {
+  display: none;
+}
+
+#hs-app .hs-refine-summary h2 {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+#hs-app .hs-refine-summary p {
+  margin: 0;
+  max-width: 40rem;
+  color: var(--fs-muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+#hs-app .hs-refine-details .fs-secondary {
+  margin-top: 0.55rem;
+}
+
 #hs-app .hs-section-refine .fs-secondary {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: end;
 }
 
@@ -194,7 +258,7 @@
 
 /* Nothing to report before the first search: collapse instead of leaving a
    divider floating above the empty state. */
-#hs-app .fs-status:has(> #hs-search-summary:empty):has(> #hs-offline-banner[hidden]):has(> #hs-banners:empty):has(> #hs-progress:empty) {
+#hs-app .fs-status:has(> #hs-search-summary:empty):has(> #hs-offline-banner[hidden]):has(> #hs-stale[hidden]):has(> #hs-banners:empty):has(> #hs-progress:empty) {
   padding: 0;
   margin: 0;
   border-bottom: 0;
@@ -209,7 +273,7 @@
    fixed dock does. */
 #hs-app .fs-search-progress {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   left: auto;
   bottom: auto;
   z-index: 20;
@@ -286,6 +350,7 @@
 
 .hs-cell-hotel a {
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .hs-cell-deal {
@@ -480,6 +545,33 @@
   font-size: 0.85em;
 }
 
+@media (min-width: 721px) {
+  #hs-app .hs-refine-summary {
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 960px) {
+  #hs-app .hs-section-where .fs-primary {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  #hs-app .hs-section-where .hs-field-city {
+    grid-column: 1 / -1;
+  }
+
+  #hs-app .hs-section-where .hs-field-checkin,
+  #hs-app .hs-section-where .hs-field-checkout {
+    grid-column: span 2;
+  }
+
+  #hs-app .hs-section-where .hs-field-adults {
+    grid-column: span 2;
+    max-width: none;
+  }
+}
+
 @media (max-width: 720px) {
   #hs-app.fs-page {
     padding-inline: max(0.65rem, env(safe-area-inset-left));
@@ -495,6 +587,7 @@
   }
 
   #hs-app .fs-heading p {
+    max-width: none;
     font-size: 0.82rem;
     line-height: 1.4;
   }
@@ -517,26 +610,22 @@
   }
 
   #hs-app .hs-section-where .fs-primary {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem 0.5rem;
   }
 
-  #hs-app .hs-section-where .hs-city-block {
-    grid-column: span 6;
-  }
-
-  #hs-app .hs-section-where .hs-field-adults {
-    grid-column: span 6;
-  }
-
-  #hs-app .hs-section-where .fs-primary.is-other-city .hs-city-block,
-  #hs-app .hs-section-where .fs-primary.is-other-city .hs-field-q {
+  #hs-app .hs-section-where .hs-field-city {
     grid-column: 1 / -1;
   }
 
   #hs-app .hs-section-where .hs-field-checkin,
   #hs-app .hs-section-where .hs-field-checkout {
-    grid-column: span 3;
+    grid-column: span 1;
+  }
+
+  #hs-app .hs-section-where .hs-field-adults {
+    grid-column: 1;
+    max-width: 8.5rem;
   }
 
   #hs-app .hs-run-row {
@@ -552,24 +641,62 @@
   }
 
   #hs-app .hs-run-row .fs-actions {
+    display: flex;
+    flex-wrap: wrap;
     justify-content: stretch;
+    gap: 0.4rem;
   }
 
-  #hs-app .hs-run-row .fs-btn {
-    flex: 1;
+  #hs-app .hs-run-row .fs-btn-primary,
+  #hs-app .hs-run-row .hs-btn-cancel {
+    flex: 1 1 100%;
+    width: 100%;
   }
 
-  #hs-app .hs-btn-secondary {
-    min-width: 0;
-  }
-
-  /* Full-height label so the checkbox keeps a thumb-sized target. */
-  #hs-app .hs-other-city-toggle {
+  #hs-app .hs-run-row .hs-btn-ranking {
+    flex: 1 1 100%;
+    width: 100%;
     min-height: 44px;
+    padding-inline: 1rem;
+    border-color: var(--fs-line);
+    background: var(--fs-bg);
+    color: var(--fs-ink);
+    align-self: stretch;
+  }
+
+  #hs-app .hs-other-city-toggle {
+    min-height: 1.5rem;
+  }
+
+  #hs-app .hs-refine-summary {
+    position: relative;
+    padding-right: 1.5rem;
+  }
+
+  #hs-app .hs-refine-summary::after {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.15rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1.5px solid var(--fs-muted);
+    border-bottom: 1.5px solid var(--fs-muted);
+    content: "";
+    transform: rotate(-45deg);
+    transition: transform 140ms ease-out;
+  }
+
+  #hs-app .hs-refine-details[open] > .hs-refine-summary::after {
+    top: 0.55rem;
+    transform: rotate(45deg);
   }
 
   #hs-app .hs-section-refine .fs-secondary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #hs-app .hs-field-budget {
+    grid-column: 1 / -1;
   }
 
   #hs-app .hs-refine-toggles {
@@ -636,6 +763,10 @@
     min-width: 0;
   }
 
+  .hs-table tr[data-token] > .hs-cell-hotel a {
+    overflow-wrap: anywhere;
+  }
+
   .hs-table tr[data-token] > .hs-cell-score {
     grid-column: 3;
     grid-row: 1;
@@ -665,6 +796,16 @@
     grid-row: 2;
     text-align: right;
     font-size: 0.82rem;
+  }
+
+  .hs-table tr[data-token] > .hs-cell-price.hs-has-price::after {
+    content: "total stay";
+    display: block;
+    color: var(--fs-muted);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   .hs-table tr[data-token] > .hs-cell-deal {
@@ -701,5 +842,12 @@
     padding: 0.7rem;
     border: 1px solid var(--fs-line);
     border-radius: var(--fs-radius);
+  }
+}
+
+@media (max-width: 380px) {
+  #hs-app .hs-section-where .hs-field-adults {
+    grid-column: 1 / -1;
+    max-width: none;
   }
 }

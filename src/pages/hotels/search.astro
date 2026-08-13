@@ -68,35 +68,51 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           aria-labelledby="hs-where-heading"
         >
           <header class="fs-section-heading">
-            <h2 id="hs-where-heading">Where &amp; when</h2>
+            <h2 id="hs-where-heading">Search</h2>
           </header>
           <div class="fs-primary">
-            <div class="hs-city-block">
-              <div class="fs-field hs-field-city">
-                <label for="hs-city">City</label>
-                <select id="hs-city"></select>
+            <div class="fs-field hs-field-city">
+              <div class="fs-field-label-row">
+                <label id="hs-city-label" for="hs-city">City</label>
+                <label class="fs-check hs-other-city-toggle">
+                  <input
+                    id="hs-other-city"
+                    type="checkbox"
+                    aria-controls="hs-city hs-q"
+                  />
+                  <span>Other city</span>
+                </label>
               </div>
-              <label class="fs-check hs-other-city-toggle">
-                <input id="hs-other-city" type="checkbox" />
-                <span>Other city</span>
-              </label>
-            </div>
-            <div class="fs-field hs-field-q" id="hs-q-wrap" hidden>
-              <label for="hs-q">City name</label>
+              <select id="hs-city" aria-labelledby="hs-city-label"></select>
               <input
                 id="hs-q"
                 type="text"
-                placeholder="Type any city, e.g. Lisbon"
+                placeholder="Any city, e.g. Lisbon"
                 autocomplete="off"
+                spellcheck="false"
+                enterkeyhint="search"
+                aria-labelledby="hs-city-label"
+                hidden
               />
             </div>
             <div class="fs-field hs-field-checkin">
               <label for="hs-checkin-start">Check-in</label>
-              <input id="hs-checkin-start" type="date" />
+              <input
+                id="hs-checkin-start"
+                type="date"
+                aria-describedby="hs-credit-hint"
+              />
             </div>
             <div class="fs-field hs-field-checkout">
-              <label for="hs-checkout">Check-out</label>
-              <input id="hs-checkout" type="date" />
+              <div class="fs-field-label-row">
+                <label for="hs-checkout">Check-out</label>
+                <span class="hs-nights-hint" id="hs-nights-hint" aria-live="polite"></span>
+              </div>
+              <input
+                id="hs-checkout"
+                type="date"
+                aria-describedby="hs-nights-hint hs-credit-hint"
+              />
             </div>
             <div class="fs-field hs-field-adults">
               <label for="hs-adults">Adults</label>
@@ -120,15 +136,18 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
                 aria-describedby="hs-credit-hint"
                 >Search hotels</button
               >
-              <button type="button" class="fs-btn hs-btn-secondary" id="hs-ranking"
+              <button
+                type="button"
+                class="fs-btn hs-btn-ranking"
+                id="hs-ranking"
                 >Show ranking</button
               >
               <button
                 type="button"
-                class="fs-btn hs-btn-secondary"
+                class="fs-btn hs-btn-cancel"
                 id="hs-cancel"
                 hidden
-                >Cancel</button
+                >Cancel search</button
               >
             </div>
           </div>
@@ -138,60 +157,64 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
           class="fs-form-section fs-form-section-options hs-section-refine"
           aria-labelledby="hs-refine-heading"
         >
-          <header class="fs-section-heading">
-            <h2 id="hs-refine-heading">Refine results</h2>
-          </header>
-          <div class="fs-secondary">
-            <div class="fs-field">
-              <label for="hs-sort">Sort by</label>
-              <select id="hs-sort">
-                <option value="comfort" selected>Comfort</option>
-                <option value="deal">Best deal (needs dates)</option>
-                <option value="nightly">Total stay $</option>
-                <option value="rating">Rating</option>
-                <option value="reviews">Reviews</option>
-                <option value="unknowns">Fewest unknowns</option>
-              </select>
+          <details class="hs-refine-details" id="hs-refine-details" open>
+            <summary class="hs-refine-summary">
+              <h2 id="hs-refine-heading">Refine results</h2>
+              <p>Sort and filters update the list instantly — no new search.</p>
+            </summary>
+            <div class="fs-secondary">
+              <div class="fs-field">
+                <label for="hs-sort">Sort by</label>
+                <select id="hs-sort">
+                  <option value="comfort" selected>Comfort</option>
+                  <option value="deal">Best deal (needs dates)</option>
+                  <option value="nightly">Total stay $</option>
+                  <option value="rating">Rating</option>
+                  <option value="reviews">Reviews</option>
+                  <option value="unknowns">Fewest unknowns</option>
+                </select>
+              </div>
+              <div class="fs-field">
+                <label for="hs-min-reviews">Min reviews</label>
+                <select id="hs-min-reviews">
+                  <option value="200" selected>200+</option>
+                  <option value="500">500+</option>
+                  <option value="1000">1000+</option>
+                </select>
+              </div>
+              <div class="fs-field hs-field-budget">
+                <label for="hs-budget-max">Max total stay $</label>
+                <input
+                  id="hs-budget-max"
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  step="10"
+                  placeholder="No limit"
+                />
+              </div>
+              <div class="fs-toggles hs-refine-toggles">
+                <label class="fs-check">
+                  <input id="hs-require-ac" type="checkbox" />
+                  <span>Require AC</span>
+                </label>
+                <label class="fs-check">
+                  <input id="hs-require-desk" type="checkbox" />
+                  <span>24-hour front desk</span>
+                </label>
+                <label class="fs-check">
+                  <input id="hs-branded-only" type="checkbox" />
+                  <span>Branded only</span>
+                </label>
+              </div>
             </div>
-            <div class="fs-field">
-              <label for="hs-min-reviews">Min reviews</label>
-              <select id="hs-min-reviews">
-                <option value="200" selected>200+</option>
-                <option value="500">500+</option>
-                <option value="1000">1000+</option>
-              </select>
-            </div>
-            <div class="fs-field">
-              <label for="hs-budget-max">Max total stay $</label>
-              <input
-                id="hs-budget-max"
-                type="number"
-                inputmode="numeric"
-                min="0"
-                step="10"
-                placeholder="No limit"
-              />
-            </div>
-            <div class="fs-toggles hs-refine-toggles">
-              <label class="fs-check">
-                <input id="hs-require-ac" type="checkbox" />
-                <span>Require AC</span>
-              </label>
-              <label class="fs-check">
-                <input id="hs-require-desk" type="checkbox" />
-                <span>24-hour front desk</span>
-              </label>
-              <label class="fs-check">
-                <input id="hs-branded-only" type="checkbox" />
-                <span>Branded only</span>
-              </label>
-            </div>
-          </div>
+          </details>
         </section>
       </form>
 
       <div class="fs-status" aria-live="polite">
         <p class="fs-search-summary" id="hs-search-summary"></p>
+        <p class="hs-stale" id="hs-stale" hidden></p>
         <div
           class="fs-banner fs-banner-warn"
           id="hs-offline-banner"
@@ -225,11 +248,10 @@ const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
 
       <div id="hs-results">
         <div class="fs-empty">
-          <strong>No hotels loaded yet.</strong>
+          <strong>Pick a city to get started.</strong>
           <span>
-            Show ranking opens the saved comfort list for the selected city —
-            free, and no dates needed. Search hotels adds live prices for your
-            stay dates.
+            Show ranking is the free comfort list. Search hotels needs dates,
+            then adds live prices.
           </span>
         </div>
       </div>

@@ -212,7 +212,7 @@ export function formStateFromSearchParams(
       params.get("deepSearch") === null
         ? base.deepSearch
         : params.get("deepSearch") === "1",
-    topN: clampInt(params.get("topN"), 1, 20, base.topN),
+    topN: clampInt(params.get("topN"), 1, 10, base.topN),
     adults: parseAdults(params.get("adults"), base.adults),
     currency: parseSearchCurrency(params.get("currency"), base.currency),
     gl: params.get("gl") ?? base.gl,

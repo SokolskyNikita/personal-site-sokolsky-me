@@ -88,8 +88,14 @@ const ROUND_TRIP_CONCURRENCY = 3;
 
 /** Marks per-leg times in the route line as flight durations. */
 const PLANE_ICON = `<svg class="fs-result-route-plane" viewBox="0 0 24 24" width="10" height="10" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 16v-2l-8-5V3.5C13 2.67 12.33 2 11.5 2S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z"/></svg>`;
+/** Marks layover waits in the same 10px glyph style as the plane. */
+const CLOCK_ICON = `<svg class="fs-result-route-clock" viewBox="0 0 24 24" width="10" height="10" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M12 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>`;
 
 export function mountFlightSearch(root: HTMLElement): void {
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
   const formEl = root.querySelector<HTMLFormElement>("#fs-form")!;
   const searchSummary = root.querySelector<HTMLElement>("#fs-search-summary")!;
   const banners = root.querySelector<HTMLElement>("#fs-banners")!;
@@ -215,6 +221,37 @@ export function mountFlightSearch(root: HTMLElement): void {
     });
   }
 
+  function closeAirportCities(): void {
+    for (const el of results.querySelectorAll(".fs-route-code.is-open")) {
+      el.classList.remove("is-open");
+    }
+  }
+
+  results.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const code = target.closest(".fs-route-code.is-interactive");
+    if (!(code instanceof HTMLElement) || !results.contains(code)) {
+      closeAirportCities();
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    const willOpen = !code.classList.contains("is-open");
+    closeAirportCities();
+    if (willOpen) code.classList.add("is-open");
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target instanceof Node && results.contains(target)) return;
+    closeAirportCities();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeAirportCities();
+  });
+
   sortSelect.addEventListener("change", rerenderLatestResults);
   citySortSelect.addEventListener("change", rerenderLatestResults);
   citySideSelect.addEventListener("change", () => {
@@ -265,13 +302,13 @@ export function mountFlightSearch(root: HTMLElement): void {
           .querySelector<HTMLSelectElement>(
             side === "origin" ? "#fs-origin-reg" : "#fs-dest-reg",
           )
-          ?.focus();
+          ?.focus({ preventScroll: true });
       } else {
         root
           .querySelector<HTMLInputElement>(
             side === "origin" ? "#fs-origin-query" : "#fs-dest-query",
           )
-          ?.focus();
+          ?.focus({ preventScroll: true });
       }
     });
   }
@@ -400,14 +437,16 @@ export function mountFlightSearch(root: HTMLElement): void {
       runBtn.setAttribute("aria-busy", "true");
       // Disabling the focused control would drop focus to the body.
       if (focused instanceof HTMLElement && formEl.contains(focused)) {
-        cancelBtn.focus();
+        cancelBtn.focus({ preventScroll: true });
       }
     } else {
       runBtn.removeAttribute("aria-busy");
       // Keep Search disabled if the current route is Anywhere→Anywhere.
       runBtn.disabled = Boolean(routeBlockedMessage(form));
       // Hiding Cancel while it holds focus would drop focus to the body.
-      if (focused === cancelBtn && !runBtn.disabled) runBtn.focus();
+      if (focused === cancelBtn && !runBtn.disabled) {
+        runBtn.focus({ preventScroll: true });
+      }
     }
   }
 
@@ -852,6 +891,8 @@ function renderResults(
     currency?: SearchCurrency;
   } = {},
 ): void {
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
   const sort = view.sort ?? "date";
   const currency = view.currency ?? "USD";
   const errors = [...container.querySelectorAll(".fs-step-error")];
@@ -867,6 +908,7 @@ function renderResults(
     : renderDateGroupedResults(options, spec, sort, currency);
   container.innerHTML = html;
   for (const err of errors) container.appendChild(err);
+  restoreScrollIfJumped(scrollX, scrollY);
 }
 
 function renderDateGroupedResults(
@@ -1109,42 +1151,12 @@ function renderResultLeg(
     showDuration?: boolean;
   } = {},
 ): string {
-  const first = option.segments[0]!;
-  const last = option.segments.at(-1)!;
   const carriers = [...new Set(option.segments.map((segment) => segment.carrier))];
   const seatDetail = modeInvolvesLieFlat(spec.lieFlatPolicy)
     ? formatLieFlatSegments(option)
     : formatCabinDetail(option);
   const stopDetail = formatStops(option);
   const className = ["fs-result-leg", opts.extraClass].filter(Boolean).join(" ");
-  const airportCodes = [
-    first.departureAirport,
-    ...option.segments.map((segment) => segment.arrivalAirport),
-  ];
-  const airportsMarkup = airportCodes
-    .map((code, index) => {
-      const codeHtml = `<span>${escapeHtml(code)}</span>`;
-      if (index === 0) return codeHtml;
-      const segment = option.segments[index - 1];
-      const legMinutes = segmentLegMinutes(segment);
-      const sep =
-        legMinutes > 0
-          ? `<span class="fs-result-route-sep" aria-hidden="true"><span class="fs-result-route-leg">${PLANE_ICON}${escapeHtml(
-              formatDuration(legMinutes),
-            )}</span></span>`
-          : `<span class="fs-result-route-sep" aria-hidden="true"></span>`;
-      return `${sep}${codeHtml}`;
-    })
-    .join("");
-  const airportsAria = airportCodes
-    .map((code, index) => {
-      if (index === 0) return code;
-      const legMinutes = segmentLegMinutes(option.segments[index - 1]);
-      return legMinutes > 0
-        ? `${formatDuration(legMinutes)} to ${code}`
-        : `to ${code}`;
-    })
-    .join(" ");
   const metaParts = [
     `<span class="fs-result-stops">${escapeHtml(stopDetail)}</span>`,
     `<span class="fs-result-carrier">${escapeHtml(carriers.join(" + "))}</span>`,
@@ -1169,30 +1181,120 @@ function renderResultLeg(
           ? `<span class="fs-result-leg-label">${escapeHtml(opts.label)}</span>`
           : ""
       }
-      <div class="fs-result-schedule">
-        <div class="fs-result-times">
-          <time>${escapeHtml(formatClock(first.departureTime))}</time>
-          <span class="fs-result-time-sep" aria-hidden="true"></span>
-          <time>${escapeHtml(formatClock(last.arrivalTime))}</time>
-        </div>
-        <div class="fs-result-airports" aria-label="${escapeAttr(
-          airportsAria,
-        )}">${airportsMarkup}</div>
-      </div>
+      ${renderRouteLine(option)}
       <div class="fs-result-meta">${metaParts.join("")}</div>
       ${tierMarkup}
     </div>
   `;
 }
 
+/** One horizontal strip: clock times, flight time on each hop, layover at each stop. */
+function renderRouteLine(option: ItineraryOption): string {
+  const first = option.segments[0]!;
+  const last = option.segments.at(-1)!;
+  const parts: string[] = [
+    `<span class="fs-route-end">
+      <time class="fs-route-time">${escapeHtml(formatClock(first.departureTime))}</time>
+      ${renderAirportCode(first.departureAirport)}
+    </span>`,
+  ];
+
+  option.segments.forEach((segment, index) => {
+    const isLast = index === option.segments.length - 1;
+    const hop = renderFlightHop(segmentLegMinutes(segment));
+    if (isLast) {
+      parts.push(`<span class="fs-route-unit">
+        ${hop}
+        <span class="fs-route-end">
+          ${renderAirportCode(segment.arrivalAirport)}
+          <time class="fs-route-time">${escapeHtml(formatClock(last.arrivalTime))}</time>
+        </span>
+      </span>`);
+      return;
+    }
+    const layover = layoverAfterSegment(option, index);
+    const layoverMins = layover?.durationMinutes ?? 0;
+    const layoverMarkup =
+      layoverMins > 0
+        ? `<span class="fs-route-lay">${CLOCK_ICON}${escapeHtml(formatDuration(layoverMins))}</span>`
+        : "";
+    parts.push(`<span class="fs-route-unit">
+      ${hop}
+      <span class="fs-route-stop">
+        ${renderAirportCode(segment.arrivalAirport)}
+        ${layoverMarkup}
+      </span>
+    </span>`);
+  });
+
+  return `<div class="fs-result-route" aria-label="${escapeAttr(
+    routeAriaLabel(option),
+  )}">${parts.join("")}</div>`;
+}
+
+function renderAirportCode(code: string): string {
+  const city = airportCity(code);
+  const iata = escapeHtml(code);
+  if (city === code) {
+    return `<span class="fs-route-code">${iata}</span>`;
+  }
+  return `<span class="fs-route-code is-interactive" aria-label="${escapeAttr(`${code}, ${city}`)}">
+    <span class="fs-route-iata">${iata}</span>
+    <span class="fs-route-city" aria-hidden="true">${escapeHtml(city)}</span>
+  </span>`;
+}
+
+function renderFlightHop(minutes: number): string {
+  const label = minutes > 0 ? formatDuration(minutes) : "";
+  const meta = label
+    ? `<span class="fs-route-flight-meta">${PLANE_ICON}${escapeHtml(label)}</span>`
+    : "";
+  return `<span class="fs-route-flight" aria-hidden="true">
+    <span class="fs-route-rail"></span>
+    ${meta}
+    <span class="fs-route-rail"></span>
+  </span>`;
+}
+
+function layoverAfterSegment(
+  option: ItineraryOption,
+  segmentIndex: number,
+): { airport: string; durationMinutes: number } | undefined {
+  const airport = option.segments[segmentIndex]?.arrivalAirport;
+  const byIndex = option.layovers[segmentIndex];
+  if (byIndex && (!airport || byIndex.airport === airport)) return byIndex;
+  return option.layovers.find((layover) => layover.airport === airport);
+}
+
+function routeAriaLabel(option: ItineraryOption): string {
+  const first = option.segments[0]!;
+  const last = option.segments.at(-1)!;
+  const bits = [
+    `${formatClock(first.departureTime)} ${airportLabel(first.departureAirport)}`,
+  ];
+  option.segments.forEach((segment, index) => {
+    const minutes = segmentLegMinutes(segment);
+    if (minutes > 0) bits.push(`${formatDuration(minutes)} flight`);
+    if (index < option.segments.length - 1) {
+      const layover = layoverAfterSegment(option, index);
+      const layoverText =
+        layover && layover.durationMinutes > 0
+          ? `${formatDuration(layover.durationMinutes)} layover`
+          : "stop";
+      bits.push(`${airportLabel(segment.arrivalAirport)} ${layoverText}`);
+    } else {
+      bits.push(
+        `${airportLabel(segment.arrivalAirport)} ${formatClock(last.arrivalTime)}`,
+      );
+    }
+  });
+  return bits.join(", ");
+}
+
 function formatStops(option: ItineraryOption): string {
-  if (option.layovers.length === 0) return "Nonstop";
-  const count = option.layovers.length;
-  const label = count === 1 ? "stop" : "stops";
-  const details = option.layovers
-    .map((layover) => `${layover.airport} ${formatDuration(layover.durationMinutes)}`)
-    .join(" · ");
-  return `${count} ${label} · ${details}`;
+  const stops = Math.max(option.segments.length - 1, option.layovers.length);
+  if (stops === 0) return "Nonstop";
+  return stops === 1 ? "1 stop" : `${stops} stops`;
 }
 
 function formatClock(value: string): string {
@@ -1449,7 +1551,13 @@ function readForm(root: HTMLElement, prev: FormState): FormState {
     maxTotalHours: MAX_TOTAL_HOURS_OPTIONS.includes(maxTotalHoursValue)
       ? maxTotalHoursValue
       : base.maxTotalHours,
-    topN: Number(root.querySelector<HTMLInputElement>("#fs-topn")?.value) || 2,
+    topN: (() => {
+      const raw = Number(
+        root.querySelector<HTMLSelectElement>("#fs-topn")?.value,
+      );
+      if (Number.isInteger(raw) && raw >= 1 && raw <= 10) return raw;
+      return DEFAULT_FORM.topN;
+    })(),
     adults: (() => {
       const raw = Number(
         root.querySelector<HTMLSelectElement>("#fs-adults")?.value,
@@ -1753,12 +1861,38 @@ function mountAirportSearch(
 function syncUrl(form: FormState): void {
   const params = formStateToSearchParams(form);
   const next = `${location.pathname}?${params.toString()}`;
-  history.replaceState(null, "", next);
+  replaceUrlPreservingScroll(next);
 }
 
 /** Strip query params after Clear (back to a clean `/flights/search/`). */
 function clearUrl(): void {
-  history.replaceState(null, "", location.pathname);
+  replaceUrlPreservingScroll(location.pathname);
+}
+
+/** iOS Safari can reset scroll when the query string changes via replaceState. */
+function replaceUrlPreservingScroll(url: string): void {
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  history.replaceState(null, "", url);
+  restoreScrollIfJumped(scrollX, scrollY);
+}
+
+/**
+ * Replacing result markup (and some mobile browsers' live-region handling)
+ * can yank the viewport toward the top. Restore the user's position if we
+ * jumped up; leave it alone if they scrolled down themselves.
+ */
+function restoreScrollIfJumped(scrollX: number, scrollY: number): void {
+  const restore = () => {
+    if (window.scrollY < scrollY - 1 || window.scrollX !== scrollX) {
+      window.scrollTo(scrollX, scrollY);
+    }
+  };
+  restore();
+  requestAnimationFrame(() => {
+    restore();
+    requestAnimationFrame(restore);
+  });
 }
 
 function syncDaysLabel(
