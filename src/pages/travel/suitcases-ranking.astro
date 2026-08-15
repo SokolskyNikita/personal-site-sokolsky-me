@@ -1,0 +1,709 @@
+---
+export const prerender = true;
+
+import pageData from "../../data/suitcases-ranking.json";
+
+const pageTitle = pageData.title;
+const pageDescription = pageData.description;
+const themeColorLight = "#f4efe6";
+const themeColorDark = "#16130f";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type CategoryId = "carryOn" | "small" | "medium" | "large";
+
+type Exterior = {
+  height: number;
+  width: number;
+  depth: number;
+};
+
+type Scores = {
+  durability: number;
+  rolling: number;
+  weightScore: number;
+  packing: number;
+  value: number;
+};
+
+type Suitcase = {
+  id: string;
+  category: CategoryId;
+  rank: number;
+  name: string;
+  brand: string;
+  asin: string;
+  amazonUrl: string;
+  priceUsd: number;
+  rating: number;
+  reviewCount: number;
+  exteriorInches: Exterior;
+  linearInches: number;
+  emptyWeightLbs: number | null;
+  capacityLiters: number | null;
+  shell: string;
+  material: string;
+  wheels: string;
+  warranty: string;
+  expandable: boolean;
+  fitsUnexpandedOnly: boolean;
+  availabilityText: string;
+  scores: Scores;
+  score: number;
+  why: string;
+  bestFor: string;
+};
+
+const suitcases = pageData.suitcases as Suitcase[];
+const weights = pageData.weights;
+const airlines = pageData.airlines;
+const categories = pageData.categories;
+
+const tabs: { id: CategoryId; label: string; blurb: string }[] = [
+  { id: "carryOn", label: categories.carryOn.label, blurb: categories.carryOn.rule },
+  { id: "small", label: categories.small.label, blurb: categories.small.rule },
+  { id: "medium", label: categories.medium.label, blurb: categories.medium.rule },
+  { id: "large", label: categories.large.label, blurb: categories.large.rule },
+];
+
+const byCategory = (id: CategoryId) =>
+  suitcases
+    .filter((item) => item.category === id)
+    .sort((a, b) => a.rank - b.rank);
+
+const formatInches = (value: number) =>
+  Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "");
+
+const formatDims = (dims: Exterior) =>
+  `${formatInches(dims.height)} × ${formatInches(dims.width)} × ${formatInches(dims.depth)}`;
+
+const formatPrice = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: value % 1 === 0 ? 0 : 2,
+  }).format(value);
+
+const formatReviews = (value: number) =>
+  new Intl.NumberFormat("en-US").format(value);
+
+const formatScore = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(value);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  dateModified: pageData.updated,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: {
+    "@type": "Thing",
+    name: "Airline-legal suitcases sold on Amazon",
+  },
+  inLanguage: "en",
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="keywords"
+      content="suitcase ranking, carry-on luggage, checked luggage, airline size limits, Amazon luggage"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,620;9..144,720&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/travel/">Travel</a>
+        <p class="eyebrow">Claim check · {pageData.updated}</p>
+        <h1>{pageTitle}</h1>
+        <p class="lede">{pageDescription}</p>
+      </header>
+
+      <section class="limits" aria-labelledby="limits-heading">
+        <h2 id="limits-heading">Four-airline box</h2>
+        <p>{airlines.note}</p>
+        <dl class="limit-grid">
+          {
+            airlines.policies.map((policy) => (
+              <div>
+                <dt>
+                  <a href={policy.url} target="_blank" rel="noopener noreferrer">
+                    {policy.airline}
+                  </a>
+                </dt>
+                <dd>Carry-on {policy.carryOn}</dd>
+                <dd>Checked {policy.checked}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="limit-note">
+          Binding carry-on: {airlines.carryOnBinding.height} × {airlines.carryOnBinding.width} × {airlines.carryOnBinding.depth} in, {airlines.carryOnBinding.includes}.
+          Binding large checked: {airlines.checkedBinding.linearInches} linear in / {airlines.checkedBinding.weightLbs} lb.
+        </p>
+      </section>
+
+      <div class="board" data-suitcase-board>
+        <div class="tab-list" role="tablist" aria-label="Suitcase size class">
+          {
+            tabs.map((tab, index) => (
+              <button
+                type="button"
+                class="tab"
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-controls={`panel-${tab.id}`}
+                aria-selected={index === 0 ? "true" : "false"}
+                tabindex={index === 0 ? 0 : -1}
+                data-tab={tab.id}
+              >
+                <span class="tab-index">{String(index + 1).padStart(2, "0")}</span>
+                {tab.label}
+              </button>
+            ))
+          }
+        </div>
+
+        {
+          tabs.map((tab, index) => {
+            const rows = byCategory(tab.id);
+            return (
+              <section
+                class="panel"
+                role="tabpanel"
+                id={`panel-${tab.id}`}
+                aria-labelledby={`tab-${tab.id}`}
+                hidden={index !== 0}
+              >
+                <p class="panel-rule">{tab.blurb}</p>
+                <ol class="rank-list">
+                  {rows.map((item) => (
+                    <li class="ticket" value={item.rank}>
+                      <div class="ticket-rank" aria-hidden="true">
+                        {String(item.rank).padStart(2, "0")}
+                      </div>
+                      <div class="ticket-body">
+                        <div class="ticket-top">
+                          <h3>
+                            <a
+                              href={item.amazonUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {item.name}
+                            </a>
+                          </h3>
+                          <p class="score">{formatScore(item.score)}</p>
+                        </div>
+                        <p class="why">{item.why}</p>
+                        <p class="best-for">
+                          <span>Best for</span> {item.bestFor}
+                        </p>
+                        <dl class="specs">
+                          <div>
+                            <dt>Outside</dt>
+                            <dd>{formatDims(item.exteriorInches)} in</dd>
+                          </div>
+                          <div>
+                            <dt>Linear</dt>
+                            <dd>{formatInches(item.linearInches)} in</dd>
+                          </div>
+                          <div>
+                            <dt>Empty</dt>
+                            <dd>
+                              {item.emptyWeightLbs == null
+                                ? "—"
+                                : `${formatInches(item.emptyWeightLbs)} lb`}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>Volume</dt>
+                            <dd>
+                              {item.capacityLiters == null
+                                ? "—"
+                                : `${item.capacityLiters} L`}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>Price</dt>
+                            <dd>{formatPrice(item.priceUsd)}</dd>
+                          </div>
+                          <div>
+                            <dt>Reviews</dt>
+                            <dd>
+                              {item.rating.toFixed(1)} · {formatReviews(item.reviewCount)}
+                            </dd>
+                          </div>
+                        </dl>
+                        <p class="meta">
+                          {item.shell} · {item.material}
+                          {item.expandable ? " · expandable" : ""}
+                          {item.fitsUnexpandedOnly
+                            ? " · fits the four-airline box only unexpanded"
+                            : ""}
+                          {" · "}
+                          {item.warranty.toLowerCase() === "not stated"
+                            ? "warranty not stated"
+                            : `${item.warranty} warranty`}
+                          {" · "}
+                          {item.availabilityText.toLowerCase()}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            );
+          })
+        }
+      </div>
+
+      <aside class="method" aria-label="Scoring">
+        <h2>How the score is built</h2>
+        <ul>
+          <li>
+            <strong>Durability</strong> ({weights.durability}%) — shell, warranty, and whether the brand has a record of surviving belts.
+          </li>
+          <li>
+            <strong>Rolling</strong> ({weights.rolling}%) — spinner count and handle feel as described on the listing and in volume reviews.
+          </li>
+          <li>
+            <strong>Empty weight</strong> ({weights.weightScore}%) — lighter is better inside the size class, especially against a 50 lb checked cap.
+          </li>
+          <li>
+            <strong>Packing</strong> ({weights.packing}%) — liters for the exterior, expansion that is actually usable, organization.
+          </li>
+          <li>
+            <strong>Value</strong> ({weights.value}%) — the above, divided by the Amazon price on {pageData.updated}.
+          </li>
+        </ul>
+        <p>
+          Only bags shown in stock on Amazon US that day are listed. Famous carry-ons that miss 22 × 14 × 9, and large shells over 62 linear inches, are out even when they sell well.
+        </p>
+        <ul class="exclusions">
+          {pageData.excludedNotes.map((note) => (
+            <li>{note}</li>
+          ))}
+        </ul>
+      </aside>
+    </main>
+    <script>
+      const board = document.querySelector("[data-suitcase-board]");
+      if (board) {
+        const tabs = Array.from(board.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+        const panels = Array.from(board.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+        const activate = (next: HTMLButtonElement) => {
+          tabs.forEach((tab) => {
+            const on = tab === next;
+            tab.setAttribute("aria-selected", on ? "true" : "false");
+            tab.tabIndex = on ? 0 : -1;
+          });
+          panels.forEach((panel) => {
+            panel.hidden = panel.id !== next.getAttribute("aria-controls");
+          });
+          next.focus();
+        };
+
+        tabs.forEach((tab, index) => {
+          tab.addEventListener("click", () => activate(tab));
+          tab.addEventListener("keydown", (event) => {
+            const key = event.key;
+            const last = tabs.length - 1;
+            let target = index;
+            if (key === "ArrowRight" || key === "ArrowDown") target = index === last ? 0 : index + 1;
+            else if (key === "ArrowLeft" || key === "ArrowUp") target = index === 0 ? last : index - 1;
+            else if (key === "Home") target = 0;
+            else if (key === "End") target = last;
+            else return;
+            event.preventDefault();
+            activate(tabs[target]);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4efe6;
+    --ink: #221c16;
+    --muted: #6d5f50;
+    --rule: #d7c8b2;
+    --paper: #fffaf1;
+    --stamp: #8a3d1c;
+    --stamp-soft: #f3ddd0;
+    --serif: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+    --sans: "Source Sans 3", "Avenir Next", ui-sans-serif, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16130f;
+      --ink: #f4eadc;
+      --muted: #b7a48d;
+      --rule: #3d3429;
+      --paper: #1f1a15;
+      --stamp: #e39a68;
+      --stamp-soft: #3a2618;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 31px,
+        rgb(138 61 28 / 0.04) 31px,
+        rgb(138 61 28 / 0.04) 32px
+      ),
+      var(--bg);
+  }
+
+  a {
+    color: var(--stamp);
+    text-underline-offset: 0.16em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 0.08em;
+  }
+
+  .page {
+    width: min(100% - 1.5rem, 52rem);
+    margin: 0 auto;
+    padding: 1.1rem 0 3rem;
+  }
+
+  .hero,
+  .limits,
+  .method {
+    max-width: 62ch;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    margin: 1.1rem 0 0.2rem;
+    color: var(--stamp);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-weight: 620;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+  }
+
+  h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.35rem;
+  }
+
+  .lede,
+  .limits p,
+  .method p,
+  .panel-rule {
+    margin: 0.7rem 0 0;
+    color: var(--muted);
+  }
+
+  .limits,
+  .method {
+    margin-top: 1.8rem;
+  }
+
+  .limit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1.2rem;
+    margin: 1rem 0 0;
+  }
+
+  .limit-grid dt {
+    font-weight: 700;
+  }
+
+  .limit-grid dd {
+    margin: 0.1rem 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .limit-note {
+    font-size: 0.92rem;
+  }
+
+  .board {
+    margin-top: 2rem;
+  }
+
+  .tab-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    min-height: 2.6rem;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+
+  .tab[aria-selected="true"] {
+    border-color: var(--stamp);
+    background: var(--stamp-soft);
+  }
+
+  .tab-index {
+    color: var(--stamp);
+    font-family: var(--serif);
+    font-size: 0.78rem;
+    font-weight: 720;
+  }
+
+  .rank-list {
+    display: grid;
+    gap: 0.85rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ticket {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  .ticket-rank {
+    display: grid;
+    place-items: center;
+    min-width: 3.4rem;
+    padding: 0.8rem 0.55rem;
+    border-right: 1px dashed var(--rule);
+    color: var(--stamp);
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 720;
+    letter-spacing: -0.04em;
+  }
+
+  .ticket-body {
+    min-width: 0;
+    padding: 0.85rem 1rem 0.95rem;
+  }
+
+  .ticket-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .ticket-top h3 {
+    font-size: 1.12rem;
+    font-weight: 620;
+  }
+
+  .ticket-top a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ticket-top a:hover {
+    color: var(--stamp);
+    text-decoration: underline;
+  }
+
+  .score {
+    margin: 0;
+    color: var(--stamp);
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 720;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .why,
+  .best-for,
+  .meta {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .best-for span,
+  .meta {
+    font-size: 0.84rem;
+  }
+
+  .best-for span {
+    margin-right: 0.35rem;
+    color: var(--stamp);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem 0.7rem;
+    margin: 0.75rem 0 0;
+  }
+
+  .specs dt {
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .specs dd {
+    margin: 0.05rem 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .method ul,
+  .exclusions {
+    margin: 0.5rem 0 0;
+    padding-left: 1.15rem;
+    color: var(--muted);
+  }
+
+  .exclusions {
+    font-size: 0.9rem;
+  }
+
+  .method strong {
+    color: var(--ink);
+  }
+
+  @media (max-width: 640px) {
+    .limit-grid,
+    .specs {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ticket {
+      grid-template-columns: 1fr;
+    }
+
+    .ticket-rank {
+      justify-content: start;
+      min-width: 0;
+      padding: 0.55rem 0.9rem 0;
+      border-right: 0;
+      font-size: 1.05rem;
+    }
+  }
+</style>
