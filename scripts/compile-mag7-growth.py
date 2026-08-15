@@ -135,82 +135,95 @@ def pe_ratio(market_cap: float, earnings: float | None) -> float | None:
     return market_cap / earnings
 
 
-def compile_years(tables: dict, region: str | None = None) -> list[dict]:
+def build_point(
+    year: int,
+    market_cap: float,
+    slug: str,
+    info: dict,
+    tables: dict,
+    rank: int,
+) -> dict:
+    revenues = tables["revenue"].get(slug, {})
+    earnings = tables["earnings"].get(slug, {})
+    growth = pe = None
+    growth_basis = pe_basis = None
+    if year <= 2024:
+        growth = ratio(
+            revenues.get(year + 1, {}).get("value"),
+            revenues.get(year, {}).get("value"),
+        )
+        if growth is not None:
+            growth_basis = f"realized revenue, FY{year + 1} vs FY{year}"
+        pe = pe_ratio(market_cap, earnings.get(year + 1, {}).get("value"))
+        if pe is not None:
+            pe_basis = f"year-end cap / FY{year + 1} earnings"
+    elif year == 2025:
+        growth = ratio(
+            revenues.get(2026, {}).get("value"),
+            revenues.get(2025, {}).get("value"),
+        )
+        if growth is not None:
+            growth_basis = "2026 TTM revenue vs FY2025"
+        pe = pe_ratio(market_cap, earnings.get(2026, {}).get("value"))
+        if pe is not None:
+            pe_basis = "year-end 2025 cap / 2026 TTM earnings"
+    yahoo = YAHOO_2026.get(info["id"], {})
+    if year == 2025 and growth is None and yahoo.get("growth") is not None:
+        growth = yahoo["growth"]
+        growth_basis = "consensus FY2026 revenue growth"
+    if year == 2026:
+        growth = yahoo.get("growth")
+        pe = yahoo.get("pe")
+        if growth is not None:
+            growth_basis = "consensus current-FY revenue growth"
+        if pe is not None:
+            pe_basis = "NTM / forward P/E"
+    if growth is None and year == 2026:
+        growth = ratio(
+            revenues.get(2026, {}).get("value"),
+            revenues.get(2025, {}).get("value"),
+        )
+        if growth is not None:
+            growth_basis = "2026 TTM revenue vs FY2025"
+    if pe is None and year == 2026:
+        pe = pe_ratio(market_cap, earnings.get(2026, {}).get("value"))
+        if pe is not None:
+            pe_basis = "latest cap / 2026 TTM earnings"
+    if pe is None:
+        pe = pe_ratio(market_cap, earnings.get(year, {}).get("value"))
+        if pe is not None:
+            pe_basis = f"year-end cap / FY{year} earnings"
+    if pe is None and year == 2026:
+        pe = pe_ratio(market_cap, earnings.get(2025, {}).get("value"))
+        if pe is not None:
+            pe_basis = "latest cap / FY2025 earnings"
+    return {
+        "id": info["id"],
+        "ticker": info["ticker"],
+        "name": info["name"],
+        "region": info["region"],
+        "rank": rank,
+        "marketCap": int(round(market_cap)),
+        "revenueGrowth": None if growth is None else round(growth, 4),
+        "pe": None if pe is None else round(pe, 2),
+        "growthBasis": growth_basis,
+        "peBasis": pe_basis,
+    }
+
+
+def compile_universe(tables: dict) -> list[dict]:
     years = []
     for year in range(2016, 2027):
         ranked = []
         for slug, info in META.items():
-            if region == "us" and info["region"] != "us":
-                continue
             market_cap = tables["marketcap"].get(slug, {}).get(year, {}).get("value")
             if market_cap:
                 ranked.append((market_cap, slug, info))
         ranked.sort(reverse=True)
-        points = []
-        for rank, (market_cap, slug, info) in enumerate(ranked[:10], start=1):
-            revenues = tables["revenue"].get(slug, {})
-            earnings = tables["earnings"].get(slug, {})
-            growth = pe = None
-            growth_basis = pe_basis = None
-            if year <= 2024:
-                growth = ratio(
-                    revenues.get(year + 1, {}).get("value"),
-                    revenues.get(year, {}).get("value"),
-                )
-                if growth is not None:
-                    growth_basis = f"realized revenue, FY{year + 1} vs FY{year}"
-                pe = pe_ratio(market_cap, earnings.get(year + 1, {}).get("value"))
-                if pe is not None:
-                    pe_basis = f"year-end cap / FY{year + 1} earnings"
-            elif year == 2025:
-                growth = ratio(
-                    revenues.get(2026, {}).get("value"),
-                    revenues.get(2025, {}).get("value"),
-                )
-                if growth is not None:
-                    growth_basis = "2026 TTM revenue vs FY2025"
-                pe = pe_ratio(market_cap, earnings.get(2026, {}).get("value"))
-                if pe is not None:
-                    pe_basis = "year-end 2025 cap / 2026 TTM earnings"
-            yahoo = YAHOO_2026.get(info["id"], {})
-            if year == 2025 and growth is None and yahoo.get("growth") is not None:
-                growth = yahoo["growth"]
-                growth_basis = "consensus FY2026 revenue growth"
-            if year == 2026:
-                growth = yahoo.get("growth")
-                pe = yahoo.get("pe")
-                if growth is not None:
-                    growth_basis = "consensus current-FY revenue growth"
-                if pe is not None:
-                    pe_basis = "NTM / forward P/E"
-            if growth is None and year == 2026:
-                growth = ratio(
-                    revenues.get(2026, {}).get("value"),
-                    revenues.get(2025, {}).get("value"),
-                )
-                if growth is not None:
-                    growth_basis = "2026 TTM revenue vs FY2025"
-            if pe is None and year == 2026:
-                pe = pe_ratio(market_cap, earnings.get(2026, {}).get("value"))
-                if pe is not None:
-                    pe_basis = "latest cap / 2026 TTM earnings"
-            if pe is None:
-                pe = pe_ratio(market_cap, earnings.get(year, {}).get("value"))
-                if pe is not None:
-                    pe_basis = f"year-end cap / FY{year} earnings"
-            points.append(
-                {
-                    "id": info["id"],
-                    "ticker": info["ticker"],
-                    "name": info["name"],
-                    "rank": rank,
-                    "marketCap": int(round(market_cap)),
-                    "revenueGrowth": None if growth is None else round(growth, 4),
-                    "pe": None if pe is None else round(pe, 2),
-                    "growthBasis": growth_basis,
-                    "peBasis": pe_basis,
-                }
-            )
+        points = [
+            build_point(year, market_cap, slug, info, tables, rank)
+            for rank, (market_cap, slug, info) in enumerate(ranked, start=1)
+        ]
         years.append(
             {
                 "year": year,
@@ -222,10 +235,32 @@ def compile_years(tables: dict, region: str | None = None) -> list[dict]:
     return years
 
 
+def scope_years(universe: list[dict], region: str | None) -> list[dict]:
+    scoped = []
+    for row in universe:
+        eligible = (
+            [company for company in row["companies"] if company["region"] == "us"]
+            if region == "us"
+            else row["companies"]
+        )
+        companies = []
+        for rank, company in enumerate(eligible[:10], start=1):
+            item = dict(company)
+            item["rank"] = rank
+            companies.append(item)
+        primary_ids = {company["id"] for company in companies}
+        others = [
+            company for company in row["companies"] if company["id"] not in primary_ids
+        ]
+        scoped.append({**row, "companies": companies, "others": others})
+    return scoped
+
+
 def main() -> None:
     tables = load_tables()
-    us_years = compile_years(tables, region="us")
-    global_years = compile_years(tables)
+    universe = compile_universe(tables)
+    us_years = scope_years(universe, "us")
+    global_years = scope_years(universe, None)
     payload = {
         "title": "Top 10 tech: revenue (+1Y growth) vs P/E",
         "generatedAt": "2026-08-15",
@@ -236,8 +271,8 @@ def main() -> None:
             "global": {"id": "global", "label": "Global", "years": global_years},
         },
         "methodology": {
-            "universe": "Public technology companies in the usual market sense: GICS information technology, plus internet platforms, Amazon, and Tesla. The global set also includes TSMC, Samsung, Tencent, Alibaba, and ASML.",
-            "ranking": "Top 10 by year-end market cap from CompaniesMarketCap, either U.S.-listed headquarters or the global set. 2026 uses the latest available cap (14 Aug 2026).",
+            "universe": "Public technology companies in the usual market sense: GICS information technology, plus internet platforms, Amazon, and Tesla. The tracked non-U.S. set is TSMC, Samsung, Tencent, Alibaba, and ASML.",
+            "ranking": "Each view’s top 10 is ranked by year-end market cap from CompaniesMarketCap. Also others plots the rest of the tracked set, using each name’s rank among that full set. 2026 uses the latest available cap (14 Aug 2026).",
             "x": "For 2016–2024, realized next-year revenue growth. For 2025, 2026 TTM vs 2025. For 2026 YTD, consensus current-fiscal-year revenue growth (Yahoo Finance).",
             "y": "For completed years, year-end market cap divided by the next year's earnings (realized forward P/E, a stand-in for NTM). For 2026 YTD, Yahoo Finance forward P/E. Unprofitable next years are omitted from the plot.",
         },
@@ -252,7 +287,9 @@ def main() -> None:
                 f"{c['rank']}.{c['name']} {c['revenueGrowth'] if c['revenueGrowth'] is not None else '—':>6} {c['pe'] if c['pe'] is not None else 'n/m'}"
                 for c in year["companies"]
             )
+            extras = ", ".join(c["name"] for c in year["others"])
             print(year["label"], row)
+            print("   others:", extras)
 
 
 if __name__ == "__main__":

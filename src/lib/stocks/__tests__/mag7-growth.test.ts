@@ -21,6 +21,15 @@ const data = JSON.parse(
           revenueGrowth: number | null;
           pe: number | null;
         }>;
+        others: Array<{
+          id: string;
+          name: string;
+          rank: number;
+          region: string;
+          marketCap: number;
+          revenueGrowth: number | null;
+          pe: number | null;
+        }>;
       }>;
     }
   >;
@@ -82,5 +91,30 @@ describe("mag7 growth dataset", () => {
       ?.companies.map((company) => company.id);
     expect(us).not.toContain("TSM");
     expect(world).toContain("TSM");
+  });
+
+  it("keeps non-U.S. names available as extras on the U.S. view", () => {
+    const row = data.scopes.us.years.find((item) => item.year === 2026);
+    const extraIds = row?.others.map((company) => company.id) ?? [];
+    expect(extraIds).toEqual(
+      expect.arrayContaining(["TSM", "SMSN", "ASML", "TCEHY", "BABA"]),
+    );
+    expect(row?.companies.map((company) => company.id)).not.toContain("TSM");
+  });
+
+  it("does not duplicate a company between the ten and the others", () => {
+    for (const scope of ["us", "global"] as const) {
+      for (const row of data.scopes[scope].years) {
+        const ids = [
+          ...row.companies.map((company) => company.id),
+          ...row.others.map((company) => company.id),
+        ];
+        expect(new Set(ids).size).toBe(ids.length);
+        expect(row.others.length).toBeGreaterThan(0);
+        for (const company of row.others) {
+          expect(company.revenueGrowth).toEqual(expect.any(Number));
+        }
+      }
+    }
   });
 });

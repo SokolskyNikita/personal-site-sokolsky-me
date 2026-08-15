@@ -156,6 +156,23 @@ h1 {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, var(--rule));
 }
 
+.extras-toggle {
+  padding: 0.22rem 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.extras-toggle[aria-pressed="true"] {
+  color: var(--accent);
+}
+
 .year-readout strong {
   font-family: var(--serif);
   font-size: clamp(1.35rem, 2.2vw, 1.7rem);
@@ -315,7 +332,12 @@ h1 {
   stroke-width: 1;
 }
 
+.marker.is-extra {
+  opacity: 0.7;
+}
+
 .marker.is-active {
+  opacity: 1;
   filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--ink) 18%, transparent));
 }
 
@@ -425,6 +447,21 @@ th.num {
   border-radius: 50%;
   background: #fffdf8;
   object-fit: contain;
+}
+
+tr.extras-head td {
+  padding-top: 1.05rem;
+  padding-bottom: 0.3rem;
+  border-bottom-color: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+tr.is-extra {
+  color: var(--ink-soft);
 }
 
 tr.is-active td {
