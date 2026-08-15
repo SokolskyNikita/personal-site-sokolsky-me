@@ -5,7 +5,7 @@ import pageData from "../../data/suitcases-ranking.json";
 
 const pageTitle = pageData.title;
 const pageDescription = pageData.description;
-const themeColorLight = "#f4efe6";
+const themeColorLight = "#f6f2eb";
 const themeColorDark = "#16130f";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
@@ -57,7 +57,6 @@ type Suitcase = {
 
 const suitcases = pageData.suitcases as Suitcase[];
 const weights = pageData.weights;
-const airlines = pageData.airlines;
 const categories = pageData.categories;
 
 const tabs: { id: CategoryId; label: string; blurb: string }[] = [
@@ -179,30 +178,6 @@ const structuredData = {
         <h1>{pageTitle}</h1>
         <p class="lede">{pageDescription}</p>
       </header>
-
-      <section class="limits" aria-labelledby="limits-heading">
-        <h2 id="limits-heading">Four-airline box</h2>
-        <p>{airlines.note}</p>
-        <dl class="limit-grid">
-          {
-            airlines.policies.map((policy) => (
-              <div>
-                <dt>
-                  <a href={policy.url} target="_blank" rel="noopener noreferrer">
-                    {policy.airline}
-                  </a>
-                </dt>
-                <dd>Carry-on {policy.carryOn}</dd>
-                <dd>Checked {policy.checked}</dd>
-              </div>
-            ))
-          }
-        </dl>
-        <p class="limit-note">
-          Binding carry-on: {airlines.carryOnBinding.height} × {airlines.carryOnBinding.width} × {airlines.carryOnBinding.depth} in, {airlines.carryOnBinding.includes}.
-          Binding large checked: {airlines.checkedBinding.linearInches} linear in / {airlines.checkedBinding.weightLbs} lb.
-        </p>
-      </section>
 
       <div class="board" data-suitcase-board>
         <div class="tab-list" role="tablist" aria-label="Suitcase size class">
@@ -389,7 +364,7 @@ const structuredData = {
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #f4efe6;
+    --bg: #f6f2eb;
     --ink: #221c16;
     --muted: #6d5f50;
     --rule: #d7c8b2;
@@ -427,15 +402,7 @@ const structuredData = {
 
   body {
     margin: 0;
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 31px,
-        rgb(138 61 28 / 0.04) 31px,
-        rgb(138 61 28 / 0.04) 32px
-      ),
-      var(--bg);
+    background: var(--bg);
   }
 
   a {
@@ -454,7 +421,6 @@ const structuredData = {
   }
 
   .hero,
-  .limits,
   .method {
     max-width: 62ch;
   }
@@ -496,37 +462,14 @@ const structuredData = {
   }
 
   .lede,
-  .limits p,
   .method p,
   .panel-rule {
     margin: 0.7rem 0 0;
     color: var(--muted);
   }
 
-  .limits,
   .method {
     margin-top: 1.8rem;
-  }
-
-  .limit-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.9rem 1.2rem;
-    margin: 1rem 0 0;
-  }
-
-  .limit-grid dt {
-    font-weight: 700;
-  }
-
-  .limit-grid dd {
-    margin: 0.1rem 0 0;
-    color: var(--muted);
-    font-size: 0.92rem;
-  }
-
-  .limit-note {
-    font-size: 0.92rem;
   }
 
   .board {
@@ -689,7 +632,6 @@ const structuredData = {
   }
 
   @media (max-width: 640px) {
-    .limit-grid,
     .specs {
       grid-template-columns: 1fr 1fr;
     }
