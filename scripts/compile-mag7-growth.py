@@ -12,23 +12,23 @@ AGENT_TOOLS = Path(
 )
 
 META = {
-    "apple": {"id": "AAPL", "ticker": "AAPL", "name": "Apple"},
-    "microsoft": {"id": "MSFT", "ticker": "MSFT", "name": "Microsoft"},
-    "alphabet-google": {"id": "GOOGL", "ticker": "GOOGL", "name": "Alphabet"},
-    "amazon": {"id": "AMZN", "ticker": "AMZN", "name": "Amazon"},
-    "meta-platforms": {"id": "META", "ticker": "META", "name": "Meta"},
-    "nvidia": {"id": "NVDA", "ticker": "NVDA", "name": "Nvidia"},
-    "tesla": {"id": "TSLA", "ticker": "TSLA", "name": "Tesla"},
-    "tsmc": {"id": "TSM", "ticker": "TSM", "name": "TSMC"},
-    "broadcom": {"id": "AVGO", "ticker": "AVGO", "name": "Broadcom"},
-    "oracle": {"id": "ORCL", "ticker": "ORCL", "name": "Oracle"},
-    "intel": {"id": "INTC", "ticker": "INTC", "name": "Intel"},
-    "cisco": {"id": "CSCO", "ticker": "CSCO", "name": "Cisco"},
-    "ibm": {"id": "IBM", "ticker": "IBM", "name": "IBM"},
-    "tencent": {"id": "TCEHY", "ticker": "TCEHY", "name": "Tencent"},
-    "alibaba": {"id": "BABA", "ticker": "BABA", "name": "Alibaba"},
-    "samsung": {"id": "SMSN", "ticker": "005930.KS", "name": "Samsung"},
-    "asml": {"id": "ASML", "ticker": "ASML", "name": "ASML"},
+    "apple": {"id": "AAPL", "ticker": "AAPL", "name": "Apple", "region": "us"},
+    "microsoft": {"id": "MSFT", "ticker": "MSFT", "name": "Microsoft", "region": "us"},
+    "alphabet-google": {"id": "GOOGL", "ticker": "GOOGL", "name": "Alphabet", "region": "us"},
+    "amazon": {"id": "AMZN", "ticker": "AMZN", "name": "Amazon", "region": "us"},
+    "meta-platforms": {"id": "META", "ticker": "META", "name": "Meta", "region": "us"},
+    "nvidia": {"id": "NVDA", "ticker": "NVDA", "name": "Nvidia", "region": "us"},
+    "tesla": {"id": "TSLA", "ticker": "TSLA", "name": "Tesla", "region": "us"},
+    "tsmc": {"id": "TSM", "ticker": "TSM", "name": "TSMC", "region": "global"},
+    "broadcom": {"id": "AVGO", "ticker": "AVGO", "name": "Broadcom", "region": "us"},
+    "oracle": {"id": "ORCL", "ticker": "ORCL", "name": "Oracle", "region": "us"},
+    "intel": {"id": "INTC", "ticker": "INTC", "name": "Intel", "region": "us"},
+    "cisco": {"id": "CSCO", "ticker": "CSCO", "name": "Cisco", "region": "us"},
+    "ibm": {"id": "IBM", "ticker": "IBM", "name": "IBM", "region": "us"},
+    "tencent": {"id": "TCEHY", "ticker": "TCEHY", "name": "Tencent", "region": "global"},
+    "alibaba": {"id": "BABA", "ticker": "BABA", "name": "Alibaba", "region": "global"},
+    "samsung": {"id": "SMSN", "ticker": "005930.KS", "name": "Samsung", "region": "global"},
+    "asml": {"id": "ASML", "ticker": "ASML", "name": "ASML", "region": "global"},
 }
 
 # Tencent USD series after 2022, scaled from CMC 2022 USD with CNY YoY.
@@ -55,6 +55,10 @@ YAHOO_2026 = {
     "TSLA": {"pe": 154.23, "growth": 0.1164},
     "TSM": {"pe": 19.59, "growth": 0.4245},
     "AVGO": {"pe": 20.12, "growth": 0.6598},
+    "ORCL": {"pe": 13.82, "growth": 0.3260},
+    "INTC": {"pe": 49.79, "growth": 0.1929},
+    "CSCO": {"pe": 20.40, "growth": 0.1430},
+    "IBM": {"pe": 17.79, "growth": 0.0421},
     "SMSN": {"pe": None, "growth": None},  # KRW quote is not usable
     "TCEHY": {"pe": None, "growth": 0.0938},
 }
@@ -131,11 +135,13 @@ def pe_ratio(market_cap: float, earnings: float | None) -> float | None:
     return market_cap / earnings
 
 
-def compile_years(tables: dict) -> list[dict]:
+def compile_years(tables: dict, region: str | None = None) -> list[dict]:
     years = []
     for year in range(2016, 2027):
         ranked = []
         for slug, info in META.items():
+            if region == "us" and info["region"] != "us":
+                continue
             market_cap = tables["marketcap"].get(slug, {}).get(year, {}).get("value")
             if market_cap:
                 ranked.append((market_cap, slug, info))
@@ -218,28 +224,35 @@ def compile_years(tables: dict) -> list[dict]:
 
 def main() -> None:
     tables = load_tables()
-    years = compile_years(tables)
+    us_years = compile_years(tables, region="us")
+    global_years = compile_years(tables)
     payload = {
         "title": "Top 10 tech: revenue (+1Y growth) vs P/E",
         "generatedAt": "2026-08-15",
         "asOf": "2026-08-14",
+        "defaultScope": "us",
+        "scopes": {
+            "us": {"id": "us", "label": "USA", "years": us_years},
+            "global": {"id": "global", "label": "Global", "years": global_years},
+        },
         "methodology": {
-            "universe": "Public technology companies in the usual market sense: GICS information technology, plus internet platforms, Amazon, Tesla, TSMC, Samsung, Tencent, Alibaba, and ASML.",
-            "ranking": "Top 10 by year-end market cap from CompaniesMarketCap. 2026 uses the latest available cap (14 Aug 2026).",
+            "universe": "Public technology companies in the usual market sense: GICS information technology, plus internet platforms, Amazon, and Tesla. The global set also includes TSMC, Samsung, Tencent, Alibaba, and ASML.",
+            "ranking": "Top 10 by year-end market cap from CompaniesMarketCap, either U.S.-listed headquarters or the global set. 2026 uses the latest available cap (14 Aug 2026).",
             "x": "For 2016–2024, realized next-year revenue growth. For 2025, 2026 TTM vs 2025. For 2026 YTD, consensus current-fiscal-year revenue growth (Yahoo Finance).",
             "y": "For completed years, year-end market cap divided by the next year's earnings (realized forward P/E, a stand-in for NTM). For 2026 YTD, Yahoo Finance forward P/E. Unprofitable next years are omitted from the plot.",
         },
-        "years": years,
     }
     out = Path("src/data/mag7-growth.json")
     out.write_text(json.dumps(payload, indent=2) + "\n")
     print("wrote", out)
-    for year in years:
-        row = ", ".join(
-            f"{c['rank']}.{c['name']} {c['revenueGrowth'] if c['revenueGrowth'] is not None else '—':>6} {c['pe'] if c['pe'] is not None else 'n/m'}"
-            for c in year["companies"]
-        )
-        print(year["label"], row)
+    for scope_id, years in (("us", us_years), ("global", global_years)):
+        print(f"\n=== {scope_id} ===")
+        for year in years:
+            row = ", ".join(
+                f"{c['rank']}.{c['name']} {c['revenueGrowth'] if c['revenueGrowth'] is not None else '—':>6} {c['pe'] if c['pe'] is not None else 'n/m'}"
+                for c in year["companies"]
+            )
+            print(year["label"], row)
 
 
 if __name__ == "__main__":

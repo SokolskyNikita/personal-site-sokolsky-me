@@ -13,7 +13,7 @@
   --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
   --mono: "Source Serif 4", ui-serif, Georgia, serif;
   --pad-x: clamp(1rem, 3vw, 2.25rem);
-  --chart-h: min(68vh, 640px);
+  --chart-h: min(64vh, 560px);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,7 +52,7 @@ body {
 .page {
   width: min(1120px, 100%);
   margin: 0 auto;
-  padding: 1.1rem var(--pad-x) 3.5rem;
+  padding: 1.1rem var(--pad-x) 2rem;
 }
 
 .top {
@@ -109,15 +109,51 @@ h1 {
 }
 
 .year-panel {
-  margin: 1.75rem 0 1.15rem;
+  margin: 1.15rem 0 0.55rem;
 }
 
 .year-readout {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem 1rem;
   margin-bottom: 0.55rem;
+}
+
+.year-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.scope-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--rule);
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--paper-2) 55%, var(--paper));
+}
+
+.scope-toggle button {
+  padding: 0.22rem 0.62rem;
+  border: 0;
+  border-radius: 99px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.scope-toggle button[aria-pressed="true"] {
+  background: var(--paper);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, var(--rule));
 }
 
 .year-readout strong {
@@ -219,6 +255,7 @@ h1 {
 
 .chart-shell {
   position: relative;
+  overflow: hidden;
   background: color-mix(in srgb, var(--paper-2) 55%, var(--paper));
   border: 1px solid var(--rule);
 }
@@ -407,7 +444,7 @@ tr.is-active td {
   }
 
   .chart {
-    height: min(72vh, 680px);
+    height: min(64vh, 560px);
   }
 
   th,
@@ -418,7 +455,7 @@ tr.is-active td {
 
 @media (max-width: 639px) {
   :root {
-    --chart-h: min(92vw, 460px);
+    --chart-h: min(88vw, 400px);
   }
 
   .top {
@@ -435,7 +472,7 @@ tr.is-active td {
   }
 
   .chart {
-    min-height: 380px;
+    min-height: 300px;
   }
 
   .chart-title {

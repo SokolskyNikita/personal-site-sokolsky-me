@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "Top 10 tech: growth vs P/E";
 const pageDescription =
-  "Scatter of the ten largest tech companies each year from 2016 through 2026 YTD, plotted by next-year revenue growth against forward P/E.";
+  "Scatter of the ten largest U.S. or global tech companies each year from 2016 through 2026 YTD, plotted by next-year revenue growth against forward P/E.";
 const themeColorLight = "#f3efe6";
 const themeColorDark = "#161411";
 const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
@@ -74,7 +74,7 @@ const structuredData = {
           <p class="lede">
             Each year shows the ten largest public tech companies at year-end —
             2026 is year-to-date — plotted by next-year revenue growth against
-            forward P/E.
+            forward P/E. Start with the U.S. set, or switch to the global ten.
           </p>
         </div>
         <a class="home" href="/">sokolsky.me</a>
@@ -83,7 +83,15 @@ const structuredData = {
       <section class="year-panel" aria-label="Year">
         <div class="year-readout">
           <strong id="year-label">2026 YTD</strong>
-          <span id="year-asof">as of 14 Aug 2026</span>
+          <div class="year-tools">
+            <div class="scope-toggle" role="group" aria-label="Universe">
+              <button type="button" data-scope="us" aria-pressed="true">USA</button>
+              <button type="button" data-scope="global" aria-pressed="false">
+                Global
+              </button>
+            </div>
+            <span id="year-asof">as of 14 Aug 2026</span>
+          </div>
         </div>
         <input
           id="year-slider"
@@ -111,7 +119,7 @@ const structuredData = {
 
         <div class="table-wrap">
           <table>
-            <caption id="table-caption">Largest tech companies in 2026</caption>
+            <caption id="table-caption">Largest U.S. tech companies in 2026</caption>
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -128,8 +136,7 @@ const structuredData = {
     </main>
 
     <script define:vars={{ dataset: data }}>
-      const YEARS = dataset.years;
-      const byYear = new Map(YEARS.map((row) => [row.year, row]));
+      const SCOPES = dataset.scopes;
       const logoInset = {
         AAPL: 0.3,
         MSFT: 0.22,
@@ -147,6 +154,7 @@ const structuredData = {
         INTC: 0.18,
         IBM: 0.16,
         CSCO: 0.16,
+        ORCL: 0.16,
       };
       const logoSrc = (id) => `/images/logos/${id}.svg`;
 
@@ -158,30 +166,37 @@ const structuredData = {
       const svg = document.getElementById("chart");
       const tooltip = document.getElementById("tooltip");
       const tableBody = document.getElementById("table-body");
+      const scopeButtons = [...document.querySelectorAll(".scope-toggle button")];
       const tableCaption = document.getElementById("table-caption");
       const NS = "http://www.w3.org/2000/svg";
       const W = 1000;
-      const H = 720;
-      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      let H = 720;
       svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
       let currentYear = 2026;
+      let currentScope = "us";
       let activeId = null;
       let positions = new Map();
       let layout = null;
 
+      const scopeMeta = () => SCOPES[currentScope];
+      const yearsFor = () => scopeMeta().years;
+      const rowFor = (year) => yearsFor().find((row) => row.year === year);
+
       const chartLayout = () => {
         const box = svg.getBoundingClientRect();
+        H = Math.round(W * (box.height / Math.max(box.width, 1)));
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
         const scale = Math.max(box.width / W, 0.25);
         const narrow = window.innerWidth < 640;
         const mid = window.innerWidth < 880;
-        const tick = 16 / scale;
-        const axis = 17 / scale;
+        const tick = 15 / scale;
+        const axis = 16 / scale;
         const pad = {
-          top: narrow ? 86 : 68,
-          right: Math.max(36, tick * 2.2),
-          bottom: Math.round(tick + axis + 28),
-          left: Math.round(axis + tick * 3.6 + 16),
+          top: narrow ? 48 : 42,
+          right: Math.max(18, tick * 1.5),
+          bottom: Math.round(tick + axis + 12),
+          left: Math.round(axis + tick * 2.8 + 8),
         };
         return {
           scale,
@@ -326,7 +341,10 @@ const structuredData = {
       };
 
       const renderTable = (row) => {
-        tableCaption.textContent = `Largest tech companies in ${row.label}`;
+        tableCaption.textContent =
+          currentScope === "us"
+            ? `Largest U.S. tech companies in ${row.label}`
+            : `Largest tech companies in ${row.label}`;
         tableBody.replaceChildren(
           ...row.companies.map((company) => {
             const tr = document.createElement("tr");
@@ -360,7 +378,7 @@ const structuredData = {
         tableBody.querySelectorAll("tr").forEach((node) => {
           node.classList.toggle("is-active", node.dataset.id === id);
         });
-        const row = byYear.get(currentYear);
+        const row = rowFor(currentYear);
         const company = row.companies.find((item) => item.id === id);
         const pos = positions.get(id);
         if (company && pos) setTooltip(company, pos.x, pos.y);
@@ -379,9 +397,10 @@ const structuredData = {
         const yDom = niceDomain(Math.min(...ys), Math.max(...ys), ticksWanted, true);
 
         svg.replaceChildren();
+        const scopeName = scopeMeta().label;
         chartTitle.textContent = narrow
-          ? `${row.label}: growth vs P/E`
-          : `${row.label}: revenue (+1Y growth) vs P/E`;
+          ? `${row.label} · ${scopeName}: growth vs P/E`
+          : `${row.label} · ${scopeName}: revenue (+1Y growth) vs P/E`;
 
         for (const value of xDom.values) {
           const x = scaleX(value, xDom);
@@ -462,9 +481,18 @@ const structuredData = {
         }
       };
 
+      const syncUrl = (pushUrl) => {
+        const url = new URL(window.location.href);
+        if (currentYear === 2026) url.searchParams.delete("year");
+        else url.searchParams.set("year", String(currentYear));
+        if (currentScope === "us") url.searchParams.delete("scope");
+        else url.searchParams.set("scope", currentScope);
+        if (pushUrl) history.replaceState({ year: currentYear, scope: currentScope }, "", url);
+      };
+
       const setYear = (year, pushUrl) => {
         currentYear = year;
-        const row = byYear.get(year);
+        const row = rowFor(year);
         slider.value = String(year);
         yearLabel.textContent = row.label;
         yearAsof.textContent = `as of ${fmtDate(row.asOf)}`;
@@ -478,13 +506,22 @@ const structuredData = {
         renderChart(row);
         renderTable(row);
         highlight(activeId && row.companies.some((c) => c.id === activeId) ? activeId : null);
-        const url = new URL(window.location.href);
-        if (year === 2026) url.searchParams.delete("year");
-        else url.searchParams.set("year", String(year));
-        if (pushUrl) history.replaceState({ year }, "", url);
+        syncUrl(pushUrl);
       };
 
-      YEARS.forEach((row) => {
+      const setScope = (scope, pushUrl) => {
+        if (!SCOPES[scope] || scope === currentScope) {
+          if (scope === currentScope) syncUrl(pushUrl);
+          return;
+        }
+        currentScope = scope;
+        scopeButtons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.scope === scope));
+        });
+        setYear(currentYear, pushUrl);
+      };
+
+      SCOPES.us.years.forEach((row) => {
         const button = document.createElement("button");
         button.type = "button";
         button.dataset.year = String(row.year);
@@ -495,6 +532,9 @@ const structuredData = {
       });
 
       slider.addEventListener("input", () => setYear(Number(slider.value), true));
+      scopeButtons.forEach((button) => {
+        button.addEventListener("click", () => setScope(button.dataset.scope, true));
+      });
       window.addEventListener("keydown", (event) => {
         if (event.key === "ArrowLeft") {
           setYear(Math.max(2016, currentYear - 1), true);
@@ -506,10 +546,15 @@ const structuredData = {
       window.addEventListener("resize", () => setYear(currentYear, false));
 
       const params = new URLSearchParams(window.location.search);
-      const requested = Number(params.get("year"));
-      const start = byYear.has(requested) ? requested : 2026;
-      setYear(start, false);
-      void reduceMotion;
+      const requestedYear = Number(params.get("year"));
+      const requestedScope = params.get("scope");
+      const startYear = rowFor(requestedYear) ? requestedYear : 2026;
+      const startScope = SCOPES[requestedScope] ? requestedScope : "us";
+      currentScope = startScope;
+      scopeButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.scope === startScope));
+      });
+      setYear(startYear, false);
     </script>
   </body>
 </html>
