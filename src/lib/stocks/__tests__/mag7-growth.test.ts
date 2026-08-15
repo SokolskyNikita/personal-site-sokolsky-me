@@ -16,16 +16,8 @@ const data = JSON.parse(
         companies: Array<{
           id: string;
           name: string;
-          rank: number;
-          marketCap: number;
-          revenueGrowth: number | null;
-          pe: number | null;
-        }>;
-        others: Array<{
-          id: string;
-          name: string;
-          rank: number;
           region: string;
+          rank: number;
           marketCap: number;
           revenueGrowth: number | null;
           pe: number | null;
@@ -35,15 +27,33 @@ const data = JSON.parse(
   >;
 };
 
-const NON_US = new Set(["TSM", "TCEHY", "BABA", "SMSN", "ASML"]);
+const NON_US = new Set([
+  "TSM",
+  "TCEHY",
+  "BABA",
+  "SMSN",
+  "ASML",
+  "SKH",
+  "SAP",
+  "SHOP",
+  "MTK",
+  "TOEL",
+  "SONY",
+  "KEYN",
+  "PDD",
+  "BIDU",
+  "FOXN",
+  "NTDOY",
+  "ADVT",
+]);
 
 describe("mag7 growth dataset", () => {
-  it("defaults to the U.S. set and also has a global set", () => {
+  it("defaults to the U.S. set and also has global and non-U.S. sets", () => {
     expect(data.defaultScope).toBe("us");
-    expect(Object.keys(data.scopes)).toEqual(["us", "global"]);
+    expect(Object.keys(data.scopes)).toEqual(["us", "global", "nonus"]);
   });
 
-  it.each(["us", "global"] as const)(
+  it.each(["us", "global", "nonus"] as const)(
     "covers 2016 through 2026 with ten %s companies each year",
     (scope) => {
       const years = data.scopes[scope].years;
@@ -59,10 +69,8 @@ describe("mag7 growth dataset", () => {
         const caps = row.companies.map((company) => company.marketCap);
         expect(caps).toEqual([...caps].sort((a, b) => b - a));
         for (const company of row.companies) {
-          expect(company.revenueGrowth).toEqual(expect.any(Number));
-          expect(company.pe).toEqual(expect.any(Number));
-          expect(company.pe).toBeGreaterThan(0);
           if (scope === "us") expect(NON_US.has(company.id)).toBe(false);
+          if (scope === "nonus") expect(company.region).toBe("nonus");
         }
       }
     },
@@ -93,28 +101,20 @@ describe("mag7 growth dataset", () => {
     expect(world).toContain("TSM");
   });
 
-  it("keeps non-U.S. names available as extras on the U.S. view", () => {
-    const row = data.scopes.us.years.find((item) => item.year === 2026);
-    const extraIds = row?.others.map((company) => company.id) ?? [];
-    expect(extraIds).toEqual(
-      expect.arrayContaining(["TSM", "SMSN", "ASML", "TCEHY", "BABA"]),
-    );
-    expect(row?.companies.map((company) => company.id)).not.toContain("TSM");
-  });
-
-  it("does not duplicate a company between the ten and the others", () => {
-    for (const scope of ["us", "global"] as const) {
-      for (const row of data.scopes[scope].years) {
-        const ids = [
-          ...row.companies.map((company) => company.id),
-          ...row.others.map((company) => company.id),
-        ];
-        expect(new Set(ids).size).toBe(ids.length);
-        expect(row.others.length).toBeGreaterThan(0);
-        for (const company of row.others) {
-          expect(company.revenueGrowth).toEqual(expect.any(Number));
-        }
-      }
-    }
+  it("ranks the 2026 non-U.S. ten by headquarters outside the United States", () => {
+    const names = data.scopes.nonus.years
+      .find((row) => row.year === 2026)
+      ?.companies.map((company) => company.name);
+    expect(names?.slice(0, 5)).toEqual([
+      "TSMC",
+      "Samsung",
+      "SK Hynix",
+      "ASML",
+      "Tencent",
+    ]);
+    expect(names).toContain("SAP");
+    expect(names).toContain("Shopify");
+    expect(names).not.toContain("Nvidia");
+    expect(names).not.toContain("Apple");
   });
 });

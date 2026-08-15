@@ -6,7 +6,7 @@ export const prerender = true;
 
 const pageTitle = "Top 10 tech: growth vs P/E";
 const pageDescription =
-  "Scatter of the ten largest U.S. or global tech companies each year from 2016 through 2026 YTD, with the rest of the tracked set available as an overlay.";
+  "Scatter of the ten largest U.S., global, or non-U.S. tech companies each year from 2016 through 2026 YTD, plotted by next-year revenue growth against forward P/E.";
 const themeColorLight = "#f3efe6";
 const themeColorDark = "#161411";
 const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
@@ -74,8 +74,8 @@ const structuredData = {
           <p class="lede">
             Each year shows the ten largest public tech companies at year-end —
             2026 is year-to-date — plotted by next-year revenue growth against
-            forward P/E. Start with the U.S. set, switch to the global ten, or
-            add the rest of the tracked names.
+            forward P/E. Start with the U.S. set, or switch to the global or
+            non-U.S. ten.
           </p>
         </div>
         <a class="home" href="/">sokolsky.me</a>
@@ -90,15 +90,10 @@ const structuredData = {
               <button type="button" data-scope="global" aria-pressed="false">
                 Global
               </button>
+              <button type="button" data-scope="nonus" aria-pressed="false">
+                Non-USA
+              </button>
             </div>
-            <button
-              type="button"
-              id="extras-toggle"
-              class="extras-toggle"
-              aria-pressed="false"
-            >
-              Also others
-            </button>
             <span id="year-asof">as of 14 Aug 2026</span>
           </div>
         </div>
@@ -164,6 +159,18 @@ const structuredData = {
         IBM: 0.16,
         CSCO: 0.16,
         ORCL: 0.16,
+        SKH: 0.14,
+        SAP: 0.16,
+        SHOP: 0.16,
+        MTK: 0.14,
+        TOEL: 0.14,
+        SONY: 0.18,
+        KEYN: 0.14,
+        PDD: 0.14,
+        BIDU: 0.16,
+        FOXN: 0.14,
+        NTDOY: 0.16,
+        ADVT: 0.14,
       };
       const logoSrc = (id) => `/images/logos/${id}.svg`;
 
@@ -176,7 +183,6 @@ const structuredData = {
       const tooltip = document.getElementById("tooltip");
       const tableBody = document.getElementById("table-body");
       const scopeButtons = [...document.querySelectorAll(".scope-toggle button")];
-      const extrasToggle = document.getElementById("extras-toggle");
       const tableCaption = document.getElementById("table-caption");
       const NS = "http://www.w3.org/2000/svg";
       const W = 1000;
@@ -185,7 +191,6 @@ const structuredData = {
 
       let currentYear = 2026;
       let currentScope = "us";
-      let showExtras = false;
       let activeId = null;
       let positions = new Map();
       let layout = null;
@@ -193,14 +198,8 @@ const structuredData = {
       const scopeMeta = () => SCOPES[currentScope];
       const yearsFor = () => scopeMeta().years;
       const rowFor = (year) => yearsFor().find((row) => row.year === year);
-      const extrasFor = (row) => row.others ?? [];
-      const findCompany = (row, id) => {
-        const company = row.companies.find((item) => item.id === id);
-        if (company) return company;
-        if (!showExtras) return null;
-        const extra = extrasFor(row).find((item) => item.id === id);
-        return extra ? { ...extra, extra: true } : null;
-      };
+      const findCompany = (row, id) =>
+        row.companies.find((item) => item.id === id);
 
       const chartLayout = () => {
         const box = svg.getBoundingClientRect();
@@ -340,12 +339,9 @@ const structuredData = {
           return;
         }
         tooltip.hidden = false;
-        const rankNote = company.extra
-          ? `${company.ticker} · #${company.rank} among tracked`
-          : `${company.ticker} · #${company.rank} by cap`;
         tooltip.innerHTML = `
           <b>${company.name}</b>
-          <small>${rankNote}</small>
+          <small>${company.ticker} · #${company.rank} by cap</small>
           <dl>
             <dt>+1Y growth</dt><dd>${fmtPct(company.revenueGrowth)}</dd>
             <dt>P/E</dt><dd>${fmtPe(company.pe)}</dd>
@@ -362,46 +358,35 @@ const structuredData = {
         tooltip.classList.add("is-on");
       };
 
-      const renderRow = (company) => {
-        const tr = document.createElement("tr");
-        tr.dataset.id = company.id;
-        if (company.extra) tr.classList.add("is-extra");
-        if (company.id === activeId) tr.classList.add("is-active");
-        tr.innerHTML = `
-          <td>${company.rank}</td>
-          <td>
-            <span class="company">
-              <img src="${logoSrc(company.id)}" alt="" width="18" height="18" />
-              ${company.name}
-            </span>
-          </td>
-          <td class="num">${fmtPct(company.revenueGrowth)}</td>
-          <td class="num">${fmtPe(company.pe)}</td>
-          <td class="num">${fmtCap(company.marketCap)}</td>
-        `;
-        tr.addEventListener("pointerenter", () => highlight(company.id));
-        tr.addEventListener("pointerleave", () => highlight(null));
-        return tr;
-      };
-
       const renderTable = (row) => {
         tableCaption.textContent =
           currentScope === "us"
             ? `Largest U.S. tech companies in ${row.label}`
-            : `Largest tech companies in ${row.label}`;
-        const nodes = row.companies.map(renderRow);
-        if (showExtras && extrasFor(row).length) {
-          const head = document.createElement("tr");
-          head.className = "extras-head";
-          head.innerHTML = `<td colspan="5">Also tracked</td>`;
-          nodes.push(
-            head,
-            ...extrasFor(row).map((company) =>
-              renderRow({ ...company, extra: true }),
-            ),
-          );
-        }
-        tableBody.replaceChildren(...nodes);
+            : currentScope === "nonus"
+              ? `Largest non-U.S. tech companies in ${row.label}`
+              : `Largest tech companies in ${row.label}`;
+        tableBody.replaceChildren(
+          ...row.companies.map((company) => {
+            const tr = document.createElement("tr");
+            tr.dataset.id = company.id;
+            if (company.id === activeId) tr.classList.add("is-active");
+            tr.innerHTML = `
+              <td>${company.rank}</td>
+              <td>
+                <span class="company">
+                  <img src="${logoSrc(company.id)}" alt="" width="18" height="18" />
+                  ${company.name}
+                </span>
+              </td>
+              <td class="num">${fmtPct(company.revenueGrowth)}</td>
+              <td class="num">${fmtPe(company.pe)}</td>
+              <td class="num">${fmtCap(company.marketCap)}</td>
+            `;
+            tr.addEventListener("pointerenter", () => highlight(company.id));
+            tr.addEventListener("pointerleave", () => highlight(null));
+            return tr;
+          }),
+        );
       };
 
       const highlight = (id) => {
@@ -423,22 +408,9 @@ const structuredData = {
       const renderChart = (row) => {
         layout = chartLayout();
         const { pad, innerW, innerH, tick, axis, ticksWanted, narrow } = layout;
-        const extras = showExtras
-          ? extrasFor(row)
-              .filter(
-                (company) =>
-                  company.revenueGrowth != null &&
-                  company.pe != null &&
-                  company.pe <= 250,
-              )
-              .map((company) => ({ ...company, extra: true }))
-          : [];
-        const plotted = [
-          ...row.companies.filter(
-            (company) => company.revenueGrowth != null && company.pe != null,
-          ),
-          ...extras,
-        ];
+        const plotted = row.companies.filter(
+          (company) => company.revenueGrowth != null && company.pe != null,
+        );
         const xs = plotted.map((company) => company.revenueGrowth);
         const ys = plotted.map((company) => company.pe);
         const xDom = niceDomain(Math.min(...xs), Math.max(...xs), ticksWanted, false);
@@ -509,23 +481,19 @@ const structuredData = {
 
         const r = markerR();
         positions = new Map();
-        const extrasFirst = [
-          ...plotted.filter((company) => company.extra),
-          ...plotted.filter((company) => !company.extra),
-        ];
-        for (const company of extrasFirst) {
+        for (const company of plotted) {
           const x = scaleX(company.revenueGrowth, xDom);
           const y = scaleY(company.pe, yDom);
           positions.set(company.id, { x, y });
           const g = el("g", {
-            class: company.extra ? "marker is-extra" : "marker",
+            class: "marker",
             "data-id": company.id,
             transform: `translate(${x} ${y})`,
             tabindex: "0",
             role: "img",
             "aria-label": `${company.name}, ${fmtPct(company.revenueGrowth)} growth, ${fmtPe(company.pe)}`,
           });
-          drawMark(g, company.id, company.extra ? r * 0.78 : r);
+          drawMark(g, company.id, r);
           g.addEventListener("pointerenter", () => highlight(company.id));
           g.addEventListener("pointerleave", () => highlight(null));
           g.addEventListener("focus", () => highlight(company.id));
@@ -539,15 +507,8 @@ const structuredData = {
         else url.searchParams.set("year", String(currentYear));
         if (currentScope === "us") url.searchParams.delete("scope");
         else url.searchParams.set("scope", currentScope);
-        if (showExtras) url.searchParams.set("extras", "1");
-        else url.searchParams.delete("extras");
-        if (pushUrl) {
-          history.replaceState(
-            { year: currentYear, scope: currentScope, extras: showExtras },
-            "",
-            url,
-          );
-        }
+        url.searchParams.delete("extras");
+        if (pushUrl) history.replaceState({ year: currentYear, scope: currentScope }, "", url);
       };
 
       const setYear = (year, pushUrl) => {
@@ -565,7 +526,7 @@ const structuredData = {
         });
         renderChart(row);
         renderTable(row);
-        highlight(activeId && findCompany(row, activeId) ? activeId : null);
+        highlight(activeId && row.companies.some((c) => c.id === activeId) ? activeId : null);
         syncUrl(pushUrl);
       };
 
@@ -578,12 +539,6 @@ const structuredData = {
         scopeButtons.forEach((button) => {
           button.setAttribute("aria-pressed", String(button.dataset.scope === scope));
         });
-        setYear(currentYear, pushUrl);
-      };
-
-      const setExtras = (on, pushUrl) => {
-        showExtras = Boolean(on);
-        extrasToggle.setAttribute("aria-pressed", String(showExtras));
         setYear(currentYear, pushUrl);
       };
 
@@ -601,7 +556,6 @@ const structuredData = {
       scopeButtons.forEach((button) => {
         button.addEventListener("click", () => setScope(button.dataset.scope, true));
       });
-      extrasToggle.addEventListener("click", () => setExtras(!showExtras, true));
       window.addEventListener("keydown", (event) => {
         if (event.key === "ArrowLeft") {
           setYear(Math.max(2016, currentYear - 1), true);
@@ -618,8 +572,6 @@ const structuredData = {
       const startYear = rowFor(requestedYear) ? requestedYear : 2026;
       const startScope = SCOPES[requestedScope] ? requestedScope : "us";
       currentScope = startScope;
-      showExtras = params.get("extras") === "1";
-      extrasToggle.setAttribute("aria-pressed", String(showExtras));
       scopeButtons.forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.scope === startScope));
       });
