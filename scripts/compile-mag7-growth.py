@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+"""Compile cleaned top-10 tech scatter data from scraped CMC tables + Yahoo 2026."""
+
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+AGENT_TOOLS = Path(
+    "/Users/nsokolsky/.cursor/projects/Users-nsokolsky-projects-personal-site-sokolsky-me/agent-tools"
+)
+
+META = {
+    "apple": {"id": "AAPL", "ticker": "AAPL", "name": "Apple"},
+    "microsoft": {"id": "MSFT", "ticker": "MSFT", "name": "Microsoft"},
+    "alphabet-google": {"id": "GOOGL", "ticker": "GOOGL", "name": "Alphabet"},
+    "amazon": {"id": "AMZN", "ticker": "AMZN", "name": "Amazon"},
+    "meta-platforms": {"id": "META", "ticker": "META", "name": "Meta"},
+    "nvidia": {"id": "NVDA", "ticker": "NVDA", "name": "Nvidia"},
+    "tesla": {"id": "TSLA", "ticker": "TSLA", "name": "Tesla"},
+    "tsmc": {"id": "TSM", "ticker": "TSM", "name": "TSMC"},
+    "broadcom": {"id": "AVGO", "ticker": "AVGO", "name": "Broadcom"},
+    "oracle": {"id": "ORCL", "ticker": "ORCL", "name": "Oracle"},
+    "intel": {"id": "INTC", "ticker": "INTC", "name": "Intel"},
+    "cisco": {"id": "CSCO", "ticker": "CSCO", "name": "Cisco"},
+    "ibm": {"id": "IBM", "ticker": "IBM", "name": "IBM"},
+    "tencent": {"id": "TCEHY", "ticker": "TCEHY", "name": "Tencent"},
+    "alibaba": {"id": "BABA", "ticker": "BABA", "name": "Alibaba"},
+    "samsung": {"id": "SMSN", "ticker": "005930.KS", "name": "Samsung"},
+    "asml": {"id": "ASML", "ticker": "ASML", "name": "ASML"},
+}
+
+# Tencent USD series after 2022, scaled from CMC 2022 USD with CNY YoY.
+TENCENT_FILL = {
+    "revenue": {
+        2023: 90.15e9,
+        2024: 97.75e9,
+        2025: 111.3e9,
+    },
+    "earnings": {
+        2023: 15.7e9,
+        2024: 27.1e9,
+        2025: 30.9e9,
+    },
+}
+
+YAHOO_2026 = {
+    "AAPL": {"pe": 32.18, "growth": 0.1476},
+    "MSFT": {"pe": 21.03, "growth": 0.1788},
+    "GOOGL": {"pe": 23.47, "growth": 0.2355},
+    "AMZN": {"pe": 25.30, "growth": 0.1553},
+    "META": {"pe": 16.91, "growth": 0.2655},
+    "NVDA": {"pe": 17.47, "growth": 0.8239},
+    "TSLA": {"pe": 154.23, "growth": 0.1164},
+    "TSM": {"pe": 19.59, "growth": 0.4245},
+    "AVGO": {"pe": 20.12, "growth": 0.6598},
+    "SMSN": {"pe": None, "growth": None},  # KRW quote is not usable
+    "TCEHY": {"pe": None, "growth": 0.0938},
+}
+
+
+def parse_usd(value: str) -> float | None:
+    match = re.search(r"\$([\d.]+)\s*([TBM])", value.replace(",", ""))
+    if not match:
+        return None
+    number = float(match.group(1))
+    return number * {"T": 1e12, "B": 1e9, "M": 1e6}[match.group(2)]
+
+
+def load_tables() -> dict[str, dict[str, dict[int, dict]]]:
+    found: dict[str, dict[str, dict[int, dict]]] = {
+        "revenue": {},
+        "earnings": {},
+        "marketcap": {},
+    }
+    for path in AGENT_TOOLS.glob("*.txt"):
+        try:
+            payload = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, list):
+            continue
+        for item in payload:
+            value = item.get("value") if isinstance(item, dict) else None
+            if not isinstance(value, dict):
+                continue
+            url = value.get("url") or ""
+            content = value.get("content") or ""
+            if "companiesmarketcap.com" not in url:
+                continue
+            slug, kind = url.rstrip("/").split("/")[-2:]
+            if kind not in found:
+                continue
+            text = content.replace("&#x20;", " ").replace("&nbsp;", " ")
+            rows = re.findall(
+                r"(20\d{2})(?:\s*\(TTM\))?\s*\n+\s*(\$[0-9.]+ [TBM]|N/A)\s*\n+\s*([-\d.]+%|)",
+                text,
+            )
+            parsed: dict[int, dict] = {}
+            for year_s, amount, change in rows:
+                year = int(year_s)
+                if year < 2014 or year > 2026:
+                    continue
+                parsed[year] = {
+                    "value": parse_usd(amount),
+                    "change": float(change[:-1]) / 100 if change.endswith("%") else None,
+                }
+            if parsed and len(parsed) >= len(found[kind].get(slug, {})):
+                found[kind][slug] = parsed
+    for year, amount in TENCENT_FILL["revenue"].items():
+        found["revenue"].setdefault("tencent", {}).setdefault(
+            year, {"value": amount, "change": None}
+        )
+    for year, amount in TENCENT_FILL["earnings"].items():
+        found["earnings"].setdefault("tencent", {}).setdefault(
+            year, {"value": amount, "change": None}
+        )
+    return found
+
+
+def ratio(numer: float | None, denom: float | None) -> float | None:
+    if not numer or not denom or denom <= 0:
+        return None
+    return numer / denom - 1
+
+
+def pe_ratio(market_cap: float, earnings: float | None) -> float | None:
+    if not earnings or earnings <= 0:
+        return None
+    return market_cap / earnings
+
+
+def compile_years(tables: dict) -> list[dict]:
+    years = []
+    for year in range(2016, 2027):
+        ranked = []
+        for slug, info in META.items():
+            market_cap = tables["marketcap"].get(slug, {}).get(year, {}).get("value")
+            if market_cap:
+                ranked.append((market_cap, slug, info))
+        ranked.sort(reverse=True)
+        points = []
+        for rank, (market_cap, slug, info) in enumerate(ranked[:10], start=1):
+            revenues = tables["revenue"].get(slug, {})
+            earnings = tables["earnings"].get(slug, {})
+            growth = pe = None
+            growth_basis = pe_basis = None
+            if year <= 2024:
+                growth = ratio(
+                    revenues.get(year + 1, {}).get("value"),
+                    revenues.get(year, {}).get("value"),
+                )
+                if growth is not None:
+                    growth_basis = f"realized revenue, FY{year + 1} vs FY{year}"
+                pe = pe_ratio(market_cap, earnings.get(year + 1, {}).get("value"))
+                if pe is not None:
+                    pe_basis = f"year-end cap / FY{year + 1} earnings"
+            elif year == 2025:
+                growth = ratio(
+                    revenues.get(2026, {}).get("value"),
+                    revenues.get(2025, {}).get("value"),
+                )
+                if growth is not None:
+                    growth_basis = "2026 TTM revenue vs FY2025"
+                pe = pe_ratio(market_cap, earnings.get(2026, {}).get("value"))
+                if pe is not None:
+                    pe_basis = "year-end 2025 cap / 2026 TTM earnings"
+            yahoo = YAHOO_2026.get(info["id"], {})
+            if year == 2025 and growth is None and yahoo.get("growth") is not None:
+                growth = yahoo["growth"]
+                growth_basis = "consensus FY2026 revenue growth"
+            if year == 2026:
+                growth = yahoo.get("growth")
+                pe = yahoo.get("pe")
+                if growth is not None:
+                    growth_basis = "consensus current-FY revenue growth"
+                if pe is not None:
+                    pe_basis = "NTM / forward P/E"
+            if growth is None and year == 2026:
+                growth = ratio(
+                    revenues.get(2026, {}).get("value"),
+                    revenues.get(2025, {}).get("value"),
+                )
+                if growth is not None:
+                    growth_basis = "2026 TTM revenue vs FY2025"
+            if pe is None and year == 2026:
+                pe = pe_ratio(market_cap, earnings.get(2026, {}).get("value"))
+                if pe is not None:
+                    pe_basis = "latest cap / 2026 TTM earnings"
+            if pe is None:
+                pe = pe_ratio(market_cap, earnings.get(year, {}).get("value"))
+                if pe is not None:
+                    pe_basis = f"year-end cap / FY{year} earnings"
+            points.append(
+                {
+                    "id": info["id"],
+                    "ticker": info["ticker"],
+                    "name": info["name"],
+                    "rank": rank,
+                    "marketCap": int(round(market_cap)),
+                    "revenueGrowth": None if growth is None else round(growth, 4),
+                    "pe": None if pe is None else round(pe, 2),
+                    "growthBasis": growth_basis,
+                    "peBasis": pe_basis,
+                }
+            )
+        years.append(
+            {
+                "year": year,
+                "asOf": "2026-08-14" if year == 2026 else f"{year}-12-31",
+                "label": "2026 YTD" if year == 2026 else str(year),
+                "companies": points,
+            }
+        )
+    return years
+
+
+def main() -> None:
+    tables = load_tables()
+    years = compile_years(tables)
+    payload = {
+        "title": "Top 10 tech: revenue (+1Y growth) vs P/E",
+        "generatedAt": "2026-08-15",
+        "asOf": "2026-08-14",
+        "methodology": {
+            "universe": "Public technology companies in the usual market sense: GICS information technology, plus internet platforms, Amazon, Tesla, TSMC, Samsung, Tencent, Alibaba, and ASML.",
+            "ranking": "Top 10 by year-end market cap from CompaniesMarketCap. 2026 uses the latest available cap (14 Aug 2026).",
+            "x": "For 2016–2024, realized next-year revenue growth. For 2025, 2026 TTM vs 2025. For 2026 YTD, consensus current-fiscal-year revenue growth (Yahoo Finance).",
+            "y": "For completed years, year-end market cap divided by the next year's earnings (realized forward P/E, a stand-in for NTM). For 2026 YTD, Yahoo Finance forward P/E. Unprofitable next years are omitted from the plot.",
+        },
+        "years": years,
+    }
+    out = Path("src/data/mag7-growth.json")
+    out.write_text(json.dumps(payload, indent=2) + "\n")
+    print("wrote", out)
+    for year in years:
+        row = ", ".join(
+            f"{c['rank']}.{c['name']} {c['revenueGrowth'] if c['revenueGrowth'] is not None else '—':>6} {c['pe'] if c['pe'] is not None else 'n/m'}"
+            for c in year["companies"]
+        )
+        print(year["label"], row)
+
+
+if __name__ == "__main__":
+    main()

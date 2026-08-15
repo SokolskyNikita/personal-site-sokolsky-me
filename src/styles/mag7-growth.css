@@ -1,0 +1,471 @@
+:root {
+  --paper: #f3efe6;
+  --paper-2: #e7e1d4;
+  --ink: #1d1a16;
+  --ink-soft: #4a453c;
+  --muted: #7a7368;
+  --rule: #d4cdc0;
+  --grid: #ddd6c8;
+  --accent: #8a3b22;
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, var(--paper));
+  --marker-ring: #fffdf8;
+  --sans: "Source Sans 3", "Segoe UI", sans-serif;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --mono: "Source Serif 4", ui-serif, Georgia, serif;
+  --pad-x: clamp(1rem, 3vw, 2.25rem);
+  --chart-h: min(68vh, 640px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #161411;
+    --paper-2: #221e19;
+    --ink: #f0ebe1;
+    --ink-soft: #c8c0b3;
+    --muted: #9a9286;
+    --rule: #3a342c;
+    --grid: #2c271f;
+    --accent: #e08a68;
+    --accent-soft: color-mix(in srgb, var(--accent) 16%, var(--paper));
+    --marker-ring: #2a251e;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.page {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 1.1rem var(--pad-x) 3.5rem;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.home {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+}
+
+.home:hover,
+.home:focus-visible {
+  color: var(--accent);
+}
+
+.eyebrow {
+  display: block;
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 6vw, 3.35rem);
+  font-weight: 480;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  max-width: 46ch;
+  margin: 0.85rem 0 0;
+  color: var(--ink-soft);
+  font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+  line-height: 1.45;
+}
+
+.year-panel {
+  margin: 1.75rem 0 1.15rem;
+}
+
+.year-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.55rem;
+}
+
+.year-readout strong {
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 4vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.year-readout span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.year-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2.25rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.year-slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.year-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--rule);
+  border-radius: 99px;
+}
+
+.year-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -10px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.year-slider::-moz-range-track {
+  height: 3px;
+  background: var(--rule);
+  border: 0;
+  border-radius: 99px;
+}
+
+.year-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.year-ticks {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.15rem;
+  margin-top: 0.15rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.year-ticks::-webkit-scrollbar {
+  display: none;
+}
+
+.year-ticks button {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.45rem 0.05rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: clamp(0.875rem, 2.6vw, 1rem);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.year-ticks button[aria-current="true"] {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+@media (pointer: coarse) {
+  .year-ticks button {
+    padding: 0.65rem 0.05rem;
+  }
+}
+
+.chart-shell {
+  position: relative;
+  background: color-mix(in srgb, var(--paper-2) 55%, var(--paper));
+  border: 1px solid var(--rule);
+}
+
+.chart-title {
+  position: absolute;
+  top: 0.55rem;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0 0.85rem;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  pointer-events: none;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: var(--chart-h);
+  min-height: 320px;
+}
+
+.chart text {
+  fill: var(--ink-soft);
+  font-family: var(--sans);
+  font-weight: 600;
+}
+
+.chart .axis-label {
+  fill: var(--ink);
+  font-weight: 650;
+}
+
+.chart .grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.chart .zero {
+  stroke: color-mix(in srgb, var(--accent) 35%, var(--grid));
+  stroke-dasharray: 3 4;
+}
+
+.marker {
+  cursor: pointer;
+}
+
+.marker circle.disc {
+  fill: var(--marker-ring);
+  stroke: color-mix(in srgb, var(--ink) 12%, var(--rule));
+  stroke-width: 1;
+}
+
+.marker.is-active {
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--ink) 18%, transparent));
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 3;
+  min-width: 11.5rem;
+  max-width: min(18rem, calc(100% - 1.5rem));
+  padding: 0.7rem 0.8rem 0.75rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--ink) 12%, transparent);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, calc(-100% - 14px));
+  transition: opacity 140ms ease;
+}
+
+.tooltip.is-on {
+  opacity: 1;
+}
+
+.tooltip b {
+  display: block;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 550;
+}
+
+.tooltip small {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.tooltip dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.7rem;
+  margin: 0.45rem 0 0;
+}
+
+.tooltip dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.tooltip dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+}
+
+.table-wrap {
+  margin-top: 1.4rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+caption {
+  caption-side: top;
+  padding: 0 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 0.55rem 0.45rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+td.num,
+th.num {
+  text-align: right;
+}
+
+.company {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.company img {
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0.12rem;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: #fffdf8;
+  object-fit: contain;
+}
+
+tr.is-active td {
+  background: var(--accent-soft);
+}
+
+.notes {
+  max-width: 68ch;
+  margin: 2.2rem 0 0;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.notes h2 {
+  margin: 0 0 0.45rem;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 520;
+}
+
+.notes p + p {
+  margin-top: 0.7rem;
+}
+
+@media (min-width: 880px) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    gap: 1.4rem;
+    align-items: start;
+  }
+
+  .table-wrap {
+    margin-top: 0;
+  }
+
+  .chart {
+    height: min(72vh, 680px);
+  }
+
+  th,
+  td {
+    padding: 0.48rem 0.35rem;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --chart-h: min(92vw, 460px);
+  }
+
+  .top {
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    max-width: 14ch;
+  }
+
+  .year-readout {
+    flex-wrap: wrap;
+    gap: 0.2rem 0.8rem;
+  }
+
+  .chart {
+    min-height: 380px;
+  }
+
+  .chart-title {
+    top: 0.5rem;
+    padding: 0 0.7rem;
+  }
+
+  th,
+  td {
+    font-size: 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip,
+  .marker {
+    transition: none;
+  }
+}

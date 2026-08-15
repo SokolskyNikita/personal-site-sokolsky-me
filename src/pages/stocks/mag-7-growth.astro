@@ -1,0 +1,531 @@
+---
+import data from "../../data/mag7-growth.json";
+import "../../styles/mag7-growth.css";
+
+export const prerender = true;
+
+const pageTitle = "Top 10 tech: growth vs P/E";
+const pageDescription =
+  "Scatter of the ten largest tech companies each year from 2016 through 2026 YTD, plotted by next-year revenue growth against forward P/E.";
+const themeColorLight = "#f3efe6";
+const themeColorDark = "#161411";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  author: { "@type": "Person", name: "Nikita Sokolsky" },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,550&family=Source+Sans+3:wght@400;600;650;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="top">
+        <div>
+          <span class="eyebrow">Stocks</span>
+          <h1>Who was expensive for the growth they were about to deliver</h1>
+          <p class="lede">
+            Each year shows the ten largest public tech companies at year-end —
+            2026 is year-to-date — plotted by next-year revenue growth against
+            forward P/E.
+          </p>
+        </div>
+        <a class="home" href="/">sokolsky.me</a>
+      </header>
+
+      <section class="year-panel" aria-label="Year">
+        <div class="year-readout">
+          <strong id="year-label">2026 YTD</strong>
+          <span id="year-asof">as of 14 Aug 2026</span>
+        </div>
+        <input
+          id="year-slider"
+          class="year-slider"
+          type="range"
+          min="2016"
+          max="2026"
+          step="1"
+          value="2026"
+          aria-labelledby="year-label"
+        />
+        <div class="year-ticks" id="year-ticks"></div>
+      </section>
+
+      <div class="layout">
+        <div class="chart-shell">
+          <p class="chart-title" id="chart-title"></p>
+          <svg
+            class="chart"
+            id="chart"
+            role="img"
+            aria-labelledby="chart-title"></svg>
+          <div class="tooltip" id="tooltip" hidden></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <caption id="table-caption">Largest tech companies in 2026</caption>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Company</th>
+                <th class="num" scope="col">+1Y</th>
+                <th class="num" scope="col">P/E</th>
+                <th class="num" scope="col">Cap</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <section class="notes">
+        <h2>How to read it</h2>
+        <p>
+          Right and low is cheap growth. Left and high paid a lot for little
+          incoming revenue. The 2026 pane uses live forward estimates so it
+          matches the usual Mag7 scatter; earlier years use the growth and
+          earnings that actually arrived in the following year.
+        </p>
+        <p>
+          “Tech” here is the market’s working set: software, chips, hardware,
+          and the internet platforms, plus Amazon and Tesla. Rankings are
+          year-end market cap from CompaniesMarketCap. 2026 figures are as of 14
+          August.
+        </p>
+      </section>
+    </main>
+
+    <script define:vars={{ dataset: data }}>
+      const YEARS = dataset.years;
+      const byYear = new Map(YEARS.map((row) => [row.year, row]));
+      const logoInset = {
+        AAPL: 0.3,
+        MSFT: 0.22,
+        GOOGL: 0.2,
+        AMZN: 0.16,
+        META: 0.2,
+        NVDA: 0.16,
+        TSLA: 0.2,
+        TSM: 0.12,
+        AVGO: 0.18,
+        BABA: 0.18,
+        SMSN: 0.16,
+        TCEHY: 0.16,
+        ASML: 0.14,
+        INTC: 0.18,
+        IBM: 0.16,
+        CSCO: 0.16,
+      };
+      const logoSrc = (id) => `/images/logos/${id}.svg`;
+
+      const slider = document.getElementById("year-slider");
+      const ticks = document.getElementById("year-ticks");
+      const yearLabel = document.getElementById("year-label");
+      const yearAsof = document.getElementById("year-asof");
+      const chartTitle = document.getElementById("chart-title");
+      const svg = document.getElementById("chart");
+      const tooltip = document.getElementById("tooltip");
+      const tableBody = document.getElementById("table-body");
+      const tableCaption = document.getElementById("table-caption");
+      const NS = "http://www.w3.org/2000/svg";
+      const W = 1000;
+      const H = 720;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+      let currentYear = 2026;
+      let activeId = null;
+      let positions = new Map();
+      let layout = null;
+
+      const chartLayout = () => {
+        const box = svg.getBoundingClientRect();
+        const scale = Math.max(box.width / W, 0.25);
+        const narrow = window.innerWidth < 640;
+        const mid = window.innerWidth < 880;
+        const tick = 16 / scale;
+        const axis = 17 / scale;
+        const pad = {
+          top: narrow ? 86 : 68,
+          right: Math.max(36, tick * 2.2),
+          bottom: Math.round(tick + axis + 28),
+          left: Math.round(axis + tick * 3.6 + 16),
+        };
+        return {
+          scale,
+          tick,
+          axis,
+          pad,
+          innerW: W - pad.left - pad.right,
+          innerH: H - pad.top - pad.bottom,
+          narrow,
+          mid,
+          ticksWanted: narrow ? 4 : mid ? 5 : 6,
+        };
+      };
+
+      const fmtPct = (value) => {
+        if (value == null) return "—";
+        const pct = value * 100;
+        const abs = Math.abs(pct).toFixed(Math.abs(pct) >= 10 ? 0 : 1);
+        return `${pct < 0 ? "−" : ""}${abs}%`;
+      };
+      const fmtPe = (value) => (value == null ? "n/m" : `${value.toFixed(1)}x`);
+      const fmtCap = (value) => {
+        if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
+        return `$${(value / 1e9).toFixed(0)}B`;
+      };
+      const fmtDate = (iso) => {
+        if (iso.endsWith("12-31")) return `31 Dec ${iso.slice(0, 4)}`;
+        const date = new Date(`${iso}T12:00:00Z`);
+        return date.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          timeZone: "UTC",
+        });
+      };
+
+      const niceNum = (range, ticksWanted) => {
+        const rough = range / ticksWanted;
+        const mag = 10 ** Math.floor(Math.log10(rough));
+        const residual = rough / mag;
+        const nice = residual >= 7.5 ? 10 : residual >= 3.5 ? 5 : residual >= 1.5 ? 2 : 1;
+        return nice * mag;
+      };
+
+      const niceDomain = (min, max, ticksWanted, floorZero) => {
+        if (min === max) {
+          min -= Math.abs(min) * 0.2 || 1;
+          max += Math.abs(max) * 0.2 || 1;
+        }
+        const padAmt = (max - min) * 0.12;
+        let lo = min - padAmt;
+        let hi = max + padAmt;
+        if (floorZero && lo > 0) lo = 0;
+        if (min >= 0 && lo < 0 && min < (max - min) * 0.15) lo = 0;
+        const step = niceNum(hi - lo, ticksWanted);
+        lo = Math.floor(lo / step) * step;
+        hi = Math.ceil(hi / step) * step;
+        const values = [];
+        for (let v = lo; v <= hi + step / 2; v += step) values.push(v);
+        return { lo, hi, values };
+      };
+
+      const fmtAxisPct = (value) => {
+        const pct = value * 100;
+        const abs = Math.abs(pct);
+        const digits = abs === 0 || abs >= 10 ? 0 : 1;
+        return `${pct < 0 ? "−" : ""}${abs.toFixed(digits)}%`;
+      };
+      const fmtAxisPe = (value) =>
+        `${value.toFixed(value === 0 || value >= 10 ? 0 : 1)}x`;
+
+      const scaleX = (value, domain) =>
+        layout.pad.left +
+        ((value - domain.lo) / (domain.hi - domain.lo)) * layout.innerW;
+      const scaleY = (value, domain) =>
+        layout.pad.top +
+        (1 - (value - domain.lo) / (domain.hi - domain.lo)) * layout.innerH;
+
+      const markerR = () => 22;
+
+      const el = (name, attrs = {}, parent = svg) => {
+        const node = document.createElementNS(NS, name);
+        for (const [key, value] of Object.entries(attrs)) {
+          node.setAttribute(key, String(value));
+        }
+        parent.appendChild(node);
+        return node;
+      };
+
+      const drawMark = (group, id, r) => {
+        const inset = (logoInset[id] ?? 0.2) * r;
+        const size = (r - inset) * 2;
+        el("circle", { class: "disc", r, cx: 0, cy: 0 }, group);
+        const clipId = `logo-clip-${id}`;
+        const defs = el("defs", {}, group);
+        const clip = el("clipPath", { id: clipId }, defs);
+        el("circle", { r: r - 1.5, cx: 0, cy: 0 }, clip);
+        const image = el(
+          "image",
+          {
+            href: logoSrc(id),
+            x: -size / 2,
+            y: -size / 2,
+            width: size,
+            height: size,
+            preserveAspectRatio: "xMidYMid meet",
+            "clip-path": `url(#${clipId})`,
+          },
+          group,
+        );
+        image.setAttributeNS(
+          "http://www.w3.org/1999/xlink",
+          "href",
+          logoSrc(id),
+        );
+      };
+
+      const setTooltip = (company, x, y) => {
+        if (!company) {
+          tooltip.hidden = true;
+          tooltip.classList.remove("is-on");
+          return;
+        }
+        tooltip.hidden = false;
+        tooltip.innerHTML = `
+          <b>${company.name}</b>
+          <small>${company.ticker} · #${company.rank} by cap</small>
+          <dl>
+            <dt>+1Y growth</dt><dd>${fmtPct(company.revenueGrowth)}</dd>
+            <dt>P/E</dt><dd>${fmtPe(company.pe)}</dd>
+            <dt>Market cap</dt><dd>${fmtCap(company.marketCap)}</dd>
+          </dl>
+        `;
+        const shell = tooltip.parentElement.getBoundingClientRect();
+        const svgBox = svg.getBoundingClientRect();
+        const px = svgBox.left - shell.left + (x / W) * svgBox.width;
+        const py = svgBox.top - shell.top + (y / H) * svgBox.height;
+        const left = Math.min(Math.max(px, 80), shell.width - 80);
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${Math.max(py, 48)}px`;
+        tooltip.classList.add("is-on");
+      };
+
+      const renderTable = (row) => {
+        tableCaption.textContent = `Largest tech companies in ${row.label}`;
+        tableBody.replaceChildren(
+          ...row.companies.map((company) => {
+            const tr = document.createElement("tr");
+            tr.dataset.id = company.id;
+            if (company.id === activeId) tr.classList.add("is-active");
+            tr.innerHTML = `
+              <td>${company.rank}</td>
+              <td>
+                <span class="company">
+                  <img src="${logoSrc(company.id)}" alt="" width="18" height="18" />
+                  ${company.name}
+                </span>
+              </td>
+              <td class="num">${fmtPct(company.revenueGrowth)}</td>
+              <td class="num">${fmtPe(company.pe)}</td>
+              <td class="num">${fmtCap(company.marketCap)}</td>
+            `;
+            tr.addEventListener("pointerenter", () => highlight(company.id));
+            tr.addEventListener("pointerleave", () => highlight(null));
+            return tr;
+          }),
+        );
+      };
+
+      const highlight = (id) => {
+        activeId = id;
+        svg.querySelectorAll(".marker").forEach((node) => {
+          node.classList.toggle("is-active", node.dataset.id === id);
+          if (node.dataset.id === id) node.parentNode.appendChild(node);
+        });
+        tableBody.querySelectorAll("tr").forEach((node) => {
+          node.classList.toggle("is-active", node.dataset.id === id);
+        });
+        const row = byYear.get(currentYear);
+        const company = row.companies.find((item) => item.id === id);
+        const pos = positions.get(id);
+        if (company && pos) setTooltip(company, pos.x, pos.y);
+        else setTooltip(null);
+      };
+
+      const renderChart = (row) => {
+        layout = chartLayout();
+        const { pad, innerW, innerH, tick, axis, ticksWanted, narrow } = layout;
+        const plotted = row.companies.filter(
+          (company) => company.revenueGrowth != null && company.pe != null,
+        );
+        const xs = plotted.map((company) => company.revenueGrowth);
+        const ys = plotted.map((company) => company.pe);
+        const xDom = niceDomain(Math.min(...xs), Math.max(...xs), ticksWanted, false);
+        const yDom = niceDomain(Math.min(...ys), Math.max(...ys), ticksWanted, true);
+
+        svg.replaceChildren();
+        chartTitle.textContent = narrow
+          ? `${row.label}: growth vs P/E`
+          : `${row.label}: revenue (+1Y growth) vs P/E`;
+
+        for (const value of xDom.values) {
+          const x = scaleX(value, xDom);
+          el("line", {
+            class: value === 0 ? "zero" : "grid",
+            x1: x,
+            x2: x,
+            y1: pad.top,
+            y2: pad.top + innerH,
+          });
+          const label = el("text", {
+            x,
+            y: H - pad.bottom + tick * 0.82,
+            "text-anchor": "middle",
+            "font-size": tick,
+          });
+          label.textContent = fmtAxisPct(value);
+        }
+        for (const value of yDom.values) {
+          const y = scaleY(value, yDom);
+          el("line", {
+            class: value === 0 ? "zero" : "grid",
+            x1: pad.left,
+            x2: pad.left + innerW,
+            y1: y,
+            y2: y,
+          });
+          const onFloor = Math.abs(y - (pad.top + innerH)) < 1.5;
+          if (onFloor) continue;
+          const label = el("text", {
+            x: pad.left - 10,
+            y: y + tick * 0.32,
+            "text-anchor": "end",
+            "font-size": tick,
+          });
+          label.textContent = fmtAxisPe(value);
+        }
+
+        const xName = el("text", {
+          class: "axis-label",
+          x: pad.left + innerW / 2,
+          y: H - axis * 0.2,
+          "text-anchor": "middle",
+          "font-size": axis,
+        });
+        xName.textContent = narrow ? "Revenue growth" : "Revenue (+1Y growth)";
+        const yTitleX = Math.max(axis * 0.9, 24);
+        const yTitleY = pad.top + innerH / 2;
+        const yName = el("text", {
+          class: "axis-label",
+          x: yTitleX,
+          y: yTitleY,
+          transform: `rotate(-90 ${yTitleX} ${yTitleY})`,
+          "text-anchor": "middle",
+          "font-size": axis,
+        });
+        yName.textContent = row.year === 2026 ? "P/E (NTM)" : "P/E (fwd)";
+
+        const r = markerR();
+        positions = new Map();
+        for (const company of plotted) {
+          const x = scaleX(company.revenueGrowth, xDom);
+          const y = scaleY(company.pe, yDom);
+          positions.set(company.id, { x, y });
+          const g = el("g", {
+            class: "marker",
+            "data-id": company.id,
+            transform: `translate(${x} ${y})`,
+            tabindex: "0",
+            role: "img",
+            "aria-label": `${company.name}, ${fmtPct(company.revenueGrowth)} growth, ${fmtPe(company.pe)}`,
+          });
+          drawMark(g, company.id, r);
+          g.addEventListener("pointerenter", () => highlight(company.id));
+          g.addEventListener("pointerleave", () => highlight(null));
+          g.addEventListener("focus", () => highlight(company.id));
+          g.addEventListener("blur", () => highlight(null));
+        }
+      };
+
+      const setYear = (year, pushUrl) => {
+        currentYear = year;
+        const row = byYear.get(year);
+        slider.value = String(year);
+        yearLabel.textContent = row.label;
+        yearAsof.textContent = `as of ${fmtDate(row.asOf)}`;
+        ticks.querySelectorAll("button").forEach((button) => {
+          if (Number(button.dataset.year) === year) {
+            button.setAttribute("aria-current", "true");
+          } else {
+            button.removeAttribute("aria-current");
+          }
+        });
+        renderChart(row);
+        renderTable(row);
+        highlight(activeId && row.companies.some((c) => c.id === activeId) ? activeId : null);
+        const url = new URL(window.location.href);
+        if (year === 2026) url.searchParams.delete("year");
+        else url.searchParams.set("year", String(year));
+        if (pushUrl) history.replaceState({ year }, "", url);
+      };
+
+      YEARS.forEach((row) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.year = String(row.year);
+        button.textContent = row.year === 2026 ? "’26" : String(row.year).slice(2);
+        button.setAttribute("aria-label", row.label);
+        button.addEventListener("click", () => setYear(row.year, true));
+        ticks.appendChild(button);
+      });
+
+      slider.addEventListener("input", () => setYear(Number(slider.value), true));
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") {
+          setYear(Math.max(2016, currentYear - 1), true);
+        }
+        if (event.key === "ArrowRight") {
+          setYear(Math.min(2026, currentYear + 1), true);
+        }
+      });
+      window.addEventListener("resize", () => setYear(currentYear, false));
+
+      const params = new URLSearchParams(window.location.search);
+      const requested = Number(params.get("year"));
+      const start = byYear.has(requested) ? requested : 2026;
+      setYear(start, false);
+      void reduceMotion;
+    </script>
+  </body>
+</html>
