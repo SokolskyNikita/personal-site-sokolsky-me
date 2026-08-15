@@ -313,14 +313,6 @@ const structuredData = {
             <strong>Value</strong> ({weights.value}%) — the above, divided by the Amazon price on {pageData.updated}.
           </li>
         </ul>
-        <p>
-          Only bags shown in stock on Amazon US that day are listed. Famous carry-ons that miss 22 × 14 × 9, and large shells over 62 linear inches, are out even when they sell well.
-        </p>
-        <ul class="exclusions">
-          {pageData.excludedNotes.map((note) => (
-            <li>{note}</li>
-          ))}
-        </ul>
       </aside>
     </main>
     <script>
@@ -616,15 +608,10 @@ const structuredData = {
     font-variant-numeric: tabular-nums;
   }
 
-  .method ul,
-  .exclusions {
+  .method ul {
     margin: 0.5rem 0 0;
     padding-left: 1.15rem;
     color: var(--muted);
-  }
-
-  .exclusions {
-    font-size: 0.9rem;
   }
 
   .method strong {
