@@ -59,8 +59,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 1.75rem;
+  gap: 1.25rem;
+  margin-bottom: 1.4rem;
+}
+
+.top > div {
+  flex: 1;
+  min-width: 0;
 }
 
 .home {
@@ -87,19 +92,19 @@ body {
 
 h1 {
   margin: 0;
-  max-width: 18ch;
+  max-width: 36ch;
   font-family: var(--serif);
-  font-size: clamp(2rem, 6vw, 3.35rem);
-  font-weight: 480;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.45rem, 2.6vw, 2.05rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .lede {
-  max-width: 46ch;
-  margin: 0.85rem 0 0;
+  max-width: 62ch;
+  margin: 0.55rem 0 0;
   color: var(--ink-soft);
-  font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+  font-size: 1.02rem;
   line-height: 1.45;
 }
 
@@ -117,9 +122,9 @@ h1 {
 
 .year-readout strong {
   font-family: var(--serif);
-  font-size: clamp(1.7rem, 4vw, 2.35rem);
+  font-size: clamp(1.35rem, 2.2vw, 1.7rem);
   font-weight: 500;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .year-readout span {
@@ -389,25 +394,6 @@ tr.is-active td {
   background: var(--accent-soft);
 }
 
-.notes {
-  max-width: 68ch;
-  margin: 2.2rem 0 0;
-  color: var(--ink-soft);
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.notes h2 {
-  margin: 0 0 0.45rem;
-  font-family: var(--serif);
-  font-size: 1.25rem;
-  font-weight: 520;
-}
-
-.notes p + p {
-  margin-top: 0.7rem;
-}
-
 @media (min-width: 880px) {
   .layout {
     display: grid;
@@ -440,7 +426,7 @@ tr.is-active td {
   }
 
   h1 {
-    max-width: 14ch;
+    max-width: 22ch;
   }
 
   .year-readout {
