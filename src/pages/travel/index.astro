@@ -36,7 +36,6 @@ const continentBySlug: Record<string, Continent> = {
   "south-asia": "Asia",
   "southeast-asia": "Asia",
   "middle-east": "Asia",
-  europe: "Europe",
   "northern-europe": "Europe",
   "western-europe": "Europe",
   "central-europe": "Europe",
@@ -66,8 +65,6 @@ const importedSpotCounts: Record<string, number> = {
   ...europeSubregionImportedSpotCounts,
 };
 
-const hiddenIndexSlugs = new Set(["best-of-europe"]);
-
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
@@ -96,7 +93,7 @@ const formatRegionName = (slug: string) =>
 
 const regionalSpotCounts = Object.fromEntries(
   Object.entries(pageSources)
-    .filter(([path]) => !path.endsWith("/best-of-world.astro") && !path.endsWith("/best-of-europe.astro"))
+    .filter(([path]) => !path.endsWith("/best-of-world.astro"))
     .map(([path, source]) => [
       path,
       importedSpotCounts[path] ?? extractTravelSpotsFromSource(String(source)).length,
@@ -107,8 +104,6 @@ const worldSpotCount = Object.values(regionalSpotCounts).reduce((sum, count) => 
 const regions = Object.entries(pageSources)
   .flatMap(([path, source]) => {
     const slug = path.replace("./", "").replace(/\.astro$/, "");
-    if (hiddenIndexSlugs.has(slug)) return [];
-
     const regionSlug = slug.replace(/^best-of-/, "");
     const spotCount =
       slug === "best-of-world"

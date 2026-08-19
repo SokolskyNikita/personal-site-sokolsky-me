@@ -1,4 +1,4 @@
-// Data for /travel/best-of-europe. Kept out of the .astro frontmatter so the
+// Data for Europe travel subregion pages. Kept out of .astro frontmatter so the
 // Astro compiler (Go WASM, ~2GB heap cap) never has to parse it; it OOMed on CI.
 import type { TravelSpot } from "../components/travel/TravelSpotGuide.astro";
 

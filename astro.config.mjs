@@ -14,6 +14,7 @@ const trackedRedirectPaths = new Set([
   '/skincare/ari-match-tool-usa/',
   '/travel/best-of-antarctica/',
   '/travel/best-of-arctic/',
+  '/travel/best-of-europe/',
 ]);
 /** @param {string} page */
 const isPrivatePage = (page) => {

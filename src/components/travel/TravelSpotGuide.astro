@@ -1,4 +1,12 @@
 ---
+import {
+  SCORE_MAX,
+  SCORE_TOTAL_MAX,
+  scoreTotal,
+  weightedScore,
+  type TravelScoreKey,
+} from "../../data/travelScores";
+
 export type TravelSpot = {
   id: string;
   name: string;
@@ -91,18 +99,13 @@ const googleMapsApiKey =
     : "";
 const showMapCanvas = showMap && (usesPolarMap || Boolean(googleMapsApiKey));
 
-const getScoreTotal = (spot: TravelSpot) =>
-  spot.scores.globallyUnique +
-  spot.scores.laymenInterest +
-  spot.scores.easeOfAccess +
-  spot.scores.lowTouristCrowds;
 const scoreEntries = [
   ["Globally unique", "globallyUnique"],
   ["Laymen interest", "laymenInterest"],
   ["Ease of access", "easeOfAccess"],
   ["Low tourist crowds", "lowTouristCrowds"],
-] as const;
-const validateScore = (spot: TravelSpot, key: keyof TravelSpot["scores"]) => {
+] as const satisfies ReadonlyArray<readonly [string, TravelScoreKey]>;
+const validateScore = (spot: TravelSpot, key: TravelScoreKey) => {
   const score = spot.scores[key];
   if (!Number.isInteger(score) || score < 0 || score > 10) {
     throw new Error(`${pageTitle} spot "${spot.id}" has invalid ${key} score.`);
@@ -131,7 +134,7 @@ const rankedSpotsWithTrip = spots
   .map((spot, originalIndex) => ({
     ...spot,
     originalIndex,
-    totalScore: getScoreTotal(spot),
+    totalScore: scoreTotal(spot.scores),
     googleMapsUrl: getGoogleMapsUrl(spot),
   }))
   .sort(
@@ -358,10 +361,10 @@ const structuredData = {
             data-review-count={spot.map.reviewCount ?? 0}
             data-score-rank={index + 1}
             data-total-score={spot.totalScore}
-            data-globally-unique={spot.scores.globallyUnique}
-            data-laymen-interest={spot.scores.laymenInterest}
-            data-ease-of-access={spot.scores.easeOfAccess}
-            data-low-tourist-crowds={spot.scores.lowTouristCrowds}
+            data-globally-unique={weightedScore(spot.scores, "globallyUnique")}
+            data-laymen-interest={weightedScore(spot.scores, "laymenInterest")}
+            data-ease-of-access={weightedScore(spot.scores, "easeOfAccess")}
+            data-low-tourist-crowds={weightedScore(spot.scores, "lowTouristCrowds")}
           >
             <div class="spot-rank" aria-label={`Rank ${index + 1}`}>
               {String(index + 1).padStart(2, "0")}
@@ -397,13 +400,13 @@ const structuredData = {
               <div class="score-panel" aria-label={`${spot.name} ranking scores`}>
                 <div class="score-total">
                   <span>Total score</span>
-                  <strong>{spot.totalScore}/40</strong>
+                  <strong>{spot.totalScore}/{SCORE_TOTAL_MAX}</strong>
                 </div>
                 <dl class="score-grid">
                   {scoreEntries.map(([label, key]) => (
                     <div>
                       <dt>{label}</dt>
-                      <dd>{spot.scores[key]}/10</dd>
+                      <dd>{weightedScore(spot.scores, key)}/{SCORE_MAX[key]}</dd>
                     </div>
                   ))}
                 </dl>

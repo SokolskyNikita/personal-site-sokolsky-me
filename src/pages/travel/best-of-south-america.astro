@@ -1,6 +1,13 @@
 ---
 export const prerender = true;
 
+import {
+  SCORE_MAX,
+  SCORE_TOTAL_MAX,
+  scoreTotal,
+  weightedScore,
+} from "../../data/travelScores";
+
 const pageTitle = "Most interesting spots in South America";
 const pageDescription =
   "A researched field guide to South America's most unique places: geology, archaeology, ecosystems and culture, with Google Maps pins.";
@@ -2907,11 +2914,7 @@ const scoreEntries = [
   ["Ease of access", "easeOfAccess"],
   ["Low tourist crowds", "lowTouristCrowds"],
 ] as const;
-const getScoreTotal = (spot: Spot) =>
-  spot.scores.globallyUnique +
-  spot.scores.laymenInterest +
-  spot.scores.easeOfAccess +
-  spot.scores.lowTouristCrowds;
+const getScoreTotal = (spot: Spot) => scoreTotal(spot.scores);
 const validateScore = (spot: Spot, key: keyof Spot["scores"]) => {
   const score = spot.scores[key];
   if (!Number.isInteger(score) || score < 0 || score > 10) {
@@ -2924,14 +2927,27 @@ spots.forEach((spot) => {
 });
 
 const spotById = new Map(spots.map((spot) => [spot.id, spot] as const));
-const rankedSpots = interestingnessOrder
-  .map((id) => spotById.get(id))
-  .filter((spot): spot is Spot => Boolean(spot));
 const rankedSpotIds = new Set(interestingnessOrder);
 
-if (rankedSpotIds.size !== spots.length || rankedSpots.length !== spots.length) {
+if (rankedSpotIds.size !== spots.length || rankedSpotIds.size !== interestingnessOrder.length) {
   throw new Error("South America spot ranking must include each spot exactly once.");
 }
+
+for (const id of interestingnessOrder) {
+  if (!spotById.has(id)) {
+    throw new Error(`South America ranking includes unknown spot "${id}".`);
+  }
+}
+
+const rankedSpots = spots
+  .map((spot, originalIndex) => ({ spot, originalIndex }))
+  .sort(
+    (a, b) =>
+      getScoreTotal(b.spot) - getScoreTotal(a.spot) ||
+      b.spot.scores.laymenInterest - a.spot.scores.laymenInterest ||
+      a.originalIndex - b.originalIndex,
+  )
+  .map(({ spot }) => spot);
 
 const tripEstimates: Record<string, { days: number; costUsd: number; note: string }> = {
   "catatumbo-lightning": {
@@ -3559,10 +3575,10 @@ const structuredData = {
             data-review-count={spot.map.reviewCount ?? 0}
             data-score-rank={index + 1}
             data-total-score={spot.totalScore}
-            data-globally-unique={spot.scores.globallyUnique}
-            data-laymen-interest={spot.scores.laymenInterest}
-            data-ease-of-access={spot.scores.easeOfAccess}
-            data-low-tourist-crowds={spot.scores.lowTouristCrowds}
+            data-globally-unique={weightedScore(spot.scores, "globallyUnique")}
+            data-laymen-interest={weightedScore(spot.scores, "laymenInterest")}
+            data-ease-of-access={weightedScore(spot.scores, "easeOfAccess")}
+            data-low-tourist-crowds={weightedScore(spot.scores, "lowTouristCrowds")}
           >
             <div class="spot-rank" aria-label={`Rank ${index + 1}`}>
               {String(index + 1).padStart(2, "0")}
@@ -3598,13 +3614,13 @@ const structuredData = {
               <div class="score-panel" aria-label={`${spot.name} ranking scores`}>
                 <div class="score-total">
                   <span>Total score</span>
-                  <strong>{spot.totalScore}/40</strong>
+                  <strong>{spot.totalScore}/{SCORE_TOTAL_MAX}</strong>
                 </div>
                 <dl class="score-grid">
                   {scoreEntries.map(([label, key]) => (
                     <div>
                       <dt>{label}</dt>
-                      <dd>{spot.scores[key]}/10</dd>
+                      <dd>{weightedScore(spot.scores, key)}/{SCORE_MAX[key]}</dd>
                     </div>
                   ))}
                 </dl>
