@@ -13,10 +13,10 @@ export const europeTravelSpots = [
     "kind": "Rock-cut city",
     "access": "Rail/road access and steep walking",
     "scores": {
-      "globallyUnique": 9,
+      "globallyUnique": 8,
       "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 4,
+      "lowTouristCrowds": 3,
     },
     "uniqueness": "A large rock-cut settlement with evidence of human occupation from the Palaeolithic to the present",
     "why": "Matera’s rarity is the way cave houses, churches and lanes along the ravine form a city with roots in prehistory. Together the Sassi form an urban fabric built into the natural caves of the Murgia.",
@@ -52,9 +52,9 @@ export const europeTravelSpots = [
     "kind": "Submarine-canyon surf",
     "access": "Clifftop viewpoints in swell season",
     "scores": {
-      "globallyUnique": 9,
+      "globallyUnique": 8,
       "laymenInterest": 10,
-      "easeOfAccess": 5,
+      "easeOfAccess": 9,
       "lowTouristCrowds": 3,
     },
     "uniqueness": "A submarine canyon that helps produce some of the world’s largest surfable waves",
@@ -96,7 +96,7 @@ export const europeTravelSpots = [
       "globallyUnique": 5,
       "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 4,
+      "lowTouristCrowds": 3,
     },
     "uniqueness": "Artemy top-tier rating: medieval ridge and planned Georgian city facing each other",
     "why": "Edinburgh is a city, but below the million-person cutoff and in Artemy’s top tier. Its travel value is the paired urban form: Old Town ridge, castle rock, closes, New Town geometry and volcanic hills around the center.",
@@ -132,8 +132,8 @@ export const europeTravelSpots = [
     "kind": "Lebedev-loved island city",
     "access": "Flight or ferry access",
     "scores": {
-      "globallyUnique": 5,
-      "laymenInterest": 9,
+      "globallyUnique": 4,
+      "laymenInterest": 7,
       "easeOfAccess": 8,
       "lowTouristCrowds": 5,
     },
@@ -211,10 +211,10 @@ export const europeTravelSpots = [
     "kind": "Reed-bed delta ecosystem",
     "access": "Travel from delta towns and villages uses 15 water routes plus nine land routes, with ARBDD permits and route restrictions.",
     "scores": {
-      "globallyUnique": 9,
-      "laymenInterest": 9,
+      "globallyUnique": 8,
+      "laymenInterest": 8,
       "easeOfAccess": 4,
-      "lowTouristCrowds": 6,
+      "lowTouristCrowds": 8,
     },
     "uniqueness": "Europe’s largest continuous marshland and one of the world’s great reed-bed systems",
     "why": "The delta is a network of reedbeds, floating reed islands, channels and lakes rather than a single viewpoint. More than 300 bird species use it. It is one of Europe's best-preserved deltas, but navigation, tourism and pollution are putting pressure on it.",
@@ -254,7 +254,7 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 7,
       "laymenInterest": 7,
-      "easeOfAccess": 10,
+      "easeOfAccess": 8,
       "lowTouristCrowds": 8,
     },
     "uniqueness": "A manganese-mining town with cable cars linking its steep valley and outlying districts",
@@ -296,10 +296,10 @@ export const europeTravelSpots = [
     "kind": "Cave biodiversity",
     "access": "Tourist cave tours and vivarium exhibits",
     "scores": {
-      "globallyUnique": 8,
-      "laymenInterest": 8,
+      "globallyUnique": 7,
+      "laymenInterest": 7,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 4,
+      "lowTouristCrowds": 2,
     },
     "uniqueness": "Europe’s only cave-adapted vertebrate and one of the world’s richest regions for subterranean biodiversity",
     "why": "The olm is a blind, neotenic aquatic salamander that lives in the underground waters of the Dinaric karst, from northeastern Italy through Slovenia and Croatia to Bosnia and Herzegovina. Postojna’s Vivarium gives visitors a public view of the animal, while much of the wider cave ecosystem is physically inaccessible.",
@@ -337,10 +337,10 @@ export const europeTravelSpots = [
     "kind": "Subaerial plate boundary",
     "access": "Golden Circle roads; Silfra snorkeling or diving requires a buddy, a park permit and full cold-water equipment; diving also requires certification",
     "scores": {
-      "globallyUnique": 8,
-      "laymenInterest": 7,
+      "globallyUnique": 9,
+      "laymenInterest": 8,
       "easeOfAccess": 8,
-      "lowTouristCrowds": 3,
+      "lowTouristCrowds": 2,
     },
     "uniqueness": "An exposed section of Iceland’s Mid-Atlantic rift, with the clear, diveable Silfra fissure inside the rift zone",
     "why": "Þingvellir is an onshore section of Iceland’s Mid-Atlantic rift, where the land between the North American and Eurasian plates is pulling apart and subsiding. Silfra is a water-filled fissure within that rift zone, fed by groundwater filtered through lava from Langjökull glacier and clear enough for roughly 100 metres of visibility.",
@@ -378,7 +378,7 @@ export const europeTravelSpots = [
     "kind": "Medieval fortress town on a sea rock",
     "access": "Road or KTEL bus from Athens; local bus from Gefyra to the fortress",
     "scores": {
-      "globallyUnique": 7,
+      "globallyUnique": 6,
       "laymenInterest": 8,
       "easeOfAccess": 7,
       "lowTouristCrowds": 5,
@@ -457,7 +457,7 @@ export const europeTravelSpots = [
     "kind": "Inhabited enclave system",
     "access": "Road, bike or regional bus access",
     "scores": {
-      "globallyUnique": 9,
+      "globallyUnique": 10,
       "laymenInterest": 8,
       "easeOfAccess": 10,
       "lowTouristCrowds": 7,
@@ -496,10 +496,10 @@ export const europeTravelSpots = [
     "kind": "Harbor city with a Hanseatic wharf",
     "access": "Easy flight/rail access",
     "scores": {
-      "globallyUnique": 8,
-      "laymenInterest": 10,
+      "globallyUnique": 5,
+      "laymenInterest": 8,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 4,
+      "lowTouristCrowds": 2,
     },
     "uniqueness": "Artemy top-tier rating: UNESCO-listed Hanseatic wharf in Bergen, a harbor city between the sea and steep mountains",
     "why": "Bergen appears in Artemy’s top tier. Around the harbor, Bryggen’s timber trading quarter, the Fish Market and the Fløibanen funicular are all within a short walk. Fjord trips leave from the city too.",
@@ -538,7 +538,7 @@ export const europeTravelSpots = [
     "access": "80 km / 1 h 20 min from Baku by car via E119; raw field routes need a 4x4 or local driver",
     "scores": {
       "globallyUnique": 8,
-      "laymenInterest": 9,
+      "laymenInterest": 8,
       "easeOfAccess": 7,
       "lowTouristCrowds": 7,
     },
@@ -580,8 +580,8 @@ export const europeTravelSpots = [
     "kind": "Tidal flats",
     "access": "Guided mudflat walks, ferries and island bases",
     "scores": {
-      "globallyUnique": 9,
-      "laymenInterest": 8,
+      "globallyUnique": 8,
+      "laymenInterest": 7,
       "easeOfAccess": 8,
       "lowTouristCrowds": 4,
     },
@@ -621,10 +621,10 @@ export const europeTravelSpots = [
     "kind": "Buried Roman cities",
     "access": "Rail and site walking",
     "scores": {
-      "globallyUnique": 8,
-      "laymenInterest": 8,
+      "globallyUnique": 7,
+      "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 3,
+      "lowTouristCrowds": 2,
     },
     "uniqueness": "Roman urban life preserved by the 79 CE eruption of Vesuvius",
     "why": "Pompeii gives urban scale while Herculaneum gives denser preservation of houses, timber and upper floors. Together they form a rare city-level disaster record.",
@@ -663,9 +663,9 @@ export const europeTravelSpots = [
     "kind": "Tertiary relict forest",
     "access": "Island forest hikes and levada trails",
     "scores": {
-      "globallyUnique": 9,
-      "laymenInterest": 10,
-      "easeOfAccess": 6,
+      "globallyUnique": 8,
+      "laymenInterest": 8,
+      "easeOfAccess": 8,
       "lowTouristCrowds": 4,
     },
     "uniqueness": "A living remnant of the laurel forests that once covered southern Europe and North Africa",
@@ -707,7 +707,7 @@ export const europeTravelSpots = [
       "globallyUnique": 5,
       "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 3,
+      "lowTouristCrowds": 1,
     },
     "uniqueness": "Artemy top-tier rating: inhabited caldera rim above a Bronze Age volcanic system",
     "why": "Artemy's top-tier rating has a concrete basis: whitewashed villages sit on the rim of a mostly submerged volcanic caldera formed by the Late Bronze Age Minoan eruption.",
@@ -747,10 +747,10 @@ export const europeTravelSpots = [
     "kind": "Cross-border urban transit",
     "access": "Regular public transit",
     "scores": {
-      "globallyUnique": 7,
-      "laymenInterest": 6,
+      "globallyUnique": 5,
+      "laymenInterest": 5,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 5,
+      "lowTouristCrowds": 8,
     },
     "uniqueness": "Urban tram lines crossing from one city into two neighboring countries",
     "why": "Travel Stack Exchange identifies Basel as an unusual mass-transit case where tram lines run from Switzerland into both France and Germany. The everydayness of the border crossing is the point.",
@@ -788,10 +788,10 @@ export const europeTravelSpots = [
     "kind": "Accessible polar archipelago",
     "access": "Direct flights from Oslo or Tromsø to Longyearbyen; guided travel recommended outside town",
     "scores": {
-      "globallyUnique": 5,
+      "globallyUnique": 8,
       "laymenInterest": 9,
       "easeOfAccess": 5,
-      "lowTouristCrowds": 5,
+      "lowTouristCrowds": 7,
     },
     "uniqueness": "A high-Arctic settlement and wilderness edge with the Global Seed Vault nearby",
     "why": "Svalbard combines direct flights, polar-bear country, months of midnight sun and polar night, a settlement outside Schengen and the Global Seed Vault in permafrost.",
@@ -830,7 +830,7 @@ export const europeTravelSpots = [
       "globallyUnique": 9,
       "laymenInterest": 7,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 3,
+      "lowTouristCrowds": 2,
     },
     "uniqueness": "The largely intact grounds of Auschwitz I and Auschwitz II-Birkenau, the principal Nazi German concentration and extermination camp complex",
     "why": "The visit covers preserved grounds and exhibitions at Auschwitz I and Auschwitz II-Birkenau, the principal Nazi German concentration and extermination camp complex. The museum preserves victims' belongings and survivor testimonies while documenting how the Holocaust was carried out.",
@@ -868,10 +868,10 @@ export const europeTravelSpots = [
     "kind": "Water-control infrastructure",
     "access": "Free road, cycle and foot access",
     "scores": {
-      "globallyUnique": 7,
-      "laymenInterest": 6,
+      "globallyUnique": 6,
+      "laymenInterest": 7,
       "easeOfAccess": 8,
-      "lowTouristCrowds": 7,
+      "lowTouristCrowds": 8,
     },
     "uniqueness": "A nine-kilometre movable storm-surge barrier with 65 concrete piers, 62 gates and a public road, cycle path and footpath",
     "why": "Travel Stack Exchange describes the 9 km Oosterscheldekering as a cycle crossing with a separate cycle path. The barrier normally leaves the Oosterschelde open to tides and closes its 62 gates when high water threatens.",
@@ -909,8 +909,8 @@ export const europeTravelSpots = [
     "kind": "Scheduled hovercraft service",
     "access": "Regular passenger service",
     "scores": {
-      "globallyUnique": 7,
-      "laymenInterest": 5,
+      "globallyUnique": 8,
+      "laymenInterest": 6,
       "easeOfAccess": 10,
       "lowTouristCrowds": 5,
     },
@@ -953,7 +953,7 @@ export const europeTravelSpots = [
       "globallyUnique": 6,
       "laymenInterest": 10,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 2,
+      "lowTouristCrowds": 1,
     },
     "uniqueness": "A cascade of 16 named lakes separated by actively growing tufa barriers, unusual for its scale and intactness.",
     "why": "The lake system is visually arresting, but it ranks below places whose defining process has no close analogue: tufa barriers also shape Croatia's Krka River. Plitvice's case is the combination of scale, clear water and public access to an active tufa-building system.",
@@ -991,9 +991,9 @@ export const europeTravelSpots = [
     "kind": "Lebedev-loved remote archipelago",
     "access": "Boat access in good weather",
     "scores": {
-      "globallyUnique": 8,
+      "globallyUnique": 9,
       "laymenInterest": 9,
-      "easeOfAccess": 2,
+      "easeOfAccess": 3,
       "lowTouristCrowds": 9,
     },
     "uniqueness": "Artemy top-tier rating: evacuated Atlantic island culture and seabird cliffs",
@@ -1032,7 +1032,7 @@ export const europeTravelSpots = [
     "kind": "Historic basaltic eruption field",
     "access": "Managed national-park routes and demonstrations",
     "scores": {
-      "globallyUnique": 6,
+      "globallyUnique": 5,
       "laymenInterest": 9,
       "easeOfAccess": 9,
       "lowTouristCrowds": 2,
@@ -1074,9 +1074,9 @@ export const europeTravelSpots = [
     "access": "Easy coastal access",
     "scores": {
       "globallyUnique": 6,
-      "laymenInterest": 8,
+      "laymenInterest": 9,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 0,
+      "lowTouristCrowds": 1,
     },
     "uniqueness": "A distinctive basalt-column coast with related formations at Staffa, Mull and Ulva in Scotland",
     "why": "The Causeway is worth keeping, but columnar basalt is not exclusive to this coast: related formations occur at Staffa, Mull and Ulva in Scotland. The draw here is scale, coastal setting and mythology rather than a process unique to Europe.",
@@ -1115,9 +1115,9 @@ export const europeTravelSpots = [
     "access": "Road, cable-car, hut and hiking access",
     "scores": {
       "globallyUnique": 6,
-      "laymenInterest": 7,
-      "easeOfAccess": 6,
-      "lowTouristCrowds": 5,
+      "laymenInterest": 9,
+      "easeOfAccess": 8,
+      "lowTouristCrowds": 4,
     },
     "uniqueness": "A classic example of mountains in dolomitic limestone, with Triassic carbonate platforms and tectonic and glacial landforms",
     "why": "The Dolomites merit a place here because their pale limestone peaks expose Triassic carbonate platforms, fossilized atolls and reef-and-basin relationships. Tectonic uplift and erosion shaped that record into a mountain range that remains legible from the trail.",
@@ -1155,10 +1155,10 @@ export const europeTravelSpots = [
     "kind": "Cave system",
     "access": "Guided cave route",
     "scores": {
-      "globallyUnique": 8,
+      "globallyUnique": 7,
       "laymenInterest": 10,
-      "easeOfAccess": 6,
-      "lowTouristCrowds": 3,
+      "easeOfAccess": 8,
+      "lowTouristCrowds": 6,
     },
     "uniqueness": "One of the world's largest known underground river canyons in the Classical Karst",
     "why": "The Reka River canyon reaches up to 150 metres high and more than 120 metres wide; its scale is the main event.",
@@ -1196,9 +1196,9 @@ export const europeTravelSpots = [
     "kind": "Megalithic temple complex",
     "access": "Heritage Malta sites across Malta and Gozo; the Hypogeum requires timed entry",
     "scores": {
-      "globallyUnique": 7,
+      "globallyUnique": 8,
       "laymenInterest": 8,
-      "easeOfAccess": 8,
+      "easeOfAccess": 9,
       "lowTouristCrowds": 4,
     },
     "uniqueness": "An island-only megalithic tradition older than Stonehenge and the pyramids",
@@ -1238,7 +1238,7 @@ export const europeTravelSpots = [
     "access": "Road or bus to Kalambaka, then local transfers and monastery stairs",
     "scores": {
       "globallyUnique": 8,
-      "laymenInterest": 8,
+      "laymenInterest": 9,
       "easeOfAccess": 8,
       "lowTouristCrowds": 2,
     },
@@ -1281,7 +1281,7 @@ export const europeTravelSpots = [
       "globallyUnique": 5,
       "laymenInterest": 7,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 5,
+      "lowTouristCrowds": 4,
     },
     "uniqueness": "The codebreaking campus tied to Enigma, Colossus and early computing",
     "why": "Travel Stack Exchange points visitors looking for Alan Turing sites to Bletchley Park, Hut 8, the Bombe reconstruction and the National Museum of Computing. The place is stronger than a memorial because the work happened there.",
@@ -1319,10 +1319,10 @@ export const europeTravelSpots = [
     "kind": "Underground mine museum",
     "access": "Guided underground route",
     "scores": {
-      "globallyUnique": 6,
-      "laymenInterest": 9,
+      "globallyUnique": 5,
+      "laymenInterest": 8,
       "easeOfAccess": 10,
-      "lowTouristCrowds": 2,
+      "lowTouristCrowds": 1,
     },
     "uniqueness": "A historic salt mine with underground chapels, chambers and visitor routes",
     "why": "UNESCO lists Wieliczka with Bochnia as a royal salt-mining complex worked from the 13th century. The visitor route passes through former mine workings with underground chapels, statues and chambers carved from rock salt.",
@@ -1363,7 +1363,7 @@ export const europeTravelSpots = [
       "globallyUnique": 8,
       "laymenInterest": 8,
       "easeOfAccess": 9,
-      "lowTouristCrowds": 5,
+      "lowTouristCrowds": 4,
     },
     "uniqueness": "A dense Boyne Valley ritual landscape with chambered tombs older than Stonehenge",
     "why": "Brú na Bóinne is Ireland’s strongest archaeology entry because Newgrange, Knowth and Dowth form a connected Neolithic ritual landscape with large mounds, long passages and carved stones. Newgrange’s winter-solstice alignment gives the site a precise astronomical hook without making the whole visit about one famous chamber.",
@@ -1398,7 +1398,7 @@ export const europeTravelSpots = [
     "kind": "Atlantic monastic island",
     "access": "Seasonal licensed boats; weather-dependent landings",
     "scores": {
-      "globallyUnique": 7,
+      "globallyUnique": 9,
       "laymenInterest": 9,
       "easeOfAccess": 3,
       "lowTouristCrowds": 8,
@@ -1438,7 +1438,7 @@ export const europeTravelSpots = [
     "scores": {
       "globallyUnique": 7,
       "laymenInterest": 7,
-      "easeOfAccess": 9,
+      "easeOfAccess": 8,
       "lowTouristCrowds": 6,
     },
     "uniqueness": "A glaciated limestone pavement landscape with rare flora, caves and megaliths",
@@ -1474,9 +1474,9 @@ export const europeTravelSpots = [
     "kind": "Neolithic field system under blanket bog",
     "access": "Visitor centre, cliff viewing platform and guided bog tours",
     "scores": {
-      "globallyUnique": 7,
-      "laymenInterest": 6,
-      "easeOfAccess": 7,
+      "globallyUnique": 8,
+      "laymenInterest": 5,
+      "easeOfAccess": 6,
       "lowTouristCrowds": 8,
     },
     "uniqueness": "A Stone Age farming landscape preserved beneath Atlantic blanket bog",
@@ -1513,10 +1513,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Road and bus access from Tirana; steep, uneven stone streets in both historic centres.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 4,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "Two well-preserved fortified historic centres where Ottoman-era houses sit alongside Byzantine churches and mosques.",
       "why": "Berat's Kala includes 13th-century Byzantine churches and Ottoman mosques, while Gjirokastra has 17th-century two-storey houses around its citadel, a bazaar and an 18th-century mosque.",
@@ -1550,10 +1550,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural heritage",
       "access": "Road access from Vanadzor or Alaverdi; local buses and marshrutka vans are possible, but schedules need checking.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "These two complexes combine Byzantine ecclesiastical forms with traditional vernacular building styles from the Caucasus.",
       "why": "These two Byzantine monasteries in the Tumanian region date from the Kiurikian dynasty's prosperous period, the 10th to 13th centuries. They were important centres of learning and Sanahin was known for its school of illuminators and calligraphers.",
@@ -1590,7 +1590,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 8,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 4,
       },
       "uniqueness": "Rock-cut churches and tombs within a still-used medieval monastery at the entrance to the Azat Valley",
       "why": "The complex combines a 1215 main church with 13th-century churches and tombs cut into the living rock, including the Proshyan princes' mausoleum.",
@@ -1661,10 +1661,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic city centre",
       "access": "Pedestrian old town; Salzburg Central Station is a 20-minute walk away, with trolleybus lines 1, 3, 5, 6 and 25 to the city centre",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 5,
         "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "The most completely preserved surviving example of an ecclesiastical city-state from the Holy Roman Empire, with a Baroque skyline dominated by Hohensalzburg Fortress",
       "why": "Salzburg retains the split between the prince-archbishops' monumental district around the cathedral and the burghers' narrow streets and small plots. Italian architects Vincenzo Scamozzi and Santino Solari gave the centre much of its Baroque appearance.",
@@ -1701,7 +1701,7 @@ export const europeTravelSpots = [
           "globallyUnique": 6,
           "laymenInterest": 6,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A continuously operating 19th-century mountain railway with 14 tunnels, 16 major viaducts and nearby resort buildings",
       "why": "Built between 1848 and 1854, the 41-km route crosses the Semmering Pass through 14 tunnels and 16 major viaducts, and the line remains in continuous use.",
@@ -1735,10 +1735,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "In Vienna; U4, trams 10 and 60 and bus 10A stop at the palace",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "The palace and gardens form a Baroque Gesamtkunstwerk; the 18th-century park layout is virtually untouched and the complex retains its original architecture, furnishings and spatial relationship.",
       "why": "From the 18th century to 1918, Schönbrunn was the residence of the Habsburg emperors. It was designed by the architects Johann Bernhard Fischer von Erlach and Nicolaus Pacassi and is full of outstanding examples of decorative art.",
@@ -1772,10 +1772,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Train, bus or car access; Hallstatt village has limited parking and the train station requires a ferry connection.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 7,
-        "lowTouristCrowds": 3,
+        "globallyUnique": 5,
+        "laymenInterest": 9,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 1,
       },
       "uniqueness": "A preserved Alpine cultural landscape shaped by more than 2,500 years of salt mining, timber production and transhumance.",
       "why": "Systematic salt production began in the late 2nd millennium BC. Salt mining underpinned the region's prosperity into the 20th century and is visible in Hallstatt's architecture.",
@@ -1809,10 +1809,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; tram and a short walk to Schloss Eggenberg",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 6
       },
       "uniqueness": "UNESCO-listed urban ensemble joining Graz's historic centre with Schloss Eggenberg, a 17th-century palace and its gardens",
       "why": "Graz's historic centre and Schloss Eggenberg combine architectural styles from the Middle Ages through the 18th century. The Habsburgs and major aristocratic families shaped the city's political and artistic history.",
@@ -1846,9 +1846,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Train to Melk or Krems, then regional buses, ferries and seasonal river boats",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 8,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
+        "easeOfAccess": 9,
         "lowTouristCrowds": 6,
       },
       "uniqueness": "A UNESCO-listed Danube valley where medieval settlements and vineyard terraces remain part of a working landscape",
@@ -1883,10 +1883,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 7,
+          "globallyUnique": 6,
           "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 3
+          "lowTouristCrowds": 2
         },
       "uniqueness": "A UNESCO-listed city centre with a medieval core, Baroque palace ensembles and the late-19th-century Ringstrasse",
       "why": "Vienna developed from early Celtic and Roman settlements into a medieval and Baroque city and later became the capital of the Austro-Hungarian Empire. It was a leading European music centre from the age of Viennese Classicism through the early 20th century.",
@@ -1920,10 +1920,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A rare medieval walled urban ensemble where 12th-century defenses, the Maiden Tower and the Shirvanshahs' Palace remain part of a living city.",
       "why": "The Walled City of Baku occupies a site inhabited since the Palaeolithic period and preserves evidence of Zoroastrian, Sasanian, Arabic, Persian, Shirvani, Ottoman and Russian presence across its history.",
@@ -1958,9 +1958,9 @@ export const europeTravelSpots = [
       "access": "Remote mountain access; arrange local transport for the final 55 km from Guba",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 5,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A living UNESCO cultural landscape organized around a 200-kilometre vertical transhumance route",
       "why": "This cultural landscape includes the high-mountain Khinalig village in northern Azerbaijan, high-altitude summer pastures and agricultural terraces in the Greater Caucasus Mountains, winter pastures in the lowland plains in central Azerbaijan and the connecting 200-kilometre-long seasonal transhumance route called Köç Yolu (“Migration Route”).",
@@ -1994,10 +1994,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO fortification",
       "access": "Road or bus access from Minsk; museum entry is ticketed",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 4
+          "easeOfAccess": 3,
+          "lowTouristCrowds": 3
       },
       "uniqueness": "UNESCO-listed castle combining Gothic, Renaissance and Baroque architecture",
       "why": "The construction of this castle began at the end of the 15th century, in Gothic style. It was subsequently extended and reconstructed, first in the Renaissance and then in the Baroque style.",
@@ -2032,9 +2032,9 @@ export const europeTravelSpots = [
       "access": "RAVeL loop past the four lifts; tourist and educational activities are no longer scheduled.",
       "scores": {
         "globallyUnique": 9,
-        "laymenInterest": 6,
-        "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "laymenInterest": 5,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "The four hydraulic boat-lifts are the only ones among the eight built in the late 19th and early 20th centuries that remain in their original working condition.",
       "why": "Over 7 km of the historic Canal du Centre, four hydraulic lifts each raise boats 15 to 16 metres. The canal, bridges, machinery buildings and staff housing remain together as a well-preserved late-19th-century industrial complex.",
@@ -2069,9 +2069,9 @@ export const europeTravelSpots = [
       "access": "Walkable historic centre; direct trains from Brussels",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 1
       },
       "uniqueness": "A UNESCO-listed medieval city centre where the street plan, canals and brick-Gothic architecture remain legible",
       "why": "Brugge keeps its medieval street pattern, canals and brick-Gothic buildings. The Market Place, belfry, churches and commercial complexes show how the city grew as a trading centre. Brugge was also the birthplace of the Flemish Primitives.",
@@ -2105,8 +2105,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Open to visitors; hours vary by day and restoration work can limit access to some sections.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 6,
+        "laymenInterest": 6,
         "easeOfAccess": 10,
         "lowTouristCrowds": 6,
       },
@@ -2143,9 +2143,9 @@ export const europeTravelSpots = [
       "access": "Currently closed for renovation through 4 December 2026; normally open Tuesday–Sunday 10:00–17:00 in central Antwerp.",
       "scores": {
         "globallyUnique": 9,
-        "laymenInterest": 6,
-        "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "laymenInterest": 5,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "The world's only surviving Renaissance- and Baroque-era printing workshop and publishing house, with workshop equipment and furnishings kept in situ, an extensive library, business archives and works of art.",
       "why": "The complex preserves the Plantin-Moretus family's home, workshops, library and business archives in the same location where the firm operated from 1576 to 1867. It also holds the world's two oldest printing presses, along with books and art tied to Antwerp's role in early European typography.",
@@ -2180,9 +2180,9 @@ export const europeTravelSpots = [
       "access": "Walkable old-town site; the train station is five minutes from central Mostar and buses connect to Sarajevo, Split and Dubrovnik.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 2
       },
       "uniqueness": "Reconstructed 16th-century Ottoman bridge in a historic town with pre-Ottoman, Ottoman, Mediterranean and western European architectural layers",
       "why": "Mostar grew in the 15th and 16th centuries as an Ottoman frontier town in the Neretva valley, then developed further during Austro-Hungarian rule. The Old Bridge and much of the historic town were rebuilt after the 1990s conflict.",
@@ -2216,10 +2216,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "Pedestrian bridge in Višegrad; daily but limited bus service from Sarajevo",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 5,
+        "easeOfAccess": 5,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "UNESCO-listed Ottoman bridge by Mimar Koca Sinan, with 11 masonry arches and a total length of 179.5 m",
       "why": "The Mehmed Paša Sokolović Bridge of Višegrad across the Drina River in the east of Bosnia and Herzegovina was built at the end of the 16th century by the court architect Mimar Koca Sinan on the orders of Grand Vizier Mehmed Paša Sokolović.",
@@ -2255,8 +2255,8 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 7
       },
       "uniqueness": "Three-period church complex with 1259 frescoes and later painted layers",
       "why": "Located on the outskirts of Sofia, Boyana Church consists of three buildings. The eastern church was built in the 10th century and enlarged at the beginning of the 13th century by Sebastocrator Kaloyan, who ordered a second two-storey building beside it; a third church was added at the beginning of the 19th century.",
@@ -2290,10 +2290,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Paid, seasonal access by road to the foot of the rocks, with stairs to the churches; a marked path from Ivanovo takes about 40 minutes.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+        "globallyUnique": 5,
+        "laymenInterest": 7,
           "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+        "lowTouristCrowds": 8
       },
       "uniqueness": "A medieval monastic complex carved into natural karst cavities, with 13th- and 14th-century churches and frescoes preserved in the rock.",
       "why": "In the Rusenski Lom valley near Ivanovo, hermits first carved cells and churches into the rock in the 12th century. The complex later grew to include chapels and monasteries, with 14th-century murals by the Tarnovo School.",
@@ -2330,7 +2330,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 8,
         "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 4,
       },
       "uniqueness": "A UNESCO-listed monastery with a 19th-century Bulgarian Renaissance complex and a functioning monastic community",
       "why": "St John of Rila founded the monastery in the 10th century after living as a hermit in the Rila Mountains. His dwelling and tomb became a holy site, and the monastery became a spiritual and social centre in medieval Bulgaria. After a fire at the beginning of the 19th century, the complex was rebuilt between 1834 and 1862 as a characteristic example of Bulgarian Renaissance architecture.",
@@ -2365,9 +2365,9 @@ export const europeTravelSpots = [
       "access": "Pedestrian old-town access; the city-wall walk requires a ticket.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 7,
+        "laymenInterest": 9,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "UNESCO-listed walled city with preserved Gothic, Renaissance and Baroque buildings inside its historic fortifications.",
       "why": "On the Dalmatian coast, Dubrovnik became an important Mediterranean sea power from the 13th century. The 1667 earthquake severely damaged the city, but it preserved Gothic, Renaissance and Baroque churches, monasteries, palaces and fountains.",
@@ -2401,10 +2401,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable public streets in Split's historic centre; the palace itself is free to enter, while paid interiors have separate hours and admission.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "A Roman imperial palace whose walls and substructures are part of a living, inhabited historic centre",
       "why": "Built for Emperor Diocletian between the late 3rd and early 4th centuries A.D., the palace now forms the core of Split. The cathedral occupies the ancient mausoleum, and later medieval, Renaissance and Baroque buildings filled out the protected centre.",
@@ -2438,7 +2438,7 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable from nearby car parks; the old town is mostly closed to traffic.",
       "scores": {
-        "globallyUnique": 8,
+          "globallyUnique": 7,
         "laymenInterest": 7,
         "easeOfAccess": 9,
         "lowTouristCrowds": 4,
@@ -2475,10 +2475,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "Hellenistic street grid and Romanesque, Renaissance and Baroque buildings survive in a compact island town.",
       "why": "Trogir's historic island still follows a Hellenistic street grid, with Romanesque churches, Venetian Renaissance and Baroque buildings, palaces and fortifications packed into the core.",
@@ -2549,10 +2549,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 1
       },
       "uniqueness": "A preserved urban ensemble spanning Prague’s medieval town plan, Gothic monuments, Baroque buildings and modernist architecture",
       "why": "The Old Town, Lesser Town and New Town preserve Prague’s medieval urban plan alongside major monuments such as Prague Castle, St Vitus Cathedral and Charles Bridge. UNESCO says the city’s Gothic, Baroque and modernist architecture influenced Central European architecture.",
@@ -2586,10 +2586,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 2
       },
       "uniqueness": "A medieval town on a Vltava meander where the castle, planned street layout and many historic buildings remain intact",
       "why": "Built around a 13th-century castle on both banks of the Vltava, the town combines Gothic, Renaissance and Baroque elements. Its medieval street layout and many historic buildings remain largely intact, including Renaissance and Baroque facades and original interiors.",
@@ -2623,10 +2623,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 4,
         "laymenInterest": 7,
         "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A triangular market square lined by Renaissance and Baroque burgher houses with continuous arcades, alongside a Renaissance castle and defensive fishponds.",
       "why": "The houses in Telc, which stands on a hilltop, were originally built of wood. After a fire in the late 14th century, the town was rebuilt in stone, surrounded by walls and further strengthened by a network of artificial ponds.",
@@ -2660,10 +2660,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Visitor-site access; check hours",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 7,
           "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A five-pointed church with a circular cloister and a layout built around repeated groups of five",
       "why": "Built between 1719 and 1727 near Žďár nad Sázavou, this pilgrimage church has a five-pointed star plan and a circular cloister. Jan Blažej Santini Aichel combined Baroque composition with pointed windows, portals and ribbed vaults drawn from late Gothic architecture.",
@@ -2697,10 +2697,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; the Sedlec cathedral is about 1.5 km northeast, so the two UNESCO components are separate stops.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A preserved medieval silver-mining town with a late-Gothic Church of St Barbara and a Cistercian church at Sedlec restored in the early-18th-century Baroque Gothic style.",
       "why": "Kutná Hora grew from silver mining and became a royal city in the 14th century. Its preserved medieval urban plan includes the late-Gothic Church of St Barbara, while the Sedlec cathedral was restored in the early 18th century in the Baroque Gothic style.",
@@ -2734,10 +2734,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Regional route or landscape access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 5
       },
       "uniqueness": "One of Europe's largest designed landscapes, linking Liechtenstein castles, parks and smaller structures with avenues, ponds and long views",
       "why": "Between the 17th and 20th centuries, the ruling dukes of Liechtenstein reshaped their domains in southern Moravia. Valtice's Baroque rebuilding involved Johann Bernhard Fischer von Erlach and other architects, while Lednice was remodeled in Baroque, Classical and Neo-Gothic styles; parks, avenues, ponds and smaller structures follow English Romantic landscape principles.",
@@ -2771,10 +2771,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO Baroque garden-and-castle ensemble",
       "access": "Castle tours are seasonal; the Chateau Garden is free and open year-round, while the Flower Garden has separate seasonal hours.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 6
       },
       "uniqueness": "UNESCO-listed Baroque princely residence with an almost-intact 17th-century Pleasure Garden",
       "why": "Kroměříž stands on the site of an earlier ford across the River Morava, at the foot of the Chriby mountain range which dominates the central part of Moravia. The gardens and castle of Kroměříž are an exceptionally complete and well-preserved example of a European Baroque princely residence and its gardens.",
@@ -2808,10 +2808,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Regular bus from České Budějovice; walkable village green",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "easeOfAccess": 8,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A living South Bohemian village of 23 farmsteads around a rectangular green, with façades in the South Bohemian folk Baroque style and a medieval plan.",
       "why": "Holašovice keeps 23 farmsteads around a rectangular village green, most with U-shaped plans and stucco gables in the South Bohemian folk-Baroque style. The village also retains its medieval layout and land parcelling.",
@@ -2848,7 +2848,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 7,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "Preserved arcaded Renaissance country residence with a second square courtyard unique to Litomyšl and intact ancillary buildings",
       "why": "Litomyšl Castle was originally a Renaissance arcade-castle of the type first developed in Italy and then adopted and greatly developed in central Europe in the 16th century.",
@@ -2883,9 +2883,9 @@ export const europeTravelSpots = [
       "access": "Regional route or landscape access",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "laymenInterest": 4,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "The world’s only hop-growing landscape on the UNESCO World Heritage List: Žatec’s medieval centre and industrial Prague Suburb sit alongside rural hop fields and villages.",
       "why": "This cultural landscape has been shaped for centuries by the living tradition of growing and trading Saaz hops, used in beer production around the globe.",
@@ -2919,10 +2919,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "In central Roskilde; 25 minutes by train from Copenhagen, with almost all westbound trains from Copenhagen Central stopping at Roskilde",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 4,
+          "laymenInterest": 6,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A Gothic brick cathedral that became a Danish royal mausoleum, with chapels and porches added in successive architectural styles.",
       "why": "Built in the 12th and 13th centuries, this was Scandinavia's first Gothic cathedral to be built of brick and it encouraged the spread of this style throughout northern Europe.",
@@ -2956,10 +2956,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO fortification",
       "access": "Paid visitor site; direct train from Copenhagen takes about 46 minutes, followed by a 10-minute walk from Helsingør station; check seasonal hours.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "Preserved Renaissance castle and fortress with a chapel that survived the 1629 fire and the largest Renaissance great hall of its kind in Northern Europe.",
       "why": "Kronborg controlled the narrowest part of the Øresund, where Denmark collected Sound tolls from passing ships from 1429 to 1857. It is also Shakespeare's Elsinore in Hamlet.",
@@ -2994,9 +2994,9 @@ export const europeTravelSpots = [
       "access": "Unrestricted public access across three forest areas; plan a route",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
+          "laymenInterest": 4,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 5
       },
       "uniqueness": "Preserved Baroque hunting landscape with star-and-grid forest roads, numbered stone posts and a hunting lodge",
       "why": "About 30 km northeast of Copenhagen, the site includes Store Dyrehave, Gribskov and Jægersborg Hegn/Jægersborg Dyrehave. Danish kings used these royal forests for par force hunts, whose roads and markers still shape the site.",
@@ -3031,9 +3031,9 @@ export const europeTravelSpots = [
       "access": "Walkable old town; airport buses 2 and 15 stop a five-minute walk away, and the main port terminals are 15–20 minutes on foot",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "An exceptionally complete medieval northern European trading city where the 13th-century street plan, building plots and long sections of the town defences remain legible",
       "why": "Upper Toompea and the lower town preserve Tallinn's medieval urban plan, including narrow streets, churches, the town wall and merchant houses. The lower town's building plots remain virtually intact from the 13th–14th centuries, while the plan shows how a feudal seat and a Hanseatic trading centre shared a common system of walls and fortifications.",
@@ -3067,10 +3067,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO fortification",
       "access": "No entrance fee; the year-round HSL ferry from Helsinki Market Square takes about 15 minutes, while museums and services keep separate hours",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "A 210-hectare sea fortress spread across six islands, with 6 km of defensive walls and 200 buildings from the Swedish and Russian periods",
       "why": "Sweden began building Suomenlinna in 1748 on islands at the entrance to Helsinki Harbour. Vauban’s fortification ideas were adapted to the archipelago, and the fortress later served Sweden, Russia and Finland.",
@@ -3104,10 +3104,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Parking by Highway 23; the church is about 200 metres from the lot, with uneven floors and steep steps; no wheelchair access",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+        "globallyUnique": 5,
+        "laymenInterest": 5,
         "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "Preserved pine-log Lutheran church combining Renaissance central planning, Gothic vaulting and Finnish vernacular construction",
       "why": "Petäjävesi Old Church, in central Finland, was built of logs between 1763 and 1765. This Lutheran country church is a typical example of an architectural tradition that is unique to eastern Scandinavia.",
@@ -3141,10 +3141,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "32 km from Kouvola by road; a summer weekend bus, car or taxi reaches the site, and mill visits are guided tours only.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 7,
+        "laymenInterest": 4,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 7,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A preserved late-19th-century forest-industry village with original machinery, workers' housing, power plants and the surrounding rapids.",
       "why": "The mill, workers' houses, power plants and original machinery remain in a largely intact late-19th-century forest-industry village. The guided tour follows how spruce was turned into groundwood pulp and board.",
@@ -3181,7 +3181,7 @@ export const europeTravelSpots = [
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "An unusually complete early-13th-century Gothic cathedral with much of its 12th- and 13th-century stained glass intact.",
       "why": "Partly built starting in 1145, and then reconstructed over a 26-year period after the fire of 1194, Chartres Cathedral is a high point of French Gothic art.",
@@ -3216,9 +3216,9 @@ export const europeTravelSpots = [
       "access": "Timed Palace entry; RER C to Versailles Château–Rive Gauche, then a 10-minute walk; Palace closed Mondays, with separate hours for Trianon, Gardens and Park",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 7,
+        "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 3,
+        "lowTouristCrowds": 1,
       },
       "uniqueness": "A royal palace, Trianon châteaux and French formal gardens arranged along a five-kilometre royal perspective",
       "why": "The Palace of Versailles was the principal residence of the French kings from the time of Louis XIV to Louis XVI. Embellished by several generations of architects, sculptors, decorators and landscape architects, it provided Europe with a model of the ideal royal residence for over a century.",
@@ -3252,10 +3252,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Visitor-site access; check hours",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 6,
           "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A 12th-century Romanesque abbey church on a protected hill, with the historic village below included in the UNESCO property",
       "why": "Shortly after its foundation in the 9th century, the Benedictine abbey of Vézelay acquired the relics of St Mary Magdalene and since then it has been an important place of pilgrimage.",
@@ -3289,10 +3289,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Train from Paris Gare de Lyon to Fontainebleau-Avon, then bus 1 to the château; closed Tuesdays and seasonal hours",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "UNESCO-listed royal palace and park where Italian Renaissance artists influenced French Renaissance art",
       "why": "French kings used Fontainebleau as a hunting lodge from the 12th century. François I transformed and enlarged the lodge in the 16th century because he wanted a 'New Rome'; it became a palace that combines Italian Renaissance work with French artistic traditions.",
@@ -3326,8 +3326,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Free cathedral entry; separate paid tower and treasury tours; check seasonal hours and ceremony closures",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
@@ -3364,9 +3364,9 @@ export const europeTravelSpots = [
       "access": "Open daily; 66-minute TGV from Paris to Montbard, then 5 km by taxi or bike; hours vary by season",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 7,
+        "laymenInterest": 6,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "An unusually complete Cistercian complex whose intact site retains its Romanesque church, cloister, monastic buildings and a late-12th-century forge",
       "why": "Fontenay was founded by Saint Bernard in 1118. Its Romanesque church, cloister, dormitory and late-12th-century forge show how a Cistercian community combined worship with agriculture and industry.",
@@ -3400,10 +3400,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Paid visitor sites; Arc-et-Senans has a TER station 100 metres from the entrance, while the underground gallery at Salins-les-Bains requires a guided tour and stair access.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 6,
+        "globallyUnique": 7,
+        "laymenInterest": 7,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A linked pair of saltworks: Salins-les-Bains preserves underground brine extraction and a working 19th-century pump, while Arc-et-Senans preserves Ledoux's semicircular 18th-century factory.",
       "why": "The Royal Saltworks at Arc-et-Senans, 35 km from Besançon, was designed by Claude-Nicolas Ledoux and built from 1775 to 1779 under Louis XVI. UNESCO calls its semicircular complex the first architectural complex of this scale and standard designed as a place of work; Ledoux's planned ideal city around it was never built.",
@@ -3438,9 +3438,9 @@ export const europeTravelSpots = [
       "access": "Walkable historic-area access",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A medieval urban ensemble that brings together the Papal Palace, the episcopal buildings, city ramparts and four surviving arches of the Saint-Bénézet Bridge.",
       "why": "In the 14th century, this city in the South of France was the seat of the papacy. The Palais des Papes, an austere-looking fortress lavishly decorated by Simone Martini and Matteo Giovanetti, dominates the city, the surrounding ramparts and the remains of a 12th-century bridge over the Rhone.",
@@ -3475,9 +3475,9 @@ export const europeTravelSpots = [
       "access": "Near Poitiers; reach it by car or bus, with self-guided visits during opening hours and guided tours varying by season and church activity",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 8,
+        "laymenInterest": 7,
         "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "An extensive ensemble of 11th- and 12th-century Romanesque murals preserved across the church",
       "why": "The church contains an extensive 11th- and 12th-century biblical mural cycle, with scenes from Genesis, Exodus and the Apocalypse. Much of the painted decoration remains in situ.",
@@ -3514,7 +3514,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A well-preserved Roman aqueduct bridge with three levels of arches and a height of nearly 49 m",
       "why": "The Pont du Gard is the three-storey crossing on the roughly 50 km Roman aqueduct that carried water from near Uzès to Nîmes in the first century AD. It rises nearly 49 m above the Gardon River, and its upper level stretches 275 m.",
@@ -3548,10 +3548,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Free 24-hour access to the Cité; ticketed castle and ramparts",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 3
       },
       "uniqueness": "Inhabited medieval town with two concentric walls, 52 towers and 3 km of ramparts",
       "why": "A fortified settlement has existed on this hill since the pre-Roman period. The present city has two concentric walls around its streets, castle and Gothic Saint-Nazaire Basilica; Eugène Viollet-le-Duc led a long restoration campaign here from 1853 to 1879.",
@@ -3588,7 +3588,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A three-part coronation complex: a Gothic cathedral, the former royal Benedictine Abbey of Saint-Rémi and the archbishop's Palace of Tau",
       "why": "Reims Cathedral combines 13th-century Gothic construction with sculpture integrated into the architecture. The former Abbey of Saint-Rémi and Palace of Tau complete a coronation complex tied to the French monarchy.",
@@ -3622,10 +3622,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Historic-centre site; the crypt is guided-tour only and tower visits use limited seasonal guided slots; check current hours",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 6,
       },
       "uniqueness": "A five-nave Gothic cathedral with no transept, five sculpted west portals and stained glass dating from the 13th to 17th centuries",
       "why": "Built from 1195 in a single major phase, the cathedral has a five-nave plan without a transept and a five-level structure that brings light into the interior. The ambulatory contains 13th-century stained-glass windows.",
@@ -3661,7 +3661,7 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
-          "easeOfAccess": 10,
+          "easeOfAccess": 9,
           "lowTouristCrowds": 6
       },
       "uniqueness": "A 17th-century canal network still in operation, with Pierre-Paul Riquet's original route, water-supply system and many structures intact",
@@ -3699,7 +3699,7 @@ export const europeTravelSpots = [
           "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A two-thousand-year urban fabric where Roman remains, medieval streets, Renaissance Vieux Lyon, classical Presqu'île architecture and 19th-century canut housing remain legible in one city",
       "why": "Lyon grew from Roman Lugdunum, capital of the Three Gauls, into a city whose west-to-east expansion left Roman remains, medieval streets, Renaissance houses, classical architecture and 19th-century canut dwellings side by side.",
@@ -3733,10 +3733,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO-listed medieval fair town",
       "access": "Direct Line P train from Paris-Est; the main medieval area and monuments are walkable",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 5,
+          "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A well-preserved medieval fair town whose urban layout, merchant houses, vaulted cellars, warehouses and defenses were built for international trade",
       "why": "Provins grew on the former lands of the Counts of Champagne and hosted fairs linking northern Europe with the Mediterranean. Its surviving merchant houses, vaulted cellars, warehouses and defenses show how the town was built around trade and wool.",
@@ -3770,10 +3770,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Regional roads and hiking routes; no single site entrance",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "globallyUnique": 5,
+          "laymenInterest": 5,
+          "easeOfAccess": 5,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "UNESCO-listed agro-pastoral landscape with drailles, stone farmhouses and traditional summer transhumance on Mont Lozère",
       "why": "This 302,319 ha property lies in southern central France, where deep mountain valleys, drailles and drove roads show how agro-pastoral systems shaped the terrain.",
@@ -3807,10 +3807,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable city-centre heritage area with a 5 km route; trams and buses connect the centre, while museums and monuments have separate hours and booking rules",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 6,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 5
       },
       "uniqueness": "An inhabited UNESCO historic city whose early-18th-century plans and classical and neoclassical buildings form a coherent urban ensemble",
       "why": "The UNESCO designation covers an inhabited historic city rather than a single monument. Early-18th-century plans and classical and neoclassical buildings give Bordeaux a coherent urban form, while its port supported cultural and commercial exchange for more than 2,000 years. UNESCO says only Paris has more protected buildings among French cities.",
@@ -3844,10 +3844,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable UNESCO core; daily trains from Toulouse and Paris",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 5,
+          "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "Rare, unusually complete medieval episcopal ensemble unified by local fired brick",
       "why": "On the Tarn in south-west France, Albi's old city preserves a dense medieval urban ensemble. The Pont-Vieux and the Saint-Salvi quarter with its church preserve evidence of the city's early development in the 10th and 11th centuries.",
@@ -3884,7 +3884,7 @@ export const europeTravelSpots = [
         "globallyUnique": 8,
         "laymenInterest": 8,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A monumental open-sea lighthouse with a Renaissance royal chapel and apartments that remains an active maritime signal",
       "why": "The Lighthouse of Cordouan rises up on a shallow rocky plateau in the Atlantic Ocean at the mouth of the Gironde estuary in the Nouvelle-Aquitaine region, in a highly exposed and hostile environment.",
@@ -3918,10 +3918,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Open urban site; central districts are walkable and Nice's tram and bus network connects the wider property",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 6,
+        "globallyUnique": 5,
+        "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A 522-hectare UNESCO urban property whose hotels, villas, promenades and street plan record the rise of international winter tourism",
       "why": "Nice, located on the Mediterranean, at the foot of the Alps, near the Italian border, in the Provence-Alpes-Côte d’Azur region, grew as a city devoted to winter tourism, making the most of its mild climate and its coastal situation, between sea and mountains.",
@@ -3955,7 +3955,7 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "About 11 km from Kutaisi; marshrutka 33 runs to the monastery, but restoration can restrict entry",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 6,
         "easeOfAccess": 8,
         "lowTouristCrowds": 6,
@@ -3992,10 +3992,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "In central Aachen, about a 15-minute walk from the main station; cathedral entry is free, while the choir hall and imperial throne require a guided tour.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "A Carolingian palatine chapel with a preserved octagonal core, later enlarged by a Gothic choir and medieval chapels.",
       "why": "Construction of this palatine chapel, with its octagonal basilica and cupola, began c. 790–800 under the Emperor Charlemagne.",
@@ -4029,10 +4029,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Open to visitors, with seasonal hours; services and concerts can restrict access, and tower and Imperial Hall visits have separate hours",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 6,
       },
       "uniqueness": "The world's largest Romanesque church, with four towers, two domes and a gallery that encircles the building",
       "why": "Speyer Cathedral was founded by Conrad II in 1030 and remodelled under Henry IV in the 1080s. Its four towers, two domes and encircling gallery define the Romanesque design; German emperors were buried here for almost 300 years.",
@@ -4067,7 +4067,7 @@ export const europeTravelSpots = [
       "access": "In Würzburg; about 20 minutes on foot from the station, with buses and trams nearby. The palace rooms are ticketed and open daily on seasonal hours; the Court Garden is free until dusk.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
         "lowTouristCrowds": 6,
       },
@@ -4103,10 +4103,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "In central Hildesheim and reachable on foot or by public transport; check seasonal hours and service or concert closures.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 7,
+        "laymenInterest": 6,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A rare surviving Ottonian Romanesque complex with Bernward's bronze doors and column, St Michael's painted wooden ceiling and the medieval town layout around both churches.",
       "why": "St Michael's Church was built between 1010 and 1020 on a symmetrical plan with two apses characteristic of Ottonian Romanesque art in Old Saxony. Its painted stucco-work and wooden ceiling, together with St Mary's Cathedral's bronze doors and Bernward's bronze column, are examples of Romanesque churches in the Holy Roman Empire that UNESCO considers of exceptional interest.",
@@ -4141,9 +4141,9 @@ export const europeTravelSpots = [
       "access": "Open daily, but sightseeing is barred during services and may be unavailable during tours or pilgrim masses; check current hours.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 6,
+        "laymenInterest": 8,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "UNESCO-listed Rococo pilgrimage church with an intact rural Alpine setting",
       "why": "The Church of Wies was built from 1745 to 1754 under Dominikus Zimmermann's direction in an Alpine valley near Steingaden. Its oval plan, stucco work, frescoes and trompe-l'œil ceiling form a unified Bavarian Rococo interior.",
@@ -4177,8 +4177,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 5,
+          "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
@@ -4215,9 +4215,9 @@ export const europeTravelSpots = [
       "access": "Beside Cologne Central Station; tourist visits require a ticket, with weekday hours generally 10:00–17:45 and shorter Sunday and holiday hours",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "A 157-metre High Gothic five-aisled basilica with a large medieval stained-glass cycle and the Shrine of the Magi",
       "why": "Construction began in 1248, stopped for more than 300 years and resumed in the 19th century, when builders completed the medieval plan in 1880. The five-aisled basilica holds the Shrine of the Magi, medieval choir fittings and a large cycle of early-14th-century stained glass.",
@@ -4252,9 +4252,9 @@ export const europeTravelSpots = [
       "access": "Most components are in Trier; indoor sites have individual hours, and church visits pause during services",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A dense concentration of surviving Roman buildings north of the Alps, including the Porta Nigra and Constantine's Basilica, with Trier Cathedral and the Church of Our Lady in the same property",
       "why": "On the Moselle, Trier was a Roman colony from the 1st century AD and a major trading centre from the 2nd century. It became one of the capitals of the Tetrarchy at the end of the 3rd century and was known as the 'second Rome'.",
@@ -4289,9 +4289,9 @@ export const europeTravelSpots = [
       "access": "Train and bus access to Lorsch; the station is about a 10-minute walk from the museum center and grounds. The grounds are free until nightfall, while the Königshalle upper floor requires a public tour and museum hours vary.",
       "scores": {
         "globallyUnique": 7,
-        "laymenInterest": 6,
+        "laymenInterest": 4,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A rare surviving Carolingian gatehouse with archaeological remains from more than 800 years of monastic life",
       "why": "The Torhalle, also called the Königshalle, is a rare surviving Carolingian gatehouse whose original appearance is largely intact. The site also preserves Carolingian sculpture and painting and archaeological remains from more than 800 years of monastic life.",
@@ -4325,10 +4325,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Public access across Potsdam and Berlin; palace interiors have site-specific hours, and Sanssouci uses fixed admission times with limited daily tickets",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A cross-city ensemble of Prussian palaces, parks and designed spaces along the Havel, extending across Potsdam and Berlin",
       "why": "The original 500-hectare property included 150 buildings constructed between 1730 and 1916. After extensions in 1992 and 1999, the UNESCO property covers 2,064 hectares across Potsdam and Berlin, including Sanssouci, the New Garden, Babelsberg, Sacrow and Glienicke Park.",
@@ -4362,10 +4362,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Public parks are open year-round; hourly World Heritage buses 304 and 310 connect Dessau, Wörlitz and Lutherstadt Wittenberg, while palace interiors have seasonal hours.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 6,
+        "laymenInterest": 6,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "An unusually broad Enlightenment cultural landscape linking English-style parks, palaces and agricultural land across the Dessau-Wörlitz region; Wörlitz was the focus of the first landscape garden in continental Europe.",
       "why": "Prince Leopold III Friedrich Franz and architect Friedrich Wilhelm von Erdmannsdorff developed the Garden Kingdom over 40 years as an Enlightenment cultural landscape of art, education and agriculture. Wörlitz was the focus of the first landscape garden in continental Europe; English-style parks, palaces and agricultural land are connected by paths, sightlines and avenues.",
@@ -4399,10 +4399,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 8,
+          "lowTouristCrowds": 6
       },
       "uniqueness": "UNESCO-listed medieval town with more than 2,000 half-timbered houses, a preserved medieval town plan and the Romanesque Collegiate Church of St Servatius",
       "why": "Quedlinburg, in the Land of Sachsen-Anhalt, was a capital of the East Franconian German Empire at the time of the Saxonian-Ottonian ruling dynasty. It has been a prosperous trading town since the Middle Ages.",
@@ -4437,9 +4437,9 @@ export const europeTravelSpots = [
       "access": "Visitor-site access; check hours",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "laymenInterest": 5,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A nearly complete Cistercian monastic complex with a preserved medieval layout and water-management system",
       "why": "Founded in 1147, the Cistercian Maulbronn Monastery is considered the most complete and best-preserved medieval monastic complex north of the Alps. Surrounded by fortified walls, the main buildings were constructed between the 12th and 16th centuries.",
@@ -4476,7 +4476,7 @@ export const europeTravelSpots = [
         "globallyUnique": 7,
         "laymenInterest": 6,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
       "why": "The Upper Harz mining water management system, which lies south of the Rammelsberg mines and the town of Goslar, has been developed over a period of some 800 years to assist in the process of extracting ore for the production of non-ferrous metals.",
@@ -4510,8 +4510,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; take bus 901 or another bus from Bamberg station to the ZOB, then walk 5–10 minutes",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
@@ -4550,7 +4550,7 @@ export const europeTravelSpots = [
         "globallyUnique": 7,
         "laymenInterest": 6,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A serial property of seven component parts across three cities, including Haus Am Horn in Weimar, the Bauhaus Building and Masters' Houses in Dessau and the ADGB Trade Union School in Bernau.",
       "why": "The Bauhaus began in Weimar in 1919, moved to Dessau in 1925 and closed in 1933. Its surviving sites across Weimar, Dessau and Bernau show the school's use of reinforced concrete, glass and steel, along with functional planning and social-housing experiments.",
@@ -4585,9 +4585,9 @@ export const europeTravelSpots = [
       "access": "Central Berlin; U5 Museumsinsel or S-Bahn Friedrichstraße/Hackescher Markt; museum hours vary and the Pergamonmuseum is closed for construction",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 6,
+        "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "A planned ensemble of five museums built between 1824 and 1930, with each building designed in relation to its collections",
       "why": "The idea of the public museum emerged from the 18th-century Enlightenment. Five museums were built on the Museumsinsel between 1824 and 1930, and each was designed in relation to its collections. Together they show how museum design changed over more than a century.",
@@ -4622,8 +4622,8 @@ export const europeTravelSpots = [
       "access": "Ticketed visitor site above Eisenach; ICE trains reach Eisenach and bus 3 runs from the station bus terminal to the castle parking area; check seasonal hours and tour times",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
           "lowTouristCrowds": 4
       },
       "uniqueness": "UNESCO-listed hilltop fortress with a late-Romanesque palace, surviving medieval ramparts and a 19th-century reconstruction that shapes much of its present appearance",
@@ -4658,8 +4658,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Urban industrial site; tram 107, S-Bahn line 2 and buses 170/183 reach the grounds, while museums and guided tours keep separate hours",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 7,
+          "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
@@ -4697,8 +4697,8 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+          "easeOfAccess": 8,
+          "lowTouristCrowds": 6
       },
       "uniqueness": "A paired UNESCO site where Wismar retains its medieval harbour basin and Stralsund retains its 13th-century island setting, with Brick Gothic churches and merchant houses in both",
       "why": "The medieval towns of Wismar and Stralsund, on the Baltic coast of northern Germany, were major trading centres of the Hanseatic League in the 14th and 15th centuries.",
@@ -4732,10 +4732,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "Walkable city-centre access; town hall interior by guided tour",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 6,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A Gothic and Weser Renaissance town hall beside the 1404 Roland, with its historic relationship to the market square still intact",
       "why": "The Town Hall and the statue of Roland on the marketplace of Bremen in north-west Germany are outstanding representations of civic autonomy and sovereignty, as these developed in the Holy Roman Empire in Europe.",
@@ -4769,10 +4769,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO medieval trading city",
       "access": "Walkable historic core and Stadtamhof; the Old Town Hall tourist information is a 15-minute walk from the main station, and guided city tours meet at Domplatz",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A preserved medieval trading city with Roman, Romanesque and Gothic buildings, patrician towers, strong fortifications and the 12th-century Stone Bridge",
       "why": "On the Danube in Bavaria, Regensburg keeps a dense medieval core of tall buildings, narrow lanes and strong fortifications. Roman, Romanesque and Gothic structures, including patrician houses and the 12th-century Stone Bridge, reflect its role as a central-European trading centre from the 9th century.",
@@ -4806,10 +4806,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Alfeld station is about 700 m away, a 10-minute walk. The factory is open to visitors 10:00–17:00 April–October and 10:00–16:00 November–March; guided tours run at set times.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 7,
+          "laymenInterest": 5,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A complete 10-building factory complex with vast glass-panel walls, original layout and continuing industrial use",
       "why": "Fagus Factory is a 10-building complex designed by Walter Gropius and Adolf Meyer from 1911. Its production, storage and dispatch spaces for shoe lasts remain arranged across the site, while vast glass panels and a light structural frame foreshadowed modernist industrial architecture and the Bauhaus.",
@@ -4844,9 +4844,9 @@ export const europeTravelSpots = [
       "access": "Open daily on seasonal hours, with 9 am–6 pm entry April–September and shorter hours in winter; events and rehearsals can cause temporary closures. The opera house is in central Bayreuth, about one hour by train from Nuremberg.",
       "scores": {
           "globallyUnique": 7,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 7
       },
       "uniqueness": "The only entirely preserved example of its type, a freestanding Baroque court opera house whose tiered auditorium retains original wood and painted canvas",
       "why": "Built between 1745 and 1750, the Opera House has a 500-seat auditorium designed by Giuseppe Galli Bibiena. The tiered loges retain the original wood and painted canvas; UNESCO says their survival lets visitors appreciate the opera house's original acoustic quality.",
@@ -4880,10 +4880,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Ticketed visitor access with seasonal hours; services, events, weddings and restoration can restrict access",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A medieval west choir that integrates architecture, sculpture and stained glass around twelve life-size founder statues by the Naumburg Master",
       "why": "Construction began in 1028; most of the present building dates to the 13th century, with a Romanesque nave, Gothic choirs and life-size founder statues by the Naumburg Master.",
@@ -4917,10 +4917,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "The canals, fountains, Hochablass and Eiskanal are publicly walkable; the Red Gate water towers require a guided visit on selected days and several power plants and waterworks are not open to the public",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 6,
-        "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "globallyUnique": 7,
+        "laymenInterest": 5,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A 22-element urban water system documenting more than 700 years of successive hydraulic engineering, from medieval canals and Renaissance water towers to operating hydropower plants",
       "why": "Augsburg's system grew from medieval canals into a 22-element network of watercourses, waterworks and hydropower plants. The surviving pieces include the Red Gate water towers, a water-cooled butchers' hall and three Renaissance fountains; drinking and process water were kept separate from 1545.",
@@ -4954,10 +4954,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "The ensemble is spread across Schwerin. The castle museum is open Tuesday–Sunday, 10 am–6 pm from 15 April to 14 October and 10 am–5 pm from 15 October to 14 April; the Schlosspark is open year-round. Check current notices for closures.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "It is a 38-element 19th-century ducal capital ensemble where the palace, civic and religious buildings, parks and water features remain connected by preserved sightlines.",
       "why": "Built mainly in the 19th century for the Grand Duchy of Mecklenburg-Schwerin, the ensemble links the palace with court and state buildings, a theatre, museum, churches, parks and lakes across the former ducal capital. Its architecture ranges from Neo-Classical to Neo-Baroque and Neo-Renaissance, with regional Johann-Albrecht forms.",
@@ -4992,9 +4992,9 @@ export const europeTravelSpots = [
       "access": "Guided tours at Neuschwanstein and Linderhof; boat trip plus guided tour at Herrenchiemsee; Schachen only on foot, with a 6–7-hour walk and seasonal guided tours.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 7,
+        "laymenInterest": 9,
         "easeOfAccess": 5,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "A serial group of four well-preserved 19th-century palace complexes with historic settings and gardens, combining historicist and eclectic design.",
       "why": "This serial property consists of four palace complexes in Bavaria's alpine region, built under King Ludwig II between 1868 and 1886. Designed as personal retreats and imaginative escapes, they reflect the romantic and eclectic spirit of the era.",
@@ -5028,10 +5028,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Archaeological site; private transport only; check current seasonal hours",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 6,
+        "laymenInterest": 5,
         "easeOfAccess": 5,
-        "lowTouristCrowds": 7,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A Greek temple that combines Doric, Ionic and Corinthian orders and has the earliest surviving Corinthian capital",
       "why": "Built around 420–400 B.C. high in the Arcadian mountains, the temple was dedicated to Apollo as a god of healing and the sun. It also has the earliest surviving Corinthian capital.",
@@ -5065,10 +5065,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Road access; roughly 30 minutes from Nafplio and two hours from Athens. Festival coaches from Athens run on performance days; check seasonal hours.",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 6,
         "laymenInterest": 8,
-        "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "One of the most complete ancient Greek sanctuaries, with temples, hospital buildings, a stadium and a theatre.",
       "why": "The cult of Asklepios, the god of medicine, grew from an earlier cult of Apollo Maleatas and became the official cult of Epidaurus by the 6th century BC. The sanctuary's temples, hospital buildings, stadium and theatre show how ancient healing combined ritual, exercise and accommodation.",
@@ -5104,8 +5104,8 @@ export const europeTravelSpots = [
       "scores": {
         "globallyUnique": 6,
         "laymenInterest": 7,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "A four-kilometre-walled medieval city where the Knights' Gothic upper town sits alongside Ottoman mosques, baths and houses in a living urban settlement",
       "why": "The Order of St John of Jerusalem occupied Rhodes from 1309 to 1523 and set about transforming the city into a stronghold. It subsequently came under Turkish and Italian rule.",
@@ -5139,10 +5139,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural heritage",
       "access": "Three separate sites: Daphni is reachable by Metro Line 3 and bus from Athens; Hosios Loukas is about two hours by car; Nea Moni is reached by car on Chios.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "globallyUnique": 5,
+          "laymenInterest": 4,
+          "easeOfAccess": 5,
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A serial UNESCO property of three middle-Byzantine monasteries with related octagonal church plans, marble revetments and gold-ground mosaics.",
       "why": "Daphni near Athens, Hosios Loukas in Boeotia and Nea Moni on Chios are geographically separate but share a cross-in-square church plan, large domes on squinches and 11th- and 12th-century marble and gold-ground mosaics. Nea Moni uses the simpler octagonal form, while Daphni and Hosios Loukas have more elaborate surrounding bays.",
@@ -5178,8 +5178,8 @@ export const europeTravelSpots = [
       "scores": {
         "globallyUnique": 8,
         "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 4,
+        "easeOfAccess": 5,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "The only example in Greece of an organized settlement built around a fortified Orthodox monastery, with the Cave of the Apocalypse and Chóra forming the same pilgrimage property",
       "why": "According to Christian tradition, St John the Theologian wrote his Gospel and the Apocalypse on Pátmos around 95 AD. Hosios Christodoulos Latrinos founded the monastery in 1088, and the fortified complex grew with Chóra around it; the Cave of the Apocalypse lies on the road between Skála and Chóra.",
@@ -5213,10 +5213,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Pedestrian historic-area access; key Old Town points are roughly 1.9–2.8 km from the port and 2.2–2.4 km from the airport.",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "Fortified Mediterranean port with Venetian fortifications and a largely intact neoclassical urban network.",
       "why": "Corfu's Old Town sits at the entrance to the Adriatic Sea and has roots reaching back to the 8th century BC. Venetian engineers designed its three forts to protect the Republic of Venice's maritime trade from the Ottoman Empire.",
@@ -5251,9 +5251,9 @@ export const europeTravelSpots = [
       "access": "Mountain roads from Ioannina; public buses are limited and the villages are spread across the area",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
+          "laymenInterest": 7,
           "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A rare surviving group of stone-built villages, arched bridges, cobbled paths and stone staircases shaped by Byzantine and Ottoman vernacular traditions",
       "why": "Zagori’s stone villages are linked by arched bridges, cobbled paths and staircases, a network shaped in the 18th and 19th centuries by remittances from Zagorisians abroad.",
@@ -5287,10 +5287,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO-listed historic urban landscape",
       "access": "Open-air urban site; BKK buses, trams and the Castle Funicular reach the Castle District, while museums and monument interiors have separate hours",
       "scores": {
-          "globallyUnique": 7,
-          "laymenInterest": 8,
+          "globallyUnique": 6,
+          "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 3
+          "lowTouristCrowds": 2
         },
       "uniqueness": "A city-scale urban ensemble combining the Danube panorama, Buda’s medieval and Baroque Castle Quarter and Andrássy Avenue’s 19th-century urban plan",
       "why": "The property preserves the separate urban forms of Buda, Pest and Óbuda: Buda’s medieval and Baroque Castle Quarter, the Danube panorama and Pest’s ring-radial 19th-century plan. Andrássy Avenue and the Millennium Underground Railway, the first in Continental Europe, date from Budapest’s late-19th-century expansion.",
@@ -5326,8 +5326,8 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A living Benedictine monastery founded in 996, with a thousand-year sequence of monastic buildings, a school and surrounding forest and gardens",
       "why": "The first Benedictine monks settled here in 996. The community helped Christianize Hungary and founded the country's first school. Its archives hold the 1055 foundation deed of Tihany Abbey, the oldest surviving document with Hungarian words.",
@@ -5364,7 +5364,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 6,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A 27-settlement UNESCO landscape where active vineyards, historic settlements and hand-cut volcanic-rock cellars remain linked.",
       "why": "The cultural landscape of Tokaj is a working wine region of low hills and river valleys, with vineyards, farms, villages, small towns and historic networks of deep wine cellars. The quality and management of Tokaj wines have been strictly regulated for nearly three centuries.",
@@ -5398,8 +5398,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "The Last Supper museum requires advance reservation; it is open Tuesday–Sunday from 8:15 a.m. to 7 p.m. and admits up to 40 people per 15-minute visit.",
       "scores": {
-        "globallyUnique": 9,
-        "laymenInterest": 9,
+        "globallyUnique": 10,
+        "laymenInterest": 10,
         "easeOfAccess": 9,
         "lowTouristCrowds": 4,
       },
@@ -5435,10 +5435,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 8,
+          "globallyUnique": 6,
           "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 2
+          "lowTouristCrowds": 1
         },
       "uniqueness": "A Renaissance city centre that retains medieval streets, fortified palaces and traditional shops alongside major churches and museums.",
       "why": "Florence grew from an Etruscan settlement and the later Roman colony of Florentia into a centre of Renaissance art, architecture and humanism under the Medici in the 15th and 16th centuries.",
@@ -5472,10 +5472,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Access varies across 14 scattered components: museums, appointment-only sites and private properties that can only be viewed from outside.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
         "easeOfAccess": 5,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A serial UNESCO cultural landscape of 12 villas and two gardens, each tied to its surrounding rural setting.",
       "why": "The site includes twelve villas and two gardens built between the 15th and 17th centuries. Their architecture, gardens and rural settings formed models for princely residences across Italy and Europe.",
@@ -5510,7 +5510,7 @@ export const europeTravelSpots = [
       "access": "Caserta station is opposite the palace; ticket limits and changing hours apply",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+        "laymenInterest": 8,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
@@ -5546,10 +5546,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Historic centre is walkable; public transport runs via Poggibonsi/San Gimignano station and a connecting bus, with regular buses also available from Florence and Siena.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "globallyUnique": 4,
+        "laymenInterest": 8,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "Compact medieval centre with 14 surviving tower houses, an original urban layout and 14th- and 15th-century Italian art in its historic settings.",
       "why": "'San Gimignano delle belle Torri' is in Tuscany, 56 km south of Florence. It served as an important relay point for pilgrims travelling to or from Rome on the Via Francigena.",
@@ -5583,10 +5583,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO serial cultural site",
       "access": "Walkable in Vicenza; dispersed villas need separate transport",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
         "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A serial UNESCO site with 23 Palladian buildings in Vicenza and 24 villas scattered across the Veneto",
       "why": "Founded in the 2nd century B.C. in northern Italy, Vicenza prospered under Venetian rule from the early 15th to the end of the 18th century.",
@@ -5620,10 +5620,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; the ZTL keeps most cars out, while city car parks connect by short walks or escalators.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "Rare, largely intact medieval city centre with a 15th-century street plan, Gothic buildings and the Piazza del Campo at its centre.",
       "why": "Siena's three hills are linked by a Y-shaped street plan that meets at the Piazza del Campo. The city kept this Gothic urban form while competing with Florence and Pisa.",
@@ -5657,10 +5657,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "Historic urban fabric where the ancient Greek grid remains legible beneath Roman, medieval, Spanish and Bourbon layers",
       "why": "From the Neapolis founded by Greek settlers in 470 B.C. to the city of today, Naples has retained the imprint of the successive cultures that emerged in Europe and the Mediterranean basin.",
@@ -5694,9 +5694,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Ferrara's historic centre is walkable and its walls have cycle paths; the wider Po Delta property is dispersed, with some Este residences private or not open to visitors",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
-        "easeOfAccess": 8,
+        "easeOfAccess": 9,
         "lowTouristCrowds": 6,
       },
       "uniqueness": "A virtually intact Renaissance urban plan tied to the Este family's engineered Po Delta landscape and network of ducal residences",
@@ -5731,10 +5731,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; the 24/7 ZTL inside the walls means visitors need to follow municipal access and parking rules",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 4,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "UNESCO-listed Renaissance ideal city with a largely intact medieval street plan and Piazza Pio II at its centre",
       "why": "It was in this Tuscan town that Renaissance town-planning concepts were first put into practice after Pope Pius II decided, in 1459, to transform the look of his birthplace.",
@@ -5768,10 +5768,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A 2,000-year urban fabric with Roman remains, medieval walls and Renaissance buildings inside a preserved fortified city",
       "why": "The historic city of Verona was founded in the 1st century B.C. It particularly flourished under the rule of the Scaliger family in the 13th and 14th centuries and as part of the Republic of Venice from the 15th to 18th centuries.",
@@ -5805,10 +5805,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Paid entry; open Tuesday to Sunday and public holidays, with seasonal hours and a last-entry cutoff; working Mondays are generally closed. From Padua station, a bus or tram leaves about every 10 minutes for the Santo stop.",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 6,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "The oldest surviving academic botanical garden in its original location, with its 16th-century circular plan and ring of water still intact.",
       "why": "Founded in 1545, Padua's garden is the oldest surviving academic botanical garden in its original location. Its Renaissance plan uses a square inside a circle, with paths aligned to the cardinal directions and a ring of water around the inner garden.",
@@ -5842,10 +5842,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO Romanesque architectural heritage",
       "access": "Cathedral free; Ghirlandina requires booking and admits up to 25 people per hour; check seasonal hours and closures.",
       "scores": {
-        "globallyUnique": 7,
+        "globallyUnique": 5,
         "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 6,
       },
       "uniqueness": "A compact Romanesque complex where the cathedral, Ghirlandina tower and Piazza Grande retain their historic relationship",
       "why": "The cathedral was begun in 1099 under architect Lanfranco, with sculpture by Wiligelmus. UNESCO identifies the cathedral, Ghirlandina tower and Piazza Grande as a Romanesque complex that combines religious and civic values in a medieval city.",
@@ -5881,8 +5881,8 @@ export const europeTravelSpots = [
       "scores": {
         "globallyUnique": 6,
         "laymenInterest": 7,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A compact Renaissance urban ensemble inside largely intact walls, with the Ducal Palace, cathedral and oratories still part of the historic centre",
       "why": "Urbino's 15th-century court drew artists and scholars from across Italy and beyond. Their projects created an exceptional urban complex and influenced cultural developments elsewhere in Europe.",
@@ -5916,10 +5916,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "A six-component regional site; cross-section itineraries use a car, motorbike or bicycle to link its vineyards, villages and castles.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 4,
         "laymenInterest": 6,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 5,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 6,
       },
       "uniqueness": "A serial cultural landscape of five wine-growing areas and Grinzane Cavour Castle, with villages, castles, churches and wine-making structures across six components.",
       "why": "Five wine-growing areas and Grinzane Cavour Castle make up the serial site; Camillo Benso, Count of Cavour used the castle for modern winemaking experiments and promoted the Langhe's red wines, including Barolo.",
@@ -5953,9 +5953,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural heritage",
       "access": "Public transport from Palermo; check opening hours",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 10,
+        "globallyUnique": 7,
+        "laymenInterest": 9,
+        "easeOfAccess": 9,
           "lowTouristCrowds": 4
       },
       "uniqueness": "UNESCO-listed serial site with Norman, Islamic and Byzantine architectural synthesis",
@@ -5991,9 +5991,9 @@ export const europeTravelSpots = [
       "access": "Walkable urban site; the free Visitor Centre is open on a schedule, while many buildings are privately owned and not freely accessible",
       "scores": {
         "globallyUnique": 7,
-        "laymenInterest": 6,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 8,
+        "laymenInterest": 5,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 9,
       },
       "uniqueness": "A modernist industrial city where Olivetti's factories, offices, housing and social services form one planned architectural ensemble",
       "why": "The industrial city of Ivrea is located in the Piedmont region and developed as the testing ground for Olivetti, manufacturer of typewriters, mechanical calculators and office computers.",
@@ -6028,9 +6028,9 @@ export const europeTravelSpots = [
       "access": "Walkable from Riga Central Station in about five minutes; airport bus 22 reaches the Old Town edge, with trams and buses stopping around the boulevard ring.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A UNESCO urban ensemble combining a medieval core, a 19th-century boulevard ring and former suburbs with wooden architecture; the property also contains about 50 high-value Art Nouveau buildings in the medieval part and more than 300 elsewhere.",
       "why": "Riga was a key eastern European centre of the Hanseatic League from the 13th to the 15th century. Its medieval urban fabric reflects that trade, although many early buildings were rebuilt or lost to fire and war. The UNESCO property also includes the 19th-century boulevard ring and former suburbs, where wooden neoclassical buildings and later Art Nouveau architecture spread around the medieval core.",
@@ -6064,10 +6064,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; a 4 km route takes about 2.5 hours, with bus and car access",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+        "globallyUnique": 5,
+        "laymenInterest": 6,
         "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "UNESCO-listed historic town with a largely retained ducal-period street plan, traditional log buildings and Baltic-influenced brick and timber-framed houses",
       "why": "Located in the western part of Latvia, the town of Kuldīga is an exceptionally well-preserved example of a traditional urban settlement, which developed from a small medieval hamlet into an important administrative centre of the Duchy of Courland and Semigallia between the 16th and 18th centuries.",
@@ -6101,7 +6101,7 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
         "easeOfAccess": 10,
         "lowTouristCrowds": 6,
@@ -6139,9 +6139,9 @@ export const europeTravelSpots = [
       "access": "Central Kaunas districts; rail and bus links from Vilnius plus local public transport and airport connections.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
+          "laymenInterest": 5,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A city-scale interwar ensemble in Naujamiestis and Žaliakalnis, with about 1,500 of Kaunas's surviving 1919–1939 buildings inside the World Heritage area.",
       "why": "Between 1919 and 1939, Kaunas expanded rapidly as Lithuania's provisional capital. Naujamiestis and Žaliakalnis preserve public buildings, homes and streetscapes built during that period, combining local choices with international modernism.",
@@ -6175,10 +6175,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A fortified European city where medieval streets, bastions and casemates survive on a steep rocky outcrop above the Alzette and Pétrusse rivers.",
       "why": "Because of its strategic position, Luxembourg was, from the 16th century until 1867, when its walls were dismantled, one of Europe's greatest fortified sites. It was repeatedly reinforced as it passed from one great European power to another: the Holy Roman Emperors, the House of Burgundy, the Habsburgs, the French and Spanish kings and finally the Prussians.",
@@ -6212,10 +6212,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable fortified city centre; ferries and buses connect it to Malta’s harbour towns",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 6,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "Fortified late-Renaissance city on a hilly peninsula, with a uniform grid plan and 320 monuments in 55 hectares",
       "why": "Valletta was founded by the Order of St John in 1566 after the Siege of Malta. Its bastioned walls, uniform grid plan and 320 monuments fit inside a 55-hectare historic area, one of the most concentrated historic areas in the world.",
@@ -6249,10 +6249,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Paid visitor locations; bus 489 from Rotterdam Kralingse Zoom takes about 35 minutes and runs twice hourly, while the WaterShuttle takes under 30 minutes on Friday–Sunday.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 8,
+        "globallyUnique": 7,
+        "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "UNESCO describes it as the only drainage network of this kind or comparable antiquity, with 19 mills and three pumping stations in a hydraulic system that still functions.",
       "why": "Its polders, drainage channels, dikes, pumping stations and 19 windmills show how Dutch hydraulic works drained land for farming and settlement from the Middle Ages onward.",
@@ -6286,7 +6286,7 @@ export const europeTravelSpots = [
       "kind": "UNESCO-listed historic urban area",
       "access": "Open urban area; its canal streets and quays are walkable, while museums and canal cruises have separate schedules, tickets and reservation rules.",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 8,
         "easeOfAccess": 10,
         "lowTouristCrowds": 3,
@@ -6323,10 +6323,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO medieval stave church",
       "access": "Seasonal visitor access; the 2026 season runs 2 May–30 September, 10:30–17:45 daily except 17 May; ferry from Solvorn or road via Gaupne and Skjolden",
       "scores": {
-        "globallyUnique": 7,
-        "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "globallyUnique": 8,
+        "laymenInterest": 8,
+        "easeOfAccess": 5,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "Norway's only stave church on UNESCO's World Heritage List, with a reused carved portal and the distinctive Urnes style",
       "why": "Built around 1130 on the Lustrafjord, Urnes Stave Church reuses a carved portal from an earlier church on the same site, dated to about 1070. The interlaced animal ornament gave its name to the Urnes style, and the building combines Viking and Romanesque traditions with traces of Celtic art.",
@@ -6360,10 +6360,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "The site spans Rjukan and Notodden, with road and bus links; Vemork is about 6 km west of Rjukan. NIA currently says the Rjukan Railway and Lake Tinn ferries do not run.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 7,
+          "laymenInterest": 5,
           "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A UNESCO property that brings together power plants, fertilizer works, company towns and transport systems from one early-20th-century industrial complex",
       "why": "The site links hydroelectric plants, transmission lines and fertilizer factories with rail and ferry routes and the company towns of Rjukan and Notodden. Together, they trace a chain from mountain power generation to fertilizer production, worker housing and export transport.",
@@ -6397,10 +6397,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic urban ensemble",
       "access": "Walkable historic core; trams and buses serve the surrounding streets, with cars generally restricted inside the Old Town zone",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "A 149.65-hectare urban ensemble joining the medieval chartered city, Wawel Hill and Kazimierz, with architecture from the early Romanesque to Modernist periods",
       "why": "The 13th-century chartered town has Europe’s largest market square. The property also includes Wawel Hill’s former royal residence and necropolis, medieval Kazimierz with its old synagogues and the Jagiellonian University.",
@@ -6434,10 +6434,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic urban ensemble",
       "access": "Walkable Old Town core; Castle Square is reachable by tram from Ratusz Arsenał metro station",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "A near-total postwar reconstruction of a historic city centre, retaining its medieval street plan while recreating walls, churches, palaces and the Royal Castle",
       "why": "During the Warsaw Uprising in August 1944, Nazi troops destroyed more than 85% of Warsaw's historic centre. After the war, the city's inhabitants and the Warsaw Reconstruction Office rebuilt the Old Town between 1945 and 1951, using archival records to recreate its streets, churches, palaces and market square. Work continued into the mid-1960s, and the Royal Castle was completed in 1984.",
@@ -6471,10 +6471,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Direct train or bus from Kraków to Wieliczka; Bochnia is about 40 km east with direct trains and a short walk from the station",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 2,
+        "lowTouristCrowds": 1,
       },
       "uniqueness": "A serial royal saltworks with two mines, a medieval Saltworks Castle and chapels and statues carved into rock salt",
       "why": "The deposit of rock salt in Wieliczka and Bochnia has been mined since the 13th century. This major industrial undertaking has royal status and is the oldest of its type in Europe.",
@@ -6511,7 +6511,7 @@ export const europeTravelSpots = [
         "globallyUnique": 6,
         "laymenInterest": 7,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A UNESCO-listed late-16th-century planned Renaissance town with its original rectilinear street plan, parts of its fortifications and a blend of Italian and Central European architecture",
       "why": "Zamość was founded in the 16th century by Chancellor Jan Zamoyski on the trade route linking western and northern Europe with the Black Sea. Designed by architect Bernardo Morando, a native of Padua, it follows Italian theories of the 'ideal city' and is an outstanding example of a late-16th-century Renaissance town.",
@@ -6545,10 +6545,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-        "globallyUnique": 7,
-        "laymenInterest": 6,
-        "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A rare medieval settlement agglomeration combining the ruins of the Teutonic Castle with the Old Town and New Town inside an intact ring of defensive walls, with its original street pattern and many Gothic brick townhouses still preserved.",
       "why": "Toruń owes its origins to the Teutonic Order, which built a castle there in the mid-13th century as a base for the conquest and evangelization of Prussia. It soon developed a commercial role as part of the Hanseatic League.",
@@ -6582,10 +6582,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO fortification",
       "access": "Ticketed museum with rail access; Gdańsk to Malbork takes about 50 minutes, and visits use a guide or audio guide; check route hours and last entries",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 7,
+          "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "Gothic brick castle complex with three linked units: the High Castle, Middle Castle and Outer Bailey",
       "why": "This 13th-century fortified monastery belonging to the Teutonic Order was substantially enlarged and embellished after 1309, when the seat of the Grand Master moved here from Venice.",
@@ -6619,10 +6619,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Regional route or landscape access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "globallyUnique": 5,
+          "laymenInterest": 5,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 8
       },
       "uniqueness": "UNESCO-listed cultural landscape with preserved cultural fabric",
       "why": "The complex places chapels and paths linked to Christ’s Passion and the life of the Virgin Mary across the hills south of Kraków. It dates from the early 17th century and has retained its original layout and relationship with the surrounding terrain.",
@@ -6657,9 +6657,9 @@ export const europeTravelSpots = [
       "access": "Six sites in separate towns; a car is practical for the full circuit, and opening hours vary by church",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 6,
+        "laymenInterest": 5,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "A six-part UNESCO group of Gothic timber churches retaining historic forms, horizontal-log construction and period interior decoration",
       "why": "Six Gothic churches in Binarowa, Blizne, Dębno, Haczów, Lipnica Murowana and Sękowa preserve medieval horizontal-log construction, tall shingled roofs and historic interiors tied to Roman Catholic worship.",
@@ -6693,10 +6693,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Visitor access at both churches; Jawor requires an advance reservation for groups of six or more from November through March",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 8,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "Europe's largest timber-framed Baroque church buildings, built under strict post-Westphalia rules and retaining their original structures and interiors",
       "why": "The Churches of Peace in Jawor and Świdnica, the largest timber-framed religious buildings in Europe, were built in the former Silesia in the mid-17th century, amid the religious strife that followed the Peace of Westphalia.",
@@ -6730,10 +6730,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "Visitor Centre Tuesday–Sunday; Hall interior access varies with events; check the official availability calendar",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 6,
+        "globallyUnique": 7,
+        "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A UNESCO-listed early-Modernist hall with the world's largest reinforced-concrete dome at the time of construction, within an Exhibition Grounds composition retaining its main historic features",
       "why": "The Centennial Hall, a landmark in the history of reinforced concrete architecture, was erected in 1911-1913 by the architect Max Berg as a multi-purpose recreational building, situated in the Exhibition Grounds.",
@@ -6767,10 +6767,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Main visitor routes are timed guided tours; local buses run from Tarnowskie Góry",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
-        "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+          "globallyUnique": 7,
+          "laymenInterest": 6,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 8,
       },
       "uniqueness": "A 300-year underground water-management system integrated with historic metal mining and regional water supply",
       "why": "In Upper Silesia, the property preserves a 300-year mining and drainage system with over 50 km of main drainage tunnels, 150 km of secondary drainage adits and the remains of a 19th-century steam pumping station.",
@@ -6804,10 +6804,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 6,
           "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A preserved 15th- and 16th-century road network and vernacular architecture in a port city shaped by Atlantic navigation, with two 400-year-old fortifications",
       "why": "On Terceira Island, Angra was an obligatory port of call for fleets sailing between Europe, equatorial Africa and the East and West Indies from the 15th century until the advent of steamships in the 19th century.",
@@ -6842,9 +6842,9 @@ export const europeTravelSpots = [
       "access": "Open to visitors Tuesday to Sunday; Jerónimos cloister 9:30am–5:30pm and Belém Tower 9:00am–5:30pm. Both close Mondays and selected holidays.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 8,
+        "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 3,
+        "lowTouristCrowds": 2,
       },
       "uniqueness": "A paired monastery and river fortress with surviving Manueline stonework, original layouts and a shared 16th-century setting on the Tagus.",
       "why": "Construction of the Monastery of the Hieronymites began in 1502; its 16th-century cloister, former refectory and library survive beside the Tagus. The nearby Tower of Belém was built around 1514 to commemorate Vasco da Gama's expedition and defend Lisbon's port.",
@@ -6878,9 +6878,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO-listed Dominican monastery and royal pantheons",
       "access": "Ticketed visitor site (€15) in Batalha; seasonal hours, with last entry 30 minutes before closing",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 8,
           "lowTouristCrowds": 6
       },
       "uniqueness": "A Portuguese Gothic monastery where the Royal Cloister, royal pantheons and unfinished chapels show the transition into Manueline work",
@@ -6915,9 +6915,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 9,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
+        "easeOfAccess": 10,
         "lowTouristCrowds": 4,
       },
       "uniqueness": "UNESCO-listed historic place with preserved cultural fabric",
@@ -6952,10 +6952,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Seasonal visitor access: 9:00–17:30 Nov–Mar and 9:00–18:30 Apr–Oct; last entry 30 minutes before closing; €15 ticket",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 5,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 4,
       },
       "uniqueness": "A large Cistercian complex combining an early Gothic church, medieval monastic rooms, an 18th-century kitchen and royal tombs",
       "why": "The Monastery of Santa Maria d'Alcobaça, north of Lisbon, was founded in the 12th century by King Alfonso I. The complex contains an early Cistercian Gothic church, medieval monastic buildings, an 18th-century kitchen and the paired tombs of Pedro I and Inês de Castro.",
@@ -6989,10 +6989,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Train from Lisbon to Sintra, then Bus 434 or marked trails to the hill monuments; Palace of Pena tickets are timed and private vehicles cannot drive to the monument.",
       "scores": {
-        "globallyUnique": 7,
-        "laymenInterest": 8,
+        "globallyUnique": 6,
+        "laymenInterest": 10,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 3,
+        "lowTouristCrowds": 1,
       },
       "uniqueness": "A 946-hectare UNESCO cultural landscape where Romantic palaces and exotic gardens sit among older Moorish and monastic sites in the Serra de Sintra.",
       "why": "In the 19th century Sintra became the first centre of European Romantic architecture. Around 1840, Ferdinand II converted a ruined monastery into Pena Palace. Its design mixes Gothic, Egyptian, Moorish and Renaissance elements, and its park includes local and exotic tree species.",
@@ -7026,10 +7026,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A cross-river urban ensemble that keeps Porto's medieval fabric alongside the Luiz I Bridge and Serra do Pilar's circular church and cloister.",
       "why": "Porto's historic centre climbs the hills above the Douro estuary and preserves a 2,000-year urban history. Its maritime past is visible in the mix of monuments, from the cathedral's Romanesque choir to the neoclassical Stock Exchange and the Manueline Church of Santa Clara. The UNESCO property also includes the Luiz I Bridge and Serra do Pilar monastery.",
@@ -7063,10 +7063,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic-area access",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "UNESCO-listed historic centre with a medieval urban layout, traditional granite-and-timber buildings and former Couros tanneries",
       "why": "Guimarães is associated with the emergence of Portuguese national identity in the 12th century. Its medieval urban layout and traditional building stock show how a settlement developed into a modern town, while the Couros Zone retains former tanneries, workers' houses and urban spaces from the 19th and early 20th centuries.",
@@ -7100,8 +7100,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Reachable from Porto by road, regular train or river cruise; local exploration includes narrow, winding roads.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 6,
+        "globallyUnique": 4,
+        "laymenInterest": 7,
         "easeOfAccess": 8,
         "lowTouristCrowds": 6,
       },
@@ -7137,10 +7137,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Official access includes the easy 7.1-km Vinhas da Criação Velha trail from Porto do Calhau in Candelária to Areia Larga; allow about 2 hours.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 7,
+          "laymenInterest": 7,
           "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 8
       },
       "uniqueness": "A working UNESCO vineyard landscape of thousands of small basalt-walled plots (currais) beside the Atlantic, with traditional cultivation continuing around Criação Velha.",
       "why": "The 987-ha site on volcanic Pico, the Azores' second-largest island, is a network of long basalt-stone walls running inland from and parallel to the rocky shore. The walls protect thousands of small plots called currais from wind and seawater, with vines planted inside them.",
@@ -7175,9 +7175,9 @@ export const europeTravelSpots = [
       "access": "Historic centre is walkable, but the outer forts are outside the walls and need separate transport",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+          "laymenInterest": 8,
+          "easeOfAccess": 7,
+          "lowTouristCrowds": 7,
       },
       "uniqueness": "The world's largest bulwarked dry-ditch system and the best surviving example of the Dutch school of fortification",
       "why": "The site was extensively fortified from the 17th to 19th centuries and has the world's largest bulwarked dry-ditch system. The walled town contains barracks, other military buildings, churches and monasteries; the wider property also includes the seven-kilometre Amoreira Aqueduct and forts at Santa Luzia and Graça.",
@@ -7211,10 +7211,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "Paid visits to the main monuments; the Joanina Library requires a scheduled entry time; check current hours and closures.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A university city that combines a hilltop royal palace, colleges along Rua da Sofia and later academic buildings within Coimbra's old town.",
       "why": "Coimbra's university grew for more than seven centuries on a hill above the old town. The site includes the 12th-century Cathedral of Santa Cruz, colleges along Rua da Sofia, the Royal Palace of Alcáçova, the Joanine Library and the 18th-century Botanical Garden. The palace has housed the University since 1537.",
@@ -7248,10 +7248,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Palace open Wednesday–Monday, 09:30–17:30; Basilica closed for restoration; Tapada has separate schedules and tickets",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
-        "easeOfAccess": 9,
-        "lowTouristCrowds": 4,
+          "globallyUnique": 7,
+          "laymenInterest": 8,
+          "easeOfAccess": 10,
+          "lowTouristCrowds": 5,
       },
       "uniqueness": "Rare, nearly complete Baroque estate combining a royal palace, formal garden and hunting park",
       "why": "King João V conceived the complex in 1711, 30 km northwest of Lisbon, as a royal palace, Basilica, Franciscan convent, library, formal garden and hunting park.",
@@ -7285,8 +7285,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Open to the public by road, monumental staircase or water-balance elevator; the Basilica and elevator have seasonal hours",
       "scores": {
-        "globallyUnique": 7,
-        "laymenInterest": 8,
+          "globallyUnique": 6,
+          "laymenInterest": 9,
         "easeOfAccess": 10,
         "lowTouristCrowds": 6,
       },
@@ -7322,7 +7322,7 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Seven rural villages spread across southern Transylvania; individual sites are reachable by car or regional rail/bus plus local transfers, and each church has its own hours",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
         "easeOfAccess": 5,
         "lowTouristCrowds": 6,
@@ -7359,10 +7359,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Open to visitors; published hours are seasonal, monastery entry is free and the museum may charge a small fee; reach it via Horezu and Românii de Jos off DN67.",
       "scores": {
-        "globallyUnique": 7,
+        "globallyUnique": 6,
         "laymenInterest": 6,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A large Brâncovenesc monastic complex with balanced architecture, carved stonework, votive portraits and painted decoration",
       "why": "Founded in 1690 by Prince Constantine Brancovan, Horezu is a major example of the Brâncovenesc style in Wallachia. Its balanced architecture, carved stonework, votive portraits and painted religious decoration are the details to look for; an 18th-century school of mural and icon painting was known across the Balkans.",
@@ -7397,9 +7397,9 @@ export const europeTravelSpots = [
       "access": "The eight churches are spread across Suceava County rather than one walkable site. A car is easiest from Suceava or Gura Humorului; trains reach some gateway towns, but local buses or a tour are needed for several churches. Check each monastery's hours and photography rules.",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 5,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A serial group of eight Romanian Orthodox churches whose exterior frescoes cover the facades in complete biblical cycles, a form UNESCO calls unique in Europe.",
       "why": "Built between the late 15th and late 16th centuries, these eight churches in northern Moldavia have exterior frescoes arranged as complete cycles of religious scenes. UNESCO describes the group as a unique European artistic phenomenon directly inspired by Byzantine art.",
@@ -7433,10 +7433,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic area; the Citadel has steep slopes and stairs",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A preserved Saxon citadel and lower town, with medieval walls, towers and street network still forming a coherent urban plan",
       "why": "German craftsmen and merchants known as the Transylvanian Saxons founded Sighişoara. Its citadel and lower town preserve medieval streets, houses, walls and towers from a settlement that held a strategic and commercial position on the edge of Central Europe for centuries.",
@@ -7508,9 +7508,9 @@ export const europeTravelSpots = [
       "access": "Mountain-road access; about 70 km from Alba Iulia and 135 km from Cluj-Napoca, with infrequent buses and a car the easiest option",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 6,
+        "laymenInterest": 5,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 8,
+        "lowTouristCrowds": 9,
       },
       "uniqueness": "The world's pre-eminent underground Roman gold-mining complex, with later mining works and an agro-pastoral settlement landscape around it",
       "why": "Located in the Metalliferous range of the Apuseni Mountains in western Romania, Roșia Montană contains the most significant, extensive and technically diverse underground Roman gold-mining complex known at the time of inscription.",
@@ -7544,10 +7544,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable Old Town access; nearby parking, lifts and shuttles, plus a cable car from Borgo Maggiore",
       "scores": {
-        "globallyUnique": 7,
+          "globallyUnique": 5,
         "laymenInterest": 7,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+          "lowTouristCrowds": 2,
       },
       "uniqueness": "San Marino is one of the world's oldest republics and the only surviving Italian city-state; its still-inhabited historic capital occupies Mount Titano.",
       "why": "San Marino Historic Centre and Mount Titano covers 55 ha, including Mount Titano and the historic centre of the city which dates back to the foundation of the republic as a city-state in the 13th century.",
@@ -7581,10 +7581,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Visits are allowed from 8 AM to 5 PM; group visits require advance notice.",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 6,
           "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
       },
       "uniqueness": "Preserved medieval Serbian monastery complex with white-marble churches and 13th- and 14th-century Byzantine paintings.",
       "why": "Studenica Monastery was founded in the late 12th century by Stefan Nemanja, founder of the medieval Serbian state. It is the largest and richest of Serbia’s Orthodox monasteries, with white-marble churches containing 13th- and 14th-century Byzantine paintings.",
@@ -7618,8 +7618,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "About 11 km from Zaječar; no regular public transport reaches the site, so use a car or local taxi. Seasonal hours apply and last entry is one hour before closing.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+          "globallyUnique": 6,
+          "laymenInterest": 6,
         "easeOfAccess": 6,
         "lowTouristCrowds": 8,
       },
@@ -7655,10 +7655,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO medieval mining town and technical landscape",
       "access": "Walkable old town; the wider mining landscape needs separate transport and scheduled or guided site visits",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+        "globallyUnique": 5,
+        "laymenInterest": 7,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 7
       },
       "uniqueness": "A medieval mining town paired with an industrial landscape of shafts, tunnels and historic water reservoirs",
       "why": "Banská Štiavnica became the biggest mining centre in the Habsburg Monarchy in the 18th century, with gold and silver production. Its surviving urban core has Renaissance burgher houses, 16th-century churches and the Old and New Castles, while nearby shafts, tunnels and water reservoirs record the mining system.",
@@ -7692,10 +7692,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Nine UNESCO components in eight Slovak locations; interior access varies by church and may require local arrangements",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+        "globallyUnique": 6,
+        "laymenInterest": 5,
+        "easeOfAccess": 6,
+        "lowTouristCrowds": 9
       },
       "uniqueness": "A serial UNESCO site of eight wooden churches plus Hronsek's belfry, spread across eight Slovak locations",
       "why": "The serial site includes two Roman Catholic, three Protestant and three Greek Orthodox churches built between the 16th and 18th centuries, plus Hronsek's separate belfry component.",
@@ -7730,9 +7730,9 @@ export const europeTravelSpots = [
       "access": "High-speed trains from Madrid stop at Segovia-Guiomar, 6 km from the city centre; continue by local bus or taxi, then walk the historic area.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "An unusually well-preserved Roman aqueduct remains part of Segovia's historic urban fabric, alongside the Alcázar, Romanesque churches, 16th-century Gothic cathedral and Royal Mint.",
       "why": "The Roman aqueduct, probably built c. A.D. 50, is 813 m long, with two tiers of arches rising 28.5 m above ground at the valley's lowest point. The historic city also contains the Alcázar, Romanesque churches, a 16th-century Gothic cathedral and the Royal Mint.",
@@ -7766,10 +7766,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; high-speed train takes about 40 minutes from Seville and 1 hour 40 minutes from Madrid.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+          "globallyUnique": 7,
+          "laymenInterest": 10,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+          "lowTouristCrowds": 2,
       },
       "uniqueness": "Historic quarter around the Mosque-Cathedral where Roman, Visigoth, Islamic, Jewish and Christian layers remain in the street plan, monuments and courtyard houses.",
       "why": "After the Muslim conquest in the 8th century, Córdoba became an emirate capital and later the seat of an independent caliphate. The city had about 300 mosques as well as innumerable palaces and public buildings; in the 13th century its Great Mosque was converted into a cathedral.",
@@ -7803,10 +7803,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Paid visitor access; seasonal hours",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+          "globallyUnique": 5,
+          "laymenInterest": 8,
+          "easeOfAccess": 8,
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A complete Gothic cathedral with chapels, cloister and annexes, plus a unique collection of paintings, choir stalls, reredos, tombs and stained-glass windows.",
       "why": "Our Lady of Burgos was begun in the 13th century at the same time as the great cathedrals of the Ile-de-France and was completed in the 15th and 16th centuries.",
@@ -7841,9 +7841,9 @@ export const europeTravelSpots = [
       "access": "Paid, timed entry; closed Mondays; C-8 commuter train or buses 661/664 from Madrid.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 4
       },
       "uniqueness": "One Herrerian royal monastery-palace complex combines a basilica, royal pantheon, palace, school, seminary and library.",
       "why": "Construction began in 1563 under Philip II and finished in 1584. The complex combines a monastery, basilica, royal palace, school, seminary and library in a Herrerian plan whose grill-like shape recalls St Lawrence's martyrdom.",
@@ -7878,9 +7878,9 @@ export const europeTravelSpots = [
       "access": "Walkable historic centre; Santiago Airport is 10 kilometres away with a roughly 30-minute bus, and high-speed rail links the city with Madrid.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "Cathedral-centred old town with Romanesque, Gothic, Renaissance, Baroque and Neoclassical buildings lining its squares and narrow streets.",
       "why": "A tomb identified as that of St James drew pilgrims from across Europe from the early 9th century. After the city was destroyed at the end of the 10th century, it was rebuilt in the following century, leaving Romanesque, Gothic, Renaissance, Baroque and Neoclassical buildings around the cathedral.",
@@ -7914,8 +7914,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre with a public wall walk of almost 1,700 metres; direct train and bus links connect Ávila with Madrid.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
         "easeOfAccess": 10,
         "lowTouristCrowds": 4,
       },
@@ -7953,8 +7953,8 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "easeOfAccess": 7,
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A serial group of ten monuments using Islamic-influenced brick, glazed tile and decorative forms with contemporary European, especially Gothic, architecture.",
       "why": "Aragonese Mudéjar began in the 12th century after the Reconquista and continued into the early 17th century. Its builders combined Islamic-influenced brick and glazed tile with contemporary European forms, especially Gothic ones.",
@@ -7989,9 +7989,9 @@ export const europeTravelSpots = [
       "access": "High-speed Avant trains from Madrid take about 25 minutes; the historic centre is walkable but hilly, with cobbled streets.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 7,
+          "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+          "lowTouristCrowds": 2,
       },
       "uniqueness": "An inhabited historic city where Roman, Visigothic, Andalusi, Jewish and Christian buildings survive within a medieval street plan.",
       "why": "Toledo was successively a Roman municipium, the capital of the Visigothic Kingdom, a fortress of the Emirate of Córdoba and an outpost of Christian kingdoms fighting the Moors. Under Charles V, it was the temporary seat of supreme power in the 16th century, and its surviving monuments document more than 2,000 years of history.",
@@ -8025,8 +8025,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; the Madrid train journey takes about 1 hour 30 minutes, with the railway station 20 minutes and bus station 15 minutes on foot from the centre.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
         "easeOfAccess": 10,
         "lowTouristCrowds": 4,
       },
@@ -8062,10 +8062,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural heritage",
       "access": "Three separate visitor sites; the cathedral has limited-capacity entry, the Alcázar has seasonal hours and online ticket sales and the Archivo is free with capacity restrictions.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+          "globallyUnique": 7,
+          "laymenInterest": 9,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 3,
+          "lowTouristCrowds": 2,
       },
       "uniqueness": "One UNESCO cultural property brings together a Gothic cathedral, a royal palace complex and the former merchants' exchange that became the Archivo de Indias.",
       "why": "Three buildings sit together in Seville's historic centre. The cathedral reuses the former Almohad Giralda minaret, the Alcázar retains Islamic and Mudejar palace work and the former merchants' exchange houses the Archivo de Indias, with records from Spain's former colonies in the Americas.",
@@ -8100,9 +8100,9 @@ export const europeTravelSpots = [
       "access": "Walkable historic centre; train and bus stations are about 2 km away, with city buses or a half-hour walk to the centre.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 4
+        "laymenInterest": 8,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 5
       },
       "uniqueness": "An unusually intact 9-hectare walled urban ensemble with Almohad defenses, Gothic and Renaissance palace-houses and religious buildings.",
       "why": "Inside the 1,174-metre wall, Roman, Arab, Jewish and Christian traces sit alongside Almohad defenses, Northern Gothic buildings and Italian Renaissance palace-houses. The Torre del Bujaco is the best known of roughly 30 towers from the Muslim period.",
@@ -8137,9 +8137,9 @@ export const europeTravelSpots = [
       "access": "Road or regional bus; the R13/R14 train station at L’Espluga de Francolí is about 3.9 km away on foot. Visitor hours vary by season, include a midday closure and stop ticket sales 30 minutes before closing.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 6,
+          "laymenInterest": 7,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+          "lowTouristCrowds": 7,
       },
       "uniqueness": "An inhabited Cistercian abbey arranged in three fortified enclosures, with a royal residence and the pantheon of Catalan and Aragonese rulers.",
       "why": "Poblet is a large Cistercian complex built from the 12th to 15th centuries around a church, with three fortified enclosures, a royal residence and the pantheon of Catalan and Aragonese rulers.",
@@ -8174,9 +8174,9 @@ export const europeTravelSpots = [
       "access": "Paid museum visits run in groups at posted hours; buses connect Guadalupe with Madrid, Cáceres, Trujillo and Miajadas, and vehicles cannot park in the monastery square.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "laymenInterest": 7,
+          "easeOfAccess": 5,
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A monastery complex combining 14th- to 15th-century Mudéjar work with Gothic, Plateresque and Baroque additions, including a Mudéjar cloister, a Gothic cloister and paintings by Zurbarán.",
       "why": "The complex brings together a Mudéjar basilica and cloister, a Gothic cloister, a Plateresque portal and Baroque interiors. UNESCO links the monastery to two events in 1492: the Catholic monarchs' final defeat of Muslim power in Iberia and Christopher Columbus's arrival in the Americas; its Virgin of Guadalupe later became a symbol in the Christianization of much of the New World.",
@@ -8211,8 +8211,8 @@ export const europeTravelSpots = [
       "access": "Walkable historic centre; high-speed trains from Madrid take under an hour, but the Fernando Zóbel AVE station is about 6 km from the old town and connects by city bus or taxi.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
-          "easeOfAccess": 7,
+          "laymenInterest": 9,
+          "easeOfAccess": 8,
           "lowTouristCrowds": 4
       },
       "uniqueness": "A medieval fortress-town whose intact townscape includes religious and secular buildings from the 12th to 18th centuries, with the casas colgadas above the Huécar gorge.",
@@ -8247,10 +8247,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Suso is currently closed for restoration; Yuso visits are guided and follow seasonal hours, and the two monasteries require separate visit arrangements.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "globallyUnique": 7,
+        "laymenInterest": 5,
+        "easeOfAccess": 5,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "UNESCO-listed monastic pair in which Suso preserves hermit caves and Visigothic and Mozarabic remains, while Yuso is a later Renaissance monastery with Baroque additions.",
       "why": "Saint Millán founded the monastic community in the mid-6th century and it later became a pilgrimage site. Suso still has a Romanesque church built in his honour, and its scriptorium produced the Glosas Emilianenses, early notes in Castilian and Basque.",
@@ -8284,10 +8284,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; 30 km from Madrid, with Renfe C2/C7 commuter trains and the bus station about a 10-minute walk away.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 6,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "A planned university city beside a medieval town, with a humanist university layout and 465 protected buildings among the precinct's 785.",
       "why": "Founded by Cardinal Jiménez de Cisneros in the early 16th century, Alcalá de Henares was the world's first planned university city. It was the original model for the Civitas Dei (City of God), the ideal urban community which Spanish missionaries brought to the Americas.",
@@ -8321,10 +8321,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "Mountain-road access via the N-230 and L-500; buses reach El Pont de Suert, with local taxis or a car useful for the churches.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 6,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "globallyUnique": 7,
+        "laymenInterest": 7,
+        "easeOfAccess": 5,
+        "lowTouristCrowds": 8,
       },
       "uniqueness": "Nine 11th- and 12th-century churches form Europe's largest concentration of Romanesque art, with a consistent Lombard style in a rural mountain setting.",
       "why": "The narrow Vall de Boí is situated in the high Pyrénées, in the Alta Ribagorça region and is surrounded by steep mountains. Each village in the valley contains a Romanesque church, and is surrounded by a pattern of enclosed fields.",
@@ -8358,8 +8358,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "40-minute Cercanías train or coach from Madrid; palace, gardens and historic centre are walkable",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 6,
+          "globallyUnique": 5,
+          "laymenInterest": 7,
           "easeOfAccess": 10,
           "lowTouristCrowds": 6
       },
@@ -8396,9 +8396,9 @@ export const europeTravelSpots = [
       "access": "The gondola runs 24/7; the paid upper walkway has seasonal hours, with last entry 20 minutes before closing. Check weather and maintenance notices, and book ahead on weekends, holidays and in summer.",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "The world's first transporter bridge, still in operation; UNESCO says only eight of the more than twenty built worldwide still stand.",
       "why": "Vizcaya Bridge straddles the mouth of the Ibaizabal estuary, west of Bilbao. It was designed by the Basque architect Alberto de Palacio and completed in 1893.",
@@ -8432,10 +8432,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "TIB buses from Palma reach Valldemossa, Deià, Sóller and western villages; the GR 221 has marked hiking sections across the range.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 6,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 5,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
+        "easeOfAccess": 9,
+        "lowTouristCrowds": 4,
       },
       "uniqueness": "A Mediterranean mountain landscape where Arabic water-management systems, dry-stone terraces and Christian-era farm estates remain legible together.",
       "why": "The Cultural Landscape of the Serra de Tramuntana lies on a steep-sided range parallel to Mallorca's north-west coast. Millennia of farming in a resource-poor environment produced terraces, dry-stone buildings, farms and linked waterworks, including water mills, around agricultural units with feudal origins.",
@@ -8469,10 +8469,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Walkable site in central Madrid with metro at Banco de España, Estación del Arte and Retiro, plus Madrid-Atocha Cercanías and numerous bus routes.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 6,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A single urban property links a 16th-century tree-lined avenue, 120-hectare Retiro gardens and the terraced Royal Botanic Garden with museums and scientific institutions.",
       "why": "The tree-lined Paseo del Prado began in the 16th century and was remade in the 18th, when fountains, gardens, museums and scientific institutions formed an Enlightenment-era urban project.",
@@ -8506,10 +8506,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre; ferries from Nynäshamn or Oskarshamn take about three hours, and flights land at Visby Airport 4 km away.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 7,
         "laymenInterest": 8,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 4,
       },
       "uniqueness": "UNESCO-listed medieval walled trading town with a notably complete historic townscape and more than 200 surviving warehouses and merchants' dwellings.",
       "why": "A former Viking site on the island of Gotland, Visby was the main centre of the Hanseatic League in the Baltic from the 12th to the 14th century. Its 13th-century ramparts and more than 200 warehouses and wealthy merchants' dwellings from the same period make it the best-preserved fortified commercial city in northern Europe.",
@@ -8543,10 +8543,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Free open-air site; city bus 9 runs to the church town, while buses 1 and 2 stop at Stadsö Centrum, a 15-minute walk away.",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 7,
           "laymenInterest": 6,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 8
       },
       "uniqueness": "Best-preserved church town in northern Scandinavia, with 404 wooden cottages around a late-15th-century stone church.",
       "why": "Gammelstad, at the head of the Gulf of Bothnia, is the best-preserved example of a 'church village', a unique kind of village formerly found throughout northern Scandinavia.",
@@ -8580,10 +8580,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "The civilian city and Stumholmen are publicly visitable and largely walkable; the active naval dockyard and military base are not general walk-in sites, while museums, forts and guided tours follow separate schedules.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
-        "easeOfAccess": 7,
-        "lowTouristCrowds": 6,
+        "globallyUnique": 7,
+        "laymenInterest": 6,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A planned 17th-century naval city where the civilian grid, dockyard, harbour and island fortifications remain legible as one connected system",
       "why": "Karlskrona is an outstanding example of a late-17th-century European planned naval city. The original plan and many of the buildings have survived intact, along with installations that illustrate its subsequent development up to the present day.",
@@ -8618,9 +8618,9 @@ export const europeTravelSpots = [
       "access": "Reach Öland over the six-kilometre bridge from Kalmar; explore the large site by local roads, KLT buses, footpaths or cycleways.",
       "scores": {
         "globallyUnique": 7,
-        "laymenInterest": 6,
-        "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "laymenInterest": 5,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "Living agrarian landscape with medieval land-use patterns, villages, coastal pastures and Stora Alvaret, a very rare survival in northern Europe.",
       "why": "The southern part of the island of Öland in the Baltic Sea is dominated by a vast limestone plateau. Human beings have lived here for some five thousand years and adapted their way of life to the physical constraints of the island.",
@@ -8654,10 +8654,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable old city; dense tram and bus links make the centre easy to reach, and the Bern Ticket gives overnight guests free local transit.",
       "scores": {
-          "globallyUnique": 6,
+          "globallyUnique": 5,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 5
       },
       "uniqueness": "Medieval urban structure remains legible in the market streets, narrow plots, sandstone houses, six kilometres of arcades and 16th-century fountains.",
       "why": "Founded in the 12th century on a hill surrounded by the Aare River, Bern expanded in stages while retaining its medieval street plan, market streets and narrow plots.",
@@ -8691,10 +8691,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO religious heritage",
       "access": "The Abbey Library, Vaulted Cellar and Exhibition Space are open daily; St Gall station is a 5–10 minute walk away. Check current hours and closure dates.",
       "scores": {
-        "globallyUnique": 8,
+        "globallyUnique": 7,
         "laymenInterest": 6,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A Carolingian monastic complex with the 9th-century Plan of St Gall, the only surviving manuscript plan of its time.",
       "why": "The complex spans 1,200 years of monastic history: its library holds early medieval manuscripts and the 9th-century Plan of St Gall, while the cathedral and library form an 18th-century Baroque ensemble.",
@@ -8728,10 +8728,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable from Bellinzona station; bus line 4 reaches Montebello and Sasso Corbaro, while the latter is a 30-minute uphill walk from Montebello.",
       "scores": {
-        "globallyUnique": 8,
-        "laymenInterest": 7,
+        "globallyUnique": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 5,
       },
       "uniqueness": "The only visible medieval fortification ensemble in the Alpine Arc with several castles linked by a wall that once closed the Ticino Valley.",
       "why": "Three castles and a wall once blocked the Ticino Valley at a major Alpine crossing. Castelgrande occupies the central rocky peak, Montebello is integrated into the fortifications and Sasso Corbaro sits separately on a southeast promontory.",
@@ -8765,8 +8765,8 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Regional trains cross Lavaux between Lausanne and Montreux; marked vineyard trails connect the villages, with buses and boats as alternatives.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
+        "globallyUnique": 5,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
         "lowTouristCrowds": 6,
       },
@@ -8803,8 +8803,8 @@ export const europeTravelSpots = [
       "access": "Both components have visitor access, but hours vary by institution. The Lavra lists daily hours of 10 a.m.–6 p.m. with ticket sales until 5:30 p.m.; Ukraine's airspace remains closed and martial-law rules, curfews and security closures can change quickly.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 2,
+        "laymenInterest": 8,
+        "easeOfAccess": 1,
         "lowTouristCrowds": 4,
       },
       "uniqueness": "A single UNESCO property links two separate monastic complexes: Saint Sophia's 11th-century mosaics and frescoes, Ukrainian Baroque buildings and the Lavra's surface churches with more than 600 metres of underground caves.",
@@ -8839,9 +8839,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic place",
       "access": "Walkable historic centre, but Ukraine's airspace is closed; visitors must arrive overland and road or rail travel can be disrupted.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
-        "easeOfAccess": 3,
+        "easeOfAccess": 2,
         "lowTouristCrowds": 4,
       },
       "uniqueness": "UNESCO-listed historic centre with a near-intact medieval street pattern, visible traces of separate ethnic and religious communities and a fusion of Eastern European, Italian and German traditions.",
@@ -8877,8 +8877,8 @@ export const europeTravelSpots = [
       "access": "Entry is controlled by Yuriy Fedkovych Chernivtsi National University; during martial law, sightseeing without a guide is prohibited. Check the current tour schedule and access rules.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 6,
-        "easeOfAccess": 5,
+        "laymenInterest": 8,
+        "easeOfAccess": 3,
         "lowTouristCrowds": 6,
       },
       "uniqueness": "A 19th-century historicist ensemble combining Byzantine, Gothic and Baroque forms across a former metropolitan residence, seminary and monastery.",
@@ -8913,9 +8913,9 @@ export const europeTravelSpots = [
       "kind": "UNESCO historic city centre",
       "access": "Walkable city centre, but the FCDO advises against all travel to Odesa; Ukraine's airspace is closed and martial-law rules, curfews and local access can change quickly.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 7,
-        "easeOfAccess": 2,
+        "easeOfAccess": 1,
         "lowTouristCrowds": 4,
       },
       "uniqueness": "A preserved 19th-century port-city grid of low-rise eclectic buildings, with theatres, religious buildings, palaces, tenements and former commercial buildings in one urban ensemble.",
@@ -8951,7 +8951,7 @@ export const europeTravelSpots = [
       "access": "Direct rail to Durham; Cathedral entry is free during visitor hours, while Durham Castle is open only by guided tour, with tours unavailable on some days.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
           "lowTouristCrowds": 4
       },
@@ -8987,10 +8987,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO architectural heritage",
       "access": "20-minute journey from Oxford; S3 and S7 buses run from Oxford City Centre to Woodstock four times an hour, then a 10-minute walk through the park; check opening times",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 5,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
       },
       "uniqueness": "A UNESCO-listed 18th-century princely residence pairing Vanbrugh's palace with Capability Brown's two lakes inside a walled landscape park",
       "why": "Blenheim Palace, near Oxford, was built between 1705 and 1722 from John Vanbrugh's design; Lancelot 'Capability' Brown later reshaped the park and created two lakes by damming the River Glyme. The English nation presented it to John Churchill, first Duke of Marlborough, after his 1704 victory over French and Bavarian troops.",
@@ -9024,10 +9024,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO civic and religious heritage",
       "access": "London Tube and bus access; Abbey admission is ticketed Monday–Saturday, St Margaret’s has separate visitor hours and Palace interiors require a booked multimedia or guided tour.",
       "scores": {
-          "globallyUnique": 6,
-          "laymenInterest": 7,
+          "globallyUnique": 7,
+          "laymenInterest": 9,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 2
       },
       "uniqueness": "A World Heritage ensemble where a working Gothic abbey and parish church sit beside the neo-Gothic Palace of Westminster, the seat of the UK Parliament.",
       "why": "The Palace of Westminster was rebuilt from 1840 on important medieval remains in the neo-Gothic style. The property also includes the small medieval St Margaret’s Church in Perpendicular Gothic style and Westminster Abbey, where monarchs have been crowned since the 11th century.",
@@ -9062,9 +9062,9 @@ export const europeTravelSpots = [
       "access": "Compact historic centre; the main attractions are walkable from Bath Spa station, with direct London Paddington trains taking about 1 hour 14 minutes.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 7,
+        "laymenInterest": 8,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 4,
+        "lowTouristCrowds": 3,
       },
       "uniqueness": "A city-wide World Heritage site where Roman baths and hot springs sit within an unusually intact Georgian plan of crescents, squares and terraces.",
       "why": "Bath was founded by the Romans as a thermal spa and became an important centre of the wool industry in the Middle Ages. In the 18th century, under the reigns of George I, George II and George III, it developed into a spa city with Palladian crescents, squares and terraces around the Roman baths.",
@@ -9100,7 +9100,7 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 7,
-          "easeOfAccess": 7,
+          "easeOfAccess": 9,
           "lowTouristCrowds": 4
       },
       "uniqueness": "A three-part World Heritage site linking a 6th-century church, an abbey ruin and a cathedral.",
@@ -9135,10 +9135,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Road access via the A4043; Blaenavon has no dedicated railway station, but a direct bus from Pontypool Station takes about 20 minutes.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
-        "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "easeOfAccess": 7,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "UNESCO-listed industrial landscape where mines, ironworks, transport routes and workers' housing survive together in an unusually complete setting.",
       "why": "The area around Blaenavon is evidence of the pre-eminence of South Wales as the world's major producer of iron and coal in the 19th century. All the necessary elements can still be seen - coal and ore mines, quarries, a primitive railway system, furnaces, workers' homes, and the social infrastructure of their community.",
@@ -9173,9 +9173,9 @@ export const europeTravelSpots = [
       "access": "The site is dispersed across 24 kilometres of the Derwent valley. The Derwent Valley Line provides hourly service between Matlock and Nottingham via Derby, with buses and traffic-free trails for local connections; individual mills have their own hours and charges.",
       "scores": {
           "globallyUnique": 6,
-          "laymenInterest": 6,
-          "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "laymenInterest": 5,
+          "easeOfAccess": 9,
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A 24-kilometre industrial landscape with mills, workers' housing, canals and railways still visible around the River Derwent.",
       "why": "At Cromford, Richard Arkwright's water-powered mills of 1771 and 1776-77 established a factory system later copied worldwide. The 24-kilometre valley still holds cotton mills, workers' housing and the industrial settlements of Cromford, Belper, Milford and Darley Abbey.",
@@ -9209,10 +9209,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Ticketed garden in London Zone 3; Kew Gardens station is 500m from Victoria Gate and is served by the District and Mildmay lines.",
       "scores": {
-          "globallyUnique": 7,
+          "globallyUnique": 6,
           "laymenInterest": 7,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 4
+          "lowTouristCrowds": 3
         },
       "uniqueness": "A 132-hectare historic garden with 18th- to 20th-century design, 44 listed buildings and extensive botanical collections.",
       "why": "This historic landscape garden has elements from several periods of garden design from the 18th to the 20th centuries. The gardens house botanic collections (conserved plants, living plants and documents) that have been considerably enriched through the centuries.",
@@ -9246,10 +9246,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO industrial heritage",
       "access": "Ten separate areas across Cornwall and west Devon, with coast paths, clifftops, multi-use trails and key centres such as Geevor Tin Mine and Tavistock Guildhall.",
       "scores": {
-          "globallyUnique": 7,
+          "globallyUnique": 6,
           "laymenInterest": 6,
-          "easeOfAccess": 7,
-          "lowTouristCrowds": 6
+          "easeOfAccess": 6,
+          "lowTouristCrowds": 7
         },
       "uniqueness": "A 19,709-hectare cultural landscape with more than 200 Cornish engine-house sites, mine workings, ports, railways and mining settlements spread across ten areas.",
       "why": "Between 1700 and 1914, deep copper and tin mining reshaped ten areas with engine houses, foundries, ports, railways and new settlements; Cornish steam technology later spread to mining regions around the world.",
@@ -9285,7 +9285,7 @@ export const europeTravelSpots = [
       "scores": {
         "globallyUnique": 7,
         "laymenInterest": 8,
-        "easeOfAccess": 10,
+        "easeOfAccess": 9,
         "lowTouristCrowds": 6,
       },
       "uniqueness": "A navigable canal crossing the Dee Valley on a 38.4-metre-high aqueduct with nineteen cast-iron spans.",
@@ -9321,9 +9321,9 @@ export const europeTravelSpots = [
       "access": "No public access onto the railway bridge except by train; use viewpoints and the 5-mile Forth Bridges Trail around North and South Queensferry.",
       "scores": {
           "globallyUnique": 8,
-          "laymenInterest": 7,
+          "laymenInterest": 8,
           "easeOfAccess": 10,
-          "lowTouristCrowds": 6
+          "lowTouristCrowds": 7
         },
       "uniqueness": "The world's earliest great multispan cantilever railway bridge, with three double-cantilever towers and an unadorned steel structure still carrying trains.",
       "why": "This railway bridge crosses the Firth of Forth between Fife and Edinburgh and had the world's longest spans, at 541 m, when it opened in 1890. It still carries passenger and freight trains.",
@@ -9358,9 +9358,9 @@ export const europeTravelSpots = [
       "access": "Public visitor centre open daily; plan a car or taxi from Goostrey or Macclesfield because there is no bus access.",
       "scores": {
         "globallyUnique": 6,
-        "laymenInterest": 6,
+        "laymenInterest": 7,
         "easeOfAccess": 6,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A working radio-astronomy site whose 76-metre Lovell Telescope and surviving research buildings document the shift from optical astronomy to radio astronomy.",
       "why": "Jodrell Bank began radio-astronomy work in 1945 in rural Cheshire, where low radio interference supported research on cosmic rays, meteors and the Moon. Its working 76-metre Lovell Telescope and surviving research buildings record the shift from optical astronomy to radio astronomy, with later work including the discovery of quasars.",
@@ -9396,8 +9396,8 @@ export const europeTravelSpots = [
       "scores": {
           "globallyUnique": 6,
           "laymenInterest": 6,
-          "easeOfAccess": 6,
-          "lowTouristCrowds": 6
+          "easeOfAccess": 5,
+          "lowTouristCrowds": 7
       },
       "uniqueness": "A six-part industrial landscape joining relict quarries and mines to worker settlements, railways and coastal export harbours across the Snowdon massif.",
       "why": "Between 1780 and 1940, slate production reshaped the Snowdon massif from mountain-top to sea-coast, linking quarries and processing sites with worker settlements, railways and export harbours.",
@@ -9432,10 +9432,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Regional access by train, bus and bike; visitor access varies by village and protected zone.",
       "scores": {
-        "globallyUnique": 6,
+        "globallyUnique": 5,
         "laymenInterest": 6,
         "easeOfAccess": 8,
-        "lowTouristCrowds": 6,
+        "lowTouristCrowds": 7,
       },
       "uniqueness": "A cross-border cultural landscape around Eurasia's westernmost steppe lake, with saline soils, reed beds, villages and centuries of viticulture and stock raising.",
       "why": "The lake region has been a meeting place for different cultures for eight millennia. Its villages, palaces, wetlands and agricultural land show how settlement, viticulture and stock raising shaped the landscape.",
@@ -9471,9 +9471,9 @@ export const europeTravelSpots = [
       "access": "Walkable historic centre; the separate Basilica of Saint Paul Outside the Walls is on Metro B, then about three minutes on foot.",
       "scores": {
         "globallyUnique": 8,
-        "laymenInterest": 9,
+        "laymenInterest": 10,
         "easeOfAccess": 10,
-        "lowTouristCrowds": 3,
+        "lowTouristCrowds": 1,
       },
       "uniqueness": "A stratified urban property combining Roman archaeological sites, Christian basilicas, papal buildings and Renaissance and Baroque streetscapes, with San Paolo Fuori le Mura as a separate component.",
       "why": "Founded, according to legend, by Romulus and Remus in 753 BC, Rome was first the centre of the Roman Republic, then of the Roman Empire, and it became the capital of the Christian world in the 4th century.",
@@ -9508,10 +9508,10 @@ export const europeTravelSpots = [
       "kind": "UNESCO cultural landscape",
       "access": "Public rail route through the UNESCO property from Thusis to Tirano; Bernina Express reservations are mandatory, while regional-train reservations are optional but recommended on the busy St. Moritz–Tirano section.",
       "scores": {
-        "globallyUnique": 6,
-        "laymenInterest": 7,
-        "easeOfAccess": 7,
-        "lowTouristCrowds": 5,
+        "globallyUnique": 7,
+        "laymenInterest": 9,
+        "easeOfAccess": 8,
+        "lowTouristCrowds": 4,
       },
       "uniqueness": "Two historic mountain railway lines remain in service as a UNESCO technical, architectural and environmental ensemble; the Bernina line is the highest transalpine railway route and one of the steepest adhesion railways.",
       "why": "The property brings together two historic railway lines that cross the Swiss Alps through the Albula and Bernina passes. The Albula line opened in 1904 and runs 67 km; the Bernina line runs 61 km. Together, they have 55 tunnels and galleries and 196 viaducts and bridges.",
