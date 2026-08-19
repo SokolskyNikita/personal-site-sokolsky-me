@@ -67,6 +67,19 @@ const toolLinks = [
   },
 ];
 
+const projectLinks = [
+  {
+    label: "pow-finder",
+    href: "https://pow-finder.com/",
+    favicon: "/images/projects/pow-finder.svg",
+  },
+  {
+    label: "rankmyweather",
+    href: "https://rankmyweather.com/",
+    favicon: "/images/projects/rankmyweather.svg",
+  },
+];
+
 const pageTitle = "Nikita Sokolsky";
 const pageDescription =
   "Personal website of Nikita Sokolsky, senior software engineer based in Seattle, with 8 years at Amazon and AWS.";
@@ -225,6 +238,26 @@ const structuredData = {
               <li>
                 <a href={link.href}>
                   <span class="icon" set:html={link.icon} />
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="projects">
+          <h2>Personal projects</h2>
+          <ul class="links">
+            {projectLinks.map((link) => (
+              <li>
+                <a href={link.href} target="_blank" rel="noreferrer">
+                  <img
+                    class="favicon"
+                    src={link.favicon}
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
                   {link.label}
                 </a>
               </li>
@@ -504,6 +537,13 @@ const structuredData = {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .favicon {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 3px;
+    flex-shrink: 0;
   }
 
   @media (max-width: 600px) {
