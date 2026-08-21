@@ -3,7 +3,7 @@ export const prerender = true;
 
 const pageTitle = "My food preferences";
 const pageDescription =
-  "A compact dietary profile covering vegetarian baseline, favorite foods, foods to avoid, and allowed exceptions.";
+  "My dietary rules as a picky ovo-lacto vegetarian, plus favorite foods and go-to restaurant orders.";
 const themeColorLight = "#ffffff";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -54,60 +54,158 @@ const structuredData = {
   </head>
   <body>
     <main>
-      <p><a href="/">sokolsky.me</a></p>
+      <p>
+        <a href="/">sokolsky.me</a>
+        <span class="lang-switch">
+          <button type="button" data-set-lang="en" aria-pressed="true">English</button>
+          <span aria-hidden="true">|</span>
+          <button type="button" data-set-lang="es" aria-pressed="false">Español</button>
+        </span>
+      </p>
 
-      <h1>{pageTitle}</h1>
+      <div data-lang="en" lang="en">
+        <h1>My food preferences</h1>
 
-      <p><strong>Dietary profile</strong></p>
+        <p>I'm an <strong>ovo-lacto vegetarian</strong>, and honey is fine too.</p>
 
-      <p><strong>Baseline</strong></p>
-      <ul>
-        <li><strong>Diet:</strong> Ovo-lacto vegetarian. Honey is acceptable.</li>
-        <li><strong>Flavor/smell:</strong> Must avoid any dishes with a noticeable meat or fish flavor or smell.</li>
-        <li><strong>Note:</strong> Trace or imperceptible non-vegetarian ingredients, such as gelatin, are acceptable.</li>
-      </ul>
+        <p>I can't eat any dish with a <strong>noticeable meat or fish flavor or smell</strong>. Trace or imperceptible amounts of non-vegetarian ingredients, like gelatin, don't bother me.</p>
 
-      <p><strong>Favorite foods</strong></p>
-      <ul>
-        <li><strong>Taco Bell:</strong> Vegetarian items, especially bean-and-cheese burritos, cheese quesadillas, and potato tacos. <em>No fajita vegetables. No sofritas.</em></li>
-        <li><strong>Chipotle:</strong> Veggie burrito bowl. <em>No fajita vegetables. No sofritas.</em></li>
-        <li><strong>Vareniki / pierogi:</strong> Potato and cheese; sweet cherry as dessert. <em>No mushroom.</em></li>
-        <li><strong>Pizza:</strong> Cheese and tomato. <em>No cooked-vegetable toppings.</em></li>
-        <li><strong>Pasta with tomato sauces:</strong> Marinara/pomodoro; cheese ravioli with tomato sauce. <em>No cooked-vegetable add-ins.</em></li>
-      </ul>
+        <h2>What I don't eat</h2>
+        <ul>
+          <li><strong>Meat, fish and poultry.</strong></li>
+          <li><strong>Meat substitutes:</strong> tofu, Impossible and Beyond products, tempeh, seitan.</li>
+          <li><strong>Cooked vegetables</strong> of any kind (boiled, sauteed, roasted), <em>except the ones listed below</em>.</li>
+          <li><strong>Mushrooms</strong>, in any form.</li>
+        </ul>
 
-      <p><strong>Other favorites</strong></p>
-      <ul>
-        <li>Tomato soup with grilled cheese.</li>
-        <li>Potatoes: hash browns, baked potatoes, and latkes.</li>
-        <li>Hummus with pita and fresh vegetables.</li>
-        <li>Bean-and-cheese burritos or bowls with vegetarian beans and no fajita vegetables.</li>
-        <li>Vegetable spring rolls and samosas.</li>
-        <li>Vegetable sushi, especially cucumber or avocado rolls.</li>
-        <li>Fried cheese, including Czech smazeny syr, mozzarella sticks, and cheese curds.</li>
-        <li>Egg-and-cheese items, including cheese omelets and breakfast sandwiches without cooked vegetables.</li>
-      </ul>
+        <h2>What I do eat</h2>
+        <ul>
+          <li><strong>Dairy, eggs, honey and gelatin.</strong></li>
+          <li><strong>All grains, breads, pastas and rice.</strong></li>
+          <li><strong>All fruit.</strong></li>
+          <li><strong>Raw vegetables</strong> of any kind, as long as they're fresh and uncooked.</li>
+          <li><strong>Potatoes, tomatoes and corn</strong>, cooked any way at all: boiled, sauteed, roasted, as tomato sauce, as soup.</li>
+          <li><strong>Cooked beans and chickpeas</strong>, including hummus and bean burritos.</li>
+          <li><strong>Onion and garlic</strong> in small amounts, fried and mixed into a dish. <em>Not as a standalone cooked side.</em></li>
+          <li><strong>Pickled and fermented vegetables</strong> like pickles and sauerkraut.</li>
+          <li><strong>Seaweed</strong> in small amounts, e.g. nori wraps.</li>
+          <li><strong>Fried or wrapped items filled with vegetables</strong>, along the lines of spring rolls and samosas.</li>
+        </ul>
 
-      <p><em>Note: Mentioning Taco Bell and Chipotle does not imply a preference for "authentic" Mexican cuisine, which is generally avoided.</em></p>
+        <h2>Favorites</h2>
+        <ul>
+          <li><strong>Taco Bell</strong> is my go-to fast food: anything vegetarian, especially bean-and-cheese burritos, cheese quesadillas and potato tacos. <em>No fajita vegetables, no sofritas.</em></li>
+          <li><strong>Chipotle:</strong> the veggie burrito bowl. <em>Also no fajita vegetables, no sofritas.</em></li>
+          <li><strong>Vareniki (pierogi):</strong> potato and cheese fillings, plus sweet cherry ones for dessert. <em>Never mushroom.</em></li>
+          <li><strong>Pizza:</strong> cheese and tomato. <em>No cooked-vegetable toppings.</em></li>
+          <li><strong>Pasta with tomato sauce:</strong> marinara, pomodoro or cheese ravioli in tomato sauce. <em>No cooked-vegetable add-ins.</em></li>
+        </ul>
 
-      <p><strong>Foods to avoid</strong></p>
-      <ul>
-        <li><strong>Proteins:</strong> Meat, fish, poultry.</li>
-        <li><strong>Meat/tofu analogs:</strong> Tofu, Impossible/Beyond products, tempeh, seitan.</li>
-        <li><strong>Cooked vegetables:</strong> All cooked vegetables, including boiled, sauteed, and roasted vegetables, except the specific items listed as allowed.</li>
-        <li><strong>Mushrooms:</strong> Mushrooms in any form.</li>
-      </ul>
+        <p><em>Liking Taco Bell and Chipotle doesn't mean I like Mexican food, though. I generally avoid "authentic" Mexican cuisine.</em></p>
 
-      <p><strong>Allowed foods and exceptions</strong></p>
-      <ul>
-        <li><strong>General categories:</strong> Dairy, eggs, honey, gelatin; all grains, breads, pastas, and rice; all fruit.</li>
-        <li><strong>Raw vegetables:</strong> Any type of fresh, uncooked vegetable is acceptable.</li>
-        <li><strong>Cooked-vegetable exceptions:</strong> Potatoes, tomatoes, and corn are acceptable in any form, including boiled, sauteed, and roasted. This includes tomato sauces and soups.</li>
-        <li><strong>Onion and garlic:</strong> Acceptable in small amounts when fried and mixed into dishes, but not as standalone cooked sides.</li>
-        <li><strong>Legumes:</strong> Cooked beans and chickpeas are acceptable, including hummus and bean burritos.</li>
-        <li><strong>Other exceptions:</strong> Pickled or fermented vegetables, such as pickles and sauerkraut; seaweed in small amounts, such as nori wraps; vegetable-filled fried or wrapped items similar to spring rolls and samosas.</li>
-      </ul>
+        <p>Other favorites:</p>
+        <ul>
+          <li><strong>Tomato soup</strong> with grilled cheese.</li>
+          <li><strong>Potatoes:</strong> hash browns, baked potatoes, latkes.</li>
+          <li><strong>Hummus</strong> with pita and fresh vegetables.</li>
+          <li><strong>Bean-and-cheese burritos or bowls</strong>, made with vegetarian beans and <em>no fajita vegetables</em>.</li>
+          <li><strong>Vegetable spring rolls and samosas.</strong></li>
+          <li><strong>Vegetable sushi</strong>, cucumber and avocado rolls above all.</li>
+          <li><strong>Fried cheese:</strong> Czech smazeny syr, mozzarella sticks, cheese curds.</li>
+          <li><strong>Egg-and-cheese dishes:</strong> cheese omelets and breakfast sandwiches, <em>as long as there are no cooked vegetables in them</em>.</li>
+        </ul>
+      </div>
+
+      <div data-lang="es" lang="es" hidden>
+        <h1>Mis preferencias de comida</h1>
+
+        <p>Soy <strong>ovolactovegetariano</strong>, y la miel también está bien.</p>
+
+        <p>No puedo comer ningún plato que tenga un <strong>gusto o un olor perceptible a carne o pescado</strong>. Las trazas o cantidades imperceptibles de ingredientes no vegetarianos, como la gelatina, no me molestan.</p>
+
+        <h2>Qué no como</h2>
+        <ul>
+          <li><strong>Carne, pescado y aves.</strong></li>
+          <li><strong>Sustitutos de la carne:</strong> tofu, productos Impossible y Beyond, tempeh, seitán.</li>
+          <li><strong>Verduras cocidas</strong> de cualquier tipo (hervidas, salteadas, al horno), <em>salvo las que están en la lista de abajo</em>.</li>
+          <li><strong>Hongos</strong>, en cualquier forma.</li>
+        </ul>
+
+        <h2>Qué sí como</h2>
+        <ul>
+          <li><strong>Lácteos, huevos, miel y gelatina.</strong></li>
+          <li><strong>Todos los cereales, panes, pastas y arroz.</strong></li>
+          <li><strong>Toda la fruta.</strong></li>
+          <li><strong>Verduras crudas</strong> de cualquier tipo, siempre que estén frescas y sin cocinar.</li>
+          <li><strong>Papas, tomates y choclo</strong>, cocidos de cualquier manera: hervidos, salteados, al horno, en salsa de tomate, en sopa.</li>
+          <li><strong>Porotos y garbanzos cocidos</strong>, incluidos el hummus y los burritos de porotos.</li>
+          <li><strong>Cebolla y ajo</strong> en poca cantidad, fritos y mezclados dentro del plato. <em>No como guarnición cocida aparte.</em></li>
+          <li><strong>Verduras en vinagre o fermentadas</strong>, como los pickles y el chucrut.</li>
+          <li><strong>Algas</strong> en poca cantidad, por ejemplo en rolls con nori.</li>
+          <li><strong>Frituras o envueltos rellenos de verdura</strong>, tipo arrolladitos primavera y samosas.</li>
+        </ul>
+
+        <h2>Favoritos</h2>
+        <ul>
+          <li><strong>Taco Bell</strong> es mi comida rápida preferida: cualquier opción vegetariana, sobre todo los burritos de porotos y queso, las quesadillas de queso y los tacos de papa. <em>Sin las verduras de fajita y sin sofritas.</em></li>
+          <li><strong>Chipotle:</strong> el bowl de burrito vegetariano. <em>También sin las verduras de fajita y sin sofritas.</em></li>
+          <li><strong>Varenikes (pierogis):</strong> rellenos de papa y de queso, más los de cereza dulce de postre. <em>Nunca de hongos.</em></li>
+          <li><strong>Pizza:</strong> de queso y tomate. <em>Sin verduras cocidas encima.</em></li>
+          <li><strong>Pastas con salsa de tomate:</strong> marinara, pomodoro o ravioles de queso con salsa de tomate. <em>Sin verduras cocidas agregadas.</em></li>
+        </ul>
+
+        <p><em>Que me gusten Taco Bell y Chipotle no quiere decir que me guste la comida mexicana: en general evito la cocina mexicana "auténtica".</em></p>
+
+        <p>Otros favoritos:</p>
+        <ul>
+          <li><strong>Sopa de tomate</strong> con tostado de queso.</li>
+          <li><strong>Papas:</strong> hash browns, papas al horno, latkes.</li>
+          <li><strong>Hummus</strong> con pan pita y verduras frescas.</li>
+          <li><strong>Burritos o bowls de porotos y queso</strong>, hechos con porotos vegetarianos y <em>sin las verduras de fajita</em>.</li>
+          <li><strong>Arrolladitos primavera y samosas de verdura.</strong></li>
+          <li><strong>Sushi de verduras</strong>, ante todo los rolls de pepino y de palta.</li>
+          <li><strong>Queso frito:</strong> el smazeny syr checo, los bastones de muzzarella, los cheese curds.</li>
+          <li><strong>Platos de huevo y queso:</strong> omelettes de queso y sándwiches de desayuno, <em>siempre que no tengan verduras cocidas</em>.</li>
+        </ul>
+      </div>
     </main>
+
+    <script>
+      const titles: Record<string, string> = {
+        en: "My food preferences",
+        es: "Mis preferencias de comida",
+      };
+      const buttons = document.querySelectorAll<HTMLButtonElement>("button[data-set-lang]");
+      const sections = document.querySelectorAll<HTMLElement>("main div[data-lang]");
+
+      function setLang(lang: string) {
+        sections.forEach((section) => {
+          section.hidden = section.dataset.lang !== lang;
+        });
+        buttons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.setLang === lang));
+        });
+        document.documentElement.lang = lang;
+        document.title = titles[lang] ?? titles.en;
+        try {
+          localStorage.setItem("food-prefs-lang", lang);
+        } catch {
+          /* private mode etc. */
+        }
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => setLang(button.dataset.setLang ?? "en"));
+      });
+
+      let saved: string | null = null;
+      try {
+        saved = localStorage.getItem("food-prefs-lang");
+      } catch {
+        /* ignore */
+      }
+      if (saved === "es") setLang("es");
+    </script>
   </body>
 </html>
 
@@ -151,6 +249,12 @@ const structuredData = {
     line-height: 1.15;
   }
 
+  h2 {
+    margin: 1.4rem 0 0.6rem;
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+
   p,
   ul {
     margin: 0 0 0.9rem;
@@ -169,7 +273,26 @@ const structuredData = {
   }
 
   body > main > p:first-child {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
     color: var(--muted);
     font-size: 0.9rem;
+  }
+
+  .lang-switch button {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .lang-switch button[aria-pressed="true"] {
+    text-decoration: none;
+    font-weight: 600;
+    cursor: default;
   }
 </style>

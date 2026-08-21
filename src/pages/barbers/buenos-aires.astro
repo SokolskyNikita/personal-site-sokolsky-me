@@ -229,7 +229,7 @@ const structuredData = {
             <input id="sort-name" type="radio" name="sort" autocomplete="off" />
             <label for="sort-name">Name</label>
             <input id="sort-rating" type="radio" name="sort" autocomplete="off" />
-            <label for="sort-rating">GMaps rating</label>
+            <label for="sort-rating">Rating</label>
             <input id="sort-popularity" type="radio" name="sort" autocomplete="off" />
             <label for="sort-popularity">Popularity</label>
           </fieldset>
@@ -1063,11 +1063,33 @@ const structuredData = {
     }
 
     .toolbar {
-      gap: 0.5rem;
+      display: grid;
+      gap: 0.65rem;
     }
 
-    .sort-toggle {
+    .sort-toggle,
+    .extras-toggle,
+    .filter-dropdown {
+      width: 100%;
+    }
+
+    .sort-toggle,
+    .extras-toggle {
       border-radius: 1rem;
+      padding: 0.45rem 0.5rem 0.5rem;
+    }
+
+    .sort-toggle legend,
+    .extras-toggle legend {
+      display: block;
+      width: 100%;
+      margin: 0 0.2rem 0.15rem;
+      line-height: 1.2;
+    }
+
+    .sort-toggle label,
+    .extras-toggle label {
+      min-height: 2.35rem;
     }
 
     .barber-list {
@@ -1076,25 +1098,27 @@ const structuredData = {
       border-color: var(--border-strong);
     }
 
-    .barber-head {
+    .barber-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "name maps"
+        "address address"
+        "desc desc"
+        "price rating";
+      gap: 0.22rem 0.7rem;
+      align-items: start;
+      min-height: 0;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.85rem 0.9rem;
+    }
+
+    .barber-row.barber-head {
       display: none;
     }
 
-    .barber-row {
-      position: relative;
-      min-height: 5.2rem;
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        "name"
-        "desc";
-      gap: 0.2rem 0.6rem;
-      align-items: center;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 0.68rem 10.6rem 0.68rem 0.78rem;
-    }
-
-    .barber-row:first-of-type {
+    .barber-list > article.barber-row:first-of-type {
       border-top: 0;
     }
 
@@ -1105,47 +1129,55 @@ const structuredData = {
 
     .barber-name {
       grid-area: name;
-      font-size: 1rem;
-      line-height: 1.18;
+      font-size: 1.02rem;
+      line-height: 1.2;
+      padding-right: 0.2rem;
     }
 
     .map-actions {
-      position: absolute;
-      top: 0.68rem;
-      right: 0.78rem;
+      grid-area: maps;
+      position: static;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 0.32rem;
+      align-self: start;
     }
 
     .maps-link {
       position: static;
-      width: 1.9rem;
-      height: 1.9rem;
+      width: 2.75rem;
+      height: 2.75rem;
+      margin: -0.4rem -0.4rem 0 0;
     }
 
-    .address,
+    .address {
+      grid-area: address;
+      display: block;
+      font-size: 0.82rem;
+    }
+
     .hours {
       display: none;
     }
 
     .price {
-      position: absolute;
-      top: 0.7rem;
-      right: 3rem;
-      width: 6.9rem;
-      font-size: 0.86rem;
-      text-align: right;
+      grid-area: price;
+      position: static;
+      width: auto;
+      align-content: start;
+      padding-top: 0.4rem;
+      font-size: 0.88rem;
+      text-align: left;
     }
 
     .rating {
-      position: absolute;
-      top: 2.65rem;
-      right: 3rem;
-      width: 6.9rem;
+      grid-area: rating;
+      position: static;
+      width: auto;
+      justify-self: end;
+      align-content: start;
+      padding-top: 0.4rem;
       color: var(--text-muted);
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       text-align: right;
     }
 
@@ -1156,7 +1188,7 @@ const structuredData = {
     .description {
       grid-area: desc;
       font-size: 0.92rem;
-      line-height: 1.35;
+      line-height: 1.38;
     }
 
     .barber-map-section {

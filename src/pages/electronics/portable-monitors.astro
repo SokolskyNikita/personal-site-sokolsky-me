@@ -1,0 +1,1146 @@
+---
+export const prerender = true;
+
+import pageData from "../../data/portable-monitors.json";
+
+const pageTitle = "Portable monitors under 11 lb";
+const pageDescription = pageData.description;
+const themeColorLight = "#f4f2ee";
+const themeColorDark = "#141311";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Monitor = {
+  include?: boolean;
+  brand: string;
+  model: string;
+  markets: string[];
+  buyUrl: string;
+  priceUsd: number | null;
+  priceNote?: string | null;
+  sizeInches: number | null;
+  resolution: string | null;
+  panel: string | null;
+  refreshHz: number | null;
+  touch: boolean | null;
+  battery: boolean | null;
+  weightStatedLbs: number | null;
+  weightMeasuredLbs: number | null;
+  brightnessStatedNits: number | null;
+  brightnessMeasuredNits: number | null;
+  gamutStated: string | null;
+  gamutMeasured: string | null;
+  contrastStated: string | null;
+  contrastMeasured: string | null;
+  ports: string | null;
+  reviewUrl: string | null;
+  reviewer: string | null;
+};
+
+const dash = "—";
+
+const formatPrice = (value: number | null) =>
+  value == null
+    ? dash
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: value % 1 === 0 ? 0 : 0,
+      }).format(Math.round(value));
+
+const formatNumber = (value: number | null, digits = 2) =>
+  value == null
+    ? dash
+    : new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
+        maximumFractionDigits: digits,
+      }).format(value);
+
+const formatBool = (value: boolean | null) =>
+  value == null ? dash : value ? "Yes" : "No";
+
+const maxResolution = (value: string | null) => {
+  if (!value) return null;
+  const matches = [...value.matchAll(/(\d+)\s*[x×]\s*(\d+)/gi)];
+  if (matches.length === 0) return value;
+  const best = matches
+    .map((match) => ({
+      width: Number(match[1]),
+      height: Number(match[2]),
+    }))
+    .sort((first, second) => second.width * second.height - first.width * first.height)[0];
+  return `${best.width}×${best.height}`;
+};
+
+const resolutionPixels = (value: string | null) => {
+  const max = maxResolution(value);
+  const match = max?.match(/(\d+)×(\d+)/);
+  return match ? Number(match[1]) * Number(match[2]) : null;
+};
+
+const pair = (stated: string, measured: string) => {
+  if (stated === dash && measured === dash) return dash;
+  if (measured === dash) return stated;
+  return `${stated} / ${measured}`;
+};
+
+const parseContrast = (value: string | null) => {
+  if (!value) return null;
+  const match = value.replace(/,/g, "").match(/([\d.]+)\s*:/);
+  return match ? Number.parseFloat(match[1]) : null;
+};
+
+const isWorseNumber = (
+  stated: number | null,
+  measured: number | null,
+  { higherIsBetter }: { higherIsBetter: boolean },
+) => {
+  if (stated == null || measured == null) return false;
+  if (higherIsBetter) return measured < stated * 0.85;
+  return measured > stated * 1.1;
+};
+
+const firstPercent = (value: string | null) => {
+  if (!value) return null;
+  const match = value.replace(/,/g, "").match(/([\d.]+)\s*%/);
+  return match ? Number.parseFloat(match[1]) : null;
+};
+
+const resolutionClass = (value: string | null) => {
+  const max = maxResolution(value);
+  const match = max?.match(/(\d+)×(\d+)/);
+  if (!match) return null;
+  const width = Number(match[1]);
+  if (width >= 3840) return "4K";
+  if (width >= 2560) return "2K";
+  return "HD";
+};
+
+const panelClass = (value: string | null) => {
+  if (!value) return null;
+  const lower = value.toLowerCase();
+  if (lower.includes("oled")) return "OLED";
+  if (lower.includes("mini-led") || lower.includes("mini led") || lower.includes("miniled")) {
+    return "Mini-LED";
+  }
+  if (lower.includes("ips")) return "IPS";
+  return null;
+};
+
+const refreshClass = (value: number | null) =>
+  value == null ? null : String(value);
+
+const monitors = (pageData.models as Monitor[])
+  .filter(
+    (monitor) =>
+      monitor.include !== false &&
+      monitor.sizeInches != null &&
+      monitor.sizeInches >= 15 &&
+      monitor.priceUsd != null,
+  )
+  .map((monitor) => {
+    const weightMismatch = isWorseNumber(
+      monitor.weightStatedLbs,
+      monitor.weightMeasuredLbs,
+      { higherIsBetter: false },
+    );
+    const brightnessMismatch = isWorseNumber(
+      monitor.brightnessStatedNits,
+      monitor.brightnessMeasuredNits,
+      { higherIsBetter: true },
+    );
+    const contrastMismatch = isWorseNumber(
+      parseContrast(monitor.contrastStated),
+      parseContrast(monitor.contrastMeasured),
+      { higherIsBetter: true },
+    );
+    const gamutMismatch = isWorseNumber(
+      firstPercent(monitor.gamutStated),
+      firstPercent(monitor.gamutMeasured),
+      { higherIsBetter: true },
+    );
+
+    return {
+      ...monitor,
+      name: `${monitor.brand} ${monitor.model}`,
+      resolutionClass: resolutionClass(monitor.resolution),
+      panelClass: panelClass(monitor.panel),
+      refreshClass: refreshClass(monitor.refreshHz),
+      weightMismatch,
+      brightnessMismatch,
+      contrastMismatch,
+      gamutMismatch,
+    };
+  })
+  .sort((first, second) => {
+    const sizeGap = (second.sizeInches ?? -1) - (first.sizeInches ?? -1);
+    if (sizeGap !== 0) return sizeGap;
+    return first.name.localeCompare(second.name, "en", { numeric: true });
+  });
+
+const countOptions = (values: readonly string[], key: "resolutionClass" | "panelClass" | "refreshClass") =>
+  values
+    .map((value) => ({
+      value,
+      count: monitors.filter((monitor) => monitor[key] === value).length,
+    }))
+    .filter((option) => option.count > 0);
+
+const resolutionOptions = countOptions(["HD", "2K", "4K"], "resolutionClass");
+const panelOptions = countOptions(["IPS", "OLED", "Mini-LED"], "panelClass");
+const refreshOptions = countOptions(
+  ["60", "100", "120", "144", "180", "240", "288"],
+  "refreshClass",
+);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  dateModified: pageData.updated,
+  author: {
+    "@type": "Person",
+    name: "Nikita Sokolsky",
+  },
+  about: {
+    "@type": "Thing",
+    name: "Portable monitors",
+  },
+  inLanguage: "en",
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · sokolsky.me</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="keywords"
+      content="portable monitor, USB-C monitor, travel monitor, UPERFECT, ASUS ZenScreen, Arzopa, espresso Displays"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <p class="eyebrow">Electronics notes · {pageData.updated}</p>
+        <h1>{pageTitle}</h1>
+        <p class="summary">
+          {pageDescription} Sorted by size. Highlighted cells are stated-versus-tested
+          gaps. Weight is panel plus included stand, not the box.
+        </p>
+      </header>
+
+      <section class="ranking" aria-label="Portable monitors">
+        <div class="filter-bar" aria-label="Monitor filters">
+          <label class="filter-field" for="resolution-filter">
+            <span>Resolution</span>
+            <select id="resolution-filter" name="resolution" autocomplete="off">
+              <option value="">All</option>
+              {resolutionOptions.map((option) => (
+                <option value={option.value}>
+                  {option.value} ({option.count})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label class="filter-field" for="panel-filter">
+            <span>Panel</span>
+            <select id="panel-filter" name="panel" autocomplete="off">
+              <option value="">All</option>
+              {panelOptions.map((option) => (
+                <option value={option.value}>
+                  {option.value} ({option.count})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label class="filter-field" for="refresh-filter">
+            <span>Refresh rate</span>
+            <select id="refresh-filter" name="refresh" autocomplete="off">
+              <option value="">All</option>
+              {refreshOptions.map((option) => (
+                <option value={option.value}>
+                  {option.value} Hz ({option.count})
+                </option>
+              ))}
+            </select>
+          </label>
+          <p id="filter-status" class="filter-status">
+            Showing all {monitors.length} monitors.
+          </p>
+        </div>
+        <div class="table-wrap">
+          <table class="sortable-table">
+            <thead>
+              <tr>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Model</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Markets</button>
+                </th>
+                <th
+                  scope="col"
+                  class="num"
+                  aria-sort="descending"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">Size</button>
+                </th>
+                <th
+                  scope="col"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">Resolution</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Panel</button>
+                </th>
+                <th
+                  scope="col"
+                  class="num"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">Hz</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Touch</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Battery</button>
+                </th>
+                <th
+                  scope="col"
+                  class="num"
+                  data-sort-type="number"
+                  data-sort-default="ascending"
+                >
+                  <button type="button" class="sort-button">Weight</button>
+                </th>
+                <th
+                  scope="col"
+                  class="num"
+                  data-sort-type="number"
+                  data-sort-default="descending"
+                >
+                  <button type="button" class="sort-button">Nits</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Gamut</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Contrast</button>
+                </th>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Ports</button>
+                </th>
+                <th
+                  scope="col"
+                  class="num"
+                  data-sort-type="number"
+                  data-sort-default="ascending"
+                >
+                  <button type="button" class="sort-button">Price</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                monitors.map((monitor) => (
+                  <tr
+                    data-resolution={monitor.resolutionClass ?? ""}
+                    data-panel={monitor.panelClass ?? ""}
+                    data-refresh={monitor.refreshClass ?? ""}
+                  >
+                    <td class="model-cell" data-sort-value={monitor.name}>
+                      <div class="model-stack">
+                        <a
+                          href={monitor.buyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {monitor.name}
+                        </a>
+                        {monitor.reviewUrl && (
+                          <a
+                            class="review-link"
+                            href={monitor.reviewUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {monitor.reviewer ?? "Review"}
+                          </a>
+                        )}
+                      </div>
+                    </td>
+                    <td data-sort-value={monitor.markets.join(" ")}>
+                      {monitor.markets.join(" · ")}
+                    </td>
+                    <td class="num" data-sort-value={monitor.sizeInches ?? ""}>
+                      {monitor.sizeInches == null
+                        ? dash
+                        : `${formatNumber(monitor.sizeInches, 1)}"`}
+                    </td>
+                    <td data-sort-value={resolutionPixels(monitor.resolution) ?? ""}>
+                      {maxResolution(monitor.resolution) ?? dash}
+                    </td>
+                    <td data-sort-value={monitor.panel ?? ""}>
+                      {monitor.panel ?? dash}
+                    </td>
+                    <td class="num" data-sort-value={monitor.refreshHz ?? ""}>
+                      {monitor.refreshHz ?? dash}
+                    </td>
+                    <td data-sort-value={formatBool(monitor.touch)}>
+                      {formatBool(monitor.touch)}
+                    </td>
+                    <td data-sort-value={formatBool(monitor.battery)}>
+                      {formatBool(monitor.battery)}
+                    </td>
+                    <td
+                      class:list={["num", { mismatch: monitor.weightMismatch }]}
+                      data-sort-value={
+                        monitor.weightStatedLbs ??
+                        monitor.weightMeasuredLbs ??
+                        ""
+                      }
+                    >
+                      {pair(
+                        formatNumber(monitor.weightStatedLbs),
+                        formatNumber(monitor.weightMeasuredLbs),
+                      )}
+                    </td>
+                    <td
+                      class:list={[
+                        "num",
+                        { mismatch: monitor.brightnessMismatch },
+                      ]}
+                      data-sort-value={
+                        monitor.brightnessStatedNits ??
+                        monitor.brightnessMeasuredNits ??
+                        ""
+                      }
+                    >
+                      {pair(
+                        formatNumber(monitor.brightnessStatedNits, 0),
+                        formatNumber(monitor.brightnessMeasuredNits, 0),
+                      )}
+                    </td>
+                    <td
+                      class:list={[{ mismatch: monitor.gamutMismatch }]}
+                      data-sort-value={monitor.gamutStated ?? ""}
+                    >
+                      {pair(
+                        monitor.gamutStated ?? dash,
+                        monitor.gamutMeasured ?? dash,
+                      )}
+                    </td>
+                    <td
+                      class:list={[{ mismatch: monitor.contrastMismatch }]}
+                      data-sort-value={monitor.contrastStated ?? ""}
+                    >
+                      {pair(
+                        monitor.contrastStated ?? dash,
+                        monitor.contrastMeasured ?? dash,
+                      )}
+                    </td>
+                    <td class="ports-cell" data-sort-value={monitor.ports ?? ""}>
+                      {monitor.ports ?? dash}
+                    </td>
+                    <td
+                      class="num price-cell"
+                      data-sort-value={monitor.priceUsd ?? ""}
+                      title={monitor.priceNote ?? undefined}
+                    >
+                      {formatPrice(monitor.priceUsd)}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <aside class="notes" aria-label="Inclusion rules">
+          <p>
+            Inclusion: currently sold in the US or China, 15" or larger, a
+            known USD price, and panel plus included stand at or under
+            {pageData.weightCutoffLbs} lb.
+            Package weight is
+            ignored. Dual-mode refresh rates use the higher number. Paired cells
+            are stated / tested. Amber marks a tested value that is materially
+            worse than the claim.
+          </p>
+        </aside>
+      </section>
+    </main>
+    <script>
+      const table = document.querySelector<HTMLTableElement>(".sortable-table");
+      const resolutionFilter = document.querySelector<HTMLSelectElement>("#resolution-filter");
+      const panelFilter = document.querySelector<HTMLSelectElement>("#panel-filter");
+      const refreshFilter = document.querySelector<HTMLSelectElement>("#refresh-filter");
+      const filterStatus = document.querySelector<HTMLParagraphElement>("#filter-status");
+
+      const matchesFilter = (selected: string, value: string | undefined) => {
+        if (!selected) return true;
+        return Boolean(value) && value === selected;
+      };
+
+      const applyFilters = () => {
+        if (!table) return;
+        const body = table.tBodies[0];
+        const resolution = resolutionFilter?.value ?? "";
+        const panel = panelFilter?.value ?? "";
+        const refresh = refreshFilter?.value ?? "";
+        let visible = 0;
+
+        Array.from(body.rows).forEach((row) => {
+          const show =
+            matchesFilter(resolution, row.dataset.resolution) &&
+            matchesFilter(panel, row.dataset.panel) &&
+            matchesFilter(refresh, row.dataset.refresh);
+          row.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        if (filterStatus) {
+          const total = body.rows.length;
+          filterStatus.textContent =
+            visible === total
+              ? `Showing all ${total} monitors.`
+              : `Showing ${visible} of ${total} monitors.`;
+        }
+      };
+
+      [resolutionFilter, panelFilter, refreshFilter].forEach((filter) => {
+        filter?.addEventListener("change", applyFilters);
+      });
+
+      if (table) {
+        const headers = Array.from(
+          table.querySelectorAll<HTMLTableCellElement>("th[data-sort-type]"),
+        );
+        const body = table.tBodies[0];
+        let currentSort = { columnIndex: 2, direction: "descending" };
+
+        const cellValue = (row: HTMLTableRowElement, columnIndex: number) => {
+          const cell = row.cells[columnIndex];
+          return cell?.dataset.sortValue ?? cell?.textContent ?? "";
+        };
+
+        const compareRows = (
+          first: HTMLTableRowElement,
+          second: HTMLTableRowElement,
+          columnIndex: number,
+          sortType: string,
+          direction: string,
+        ) => {
+          const multiplier = direction === "ascending" ? 1 : -1;
+          const firstValue = cellValue(first, columnIndex).trim();
+          const secondValue = cellValue(second, columnIndex).trim();
+
+          if (sortType === "number") {
+            const firstNumber = Number.parseFloat(firstValue);
+            const secondNumber = Number.parseFloat(secondValue);
+            const firstEmpty = firstValue === "" || Number.isNaN(firstNumber);
+            const secondEmpty = secondValue === "" || Number.isNaN(secondNumber);
+            if (firstEmpty && secondEmpty) return 0;
+            if (firstEmpty) return 1;
+            if (secondEmpty) return -1;
+            return (firstNumber - secondNumber) * multiplier;
+          }
+
+          if (!firstValue && !secondValue) return 0;
+          if (!firstValue) return 1;
+          if (!secondValue) return -1;
+          return (
+            firstValue.localeCompare(secondValue, undefined, {
+              numeric: true,
+              sensitivity: "base",
+            }) * multiplier
+          );
+        };
+
+        headers.forEach((header) => {
+          const button = header.querySelector<HTMLButtonElement>(".sort-button");
+          button?.addEventListener("click", () => {
+            const columnIndex = header.cellIndex;
+            const sortType = header.dataset.sortType ?? "text";
+            const defaultDirection =
+              header.dataset.sortDefault ??
+              (sortType === "number" ? "descending" : "ascending");
+            const direction =
+              currentSort.columnIndex === columnIndex &&
+              currentSort.direction === defaultDirection
+                ? defaultDirection === "ascending"
+                  ? "descending"
+                  : "ascending"
+                : defaultDirection;
+
+            const sorted = Array.from(body.rows).sort((first, second) =>
+              compareRows(first, second, columnIndex, sortType, direction),
+            );
+            body.append(...sorted);
+            currentSort = { columnIndex, direction };
+            headers.forEach((item) => item.removeAttribute("aria-sort"));
+            header.setAttribute("aria-sort", direction);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f2ee;
+    --panel: #fbf9f5;
+    --panel-strong: #f3eee6;
+    --text: #1c1a16;
+    --muted: #6a6358;
+    --border: #d8d0c4;
+    --accent: #6d4a24;
+    --accent-soft: #ead9c4;
+    --warn: #8a4b12;
+    --warn-bg: #f3ddc2;
+    --shadow: 0 16px 36px rgb(48 38 24 / 0.08);
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 8% 0, rgb(214 204 188 / 0.55), transparent 28rem),
+      linear-gradient(180deg, #f7f5f1 0%, var(--bg) 18rem);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--accent);
+    font-weight: 650;
+    text-decoration-color: rgb(109 74 36 / 0.35);
+    text-underline-offset: 0.16em;
+  }
+
+  .page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding:
+      0.75rem
+      max(0.7rem, env(safe-area-inset-right))
+      2rem
+      max(0.7rem, env(safe-area-inset-left));
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.28rem;
+    width: 100%;
+    margin: 0 0 0.85rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    min-height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: clamp(1.15rem, 1.1vw + 0.85rem, 1.55rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  .summary {
+    width: 100%;
+    max-width: none;
+    margin: 0.15rem 0 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 0.8rem;
+    align-items: end;
+    margin: 0 0 0.75rem;
+  }
+
+  .filter-field {
+    display: grid;
+    gap: 0.28rem;
+    min-width: min(10.5rem, 100%);
+  }
+
+  .filter-field span {
+    color: var(--muted);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-field select {
+    min-height: 2.4rem;
+    padding: 0.35rem 2rem 0.35rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 650;
+  }
+
+  .filter-status {
+    margin: 0 0 0.15rem auto;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  tbody tr[hidden] {
+    display: none;
+  }
+
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  th,
+  td {
+    padding: 0.42rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid rgb(216 208 196 / 0.7);
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th:first-child,
+  td:first-child {
+    border-left: 0;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--panel-strong);
+    color: #4d3d2b;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    width: 100%;
+    min-height: 2.4rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+  }
+
+  .sort-button::after {
+    content: "";
+    color: var(--accent);
+    font-size: 0.58rem;
+  }
+
+  th[aria-sort="ascending"] .sort-button::after {
+    content: "▲";
+  }
+
+  th[aria-sort="descending"] .sort-button::after {
+    content: "▼";
+  }
+
+  td {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  tbody tr:nth-child(even) td {
+    background: rgb(255 255 255 / 0.42);
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  td.num {
+    white-space: nowrap;
+  }
+
+  th.num .sort-button,
+  td.num {
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+  .model-cell,
+  th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    min-width: 11.5rem;
+    background: var(--panel);
+    box-shadow: 8px 0 12px rgb(48 38 24 / 0.04);
+  }
+
+  th:first-child {
+    z-index: 4;
+    background: var(--panel-strong);
+  }
+
+  tbody tr:nth-child(even) .model-cell {
+    background: color-mix(in srgb, var(--panel) 58%, white);
+  }
+
+  .model-cell {
+    font-size: 0.82rem;
+  }
+
+  .model-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+  }
+
+  .review-link {
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 550;
+  }
+
+  .ports-cell {
+    min-width: 8.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  .price-cell {
+    font-weight: 700;
+  }
+
+  .mismatch {
+    background: var(--warn-bg);
+    color: var(--warn);
+    font-weight: 700;
+  }
+
+  .notes {
+    width: 100%;
+    margin: 0.75rem 0 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  @media (min-width: 720px) {
+    .page {
+      padding-inline: max(1rem, env(safe-area-inset-left), env(safe-area-inset-right));
+    }
+
+    h1 {
+      font-size: clamp(1.28rem, 1.4vw + 0.7rem, 1.7rem);
+    }
+
+    .summary {
+      font-size: 0.92rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .page {
+      padding-inline: max(1.15rem, env(safe-area-inset-left));
+    }
+
+    table {
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 719px) {
+    body {
+      font-size: 16px;
+    }
+
+    .page {
+      padding-inline: 0.7rem;
+    }
+
+    h1 {
+      font-size: 1.28rem;
+    }
+
+    .table-wrap {
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr {
+      display: block;
+      width: 100%;
+      min-width: 0;
+    }
+
+    thead {
+      position: sticky;
+      top: max(0.3rem, env(safe-area-inset-top));
+      z-index: 5;
+      margin-bottom: 0.7rem;
+      padding: 0.4rem;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 0.8rem;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      box-shadow: 0 8px 20px rgb(48 38 24 / 0.08);
+    }
+
+    thead tr {
+      display: flex;
+      gap: 0.3rem;
+      width: max-content;
+    }
+
+    th,
+    th:first-child {
+      position: static;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .sort-button {
+      width: auto;
+      padding: 0.4rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      font-size: 0.68rem;
+      white-space: nowrap;
+    }
+
+    th[aria-sort] .sort-button {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    tbody {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    tbody tr,
+    tbody tr:nth-child(even) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border: 1px solid var(--border);
+      border-radius: 0.9rem;
+      background: var(--panel);
+    }
+
+    tbody tr[hidden] {
+      display: none;
+    }
+
+    .filter-status {
+      margin: 0;
+      width: 100%;
+    }
+
+    td,
+    td.num,
+    .model-cell {
+      position: static;
+      display: grid;
+      gap: 0.18rem;
+      min-width: 0;
+      padding: 0.62rem 0.7rem;
+      border: 0;
+      border-top: 1px solid var(--border);
+      background: transparent;
+      box-shadow: none;
+      text-align: left;
+      white-space: normal;
+    }
+
+    td::before {
+      color: var(--muted);
+      font-size: 0.64rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    td:nth-child(1)::before { content: "Model"; }
+    td:nth-child(2)::before { content: "Markets"; }
+    td:nth-child(3)::before { content: "Size"; }
+    td:nth-child(4)::before { content: "Resolution"; }
+    td:nth-child(5)::before { content: "Panel"; }
+    td:nth-child(6)::before { content: "Hz"; }
+    td:nth-child(7)::before { content: "Touch"; }
+    td:nth-child(8)::before { content: "Battery"; }
+    td:nth-child(9)::before { content: "Weight stated / tested"; }
+    td:nth-child(10)::before { content: "Nits stated / tested"; }
+    td:nth-child(11)::before { content: "Gamut stated / tested"; }
+    td:nth-child(12)::before { content: "Contrast stated / tested"; }
+    td:nth-child(13)::before { content: "Ports"; }
+    td:nth-child(14)::before { content: "Price"; }
+
+    td:nth-child(1),
+    td:nth-child(4),
+    td:nth-child(13) {
+      grid-column: 1 / -1;
+    }
+
+    td:nth-child(1) {
+      border-top: 0;
+      font-size: 0.98rem;
+    }
+
+    td:nth-child(14) {
+      font-size: 1rem;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141311;
+      --panel: #1c1a17;
+      --panel-strong: #26221c;
+      --text: #f3eee6;
+      --muted: #b7ae9f;
+      --border: #3d382f;
+      --accent: #e0b27a;
+      --accent-soft: #3a2c1c;
+      --warn: #f0c48a;
+      --warn-bg: #3a2a16;
+      --shadow: 0 16px 36px rgb(0 0 0 / 0.32);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 10% 0, rgb(80 62 36 / 0.35), transparent 26rem),
+        linear-gradient(180deg, #1a1814 0%, var(--bg) 16rem);
+    }
+
+    th {
+      color: #f0d2aa;
+    }
+
+    tbody tr:nth-child(even) td {
+      background: rgb(255 255 255 / 0.03);
+    }
+
+    tbody tr:nth-child(even) .model-cell {
+      background: color-mix(in srgb, var(--panel) 92%, white);
+    }
+  }
+</style>
