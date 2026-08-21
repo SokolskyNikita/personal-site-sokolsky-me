@@ -35,6 +35,7 @@ type Monitor = {
   contrastStated: string | null;
   contrastMeasured: string | null;
   ports: string | null;
+  powerConsumptionW?: number | null;
   reviewUrl: string | null;
   reviewer: string | null;
 };
@@ -400,6 +401,14 @@ const structuredData = {
                   scope="col"
                   class="num"
                   data-sort-type="number"
+                  data-sort-default="ascending"
+                >
+                  <button type="button" class="sort-button">Power</button>
+                </th>
+                <th
+                  scope="col"
+                  class="num"
+                  data-sort-type="number"
                   data-sort-default="descending"
                 >
                   <button type="button" class="sort-button">Nits</button>
@@ -476,6 +485,14 @@ const structuredData = {
                       }
                     >
                       {formatKg(monitor.weightLbs)}
+                    </td>
+                    <td
+                      class="num"
+                      data-sort-value={monitor.powerConsumptionW ?? ""}
+                    >
+                      {monitor.powerConsumptionW == null
+                        ? dash
+                        : `${formatNumber(monitor.powerConsumptionW, 1)} W`}
                     </td>
                     <td
                       class:list={[
@@ -1048,13 +1065,14 @@ const structuredData = {
     td:nth-child(7)::before { content: "Hz"; }
     td:nth-child(8)::before { content: "Touch"; }
     td:nth-child(9)::before { content: "Weight"; }
-    td:nth-child(10)::before { content: "Nits stated / tested"; }
-    td:nth-child(11)::before { content: "Gamut"; }
-    td:nth-child(12)::before { content: "Ports"; }
+    td:nth-child(10)::before { content: "Power"; }
+    td:nth-child(11)::before { content: "Nits stated / tested"; }
+    td:nth-child(12)::before { content: "Gamut"; }
+    td:nth-child(13)::before { content: "Ports"; }
 
     td:nth-child(1),
     td:nth-child(4),
-    td:nth-child(12) {
+    td:nth-child(13) {
       grid-column: 1 / -1;
     }
 
