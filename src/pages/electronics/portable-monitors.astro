@@ -145,8 +145,12 @@ const panelClass = (value: string | null) => {
   return null;
 };
 
-const refreshClass = (value: number | null) =>
-  value == null ? null : String(value);
+const refreshClass = (value: number | null) => {
+  if (value === 60) return "60 Hz";
+  if (value != null && value >= 100 && value <= 144) return "100–144 Hz";
+  if (value != null && value >= 145) return "145+ Hz";
+  return null;
+};
 
 const panelCount = (sizeLabel?: string | null) => {
   const match = sizeLabel?.match(/^(\d+)\s*[×x]/);
@@ -167,6 +171,9 @@ const screenAreaSqIn = (
   return panelArea * count;
 };
 
+const hasUsbC = (ports: string | null) =>
+  Boolean(ports?.toLowerCase().includes("usb-c"));
+
 const monitors = (pageData.models as Monitor[])
   .filter(
     (monitor) =>
@@ -175,6 +182,7 @@ const monitors = (pageData.models as Monitor[])
       monitor.sizeInches >= 15 &&
       monitor.priceUsd != null &&
       monitor.resolution != null &&
+      hasUsbC(monitor.ports) &&
       (monitor.weightStatedLbs != null || monitor.weightMeasuredLbs != null),
   )
   .map((monitor) => {
@@ -224,7 +232,7 @@ const countOptions = (values: readonly string[], key: "resolutionClass" | "panel
 const resolutionOptions = countOptions(["HD", "2K", "4K"], "resolutionClass");
 const panelOptions = countOptions(["IPS", "OLED", "Mini-LED"], "panelClass");
 const refreshOptions = countOptions(
-  ["60", "100", "120", "144", "180", "240", "288"],
+  ["60 Hz", "100–144 Hz", "145+ Hz"],
   "refreshClass",
 );
 
@@ -332,14 +340,31 @@ const structuredData = {
               <option value="">All</option>
               {refreshOptions.map((option) => (
                 <option value={option.value}>
-                  {option.value} Hz ({option.count})
+                  {option.value} ({option.count})
                 </option>
               ))}
             </select>
           </label>
-          <p id="filter-status" class="filter-status">
-            Showing all {monitors.length} monitors.
-          </p>
+          <label class="filter-field mobile-sort" for="mobile-sort">
+            <span>Sort by</span>
+            <select id="mobile-sort" name="sort" autocomplete="off">
+              <option value="2:descending">Largest screen</option>
+              <option value="2:ascending">Smallest screen</option>
+              <option value="4:ascending">Lowest price</option>
+              <option value="4:descending">Highest price</option>
+              <option value="1:ascending">Lightest weight</option>
+              <option value="6:descending">Highest refresh</option>
+              <option value="0:ascending">Model A–Z</option>
+            </select>
+          </label>
+          <div class="filter-summary">
+            <p id="filter-status" class="filter-status" aria-live="polite">
+              Showing all {monitors.length} monitors.
+            </p>
+            <button id="reset-filters" class="reset-filters" type="button" hidden>
+              Reset filters
+            </button>
+          </div>
         </div>
         <div class="table-wrap">
           <table class="sortable-table">
@@ -348,8 +373,13 @@ const structuredData = {
                 <th scope="col" data-sort-type="text">
                   <button type="button" class="sort-button">Model</button>
                 </th>
-                <th scope="col" data-sort-type="text">
-                  <button type="button" class="sort-button">Markets</button>
+                <th
+                  scope="col"
+                  class="num"
+                  data-sort-type="number"
+                  data-sort-default="ascending"
+                >
+                  <button type="button" class="sort-button">Weight</button>
                 </th>
                 <th
                   scope="col"
@@ -389,13 +419,8 @@ const structuredData = {
                 <th scope="col" data-sort-type="text">
                   <button type="button" class="sort-button">Touch</button>
                 </th>
-                <th
-                  scope="col"
-                  class="num"
-                  data-sort-type="number"
-                  data-sort-default="ascending"
-                >
-                  <button type="button" class="sort-button">Weight</button>
+                <th scope="col" data-sort-type="text">
+                  <button type="button" class="sort-button">Markets</button>
                 </th>
                 <th
                   scope="col"
@@ -403,7 +428,7 @@ const structuredData = {
                   data-sort-type="number"
                   data-sort-default="ascending"
                 >
-                  <button type="button" class="sort-button">Power</button>
+                  <button type="button" class="sort-button">Power cons.</button>
                 </th>
                 <th
                   scope="col"
@@ -450,8 +475,13 @@ const structuredData = {
                         )}
                       </div>
                     </td>
-                    <td data-sort-value={monitor.markets.join(" ")}>
-                      {monitor.markets.join(" · ")}
+                    <td
+                      class="num"
+                      data-sort-value={
+                        monitor.weightLbs == null ? "" : lbsToKg(monitor.weightLbs)
+                      }
+                    >
+                      {formatKg(monitor.weightLbs)}
                     </td>
                     <td class="num" data-sort-value={monitor.sizeArea ?? ""}>
                       {monitor.sizeLabel
@@ -478,13 +508,8 @@ const structuredData = {
                     <td data-sort-value={formatBool(monitor.touch)}>
                       {formatBool(monitor.touch)}
                     </td>
-                    <td
-                      class="num"
-                      data-sort-value={
-                        monitor.weightLbs == null ? "" : lbsToKg(monitor.weightLbs)
-                      }
-                    >
-                      {formatKg(monitor.weightLbs)}
+                    <td data-sort-value={monitor.markets.join(" ")}>
+                      {monitor.markets.join(" · ")}
                     </td>
                     <td
                       class="num"
@@ -525,11 +550,15 @@ const structuredData = {
             </tbody>
           </table>
         </div>
+        <p id="empty-state" class="empty-state" hidden>
+          No monitors match these filters.
+        </p>
         <aside class="notes" aria-label="Inclusion rules">
           <p>
-            Inclusion: currently sold in the US or China, 15" or larger, a
-            known USD price, a known resolution, a known panel-plus-stand
-            weight, and that weight at or under {pageData.weightCutoffLbs} lb.
+            Inclusion: currently sold in the US or China, 15" or larger,
+            USB-C, a known USD price, a known resolution, a known
+            panel-plus-stand weight, and that weight at or under
+            {pageData.weightCutoffLbs} lb.
             Package weight is
             ignored. Dual-mode refresh rates use the higher number. Weight
             uses the higher of stated and tested. Folding or modular models
@@ -546,7 +575,10 @@ const structuredData = {
       const resolutionFilter = document.querySelector<HTMLSelectElement>("#resolution-filter");
       const panelFilter = document.querySelector<HTMLSelectElement>("#panel-filter");
       const refreshFilter = document.querySelector<HTMLSelectElement>("#refresh-filter");
+      const mobileSort = document.querySelector<HTMLSelectElement>("#mobile-sort");
       const filterStatus = document.querySelector<HTMLParagraphElement>("#filter-status");
+      const resetFilters = document.querySelector<HTMLButtonElement>("#reset-filters");
+      const emptyState = document.querySelector<HTMLParagraphElement>("#empty-state");
 
       const matchesFilter = (selected: string, value: string | undefined) => {
         if (!selected) return true;
@@ -577,6 +609,10 @@ const structuredData = {
               ? `Showing all ${total} monitors.`
               : `Showing ${visible} of ${total} monitors.`;
         }
+
+        const hasActiveFilter = Boolean(resolution || panel || refresh);
+        if (resetFilters) resetFilters.hidden = !hasActiveFilter;
+        if (emptyState) emptyState.hidden = visible !== 0;
       };
 
       [resolutionFilter, panelFilter, refreshFilter].forEach((filter) => {
@@ -628,6 +664,29 @@ const structuredData = {
           );
         };
 
+        const sortRows = (columnIndex: number, direction: string) => {
+          const header = headers[columnIndex];
+          if (!header) return;
+          const sortType = header.dataset.sortType ?? "text";
+          const sorted = Array.from(body.rows).sort((first, second) =>
+            compareRows(first, second, columnIndex, sortType, direction),
+          );
+          body.append(...sorted);
+          currentSort = { columnIndex, direction };
+          headers.forEach((item) => item.removeAttribute("aria-sort"));
+          header.setAttribute("aria-sort", direction);
+
+          const matchingMobileOption = `${columnIndex}:${direction}`;
+          if (
+            mobileSort &&
+            Array.from(mobileSort.options).some(
+              (option) => option.value === matchingMobileOption,
+            )
+          ) {
+            mobileSort.value = matchingMobileOption;
+          }
+        };
+
         headers.forEach((header) => {
           const button = header.querySelector<HTMLButtonElement>(".sort-button");
           button?.addEventListener("click", () => {
@@ -643,15 +702,21 @@ const structuredData = {
                   ? "descending"
                   : "ascending"
                 : defaultDirection;
-
-            const sorted = Array.from(body.rows).sort((first, second) =>
-              compareRows(first, second, columnIndex, sortType, direction),
-            );
-            body.append(...sorted);
-            currentSort = { columnIndex, direction };
-            headers.forEach((item) => item.removeAttribute("aria-sort"));
-            header.setAttribute("aria-sort", direction);
+            sortRows(columnIndex, direction);
           });
+        });
+
+        mobileSort?.addEventListener("change", () => {
+          const [columnIndex, direction] = mobileSort.value.split(":");
+          sortRows(Number(columnIndex), direction);
+        });
+
+        resetFilters?.addEventListener("click", () => {
+          [resolutionFilter, panelFilter, refreshFilter].forEach((filter) => {
+            if (filter) filter.value = "";
+          });
+          applyFilters();
+          resolutionFilter?.focus();
         });
       }
     </script>
@@ -787,10 +852,42 @@ const structuredData = {
     font-weight: 650;
   }
 
+  .mobile-sort {
+    display: none;
+  }
+
+  .filter-summary {
+    display: flex;
+    gap: 0.65rem;
+    align-items: center;
+    margin-left: auto;
+  }
+
   .filter-status {
-    margin: 0 0 0.15rem auto;
+    margin: 0;
     color: var(--muted);
     font-size: 0.8rem;
+  }
+
+  .reset-filters {
+    min-height: 2.4rem;
+    padding: 0.3rem 0.65rem;
+    border: 0;
+    border-radius: 0.55rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .filter-field select:focus-visible,
+  .reset-filters:focus-visible,
+  a:focus-visible,
+  .sort-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   tbody tr[hidden] {
@@ -949,6 +1046,14 @@ const structuredData = {
     font-weight: 700;
   }
 
+  .empty-state {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    border-block: 1px solid var(--border);
+    color: var(--muted);
+    text-align: center;
+  }
+
   .notes {
     width: 100%;
     margin: 0.75rem 0 0;
@@ -982,11 +1087,69 @@ const structuredData = {
     }
 
     .page {
-      padding-inline: 0.7rem;
+      padding:
+        max(0.75rem, env(safe-area-inset-top))
+        max(1rem, env(safe-area-inset-right))
+        max(2rem, env(safe-area-inset-bottom))
+        max(1rem, env(safe-area-inset-left));
+    }
+
+    .page-header {
+      gap: 0.35rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .home-link {
+      min-height: 2.75rem;
     }
 
     h1 {
-      font-size: 1.28rem;
+      max-width: 22rem;
+      font-size: clamp(1.45rem, 7vw, 1.85rem);
+      line-height: 1.08;
+      text-wrap: balance;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-field {
+      min-width: 0;
+    }
+
+    .filter-field select {
+      width: 100%;
+      min-height: 2.75rem;
+      padding-inline: 0.75rem 1.8rem;
+      border-radius: 0.65rem;
+      font-size: 0.9rem;
+    }
+
+    .mobile-sort {
+      display: grid;
+    }
+
+    .filter-summary {
+      grid-column: 1 / -1;
+      justify-content: space-between;
+      min-height: 2.25rem;
+      margin: -0.15rem 0 0;
+      padding-top: 0.15rem;
+      border-top: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+    }
+
+    .filter-status {
+      width: auto;
+      font-size: 0.84rem;
+    }
+
+    .reset-filters {
+      min-height: 2.75rem;
+      margin-block: -0.3rem;
     }
 
     .table-wrap {
@@ -1011,7 +1174,7 @@ const structuredData = {
 
     tbody {
       display: grid;
-      gap: 0.7rem;
+      gap: 0.85rem;
     }
 
     tbody tr,
@@ -1019,8 +1182,9 @@ const structuredData = {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       border: 1px solid var(--border);
-      border-radius: 0.9rem;
+      border-radius: 0.8rem;
       background: var(--panel);
+      overflow: clip;
     }
 
     tbody tr[hidden] {
@@ -1039,7 +1203,7 @@ const structuredData = {
       display: grid;
       gap: 0.18rem;
       min-width: 0;
-      padding: 0.62rem 0.7rem;
+      padding: 0.6rem 0.75rem 0.68rem;
       border: 0;
       border-top: 1px solid var(--border);
       background: transparent;
@@ -1056,33 +1220,71 @@ const structuredData = {
       text-transform: uppercase;
     }
 
-    td:nth-child(1)::before { content: "Model"; }
-    td:nth-child(2)::before { content: "Markets"; }
+    td:nth-child(1)::before { content: none; }
+    td:nth-child(2)::before { content: "Weight"; }
     td:nth-child(3)::before { content: "Size"; }
     td:nth-child(4)::before { content: "Resolution"; }
     td:nth-child(5)::before { content: "Price"; }
     td:nth-child(6)::before { content: "Panel"; }
     td:nth-child(7)::before { content: "Hz"; }
     td:nth-child(8)::before { content: "Touch"; }
-    td:nth-child(9)::before { content: "Weight"; }
-    td:nth-child(10)::before { content: "Power"; }
+    td:nth-child(9)::before { content: "Markets"; }
+    td:nth-child(10)::before { content: "Power cons."; }
     td:nth-child(11)::before { content: "Nits stated / tested"; }
     td:nth-child(12)::before { content: "Gamut"; }
     td:nth-child(13)::before { content: "Ports"; }
 
     td:nth-child(1),
-    td:nth-child(4),
+    td:nth-child(9),
     td:nth-child(13) {
       grid-column: 1 / -1;
     }
 
     td:nth-child(1) {
+      order: 1;
       border-top: 0;
-      font-size: 0.98rem;
+      padding-block: 0.85rem;
+      background: var(--panel-strong);
+      font-size: 1rem;
+      line-height: 1.3;
     }
 
     td:nth-child(5) {
-      font-size: 1rem;
+      order: 2;
+      font-size: 1.05rem;
+    }
+
+    td:nth-child(2) {
+      order: 3;
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 750;
+    }
+    td:nth-child(3) { order: 4; }
+    td:nth-child(4) { order: 5; }
+    td:nth-child(6) { order: 6; }
+    td:nth-child(7) { order: 7; }
+    td:nth-child(8) { order: 8; }
+    td:nth-child(10) { order: 9; }
+    td:nth-child(11) { order: 10; }
+    td:nth-child(12) { order: 11; }
+    td:nth-child(9) { order: 12; }
+    td:nth-child(13) { order: 13; }
+
+    .model-stack > a:first-child::after {
+      content: "↗";
+      display: inline-block;
+      margin-left: 0.3em;
+      color: var(--muted);
+      font-size: 0.72em;
+      text-decoration: none;
+      transform: translateY(-0.08em);
+    }
+
+    .notes {
+      margin-top: 1rem;
+      font-size: 0.77rem;
+      line-height: 1.55;
     }
   }
 
