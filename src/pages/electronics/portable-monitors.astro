@@ -981,7 +981,6 @@ const structuredData = {
     }
 
     table,
-    thead,
     tbody,
     tr {
       display: block;
@@ -990,46 +989,7 @@ const structuredData = {
     }
 
     thead {
-      position: sticky;
-      top: max(0.3rem, env(safe-area-inset-top));
-      z-index: 5;
-      margin-bottom: 0.7rem;
-      padding: 0.4rem;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 0.8rem;
-      background: color-mix(in srgb, var(--panel) 94%, transparent);
-      box-shadow: 0 8px 20px rgb(48 38 24 / 0.08);
-    }
-
-    thead tr {
-      display: flex;
-      gap: 0.3rem;
-      width: max-content;
-    }
-
-    th,
-    th:first-child {
-      position: static;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      box-shadow: none;
-    }
-
-    .sort-button {
-      width: auto;
-      padding: 0.4rem 0.65rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--panel);
-      font-size: 0.68rem;
-      white-space: nowrap;
-    }
-
-    th[aria-sort] .sort-button {
-      border-color: var(--accent);
-      background: var(--accent-soft);
+      display: none;
     }
 
     tbody {
