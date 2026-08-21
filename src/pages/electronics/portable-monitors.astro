@@ -20,6 +20,7 @@ type Monitor = {
   priceUsd: number | null;
   priceNote?: string | null;
   sizeInches: number | null;
+  sizeLabel?: string | null;
   resolution: string | null;
   panel: string | null;
   refreshHz: number | null;
@@ -85,6 +86,17 @@ const pair = (stated: string, measured: string) => {
   return `${stated} / ${measured}`;
 };
 
+const higherNumber = (stated: number | null, measured: number | null) => {
+  if (stated == null) return measured;
+  if (measured == null) return stated;
+  return Math.max(stated, measured);
+};
+
+const lbsToKg = (lbs: number) => Math.round(lbs * 0.45359237 * 10) / 10;
+
+const formatKg = (lbs: number | null) =>
+  lbs == null ? dash : `${lbsToKg(lbs).toFixed(1)} kg`;
+
 const isWorseNumber = (
   stated: number | null,
   measured: number | null,
@@ -99,6 +111,16 @@ const firstPercent = (value: string | null) => {
   if (!value) return null;
   const match = value.replace(/,/g, "").match(/([\d.]+)\s*%/);
   return match ? Number.parseFloat(match[1]) : null;
+};
+
+const lowerGamut = (stated: string | null, measured: string | null) => {
+  if (!stated) return measured;
+  if (!measured) return stated;
+  const statedPct = firstPercent(stated);
+  const measuredPct = firstPercent(measured);
+  if (statedPct == null) return measured;
+  if (measuredPct == null) return stated;
+  return measuredPct < statedPct ? measured : stated;
 };
 
 const resolutionClass = (value: string | null) => {
@@ -125,25 +147,42 @@ const panelClass = (value: string | null) => {
 const refreshClass = (value: number | null) =>
   value == null ? null : String(value);
 
+const panelCount = (sizeLabel?: string | null) => {
+  const match = sizeLabel?.match(/^(\d+)\s*[×x]/);
+  return match ? Number(match[1]) : 1;
+};
+
+const screenAreaSqIn = (
+  sizeInches: number | null,
+  resolution: string | null,
+  count: number,
+) => {
+  if (sizeInches == null) return null;
+  const max = maxResolution(resolution);
+  const match = max?.match(/(\d+)×(\d+)/);
+  const width = match ? Number(match[1]) : 16;
+  const height = match ? Number(match[2]) : 9;
+  const panelArea = (sizeInches ** 2 * width * height) / (width ** 2 + height ** 2);
+  return panelArea * count;
+};
+
 const monitors = (pageData.models as Monitor[])
   .filter(
     (monitor) =>
       monitor.include !== false &&
       monitor.sizeInches != null &&
       monitor.sizeInches >= 15 &&
-      monitor.priceUsd != null,
+      monitor.priceUsd != null &&
+      monitor.resolution != null &&
+      (monitor.weightStatedLbs != null || monitor.weightMeasuredLbs != null),
   )
   .map((monitor) => {
-    const weightMismatch = isWorseNumber(
-      monitor.weightStatedLbs,
-      monitor.weightMeasuredLbs,
-      { higherIsBetter: false },
-    );
     const brightnessMismatch = isWorseNumber(
       monitor.brightnessStatedNits,
       monitor.brightnessMeasuredNits,
       { higherIsBetter: true },
     );
+    const gamut = lowerGamut(monitor.gamutStated, monitor.gamutMeasured);
     const gamutMismatch = isWorseNumber(
       firstPercent(monitor.gamutStated),
       firstPercent(monitor.gamutMeasured),
@@ -152,17 +191,23 @@ const monitors = (pageData.models as Monitor[])
 
     return {
       ...monitor,
+      gamut,
       name: `${monitor.brand} ${monitor.model}`,
       resolutionClass: resolutionClass(monitor.resolution),
       panelClass: panelClass(monitor.panel),
       refreshClass: refreshClass(monitor.refreshHz),
-      weightMismatch,
+      sizeArea: screenAreaSqIn(
+        monitor.sizeInches,
+        monitor.resolution,
+        panelCount(monitor.sizeLabel),
+      ),
+      weightLbs: higherNumber(monitor.weightStatedLbs, monitor.weightMeasuredLbs),
       brightnessMismatch,
       gamutMismatch,
     };
   })
   .sort((first, second) => {
-    const sizeGap = (second.sizeInches ?? -1) - (first.sizeInches ?? -1);
+    const sizeGap = (second.sizeArea ?? -1) - (first.sizeArea ?? -1);
     if (sizeGap !== 0) return sizeGap;
     return first.name.localeCompare(second.name, "en", { numeric: true });
   });
@@ -254,10 +299,6 @@ const structuredData = {
         <a class="home-link" href="/">Nikita Sokolsky</a>
         <p class="eyebrow">Electronics notes · {pageData.updated}</p>
         <h1>{pageTitle}</h1>
-        <p class="summary">
-          {pageDescription} Sorted by size. Highlighted cells are stated-versus-tested
-          gaps. Weight is panel plus included stand, not the box.
-        </p>
       </header>
 
       <section class="ranking" aria-label="Portable monitors">
@@ -325,6 +366,14 @@ const structuredData = {
                 >
                   <button type="button" class="sort-button">Resolution</button>
                 </th>
+                <th
+                  scope="col"
+                  class="num price-cell"
+                  data-sort-type="number"
+                  data-sort-default="ascending"
+                >
+                  <button type="button" class="sort-button">Price</button>
+                </th>
                 <th scope="col" data-sort-type="text">
                   <button type="button" class="sort-button">Panel</button>
                 </th>
@@ -338,9 +387,6 @@ const structuredData = {
                 </th>
                 <th scope="col" data-sort-type="text">
                   <button type="button" class="sort-button">Touch</button>
-                </th>
-                <th scope="col" data-sort-type="text">
-                  <button type="button" class="sort-button">Battery</button>
                 </th>
                 <th
                   scope="col"
@@ -363,14 +409,6 @@ const structuredData = {
                 </th>
                 <th scope="col" data-sort-type="text">
                   <button type="button" class="sort-button">Ports</button>
-                </th>
-                <th
-                  scope="col"
-                  class="num"
-                  data-sort-type="number"
-                  data-sort-default="ascending"
-                >
-                  <button type="button" class="sort-button">Price</button>
                 </th>
               </tr>
             </thead>
@@ -406,13 +444,21 @@ const structuredData = {
                     <td data-sort-value={monitor.markets.join(" ")}>
                       {monitor.markets.join(" · ")}
                     </td>
-                    <td class="num" data-sort-value={monitor.sizeInches ?? ""}>
-                      {monitor.sizeInches == null
-                        ? dash
-                        : `${formatNumber(monitor.sizeInches, 1)}"`}
+                    <td class="num" data-sort-value={monitor.sizeArea ?? ""}>
+                      {monitor.sizeLabel
+                        ?? (monitor.sizeInches == null
+                          ? dash
+                          : `${formatNumber(monitor.sizeInches, 1)}"`)}
                     </td>
                     <td data-sort-value={resolutionPixels(monitor.resolution) ?? ""}>
                       {maxResolution(monitor.resolution) ?? dash}
+                    </td>
+                    <td
+                      class="num price-cell"
+                      data-sort-value={monitor.priceUsd ?? ""}
+                      title={monitor.priceNote ?? undefined}
+                    >
+                      {formatPrice(monitor.priceUsd)}
                     </td>
                     <td data-sort-value={monitor.panel ?? ""}>
                       {monitor.panel ?? dash}
@@ -423,21 +469,13 @@ const structuredData = {
                     <td data-sort-value={formatBool(monitor.touch)}>
                       {formatBool(monitor.touch)}
                     </td>
-                    <td data-sort-value={formatBool(monitor.battery)}>
-                      {formatBool(monitor.battery)}
-                    </td>
                     <td
-                      class:list={["num", { mismatch: monitor.weightMismatch }]}
+                      class="num"
                       data-sort-value={
-                        monitor.weightStatedLbs ??
-                        monitor.weightMeasuredLbs ??
-                        ""
+                        monitor.weightLbs == null ? "" : lbsToKg(monitor.weightLbs)
                       }
                     >
-                      {pair(
-                        formatNumber(monitor.weightStatedLbs),
-                        formatNumber(monitor.weightMeasuredLbs),
-                      )}
+                      {formatKg(monitor.weightLbs)}
                     </td>
                     <td
                       class:list={[
@@ -457,22 +495,12 @@ const structuredData = {
                     </td>
                     <td
                       class:list={[{ mismatch: monitor.gamutMismatch }]}
-                      data-sort-value={monitor.gamutStated ?? ""}
+                      data-sort-value={firstPercent(monitor.gamut) ?? ""}
                     >
-                      {pair(
-                        monitor.gamutStated ?? dash,
-                        monitor.gamutMeasured ?? dash,
-                      )}
+                      {monitor.gamut ?? dash}
                     </td>
                     <td class="ports-cell" data-sort-value={monitor.ports ?? ""}>
                       {monitor.ports ?? dash}
-                    </td>
-                    <td
-                      class="num price-cell"
-                      data-sort-value={monitor.priceUsd ?? ""}
-                      title={monitor.priceNote ?? undefined}
-                    >
-                      {formatPrice(monitor.priceUsd)}
                     </td>
                   </tr>
                 ))
@@ -483,12 +511,15 @@ const structuredData = {
         <aside class="notes" aria-label="Inclusion rules">
           <p>
             Inclusion: currently sold in the US or China, 15" or larger, a
-            known USD price, and panel plus included stand at or under
-            {pageData.weightCutoffLbs} lb.
+            known USD price, a known resolution, a known panel-plus-stand
+            weight, and that weight at or under {pageData.weightCutoffLbs} lb.
             Package weight is
-            ignored. Dual-mode refresh rates use the higher number. Paired cells
-            are stated / tested. Amber marks a tested value that is materially
-            worse than the claim.
+            ignored. Dual-mode refresh rates use the higher number. Weight
+            uses the higher of stated and tested. Folding or modular models
+            show panel count in Size (for example 3×16"). Size sorts by
+            total screen area. Remaining paired cells are stated / tested.
+            Amber marks a tested value that is materially worse than the
+            claim.
           </p>
         </aside>
       </section>
@@ -705,15 +736,6 @@ const structuredData = {
     line-height: 1.2;
   }
 
-  .summary {
-    width: 100%;
-    max-width: none;
-    margin: 0.15rem 0 0;
-    color: var(--muted);
-    font-size: 0.88rem;
-    line-height: 1.45;
-  }
-
   .filter-bar {
     display: flex;
     flex-wrap: wrap;
@@ -898,6 +920,12 @@ const structuredData = {
     font-weight: 700;
   }
 
+  th.price-cell .sort-button,
+  td.price-cell {
+    text-align: center;
+    justify-content: center;
+  }
+
   .mismatch {
     background: var(--warn-bg);
     color: var(--warn);
@@ -918,10 +946,6 @@ const structuredData = {
 
     h1 {
       font-size: clamp(1.28rem, 1.4vw + 0.7rem, 1.7rem);
-    }
-
-    .summary {
-      font-size: 0.92rem;
     }
   }
 
@@ -1019,15 +1043,14 @@ const structuredData = {
     td:nth-child(2)::before { content: "Markets"; }
     td:nth-child(3)::before { content: "Size"; }
     td:nth-child(4)::before { content: "Resolution"; }
-    td:nth-child(5)::before { content: "Panel"; }
-    td:nth-child(6)::before { content: "Hz"; }
-    td:nth-child(7)::before { content: "Touch"; }
-    td:nth-child(8)::before { content: "Battery"; }
-    td:nth-child(9)::before { content: "Weight stated / tested"; }
+    td:nth-child(5)::before { content: "Price"; }
+    td:nth-child(6)::before { content: "Panel"; }
+    td:nth-child(7)::before { content: "Hz"; }
+    td:nth-child(8)::before { content: "Touch"; }
+    td:nth-child(9)::before { content: "Weight"; }
     td:nth-child(10)::before { content: "Nits stated / tested"; }
-    td:nth-child(11)::before { content: "Gamut stated / tested"; }
+    td:nth-child(11)::before { content: "Gamut"; }
     td:nth-child(12)::before { content: "Ports"; }
-    td:nth-child(13)::before { content: "Price"; }
 
     td:nth-child(1),
     td:nth-child(4),
@@ -1040,7 +1063,7 @@ const structuredData = {
       font-size: 0.98rem;
     }
 
-    td:nth-child(13) {
+    td:nth-child(5) {
       font-size: 1rem;
     }
   }
