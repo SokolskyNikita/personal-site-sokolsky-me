@@ -85,12 +85,6 @@ const pair = (stated: string, measured: string) => {
   return `${stated} / ${measured}`;
 };
 
-const parseContrast = (value: string | null) => {
-  if (!value) return null;
-  const match = value.replace(/,/g, "").match(/([\d.]+)\s*:/);
-  return match ? Number.parseFloat(match[1]) : null;
-};
-
 const isWorseNumber = (
   stated: number | null,
   measured: number | null,
@@ -150,11 +144,6 @@ const monitors = (pageData.models as Monitor[])
       monitor.brightnessMeasuredNits,
       { higherIsBetter: true },
     );
-    const contrastMismatch = isWorseNumber(
-      parseContrast(monitor.contrastStated),
-      parseContrast(monitor.contrastMeasured),
-      { higherIsBetter: true },
-    );
     const gamutMismatch = isWorseNumber(
       firstPercent(monitor.gamutStated),
       firstPercent(monitor.gamutMeasured),
@@ -169,7 +158,6 @@ const monitors = (pageData.models as Monitor[])
       refreshClass: refreshClass(monitor.refreshHz),
       weightMismatch,
       brightnessMismatch,
-      contrastMismatch,
       gamutMismatch,
     };
   })
@@ -374,9 +362,6 @@ const structuredData = {
                   <button type="button" class="sort-button">Gamut</button>
                 </th>
                 <th scope="col" data-sort-type="text">
-                  <button type="button" class="sort-button">Contrast</button>
-                </th>
-                <th scope="col" data-sort-type="text">
                   <button type="button" class="sort-button">Ports</button>
                 </th>
                 <th
@@ -477,15 +462,6 @@ const structuredData = {
                       {pair(
                         monitor.gamutStated ?? dash,
                         monitor.gamutMeasured ?? dash,
-                      )}
-                    </td>
-                    <td
-                      class:list={[{ mismatch: monitor.contrastMismatch }]}
-                      data-sort-value={monitor.contrastStated ?? ""}
-                    >
-                      {pair(
-                        monitor.contrastStated ?? dash,
-                        monitor.contrastMeasured ?? dash,
                       )}
                     </td>
                     <td class="ports-cell" data-sort-value={monitor.ports ?? ""}>
@@ -1050,13 +1026,12 @@ const structuredData = {
     td:nth-child(9)::before { content: "Weight stated / tested"; }
     td:nth-child(10)::before { content: "Nits stated / tested"; }
     td:nth-child(11)::before { content: "Gamut stated / tested"; }
-    td:nth-child(12)::before { content: "Contrast stated / tested"; }
-    td:nth-child(13)::before { content: "Ports"; }
-    td:nth-child(14)::before { content: "Price"; }
+    td:nth-child(12)::before { content: "Ports"; }
+    td:nth-child(13)::before { content: "Price"; }
 
     td:nth-child(1),
     td:nth-child(4),
-    td:nth-child(13) {
+    td:nth-child(12) {
       grid-column: 1 / -1;
     }
 
@@ -1065,7 +1040,7 @@ const structuredData = {
       font-size: 0.98rem;
     }
 
-    td:nth-child(14) {
+    td:nth-child(13) {
       font-size: 1rem;
     }
   }
