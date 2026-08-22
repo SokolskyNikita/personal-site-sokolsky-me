@@ -3,7 +3,7 @@ export const prerender = true;
 
 const pageTitle = "Best BA surgeons";
 const pageDescription =
-  "Ranked Buenos Aires teams for venous thoracic outlet syndrome (Paget-Schroetter) requiring first rib resection, with Medifé coverage notes.";
+  "Ranked Buenos Aires clinics, then surgeons, for venous thoracic outlet syndrome (Paget-Schroetter) requiring first rib resection, with private-consultorio and Medifé notes.";
 const themeColorLight = "#fcfaf7";
 const themeColorDark = "#111111";
 const siteUrl =
@@ -16,15 +16,34 @@ const updatedDate = new Intl.DateTimeFormat("en-US", {
 }).format(new Date());
 
 type MedifeStatus = "yes" | "verify" | "private";
+type ClinicKind = "hospital" | "independent" | "group";
 
 type BookingLink = {
   label: string;
   href: string;
 };
 
-type SurgeonTeam = {
+type PrivatePractice = {
+  name: string;
+  url?: string;
+  address: string;
+  note?: string;
+};
+
+type Surgeon = {
   rank: number;
   name: string;
+  role: string;
+  practices: PrivatePractice[];
+  noneNote?: string;
+};
+
+type Clinic = {
+  rank: number;
+  kind: ClinicKind;
+  name: string;
+  nameLinks?: BookingLink[];
+  service: string;
   url: string;
   location: string;
   bookingLead: string;
@@ -32,160 +51,342 @@ type SurgeonTeam = {
   notes: string;
   medifeLabel: string;
   medifeStatus: MedifeStatus;
+  practices?: PrivatePractice[];
+  surgeons: Surgeon[];
 };
 
-const teams: SurgeonTeam[] = [
+const clinicSurgeonCount = (clinic: Clinic) =>
+  clinic.kind === "independent" ? 1 : clinic.surgeons.length;
+
+const kindLabel: Record<ClinicKind, string> = {
+  hospital: "Hospital / clinic",
+  independent: "Independent",
+  group: "Other clinics",
+};
+
+const clinics: Clinic[] = [
   {
     rank: 1,
-    name: "Hospital Británico — Cirugía Torácica (Buero, Olivera López, Lyons, Chimondeguy, Pankl)",
-    url: "https://www.cirugiatoracicahb.com.ar/",
+    kind: "hospital",
+    name: "Hospital Británico",
+    service: "Cirugía Torácica",
+    url: "https://www.hospitalbritanico.org.ar/",
     location: "Hospital Británico Central, Perdriel 74, CABA",
-    bookingLead:
-      "Ask for Buero (venous lead): a_buero@hotmail.com. Central 0810-222-2748.",
+    bookingLead: "Ask for Buero (venous lead).",
     bookingLinks: [
-      { label: "Service site", href: "https://www.cirugiatoracicahb.com.ar/equipo" },
-      {
-        label: "Turno online",
-        href: "https://www.hbritanicoweb.com.ar/Customers/HospitalBritanico/Default",
-      },
-      {
-        label: "2024 series",
-        href: "https://pubmed.ncbi.nlm.nih.gov/39309754/",
-      },
+      { label: "Cirugía Torácica", href: "https://www.cirugiatoracicahb.com.ar/" },
+      { label: "2024 series", href: "https://pubmed.ncbi.nlm.nih.gov/39309754/" },
     ],
     notes:
-      "Only Argentine published venous-TOS series (EJVES 2024: 32 VATS FRR, 31 venous). Buero first author; confirm hybrid venography plan.",
-    medifeLabel: "Yes via Británico — confirm plan",
+      "Only Argentine published venous-TOS series (EJVES 2024: 32 VATS FRR, 31 venous). Buero first author; ask about hybrid venography.",
+    medifeLabel: "Yes via Británico",
     medifeStatus: "yes",
+    surgeons: [
+      {
+        rank: 1,
+        name: "Agustín Buero",
+        role: "Venous-TOS lead",
+        practices: [
+          {
+            name: "Mederis Recoleta",
+            url: "https://mederis.com.ar/",
+            address: "M.T. de Alvear 1430, 1°, Recoleta",
+          },
+        ],
+      },
+      {
+        rank: 2,
+        name: "Gustavo A. Lyons",
+        role: "Jefe de servicio",
+        practices: [
+          {
+            name: "Consultorio particular",
+            url: "https://gustavolyons.wixsite.com/home",
+            address: "Av. Coronel Díaz 2089, 1° F, Palermo",
+            note: "Private / self-pay.",
+          },
+        ],
+      },
+      {
+        rank: 3,
+        name: "Leonardo G. Pankl",
+        role: "Staff",
+        practices: [
+          {
+            name: "Centro Médico Martín y Omar",
+            url: "https://www.cmmyo.com.ar/",
+            address: "Martín y Omar 352, San Isidro",
+            note: "Lists Medifé — ask for Pankl.",
+          },
+        ],
+      },
+      {
+        rank: 4,
+        name: "Soledad Olivera López",
+        role: "Staff",
+        practices: [
+          {
+            name: "Clínica del Sol",
+            url: "https://www.cdelsol.com.ar/cdelsol/",
+            address: "Av. Coronel Díaz 2211, Palermo",
+            note: "Listed for thoracic / lung-screening consults; ask for her by name.",
+          },
+        ],
+      },
+      {
+        rank: 5,
+        name: "Domingo J. Chimondeguy",
+        role: "Consultor (ex jefe)",
+        practices: [
+          {
+            name: "Hospital Universitario Austral",
+            url: "https://www.hospitalaustral.edu.ar/",
+            address: "Av. J. D. Perón 1500, Pilar",
+            note: "Private university hospital, not a street consultorio.",
+          },
+        ],
+      },
+    ],
   },
   {
     rank: 2,
-    name: "Hospital Italiano — Cirugía Torácica (Smith, Dietrich, Raíces)",
-    url: "https://www.cirugiageneralhiba.com.ar/cirugia-toracica/",
-    location: "Perón 4190, CABA — Sector de Cirugía Torácica y Trasplante Pulmonar",
-    bookingLead:
-      "Secretary Cecilia Bertinat; (011) 4959-0200 int. 8341; WhatsApp +54 9 11 5752-9676.",
+    kind: "hospital",
+    name: "Hospital Italiano",
+    service: "Cirugía Torácica y Trasplante Pulmonar",
+    url: "https://www.hospitalitaliano.org.ar/",
+    location: "Perón 4190, CABA",
+    bookingLead: "Ask the thoracic desk.",
     bookingLinks: [
       {
-        label: "Service page",
+        label: "Cirugía Torácica",
         href: "https://www.cirugiageneralhiba.com.ar/cirugia-toracica/",
-      },
-      {
-        label: "WhatsApp",
-        href: "https://wa.me/5491157529676",
       },
     ],
     notes:
       "Published venous pathway (thrombolysis → transaxillary FRR → venography/angioplasty). No TOS case count — ask volume.",
-    medifeLabel: "Yes via Hospital Italiano — confirm plan (Oro+/Plata+)",
+    medifeLabel: "Yes via Italiano",
     medifeStatus: "yes",
+    surgeons: [
+      {
+        rank: 1,
+        name: "David Smith",
+        role: "Jefe de servicio",
+        practices: [
+          {
+            name: "Consultorio particular",
+            address: "Potosí 4044, CABA",
+            note: "No official consultorio site found.",
+          },
+        ],
+      },
+      {
+        rank: 2,
+        name: "Agustín Dietrich",
+        role: "Cirujano de planta",
+        practices: [],
+        noneNote: "No private consultorio confirmed — book via Italiano thoracic desk.",
+      },
+      {
+        rank: 3,
+        name: "Micaela Raíces",
+        role: "Cirujana adscripta",
+        practices: [],
+        noneNote: "No private consultorio confirmed — book via Italiano thoracic desk.",
+      },
+    ],
   },
   {
     rank: 3,
-    name: "Mariano Socolovsky — Cirugía de nervios periféricos",
+    kind: "independent",
+    name: "Mariano Socolovsky",
+    service: "Cirugía de nervios periféricos",
     url: "https://socolovsky.com/",
-    location:
-      "Hospital de Clínicas (UBA); also Hospital Británico and Fundación Favaloro",
-    bookingLead:
-      "Medifé: CEMUVA Juncal 2280, (011) 4826-8513. Private Paraguay 2302 — particular.",
+    location: "Paraguay 2302, 17° 3, Recoleta",
+    bookingLead: "Also operates at",
     bookingLinks: [
-      { label: "Website", href: "https://socolovsky.com/" },
-      { label: "Contacto", href: "https://socolovsky.com/contacto" },
+      {
+        label: "Hospital de Clínicas",
+        href: "https://www.hospitaldeclinicas.uba.ar/",
+      },
+      { label: "Hospital Británico", href: "https://www.hospitalbritanico.org.ar/" },
+      { label: "Fundación Favaloro", href: "https://www.fundacionfavaloro.org/" },
     ],
     notes:
       "Leading Argentine neurogenic TOS surgeon (31-case series); zero venous cases — not primary for Paget-Schroetter.",
-    medifeLabel: "Yes — cartilla at CEMUVA Juncal 2280; Paraguay office particular",
-    medifeStatus: "yes",
+    medifeLabel: "Verify — Medifé cartilla listing looks stale",
+    medifeStatus: "verify",
+    practices: [
+      {
+        name: "INECOD",
+        url: "http://www.inecod.com.ar/",
+        address: "Calle 38 N.º 744, La Plata",
+        note: "Ask for Socolovsky. About 1 h from CABA.",
+      },
+    ],
+    surgeons: [],
   },
   {
     rank: 4,
-    name: "Martín Francisco Parodi — Cirugía vascular (Finochietto / FLENI)",
-    url: "https://www.doctoraliar.com/martin-francisco-parodi/cirujano-vascular/capital-federal",
-    location:
-      "Sanatorio Finochietto (Jefe de Cirugía Vascular); FLENI Belgrano",
-    bookingLead:
-      "Finochietto turnos / WhatsApp; Doctoralia for private consultorio (M.T. de Alvear 2320).",
+    kind: "hospital",
+    name: "Sanatorio Finochietto",
+    service: "Cirugía vascular",
+    url: "https://www.sanatoriofinochietto.com/",
+    location: "Av. Córdoba 2678, CABA",
+    bookingLead: "Also",
     bookingLinks: [
-      {
-        label: "Doctoralia",
-        href: "https://www.doctoraliar.com/martin-francisco-parodi/cirujano-vascular/capital-federal",
-      },
-      {
-        label: "Finochietto turnos",
-        href: "https://turnos.sanatoriofinochietto.com/",
-      },
-      {
-        label: "FLENI vascular",
-        href: "https://www.fleni.org.ar/especialidades/otras-especialidades/servicio-de-flebologia-y-cirugia-vascular/",
-      },
+      { label: "FLENI", href: "https://www.fleni.org.ar/" },
     ],
     notes:
       "Finochietto vascular chief; FLENI lists opérculo torácico. 2023 congress talk on opérculo; no published venous-TOS/FRR series — ask volume.",
-    medifeLabel: "Yes via Finochietto — confirm plan",
+    medifeLabel: "Yes via Finochietto",
     medifeStatus: "yes",
+    surgeons: [
+      {
+        rank: 1,
+        name: "Martín Francisco Parodi",
+        role: "Jefe de cirugía vascular",
+        practices: [
+          {
+            name: "Cirugía Buenos Aires",
+            url: "https://cirugiabuenosaires.com.ar/",
+            address: "Larrea 1035, 5°B, Recoleta",
+            note: "Best current private route. Lists Medifé.",
+          },
+          {
+            name: "Centro Rossi Abasto",
+            url: "https://www.cdrossi.com/sedes/sede-rossi-abasto_1.html",
+            address: "Sánchez de Loria 117, Abasto",
+            note: "Doctoralia still lists him here; attendance not independently confirmed.",
+          },
+        ],
+      },
+    ],
   },
   {
     rank: 5,
-    name: "Fundación Favaloro — Flebolinfología / hybrid (Gural Romero)",
-    url: "https://www.fundacionfavaloro.org/flebolinfologia/",
-    location: "Av. Belgrano 1746, CABA; Gural also Vascular Integral (private)",
-    bookingLead:
-      "Favaloro central (011) 4378-1200 — flebolinfología. Gural private WhatsApp +54 9 11 6703-3505.",
+    kind: "hospital",
+    name: "ICBA",
+    service: "Cirugía Vascular Periférica",
+    url: "https://www.icba.com.ar/",
+    location: "Av. Libertador 6302 / Blanco Encalada 1543, Belgrano, CABA",
+    bookingLead: "Ask for vascular / De Luca.",
+    bookingLinks: [
+      {
+        label: "Cirugía vascular",
+        href: "https://www.icba.com.ar/pacientes/servicios-medicos/especialidades/departamento-de-cirugia-cardiovascular/seccion-de-cirugia-vascular-periferica",
+      },
+    ],
+    notes:
+      "Top hybrid CV hospital. TOS / Paget-Schroetter is in their teaching curriculum; no published venous-TOS/FRR series and no thoracic service — ask if they decompress the first rib or only treat endovascularly.",
+    medifeLabel: "Yes via ICBA",
+    medifeStatus: "yes",
+    surgeons: [
+      {
+        rank: 1,
+        name: "Ignacio De Luca",
+        role: "Jefe de cirugía vascular periférica",
+        practices: [],
+        noneNote: "No private consultorio confirmed — book via ICBA vascular desk.",
+      },
+      {
+        rank: 2,
+        name: "Mariano Castelli",
+        role: "Staff / coordinador (aorta · endovascular)",
+        practices: [],
+        noneNote: "No private consultorio confirmed — book via ICBA vascular desk.",
+      },
+      {
+        rank: 3,
+        name: "Guillermo Pfund",
+        role: "Coordinador",
+        practices: [
+          {
+            name: "Instituto Argentino de Flebología",
+            url: "https://www.iaflebologia.com/",
+            address: "M.T. de Alvear 2320, 2°H / 3°K, Recoleta",
+            note: "Also IAF San Isidro. Flebology clinic — faster vascular consult, not FRR.",
+          },
+        ],
+      },
+      {
+        rank: 4,
+        name: "Patricio Zaefferer",
+        role: "Consultor (jefe 2003–2021)",
+        practices: [
+          {
+            name: "Instituto Argentino de Flebología",
+            url: "https://www.iaflebologia.com/",
+            address: "M.T. de Alvear 2320, 2°H / 3°K, Recoleta",
+            note: "Ask if he still sees new vascular — not TOS/FRR — patients there.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    rank: 6,
+    kind: "hospital",
+    name: "Fundación Favaloro",
+    service: "Flebolinfología",
+    url: "https://www.fundacionfavaloro.org/",
+    location: "Av. Belgrano 1746, CABA",
+    bookingLead: "Ask the flebolinfología desk.",
     bookingLinks: [
       {
         label: "Flebolinfología",
         href: "https://www.fundacionfavaloro.org/flebolinfologia/",
       },
-      {
-        label: "Portal turnos",
-        href: "https://portalweb.fundacionfavaloro.org/",
-      },
-      {
-        label: "Gural (TopDoctors)",
-        href: "https://www.topdoctors.com.ar/doctor/oscar-gural-romero/",
-      },
     ],
     notes:
       "Hybrid CV center; Gural Romero does venous opérculo endovascularly, not FRR. Ask about stenting before decompression.",
-    medifeLabel: "Verify — Favaloro in cartilla; Gural private-only",
+    medifeLabel: "Verify — Favaloro in cartilla",
     medifeStatus: "verify",
-  },
-  {
-    rank: 6,
-    name: "Private / other hybrid services (grouped)",
-    url: "https://www.hospitalaustral.edu.ar/servicios-medicos/cirugia-toracica/",
-    location:
-      "Hospital Universitario Austral, Sanatorio Güemes, CEMIC, Hospital Alemán, ICBA",
-    bookingLead:
-      "Book via each institution’s thoracic or vascular desk; ask named operator + volume.",
-    bookingLinks: [
+    surgeons: [
       {
-        label: "Austral torácica",
-        href: "https://www.hospitalaustral.edu.ar/servicios-medicos/cirugia-toracica/",
-      },
-      {
-        label: "Güemes",
-        href: "https://sitio.sg.com.ar/",
-      },
-      {
-        label: "Alemán torácica",
-        href: "https://www.hospitalaleman.org.ar/nuestro-hospital/servicios-medicos/cirugia-toracica/",
-      },
-      {
-        label: "ICBA",
-        href: "https://www.icba.com.ar/",
+        rank: 1,
+        name: "Oscar Gural Romero",
+        role: "Jefe de flebolinfología",
+        practices: [
+          {
+            name: "Vascular Integral",
+            url: "https://vascularintegral.com/",
+            address: "Azcuénaga 1860, 5°, Recoleta",
+            note: "Moved from Las Heras 3451.",
+          },
+        ],
       },
     ],
+  },
+  {
+    rank: 7,
+    kind: "group",
+    name: "Austral, Güemes, Alemán",
+    nameLinks: [
+      { label: "Austral", href: "https://www.hospitalaustral.edu.ar/" },
+      { label: "Güemes", href: "https://sitio.sg.com.ar/" },
+      { label: "Alemán", href: "https://www.hospitalaleman.org.ar/" },
+    ],
+    service: "Thoracic / hybrid desks — no named venous-TOS series",
+    url: "https://www.hospitalaustral.edu.ar/",
+    location: "Hospital Universitario Austral, Sanatorio Güemes, Hospital Alemán",
+    bookingLead:
+      "Book via each institution’s thoracic or vascular desk; ask named operator + volume.",
+    bookingLinks: [],
     notes:
-      "Austral/Güemes/Alemán/ICBA list TOS capability; no published venous volume. Ask named operator and outcomes.",
-    medifeLabel: "Verify — plan and site dependent",
+      "These list TOS capability; no published venous volume and no recommended named operator on this page.",
+    medifeLabel: "Verify — site dependent",
     medifeStatus: "verify",
+    surgeons: [],
   },
 ];
 
-const acceptsMedifeCount = teams.filter(
-  (team) => team.medifeStatus === "yes",
+const acceptsMedifeCount = clinics.filter(
+  (clinic) => clinic.medifeStatus === "yes",
 ).length;
+const surgeonCount = clinics.reduce(
+  (count, clinic) => count + clinicSurgeonCount(clinic),
+  0,
+);
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -193,17 +394,21 @@ const structuredData = {
   name: pageTitle,
   description: pageDescription,
   url: canonicalUrl,
-  numberOfItems: teams.length,
-  itemListElement: teams.map((team) => ({
+  numberOfItems: clinics.length,
+  itemListElement: clinics.map((clinic) => ({
     "@type": "ListItem",
-    position: team.rank,
+    position: clinic.rank,
     item: {
-      "@type": "Physician",
-      name: team.name,
-      url: team.url,
-      medicalSpecialty: "Thoracic Surgery",
-      description: team.notes,
-      address: team.location,
+      "@type": clinic.kind === "independent" ? "Physician" : "Hospital",
+      name: clinic.name,
+      url: clinic.url,
+      description: clinic.notes,
+      address: clinic.location,
+      employee: clinic.surgeons.map((surgeon) => ({
+        "@type": "Physician",
+        name: surgeon.name,
+        description: surgeon.role,
+      })),
     },
   })),
 };
@@ -213,14 +418,14 @@ const structuredData = {
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta
-      name="subject"
-      content="Best BA surgeons"
-    />
+    <meta name="subject" content="Best BA surgeons" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -232,7 +437,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="venous TOS Buenos Aires, Paget-Schroetter surgeon Buenos Aires, first rib resection Buenos Aires, opérculo torácico cirujano, Hospital Británico Buero, thoracic outlet syndrome Argentina"
+      content="venous TOS Buenos Aires, Paget-Schroetter surgeon Buenos Aires, first rib resection Buenos Aires, opérculo torácico cirujano, Hospital Británico Buero, ICBA cirugía vascular, thoracic outlet syndrome Argentina"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -278,8 +483,9 @@ const structuredData = {
           <p class="eyebrow">Buenos Aires guide</p>
           <h1>{pageTitle}</h1>
           <p class="intro">
-            Ranked by published venous-TOS evidence and hybrid capability.
-            Medifé coverage varies by plan and address — confirm before booking.
+            Clinics first, then surgeons inside each clinic. Private consultorios
+            sit under each doctor — usually the faster booking path. Ranked by
+            published venous-TOS / first-rib evidence, then hybrid capability.
           </p>
         </div>
         <div class="toolbar" aria-label="Surgeon filters">
@@ -291,66 +497,174 @@ const structuredData = {
             >
           </fieldset>
           <p class="meta" id="list-status">
-            Updated {updatedDate}. Showing all {teams.length} options.
+            Updated {updatedDate}. {clinics.length} clinics · {surgeonCount} surgeons.
           </p>
         </div>
       </header>
 
-      <section class="doctor-list" aria-label="Best BA surgeons">
-        <div class="doctor-row doctor-head" aria-hidden="true">
-          <span>Rank</span>
-          <span>Team</span>
-          <span>How to book</span>
-          <span>Notes</span>
-          <span>Medifé</span>
-        </div>
-
+      <section class="clinic-list" aria-label="Ranked clinics and surgeons">
         {
-          teams.map((team) => (
+          clinics.map((clinic) => (
             <article
-              class="doctor-row"
-              data-accepts-medife={String(team.medifeStatus === "yes")}
+              class="clinic"
+              data-accepts-medife={String(clinic.medifeStatus === "yes")}
+              data-surgeon-count={String(clinicSurgeonCount(clinic))}
             >
-              <p class="rank" aria-label={`Rank ${team.rank}`}>
-                {team.rank}
-              </p>
-              <h2 class="doctor-name">
-                <a href={team.url} target="_blank" rel="noreferrer noopener">
-                  {team.name}
-                </a>
-              </h2>
-              <div class="booking">
-                <p class="booking-lead">{team.bookingLead}</p>
-                {
-                  team.bookingLinks.length > 0 && (
-                    <p class="booking-links">
-                      {team.bookingLinks.map((link, index) => (
-                        <>
-                          {index > 0 && <span class="booking-sep"> · </span>}
+              <header class="clinic-head">
+                <p class="clinic-rank" aria-label={`Clinic rank ${clinic.rank}`}>
+                  {clinic.rank}
+                </p>
+                <div class="clinic-id">
+                  <h2 class="clinic-name">
+                    {clinic.nameLinks?.length ? (
+                      clinic.nameLinks.map((part) => (
+                        <a
+                          href={part.href}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                        >
+                          {part.label}
+                        </a>
+                      ))
+                    ) : (
+                      <a
+                        href={clinic.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      >
+                        {clinic.name}
+                      </a>
+                    )}
+                    {clinic.kind !== "hospital" && (
+                      <span class="clinic-kind">{kindLabel[clinic.kind]}</span>
+                    )}
+                  </h2>
+                  <p class="clinic-service">
+                    {clinic.service}
+                    <span class="clinic-loc">{clinic.location}</span>
+                  </p>
+                </div>
+                <p
+                  class:list={[
+                    "medife",
+                    clinic.medifeStatus === "yes" && "medife-yes",
+                    clinic.medifeStatus === "verify" && "medife-verify",
+                    clinic.medifeStatus === "private" && "medife-private",
+                  ]}
+                >
+                  {clinic.medifeLabel}
+                </p>
+                {(clinic.bookingLead || clinic.bookingLinks.length > 0) && (
+                  <p class="clinic-book">
+                    {clinic.bookingLead}
+                    {clinic.bookingLinks.length > 0 && (
+                      <span class="inline-links">
+                        {clinic.bookingLead && <span class="sep"> </span>}
+                        {clinic.bookingLinks.map((link, index) => (
+                          <>
+                            {index > 0 && <span class="sep"> · </span>}
+                            <a
+                              href={link.href}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              {link.label}
+                            </a>
+                          </>
+                        ))}
+                      </span>
+                    )}
+                  </p>
+                )}
+                <p class="clinic-notes">{clinic.notes}</p>
+              </header>
+
+              {clinic.kind === "independent" &&
+              (clinic.practices?.length ?? 0) > 0 ? (
+                <ul class="practice-list clinic-practices">
+                  {clinic.practices!.map((practice) => (
+                    <li class="practice">
+                      <p class="practice-head">
+                        {practice.url ? (
                           <a
-                            href={link.href}
+                            class="practice-name"
+                            href={practice.url}
                             target="_blank"
                             rel="noreferrer noopener"
                           >
-                            {link.label}
+                            {practice.name}
                           </a>
-                        </>
-                      ))}
-                    </p>
-                  )
-                }
-              </div>
-              <p class="notes">{team.notes}</p>
-              <p
-                class:list={[
-                  "medife",
-                  team.medifeStatus === "yes" && "medife-yes",
-                  team.medifeStatus === "verify" && "medife-verify",
-                  team.medifeStatus === "private" && "medife-private",
-                ]}
-              >
-                {team.medifeLabel}
-              </p>
+                        ) : (
+                          <span class="practice-name">{practice.name}</span>
+                        )}
+                      </p>
+                      <p class="practice-meta">{practice.address}</p>
+                      {practice.note && (
+                        <p class="practice-note">{practice.note}</p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : clinic.surgeons.length > 0 ? (
+                <ol class="surgeon-list">
+                  {clinic.surgeons
+                    .slice()
+                    .sort((a, b) => a.rank - b.rank)
+                    .map((surgeon) => (
+                      <li class="surgeon">
+                        <p
+                          class="surgeon-rank"
+                          aria-label={`Surgeon rank ${clinic.rank}.${surgeon.rank}`}
+                        >
+                          {clinic.rank}.{surgeon.rank}
+                        </p>
+                        <div class="surgeon-body">
+                          <h3 class="surgeon-name">
+                            {surgeon.name}
+                            <span class="surgeon-role"> · {surgeon.role}</span>
+                          </h3>
+                          {surgeon.practices.length > 0 ? (
+                            <ul class="practice-list">
+                              {surgeon.practices.map((practice) => (
+                                <li class="practice">
+                                  <p class="practice-head">
+                                    {practice.url ? (
+                                      <a
+                                        class="practice-name"
+                                        href={practice.url}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                      >
+                                        {practice.name}
+                                      </a>
+                                    ) : (
+                                      <span class="practice-name">
+                                        {practice.name}
+                                      </span>
+                                    )}
+                                  </p>
+                                  <p class="practice-meta">{practice.address}</p>
+                                  {practice.note && (
+                                    <p class="practice-note">{practice.note}</p>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p class="practice-empty">
+                              {surgeon.noneNote ??
+                                "No private consultorio confirmed."}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                </ol>
+              ) : (
+                <p class="clinic-empty">
+                  No recommended named surgeon — ask the desk for the operator and volume.
+                </p>
+              )}
             </article>
           ))
         }
@@ -362,8 +676,13 @@ const structuredData = {
 <script is:inline>
   const medifeFilter = document.querySelector("#filter-accepts-medife");
   const listStatus = document.querySelector("#list-status");
-  const doctorRows = [...document.querySelectorAll(".doctor-row:not(.doctor-head)")];
-  const totalCount = doctorRows.length;
+  const clinicRows = [...document.querySelectorAll(".clinic")];
+  const surgeonCountOf = (row) => Number(row.dataset.surgeonCount || 0);
+  const totalClinics = clinicRows.length;
+  const totalSurgeons = clinicRows.reduce(
+    (count, row) => count + surgeonCountOf(row),
+    0,
+  );
 
   const hasEnabledUrlParam = (params, key) => {
     const value = params.get(key);
@@ -384,19 +703,23 @@ const structuredData = {
 
   const applyFilters = ({ syncUrl = true } = {}) => {
     const acceptsMedifeOnly = Boolean(medifeFilter?.checked);
-    let visibleCount = 0;
+    let visibleClinics = 0;
+    let visibleSurgeons = 0;
 
-    for (const row of doctorRows) {
+    for (const row of clinicRows) {
       const accepts = row.dataset.acceptsMedife === "true";
       const visible = !acceptsMedifeOnly || accepts;
       row.hidden = !visible;
-      if (visible) visibleCount += 1;
+      if (visible) {
+        visibleClinics += 1;
+        visibleSurgeons += surgeonCountOf(row);
+      }
     }
 
     if (listStatus) {
       listStatus.textContent = acceptsMedifeOnly
-        ? `Showing ${visibleCount} option${visibleCount === 1 ? "" : "s"} who accept Medifé.`
-        : `Showing all ${totalCount} options.`;
+        ? `Showing ${visibleClinics} clinic${visibleClinics === 1 ? "" : "s"} · ${visibleSurgeons} surgeon${visibleSurgeons === 1 ? "" : "s"} who accept Medifé.`
+        : `Showing all ${totalClinics} clinics · ${totalSurgeons} surgeons.`;
     }
 
     if (syncUrl) updateFilterUrl(acceptsMedifeOnly);
@@ -429,13 +752,16 @@ const structuredData = {
     --accent: #28402f;
     --accent-soft: #dfe8d7;
     --link: #17281d;
-    --shadow: 0 20px 60px rgba(61, 44, 22, 0.08);
     --yes: #2f5d3a;
     --yes-soft: #dcead9;
     --verify: #8a6a2f;
     --verify-soft: #f3e7c8;
     --private: #6f675c;
     --private-soft: #ebe4d8;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --pad: max(0.7rem, env(safe-area-inset-left, 0px));
   }
 
   @media (prefers-color-scheme: dark) {
@@ -450,7 +776,6 @@ const structuredData = {
       --accent: #dce8d2;
       --accent-soft: #263022;
       --link: #f6f1e8;
-      --shadow: none;
       --yes: #b7d4b8;
       --yes-soft: #243126;
       --verify: #e2c788;
@@ -471,7 +796,7 @@ const structuredData = {
     font-size: 16px;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.5;
+    line-height: 1.4;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -480,9 +805,9 @@ const structuredData = {
     margin: 0;
     background:
       radial-gradient(
-        circle at 15% 0%,
-        color-mix(in srgb, var(--accent-soft), transparent 35%),
-        transparent 32rem
+        circle at 12% 0%,
+        color-mix(in srgb, var(--accent-soft), transparent 40%),
+        transparent 28rem
       ),
       var(--bg);
   }
@@ -491,31 +816,37 @@ const structuredData = {
     color: var(--link);
     text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
+    text-underline-offset: 0.15em;
   }
 
   a:hover {
     text-decoration-color: currentColor;
   }
 
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .page {
-    width: min(100%, 72rem);
+    width: min(100%, 76rem);
     margin: 0 auto;
-    padding: 0.75rem clamp(0.7rem, 1.6vw, 1.25rem) 1.25rem;
+    padding:
+      max(0.55rem, env(safe-area-inset-top, 0px))
+      var(--pad)
+      max(0.9rem, env(safe-area-inset-bottom, 0px));
   }
 
   .page-header {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.55rem;
-    align-items: start;
-    padding: 0.35rem 0 0.65rem;
+    gap: 0.4rem;
+    padding: 0.15rem 0 0.5rem;
   }
 
   .home-link {
     width: fit-content;
     color: var(--text-muted);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     text-decoration: none;
   }
 
@@ -525,13 +856,13 @@ const structuredData = {
 
   .headline {
     display: grid;
-    gap: 0.28rem;
+    gap: 0.15rem;
   }
 
   .eyebrow {
     margin: 0;
     color: var(--text-muted);
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -540,79 +871,79 @@ const structuredData = {
   h1 {
     margin: 0;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    font-size: clamp(1.3rem, 2.2vw, 1.7rem);
     font-weight: 700;
     letter-spacing: -0.03em;
-    line-height: 1.15;
+    line-height: 1.12;
   }
 
   .intro {
     margin: 0;
-    max-width: 42rem;
+    max-width: 62ch;
     color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-size: 0.86rem;
+    line-height: 1.35;
   }
 
   .toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.4rem 0.55rem;
+    gap: 0.3rem 0.55rem;
   }
 
   .extras-toggle {
     display: flex;
     width: fit-content;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    gap: 0.2rem;
     margin: 0;
-    padding: 0.28rem;
+    padding: 0.2rem;
     border: 1px solid var(--border);
     border-radius: 999px;
     background: color-mix(in srgb, var(--surface), transparent 6%);
-    box-shadow: var(--shadow);
   }
 
   .extras-toggle legend {
-    margin: 0 0.2rem 0 0.15rem;
+    margin: 0 0.15rem 0 0.2rem;
     padding: 0;
     color: var(--text-muted);
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     font-weight: 800;
     letter-spacing: 0.08em;
-    line-height: 1.75rem;
+    line-height: 1.6rem;
     text-transform: uppercase;
   }
 
   .extras-toggle input {
     position: absolute;
-    opacity: 0;
-    pointer-events: none;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .extras-toggle label {
     display: inline-flex;
-    min-height: 1.75rem;
+    min-height: 1.6rem;
     align-items: center;
-    gap: 0.35rem;
-    justify-content: center;
+    gap: 0.3rem;
     border-radius: 999px;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
-    padding: 0 0.6rem;
-    transition:
-      background 0.18s ease,
-      color 0.18s ease;
+    padding: 0 0.5rem;
   }
 
   .extras-toggle label::before {
     content: "";
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.45rem;
+    height: 0.45rem;
     border: 1.5px solid currentColor;
     border-radius: 999px;
     opacity: 0.75;
@@ -631,112 +962,124 @@ const structuredData = {
 
   .meta {
     margin: 0;
-    flex-basis: 100%;
-    max-width: 42rem;
     color: var(--text-muted);
-    font-size: 0.76rem;
-    text-align: left;
+    font-size: 0.74rem;
   }
 
-  .doctor-list {
+  .clinic-list {
     display: grid;
+    container-type: inline-size;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 1rem;
+    border-radius: 0.75rem;
     background: var(--surface);
-    box-shadow: var(--shadow);
   }
 
-  .doctor-row {
-    display: grid;
-    grid-template-columns:
-      3.4rem
-      minmax(8.5rem, 1.05fr)
-      minmax(9.5rem, 1.2fr)
-      minmax(13rem, 1.7fr)
-      minmax(9.5rem, 1.15fr);
-    gap: 0;
-    align-items: stretch;
+  .clinic {
     border-top: 1px solid var(--border);
   }
 
-  .doctor-row[hidden] {
+  .clinic:first-child {
+    border-top: 0;
+  }
+
+  .clinic[hidden] {
     display: none;
   }
 
-  .doctor-head {
-    border-top: 0;
+  .clinic-head {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank id medife"
+      ". book book"
+      ". notes notes";
+    gap: 0.06rem 0.55rem;
+    align-items: start;
+    padding: 0.42rem 0.65rem 0.38rem;
     background: var(--surface-soft);
-    color: var(--text-muted);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
   }
 
-  .doctor-row > * {
-    min-width: 0;
+  .clinic-rank,
+  .surgeon-rank {
     margin: 0;
-    padding: 0.5rem 0.55rem;
-    border-left: 1px solid var(--border);
-    overflow-wrap: anywhere;
-  }
-
-  .doctor-row > *:first-child {
-    border-left: 0;
-  }
-
-  .rank {
     color: var(--text-muted);
-    font-size: 0.88rem;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .doctor-name {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
     line-height: 1.3;
   }
 
-  .doctor-name a {
-    color: inherit;
-    text-decoration-thickness: 1px;
+  .clinic-rank {
+    grid-area: rank;
+    padding-top: 0.14rem;
   }
 
-  .booking,
-  .notes {
+  .clinic-id {
+    grid-area: id;
+    min-width: 0;
+  }
+
+  .clinic-name {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+
+  .clinic-name a,
+  a.practice-name {
+    color: inherit;
+  }
+
+  .clinic-name a:not(:last-of-type)::after {
+    content: ",";
+  }
+
+  .clinic-kind {
+    margin-left: 0.4rem;
     color: var(--text-muted);
-    font-size: 0.84rem;
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: 0.04em;
+  }
+
+  .clinic-service,
+  .clinic-book,
+  .clinic-notes,
+  .practice-head,
+  .practice-meta,
+  .practice-note,
+  .practice-empty,
+  .clinic-empty {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
     line-height: 1.35;
   }
 
-  .booking {
-    display: grid;
-    gap: 0.2rem;
+  .clinic-service {
+    color: var(--text);
   }
 
-  .booking-lead,
-  .booking-links {
-    margin: 0;
-  }
-
-  .booking-links a {
-    font-weight: 700;
-    color: var(--link);
-    text-decoration-thickness: 1px;
-  }
-
-  .booking-sep {
+  .clinic-loc::before {
+    content: " · ";
     color: var(--text-muted);
-    font-weight: 500;
   }
 
   .medife {
-    font-size: 0.82rem;
+    grid-area: medife;
+    justify-self: end;
+    max-width: 18rem;
+    margin: 0.08rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.7rem;
     font-weight: 650;
     line-height: 1.3;
+    text-align: right;
   }
 
   .medife-yes {
@@ -751,103 +1094,134 @@ const structuredData = {
     color: var(--private);
   }
 
-  @media (max-width: 900px) {
-    .page {
-      padding: 0.55rem 0.6rem 1rem;
-    }
+  .clinic-book {
+    grid-area: book;
+    min-width: 0;
+  }
 
-    .page-header {
-      padding: 0.15rem 0 0.5rem;
-      gap: 0.45rem;
-    }
+  .clinic-notes {
+    grid-area: notes;
+    font-size: 0.74rem;
+  }
 
-    h1 {
-      font-size: 1.35rem;
-      line-height: 1.15;
-    }
+  .inline-links {
+    font-weight: 650;
+  }
 
-    .intro {
-      font-size: 0.86rem;
-      line-height: 1.38;
-    }
+  .sep {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
 
-    .doctor-list {
-      border-radius: 0.9rem;
-      background: transparent;
-      border-color: var(--border-strong);
-    }
+  .surgeon-list,
+  .practice-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-    .doctor-head {
-      display: none;
-    }
+  .surgeon {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.06rem 0.55rem;
+    padding: 0.32rem 0.65rem;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 28%);
+  }
 
-    .doctor-row {
-      grid-template-columns: auto 1fr;
+  .surgeon-name {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .surgeon-role {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .practice-list {
+    display: grid;
+    gap: 0.18rem;
+    margin-top: 0.1rem;
+  }
+
+  .clinic-practices {
+    padding: 0.32rem 0.65rem 0.4rem 2.55rem;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 28%);
+  }
+
+  .practice-head {
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  .practice-name {
+    font-weight: 650;
+  }
+
+  .practice-meta,
+  .practice-note,
+  .practice-empty,
+  .clinic-empty {
+    font-size: 0.74rem;
+  }
+
+  .practice-empty {
+    margin-top: 0.04rem;
+  }
+
+  .clinic-empty {
+    padding: 0.32rem 0.65rem 0.4rem 2.55rem;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 28%);
+  }
+
+  @container (max-width: 520px) {
+    .clinic-head {
+      grid-template-columns: 1.6rem minmax(0, 1fr);
       grid-template-areas:
-        "rank name"
-        "booking booking"
-        "notes notes"
-        "medife medife";
-      gap: 0.12rem 0.5rem;
-      align-items: start;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 0.55rem 0.65rem;
-    }
-
-    .doctor-row:first-of-type {
-      border-top: 0;
-    }
-
-    .doctor-row > * {
-      padding: 0;
-      border-left: 0;
-    }
-
-    .rank {
-      grid-area: rank;
-      font-size: 0.82rem;
-      line-height: 1.3;
-    }
-
-    .doctor-name {
-      grid-area: name;
-      font-size: 0.9rem;
-      line-height: 1.25;
-    }
-
-    .booking {
-      grid-area: booking;
-      margin-top: 0.1rem;
-      font-size: 0.82rem;
-    }
-
-    .notes {
-      grid-area: notes;
-      font-size: 0.84rem;
-      line-height: 1.32;
+        "rank id"
+        ". medife"
+        ". book"
+        ". notes";
     }
 
     .medife {
-      grid-area: medife;
-      margin-top: 0.12rem;
-      width: fit-content;
+      justify-self: start;
+      text-align: left;
       max-width: 100%;
-      padding: 0.18rem 0.45rem;
-      border-radius: 999px;
-      font-size: 0.74rem;
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      padding-left: max(0.55rem, env(safe-area-inset-left, 0px));
+      padding-right: max(0.55rem, env(safe-area-inset-right, 0px));
     }
 
-    .medife-yes {
-      background: var(--yes-soft);
+    .clinic-list {
+      border-radius: 0.65rem;
     }
 
-    .medife-verify {
-      background: var(--verify-soft);
+    .clinic-head,
+    .surgeon {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
     }
 
-    .medife-private {
-      background: var(--private-soft);
+    .clinic-name {
+      font-size: 0.94rem;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .extras-toggle label,
+    .inline-links a,
+    .practice-head a {
+      min-height: 1.75rem;
     }
   }
 </style>
