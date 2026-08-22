@@ -1,0 +1,1024 @@
+---
+export const prerender = true;
+
+const pageTitle = "Best BA concierge docs";
+const pageDescription =
+  "Ranked Buenos Aires concierge-doctor options for foreigners: English, prescribing, lab orders, a physical BA office when needed, and USD visit or monthly prices.";
+const themeColorLight = "#fcfaf7";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date());
+
+type EnglishFit = "strong" | "mixed" | "weak";
+type OptionKind = "doctor" | "hospital-desk" | "clinic" | "telehealth";
+type PriceKind = "visit" | "quote" | "unknown";
+
+type BookingLink = {
+  label: string;
+  href: string;
+};
+
+type ConciergeOption = {
+  rank: number;
+  name: string;
+  kind: OptionKind;
+  url: string;
+  location: string;
+  bookingLead: string;
+  bookingLinks: BookingLink[];
+  notes: string;
+  englishLabel: string;
+  englishFit: EnglishFit;
+  sameDay: boolean;
+  priceLabel: string;
+  priceKind: PriceKind;
+};
+
+const kindLabel: Record<OptionKind, string> = {
+  doctor: "Named doctor",
+  "hospital-desk": "Hospital desk",
+  clinic: "Clinic",
+  telehealth: "Telehealth",
+};
+
+const options: ConciergeOption[] = [
+  {
+    rank: 1,
+    name: "Hospital Alemán — AMI",
+    kind: "hospital-desk",
+    url: "https://www.hospitalaleman.org.ar/pacientes/pacientes-internacionales/",
+    location: "Av. Pueyrredón 1640, Recoleta",
+    bookingLead: "Email AMI first — they book you into Casa Médica clínico.",
+    bookingLinks: [
+      {
+        label: "International",
+        href: "https://www.hospitalaleman.org.ar/pacientes/pacientes-internacionales/",
+      },
+      { label: "hainternacional@", href: "mailto:hainternacional@hospitalaleman.com" },
+      { label: "+54 11 4827-7013", href: "tel:+541148277013" },
+      { label: "Urgency May", href: "tel:+5491144704244" },
+    ],
+    notes:
+      "Best foreigner path that can actually do labs, imaging, specialists, and admit you in Recoleta. ES/EN/DE desk; Casa Médica clínico same-day 8:00–19:40. Private pay or foreign insurance. Quote only. Alemán Plan Médico (what rich locals join) is a separate DNI-based membership — not this desk.",
+    englishLabel: "English — strong",
+    englishFit: "strong",
+    sameDay: true,
+    priceLabel: "Quote",
+    priceKind: "quote",
+  },
+  {
+    rank: 2,
+    name: "Hospital Italiano — internacionales",
+    kind: "hospital-desk",
+    url: "https://www.hospitalitaliano.org.ar/hiba/es/sitio/pacientesinternacionales",
+    location: "Perón 4190, Almagro",
+    bookingLead: "Intake form first — they call it concierge de salud.",
+    bookingLinks: [
+      {
+        label: "Form",
+        href: "https://docs.google.com/forms/d/e/1FAIpQLScQJ1JPZZTLFD2RwBP_Hy3XtDNK4PLv4Ctg2pVdfLPY5F2BTg/viewform",
+      },
+      { label: "WhatsApp", href: "https://wa.me/541154719192" },
+      {
+        label: "pacientes.internacionales@",
+        href: "mailto:pacientes.internacionales@hospitalitaliano.org.ar",
+      },
+    ],
+    notes:
+      "Best-documented coordinator: EN/IT/FR, labs, specialists, hospital logistics. Form → triage → plan — not same-day GP. Plan de Salud médico de cabecera is the local membership and needs DNI. Quote only.",
+    englishLabel: "English — strong",
+    englishFit: "strong",
+    sameDay: false,
+    priceLabel: "Quote",
+    priceKind: "quote",
+  },
+  {
+    rank: 3,
+    name: "CareThere — Pietra Stanicki",
+    kind: "doctor",
+    url: "https://www.carethere.health/en",
+    location: "Video / home visit · no CABA consultorio",
+    bookingLead: "WhatsApp Argentina first — most site buttons go to Brazil.",
+    bookingLinks: [
+      { label: "WhatsApp AR", href: "https://wa.me/5491124053898" },
+      { label: "Book", href: "https://www.carethere.health/en/booking" },
+      { label: "Pricing", href: "https://www.carethere.health/en/pricing" },
+    ],
+    notes:
+      "Named English GP: same-day video, local Rx, lab orders (incl. Salud y Vos home draw), specialist referrals, GeoBlue. Downgraded because there is no published BA office — video or they come to you. Not 24h emergency; hospital admission not documented.",
+    englishLabel: "English — strong",
+    englishFit: "strong",
+    sameDay: true,
+    priceLabel: "$40 / visit",
+    priceKind: "visit",
+  },
+  {
+    rank: 4,
+    name: "Stefania Urueña Palacio",
+    kind: "doctor",
+    url: "https://www.topdoctors.com.ar/doctor/stefania-uruena-palacio/",
+    location: "Av. Triunvirato 4035, Villa Urquiza",
+    bookingLead: "TopDoctors reserve. Wed–Sat afternoons only.",
+    bookingLinks: [
+      {
+        label: "TopDoctors",
+        href: "https://www.topdoctors.com.ar/doctor/stefania-uruena-palacio/",
+      },
+      { label: "Call", href: "tel:+541168419151" },
+    ],
+    notes:
+      "English internist with a real consultorio. Can order labs and refer inside Hospital Italiano. First consult from ARS 60,000 (~$39 at 1550). Next slot was ~4 days out. No WhatsApp; TopDoctors says no teleconsult. Serious adult IM, not a same-day desk.",
+    englishLabel: "English — strong",
+    englishFit: "strong",
+    sameDay: false,
+    priceLabel: "$39 first visit",
+    priceKind: "visit",
+  },
+  {
+    rank: 5,
+    name: "Otamendi — Sin Fronteras",
+    kind: "hospital-desk",
+    url: "https://www.otamendi.com.ar/el-sanatorio/otamendi-sin-fronteras/",
+    location: "Azcuénaga 870, Recoleta",
+    bookingLead: "Sin Fronteras WhatsApp — not the Concierge membership line.",
+    bookingLinks: [
+      {
+        label: "Sin Fronteras",
+        href: "https://www.otamendi.com.ar/el-sanatorio/otamendi-sin-fronteras/",
+      },
+      { label: "WhatsApp", href: "https://wa.me/541135385353" },
+      { label: "Turnos", href: "https://www.otamendi.com.ar/turnos/" },
+    ],
+    notes:
+      "Recoleta hospital coordinator: turnos, studies, travel help. English marketing page; clinician English not guaranteed. Quote only. Otamendi Concierge is the VIP layer rich locals buy — it needs a prepaga already valid at Otamendi, so skip it unless you have one.",
+    englishLabel: "English — mixed",
+    englishFit: "mixed",
+    sameDay: false,
+    priceLabel: "Quote",
+    priceKind: "quote",
+  },
+  {
+    rank: 6,
+    name: "Hospital Británico — Privilege HB",
+    kind: "hospital-desk",
+    url: "https://pacientesinternacionales.hospitalbritanico.org.ar/",
+    location: "Perdriel 74, Barracas",
+    bookingLead: "Privilege form, or self-book Clínica Médica as particular on HB Online.",
+    bookingLinks: [
+      {
+        label: "Microsite",
+        href: "https://pacientesinternacionales.hospitalbritanico.org.ar/",
+      },
+      { label: "HB Online", href: "https://www.hbritanicoweb.com.ar/" },
+      { label: "privilegehb@", href: "mailto:privilegehb@hbritanico.com.ar" },
+      { label: "WhatsApp", href: "https://wa.me/5491130159749" },
+    ],
+    notes:
+      "International desk for planned care; English intake, labs/specialists/admit, translation on request. Slow (form first). For a simple clínico, skip Privilege and book particular on HB Online. Quote only.",
+    englishLabel: "English — mixed",
+    englishFit: "mixed",
+    sameDay: false,
+    priceLabel: "Quote",
+    priceKind: "quote",
+  },
+  {
+    rank: 7,
+    name: "Mater Dei — paciente internacional",
+    kind: "hospital-desk",
+    url: "https://www.sanatoriomaterdei.com.ar/paciente-internacional",
+    location: "San Martín de Tours 2952, Palermo",
+    bookingLead: "International desk for planned care; WhatsApp or call for a particular clínico.",
+    bookingLinks: [
+      {
+        label: "International",
+        href: "https://www.sanatoriomaterdei.com.ar/paciente-internacional",
+      },
+      { label: "WhatsApp", href: "https://wa.me/5491132027629" },
+      { label: "+54 11 4809-5533", href: "tel:+541148095533" },
+      { label: "Turnos", href: "https://www.sanatoriomaterdei.com.ar/turnos" },
+    ],
+    notes:
+      "Palermo hospital wealthy families actually use. Desk books consults, labs, procedures, and admits; particulares pay ARS, official-rate USD cash, or card. Spanish-first page — no published English clinician. Quote only. Stronger for planned care / maternity than a same-day GP.",
+    englishLabel: "English — mixed",
+    englishFit: "mixed",
+    sameDay: false,
+    priceLabel: "Quote",
+    priceKind: "quote",
+  },
+  {
+    rank: 8,
+    name: "Austral — Espacio Prestige",
+    kind: "clinic",
+    url: "https://www.hospitalaustral.edu.ar/prestige/",
+    location: "Officia Pilar · ~45–60 min from CABA",
+    bookingLead: "Portal: Clínica Médica → Dr. Coronel. Pay Mercado Pago at checkout.",
+    bookingLinks: [
+      { label: "Prestige", href: "https://www.hospitalaustral.edu.ar/prestige/" },
+      { label: "Book", href: "https://prestige.hospitalaustral.edu.ar/" },
+    ],
+    notes:
+      "100% particular premium outpatient: study concierge, priority labs/imaging, parking. Clínica Médica slots were Tue PM with ~3-day lead. Spanish-first; English is the separate international desk. No published fee. Only useful if you will go to Pilar.",
+    englishLabel: "English — mixed",
+    englishFit: "mixed",
+    sameDay: false,
+    priceLabel: "Quote",
+    priceKind: "quote",
+  },
+  {
+    rank: 9,
+    name: "Hélène Luzzati",
+    kind: "doctor",
+    url: "https://ar.diplomatie.gouv.fr/fr/liste-de-notoriete-medicale-et-paramedicale-pour-largentine",
+    location: "Amenábar 2446, Belgrano",
+    bookingLead: "WhatsApp / Telegram only — French embassy list, updated Aug 2026.",
+    bookingLinks: [
+      { label: "WhatsApp", href: "https://wa.me/5491156900161" },
+      {
+        label: "Embassy list",
+        href: "https://ar.diplomatie.gouv.fr/fr/liste-de-notoriete-medicale-et-paramedicale-pour-largentine",
+      },
+    ],
+    notes:
+      "Verified French-speaking GP with a Belgrano consultorio. A clínico can order labs; hours, speed, English, and fee are unpublished. Use the mobile, not the shared building landline.",
+    englishLabel: "English — mixed",
+    englishFit: "mixed",
+    sameDay: false,
+    priceLabel: "Unknown",
+    priceKind: "unknown",
+  },
+  {
+    rank: 10,
+    name: "Air Doctor",
+    kind: "telehealth",
+    url: "https://air-dr.com/english-speaking-doctors-in-buenosaires/",
+    location: "App · video or borrowed clinic in CABA",
+    bookingLead: "Set location to Buenos Aires, then Video or Clinic.",
+    bookingLinks: [
+      { label: "Webapp", href: "https://www.air-dr.com/webapp/" },
+      {
+        label: "BA page",
+        href: "https://air-dr.com/english-speaking-doctors-in-buenosaires/",
+      },
+    ],
+    notes:
+      "Marketplace, not a named concierge. Same-day English GPs; clinic visits exist but they do not own a BA office. Lab orders depend on whoever is assigned. Video $65–123, clinic $124–233 (22 Aug 2026). Ignore the €50–100 SEO band.",
+    englishLabel: "English — strong",
+    englishFit: "strong",
+    sameDay: true,
+    priceLabel: "$65–123 video",
+    priceKind: "visit",
+  },
+  {
+    rank: 11,
+    name: "TravelDoctores",
+    kind: "telehealth",
+    url: "https://traveldoctores.com/doctor-near-me-in-buenos-aires/",
+    location: "Video only · HQ Barcelona",
+    bookingLead: "Form + pay, then video in ~15 min. WhatsApp is a Spain number.",
+    bookingLinks: [
+      { label: "New consult", href: "https://traveldoctores.com/new-consultation/" },
+      { label: "WhatsApp", href: "https://wa.me/34675060210" },
+    ],
+    notes:
+      "Fastest English video GP (~$39 / €33, 24/7) but remote-only and does not book labs or specialists. Digital PDF Rx that patients report filling at Farmacity with a passport. First-available doctor may be licensed outside Argentina.",
+    englishLabel: "English — strong",
+    englishFit: "strong",
+    sameDay: true,
+    priceLabel: "$39 / visit",
+    priceKind: "visit",
+  },
+];
+
+const englishCount = options.filter((option) => option.englishFit === "strong").length;
+const sameDayCount = options.filter((option) => option.sameDay).length;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: options.length,
+  itemListElement: options.map((option) => ({
+    "@type": "ListItem",
+    position: option.rank,
+    item: {
+      "@type": option.kind === "doctor" ? "Physician" : "MedicalBusiness",
+      name: option.name,
+      url: option.url,
+      description: option.notes,
+      address: option.location,
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Best BA concierge docs" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="concierge doctor Buenos Aires, English speaking GP Buenos Aires, same-day doctor Buenos Aires, Hospital Alemán international patients, CareThere Buenos Aires, TravelDoctores"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            Ranked for US-style concierge that can also order labs and see you
+            in a real BA office if needed. English hospital desks first; named
+            GPs next; remote-only or no-lab video last. Wealthy Argentines
+            usually join Alemán Plan Médico, Italiano Plan de Salud, or a
+            premium prepaga plus Otamendi Concierge — those need DNI or a local
+            plan, so they are not ranked here. ARS at 1,550 = $1 (blue venta,
+            22 Aug 2026). Confirm language and the quote before you pay.
+          </p>
+        </div>
+        <div class="toolbar" aria-label="Concierge doctor filters">
+          <fieldset class="extras-toggle">
+            <legend>Filter</legend>
+            <input id="filter-english" type="checkbox" autocomplete="off" />
+            <label for="filter-english">English ({englishCount})</label>
+            <input id="filter-same-day" type="checkbox" autocomplete="off" />
+            <label for="filter-same-day">Same-day ({sameDayCount})</label>
+          </fieldset>
+          <p class="meta" id="list-status">
+            Updated {updatedDate}. {options.length} options.
+          </p>
+        </div>
+      </header>
+
+      <section class="doctor-list" aria-label="Ranked concierge doctor options">
+        <div class="doctor-row doctor-head" aria-hidden="true">
+          <span>Rank</span>
+          <span>Option</span>
+          <span>How to book</span>
+          <span>Notes</span>
+          <span>USD price</span>
+        </div>
+
+        {
+          options.map((option) => (
+            <article
+              class="doctor-row"
+              data-english={String(option.englishFit === "strong")}
+              data-same-day={String(option.sameDay)}
+            >
+              <p class="rank" aria-label={`Rank ${option.rank}`}>
+                {option.rank}
+              </p>
+              <div class="identity">
+                <h2 class="doctor-name">
+                  <a href={option.url} target="_blank" rel="noreferrer noopener">
+                    {option.name}
+                  </a>
+                </h2>
+                <p class="kind">
+                  {kindLabel[option.kind]}
+                  <span class="loc">{option.location}</span>
+                </p>
+              </div>
+              <div class="booking">
+                <p class="booking-lead">{option.bookingLead}</p>
+                {option.bookingLinks.length > 0 && (
+                  <p class="booking-links">
+                    {option.bookingLinks.map((link, index) => (
+                      <>
+                        {index > 0 && <span class="booking-sep"> · </span>}
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                        >
+                          {link.label}
+                        </a>
+                      </>
+                    ))}
+                  </p>
+                )}
+              </div>
+              <p class="notes">{option.notes}</p>
+              <p
+                class:list={[
+                  "price",
+                  option.priceKind === "visit" && "price-visit",
+                  option.priceKind === "quote" && "price-quote",
+                  option.priceKind === "unknown" && "price-unknown",
+                ]}
+              >
+                {option.priceLabel}
+              </p>
+            </article>
+          ))
+        }
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline>
+  const englishFilter = document.querySelector("#filter-english");
+  const sameDayFilter = document.querySelector("#filter-same-day");
+  const listStatus = document.querySelector("#list-status");
+  const optionRows = [...document.querySelectorAll(".doctor-row:not(.doctor-head)")];
+  const totalCount = optionRows.length;
+
+  const hasEnabledUrlParam = (params, key) => {
+    const value = params.get(key);
+    return value === "1" || value === "true" || value === "yes";
+  };
+
+  const updateFilterUrl = (englishOnly, sameDayOnly) => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("english");
+    url.searchParams.delete("house");
+    url.searchParams.delete("sameday");
+    if (englishOnly) url.searchParams.set("english", "1");
+    if (sameDayOnly) url.searchParams.set("sameday", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
+  const applyFilters = ({ syncUrl = true } = {}) => {
+    const englishOnly = Boolean(englishFilter?.checked);
+    const sameDayOnly = Boolean(sameDayFilter?.checked);
+    let visibleCount = 0;
+
+    for (const row of optionRows) {
+      const english = row.dataset.english === "true";
+      const sameDay = row.dataset.sameDay === "true";
+      const visible = (!englishOnly || english) && (!sameDayOnly || sameDay);
+      row.hidden = !visible;
+      if (visible) visibleCount += 1;
+    }
+
+    if (listStatus) {
+      const parts = [];
+      if (englishOnly) parts.push("English");
+      if (sameDayOnly) parts.push("same-day");
+      listStatus.textContent = parts.length
+        ? `Showing ${visibleCount} option${visibleCount === 1 ? "" : "s"} · ${parts.join(" · ")}.`
+        : `Showing all ${totalCount} options.`;
+    }
+
+    if (syncUrl) updateFilterUrl(englishOnly, sameDayOnly);
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    if (englishFilter) englishFilter.checked = hasEnabledUrlParam(params, "english");
+    if (sameDayFilter) {
+      sameDayFilter.checked =
+        hasEnabledUrlParam(params, "sameday") || hasEnabledUrlParam(params, "house");
+    }
+    applyFilters({ syncUrl: false });
+  };
+
+  englishFilter?.addEventListener("change", () => applyFilters());
+  sameDayFilter?.addEventListener("change", () => applyFilters());
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fcfaf7;
+    --surface: #fffdf8;
+    --surface-soft: #efe7db;
+    --text: #181612;
+    --text-muted: #6f675c;
+    --border: #d9cfc0;
+    --border-strong: #c8baa8;
+    --accent: #28402f;
+    --accent-soft: #dfe8d7;
+    --link: #17281d;
+    --shadow: 0 20px 60px rgba(61, 44, 22, 0.08);
+    --yes: #2f5d3a;
+    --yes-soft: #dcead9;
+    --verify: #8a6a2f;
+    --verify-soft: #f3e7c8;
+    --private: #6f675c;
+    --private-soft: #ebe4d8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171613;
+      --surface-soft: #211f1a;
+      --text: #f2eee7;
+      --text-muted: #aaa297;
+      --border: #343027;
+      --border-strong: #4a4338;
+      --accent: #dce8d2;
+      --accent-soft: #263022;
+      --link: #f6f1e8;
+      --shadow: none;
+      --yes: #b7d4b8;
+      --yes-soft: #243126;
+      --verify: #e2c788;
+      --verify-soft: #332914;
+      --private: #aaa297;
+      --private-soft: #26231e;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+      sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(
+        circle at 15% 0%,
+        color-mix(in srgb, var(--accent-soft), transparent 35%),
+        transparent 32rem
+      ),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .page {
+    width: min(100%, 76rem);
+    margin: 0 auto;
+    padding:
+      max(0.75rem, env(safe-area-inset-top))
+      max(clamp(0.7rem, 1.6vw, 1.25rem), env(safe-area-inset-right))
+      max(1.25rem, env(safe-area-inset-bottom))
+      max(clamp(0.7rem, 1.6vw, 1.25rem), env(safe-area-inset-left));
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0.35rem 0 0.65rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.28rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.55rem;
+  }
+
+  .extras-toggle {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0.28rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 6%);
+    box-shadow: var(--shadow);
+  }
+
+  .extras-toggle legend {
+    margin: 0 0.2rem 0 0.15rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.75rem;
+    text-transform: uppercase;
+  }
+
+  .extras-toggle input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .extras-toggle label {
+    display: inline-flex;
+    min-height: 1.75rem;
+    align-items: center;
+    gap: 0.35rem;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0 0.6rem;
+  }
+
+  .extras-toggle label::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.75;
+  }
+
+  #filter-english:checked ~ label[for="filter-english"],
+  #filter-same-day:checked ~ label[for="filter-same-day"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  #filter-english:checked ~ label[for="filter-english"]::before,
+  #filter-same-day:checked ~ label[for="filter-same-day"]::before {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--accent);
+    opacity: 1;
+  }
+
+  .meta {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+  }
+
+  .doctor-list {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .doctor-row {
+    display: grid;
+    grid-template-columns:
+      2.8rem
+      minmax(9.5rem, 1.1fr)
+      minmax(9.5rem, 1.15fr)
+      minmax(14rem, 2fr)
+      7.4rem;
+    gap: 0;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+  }
+
+  .doctor-row[hidden] {
+    display: none;
+  }
+
+  .doctor-head {
+    border-top: 0;
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .doctor-row > * {
+    min-width: 0;
+    margin: 0;
+    padding: 0.5rem 0.55rem;
+    border-left: 1px solid var(--border);
+    overflow-wrap: break-word;
+  }
+
+  .doctor-row > *:first-child {
+    border-left: 0;
+  }
+
+  .rank {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .identity {
+    display: grid;
+    gap: 0.12rem;
+    align-content: start;
+  }
+
+  .doctor-name {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .doctor-name a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+  }
+
+  .kind,
+  .booking,
+  .notes {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .kind {
+    margin: 0;
+    font-size: 0.74rem;
+  }
+
+  .loc::before {
+    content: " · ";
+  }
+
+  .booking {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .booking-lead,
+  .booking-links {
+    margin: 0;
+  }
+
+  .booking-links a {
+    font-weight: 700;
+    color: var(--link);
+  }
+
+  .booking-sep {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .price {
+    font-size: 0.82rem;
+    font-weight: 650;
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .price-visit {
+    color: var(--yes);
+  }
+
+  .price-quote {
+    color: var(--verify);
+  }
+
+  .price-unknown {
+    color: var(--private);
+  }
+
+  @media (max-width: 1100px) {
+    .page {
+      padding:
+        max(0.55rem, env(safe-area-inset-top))
+        max(0.6rem, env(safe-area-inset-right))
+        max(1rem, env(safe-area-inset-bottom))
+        max(0.6rem, env(safe-area-inset-left));
+    }
+
+    .page-header {
+      padding: 0.15rem 0 0.5rem;
+      gap: 0.45rem;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      line-height: 1.15;
+    }
+
+    .intro {
+      font-size: 0.86rem;
+      line-height: 1.38;
+    }
+
+    .extras-toggle {
+      max-width: 100%;
+    }
+
+    .doctor-list {
+      border-radius: 0.9rem;
+      background: transparent;
+      border-color: var(--border-strong);
+    }
+
+    .doctor-head {
+      display: none;
+    }
+
+    .doctor-row {
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "rank name"
+        "booking booking"
+        "notes notes"
+        "price price";
+      gap: 0.12rem 0.5rem;
+      align-items: start;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.6rem 0.7rem;
+    }
+
+    .doctor-row:first-of-type {
+      border-top: 0;
+    }
+
+    .doctor-row > * {
+      padding: 0;
+      border-left: 0;
+    }
+
+    .rank {
+      grid-area: rank;
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .identity {
+      grid-area: name;
+    }
+
+    .booking {
+      grid-area: booking;
+      margin-top: 0.1rem;
+    }
+
+    .notes {
+      grid-area: notes;
+    }
+
+    .price {
+      grid-area: price;
+      width: fit-content;
+      max-width: 100%;
+      margin-top: 0.12rem;
+      padding: 0.18rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+    }
+
+    .price-visit {
+      background: var(--yes-soft);
+    }
+
+    .price-quote {
+      background: var(--verify-soft);
+    }
+
+    .price-unknown {
+      background: var(--private-soft);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .toolbar {
+      align-items: flex-start;
+    }
+
+    .extras-toggle {
+      width: 100%;
+    }
+  }
+</style>
