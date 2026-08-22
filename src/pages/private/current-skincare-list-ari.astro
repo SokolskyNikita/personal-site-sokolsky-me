@@ -933,8 +933,11 @@ const totalSkincareItemCount = sections.reduce(
                   </>
                 )}
 
-                <p><strong>Ingredients:</strong> {item.ingredients}</p>
-                {"ingredientsNote" in item && <p class="small">{item.ingredientsNote}</p>}
+                <details class="ingredients">
+                  <summary>Expand</summary>
+                  <p><strong>Ingredients:</strong> {item.ingredients}</p>
+                  {"ingredientsNote" in item && <p class="small">{item.ingredientsNote}</p>}
+                </details>
               </li>
             ))}
           </ul>
@@ -1165,12 +1168,40 @@ const totalSkincareItemCount = sections.reduce(
     text-decoration: none;
   }
 
+  .ingredients {
+    margin: 0;
+  }
+
+  .ingredients summary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 700;
+    list-style: none;
+    width: fit-content;
+  }
+
+  .ingredients summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ingredients[open] summary {
+    margin-bottom: 0.6rem;
+  }
+
   a {
     color: var(--link);
     text-underline-offset: 0.18em;
   }
 
-  a:focus-visible {
+  a:focus-visible,
+  .ingredients summary:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
