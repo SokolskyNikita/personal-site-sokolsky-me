@@ -147,6 +147,8 @@ const brandsWithStoreLabels = brandsSortedByPrice.map((brand: Brand, index: numb
     isProvinceAddition: isProvinceAddition(brand),
     maxReviewCount: maxStoreReviews(brand),
     hasSundayStore: stores.some((store) => store.openSunday),
+    sellsBeds: brand.sellsBeds === true,
+    sellsMattresses: brand.sellsMattresses === true,
   };
 });
 const googleMapsApiKey =
@@ -163,6 +165,8 @@ const furnitureMapData = brandsWithStoreLabels.flatMap((brand) =>
     brandHasMultipleBaLocations: brand.storeCount >= 2,
     brandHasFourStarStore: brand.stores.some((entry) => (entry.rating ?? 0) >= 4),
     openSunday: store.openSunday,
+    sellsBeds: brand.sellsBeds,
+    sellsMattresses: brand.sellsMattresses,
     address: store.address,
     googleMapsUrl: store.googleMapsUrl,
     rating: store.rating,
@@ -312,6 +316,14 @@ const structuredData = {
             <input id="open-sunday-only" type="checkbox" autocomplete="off" />
             <span>Open on Sundays</span>
           </label>
+          <label class="filter-toggle" for="sells-beds-only">
+            <input id="sells-beds-only" type="checkbox" autocomplete="off" />
+            <span>Sells beds</span>
+          </label>
+          <label class="filter-toggle" for="sells-mattresses-only">
+            <input id="sells-mattresses-only" type="checkbox" autocomplete="off" />
+            <span>Sells mattresses</span>
+          </label>
         </div>
         <p class="visible-count" data-visible-count>
           Showing {brands.length} brands / {storeCount} BA map locations
@@ -332,6 +344,8 @@ const structuredData = {
             data-multi-location={brand.storeCount >= 2}
             data-four-star-brand={brand.stores.some((store) => (store.rating ?? 0) >= 4)}
             data-open-sunday={brand.hasSundayStore}
+            data-sells-beds={brand.sellsBeds}
+            data-sells-mattresses={brand.sellsMattresses}
           >
             <div class="brand-main">
               <div class="brand-title-row">
@@ -485,6 +499,8 @@ const structuredData = {
   const multiLocationOnlyToggle = document.querySelector("#multi-location-only");
   const fourStarBrandOnlyToggle = document.querySelector("#four-star-brand-only");
   const openSundayOnlyToggle = document.querySelector("#open-sunday-only");
+  const sellsBedsOnlyToggle = document.querySelector("#sells-beds-only");
+  const sellsMattressesOnlyToggle = document.querySelector("#sells-mattresses-only");
   const visibleCount = document.querySelector("[data-visible-count]");
   const brandCards = brandList ? [...brandList.querySelectorAll(".brand-card")] : [];
   const buenosAiresCenter = { lat: -34.6037, lng: -58.3816 };
@@ -557,17 +573,23 @@ const structuredData = {
     ...(multiLocationOnlyToggle?.checked ? ["2+ BA locations"] : []),
     ...(fourStarBrandOnlyToggle?.checked ? ["at least one 4.0+ rated store"] : []),
     ...(openSundayOnlyToggle?.checked ? ["open on Sundays"] : []),
+    ...(sellsBedsOnlyToggle?.checked ? ["sells beds"] : []),
+    ...(sellsMattressesOnlyToggle?.checked ? ["sells mattresses"] : []),
   ];
 
   const cardPassesActiveFilters = (card) =>
     (!multiLocationOnlyToggle?.checked || card.dataset.multiLocation === "true") &&
     (!fourStarBrandOnlyToggle?.checked || card.dataset.fourStarBrand === "true") &&
-    (!openSundayOnlyToggle?.checked || card.dataset.openSunday === "true");
+    (!openSundayOnlyToggle?.checked || card.dataset.openSunday === "true") &&
+    (!sellsBedsOnlyToggle?.checked || card.dataset.sellsBeds === "true") &&
+    (!sellsMattressesOnlyToggle?.checked || card.dataset.sellsMattresses === "true");
 
   const storePassesActiveFilters = (store) =>
     (!multiLocationOnlyToggle?.checked || store.brandHasMultipleBaLocations) &&
     (!fourStarBrandOnlyToggle?.checked || store.brandHasFourStarStore) &&
-    (!openSundayOnlyToggle?.checked || store.openSunday);
+    (!openSundayOnlyToggle?.checked || store.openSunday) &&
+    (!sellsBedsOnlyToggle?.checked || store.sellsBeds) &&
+    (!sellsMattressesOnlyToggle?.checked || store.sellsMattresses);
 
   const updateStoreListVisibility = (card) => {
     const storeList = card.querySelector(".store-list");
@@ -651,6 +673,8 @@ const structuredData = {
     "multiLocation",
     "fourStar",
     "openSunday",
+    "sellsBeds",
+    "sellsMattresses",
   ];
 
   const hasEnabledUrlParam = (params, paramName) => {
@@ -671,6 +695,8 @@ const structuredData = {
     if (multiLocationOnlyToggle?.checked) url.searchParams.set("multiLocation", "1");
     if (fourStarBrandOnlyToggle?.checked) url.searchParams.set("fourStar", "1");
     if (openSundayOnlyToggle?.checked) url.searchParams.set("openSunday", "1");
+    if (sellsBedsOnlyToggle?.checked) url.searchParams.set("sellsBeds", "1");
+    if (sellsMattressesOnlyToggle?.checked) url.searchParams.set("sellsMattresses", "1");
 
     const nextUrl = `${url.pathname}${url.search}${url.hash}`;
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -684,6 +710,8 @@ const structuredData = {
     if (multiLocationOnlyToggle) multiLocationOnlyToggle.checked = false;
     if (fourStarBrandOnlyToggle) fourStarBrandOnlyToggle.checked = false;
     if (openSundayOnlyToggle) openSundayOnlyToggle.checked = false;
+    if (sellsBedsOnlyToggle) sellsBedsOnlyToggle.checked = false;
+    if (sellsMattressesOnlyToggle) sellsMattressesOnlyToggle.checked = false;
   };
 
   const applyFiltersFromUrl = () => {
@@ -708,6 +736,12 @@ const structuredData = {
     if (openSundayOnlyToggle) {
       openSundayOnlyToggle.checked = hasEnabledUrlParam(params, "openSunday");
     }
+    if (sellsBedsOnlyToggle) {
+      sellsBedsOnlyToggle.checked = hasEnabledUrlParam(params, "sellsBeds");
+    }
+    if (sellsMattressesOnlyToggle) {
+      sellsMattressesOnlyToggle.checked = hasEnabledUrlParam(params, "sellsMattresses");
+    }
 
     applyBrandFilters({ syncUrl: false });
   };
@@ -716,6 +750,8 @@ const structuredData = {
   multiLocationOnlyToggle?.addEventListener("change", () => applyBrandFilters());
   fourStarBrandOnlyToggle?.addEventListener("change", () => applyBrandFilters());
   openSundayOnlyToggle?.addEventListener("change", () => applyBrandFilters());
+  sellsBedsOnlyToggle?.addEventListener("change", () => applyBrandFilters());
+  sellsMattressesOnlyToggle?.addEventListener("change", () => applyBrandFilters());
   for (const toggle of document.querySelectorAll("[data-store-toggle]")) {
     toggle.addEventListener("click", () => {
       const storeList = toggle.closest(".store-list");
