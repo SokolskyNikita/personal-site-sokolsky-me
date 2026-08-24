@@ -1,9 +1,11 @@
 ---
 export const prerender = true;
 
-const pageTitle = "5-day trip from Buenos Aires, September 2026";
+import research from "./_ba-6-plus-research.json";
+
+const pageTitle = "6-plus-day trips from Buenos Aires, September 2026";
 const pageDescription =
-  "Top South America destinations that fit a 5-day trip from EZE/AEP in September 2026, ranked by door-to-hotel time. Two adults, economy round-trip, 3-star+ hotel by US standards.";
+  "South America destinations that need six or more days from EZE/AEP in September 2026, ranked by door-to-hotel time. Two adults, economy round-trip, 3-star+ hotel by US standards.";
 const themeColorLight = "#f7f4ef";
 const themeColorDark = "#161412";
 const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
@@ -17,380 +19,67 @@ const usd = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
+type Via = "nonstop" | "1-stop" | "2-stop" | "ferry" | "bus";
+
 type Pick = {
   rank: number;
   place: string;
   airport: string;
   wiki: string;
-  via: "nonstop" | "1-stop" | "ferry";
+  via: Via;
   flightTime: string;
   time: string;
   timeMinutes: number;
   window: string;
   flightCost: number;
   hotelCost: number;
+  nights: number;
   rain: string;
   day: string;
   what: string;
 };
 
-const picks: Pick[] = [
-  {
-    rank: 1,
-    place: "Colonia del Sacramento",
-    airport: "ferry",
-    wiki: "https://en.wikipedia.org/wiki/Colonia_del_Sacramento",
-    via: "ferry",
-    flightTime: "1h 15m",
-    time: "2h 50m",
-    timeMinutes: 170,
-    window: "Wed 9 → Mon 14",
-    flightCost: 140,
-    hotelCost: 480,
-    rain: "23%",
-    day: "18°C",
-    what: "A Portuguese 1680 peninsula town facing Buenos Aires, with a street plan that follows the terrain instead of Spain’s colonial grid.",
-  },
-  {
-    rank: 2,
-    place: "Saltos del Moconá",
-    airport: "PSS",
-    wiki: "https://en.wikipedia.org/wiki/Mocon%C3%A1_Falls",
-    via: "nonstop",
-    flightTime: "1h 40m",
-    time: "4h 35m",
-    timeMinutes: 275,
-    window: "Wed 9 → Mon 14",
-    flightCost: 689,
-    hotelCost: 410,
-    rain: "32%",
-    day: "25°C",
-    what: "The Uruguay River drops along a submerged fault, so the falls run parallel to the current for kilometres when the water is low enough.",
-  },
-  {
-    rank: 3,
-    place: "Iguazú Falls",
-    airport: "IGR",
-    wiki: "https://en.wikipedia.org/wiki/Iguazu_Falls",
-    via: "nonstop",
-    flightTime: "1h 55m",
-    time: "4h 50m",
-    timeMinutes: 290,
-    window: "Wed 9 → Mon 14",
-    flightCost: 464,
-    hotelCost: 490,
-    rain: "33%",
-    day: "27°C",
-    what: "A horseshoe of the Iguazú River breaks into hundreds of cascades on a basaltic rim, with Atlantic Forest around it.",
-  },
-  {
-    rank: 4,
-    place: "El Leoncito / CASLEO",
-    airport: "UAQ",
-    wiki: "https://en.wikipedia.org/wiki/El_Leoncito_National_Park",
-    via: "nonstop",
-    flightTime: "2h 00m",
-    time: "5h 00m",
-    timeMinutes: 300,
-    window: "Wed 9 → Mon 14",
-    flightCost: 955,
-    hotelCost: 832,
-    rain: "3%",
-    day: "22°C",
-    what: "A high-desert park with two observatories and more than 300 clear nights a year; the sky is the reason to go.",
-  },
-  {
-    rank: 5,
-    place: "Ischigualasto and Talampaya",
-    airport: "UAQ",
-    wiki: "https://en.wikipedia.org/wiki/Ischigualasto_Provincial_Park",
-    via: "nonstop",
-    flightTime: "2h 00m",
-    time: "5h 00m",
-    timeMinutes: 300,
-    window: "Wed 9 → Mon 14",
-    flightCost: 955,
-    hotelCost: 832,
-    rain: "3%",
-    day: "22°C",
-    what: "Adjoining parks that hold a complete continental Triassic sequence: early dinosaurs, mammal ancestors, and red-rock canyons.",
-  },
-  {
-    rank: 6,
-    place: "Aconcagua Provincial Park",
-    airport: "MDZ",
-    wiki: "https://en.wikipedia.org/wiki/Aconcagua",
-    via: "nonstop",
-    flightTime: "1h 59m",
-    time: "5h 20m",
-    timeMinutes: 320,
-    window: "Wed 9 → Mon 14",
-    flightCost: 180,
-    hotelCost: 682,
-    rain: "6%",
-    day: "21°C",
-    what: "The highest mountain in the Americas; non-climbers walk the Horcones circuit toward hanging glaciers and the nearly 7,000 m summit.",
-  },
-  {
-    rank: 7,
-    place: "Quebrada de Humahuaca",
-    airport: "JUJ",
-    wiki: "https://en.wikipedia.org/wiki/Quebrada_de_Humahuaca",
-    via: "nonstop",
-    flightTime: "2h 20m",
-    time: "5h 20m",
-    timeMinutes: 320,
-    window: "Wed 9 → Mon 14",
-    flightCost: 660,
-    hotelCost: 764,
-    rain: "5%",
-    day: "16°C",
-    what: "The old Camino Inca along the Río Grande, with Purmamarca, Tilcara, churches, terraces, and mineral-colored slopes in one corridor.",
-  },
-  {
-    rank: 8,
-    place: "Península Valdés",
-    airport: "REL",
-    wiki: "https://en.wikipedia.org/wiki/Valdes_Peninsula",
-    via: "nonstop",
-    flightTime: "2h 05m",
-    time: "5h 25m",
-    timeMinutes: 325,
-    window: "Wed 9 → Mon 14",
-    flightCost: 661,
-    hotelCost: 407,
-    rain: "8%",
-    day: "17°C",
-    what: "An arid Patagonian peninsula where southern right whales calve in the gulfs and orcas, seals, and penguins use the coast.",
-  },
-  {
-    rank: 9,
-    place: "Mennonite Chaco",
-    airport: "ASU",
-    wiki: "https://en.wikipedia.org/wiki/Mennonites_in_Paraguay",
-    via: "nonstop",
-    flightTime: "1h 52m",
-    time: "5h 42m",
-    timeMinutes: 342,
-    window: "Wed 9 → Mon 14",
-    flightCost: 540,
-    hotelCost: 998,
-    rain: "22%",
-    day: "26°C",
-    what: "Plautdietsch-speaking agricultural colonies around Filadelfia, with museums on migration, farming, and Indigenous-land history.",
-  },
-  {
-    rank: 10,
-    place: "Perito Moreno",
-    airport: "FTE",
-    wiki: "https://en.wikipedia.org/wiki/Perito_Moreno_Glacier",
-    via: "nonstop",
-    flightTime: "3h 20m",
-    time: "6h 15m",
-    timeMinutes: 375,
-    window: "Wed 9 → Mon 14",
-    flightCost: 837,
-    hotelCost: 181,
-    rain: "11%",
-    day: "9°C",
-    what: "A large outlet glacier you can watch calve into a lake, the accessible edge of the Southern Patagonian Ice Field.",
-  },
-  {
-    rank: 11,
-    place: "Caral-Supe",
-    airport: "LIM",
-    wiki: "https://en.wikipedia.org/wiki/Caral",
-    via: "nonstop",
-    flightTime: "4h 45m",
-    time: "9h 25m",
-    timeMinutes: 565,
-    window: "Wed 9 → Mon 14",
-    flightCost: 657,
-    hotelCost: 542,
-    rain: "1%",
-    day: "26°C",
-    what: "Monumental earthen mounds and sunken courts from a planned city about 5,000 years old, long before the Inca.",
-  },
-  {
-    rank: 12,
-    place: "Humberstone",
-    airport: "IQQ",
-    wiki: "https://en.wikipedia.org/wiki/Humberstone_and_Santa_Laura_Saltpeter_Works",
-    via: "1-stop",
-    flightTime: "6h 48m",
-    time: "10h 53m",
-    timeMinutes: 653,
-    window: "Wed 9 → Mon 14",
-    flightCost: 662,
-    hotelCost: 336,
-    rain: "0%",
-    day: "19°C",
-    what: "Abandoned nitrate company towns in the Atacama, left standing after synthetic fertilizer killed the business.",
-  },
-  {
-    rank: 13,
-    place: "Nazca and Palpa Lines",
-    airport: "LIM",
-    wiki: "https://en.wikipedia.org/wiki/Nazca_Lines",
-    via: "nonstop",
-    flightTime: "4h 45m",
-    time: "12h 35m",
-    timeMinutes: 755,
-    window: "Wed 9 → Mon 14",
-    flightCost: 657,
-    hotelCost: 421,
-    rain: "1%",
-    day: "26°C",
-    what: "A huge group of desert geoglyphs — animals, plants, and geometry — legible from the air or a distant viewpoint.",
-  },
-  {
-    rank: 14,
-    place: "Moray and Maras",
-    airport: "CUZ",
-    wiki: "https://en.wikipedia.org/wiki/Moray_(Inca_ruin)",
-    via: "1-stop",
-    flightTime: "8h 00m",
-    time: "12h 40m",
-    timeMinutes: 760,
-    window: "Wed 9 → Mon 14",
-    flightCost: 892,
-    hotelCost: 963,
-    rain: "6%",
-    day: "18°C",
-    what: "Concentric Inca terraces with a large temperature gradient, next to working salt wells still run by local families.",
-  },
-  {
-    rank: 15,
-    place: "Colca Canyon",
-    airport: "AQP",
-    wiki: "https://en.wikipedia.org/wiki/Colca_Canyon",
-    via: "1-stop",
-    flightTime: "8h 05m",
-    time: "12h 45m",
-    timeMinutes: 765,
-    window: "Wed 9 → Mon 14",
-    flightCost: 867,
-    hotelCost: 759,
-    rain: "5%",
-    day: "21°C",
-    what: "A deep inhabited Andean canyon with pre-Inca terraces and morning condors riding thermals at eye level.",
-  },
-  {
-    rank: 16,
-    place: "Tiwanaku",
-    airport: "LPB",
-    wiki: "https://en.wikipedia.org/wiki/Tiwanaku",
-    via: "1-stop",
-    flightTime: "8h 15m",
-    time: "13h 05m",
-    timeMinutes: 785,
-    window: "Wed 9 → Mon 14",
-    flightCost: 1130,
-    hotelCost: 826,
-    rain: "10%",
-    day: "14°C",
-    what: "Pre-Inca stonework and ritual architecture on the Titicaca altiplano, from a state that flourished long before Cusco.",
-  },
-  {
-    rank: 17,
-    place: "Chan Chan",
-    airport: "TRU",
-    wiki: "https://en.wikipedia.org/wiki/Chan_Chan",
-    via: "1-stop",
-    flightTime: "10h 00m",
-    time: "14h 05m",
-    timeMinutes: 845,
-    window: "Wed 9 → Mon 14",
-    flightCost: 840,
-    hotelCost: 293,
-    rain: "1%",
-    day: "21°C",
-    what: "The Chimú capital on Peru’s desert coast: adobe palaces, walled compounds, and reliefs unlike Inca stone.",
-  },
-  {
-    rank: 18,
-    place: "Meeting of Waters",
-    airport: "MAO",
-    wiki: "https://en.wikipedia.org/wiki/Meeting_of_Waters",
-    via: "1-stop",
-    flightTime: "6h 55m",
-    time: "14h 15m",
-    timeMinutes: 855,
-    window: "Wed 9 → Mon 14",
-    flightCost: 1559,
-    hotelCost: 293,
-    rain: "33%",
-    day: "33°C",
-    what: "The dark Negro and muddy Solimões run side by side for kilometres before mixing into the Amazon.",
-  },
-  {
-    rank: 19,
-    place: "Chavín de Huántar",
-    airport: "ATA",
-    wiki: "https://en.wikipedia.org/wiki/Chav%C3%ADn_de_Huantar",
-    via: "1-stop",
-    flightTime: "10h 30m",
-    time: "15h 00m",
-    timeMinutes: 900,
-    window: "Wed 9 → Mon 14",
-    flightCost: 837,
-    hotelCost: 594,
-    rain: "5%",
-    day: "19°C",
-    what: "An early Andean ceremonial center of underground galleries, stone heads, and the Lanzón monolith, built to produce sensory effects.",
-  },
-  {
-    rank: 20,
-    place: "Potosí and Cerro Rico",
-    airport: "LPB",
-    wiki: "https://en.wikipedia.org/wiki/Cerro_Rico",
-    via: "1-stop",
-    flightTime: "8h 15m",
-    time: "20h 35m",
-    timeMinutes: 1235,
-    window: "Wed 9 → Mon 14",
-    flightCost: 1130,
-    hotelCost: 315,
-    rain: "7%",
-    day: "16°C",
-    what: "The mountain that supplied Spain’s silver: a 4,000 m city under a still-mined peak, grim and UNESCO-listed as World Heritage in Danger.",
-  },
-];
+const picks: Pick[] = [...research]
+  .map((row) => ({
+    ...row,
+    via: row.via as Via,
+    hotelCost: Math.round(row.hotelNightly * row.nights),
+    rank: 0,
+  }))
+  .sort(
+    (left, right) =>
+      left.timeMinutes - right.timeMinutes ||
+      left.flightCost + left.hotelCost - (right.flightCost + right.hotelCost),
+  )
+  .map((row, index) => ({
+    ...row,
+    rank: index + 1,
+  }));
+
+const transitWord = (via: Via) =>
+  via === "ferry" ? "crossing" : via === "bus" ? "bus" : "airborne";
+const transitLabel = (via: Via) =>
+  via === "ferry" ? "Ferry" : via === "bus" ? "Bus" : "Flight";
+const totalLabel = (via: Via) =>
+  via === "bus"
+    ? "bus + hotel"
+    : via === "ferry"
+      ? "ferry + hotel"
+      : "flights + hotel";
 
 const ruledOut = [
   {
-    place: "Kaieteur Falls",
+    place: "Five-day trips",
     reason:
-      "Highest score on the South America list, but the Georgetown day-flight plus weather buffer is a 6-day trip.",
-  },
-  {
-    place: "Mount Roraima",
-    reason: "The standard trek is 6–7 walking days before flights and transfers.",
-  },
-  {
-    place: "Torres del Paine",
-    reason: "A real visit is about 8 days once you add Punta Arenas or El Calafate access.",
-  },
-  {
-    place: "Galápagos Islands",
-    reason: "Mainland connection plus island time is about 9 days.",
-  },
-  {
-    place: "Pantanal",
-    reason: "Lodge packages from Cuiabá or Campo Grande are about 7 days.",
-  },
-  {
-    place: "Salar de Uyuni and Sud Lípez",
-    reason: "The 3-day salt-flat circuit plus La Paz or Santa Cruz connections is about 7 days.",
+      "Places that fit five days from Palermo are on the sister page, not here.",
   },
   {
     place: "Tierra del Fuego / Ushuaia",
-    reason: "Fits five days, but skipped on this page.",
+    reason: "Fits five days, so it stays on the five-day list.",
   },
   {
     place: "ESMA Museum",
-    reason:
-      "Highest remaining score that fits five days, but it is in Buenos Aires, so it is not a trip from Palermo.",
+    reason: "In Buenos Aires, so it is not a trip from Palermo.",
   },
 ];
 
@@ -405,7 +94,7 @@ const structuredData = {
     "@type": "ListItem",
     position: pick.rank,
     name: `${pick.place} (${pick.airport})`,
-    description: `${pick.flightTime} ${pick.via === "ferry" ? "ferry" : "flight"}, ${pick.time} door to hotel. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
+    description: `${pick.flightTime} ${pick.via === "bus" ? "bus" : pick.via === "ferry" ? "ferry" : "flight"}, ${pick.time} door to hotel. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
   })),
 };
 ---
@@ -449,18 +138,18 @@ const structuredData = {
     <main class="page">
       <header class="header">
         <a class="home" href="/">sokolsky.me</a>
-        <p class="eyebrow">September 2026 · 5 days · two people</p>
-        <h1>Five-day trips from Buenos Aires</h1>
+        <p class="eyebrow">September 2026 · 6+ days · two people</p>
+        <h1>Six-plus-day trips from Buenos Aires</h1>
         <p class="lede">
-          Highest-scoring places from the
+          Every place on the
           <a href="/travel/best-of-south-america/">South America list</a>
-          that actually fit five days. Default rank is door-to-hotel time from
-          Palermo (taxi to AEP or EZE, check-in, flight, immigration,
-          transfer). Toggle to sort by flights plus hotel. Costs are two
-          economy round-trips plus five nights in a US 3-star+ hotel. Window is
-          9–14 Sep 2026. Sister page:
-          <a href="/misc/ba-6-plus-day-trip/">six-plus-day trips</a>. Checked
-          24 Aug 2026.
+          whose trip estimate is six days or more. Default rank is door-to-hotel
+          time from Palermo (taxi to AEP or EZE, check-in, flight, immigration,
+          transfer). Toggle to sort by transport plus hotel. Costs are two
+          economy round-trips plus hotel nights matching the estimate (6–11).
+          Outbound is always 9 Sep 2026. Sister page:
+          <a href="/misc/ba-5-day-trip/">five-day trips</a>. Checked 24 Aug
+          2026.
         </p>
         <fieldset class="sort">
           <legend>Sort</legend>
@@ -505,12 +194,12 @@ const structuredData = {
                   </h2>
                   <p class="meta">
                     {pick.time} door to hotel · {pick.via} · {pick.flightTime}{" "}
-                    {pick.via === "ferry" ? "crossing" : "airborne"}
+                    {transitWord(pick.via)}
                   </p>
                 </div>
                 <p class="total">
                   <strong>{usd.format(pick.flightCost + pick.hotelCost)}</strong>
-                  <span>flights + hotel</span>
+                  <span>{totalLabel(pick.via)}</span>
                 </p>
               </div>
               <dl class="facts">
@@ -519,7 +208,7 @@ const structuredData = {
                   <dd>{pick.window}</dd>
                 </div>
                 <div>
-                  <dt>{pick.via === "ferry" ? "Ferry" : "Flight"}</dt>
+                  <dt>{transitLabel(pick.via)}</dt>
                   <dd>{pick.flightTime}</dd>
                 </div>
                 <div>
@@ -527,7 +216,7 @@ const structuredData = {
                   <dd>{usd.format(pick.flightCost)}</dd>
                 </div>
                 <div>
-                  <dt>Hotel 5n</dt>
+                  <dt>{`Hotel ${pick.nights}n`}</dt>
                   <dd>{usd.format(pick.hotelCost)}</dd>
                 </div>
                 <div>
@@ -561,20 +250,19 @@ const structuredData = {
       <footer class="footer">
         <p>
           Flights: Google Flights via SearchAPI, two adults, economy, gl=AR,
-          EZE/AEP, 9–14 Sep 2026. Colonia is Buquebus, not a flight. Hotels:
-          Google Hotels, two adults, same dates, US 3-star+ where they exist
-          (Wyndham/Dazzler/Esplendor/Howard Johnson, Sheraton, Casa Andina,
-          Ibis, Holiday Inn Express, Hilton Garden Inn, Costa del Sol, Casa
-          Grande); otherwise the local 3-star equivalent. Door-to-door from
-          Palermo: AEP taxi ~45 min or EZE ~70 min, domestic check-in 90 min,
-          international 120 min, plus immigration, bags, and the local
-          transfer. Timed to the city hotel (Mendoza, Posadas, San Juan, Jujuy,
-          Asunción, Ica for Nazca, Huaraz, Potosí). Sea-level and altitude
-          buffers are not in the clock. Rain and day are
+          EZE/AEP. Outbound Wed 9 Sep 2026; return is outbound plus the listed
+          nights. Fray Bentos is a Retiro bus, not a flight. Hotels: Google
+          Hotels, two adults, same dates, US 3-star+ where they exist (Wyndham,
+          Ibis, Holiday Inn, Hilton Garden Inn, Hampton, Costa del Sol, Casa
+          Andina, Marriott); otherwise the local 3-star equivalent. Door-to-door
+          from Palermo: AEP taxi ~45 min or EZE ~70 min, domestic check-in 90
+          min, international 120 min, plus immigration, bags, and the local
+          transfer. Timed to the city hotel, not the attraction (Cusco for Machu
+          Picchu, Santa Cruz for Noel Kempff, São Luís for Lençóis). Sea-level
+          and altitude buffers are not in the clock. Rain and day are
           <a href="https://weatherspark.com/">Weather Spark</a>
           September climate: chance of a wet day (≥1&nbsp;mm) and daily high
-          around 9–14 Sep, at the site (Humahuaca for the quebrada, Nazca,
-          Olleros for Chavín).
+          around the trip window, at the site.
         </p>
       </footer>
     </main>
@@ -599,7 +287,10 @@ const structuredData = {
           'input[name="sort"]',
         )) {
           input.addEventListener("change", () => {
-            if (input.checked && (input.value === "time" || input.value === "price")) {
+            if (
+              input.checked &&
+              (input.value === "time" || input.value === "price")
+            ) {
               applySort(input.value);
             }
           });
