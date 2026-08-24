@@ -17,10 +17,14 @@ const usd = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
+const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+type WeekCounts = [number, number, number, number, number, number, number];
+
 type Pick = {
   rank: number;
   place: string;
   airport: string;
+  flightTime: string;
   time: string;
   water: string;
   diving: string;
@@ -30,78 +34,97 @@ type Pick = {
   hotel: string;
   hotelCost: number;
   note: string;
+  outbound: WeekCounts;
+  inbound: WeekCounts;
 };
+
+const cell = (count: number) => (count > 0 ? String(count) : "-");
 
 const picks: Pick[] = [
   {
     rank: 1,
     place: "Porto de Galinhas",
     airport: "REC",
-    time: "6h 10m",
+    flightTime: "5h 00m",
+    time: "8h 40m",
     water: "26.4°C",
     diving: "Scuba next to the resort",
     window: "Fri 4 → Tue 8",
-    flights: "JA 3826 Fri 4, AEP 04:34–REC 09:50. JA 3827 Tue 8, REC 11:00–AEP 16:30.",
+    flights: "JA 3826 AEP 04:34–REC 09:50. JA 3827 REC 11:00–AEP 16:30.",
     flightCost: 2051,
     hotel: "Armação Resort, 1 min walk, $195/nt. Skip Boa Viagem.",
     hotelCost: 973,
-    note: "Westin all-inclusive is $2,184. Week 2 nonstops: Fri 11, Sat 12, Sun 13.",
+    note: "Westin all-inclusive is $2,184.",
+    outbound: [0, 1, 1, 0, 1, 2, 2],
+    inbound: [0, 1, 1, 0, 1, 3, 1],
   },
   {
     rank: 2,
     place: "Ponta Negra",
     airport: "NAT",
-    time: "6h 20m",
+    flightTime: "5h 35m",
+    time: "8h 50m",
     water: "26.5°C",
     diving: "Maracajaú, +90 min",
     window: "Thu 3 → Mon 7",
-    flights: "JA 3832 Thu 3, AEP 04:10–NAT 09:45. Return Sun 6 or Mon 7 only.",
+    flights: "JA 3832 AEP 04:10–NAT 09:45.",
     flightCost: 1497,
     hotel: "Golden Tulip Ponta Negra, $118/nt.",
     hotelCost: 591,
-    note: "Cheapest trip. No Tuesday return.",
+    note: "Cheapest trip.",
+    outbound: [1, 0, 0, 1, 1, 0, 2],
+    inbound: [1, 0, 0, 1, 1, 1, 1],
   },
   {
     rank: 3,
     place: "Bávaro",
     airport: "PUJ",
-    time: "8h 20m",
+    flightTime: "8h 00m",
+    time: "11h 45m",
     water: "~29°C",
     diving: "Weak resort reefs",
     window: "Fri 4 → Wed 9",
-    flights: "Arajet DM 6269 Fri 4, EZE 04:00–PUJ 11:00. Daily returns.",
+    flights: "Arajet DM 6269 EZE 04:00–PUJ 11:00.",
     flightCost: 1437,
     hotel: "Westin Puntacana, $207/nt, on the beach. Royalton Bávaro AI is $1,081.",
     hotelCost: 1036,
     note: "Hurricane season.",
+    outbound: [3, 3, 3, 3, 3, 3, 3],
+    inbound: [3, 3, 3, 3, 3, 3, 3],
   },
   {
     rank: 4,
     place: "Cancún / Cozumel",
     airport: "CUN",
-    time: "9h 30m + ferry",
+    flightTime: "9h 05m",
+    time: "13h 15m",
     water: "~29°C",
-    diving: "Best on this list; Cozumel is a ferry",
+    diving: "Best on this list; Cozumel is ~3h from CUN",
     window: "Thu 3 → Wed 9",
-    flights: "AR 1370 Thu 3, EZE 23:25–CUN 06:30 ($1,004). AR 1324 Wed 9, CUN 15:55–EZE 02:35 ($713).",
+    flights: "AR 1370 EZE 23:25–CUN 06:30 ($1,004). AR 1324 CUN 15:55–EZE 02:35 ($713).",
     flightCost: 1717,
     hotel: "Westin Cancún hotel zone, $126/nt (September low season). JW is $1,172.",
     hotelCost: 630,
-    note: "Returns Wed 9 or Mon 14, not Thu/Sat. Hurricane season.",
+    note: "Hurricane season.",
+    outbound: [0, 0, 0, 1, 0, 1, 0],
+    inbound: [1, 0, 1, 0, 0, 0, 0],
   },
   {
     rank: 5,
     place: "South Beach",
     airport: "MIA",
-    time: "9h 40m",
+    flightTime: "9h 10m",
+    time: "13h 30m",
     water: "~29°C",
     diving: "Weak wrecks and reefs",
     window: "Fri 4 → Wed 9",
-    flights: "LA 542 Fri 4, EZE 13:10–MIA 21:20. Daily nonstops.",
+    flights: "LA 542 EZE 13:10–MIA 21:20.",
     flightCost: 1311,
     hotel: "Courtyard South Beach, $165/nt. Stanton Marriott is $1,279.",
     hotelCost: 825,
     note: "Hurricane season.",
+    outbound: [5, 5, 5, 5, 5, 5, 5],
+    inbound: [6, 6, 6, 6, 6, 6, 6],
   },
 ];
 
@@ -125,8 +148,8 @@ const ruledOut = [
 ];
 
 const airports = [
-  ["REC Recife", "Several days", "26.4°C", "#1"],
-  ["NAT Natal", "Thu/Fri/Sun/Mon", "26.5°C", "#2"],
+  ["REC Recife", "Nonstop", "26.4°C", "#1"],
+  ["NAT Natal", "Nonstop", "26.5°C", "#2"],
   ["FOR Fortaleza", "Sun/Tue only", "26.6°C", "Weekend miss"],
   ["MCZ Maceió", "Sat outbound only", "~26.3°C", "No return"],
   ["BPS Porto Seguro", "Wed/Sat/Sun", "24.5°C", "Water"],
@@ -159,7 +182,7 @@ const structuredData = {
     "@type": "ListItem",
     position: pick.rank,
     name: `${pick.place} (${pick.airport})`,
-    description: `${pick.time} door to hotel. ${pick.water}. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
+    description: `${pick.flightTime} flight, ${pick.time} door to hotel. ${pick.water}. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
   })),
 };
 ---
@@ -207,9 +230,10 @@ const structuredData = {
         <h1>Warm beach from Buenos Aires</h1>
         <p class="lede">
           Direct EZE/AEP both ways, September sea above 26°C, real beach hotel.
-          Ranked by flight plus transfer, not price. Costs are two economy
-          round-trips plus five nights in a Marriott-tier hotel within a mile of
-          the beach. Checked 24 Aug 2026.
+          Ranked by door-to-door time from Palermo to the hotel (taxi to AEP or
+          EZE, check-in, flight, immigration, transfer), not price. Costs are
+          two economy round-trips plus five nights in a Marriott-tier hotel
+          within a mile of the beach. Checked 24 Aug 2026.
         </p>
       </header>
 
@@ -227,7 +251,7 @@ const structuredData = {
                     <span class="iata">{pick.airport}</span>
                   </h2>
                   <p class="meta">
-                    {pick.time} · {pick.water} · {pick.diving}
+                    {pick.time} door to hotel · {pick.water} · {pick.diving}
                   </p>
                 </div>
                 <p class="total">
@@ -241,6 +265,10 @@ const structuredData = {
                   <dd>{pick.window}</dd>
                 </div>
                 <div>
+                  <dt>Flight</dt>
+                  <dd>{pick.flightTime}</dd>
+                </div>
+                <div>
                   <dt>2× RT</dt>
                   <dd>{usd.format(pick.flightCost)}</dd>
                 </div>
@@ -249,10 +277,41 @@ const structuredData = {
                   <dd>{usd.format(pick.hotelCost)}</dd>
                 </div>
               </dl>
-              <p class="detail">{pick.flights}</p>
-              <p class="detail">
-                {pick.hotel} {pick.note}
-              </p>
+                    <table class="week">
+                      <caption>Direct out / in</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">
+                            <span class="visually-hidden">Direction</span>
+                          </th>
+                          {weekDays.map((day) => (
+                            <th scope="col">{day}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">Out</th>
+                          {pick.outbound.map((count) => (
+                            <td class={count === 0 ? "empty" : undefined}>
+                              {cell(count)}
+                            </td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th scope="row">In</th>
+                          {pick.inbound.map((count) => (
+                            <td class={count === 0 ? "empty" : undefined}>
+                              {cell(count)}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                    <p class="detail">{pick.flights}</p>
+                    <p class="detail">
+                      {pick.hotel} {pick.note}
+                    </p>
             </li>
           ))
         }
@@ -293,7 +352,8 @@ const structuredData = {
 
       <footer class="footer">
         <p>
-          Flights: Google Flights, two adults, nonstop economy, gl=AR. Hotels:
+          Flights: Google Flights, two adults, nonstop economy, gl=AR. Weekday
+          counts are AEP/EZE nonstops in the week of 1–8 Sep. Hotels:
           Google Hotels, two adults, ~4–9 Sep. Sea temps: seatemperature.org
           monthly averages. US Marriott Hotels ADR $211, Courtyard $164 (Q3
           2025, US &amp; Canada).
@@ -479,6 +539,7 @@ const structuredData = {
   .meta,
   .detail,
   .facts,
+  .week,
   .ruled,
   .audit,
   .footer {
@@ -518,7 +579,7 @@ const structuredData = {
 
   .facts {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.45rem 0.7rem;
     margin: 0.7rem 0 0.45rem;
   }
@@ -543,6 +604,67 @@ const structuredData = {
     color: var(--muted);
     font-size: 0.86rem;
     overflow-wrap: anywhere;
+  }
+
+  .week {
+    width: 100%;
+    margin: 0.65rem 0 0.2rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.74rem;
+  }
+
+  .week caption {
+    caption-side: top;
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.28rem;
+  }
+
+  .week th,
+  .week td {
+    padding: 0.22rem 0.12rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .week thead th {
+    color: var(--muted);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .week tbody th {
+    text-align: left;
+    width: 2.1rem;
+    color: var(--muted);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .week td.empty {
+    color: var(--muted);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .ruled {
@@ -631,7 +753,7 @@ const structuredData = {
     }
 
     .facts {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
