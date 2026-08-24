@@ -286,6 +286,18 @@ const picks: Pick[] = [
   },
 ];
 
+const priceOrder = new Map(
+  [...picks]
+    .sort((left, right) => {
+      const cost =
+        left.flightCost +
+        left.hotelCost -
+        (right.flightCost + right.hotelCost);
+      return cost || left.rank - right.rank;
+    })
+    .map((pick, index) => [pick.airport, index + 1]),
+);
+
 const ruledOut = [
   {
     place: "Fernando de Noronha",
@@ -385,17 +397,43 @@ const structuredData = {
         <p class="lede">
           Nonstop from EZE/AEP when it exists (sea 23°C+), even if door-to-door
           is over 13 hours. One-stop only if there is no usable nonstop, sea is
-          26°C+, and door-to-door is 13 hours or less. Ranked by time from
-          Palermo to the hotel, not price. Costs are two economy round-trips
-          plus five nights in a Marriott-tier hotel within a mile of the
-          beach. Checked 24 Aug 2026.
+          26°C+, and door-to-door is 13 hours or less. Default sort is time from
+          Palermo to the hotel; switch to price for cheapest first. Costs are
+          two economy round-trips plus five nights in a Marriott-tier hotel
+          within a mile of the beach. Checked 24 Aug 2026.
         </p>
       </header>
 
-      <ol class="picks">
+      <fieldset class="sort-toggle">
+        <legend>Sort</legend>
+        <input
+          id="sort-time"
+          type="radio"
+          name="sort"
+          value="time"
+          autocomplete="off"
+          checked
+        />
+        <label for="sort-time">Door to hotel</label>
+        <input
+          id="sort-price"
+          type="radio"
+          name="sort"
+          value="price"
+          autocomplete="off"
+        />
+        <label for="sort-price">Price</label>
+      </fieldset>
+
+      <ol class="picks" id="picks">
         {
           picks.map((pick) => (
-            <li class="pick">
+            <li
+              class="pick"
+              style={`--sort-time: ${pick.rank}; --sort-price: ${priceOrder.get(pick.airport)}`}
+              data-sort-time={pick.rank}
+              data-sort-price={priceOrder.get(pick.airport)}
+            >
               <div class="pick-top">
                 <span class="rank" aria-hidden="true">
                   {pick.rank}
@@ -532,6 +570,35 @@ const structuredData = {
         </p>
       </footer>
     </main>
+    <script>
+      const list = document.querySelector("#picks");
+      const radios = document.querySelectorAll<HTMLInputElement>(
+        'input[name="sort"]',
+      );
+      const items = list
+        ? [...list.querySelectorAll<HTMLElement>(".pick")]
+        : [];
+
+      const applySort = () => {
+        if (!list) return;
+        const price = document.querySelector<HTMLInputElement>("#sort-price");
+        const key = price?.checked ? "sortPrice" : "sortTime";
+        items
+          .sort(
+            (left, right) =>
+              Number(left.dataset[key]) - Number(right.dataset[key]),
+          )
+          .forEach((item, index) => {
+            const rank = item.querySelector(".rank");
+            if (rank) rank.textContent = String(index + 1);
+            list.append(item);
+          });
+      };
+
+      for (const radio of radios) {
+        radio.addEventListener("change", applySort);
+      }
+    </script>
   </body>
 </html>
 
@@ -647,13 +714,82 @@ const structuredData = {
     font-size: 0.95rem;
   }
 
+  .sort-toggle {
+    display: flex;
+    width: fit-content;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0 0 1rem;
+    padding: 0.2rem 0.2rem 0.2rem 0.15rem;
+    border: 1px solid var(--line);
+    background: var(--soft);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+  }
+
+  .sort-toggle legend {
+    float: left;
+    width: auto;
+    margin: 0 0.15rem 0 0.4rem;
+    padding: 0;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.9rem;
+    text-transform: uppercase;
+  }
+
+  .sort-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sort-toggle label {
+    display: inline-flex;
+    min-height: 1.9rem;
+    align-items: center;
+    padding: 0 0.7rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  #sort-time:checked ~ label[for="sort-time"],
+  #sort-price:checked ~ label[for="sort-price"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .sort-toggle label:focus-visible,
+  .sort-toggle input:focus-visible + label {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .picks {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0.85rem;
     margin: 0;
     padding: 0;
     list-style: none;
     counter-reset: none;
+  }
+
+  body:has(#sort-time:checked) .pick {
+    order: var(--sort-time);
+  }
+
+  body:has(#sort-price:checked) .pick {
+    order: var(--sort-price);
   }
 
   .pick {
