@@ -1,0 +1,637 @@
+---
+export const prerender = true;
+
+const pageTitle = "Warm-water beach from Buenos Aires, September 2026";
+const pageDescription =
+  "Direct-flight beach options from EZE/AEP for a 4–5 day trip on the first or second weekend of September 2026, ranked by door-to-hotel time.";
+const themeColorLight = "#f7f4ef";
+const themeColorDark = "#161412";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+type Pick = {
+  rank: number;
+  place: string;
+  airport: string;
+  time: string;
+  water: string;
+  diving: string;
+  window: string;
+  flights: string;
+  flightCost: number;
+  hotel: string;
+  hotelCost: number;
+  note: string;
+};
+
+const picks: Pick[] = [
+  {
+    rank: 1,
+    place: "Porto de Galinhas",
+    airport: "REC",
+    time: "6h 10m",
+    water: "26.4°C",
+    diving: "Scuba next to the resort",
+    window: "Fri 4 → Tue 8",
+    flights: "JA 3826 Fri 4, AEP 04:34–REC 09:50. JA 3827 Tue 8, REC 11:00–AEP 16:30.",
+    flightCost: 2051,
+    hotel: "Armação Resort, 1 min walk, $195/nt. Skip Boa Viagem.",
+    hotelCost: 973,
+    note: "Westin all-inclusive is $2,184. Week 2 nonstops: Fri 11, Sat 12, Sun 13.",
+  },
+  {
+    rank: 2,
+    place: "Ponta Negra",
+    airport: "NAT",
+    time: "6h 20m",
+    water: "26.5°C",
+    diving: "Maracajaú, +90 min",
+    window: "Thu 3 → Mon 7",
+    flights: "JA 3832 Thu 3, AEP 04:10–NAT 09:45. Return Sun 6 or Mon 7 only.",
+    flightCost: 1497,
+    hotel: "Golden Tulip Ponta Negra, $118/nt.",
+    hotelCost: 591,
+    note: "Cheapest trip. No Tuesday return.",
+  },
+  {
+    rank: 3,
+    place: "Bávaro",
+    airport: "PUJ",
+    time: "8h 20m",
+    water: "~29°C",
+    diving: "Weak resort reefs",
+    window: "Fri 4 → Wed 9",
+    flights: "Arajet DM 6269 Fri 4, EZE 04:00–PUJ 11:00. Daily returns.",
+    flightCost: 1437,
+    hotel: "Westin Puntacana, $207/nt, on the beach. Royalton Bávaro AI is $1,081.",
+    hotelCost: 1036,
+    note: "Hurricane season.",
+  },
+  {
+    rank: 4,
+    place: "Cancún / Cozumel",
+    airport: "CUN",
+    time: "9h 30m + ferry",
+    water: "~29°C",
+    diving: "Best on this list; Cozumel is a ferry",
+    window: "Thu 3 → Wed 9",
+    flights: "AR 1370 Thu 3, EZE 23:25–CUN 06:30 ($1,004). AR 1324 Wed 9, CUN 15:55–EZE 02:35 ($713).",
+    flightCost: 1717,
+    hotel: "Westin Cancún hotel zone, $126/nt (September low season). JW is $1,172.",
+    hotelCost: 630,
+    note: "Returns Wed 9 or Mon 14, not Thu/Sat. Hurricane season.",
+  },
+  {
+    rank: 5,
+    place: "South Beach",
+    airport: "MIA",
+    time: "9h 40m",
+    water: "~29°C",
+    diving: "Weak wrecks and reefs",
+    window: "Fri 4 → Wed 9",
+    flights: "LA 542 Fri 4, EZE 13:10–MIA 21:20. Daily nonstops.",
+    flightCost: 1311,
+    hotel: "Courtyard South Beach, $165/nt. Stanton Marriott is $1,279.",
+    hotelCost: 825,
+    note: "Hurricane season.",
+  },
+];
+
+const ruledOut = [
+  {
+    place: "Fortaleza / Meireles",
+    reason: "26.6°C and 5h 35m to the beach, but Sun/Tue only. Sunday lands Monday 03:35.",
+  },
+  {
+    place: "Maceió / Pajuçara",
+    reason: "~26.3°C and 4h 35m Saturday outbound. No nonstop return 4–13 Sep.",
+  },
+  {
+    place: "Salvador / Itapuã",
+    reason: "4h 10m and a beach, but September sea is 25.7°C.",
+  },
+  {
+    place: "Porto Seguro / Trancoso",
+    reason: "3h 45m and 20 min to hotels, but September sea is 24.5°C (max 25.4°C).",
+  },
+];
+
+const airports = [
+  ["REC Recife", "Several days", "26.4°C", "#1"],
+  ["NAT Natal", "Thu/Fri/Sun/Mon", "26.5°C", "#2"],
+  ["FOR Fortaleza", "Sun/Tue only", "26.6°C", "Weekend miss"],
+  ["MCZ Maceió", "Sat outbound only", "~26.3°C", "No return"],
+  ["BPS Porto Seguro", "Wed/Sat/Sun", "24.5°C", "Water"],
+  ["SSA Salvador", "Thu/Sat/Sun", "25.7°C", "Water"],
+  ["GIG Rio", "Daily", "21.3°C", "Water"],
+  ["FLN Florianópolis", "Daily", "~19°C", "Water"],
+  ["JPA João Pessoa", "None", "~26°C", "No nonstop"],
+  ["AJU Aracaju", "None", "~26°C", "No nonstop"],
+  ["IOS Ilhéus", "None", "colder than SSA", "No nonstop"],
+  ["UNA Una / Comandatuba", "None", "colder than SSA", "No nonstop"],
+  ["SLZ São Luís", "None", "warm", "No nonstop"],
+  ["JJD Jericoacoara", "None", "26°C+", "No nonstop"],
+  ["FEN Noronha", "None", "26°C+", "No nonstop"],
+  ["PHB Parnaíba", "None", "warm", "No nonstop"],
+  ["BEL Belém", "None", "far beaches", "No nonstop"],
+  ["VIX Vitória", "None", "~23°C", "No nonstop"],
+  ["CFB Cabo Frio", "None", "~21°C", "No nonstop"],
+  ["NVT Navegantes", "None", "cold", "No nonstop"],
+  ["SDU Rio downtown", "None", "21.3°C", "No nonstop"],
+] as const;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: picks.length,
+  itemListElement: picks.map((pick) => ({
+    "@type": "ListItem",
+    position: pick.rank,
+    name: `${pick.place} (${pick.airport})`,
+    description: `${pick.time} door to hotel. ${pick.water}. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <a class="home" href="/">sokolsky.me</a>
+        <p class="eyebrow">First or second weekend of September · 4–5 days</p>
+        <h1>Warm beach from Buenos Aires</h1>
+        <p class="lede">
+          Direct EZE/AEP both ways, September sea above 26°C, real beach hotel.
+          Ranked by flight plus transfer, not price. Costs are two economy
+          round-trips plus five nights in a Marriott-tier hotel within a mile of
+          the beach. Checked 24 Aug 2026.
+        </p>
+      </header>
+
+      <ol class="picks">
+        {
+          picks.map((pick) => (
+            <li class="pick">
+              <div class="pick-top">
+                <span class="rank" aria-hidden="true">
+                  {pick.rank}
+                </span>
+                <div class="pick-title">
+                  <h2>
+                    {pick.place}
+                    <span class="iata">{pick.airport}</span>
+                  </h2>
+                  <p class="meta">
+                    {pick.time} · {pick.water} · {pick.diving}
+                  </p>
+                </div>
+                <p class="total">
+                  <strong>{usd.format(pick.flightCost + pick.hotelCost)}</strong>
+                  <span>flights + hotel</span>
+                </p>
+              </div>
+              <dl class="facts">
+                <div>
+                  <dt>Window</dt>
+                  <dd>{pick.window}</dd>
+                </div>
+                <div>
+                  <dt>2× RT</dt>
+                  <dd>{usd.format(pick.flightCost)}</dd>
+                </div>
+                <div>
+                  <dt>Hotel 5n</dt>
+                  <dd>{usd.format(pick.hotelCost)}</dd>
+                </div>
+              </dl>
+              <p class="detail">{pick.flights}</p>
+              <p class="detail">
+                {pick.hotel} {pick.note}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <section class="ruled" aria-labelledby="ruled-heading">
+        <h2 id="ruled-heading">Close, but out</h2>
+        <ul>
+          {
+            ruledOut.map((item) => (
+              <li>
+                <strong>{item.place}.</strong> {item.reason}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <details class="audit">
+        <summary>Brazilian beach-airport audit (21)</summary>
+        <p>
+          Coastal airports that can take international traffic, checked for
+          EZE/AEP nonstops on 1–16 Sep.
+        </p>
+        <ul class="audit-list">
+          {
+            airports.map(([airport, nonstop, water, status]) => (
+              <li>
+                <strong>{airport}</strong>
+                <span>
+                  {nonstop} · {water} · {status}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+
+      <footer class="footer">
+        <p>
+          Flights: Google Flights, two adults, nonstop economy, gl=AR. Hotels:
+          Google Hotels, two adults, ~4–9 Sep. Sea temps: seatemperature.org
+          monthly averages. US Marriott Hotels ADR $211, Courtyard $164 (Q3
+          2025, US &amp; Canada).
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f4ef;
+    --ink: #1c1914;
+    --muted: #5e584e;
+    --line: #d5cfc4;
+    --soft: #efe9df;
+    --accent: #2f5d4a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161412;
+      --ink: #f3eee6;
+      --muted: #b3aa9c;
+      --line: #3a352d;
+      --soft: #221e19;
+      --accent: #8fbea8;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family:
+      "Iowan Old Style",
+      "Palatino Linotype",
+      Palatino,
+      Georgia,
+      serif;
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(42rem, 100%);
+    margin: 0 auto;
+    padding: 1.1rem 1rem 2.4rem;
+  }
+
+  .header {
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .home {
+    width: fit-content;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .home:hover {
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.7rem 0 0;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 5vw, 2.05rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .lede {
+    margin: 0.15rem 0 0;
+    max-width: 38rem;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .picks {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .pick {
+    min-width: 0;
+    padding: 0.85rem 0 0.95rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .pick-top {
+    display: grid;
+    grid-template-columns: 1.7rem minmax(0, 1fr) auto;
+    gap: 0.55rem 0.7rem;
+    align-items: start;
+  }
+
+  .rank {
+    color: var(--accent);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 1.15rem;
+    font-weight: 750;
+    line-height: 1.2;
+  }
+
+  .pick-title {
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .iata {
+    margin-left: 0.35rem;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .meta,
+  .detail,
+  .facts,
+  .ruled,
+  .audit,
+  .footer {
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+  }
+
+  .meta {
+    margin: 0.2rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .total {
+    display: grid;
+    justify-items: end;
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .total strong {
+    font-size: 1.02rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .total span {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem 0.7rem;
+    margin: 0.7rem 0 0.45rem;
+  }
+
+  .facts dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .facts dd {
+    margin: 0.12rem 0 0;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+
+  .detail {
+    margin: 0.28rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+    overflow-wrap: anywhere;
+  }
+
+  .ruled {
+    margin-top: 1.5rem;
+  }
+
+  .ruled h2,
+  .audit summary {
+    margin: 0 0 0.45rem;
+    font-family:
+      "Iowan Old Style",
+      "Palatino Linotype",
+      Palatino,
+      Georgia,
+      serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .ruled ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .ruled li + li {
+    margin-top: 0.4rem;
+  }
+
+  .audit {
+    margin-top: 1.4rem;
+  }
+
+  .audit summary {
+    cursor: pointer;
+    list-style-position: outside;
+  }
+
+  .audit p {
+    margin: 0.4rem 0 0.7rem;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .audit-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .audit-list li {
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .audit-list span {
+    color: var(--muted);
+    font-size: 0.82rem;
+    overflow-wrap: anywhere;
+  }
+
+  .footer {
+    margin-top: 1.6rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding: 0.9rem 0.85rem 2rem;
+    }
+
+    .pick-top {
+      grid-template-columns: 1.4rem minmax(0, 1fr);
+    }
+
+    .total {
+      grid-column: 2;
+      justify-items: start;
+      text-align: left;
+    }
+
+    .facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
