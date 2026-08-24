@@ -3,7 +3,7 @@ export const prerender = true;
 
 const pageTitle = "Warm-water beach from Buenos Aires, September 2026";
 const pageDescription =
-  "Direct-flight beach options from EZE/AEP for a 4–5 day trip on the first or second weekend of September 2026, ranked by door-to-hotel time.";
+  "Beach options from EZE/AEP for a 4–5 day trip on the first or second weekend of September 2026, ranked by door-to-hotel time. Nonstop when it exists, even if over 13 hours; one-stop only if there is no nonstop and door-to-door is 13 hours or less.";
 const themeColorLight = "#f7f4ef";
 const themeColorDark = "#161412";
 const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
@@ -24,9 +24,12 @@ type Pick = {
   rank: number;
   place: string;
   airport: string;
+  via: "nonstop" | "1-stop";
   flightTime: string;
   time: string;
   water: string;
+  day: string;
+  rain: number;
   diving: string;
   window: string;
   flights: string;
@@ -43,11 +46,74 @@ const cell = (count: number) => (count > 0 ? String(count) : "-");
 const picks: Pick[] = [
   {
     rank: 1,
+    place: "Porto Seguro",
+    airport: "BPS",
+    via: "nonstop",
+    flightTime: "3h 45m",
+    time: "6h 35m",
+    water: "24.5°C",
+    day: "26°C",
+    rain: 25,
+    diving: "Reef snorkel at Arraial",
+    window: "Sat 5 → Wed 9",
+    flights: "AR 1278 AEP–BPS Wed/Sat. G3 7220 EZE–BPS Sun. AR 1279 BPS–AEP Wed/Sat. G3 7219 BPS–EZE Sat.",
+    flightCost: 1287,
+    hotel: "Best Western Shalimar Praia, ~20 min, $91/nt.",
+    hotelCost: 456,
+    note: "Sunday out has no Sunday return. Next inbound is Wednesday.",
+    outbound: [0, 0, 1, 0, 0, 1, 1],
+    inbound: [0, 0, 1, 0, 0, 2, 0],
+  },
+  {
+    rank: 2,
+    place: "Itapuã",
+    airport: "SSA",
+    via: "nonstop",
+    flightTime: "4h 10m",
+    time: "7h 15m",
+    water: "25.7°C",
+    day: "28°C",
+    rain: 28,
+    diving: "Shore reefs near Stella Maris",
+    window: "Wed 2 → Sun 6",
+    flights: "G3 7213 AEP Thu/Sat. AR 1220 Thu/Sun. H2 1820 EZE Wed/Sun.",
+    flightCost: 1041,
+    hotel: "Gran Hotel Stella Maris, on the beach, $111/nt.",
+    hotelCost: 556,
+    note: "Thu/Sat out have no same-day inbound. Fri inbound has no Friday out.",
+    outbound: [0, 0, 1, 2, 0, 1, 2],
+    inbound: [0, 0, 1, 0, 2, 0, 2],
+  },
+  {
+    rank: 3,
+    place: "Meireles",
+    airport: "FOR",
+    via: "nonstop",
+    flightTime: "5h 10m",
+    time: "8h 05m",
+    water: "26.6°C",
+    day: "30°C",
+    rain: 2,
+    diving: "Weak city reefs",
+    window: "Tue 1 → Mon 7",
+    flights: "G3 7603 AEP 22:25–FOR 03:35 Tue/Sun. G3 7602 FOR 02:20–AEP 08:00 Mon/Wed.",
+    flightCost: 1199,
+    hotel: "Holiday Inn Fortaleza, 1 min walk to Iracema, $136/nt.",
+    hotelCost: 679,
+    note: "Overnight both ways. Sunday out lands Monday 03:35.",
+    outbound: [0, 1, 0, 0, 0, 0, 1],
+    inbound: [1, 0, 1, 0, 0, 0, 0],
+  },
+  {
+    rank: 4,
     place: "Porto de Galinhas",
     airport: "REC",
+    via: "nonstop",
     flightTime: "5h 00m",
     time: "8h 40m",
     water: "26.4°C",
+    day: "29°C",
+    rain: 21,
     diving: "Scuba next to the resort",
     window: "Fri 4 → Tue 8",
     flights: "JA 3826 AEP 04:34–REC 09:50. JA 3827 REC 11:00–AEP 16:30.",
@@ -59,70 +125,162 @@ const picks: Pick[] = [
     inbound: [0, 1, 1, 0, 1, 3, 1],
   },
   {
-    rank: 2,
+    rank: 5,
     place: "Ponta Negra",
     airport: "NAT",
+    via: "nonstop",
     flightTime: "5h 35m",
     time: "8h 50m",
     water: "26.5°C",
+    day: "29°C",
+    rain: 8,
     diving: "Maracajaú, +90 min",
     window: "Thu 3 → Mon 7",
     flights: "JA 3832 AEP 04:10–NAT 09:45.",
     flightCost: 1497,
     hotel: "Golden Tulip Ponta Negra, $118/nt.",
     hotelCost: 591,
-    note: "Cheapest trip.",
+    note: "Cheapest nonstop trip. Saturday inbound exists; no Saturday out.",
     outbound: [1, 0, 0, 1, 1, 0, 2],
     inbound: [1, 0, 0, 1, 1, 1, 1],
   },
   {
-    rank: 3,
+    rank: 6,
+    place: "Ponta d'Areia",
+    airport: "SLZ",
+    via: "1-stop",
+    flightTime: "7h 20m",
+    time: "10h 00m",
+    water: "27.2°C",
+    day: "32°C",
+    rain: 6,
+    diving: "Urban beach; dunes nearby",
+    window: "Fri 4 → Tue 8",
+    flights: "Fastest AEP→BSB→SLZ, about 7h 20m. Daily 1-stop via GRU, GIG, or BSB.",
+    flightCost: 1664,
+    hotel: "Luzeiros Hotel, oceanfront, $167/nt.",
+    hotelCost: 833,
+    note: "No EZE/AEP nonstop.",
+    outbound: [1, 1, 1, 1, 1, 1, 1],
+    inbound: [1, 2, 1, 1, 1, 1, 1],
+  },
+  {
+    rank: 7,
+    place: "Pajuçara",
+    airport: "MCZ",
+    via: "1-stop",
+    flightTime: "7h 35m",
+    time: "10h 10m",
+    water: "26.2°C",
+    day: "28°C",
+    rain: 22,
+    diving: "Natural pools / reefs",
+    window: "Fri 4 → Tue 8",
+    flights: "LA 8139 AEP 10:25–GRU 13:00, LA 3448 GRU 15:10–MCZ 18:00. Return via GIG.",
+    flightCost: 1511,
+    hotel: "Brisa Suítes, 6 min walk, $104/nt.",
+    hotelCost: 520,
+    note: "Nonstop is Saturday out only, with no nonstop return.",
+    outbound: [9, 7, 7, 7, 9, 8, 10],
+    inbound: [9, 9, 8, 8, 8, 8, 8],
+  },
+  {
+    rank: 8,
+    place: "Tambaú",
+    airport: "JPA",
+    via: "1-stop",
+    flightTime: "7h 45m",
+    time: "10h 15m",
+    water: "26.4°C",
+    day: "29°C",
+    rain: 18,
+    diving: "Coastal reefs",
+    window: "Fri 4 → Tue 8",
+    flights: "AEP→BSB→JPA Gol. JPA→GRU→AEP Gol. 1-stop via GRU or BSB only.",
+    flightCost: 1499,
+    hotel: "BA'RA Hotel, Tambaú beachfront. Nord Luxxor 4★ is $707.",
+    hotelCost: 1562,
+    note: "No EZE/AEP nonstop. No Marriott on the strip yet.",
+    outbound: [7, 6, 8, 7, 9, 8, 8],
+    inbound: [6, 6, 7, 6, 7, 8, 8],
+  },
+  {
+    rank: 9,
     place: "Bávaro",
     airport: "PUJ",
+    via: "nonstop",
     flightTime: "8h 00m",
     time: "11h 45m",
     water: "~29°C",
+    day: "31°C",
+    rain: 19,
     diving: "Weak resort reefs",
     window: "Fri 4 → Wed 9",
-    flights: "Arajet DM 6269 EZE 04:00–PUJ 11:00.",
-    flightCost: 1437,
-    hotel: "Westin Puntacana, $207/nt, on the beach. Royalton Bávaro AI is $1,081.",
+    flights: "Arajet DM 6269 EZE 04:00–PUJ 11:00. DM 6200 PUJ 11:15–EZE 20:15.",
+    flightCost: 1426,
+    hotel: "Westin Puntacana, $207/nt, on the beach.",
     hotelCost: 1036,
     note: "Hurricane season.",
-    outbound: [3, 3, 3, 3, 3, 3, 3],
-    inbound: [3, 3, 3, 3, 3, 3, 3],
+    outbound: [3, 3, 3, 3, 3, 4, 2],
+    inbound: [2, 5, 2, 3, 3, 5, 3],
   },
   {
-    rank: 4,
-    place: "Cancún / Cozumel",
+    rank: 10,
+    place: "Jericoacoara",
+    airport: "JJD",
+    via: "1-stop",
+    flightTime: "9h 15m",
+    time: "12h 10m",
+    water: "26.8°C",
+    day: "31°C",
+    rain: 1,
+    diving: "Wind and kite more than scuba",
+    window: "Fri 4 → Tue 8",
+    flights: "AR 1242 AEP 06:20–GRU, LA 3470 GRU–JJD 15:35. Return LA 3659 + LA 8138.",
+    flightCost: 3267,
+    hotel: "My Blue Hotel, 1 min walk, $149/nt. No Marriott in Jeri.",
+    hotelCost: 747,
+    note: "No EZE/AEP nonstop. Plus 45 min JJD transfer. Air stats are Weatherspark Cruz.",
+    outbound: [3, 0, 2, 0, 1, 1, 1],
+    inbound: [3, 2, 3, 0, 2, 3, 1],
+  },
+  {
+    rank: 11,
+    place: "Cancún",
     airport: "CUN",
+    via: "nonstop",
     flightTime: "9h 05m",
     time: "13h 15m",
     water: "~29°C",
+    day: "32°C",
+    rain: 45,
     diving: "Best on this list; Cozumel is ~3h from CUN",
     window: "Thu 3 → Wed 9",
-    flights: "AR 1370 EZE 23:25–CUN 06:30 ($1,004). AR 1324 CUN 15:55–EZE 02:35 ($713).",
+    flights: "AR 1370 EZE 23:25–CUN 06:30. AR 1324 CUN 15:55–EZE 02:35.",
     flightCost: 1717,
-    hotel: "Westin Cancún hotel zone, $126/nt (September low season). JW is $1,172.",
+    hotel: "Westin Cancún hotel zone, $126/nt. JW is $1,172.",
     hotelCost: 630,
-    note: "Hurricane season.",
+    note: "Hurricane season. Cozumel is a separate hop. No inbound on Thu/Sat out days; returns Mon/Wed.",
     outbound: [0, 0, 0, 1, 0, 1, 0],
     inbound: [1, 0, 1, 0, 0, 0, 0],
   },
   {
-    rank: 5,
+    rank: 12,
     place: "South Beach",
     airport: "MIA",
+    via: "nonstop",
     flightTime: "9h 10m",
     time: "13h 30m",
     water: "~29°C",
+    day: "31°C",
+    rain: 52,
     diving: "Weak wrecks and reefs",
     window: "Fri 4 → Wed 9",
     flights: "LA 542 EZE 13:10–MIA 21:20.",
     flightCost: 1311,
     hotel: "Courtyard South Beach, $165/nt. Stanton Marriott is $1,279.",
     hotelCost: 825,
-    note: "Hurricane season.",
+    note: "Hurricane season. No AEP nonstop.",
     outbound: [5, 5, 5, 5, 5, 5, 5],
     inbound: [6, 6, 6, 6, 6, 6, 6],
   },
@@ -130,39 +288,35 @@ const picks: Pick[] = [
 
 const ruledOut = [
   {
-    place: "Fortaleza / Meireles",
-    reason: "26.6°C and 5h 35m to the beach, but Sun/Tue only. Sunday lands Monday 03:35.",
+    place: "Fernando de Noronha",
+    reason: "1-stop out fits, but no return stays under 13h.",
   },
   {
-    place: "Maceió / Pajuçara",
-    reason: "~26.3°C and 4h 35m Saturday outbound. No nonstop return 4–13 Sep.",
+    place: "Aracaju",
+    reason: "No nonstop, and September sea averages 25.9°C.",
   },
   {
-    place: "Salvador / Itapuã",
-    reason: "4h 10m and a beach, but September sea is 25.7°C.",
-  },
-  {
-    place: "Porto Seguro / Trancoso",
-    reason: "3h 45m and 20 min to hotels, but September sea is 24.5°C (max 25.4°C).",
+    place: "Rio / Florianópolis",
+    reason: "Daily nonstops, but September sea is 21.3°C and ~19°C.",
   },
 ];
 
 const airports = [
-  ["REC Recife", "Nonstop", "26.4°C", "#1"],
-  ["NAT Natal", "Nonstop", "26.5°C", "#2"],
-  ["FOR Fortaleza", "Sun/Tue only", "26.6°C", "Weekend miss"],
-  ["MCZ Maceió", "Sat outbound only", "~26.3°C", "No return"],
-  ["BPS Porto Seguro", "Wed/Sat/Sun", "24.5°C", "Water"],
-  ["SSA Salvador", "Thu/Sat/Sun", "25.7°C", "Water"],
+  ["BPS Porto Seguro", "Wed/Sat/Sun out, Wed/Sat in", "24.5°C", "#1"],
+  ["SSA Salvador", "Wed/Thu/Sat/Sun out, Wed/Fri/Sun in", "25.7°C", "#2"],
+  ["FOR Fortaleza", "Tue/Sun out, Mon/Wed in", "26.6°C", "#3"],
+  ["REC Recife", "Nonstop; no Mon/Thu", "26.4°C", "#4"],
+  ["NAT Natal", "No Sat out; Sat in exists", "26.5°C", "#5"],
+  ["SLZ São Luís", "1-stop", "27.2°C", "#6"],
+  ["MCZ Maceió", "1-stop", "26.2°C", "#7"],
+  ["JPA João Pessoa", "1-stop", "26.4°C", "#8"],
+  ["JJD Jericoacoara", "1-stop", "26.8°C", "#10"],
+  ["FEN Noronha", "1-stop out", "26.5°C", "No return ≤13h"],
+  ["AJU Aracaju", "None", "25.9°C", "Water + no nonstop"],
   ["GIG Rio", "Daily", "21.3°C", "Water"],
   ["FLN Florianópolis", "Daily", "~19°C", "Water"],
-  ["JPA João Pessoa", "None", "~26°C", "No nonstop"],
-  ["AJU Aracaju", "None", "~26°C", "No nonstop"],
   ["IOS Ilhéus", "None", "colder than SSA", "No nonstop"],
   ["UNA Una / Comandatuba", "None", "colder than SSA", "No nonstop"],
-  ["SLZ São Luís", "None", "warm", "No nonstop"],
-  ["JJD Jericoacoara", "None", "26°C+", "No nonstop"],
-  ["FEN Noronha", "None", "26°C+", "No nonstop"],
   ["PHB Parnaíba", "None", "warm", "No nonstop"],
   ["BEL Belém", "None", "far beaches", "No nonstop"],
   ["VIX Vitória", "None", "~23°C", "No nonstop"],
@@ -182,7 +336,7 @@ const structuredData = {
     "@type": "ListItem",
     position: pick.rank,
     name: `${pick.place} (${pick.airport})`,
-    description: `${pick.flightTime} flight, ${pick.time} door to hotel. ${pick.water}. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
+    description: `${pick.via}, ${pick.flightTime} flight, ${pick.time} door to hotel. ${pick.water}. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
   })),
 };
 ---
@@ -229,11 +383,12 @@ const structuredData = {
         <p class="eyebrow">First or second weekend of September · 4–5 days</p>
         <h1>Warm beach from Buenos Aires</h1>
         <p class="lede">
-          Direct EZE/AEP both ways, September sea above 26°C, real beach hotel.
-          Ranked by door-to-door time from Palermo to the hotel (taxi to AEP or
-          EZE, check-in, flight, immigration, transfer), not price. Costs are
-          two economy round-trips plus five nights in a Marriott-tier hotel
-          within a mile of the beach. Checked 24 Aug 2026.
+          Nonstop from EZE/AEP when it exists (sea 23°C+), even if door-to-door
+          is over 13 hours. One-stop only if there is no usable nonstop, sea is
+          26°C+, and door-to-door is 13 hours or less. Ranked by time from
+          Palermo to the hotel, not price. Costs are two economy round-trips
+          plus five nights in a Marriott-tier hotel within a mile of the
+          beach. Checked 24 Aug 2026.
         </p>
       </header>
 
@@ -251,7 +406,7 @@ const structuredData = {
                     <span class="iata">{pick.airport}</span>
                   </h2>
                   <p class="meta">
-                    {pick.time} door to hotel · {pick.water} · {pick.diving}
+                    {pick.time} door to hotel · {pick.via} · {pick.diving}
                   </p>
                 </div>
                 <p class="total">
@@ -277,8 +432,24 @@ const structuredData = {
                   <dd>{usd.format(pick.hotelCost)}</dd>
                 </div>
               </dl>
+              <dl class="facts climate">
+                <div>
+                  <dt>Sea</dt>
+                  <dd>{pick.water}</dd>
+                </div>
+                <div>
+                  <dt>Day high</dt>
+                  <dd>{pick.day}</dd>
+                </div>
+                <div>
+                  <dt>Rain</dt>
+                  <dd>{pick.rain}%</dd>
+                </div>
+              </dl>
                     <table class="week">
-                      <caption>Direct out / in</caption>
+                      <caption>
+                        {pick.via === "nonstop" ? "Nonstop" : "1-stop ≤13h"}
+                      </caption>
                       <thead>
                         <tr>
                           <th scope="col">
@@ -334,7 +505,7 @@ const structuredData = {
         <summary>Brazilian beach-airport audit (21)</summary>
         <p>
           Coastal airports that can take international traffic, checked for
-          EZE/AEP nonstops on 1–16 Sep.
+          EZE/AEP nonstops and 1-stops under 13h on 1–16 Sep.
         </p>
         <ul class="audit-list">
           {
@@ -352,11 +523,16 @@ const structuredData = {
 
       <footer class="footer">
         <p>
-          Flights: Google Flights, two adults, nonstop economy, gl=AR. Weekday
-          counts are AEP/EZE nonstops in the week of 1–8 Sep. Hotels:
-          Google Hotels, two adults, ~4–9 Sep. Sea temps: seatemperature.org
-          monthly averages. US Marriott Hotels ADR $211, Courtyard $164 (Q3
-          2025, US &amp; Canada).
+          Flights: Google Flights, two adults, economy, gl=AR. If a nonstop
+          exists, only nonstops are shown, including trips over 13 hours.
+          One-stop counts are only for airports with no usable nonstop, and
+          stay ≤13h. Weekday tables cover the week of 1–8 Sep.           Hotels: Google
+          Hotels, two adults, ~4–9 Sep. Sea: seatemperature.org monthly
+          averages. Day high and rain: Weatherspark typical September daily
+          high and chance of a wet day (≥1 mm); rain is the mid-month value
+          when the month slides. Jericoacoara air is Cruz, the nearest
+          Weatherspark station. US Marriott Hotels ADR $211, Courtyard $164
+          (Q3 2025, US &amp; Canada).
         </p>
       </footer>
     </main>
@@ -584,6 +760,13 @@ const structuredData = {
     margin: 0.7rem 0 0.45rem;
   }
 
+  .facts.climate {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 0.15rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid var(--line);
+  }
+
   .facts dt {
     color: var(--muted);
     font-size: 0.68rem;
@@ -754,6 +937,10 @@ const structuredData = {
 
     .facts {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .facts.climate {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

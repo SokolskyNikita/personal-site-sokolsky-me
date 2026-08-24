@@ -1,0 +1,692 @@
+---
+export const prerender = true;
+
+const pageTitle = "5-day trip from Buenos Aires, September 2026";
+const pageDescription =
+  "Top South America destinations that fit a 5-day trip from EZE/AEP in September 2026, ranked by door-to-hotel time. Two adults, economy round-trip, 3-star+ hotel by US standards.";
+const themeColorLight = "#f7f4ef";
+const themeColorDark = "#161412";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+type Pick = {
+  rank: number;
+  place: string;
+  airport: string;
+  via: "nonstop" | "1-stop";
+  flightTime: string;
+  time: string;
+  window: string;
+  flights: string;
+  flightCost: number;
+  hotel: string;
+  hotelCost: number;
+  rain: string;
+  day: string;
+  note: string;
+};
+
+const picks: Pick[] = [
+  {
+    rank: 1,
+    place: "Iguazú Falls",
+    airport: "IGR",
+    via: "nonstop",
+    flightTime: "1h 55m",
+    time: "4h 50m",
+    window: "Wed 9 → Mon 14",
+    flights: "AR 1776 AEP 08:50–IGR 10:45. AR 1779 IGR 14:15–AEP 16:15.",
+    flightCost: 464,
+    hotel: "Tré Iguazú, Puerto Iguazú, ~20 min from IGR, $98/nt.",
+    hotelCost: 490,
+    rain: "33%",
+    day: "27°C",
+    note: "Cheapest useful nonstop on this window is JetSMART from $164 rt. Both falls sides fit in five days.",
+  },
+  {
+    rank: 2,
+    place: "Península Valdés",
+    airport: "REL",
+    via: "nonstop",
+    flightTime: "2h 05m",
+    time: "5h 25m",
+    window: "Wed 9 → Mon 14",
+    flights: "JA 3191 AEP 11:08–REL 13:13. JA 3192 REL 09:58–AEP 11:55.",
+    flightCost: 661,
+    hotel: "Hotel Tolosa, 4★, Puerto Madryn, $81/nt. REL→Madryn ~65 min.",
+    hotelCost: 407,
+    rain: "8%",
+    day: "17°C",
+    note: "September is southern right whale season. Peninsula wildlife sites add about an hour from Madryn. JetSMART fare is carry-on only.",
+  },
+  {
+    rank: 3,
+    place: "Perito Moreno",
+    airport: "FTE",
+    via: "nonstop",
+    flightTime: "3h 20m",
+    time: "6h 15m",
+    window: "Wed 9 → Mon 14",
+    flights: "AR 1838 AEP 04:10–FTE 07:30. AR 1897 FTE 12:30–AEP 15:30.",
+    flightCost: 837,
+    hotel: "Marcopolo Suites, El Calafate 3★, $36/nt. FTE→town ~20 min.",
+    hotelCost: 181,
+    rain: "11%",
+    day: "9°C",
+    note: "Door-to-door is to the town hotel. The glacier balcony is another 80 min by road.",
+  },
+  {
+    rank: 4,
+    place: "Caral-Supe",
+    airport: "LIM",
+    via: "nonstop",
+    flightTime: "4h 45m",
+    time: "9h 25m",
+    window: "Wed 9 → Mon 14",
+    flights: "LA 2381 AEP 17:35–LIM 20:20. LA 2369 LIM 12:00–AEP 18:30.",
+    flightCost: 657,
+    hotel: "Hilton Garden Inn Miraflores, 4★, $108/nt. LIM→hotel ~55 min.",
+    hotelCost: 542,
+    rain: "1%",
+    day: "26°C",
+    note: "Caral is a full-day drive from Lima, about 3h each way. Base in Miraflores and spend one day on the site. Weather is for Puerto Supe, not Lima.",
+  },
+  {
+    rank: 5,
+    place: "Humberstone",
+    airport: "IQQ",
+    via: "1-stop",
+    flightTime: "6h 48m",
+    time: "10h 53m",
+    window: "Wed 9 → Mon 14",
+    flights:
+      "LA 543 EZE 12:15–SCL 14:25, LA 170 SCL 16:37–IQQ 19:03. Back LA 161 + LA 477.",
+    flightCost: 662,
+    hotel: "Holiday Inn Express Iquique, 4★, $67/nt. IQQ→hotel ~35 min.",
+    hotelCost: 336,
+    rain: "0%",
+    day: "19°C",
+    note: "Humberstone and Santa Laura sit about 45 min inland. Evening arrival still leaves four full days.",
+  },
+  {
+    rank: 6,
+    place: "Moray and Maras",
+    airport: "CUZ",
+    via: "1-stop",
+    flightTime: "8h 00m",
+    time: "12h 40m",
+    window: "Wed 9 → Mon 14",
+    flights:
+      "LA 2376 EZE 03:55–LIM 06:45, LA 2013 LIM 08:35–CUZ 09:55. Same-day Lima connect.",
+    flightCost: 892,
+    hotel: "Hilton Garden Inn Cusco, 4★, $193/nt. CUZ→hotel ~20 min.",
+    hotelCost: 963,
+    rain: "6%",
+    day: "18°C",
+    note: "Moray and Maras are a Sacred Valley day trip, about 1.5h from Cusco. Five days is enough without Machu Picchu.",
+  },
+  {
+    rank: 7,
+    place: "Colca Canyon",
+    airport: "AQP",
+    via: "1-stop",
+    flightTime: "8h 05m",
+    time: "12h 45m",
+    window: "Wed 9 → Mon 14",
+    flights:
+      "LA 2376 EZE 03:55–LIM 06:45, LA 2119 LIM 08:30–AQP 10:00. Same-day Lima connect.",
+    flightCost: 867,
+    hotel: "Wyndham Costa del Sol Arequipa, $152/nt. AQP→city ~25 min.",
+    hotelCost: 759,
+    rain: "5%",
+    day: "21°C",
+    note: "Chivay and the condor viewpoint are another 3.5h by road. Typical plan: Arequipa night, two Colca nights, Arequipa buffer. Weather is for Colca, not Arequipa.",
+  },
+  {
+    rank: 8,
+    place: "Tiwanaku",
+    airport: "LPB",
+    via: "1-stop",
+    flightTime: "8h 15m",
+    time: "13h 05m",
+    window: "Wed 9 → Mon 14",
+    flights:
+      "OB 709 EZE 14:55–VVI 16:55, OB 683 VVI 21:05–LPB 22:10. Overnight arrival.",
+    flightCost: 1130,
+    hotel: "Casa Grande Hotel, Calacoto, $165/nt. El Alto→hotel ~45 min.",
+    hotelCost: 826,
+    rain: "10%",
+    day: "14°C",
+    note: "Tiwanaku is a 1.5h day trip from La Paz. Land late, spend the first day at altitude, visit the site the next morning.",
+  },
+  {
+    rank: 9,
+    place: "Chan Chan",
+    airport: "TRU",
+    via: "1-stop",
+    flightTime: "10h 00m",
+    time: "14h 05m",
+    window: "Wed 9 → Mon 14",
+    flights: "LATAM via LIM: EZE 03:55–LIM 06:45–TRU 11:55. Return TRU 16:20–EZE +1.",
+    flightCost: 840,
+    hotel: "Costa del Sol Trujillo Centro, 4★, $59/nt. TRU→centro ~30 min.",
+    hotelCost: 293,
+    rain: "1%",
+    day: "21°C",
+    note: "Chan Chan is about 15 min from the hotel. Huacas del Sol y de la Luna fit the same stay.",
+  },
+  {
+    rank: 10,
+    place: "Meeting of Waters",
+    airport: "MAO",
+    via: "1-stop",
+    flightTime: "6h 55m",
+    time: "14h 15m",
+    window: "Wed 9 → Mon 14",
+    flights: "G3 7655 EZE–GIG, G3 2034 GIG–MAO. One stop via Rio.",
+    flightCost: 1559,
+    hotel: "Ibis Styles Manaus Centro, $59/nt. MAO→hotel ~30 min.",
+    hotelCost: 293,
+    rain: "33%",
+    day: "33°C",
+    note: "The Negro/Solimões meeting is a half-day boat from Manaus. Longest door-to-door on this list still leaves four days on the river.",
+  },
+];
+
+const ruledOut = [
+  {
+    place: "Kaieteur Falls",
+    reason:
+      "Highest score on the South America list, but the Georgetown day-flight plus weather buffer is a 6-day trip.",
+  },
+  {
+    place: "Mount Roraima",
+    reason: "The standard trek is 6–7 walking days before flights and transfers.",
+  },
+  {
+    place: "Torres del Paine",
+    reason: "A real visit is about 8 days once you add Punta Arenas or El Calafate access.",
+  },
+  {
+    place: "Galápagos Islands",
+    reason: "Mainland connection plus island time is about 9 days.",
+  },
+  {
+    place: "Pantanal",
+    reason: "Lodge packages from Cuiabá or Campo Grande are about 7 days.",
+  },
+  {
+    place: "Salar de Uyuni and Sud Lípez",
+    reason: "The 3-day salt-flat circuit plus La Paz or Santa Cruz connections is about 7 days.",
+  },
+  {
+    place: "Tierra del Fuego / Ushuaia",
+    reason: "Fits five days, but skipped on this page. Next 5-day pick is Caral-Supe.",
+  },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: picks.length,
+  itemListElement: picks.map((pick) => ({
+    "@type": "ListItem",
+    position: pick.rank,
+    name: `${pick.place} (${pick.airport})`,
+    description: `${pick.flightTime} flight, ${pick.time} door to hotel. ${usd.format(pick.flightCost + pick.hotelCost)} for two.`,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <a class="home" href="/">sokolsky.me</a>
+        <p class="eyebrow">September 2026 · 5 days · two people</p>
+        <h1>Five-day trips from Buenos Aires</h1>
+        <p class="lede">
+          Highest-scoring places from the
+          <a href="/travel/best-of-south-america/">South America list</a>
+          that actually fit five days. Ranked by door-to-hotel time from Palermo
+          (taxi to AEP or EZE, check-in, flight, immigration, transfer), not
+          price. Costs are two economy round-trips plus five nights in a US
+          3-star+ hotel. Window is 9–14 Sep 2026. Checked 24 Aug 2026.
+        </p>
+      </header>
+
+      <ol class="picks">
+        {
+          picks.map((pick) => (
+            <li class="pick">
+              <div class="pick-top">
+                <span class="rank" aria-hidden="true">
+                  {pick.rank}
+                </span>
+                <div class="pick-title">
+                  <h2>
+                    {pick.place}
+                    <span class="iata">{pick.airport}</span>
+                  </h2>
+                  <p class="meta">
+                    {pick.time} door to hotel · {pick.via} · {pick.flightTime}{" "}
+                    airborne
+                  </p>
+                </div>
+                <p class="total">
+                  <strong>{usd.format(pick.flightCost + pick.hotelCost)}</strong>
+                  <span>flights + hotel</span>
+                </p>
+              </div>
+              <dl class="facts">
+                <div>
+                  <dt>Window</dt>
+                  <dd>{pick.window}</dd>
+                </div>
+                <div>
+                  <dt>Flight</dt>
+                  <dd>{pick.flightTime}</dd>
+                </div>
+                <div>
+                  <dt>2× RT</dt>
+                  <dd>{usd.format(pick.flightCost)}</dd>
+                </div>
+                <div>
+                  <dt>Hotel 5n</dt>
+                  <dd>{usd.format(pick.hotelCost)}</dd>
+                </div>
+                <div>
+                  <dt>Rain</dt>
+                  <dd>{pick.rain}</dd>
+                </div>
+                <div>
+                  <dt>Day</dt>
+                  <dd>{pick.day}</dd>
+                </div>
+              </dl>
+              <p class="detail">{pick.flights}</p>
+              <p class="detail">
+                {pick.hotel} {pick.note}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <section class="ruled" aria-labelledby="ruled-heading">
+        <h2 id="ruled-heading">Close, but out</h2>
+        <ul>
+          {
+            ruledOut.map((item) => (
+              <li>
+                <strong>{item.place}.</strong> {item.reason}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p>
+          Flights: Google Flights via SearchAPI, two adults, economy, gl=AR,
+          EZE/AEP, 9–14 Sep 2026. Hotels: Google Hotels, two adults, same dates,
+          US 3-star+ (Ibis, Holiday Inn Express, Hilton Garden Inn, Wyndham,
+          Costa del Sol, Casa Grande). Door-to-door from Palermo: AEP taxi ~45
+          min or EZE ~70 min, domestic check-in 90 min, international 120 min,
+          plus immigration, bags, and the local transfer. Sea-level and altitude
+          buffers are not in the clock. Rain and day are
+          <a href="https://weatherspark.com/">Weather Spark</a>
+          September climate: chance of a wet day (≥1&nbsp;mm) and daily high
+          around 9–14 Sep, at the site (Puerto Supe for Caral, Colca for the
+          canyon).
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f4ef;
+    --ink: #1c1914;
+    --muted: #5e584e;
+    --line: #d5cfc4;
+    --soft: #efe9df;
+    --accent: #2f5d4a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161412;
+      --ink: #f3eee6;
+      --muted: #b3aa9c;
+      --line: #3a352d;
+      --soft: #221e19;
+      --accent: #8fbea8;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family:
+      "Iowan Old Style",
+      "Palatino Linotype",
+      Palatino,
+      Georgia,
+      serif;
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(42rem, 100%);
+    margin: 0 auto;
+    padding: 1.1rem 1rem 2.4rem;
+  }
+
+  .header {
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .home {
+    width: fit-content;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .home:hover {
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.7rem 0 0;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 5vw, 2.05rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .lede {
+    margin: 0.15rem 0 0;
+    max-width: 38rem;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .lede a {
+    text-underline-offset: 0.12em;
+  }
+
+  .picks {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .pick {
+    min-width: 0;
+    padding: 0.85rem 0 0.95rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .pick-top {
+    display: grid;
+    grid-template-columns: 1.7rem minmax(0, 1fr) auto;
+    gap: 0.55rem 0.7rem;
+    align-items: start;
+  }
+
+  .rank {
+    color: var(--accent);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 1.15rem;
+    font-weight: 750;
+    line-height: 1.2;
+  }
+
+  .pick-title {
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .iata {
+    margin-left: 0.35rem;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .meta,
+  .detail,
+  .facts,
+  .ruled,
+  .footer {
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+  }
+
+  .meta {
+    margin: 0.2rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .total {
+    display: grid;
+    justify-items: end;
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .total strong {
+    font-size: 1.02rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .total span {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem 0.7rem;
+    margin: 0.7rem 0 0.45rem;
+  }
+
+  .facts dt {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .facts dd {
+    margin: 0.12rem 0 0;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+
+  .detail {
+    margin: 0.28rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+    overflow-wrap: anywhere;
+  }
+
+  .ruled {
+    margin-top: 1.5rem;
+  }
+
+  .ruled h2 {
+    margin: 0 0 0.45rem;
+    font-family:
+      "Iowan Old Style",
+      "Palatino Linotype",
+      Palatino,
+      Georgia,
+      serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .ruled ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .ruled li + li {
+    margin-top: 0.4rem;
+  }
+
+  .footer {
+    margin-top: 1.6rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding: 0.9rem 0.85rem 2rem;
+    }
+
+    .pick-top {
+      grid-template-columns: 1.4rem minmax(0, 1fr);
+    }
+
+    .total {
+      grid-column: 2;
+      justify-items: start;
+      text-align: left;
+    }
+
+    .facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
