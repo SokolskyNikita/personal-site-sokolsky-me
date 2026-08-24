@@ -1,0 +1,995 @@
+---
+import pageData from "../../data/ba-glasses.json";
+
+export const prerender = true;
+
+const pageTitle = pageData.title;
+const pageDescription =
+  "Equipment-first CABA rankings for comprehensive eye exams, prescription glasses, and daily contact-lens fitting.";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  about: ["Ophthalmology", "Eyeglasses", "Contact lenses"],
+  hasPart: pageData.sections.map((section) => ({
+    "@type": "ItemList",
+    name: section.title,
+    numberOfItems: section.entries.length,
+    itemListElement: section.entries.map((entry) => ({
+      "@type": "ListItem",
+      position: entry.rank,
+      item: {
+        "@type":
+          entry.kind === "hospital"
+            ? "Hospital"
+            : entry.kind === "clinic"
+              ? "MedicalClinic"
+              : "LocalBusiness",
+        name: entry.name,
+        url: entry.url,
+        address: entry.address,
+        description: entry.bestFor,
+      },
+    })),
+  })),
+};
+
+const sectionNumber = (index: number) => String(index + 1).padStart(2, "0");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#f6f2e8" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <p class="eyebrow">Buenos Aires field guide · {pageData.scope}</p>
+        <h1>{pageTitle}</h1>
+        <p class="intro">{pageData.useCase}</p>
+
+        <div class="workflow" aria-label="How eye care works in Buenos Aires">
+          <p class="workflow-label">The local workflow</p>
+          <ol>
+            <li><strong>Oftalmólogo</strong><span>Exam + written receta</span></li>
+            <li><strong>Óptica</strong><span>Measurements + glasses</span></li>
+            <li><strong>Contactólogo</strong><span>Fit + trial + follow-up</span></li>
+          </ol>
+          <p class="workflow-note">{pageData.workflowNote}</p>
+        </div>
+
+        <details class="methodology">
+          <summary>How the ranking works</summary>
+          <div class="methodology-body">
+            <p>{pageData.methodology.summary}</p>
+            <p>{pageData.methodology.evidenceRule}</p>
+            <p>{pageData.methodology.perspective}</p>
+            <dl>
+              {
+                Object.entries(pageData.methodology.weights).map(([key, value]) => (
+                  <div>
+                    <dt>{key}</dt>
+                    <dd>{value}%</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </details>
+      </header>
+
+      <nav class="section-nav" aria-label="Guide sections">
+        {
+          pageData.sections.map((section, index) => (
+            <a href={`#${section.id}`}>
+              <span>{sectionNumber(index)}</span>
+              {section.shortTitle}
+              <small>{section.entries.length}</small>
+            </a>
+          ))
+        }
+        <p>Updated {updatedDate}</p>
+      </nav>
+
+      {
+        pageData.sections.map((section, sectionIndex) => (
+          <section class="ranking-section" id={section.id}>
+            <header class="section-header">
+              <p class="section-index">{sectionNumber(sectionIndex)}</p>
+              <div>
+                <h2>{section.title}</h2>
+                <p>{section.lede}</p>
+              </div>
+              <aside>
+                <strong>Equipment standard</strong>
+                <span>{section.equipmentStandard}</span>
+              </aside>
+            </header>
+
+            <div class="column-head" aria-hidden="true">
+              <span>Rank</span>
+              <span>Provider</span>
+              <span>Equipment evidence</span>
+              <span>Process and caveats</span>
+            </div>
+
+            <div class="ranking-list">
+              {section.entries.map((entry) => (
+                <article class="provider">
+                  <div class="rank-block">
+                    <span class="rank">{entry.rank}</span>
+                    <span class="score">{entry.score}<small>/100</small></span>
+                  </div>
+
+                  <div class="identity">
+                    <h3>
+                      <a href={entry.url} target="_blank" rel="noreferrer noopener">
+                        {entry.name}
+                      </a>
+                    </h3>
+                    <p class="place">{entry.neighborhood} · {entry.kind}</p>
+                    <p class="address">{entry.address}</p>
+                    <p class="role">{entry.role}</p>
+                    <p class="booking">
+                      <a href={entry.bookingUrl} target="_blank" rel="noreferrer noopener">
+                        Book / contact
+                      </a>
+                      <span>·</span>
+                      <a href={`tel:${entry.phone.replace(/[^\d+]/g, "")}`}>{entry.phone}</a>
+                    </p>
+                  </div>
+
+                  <div class="equipment">
+                    {entry.equipment.confirmed.length > 0 && (
+                      <div class="evidence-group confirmed">
+                        <p>Confirmed</p>
+                        <ul>
+                          {entry.equipment.confirmed.map((item) => <li>{item}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {entry.equipment.claimed.length > 0 && (
+                      <div class="evidence-group claimed">
+                        <p>Claimed / unnamed</p>
+                        <ul>
+                          {entry.equipment.claimed.map((item) => <li>{item}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {entry.equipment.notFound.length > 0 && (
+                      <div class="evidence-group missing">
+                        <p>Not publicly confirmed</p>
+                        <ul>
+                          {entry.equipment.notFound.map((item) => <li>{item}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+
+                  <div class="assessment">
+                    <p class="best-for">{entry.bestFor}</p>
+                    <p>{entry.process}</p>
+                    <p class="caution">{entry.caution}</p>
+                    <dl class="quick-facts">
+                      <div><dt>Coverage</dt><dd>{entry.coverage}</dd></div>
+                      <div><dt>English</dt><dd>{entry.english}</dd></div>
+                      <div><dt>Reviews</dt><dd>{entry.review}</dd></div>
+                    </dl>
+                    <details class="sources">
+                      <summary>Sources ({entry.sources.length})</summary>
+                      <ul>
+                        {entry.sources.map((source) => (
+                          <li>
+                            <a href={source.url} target="_blank" rel="noreferrer noopener">
+                              {source.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+
+      <footer class="page-footer">
+        <p>
+          Public equipment documentation is uneven. “Not publicly confirmed” is not the
+          same as “not available”—ask before booking.
+        </p>
+        <details>
+          <summary>Excluded after verification</summary>
+          <ul>
+            {pageData.excluded.map((entry) => <li><strong>{entry.name}:</strong> {entry.reason}</li>)}
+          </ul>
+        </details>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --paper: #f6f2e8;
+    --surface: #fbf8f0;
+    --ink: #181812;
+    --muted: #68675d;
+    --line: #d4ccbc;
+    --line-strong: #aaa18f;
+    --forest: #183f32;
+    --forest-soft: #dce6dc;
+    --amber: #755716;
+    --amber-soft: #eee2bd;
+    --dust: #e9e3d7;
+    --red: #7a4037;
+    --shadow: 0 1.25rem 4rem rgb(50 42 25 / 7%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #11120f;
+      --surface: #171813;
+      --ink: #eeeade;
+      --muted: #aaa79b;
+      --line: #393a31;
+      --line-strong: #5b5b4e;
+      --forest: #c4dfce;
+      --forest-soft: #213329;
+      --amber: #e0c474;
+      --amber-soft: #382f19;
+      --dust: #24251f;
+      --red: #dda095;
+      --shadow: none;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--forest-soft), transparent 20%), transparent 34rem),
+      var(--paper);
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 3px;
+  }
+
+  .page {
+    width: min(100%, 92rem);
+    margin: 0 auto;
+    padding:
+      max(1rem, env(safe-area-inset-top))
+      max(1rem, env(safe-area-inset-right))
+      max(2rem, env(safe-area-inset-bottom))
+      max(1rem, env(safe-area-inset-left));
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+    gap: 0.45rem 3rem;
+    padding: 0.2rem 0 1rem;
+  }
+
+  .home-link,
+  .eyebrow,
+  h1,
+  .intro {
+    grid-column: 1;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    margin: 0.55rem 0 0;
+    color: var(--forest);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  h1 {
+    max-width: 58rem;
+    margin: 0;
+    font-size: clamp(2rem, 5.2vw, 4.6rem);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  .intro {
+    max-width: 50rem;
+    margin: 0.45rem 0 0;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    line-height: 1.45;
+  }
+
+  .workflow {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: end;
+    padding: 1rem 0 0 1.5rem;
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .workflow-label,
+  .evidence-group > p,
+  .section-header aside strong {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .workflow ol {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.6rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .workflow li {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 0.7rem;
+    align-items: baseline;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .workflow li span,
+  .workflow-note {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .workflow-note {
+    margin: 0.7rem 0 0;
+  }
+
+  .methodology {
+    grid-column: 1 / -1;
+    margin-top: 0.8rem;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .methodology summary,
+  .sources summary,
+  .page-footer summary {
+    width: fit-content;
+    padding: 0.65rem 0;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 750;
+  }
+
+  .methodology-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem 2rem;
+    padding: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .methodology-body p {
+    margin: 0;
+  }
+
+  .methodology-body dl {
+    display: flex;
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+  }
+
+  .methodology-body dl div {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.22rem 0.45rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  .methodology-body dt {
+    text-transform: capitalize;
+  }
+
+  .methodology-body dd {
+    margin: 0;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .section-nav {
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 0 -0.35rem;
+    padding: 0.4rem;
+    border: 1px solid color-mix(in srgb, var(--line), transparent 15%);
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--paper), transparent 4%);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+  }
+
+  .section-nav a {
+    display: flex;
+    min-height: 2.4rem;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.75rem;
+    border-right: 1px solid var(--line);
+    font-size: 0.8rem;
+    font-weight: 750;
+    text-decoration: none;
+  }
+
+  .section-nav a span {
+    color: var(--forest);
+    font-size: 0.66rem;
+    font-weight: 850;
+  }
+
+  .section-nav a small {
+    display: inline-grid;
+    min-width: 1.4rem;
+    min-height: 1.4rem;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--dust);
+    color: var(--muted);
+    font-size: 0.65rem;
+  }
+
+  .section-nav > p {
+    margin: auto 0.55rem auto auto;
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  .ranking-section {
+    margin-top: clamp(2.8rem, 7vw, 6rem);
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) minmax(18rem, 0.65fr);
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+
+  .section-index {
+    margin: 0.45rem 0 0;
+    color: var(--forest);
+    font-size: 0.75rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+  }
+
+  .section-header h2 {
+    margin: 0;
+    font-size: clamp(1.65rem, 3.4vw, 3rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  .section-header div > p {
+    max-width: 50rem;
+    margin: 0.55rem 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .section-header aside {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.7rem 0 0.7rem 1rem;
+    border-left: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .column-head,
+  .provider {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(13rem, 0.9fr) minmax(18rem, 1.2fr) minmax(20rem, 1.35fr);
+  }
+
+  .column-head {
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .column-head span {
+    padding: 0.55rem 0.7rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .column-head span:first-child {
+    border-left: 0;
+  }
+
+  .provider {
+    border-bottom: 1px solid var(--line-strong);
+    background: color-mix(in srgb, var(--surface), transparent 18%);
+  }
+
+  .provider > div {
+    min-width: 0;
+    padding: 0.8rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .provider > div:first-child {
+    border-left: 0;
+  }
+
+  .rank-block {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+  }
+
+  .rank {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score {
+    width: fit-content;
+    padding: 0.18rem 0.35rem;
+    border-radius: 0.25rem;
+    background: var(--forest-soft);
+    color: var(--forest);
+    font-size: 0.7rem;
+    font-weight: 850;
+  }
+
+  .score small {
+    font-size: 0.55rem;
+    opacity: 0.75;
+  }
+
+  .identity h3 {
+    margin: 0;
+    font-size: 0.96rem;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  .place,
+  .address,
+  .role,
+  .booking {
+    margin: 0.18rem 0 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .place {
+    color: var(--forest);
+    font-weight: 750;
+    text-transform: capitalize;
+  }
+
+  .booking {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.35rem;
+    margin-top: 0.55rem;
+  }
+
+  .booking a {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .equipment {
+    display: grid;
+    gap: 0.65rem;
+    align-content: start;
+  }
+
+  .evidence-group {
+    display: grid;
+    grid-template-columns: 7.4rem minmax(0, 1fr);
+    gap: 0.35rem;
+    align-items: start;
+  }
+
+  .evidence-group > p {
+    padding-top: 0.14rem;
+  }
+
+  .evidence-group.confirmed > p {
+    color: var(--forest);
+  }
+
+  .evidence-group.claimed > p {
+    color: var(--amber);
+  }
+
+  .evidence-group.missing > p {
+    color: var(--red);
+  }
+
+  .evidence-group ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .evidence-group li {
+    padding: 0.18rem 0.36rem;
+    border-radius: 0.28rem;
+    background: var(--dust);
+    color: var(--muted);
+    font-size: 0.71rem;
+    line-height: 1.25;
+  }
+
+  .confirmed li {
+    background: var(--forest-soft);
+    color: var(--forest);
+  }
+
+  .claimed li {
+    background: var(--amber-soft);
+    color: var(--amber);
+  }
+
+  .assessment {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .assessment > p {
+    margin: 0.45rem 0 0;
+  }
+
+  .assessment > p:first-child {
+    margin-top: 0;
+  }
+
+  .best-for {
+    color: var(--ink);
+    font-weight: 750;
+  }
+
+  .caution::before {
+    content: "Watch: ";
+    color: var(--red);
+    font-weight: 800;
+  }
+
+  .quick-facts {
+    display: grid;
+    gap: 0.22rem;
+    margin: 0.7rem 0 0;
+  }
+
+  .quick-facts div {
+    display: grid;
+    grid-template-columns: 4.2rem minmax(0, 1fr);
+    gap: 0.45rem;
+  }
+
+  .quick-facts dt {
+    color: var(--ink);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .quick-facts dd {
+    margin: 0;
+  }
+
+  .sources summary {
+    padding: 0.5rem 0 0;
+    font-size: 0.7rem;
+  }
+
+  .sources ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.8rem;
+    margin: 0.35rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sources li {
+    font-size: 0.7rem;
+  }
+
+  .page-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .page-footer > p {
+    margin: 0;
+  }
+
+  .page-footer details {
+    justify-self: end;
+    max-width: 36rem;
+  }
+
+  .page-footer summary {
+    padding: 0;
+  }
+
+  .page-footer ul {
+    margin: 0.6rem 0 0;
+    padding-left: 1.1rem;
+  }
+
+  @media (max-width: 1050px) {
+    .page-header {
+      grid-template-columns: 1fr;
+    }
+
+    .home-link,
+    .eyebrow,
+    h1,
+    .intro,
+    .workflow {
+      grid-column: 1;
+    }
+
+    .workflow {
+      grid-row: auto;
+      margin-top: 0.65rem;
+    }
+
+    .section-header {
+      grid-template-columns: 2.3rem minmax(0, 1fr);
+    }
+
+    .section-header aside {
+      grid-column: 2;
+    }
+
+    .column-head {
+      display: none;
+    }
+
+    .ranking-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .provider {
+      grid-template-columns: 3rem minmax(0, 1fr);
+      grid-template-areas:
+        "rank identity"
+        "equipment equipment"
+        "assessment assessment";
+      align-content: start;
+      border: 1px solid var(--line-strong);
+      border-radius: 0.7rem;
+      overflow: hidden;
+    }
+
+    .rank-block {
+      grid-area: rank;
+    }
+
+    .identity {
+      grid-area: identity;
+    }
+
+    .equipment {
+      grid-area: equipment;
+    }
+
+    .assessment {
+      grid-area: assessment;
+    }
+
+    .provider > div {
+      border-left: 0;
+    }
+
+    .provider > .equipment,
+    .provider > .assessment {
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 700px) {
+    html {
+      scroll-padding-top: 8rem;
+    }
+
+    .page {
+      padding-right: 0.7rem;
+      padding-left: 0.7rem;
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 12.5vw, 3.3rem);
+    }
+
+    .workflow {
+      padding-left: 0.8rem;
+    }
+
+    .workflow li {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .methodology-body {
+      grid-template-columns: 1fr;
+    }
+
+    .methodology-body dl {
+      grid-column: 1;
+    }
+
+    .section-nav {
+      flex-wrap: wrap;
+      border-radius: 0.65rem;
+    }
+
+    .section-nav a {
+      flex: 1 1 auto;
+      justify-content: center;
+      padding: 0 0.45rem;
+    }
+
+    .section-nav > p {
+      flex-basis: 100%;
+      margin: 0.22rem 0 0;
+      text-align: center;
+    }
+
+    .ranking-section {
+      margin-top: 3.2rem;
+    }
+
+    .section-header {
+      grid-template-columns: 1.8rem minmax(0, 1fr);
+      gap: 0.65rem;
+    }
+
+    .section-header aside {
+      padding-left: 0.7rem;
+    }
+
+    .ranking-list {
+      grid-template-columns: 1fr;
+    }
+
+    .provider {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+    }
+
+    .provider > div {
+      padding: 0.7rem;
+    }
+
+    .evidence-group {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    .page-footer {
+      grid-template-columns: 1fr;
+    }
+
+    .page-footer details {
+      justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+</style>
