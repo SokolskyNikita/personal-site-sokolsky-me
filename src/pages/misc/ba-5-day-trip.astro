@@ -21,18 +21,17 @@ type Pick = {
   rank: number;
   place: string;
   airport: string;
+  wiki: string;
   via: "nonstop" | "1-stop";
   flightTime: string;
   time: string;
   timeMinutes: number;
   window: string;
-  flights: string;
   flightCost: number;
-  hotel: string;
   hotelCost: number;
   rain: string;
   day: string;
-  note: string;
+  what: string;
 };
 
 const picks: Pick[] = [
@@ -40,175 +39,161 @@ const picks: Pick[] = [
     rank: 1,
     place: "Iguazú Falls",
     airport: "IGR",
+    wiki: "https://en.wikipedia.org/wiki/Iguazu_Falls",
     via: "nonstop",
     flightTime: "1h 55m",
     time: "4h 50m",
     timeMinutes: 290,
     window: "Wed 9 → Mon 14",
-    flights: "AR 1776 AEP 08:50–IGR 10:45. AR 1779 IGR 14:15–AEP 16:15.",
     flightCost: 464,
-    hotel: "Tré Iguazú, Puerto Iguazú, ~20 min from IGR, $98/nt.",
     hotelCost: 490,
     rain: "33%",
     day: "27°C",
-    note: "Cheapest useful nonstop on this window is JetSMART from $164 rt. Both falls sides fit in five days.",
+    what: "A horseshoe of the Iguazú River breaks into hundreds of cascades on a basaltic rim, with Atlantic Forest around it.",
   },
   {
     rank: 2,
     place: "Península Valdés",
     airport: "REL",
+    wiki: "https://en.wikipedia.org/wiki/Valdes_Peninsula",
     via: "nonstop",
     flightTime: "2h 05m",
     time: "5h 25m",
     timeMinutes: 325,
     window: "Wed 9 → Mon 14",
-    flights: "JA 3191 AEP 11:08–REL 13:13. JA 3192 REL 09:58–AEP 11:55.",
     flightCost: 661,
-    hotel: "Hotel Tolosa, 4★, Puerto Madryn, $81/nt. REL→Madryn ~65 min.",
     hotelCost: 407,
     rain: "8%",
     day: "17°C",
-    note: "September is southern right whale season. Peninsula wildlife sites add about an hour from Madryn. JetSMART fare is carry-on only.",
+    what: "An arid Patagonian peninsula where southern right whales calve in the gulfs and orcas, seals, and penguins use the coast.",
   },
   {
     rank: 3,
     place: "Perito Moreno",
     airport: "FTE",
+    wiki: "https://en.wikipedia.org/wiki/Perito_Moreno_Glacier",
     via: "nonstop",
     flightTime: "3h 20m",
     time: "6h 15m",
     timeMinutes: 375,
     window: "Wed 9 → Mon 14",
-    flights: "AR 1838 AEP 04:10–FTE 07:30. AR 1897 FTE 12:30–AEP 15:30.",
     flightCost: 837,
-    hotel: "Marcopolo Suites, El Calafate 3★, $36/nt. FTE→town ~20 min.",
     hotelCost: 181,
     rain: "11%",
     day: "9°C",
-    note: "Door-to-door is to the town hotel. The glacier balcony is another 80 min by road.",
+    what: "A large outlet glacier you can watch calve into a lake, the accessible edge of the Southern Patagonian Ice Field.",
   },
   {
     rank: 4,
     place: "Caral-Supe",
     airport: "LIM",
+    wiki: "https://en.wikipedia.org/wiki/Caral",
     via: "nonstop",
     flightTime: "4h 45m",
     time: "9h 25m",
     timeMinutes: 565,
     window: "Wed 9 → Mon 14",
-    flights: "LA 2381 AEP 17:35–LIM 20:20. LA 2369 LIM 12:00–AEP 18:30.",
     flightCost: 657,
-    hotel: "Hilton Garden Inn Miraflores, 4★, $108/nt. LIM→hotel ~55 min.",
     hotelCost: 542,
     rain: "1%",
     day: "26°C",
-    note: "Caral is a full-day drive from Lima, about 3h each way. Base in Miraflores and spend one day on the site. Weather is for Puerto Supe, not Lima.",
+    what: "Monumental earthen mounds and sunken courts from a planned city about 5,000 years old, long before the Inca.",
   },
   {
     rank: 5,
     place: "Humberstone",
     airport: "IQQ",
+    wiki: "https://en.wikipedia.org/wiki/Humberstone_and_Santa_Laura_Saltpeter_Works",
     via: "1-stop",
     flightTime: "6h 48m",
     time: "10h 53m",
     timeMinutes: 653,
     window: "Wed 9 → Mon 14",
-    flights:
-      "LA 543 EZE 12:15–SCL 14:25, LA 170 SCL 16:37–IQQ 19:03. Back LA 161 + LA 477.",
     flightCost: 662,
-    hotel: "Holiday Inn Express Iquique, 4★, $67/nt. IQQ→hotel ~35 min.",
     hotelCost: 336,
     rain: "0%",
     day: "19°C",
-    note: "Humberstone and Santa Laura sit about 45 min inland. Evening arrival still leaves four full days.",
+    what: "Abandoned nitrate company towns in the Atacama, left standing after synthetic fertilizer killed the business.",
   },
   {
     rank: 6,
     place: "Moray and Maras",
     airport: "CUZ",
+    wiki: "https://en.wikipedia.org/wiki/Moray_(Inca_ruin)",
     via: "1-stop",
     flightTime: "8h 00m",
     time: "12h 40m",
     timeMinutes: 760,
     window: "Wed 9 → Mon 14",
-    flights:
-      "LA 2376 EZE 03:55–LIM 06:45, LA 2013 LIM 08:35–CUZ 09:55. Same-day Lima connect.",
     flightCost: 892,
-    hotel: "Hilton Garden Inn Cusco, 4★, $193/nt. CUZ→hotel ~20 min.",
     hotelCost: 963,
     rain: "6%",
     day: "18°C",
-    note: "Moray and Maras are a Sacred Valley day trip, about 1.5h from Cusco. Five days is enough without Machu Picchu.",
+    what: "Concentric Inca terraces with a large temperature gradient, next to working salt wells still run by local families.",
   },
   {
     rank: 7,
     place: "Colca Canyon",
     airport: "AQP",
+    wiki: "https://en.wikipedia.org/wiki/Colca_Canyon",
     via: "1-stop",
     flightTime: "8h 05m",
     time: "12h 45m",
     timeMinutes: 765,
     window: "Wed 9 → Mon 14",
-    flights:
-      "LA 2376 EZE 03:55–LIM 06:45, LA 2119 LIM 08:30–AQP 10:00. Same-day Lima connect.",
     flightCost: 867,
-    hotel: "Wyndham Costa del Sol Arequipa, $152/nt. AQP→city ~25 min.",
     hotelCost: 759,
     rain: "5%",
     day: "21°C",
-    note: "Chivay and the condor viewpoint are another 3.5h by road. Typical plan: Arequipa night, two Colca nights, Arequipa buffer. Weather is for Colca, not Arequipa.",
+    what: "A deep inhabited Andean canyon with pre-Inca terraces and morning condors riding thermals at eye level.",
   },
   {
     rank: 8,
     place: "Tiwanaku",
     airport: "LPB",
+    wiki: "https://en.wikipedia.org/wiki/Tiwanaku",
     via: "1-stop",
     flightTime: "8h 15m",
     time: "13h 05m",
     timeMinutes: 785,
     window: "Wed 9 → Mon 14",
-    flights:
-      "OB 709 EZE 14:55–VVI 16:55, OB 683 VVI 21:05–LPB 22:10. Overnight arrival.",
     flightCost: 1130,
-    hotel: "Casa Grande Hotel, Calacoto, $165/nt. El Alto→hotel ~45 min.",
     hotelCost: 826,
     rain: "10%",
     day: "14°C",
-    note: "Tiwanaku is a 1.5h day trip from La Paz. Land late, spend the first day at altitude, visit the site the next morning.",
+    what: "Pre-Inca stonework and ritual architecture on the Titicaca altiplano, from a state that flourished long before Cusco.",
   },
   {
     rank: 9,
     place: "Chan Chan",
     airport: "TRU",
+    wiki: "https://en.wikipedia.org/wiki/Chan_Chan",
     via: "1-stop",
     flightTime: "10h 00m",
     time: "14h 05m",
     timeMinutes: 845,
     window: "Wed 9 → Mon 14",
-    flights: "LATAM via LIM: EZE 03:55–LIM 06:45–TRU 11:55. Return TRU 16:20–EZE +1.",
     flightCost: 840,
-    hotel: "Costa del Sol Trujillo Centro, 4★, $59/nt. TRU→centro ~30 min.",
     hotelCost: 293,
     rain: "1%",
     day: "21°C",
-    note: "Chan Chan is about 15 min from the hotel. Huacas del Sol y de la Luna fit the same stay.",
+    what: "The Chimú capital on Peru’s desert coast: adobe palaces, walled compounds, and reliefs unlike Inca stone.",
   },
   {
     rank: 10,
     place: "Meeting of Waters",
     airport: "MAO",
+    wiki: "https://en.wikipedia.org/wiki/Meeting_of_Waters",
     via: "1-stop",
     flightTime: "6h 55m",
     time: "14h 15m",
     timeMinutes: 855,
     window: "Wed 9 → Mon 14",
-    flights: "G3 7655 EZE–GIG, G3 2034 GIG–MAO. One stop via Rio.",
     flightCost: 1559,
-    hotel: "Ibis Styles Manaus Centro, $59/nt. MAO→hotel ~30 min.",
     hotelCost: 293,
     rain: "33%",
     day: "33°C",
-    note: "The Negro/Solimões meeting is a half-day boat from Manaus. Longest door-to-door on this list still leaves four days on the river.",
+    what: "The dark Negro and muddy Solimões run side by side for kilometres before mixing into the Amazon.",
   },
 ];
 
@@ -341,7 +326,14 @@ const structuredData = {
                 </span>
                 <div class="pick-title">
                   <h2>
-                    {pick.place}
+                    <a
+                      class="place"
+                      href={pick.wiki}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      {pick.place}
+                    </a>
                     <span class="iata">{pick.airport}</span>
                   </h2>
                   <p class="meta">
@@ -380,10 +372,7 @@ const structuredData = {
                   <dd>{pick.day}</dd>
                 </div>
               </dl>
-              <p class="detail">{pick.flights}</p>
-              <p class="detail">
-                {pick.hotel} {pick.note}
-              </p>
+              <p class="detail">{pick.what}</p>
             </li>
           ))
         }
@@ -673,6 +662,13 @@ const structuredData = {
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.2;
+  }
+
+  .place {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.14em;
   }
 
   .iata {
