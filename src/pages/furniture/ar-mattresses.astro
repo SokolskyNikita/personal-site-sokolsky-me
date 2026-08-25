@@ -217,6 +217,33 @@ const structuredData = {
                         {mattress.shipsNationally ? " · ships nationally" : ""}
                       </dd>
                     </div>
+                    <div>
+                      <dt>Showroom</dt>
+                      <dd>
+                        {mattress.hasShowroom ? (
+                          <>
+                            {mattress.showroomNeighborhood}
+                            {" · "}
+                            {mattress.showroomOnGoogleMaps && mattress.showroomMapsUrl ? (
+                              <a
+                                href={mattress.showroomMapsUrl}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                {mattress.showroomAddress}
+                              </a>
+                            ) : (
+                              mattress.showroomAddress
+                            )}
+                            {!mattress.showroomOnGoogleMaps && (
+                              <span class="showroom-flag"> · not on Google Maps</span>
+                            )}
+                          </>
+                        ) : (
+                          "No showroom"
+                        )}
+                      </dd>
+                    </div>
                   </dl>
                   <a class="buy" href={mattress.url} target="_blank" rel="noreferrer noopener">
                     Open listing
@@ -243,6 +270,12 @@ const structuredData = {
           Sleep quality ranks construction, not reviews. Pocket springs and
           hybrids sit above Bonnell. Taller beds and higher-density foam with a
           pillow layer rise. Boxed 20 cm foam falls.
+        </p>
+        <p>
+          Showroom is the seller’s closest walk-in store to Palermo. Addresses
+          were confirmed operational with the Google Maps Places API. Sealy’s
+          official Mercado Libre shop and ESTEBANTABLADA have no public
+          showroom pin.
         </p>
         <p>
           Related:{" "}
@@ -574,6 +607,10 @@ const structuredData = {
     width: fit-content;
     margin-top: 0.35rem;
     font-weight: 700;
+  }
+
+  .showroom-flag {
+    color: var(--text-muted);
   }
 
   .notes {
