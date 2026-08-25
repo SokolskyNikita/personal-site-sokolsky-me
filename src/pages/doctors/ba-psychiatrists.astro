@@ -1,0 +1,1026 @@
+---
+export const prerender = true;
+
+const pageTitle = "Best BA psychiatrists";
+const pageDescription =
+  "Ranked Buenos Aires psychiatrists for adult depression first and ADHD second, with hospital desks and private-consultorio notes. English is irrelevant.";
+const themeColorLight = "#fcfaf7";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date());
+
+type MedifeStatus = "yes" | "verify" | "private";
+type DoctorKind = "hospital" | "independent";
+
+type BookingLink = {
+  label: string;
+  href: string;
+};
+
+type BookingPlace = {
+  name: string;
+  url?: string;
+  address: string;
+  note?: string;
+  links?: BookingLink[];
+};
+
+type Psychiatrist = {
+  rank: number;
+  kind: DoctorKind;
+  name: string;
+  role: string;
+  url: string;
+  location: string;
+  notes: string;
+  medifeLabel: string;
+  medifeStatus: MedifeStatus;
+  places: BookingPlace[];
+};
+
+const kindLabel: Record<DoctorKind, string> = {
+  hospital: "Hospital / clinic",
+  independent: "Independent",
+};
+
+const doctors: Psychiatrist[] = [
+  {
+    rank: 1,
+    kind: "hospital",
+    name: "Marcelo Cetkovich",
+    role: "INECO medical director · mood clinic",
+    url: "https://www.ineco.org.ar/profesionales/cetkovich-marcelo-gustavo/",
+    location: "INECO Central, Marcelo T. de Alvear 1632, Recoleta",
+    notes:
+      "2023 Argentine bipolar-consensus first author. ADHD is secondary: 2017 J Affect Disord on depressive symptoms in adult ADHD; 2018 Cochrane CBT-for-adult-ADHD co-author.",
+    medifeLabel: "Verify — INECO private; Favaloro takes prepagas",
+    medifeStatus: "verify",
+    places: [
+      {
+        name: "INECO Central",
+        url: "https://www.ineco.org.ar/pacientes/turnos/",
+        address: "Marcelo T. de Alvear 1632, Recoleta",
+        note: "Ask by name — access may be limited.",
+        links: [
+          { label: "Turnos", href: "https://www.ineco.org.ar/pacientes/turnos/" },
+          { label: "WhatsApp", href: "https://wa.me/5491125246943" },
+        ],
+      },
+      {
+        name: "Fundación Favaloro — trastornos del ánimo",
+        url: "https://www.fundacionfavaloro.org/trastornos-del-animo/",
+        address: "Solís 461, San Telmo",
+        note: "Hospital desk. Central turnos (011) 4378-1200.",
+      },
+    ],
+  },
+  {
+    rank: 2,
+    kind: "independent",
+    name: "Sergio Strejilevich",
+    role: "ÁREA director · mood-disorders clinic",
+    url: "https://areatrastornosbipolares.com/quienes-somos/",
+    location: "ÁREA — CABA (no published street address)",
+    notes:
+      "2022–23 bipolar-consensus co-author and 2023 lithium update. Practice is depression/bipolar only. ADHD fit is differential (adult ADHD vs bipolar), not a TDAH clinic.",
+    medifeLabel: "Verify — no published cartilla",
+    medifeStatus: "verify",
+    places: [
+      {
+        name: "ÁREA — trastornos del ánimo",
+        url: "https://areatrastornosbipolares.com/",
+        address: "CABA — confirm sede",
+        note: "(011) 4806-4997 · info@areatrastornosbipolares.com",
+        links: [
+          { label: "Contacto", href: "https://areatrastornosbipolares.com/contacto/" },
+          { label: "Teléfono", href: "tel:+541148064997" },
+        ],
+      },
+    ],
+  },
+  {
+    rank: 3,
+    kind: "hospital",
+    name: "Alicia Lischinsky",
+    role: "INECO ADHD clinic chief · Favaloro psychiatry chair",
+    url: "https://www.fundacionineco.org/dra-alicia-lischinsky/",
+    location: "INECO Central, Marcelo T. de Alvear 1632, Recoleta",
+    notes:
+      "First adult TDAH clinic in Argentina (Fleni 2005 → INECO). 2024–25 Vertex consensus co-author; directs Favaloro’s adult-ADHD diplomatura. Depression is comorbidity, not her lead.",
+    medifeLabel: "Verify — INECO; sede-dependent",
+    medifeStatus: "verify",
+    places: [
+      {
+        name: "INECO — clínica de TDAH",
+        url: "https://www.ineco.org.ar/tdah/",
+        address: "Marcelo T. de Alvear 1632, Recoleta",
+        note: "Ask for neuropsychiatry / TDAH.",
+        links: [
+          { label: "Turnos", href: "https://www.ineco.org.ar/turnos" },
+          { label: "WhatsApp", href: "https://wa.me/5491125246943" },
+        ],
+      },
+    ],
+  },
+  {
+    rank: 4,
+    kind: "hospital",
+    name: "Marcela Waisman Campos",
+    role: "Neomed director · FLENI neuropsychiatry",
+    url: "https://centroneomed.com/dra-marcela-waisman-campos/",
+    location: "Centro Neomed, Palermo and Canning; also FLENI",
+    notes:
+      "Psychiatrist and cognitive neurologist. 2025 Vertex adult-ADHD consensus co-author; Favaloro psychopharmacology faculty; Hospital Clínic mood training. Neomed does TDAH testing. Academic brand is heavier on addictions than unipolar depression.",
+    medifeLabel: "Verify — FLENI lists Medifé; Neomed private",
+    medifeStatus: "verify",
+    places: [
+      {
+        name: "Centro Neomed",
+        url: "https://centroneomed.com/",
+        address: "Palermo and Canning — confirm sede",
+        note: "Private. 4822-5780 · coordinacionneomed@gmail.com",
+        links: [{ label: "WhatsApp", href: "https://wa.me/541139004753" }],
+      },
+      {
+        name: "FLENI",
+        url: "https://www.fleni.org.ar/especialidades/otras-especialidades/psiquiatria-adultos-y-ninos/",
+        address: "Confirm sede",
+        note: "Hospital path.",
+      },
+    ],
+  },
+  {
+    rank: 5,
+    kind: "independent",
+    name: "Esteban Esjaita",
+    role: "Private adult psychiatry · mood + TDAH eval",
+    url: "https://www.dresjaitapsiquiatra.com/",
+    location: "Bulnes 758, Almagro; also Av. Pavón 3010, San Cristóbal",
+    notes:
+      "Most bookable private option listing both. UBA / Borda; ~550 Doctoralia reviews. Mood/psychopharmacology is the core; ADHD is a paid eval, not an academic TDAH program. Fees ~$150k–$300k.",
+    medifeLabel: "Private only",
+    medifeStatus: "private",
+    places: [
+      {
+        name: "BULNES I",
+        url: "https://www.doctoraliar.com/perfil/esteban-esjaita",
+        address: "Bulnes 758, Almagro",
+        note: "No online reserve at this sede. Adult-TDAH eval is a separate, pricier slot.",
+        links: [
+          { label: "Doctoralia", href: "https://www.doctoraliar.com/perfil/esteban-esjaita" },
+          { label: "TopDoctors", href: "https://www.topdoctors.com.ar/doctor/esteban-esjaita/" },
+          { label: "WhatsApp", href: "https://wa.me/5491130893783" },
+        ],
+      },
+      {
+        name: "BULNESPAVON",
+        url: "https://www.dresjaitapsiquiatra.com/",
+        address: "Av. Pavón 3010, San Cristóbal",
+        note: "Transfer payment.",
+      },
+    ],
+  },
+  {
+    rank: 6,
+    kind: "hospital",
+    name: "María Fernanda Verdaguer",
+    role: "Jefa de psiquiatría · Hospital Británico",
+    url: "https://www.doctoraliar.com/perfil/maria-fernanda-verdaguer",
+    location: "Hospital Británico Central, Perdriel 74, Barracas",
+    notes:
+      "AAP 2025 depressive-disorders faculty; 2024 paper on depression recovery in Argentina. ADHD is an AAP 2025 panel, not a clinic. Rodríguez Peña 1385 is a different Verdaguer (neurosurgeon).",
+    medifeLabel: "Yes via Británico",
+    medifeStatus: "yes",
+    places: [
+      {
+        name: "Hospital Británico",
+        url: "https://www.hospitalbritanico.org.ar/",
+        address: "Perdriel 74, Barracas",
+        note: "Ask for Verdaguer. No Doctoralia slots.",
+        links: [{ label: "Turnos", href: "tel:08102222748" }],
+      },
+    ],
+  },
+  {
+    rank: 7,
+    kind: "hospital",
+    name: "Silvina Domínguez",
+    role: "INECO medical coordinator · adult psychiatry",
+    url: "https://www.ineco.org.ar/profesionales/silvina-dominguez/",
+    location: "INECO Central, Marcelo T. de Alvear 1632, Recoleta",
+    notes:
+      "Torcuato de Alvear residency. 2025–26 public work is depression-first. No ADHD publications — ask the desk for Lischinsky if TDAH is the live question.",
+    medifeLabel: "Verify — INECO; sede-dependent",
+    medifeStatus: "verify",
+    places: [
+      {
+        name: "INECO Central",
+        url: "https://www.ineco.org.ar/profesionales/silvina-dominguez/",
+        address: "Marcelo T. de Alvear 1632, Recoleta",
+        note: "Usually easier to book than Cetkovich. LinkedIn mentions a private consultorio; no public address.",
+        links: [
+          { label: "Turnos", href: "https://www.ineco.org.ar/turnos" },
+          { label: "WhatsApp", href: "https://wa.me/5491125246943" },
+        ],
+      },
+    ],
+  },
+  {
+    rank: 8,
+    kind: "hospital",
+    name: "José Luis Faccioli",
+    role: "Jefe de psiquiatría · Hospital Italiano",
+    url: "https://www.hospitalitaliano.org.ar/hiba/es/sitio/psiquiatria",
+    location: "Consultorios Psiquiatría, Potosí 4060, 2°, Almagro",
+    notes:
+      "ANM 2023 psychiatry prize; Infobae/SIIC work on depression in chronic illness (trastorno somatotímico). No ADHD evidence. More desk/teaching than a first-visit slot.",
+    medifeLabel: "Yes via Italiano",
+    medifeStatus: "yes",
+    places: [
+      {
+        name: "Hospital Italiano — psiquiatría",
+        url: "https://www.hospitalitaliano.org.ar/hiba/es/sitio/psiquiatria",
+        address: "Potosí 4060, 2°, Almagro",
+        note: "Ask for Faccioli.",
+        links: [
+          {
+            label: "Contacto",
+            href: "https://www.hospitalitaliano.org.ar/hiba/es/sitio/psiquiatria/contacto",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    rank: 9,
+    kind: "independent",
+    name: "Edna Yamile Abuabara",
+    role: "Private adult psychiatry · Recoleta",
+    url: "https://www.topdoctors.com.ar/doctor/edna-yamile-abuabara/",
+    location: "Mansilla 2410, 2° A, Recoleta",
+    notes:
+      "Lists both depression and adult TDAH. Thin evidence: ~2 TopDoctors reviews, no ADHD papers. Marketing also covers trauma/EMDR, legal, palliative, CBD.",
+    medifeLabel: "Private only",
+    medifeStatus: "private",
+    places: [
+      {
+        name: "Consultorio Mansilla",
+        url: "https://www.topdoctors.com.ar/doctor/edna-yamile-abuabara/",
+        address: "Gral. Lucio Norberto Mansilla 2410, 2° A, Recoleta",
+        note: "Secretary Germán. First visit from ~$95.000 — confirm.",
+        links: [
+          { label: "TopDoctors", href: "https://www.topdoctors.com.ar/doctor/edna-yamile-abuabara/" },
+          { label: "WhatsApp", href: "https://wa.me/5491136877139" },
+        ],
+      },
+      {
+        name: "Centro Medicus",
+        url: "https://www.doctoraliar.com/perfil/edna-yamile-abuabara-martinez",
+        address: "Azcuénaga 2334, Recoleta; also Medicus Boulogne",
+        note: "Particular. Confirm which day.",
+      },
+    ],
+  },
+  {
+    rank: 10,
+    kind: "hospital",
+    name: "Elsa Costanzo",
+    role: "Jefa de psiquiatría · FLENI",
+    url: "https://www.fleni.org.ar/profesionales/costanzo-elsa/",
+    location: "FLENI Belgrano, Montañeses 2325; also Escobar (adults only)",
+    notes:
+      "UBA specialist-training lead at FLENI. Best for severe or treatment-resistant depression (ketamine / ECT under her service). Adult ADHD is not her path.",
+    medifeLabel: "Verify — FLENI lists Medifé",
+    medifeStatus: "verify",
+    places: [
+      {
+        name: "FLENI Belgrano",
+        url: "https://www.fleni.org.ar/profesionales/costanzo-elsa/",
+        address: "Montañeses 2325",
+        note: "Psychiatry secretariat, int. 2503. Also Escobar (adults only).",
+        links: [
+          {
+            label: "Solicitar turno",
+            href: "https://www.fleni.org.ar/info-pacientes/solicitar-turno/?especialidad-profesional=Elsa+Costanzo",
+          },
+          { label: "WhatsApp", href: "https://wa.me/541156551155" },
+        ],
+      },
+    ],
+  },
+  {
+    rank: 11,
+    kind: "independent",
+    name: "Norma Echavarria",
+    role: "Espacio TDAH · ADHD-only private practice",
+    url: "https://www.nechavarria.com/",
+    location: "Sargento Salazar 1536, Hurlingham — not CABA",
+    notes:
+      "AAP ADHD-chapter honorary president since the 1990s. ADHD-exclusive — she treats depression as a common mask of undiagnosed TDAH, not as a mood clinic. Use only if ADHD becomes the real diagnosis.",
+    medifeLabel: "Private only",
+    medifeStatus: "private",
+    places: [
+      {
+        name: "Espacio TDAH",
+        url: "https://www.nechavarria.com/",
+        address: "Sargento Salazar 1536, Hurlingham",
+        note: "WhatsApp assistant Tue–Fri 8–11. GBA west, ~45 min from Recoleta. Teleconsult offered.",
+        links: [
+          { label: "WhatsApp", href: "https://wa.me/5491166273265" },
+          { label: "Doctoralia", href: "https://www.doctoraliar.com/perfil/norma-echavarria" },
+        ],
+      },
+    ],
+  },
+];
+
+const acceptsMedifeCount = doctors.filter(
+  (doctor) => doctor.medifeStatus === "yes",
+).length;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: doctors.length,
+  itemListElement: doctors.map((doctor) => ({
+    "@type": "ListItem",
+    position: doctor.rank,
+    item: {
+      "@type": "Physician",
+      name: doctor.name,
+      url: doctor.url,
+      medicalSpecialty: "Psychiatry",
+      description: doctor.notes,
+      address: doctor.location,
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Best BA psychiatrists" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="psiquiatra Buenos Aires depresión, psychiatrist Buenos Aires ADHD, TDAH adulto CABA, INECO Cetkovich Lischinsky, Hospital Italiano psiquiatría, Hospital Británico psiquiatría"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="msapplication-TileColor" content={themeColorDark} />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color={themeColorDark} />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Buenos Aires guide</p>
+          <h1>{pageTitle}</h1>
+          <p class="intro">
+            Adult psychiatrists only. Depression first, ADHD second. English is
+            irrelevant. Booking places sit under each name.
+          </p>
+        </div>
+        <div class="toolbar" aria-label="Psychiatrist filters">
+          <fieldset class="extras-toggle">
+            <legend>Filter</legend>
+            <input id="filter-accepts-medife" type="checkbox" autocomplete="off" />
+            <label for="filter-accepts-medife"
+              >Accepts Medifé ({acceptsMedifeCount})</label
+            >
+          </fieldset>
+          <p class="meta" id="list-status">
+            Updated {updatedDate}. {doctors.length} psychiatrists.
+          </p>
+        </div>
+      </header>
+
+      <section class="clinic-list" aria-label="Ranked psychiatrists">
+        {
+          doctors.map((doctor) => (
+            <article
+              class="clinic"
+              data-accepts-medife={String(doctor.medifeStatus === "yes")}
+            >
+              <header class="clinic-head">
+                <p class="clinic-rank" aria-label={`Rank ${doctor.rank}`}>
+                  {doctor.rank}
+                </p>
+                <div class="clinic-id">
+                  <h2 class="clinic-name">
+                    <a
+                      href={doctor.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      {doctor.name}
+                    </a>
+                    {doctor.kind === "independent" && (
+                      <span class="clinic-kind">{kindLabel[doctor.kind]}</span>
+                    )}
+                  </h2>
+                  <p class="clinic-service">{doctor.role}</p>
+                </div>
+                <p
+                  class:list={[
+                    "medife",
+                    doctor.medifeStatus === "yes" && "medife-yes",
+                    doctor.medifeStatus === "verify" && "medife-verify",
+                    doctor.medifeStatus === "private" && "medife-private",
+                  ]}
+                >
+                  {doctor.medifeLabel}
+                </p>
+                <p class="clinic-notes">{doctor.notes}</p>
+              </header>
+
+              <ul class="practice-list clinic-practices">
+                {doctor.places.map((place) => (
+                  <li class="practice">
+                    <p class="practice-head">
+                      {place.url ? (
+                        <a
+                          class="practice-name"
+                          href={place.url}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                        >
+                          {place.name}
+                        </a>
+                      ) : (
+                        <span class="practice-name">{place.name}</span>
+                      )}
+                      {place.links && place.links.length > 0 && (
+                        <span class="inline-links">
+                          {place.links.map((link, index) => (
+                            <>
+                              <span class="sep"> · </span>
+                              <a
+                                href={link.href}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                {link.label}
+                              </a>
+                            </>
+                          ))}
+                        </span>
+                      )}
+                    </p>
+                    <p class="practice-meta">{place.address}</p>
+                    {place.note && <p class="practice-note">{place.note}</p>}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </section>
+    </main>
+  </body>
+</html>
+
+<script is:inline>
+  const medifeFilter = document.querySelector("#filter-accepts-medife");
+  const listStatus = document.querySelector("#list-status");
+  const clinicRows = [...document.querySelectorAll(".clinic")];
+  const totalCount = clinicRows.length;
+
+  const hasEnabledUrlParam = (params, key) => {
+    const value = params.get(key);
+    return value === "1" || value === "true" || value === "yes";
+  };
+
+  const updateFilterUrl = (acceptsMedifeOnly) => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("medife");
+    if (acceptsMedifeOnly) url.searchParams.set("medife", "1");
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  };
+
+  const applyFilters = ({ syncUrl = true } = {}) => {
+    const acceptsMedifeOnly = Boolean(medifeFilter?.checked);
+    let visibleCount = 0;
+
+    for (const row of clinicRows) {
+      const accepts = row.dataset.acceptsMedife === "true";
+      const visible = !acceptsMedifeOnly || accepts;
+      row.hidden = !visible;
+      if (visible) visibleCount += 1;
+    }
+
+    if (listStatus) {
+      listStatus.textContent = acceptsMedifeOnly
+        ? `Showing ${visibleCount} psychiatrist${visibleCount === 1 ? "" : "s"} who accept Medifé.`
+        : `Showing all ${totalCount} psychiatrists.`;
+    }
+
+    if (syncUrl) updateFilterUrl(acceptsMedifeOnly);
+  };
+
+  const applyFiltersFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    if (medifeFilter) {
+      medifeFilter.checked = hasEnabledUrlParam(params, "medife");
+    }
+    applyFilters({ syncUrl: false });
+  };
+
+  medifeFilter?.addEventListener("change", () => applyFilters());
+  applyFiltersFromUrl();
+  window.addEventListener("pageshow", applyFiltersFromUrl);
+  window.addEventListener("popstate", applyFiltersFromUrl);
+</script>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fcfaf7;
+    --surface: #fffdf8;
+    --surface-soft: #efe7db;
+    --text: #181612;
+    --text-muted: #6f675c;
+    --border: #d9cfc0;
+    --border-strong: #c8baa8;
+    --accent: #28402f;
+    --accent-soft: #dfe8d7;
+    --link: #17281d;
+    --yes: #2f5d3a;
+    --yes-soft: #dcead9;
+    --verify: #8a6a2f;
+    --verify-soft: #f3e7c8;
+    --private: #6f675c;
+    --private-soft: #ebe4d8;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --pad: max(0.7rem, env(safe-area-inset-left, 0px));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171613;
+      --surface-soft: #211f1a;
+      --text: #f2eee7;
+      --text-muted: #aaa297;
+      --border: #343027;
+      --border-strong: #4a4338;
+      --accent: #dce8d2;
+      --accent-soft: #263022;
+      --link: #f6f1e8;
+      --yes: #b7d4b8;
+      --yes-soft: #243126;
+      --verify: #e2c788;
+      --verify-soft: #332914;
+      --private: #aaa297;
+      --private-soft: #26231e;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+      sans-serif;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(
+        circle at 12% 0%,
+        color-mix(in srgb, var(--accent-soft), transparent 40%),
+        transparent 28rem
+      ),
+      var(--bg);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .page {
+    width: min(100%, 76rem);
+    margin: 0 auto;
+    padding:
+      max(0.55rem, env(safe-area-inset-top, 0px))
+      var(--pad)
+      max(0.9rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.15rem 0 0.5rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-decoration: none;
+  }
+
+  .home-link:hover {
+    color: var(--text);
+  }
+
+  .headline {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.55rem;
+  }
+
+  .extras-toggle {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.2rem;
+    margin: 0;
+    padding: 0.2rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 6%);
+  }
+
+  .extras-toggle legend {
+    margin: 0 0.15rem 0 0.2rem;
+    padding: 0;
+    color: var(--text-muted);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.6rem;
+    text-transform: uppercase;
+  }
+
+  .extras-toggle input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .extras-toggle label {
+    display: inline-flex;
+    min-height: 1.6rem;
+    align-items: center;
+    gap: 0.3rem;
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0 0.5rem;
+  }
+
+  .extras-toggle label::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.75;
+  }
+
+  #filter-accepts-medife:checked ~ label[for="filter-accepts-medife"] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  #filter-accepts-medife:checked ~ label[for="filter-accepts-medife"]::before {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--accent);
+    opacity: 1;
+  }
+
+  .meta {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+  }
+
+  .clinic-list {
+    display: grid;
+    container-type: inline-size;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+  }
+
+  .clinic {
+    border-top: 1px solid var(--border);
+  }
+
+  .clinic:first-child {
+    border-top: 0;
+  }
+
+  .clinic[hidden] {
+    display: none;
+  }
+
+  .clinic-head {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank id medife"
+      ". notes notes";
+    gap: 0.06rem 0.55rem;
+    align-items: start;
+    padding: 0.42rem 0.65rem 0.38rem;
+    background: var(--surface-soft);
+  }
+
+  .clinic-rank {
+    margin: 0;
+    grid-area: rank;
+    padding-top: 0.14rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+  }
+
+  .clinic-id {
+    grid-area: id;
+    min-width: 0;
+  }
+
+  .clinic-name {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+
+  .clinic-name a,
+  a.practice-name {
+    color: inherit;
+  }
+
+  .clinic-kind {
+    margin-left: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: 0.04em;
+  }
+
+  .clinic-service,
+  .clinic-notes,
+  .practice-head,
+  .practice-meta,
+  .practice-note {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .clinic-service {
+    color: var(--text);
+  }
+
+  .medife {
+    grid-area: medife;
+    justify-self: end;
+    max-width: 18rem;
+    margin: 0.08rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 650;
+    line-height: 1.3;
+    text-align: right;
+  }
+
+  .medife-yes {
+    color: var(--yes);
+  }
+
+  .medife-verify {
+    color: var(--verify);
+  }
+
+  .medife-private {
+    color: var(--private);
+  }
+
+  .clinic-notes {
+    grid-area: notes;
+    font-size: 0.74rem;
+  }
+
+  .inline-links {
+    font-weight: 650;
+  }
+
+  .sep {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .practice-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.18rem;
+  }
+
+  .clinic-practices {
+    padding: 0.32rem 0.65rem 0.4rem 2.55rem;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 28%);
+  }
+
+  .practice-head {
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  .practice-name {
+    font-weight: 650;
+  }
+
+  .practice-meta,
+  .practice-note {
+    font-size: 0.74rem;
+  }
+
+  @container (max-width: 520px) {
+    .clinic-head {
+      grid-template-columns: 1.6rem minmax(0, 1fr);
+      grid-template-areas:
+        "rank id"
+        ". medife"
+        ". notes";
+    }
+
+    .medife {
+      justify-self: start;
+      text-align: left;
+      max-width: 100%;
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      padding-left: max(0.55rem, env(safe-area-inset-left, 0px));
+      padding-right: max(0.55rem, env(safe-area-inset-right, 0px));
+    }
+
+    .clinic-list {
+      border-radius: 0.65rem;
+    }
+
+    .clinic-head,
+    .clinic-practices {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
+    .clinic-practices {
+      padding-left: 2.1rem;
+    }
+
+    .clinic-name {
+      font-size: 0.94rem;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .extras-toggle label,
+    .inline-links a,
+    .practice-head a {
+      min-height: 1.75rem;
+    }
+  }
+</style>
