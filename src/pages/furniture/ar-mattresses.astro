@@ -1,29 +1,24 @@
 ---
-import pageData from "../../data/ar-beds.json";
+import pageData from "../../data/ar-mattresses.json";
 
 export const prerender = true;
 
 const pageTitle = pageData.title;
 const pageDescription =
-  "In-stock queen-sized bed frames in Argentina. Sorted cheapest to most expensive in USD.";
+  "In-stock queen-sized mattresses in Argentina. Sorted cheapest to most expensive in USD.";
 const themeColorLight = "#fcfbf8";
 const themeColorDark = "#111111";
 const siteUrl =
   (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
 const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
-type Bed = (typeof pageData.beds)[number];
+type Mattress = (typeof pageData.mattresses)[number];
 const arsPerUsd = pageData.currency.arsPerUsd;
 const usdFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   maximumFractionDigits: 0,
 });
-const arsFormatter = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: "ARS",
-  maximumFractionDigits: 0,
-});
-const beds = [...pageData.beds].sort(
+const mattresses = [...pageData.mattresses].sort(
   (first, second) => first.priceArsBuyNow - second.priceArsBuyNow,
 );
 const updatedDate = new Intl.DateTimeFormat("en-US", {
@@ -32,29 +27,35 @@ const updatedDate = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
 }).format(new Date(pageData.generatedAt));
 const toUsd = (ars: number) => Math.round(ars / arsPerUsd);
+const typeLabel: Record<Mattress["type"], string> = {
+  foam: "Foam",
+  spring: "Innerspring",
+  pocket: "Pocket spring",
+  hybrid: "Hybrid",
+};
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: pageTitle,
   description: pageDescription,
   url: canonicalUrl,
-  numberOfItems: beds.length,
-  itemListElement: beds.map((bed: Bed, index) => ({
+  numberOfItems: mattresses.length,
+  itemListElement: mattresses.map((mattress: Mattress, index) => ({
     "@type": "ListItem",
     position: index + 1,
     item: {
       "@type": "Product",
-      name: bed.name,
-      image: `${siteUrl}${bed.image}`,
-      url: bed.url,
-      brand: bed.seller,
-      description: bed.includes,
+      name: mattress.name,
+      image: `${siteUrl}${mattress.image}`,
+      url: mattress.url,
+      brand: mattress.seller,
+      description: mattress.includes,
       offers: {
         "@type": "Offer",
-        priceCurrency: "ARS",
-        price: bed.priceArsBuyNow,
+        priceCurrency: "USD",
+        price: toUsd(mattress.priceArsBuyNow),
         availability: "https://schema.org/InStock",
-        url: bed.url,
+        url: mattress.url,
       },
     },
   })),
@@ -72,7 +73,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="subject" content="Queen beds Argentina" />
+    <meta name="subject" content="Queen mattresses Argentina" />
     <meta name="application-name" content={pageTitle} />
     <meta
       name="robots"
@@ -80,7 +81,7 @@ const structuredData = {
     />
     <meta
       name="keywords"
-      content="cama queen Argentina, box cama 160x200, base tapizada queen, cama 160x190 en stock"
+      content="colchón queen Argentina, colchón 160x200 en stock, colchón 2 plazas y media"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content={themeColorLight} />
@@ -122,58 +123,56 @@ const structuredData = {
           <h1>{pageTitle}</h1>
         </div>
         <p class="lede">
-          Queen-sized frames and bases listed as in stock today — recessed or
-          mattress-on-top. Sorted by cash/transfer price in USD at the MEP rate
-          ({arsFormatter.format(arsPerUsd)} = $1).
+          Queen mattresses listed as in stock today — 160×190 or 160×200, foam,
+          spring, pocket, or hybrid. Sorted by cash price in USD at the MEP rate
+          ($1 = {new Intl.NumberFormat("es-AR").format(arsPerUsd)} ARS).
         </p>
       </header>
 
       <ol class="bed-list">
         {
-          beds.map((bed, index) => (
+          mattresses.map((mattress, index) => (
             <li>
               <article class="bed-card">
-                <a class="photo-link" href={bed.url} target="_blank" rel="noreferrer noopener">
-                  <img src={bed.image} alt={bed.imageAlt} width="900" height="900" />
+                <a class="photo-link" href={mattress.url} target="_blank" rel="noreferrer noopener">
+                  <img src={mattress.image} alt={mattress.imageAlt} width="900" height="900" />
                 </a>
                 <div class="bed-copy">
                   <p class="rank">#{index + 1}</p>
                   <h2>
-                    <a href={bed.url} target="_blank" rel="noreferrer noopener">
-                      {bed.name}
+                    <a href={mattress.url} target="_blank" rel="noreferrer noopener">
+                      {mattress.name}
                     </a>
                   </h2>
-                  <p class="seller">{bed.seller}</p>
-                  <p class:list={["sit", bed.mattressSit === "recessed" && "sit-recessed"]}>
-                    {bed.mattressSit === "recessed"
-                      ? "Recessed well"
-                      : "Mattress on top"}
+                  <p class="seller">{mattress.seller}</p>
+                  <p class:list={["sit", mattress.type === "hybrid" && "sit-recessed"]}>
+                    {typeLabel[mattress.type]}
+                    {mattress.heightCm ? ` · ${mattress.heightCm} cm` : ""}
                   </p>
                   <p class="price">
-                    <span class="usd">{usdFormatter.format(toUsd(bed.priceArsBuyNow))}</span>
-                    <span class="ars">{arsFormatter.format(bed.priceArsBuyNow)}</span>
+                    <span class="usd">{usdFormatter.format(toUsd(mattress.priceArsBuyNow))}</span>
                   </p>
-                  <p class="price-note">{bed.priceNote}</p>
+                  <p class="price-note">{mattress.priceNote}</p>
                   <dl>
                     <div>
                       <dt>Size</dt>
                       <dd>
-                        {bed.sizeCm} · {bed.sizeLabel}
+                        {mattress.sizeCm} · {mattress.sizeLabel}
                       </dd>
                     </div>
                     <div>
                       <dt>Includes</dt>
-                      <dd>{bed.includes}</dd>
+                      <dd>{mattress.includes}</dd>
                     </div>
                     <div>
                       <dt>Where</dt>
                       <dd>
-                        {bed.city}
-                        {bed.shipsNationally ? " · ships nationally" : ""}
+                        {mattress.city}
+                        {mattress.shipsNationally ? " · ships nationally" : ""}
                       </dd>
                     </div>
                   </dl>
-                  <a class="buy" href={bed.url} target="_blank" rel="noreferrer noopener">
+                  <a class="buy" href={mattress.url} target="_blank" rel="noreferrer noopener">
                     Open listing
                   </a>
                 </div>
@@ -196,7 +195,7 @@ const structuredData = {
         </ul>
         <p>
           Related:{" "}
-          <a href="/furniture/ar-mattresses">Queen mattresses in Argentina</a>
+          <a href="/furniture/ar-beds">Queen beds in Argentina</a>
           {" · "}
           <a href="/furniture/buenos-aires">Buenos Aires furniture brands</a>.
         </p>
@@ -394,7 +393,6 @@ const structuredData = {
     letter-spacing: -0.03em;
   }
 
-  .ars,
   .price-note {
     font-size: 0.88rem;
   }
