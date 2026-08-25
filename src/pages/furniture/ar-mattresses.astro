@@ -18,9 +18,43 @@ const usdFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
   maximumFractionDigits: 0,
 });
-const mattresses = [...pageData.mattresses].sort(
-  (first, second) => first.priceArsBuyNow - second.priceArsBuyNow,
-);
+const sleepQuality = (mattress: Mattress) => {
+  const includes = mattress.includes.toLowerCase();
+  const name = mattress.name.toLowerCase();
+  let score = 18;
+  if (mattress.type === "pocket") score = 42;
+  else if (mattress.type === "hybrid") score = 36;
+  else if (mattress.type === "spring") score = 22;
+  const heightCm =
+    mattress.heightCm ?? (mattress.type === "foam" ? 21 : 23);
+  score += Math.min(heightCm, 34) * 0.7;
+  if (/35\s*kg/.test(includes)) score += 10;
+  else if (/33\s*kg/.test(includes)) score += 8;
+  else if (/32\s*kg/.test(includes)) score += 7;
+  else if (/30\s*kg/.test(includes)) score += 6;
+  else if (/hiflex|high-density|high-pressure/.test(includes)) score += 5;
+  if (/double (euro )?pillow|double pillow/.test(includes)) score += 8;
+  else if (/pillow top|euro pillow|native pillow/.test(includes)) score += 5;
+  if (/lumbar|hotel|biconic/.test(includes)) score += 4;
+  if (includes.includes("trial")) score += 2;
+  if (
+    /box|compressed|bag/.test(includes) ||
+    name.includes("en caja") ||
+    name.includes("en bolsa")
+  ) {
+    score -= 7;
+  }
+  if (/bl 910|power|one plus|shankar|density 2|bilt/.test(`${name} ${includes}`)) {
+    score += 4;
+  }
+  return Math.round(score * 10);
+};
+const mattresses = [...pageData.mattresses]
+  .map((mattress) => ({
+    ...mattress,
+    sleepQuality: sleepQuality(mattress),
+  }))
+  .sort((first, second) => first.priceArsBuyNow - second.priceArsBuyNow);
 const updatedDate = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
@@ -124,15 +158,27 @@ const structuredData = {
         </div>
         <p class="lede">
           Queen mattresses listed as in stock today — 160×190 or 160×200, foam,
-          spring, pocket, or hybrid. Sorted by cash price in USD at the MEP rate
-          ($1 = {new Intl.NumberFormat("es-AR").format(arsPerUsd)} ARS).
+          spring, pocket, or hybrid. Cash prices in USD at the MEP rate ($1 = {
+            new Intl.NumberFormat("es-AR").format(arsPerUsd)
+          } ARS).
         </p>
+        <fieldset class="rank-toggle" aria-label="Rank by">
+          <legend>Rank by</legend>
+          <label>
+            <input type="radio" name="rank" value="price" autocomplete="off" checked />
+            <span>Price</span>
+          </label>
+          <label>
+            <input type="radio" name="rank" value="quality" autocomplete="off" />
+            <span>Sleep quality</span>
+          </label>
+        </fieldset>
       </header>
 
       <ol class="bed-list">
         {
           mattresses.map((mattress, index) => (
-            <li>
+            <li data-price={mattress.priceArsBuyNow} data-quality={mattress.sleepQuality}>
               <article class="bed-card">
                 <a class="photo-link" href={mattress.url} target="_blank" rel="noreferrer noopener">
                   <img src={mattress.image} alt={mattress.imageAlt} width="900" height="900" />
@@ -194,6 +240,11 @@ const structuredData = {
           }
         </ul>
         <p>
+          Sleep quality ranks construction, not reviews. Pocket springs and
+          hybrids sit above Bonnell. Taller beds and higher-density foam with a
+          pillow layer rise. Boxed 20 cm foam falls.
+        </p>
+        <p>
           Related:{" "}
           <a href="/furniture/ar-beds">Queen beds in Argentina</a>
           {" · "}
@@ -201,6 +252,50 @@ const structuredData = {
         </p>
       </aside>
     </main>
+    <script>
+      const list = document.querySelector(".bed-list");
+      const rankInputs = document.querySelectorAll('input[name="rank"]');
+      if (list instanceof HTMLOListElement && rankInputs.length) {
+        const cards = Array.from(list.children);
+        const applyRank = (mode: "price" | "quality") => {
+          const sorted = [...cards].sort((first, second) => {
+            if (!(first instanceof HTMLElement) || !(second instanceof HTMLElement)) {
+              return 0;
+            }
+            if (mode === "quality") {
+              return (
+                Number(second.dataset.quality) - Number(first.dataset.quality) ||
+                Number(first.dataset.price) - Number(second.dataset.price)
+              );
+            }
+            return Number(first.dataset.price) - Number(second.dataset.price);
+          });
+          list.append(...sorted);
+          sorted.forEach((card, index) => {
+            const rank = card.querySelector(".rank");
+            if (rank) rank.textContent = `#${index + 1}`;
+          });
+          const url = new URL(window.location.href);
+          if (mode === "quality") url.searchParams.set("rank", "quality");
+          else url.searchParams.delete("rank");
+          history.replaceState(null, "", url);
+        };
+        const requested =
+          new URLSearchParams(window.location.search).get("rank") === "quality"
+            ? "quality"
+            : "price";
+        rankInputs.forEach((input) => {
+          if (!(input instanceof HTMLInputElement)) return;
+          input.checked = input.value === requested;
+          input.addEventListener("change", () => {
+            if (input.checked && (input.value === "price" || input.value === "quality")) {
+              applyRank(input.value);
+            }
+          });
+        });
+        if (requested === "quality") applyRank("quality");
+      }
+    </script>
   </body>
 </html>
 
@@ -321,6 +416,60 @@ const structuredData = {
   .lede {
     max-width: 40rem;
     font-size: 1.02rem;
+  }
+
+  .rank-toggle {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    align-items: center;
+    width: fit-content;
+    margin: 0.15rem 0 0;
+    padding: 0.28rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+
+  .rank-toggle legend {
+    padding: 0 0.55rem 0 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .rank-toggle label {
+    cursor: pointer;
+  }
+
+  .rank-toggle input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .rank-toggle span {
+    display: block;
+    padding: 0.38rem 0.7rem;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+
+  .rank-toggle input:checked + span {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .rank-toggle input:focus-visible + span {
+    outline: 2px solid color-mix(in srgb, var(--accent), transparent 30%);
+    outline-offset: 2px;
   }
 
   .bed-list {
