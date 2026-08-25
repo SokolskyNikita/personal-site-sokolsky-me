@@ -9,10 +9,6 @@ import {
   type HotelsEnv,
 } from "./lib/hotels";
 import {
-  handlePredictionMarketOdds,
-  isPredictionMarketOddsPath,
-} from "./lib/prediction-markets";
-import {
   handleAgentDiscovery,
   withAgentDiscoveryHeaders,
 } from "./lib/agent-discovery";
@@ -132,10 +128,6 @@ export default {
 
     if (isHotelsApiPath(url.pathname)) {
       return handleHotelsApi(request, env, url);
-    }
-
-    if (isPredictionMarketOddsPath(url.pathname)) {
-      return handlePredictionMarketOdds(request, env);
     }
 
     if (isPrivatePath(url.pathname)) {

@@ -17,7 +17,6 @@ canonical machine-readable description is [OpenAPI](https://sokolsky.me/openapi.
 - \`GET /api/status\`: API availability.
 - \`GET /api/ai-compass/stats\`: aggregate, anonymous AI Compass statistics.
 - \`GET /api/hotels/index?city=buenos-aires\`: cached hotel rankings.
-- \`GET /api/prediction-markets/spain-argentina-2026\`: current public odds.
 
 Use the browser applications for operations that can consume paid third-party
 search quota. Those operations intentionally are not advertised as agent APIs.
@@ -174,22 +173,6 @@ const OPENAPI = {
             },
           },
           "503": { description: "Hotel index database is unavailable" },
-        },
-      },
-    },
-    "/api/prediction-markets/spain-argentina-2026": {
-      get: {
-        operationId: "getSpainArgentinaOdds",
-        summary: "Get public prediction-market odds for Spain vs Argentina",
-        responses: {
-          "200": {
-            description: "Current normalized market odds",
-            content: {
-              "application/json": {
-                schema: { type: "object", additionalProperties: true },
-              },
-            },
-          },
         },
       },
     },
