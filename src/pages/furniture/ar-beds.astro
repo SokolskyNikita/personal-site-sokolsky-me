@@ -172,6 +172,33 @@ const structuredData = {
                         {bed.shipsNationally ? " · ships nationally" : ""}
                       </dd>
                     </div>
+                    <div>
+                      <dt>Showroom</dt>
+                      <dd>
+                        {bed.hasShowroom ? (
+                          <>
+                            {bed.showroomNeighborhood}
+                            {" · "}
+                            {bed.showroomOnGoogleMaps && bed.showroomMapsUrl ? (
+                              <a
+                                href={bed.showroomMapsUrl}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                {bed.showroomAddress}
+                              </a>
+                            ) : (
+                              bed.showroomAddress
+                            )}
+                            {!bed.showroomOnGoogleMaps && (
+                              <span class="showroom-flag"> · not on Google Maps</span>
+                            )}
+                          </>
+                        ) : (
+                          "No showroom"
+                        )}
+                      </dd>
+                    </div>
                   </dl>
                   <a class="buy" href={bed.url} target="_blank" rel="noreferrer noopener">
                     Open listing
@@ -194,6 +221,12 @@ const structuredData = {
             ))
           }
         </ul>
+        <p>
+          Showroom is the seller’s closest walk-in store to Palermo. Addresses
+          were confirmed operational with the Google Maps Places API. DUB
+          quality lists Palermo and Once by appointment and has no public
+          showroom pin.
+        </p>
         <p>
           Related:{" "}
           <a href="/furniture/ar-mattresses">Queen mattresses in Argentina</a>
@@ -427,6 +460,10 @@ const structuredData = {
     width: fit-content;
     margin-top: 0.35rem;
     font-weight: 700;
+  }
+
+  .showroom-flag {
+    color: var(--text-muted);
   }
 
   .notes {
