@@ -624,25 +624,25 @@ const totalSkincareItems = sections.reduce(
       ))}
     </main>
     <script>
-      const filter = document.querySelector("#farmacity-filter");
-      const count = document.querySelector(".count");
+      const filter = document.querySelector<HTMLSelectElement>("#farmacity-filter");
+      const count = document.querySelector<HTMLElement>(".count");
       const total = Number(count?.dataset.total ?? 0);
-      const products = [...document.querySelectorAll(".product")];
-      const sections = [...document.querySelectorAll("main > section")];
+      const products = [...document.querySelectorAll<HTMLElement>(".product")];
+      const sections = [...document.querySelectorAll<HTMLElement>("main > section")];
 
       const applyFilter = () => {
-        const value = filter instanceof HTMLSelectElement ? filter.value : "-";
+        const value = filter?.value ?? "-";
 
         let visible = 0;
         for (const product of products) {
-          const farmacity = product.getAttribute("data-farmacity");
+          const farmacity = product.dataset.farmacity;
           const show = value === "-" || farmacity === value;
           product.hidden = !show;
           if (show) visible += 1;
         }
 
         for (const section of sections) {
-          const hasVisible = [...section.querySelectorAll(".product")].some(
+          const hasVisible = [...section.querySelectorAll<HTMLElement>(".product")].some(
             (product) => !product.hidden,
           );
           section.hidden = !hasVisible;
