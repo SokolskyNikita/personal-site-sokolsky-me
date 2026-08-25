@@ -1,0 +1,457 @@
+---
+import pageData from "../../data/ar-beds.json";
+
+export const prerender = true;
+
+const pageTitle = pageData.title;
+const pageDescription =
+  "In-stock queen-sized bed frames in Argentina. Sorted cheapest to most expensive in USD.";
+const themeColorLight = "#fcfbf8";
+const themeColorDark = "#111111";
+const siteUrl =
+  (Astro.site?.toString() ?? "https://sokolsky.me").replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+type Bed = (typeof pageData.beds)[number];
+const arsPerUsd = pageData.currency.arsPerUsd;
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+const arsFormatter = new Intl.NumberFormat("es-AR", {
+  style: "currency",
+  currency: "ARS",
+  maximumFractionDigits: 0,
+});
+const beds = [...pageData.beds].sort(
+  (first, second) => first.priceArsBuyNow - second.priceArsBuyNow,
+);
+const updatedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(new Date(pageData.generatedAt));
+const toUsd = (ars: number) => Math.round(ars / arsPerUsd);
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: beds.length,
+  itemListElement: beds.map((bed: Bed, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "Product",
+      name: bed.name,
+      image: `${siteUrl}${bed.image}`,
+      url: bed.url,
+      brand: bed.seller,
+      description: bed.includes,
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "ARS",
+        price: bed.priceArsBuyNow,
+        availability: "https://schema.org/InStock",
+        url: bed.url,
+      },
+    },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="subject" content="Queen beds Argentina" />
+    <meta name="application-name" content={pageTitle} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="keywords"
+      content="cama queen Argentina, box cama 160x200, base tapizada queen, cama 160x190 en stock"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <a class="home-link" href="/">Nikita Sokolsky</a>
+        <div class="headline">
+          <p class="eyebrow">Argentina furniture notes · {updatedDate}</p>
+          <h1>{pageTitle}</h1>
+        </div>
+        <p class="lede">
+          Queen-sized frames and bases listed as in stock today — recessed or
+          mattress-on-top. Sorted by cash/transfer price in USD at the MEP rate
+          ({arsFormatter.format(arsPerUsd)} = $1).
+        </p>
+      </header>
+
+      <ol class="bed-list">
+        {
+          beds.map((bed, index) => (
+            <li>
+              <article class="bed-card">
+                <a class="photo-link" href={bed.url} target="_blank" rel="noreferrer noopener">
+                  <img src={bed.image} alt={bed.imageAlt} width="900" height="900" />
+                </a>
+                <div class="bed-copy">
+                  <p class="rank">#{index + 1}</p>
+                  <h2>
+                    <a href={bed.url} target="_blank" rel="noreferrer noopener">
+                      {bed.name}
+                    </a>
+                  </h2>
+                  <p class="seller">{bed.seller}</p>
+                  <p class:list={["sit", bed.mattressSit === "recessed" && "sit-recessed"]}>
+                    {bed.mattressSit === "recessed"
+                      ? "Recessed well"
+                      : "Mattress on top"}
+                  </p>
+                  <p class="price">
+                    <span class="usd">{usdFormatter.format(toUsd(bed.priceArsBuyNow))}</span>
+                    <span class="ars">{arsFormatter.format(bed.priceArsBuyNow)}</span>
+                  </p>
+                  <p class="price-note">{bed.priceNote}</p>
+                  <dl>
+                    <div>
+                      <dt>Size</dt>
+                      <dd>
+                        {bed.sizeCm} · {bed.sizeLabel}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Includes</dt>
+                      <dd>{bed.includes}</dd>
+                    </div>
+                    <div>
+                      <dt>Where</dt>
+                      <dd>
+                        {bed.city}
+                        {bed.shipsNationally ? " · ships nationally" : ""}
+                      </dd>
+                    </div>
+                  </dl>
+                  <a class="buy" href={bed.url} target="_blank" rel="noreferrer noopener">
+                    Open listing
+                  </a>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ol>
+
+      <aside class="notes">
+        <h2>What did not make the list</h2>
+        <ul>
+          {
+            pageData.excluded.map((item) => (
+              <li>
+                <strong>{item.name}.</strong> {item.reason}
+              </li>
+            ))
+          }
+        </ul>
+        <p>
+          Related:{" "}
+          <a href="/furniture/buenos-aires">Buenos Aires furniture brands</a>.
+        </p>
+      </aside>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fcfbf8;
+    --surface: #fffefa;
+    --text: #181512;
+    --text-muted: #6d6258;
+    --border: #d9cbb9;
+    --accent: #4b3323;
+    --accent-soft: #ece0d3;
+    --link: #2b1c13;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10100e;
+      --surface: #171513;
+      --text: #f4eee6;
+      --text-muted: #afa59a;
+      --border: #332d25;
+      --accent: #ead8c5;
+      --accent-soft: #2d241d;
+      --link: #f7eadf;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+      Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration-color: color-mix(in srgb, var(--link), transparent 62%);
+    text-underline-offset: 0.2em;
+  }
+
+  .page {
+    width: min(100%, 52rem);
+    margin: 0 auto;
+    padding: clamp(0.75rem, 1.8vw, 1.8rem);
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0.9rem 0 1.2rem;
+  }
+
+  .home-link {
+    width: fit-content;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.85rem, 3.8vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .lede,
+  .price-note,
+  .seller,
+  .notes {
+    color: var(--text-muted);
+  }
+
+  .sit {
+    width: fit-content;
+    margin-top: 0.15rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .sit-recessed {
+    color: var(--accent);
+  }
+
+  .lede {
+    max-width: 40rem;
+    font-size: 1.02rem;
+  }
+
+  .bed-list {
+    display: grid;
+    gap: 1.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bed-card {
+    display: grid;
+    grid-template-columns: minmax(10rem, 15rem) minmax(0, 1fr);
+    gap: 1rem 1.15rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 1.1rem;
+    background: var(--surface);
+  }
+
+  .photo-link {
+    display: block;
+    align-self: start;
+    overflow: hidden;
+    border-radius: 0.75rem;
+  }
+
+  .photo-link img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .bed-copy {
+    display: grid;
+    align-content: start;
+    gap: 0.32rem;
+  }
+
+  .rank {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h2 {
+    font-size: 1.28rem;
+    letter-spacing: -0.02em;
+  }
+
+  h2 a {
+    text-decoration: none;
+  }
+
+  .price {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.75rem;
+    align-items: baseline;
+    margin-top: 0.2rem;
+  }
+
+  .usd {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .ars,
+  .price-note {
+    font-size: 0.88rem;
+  }
+
+  dl {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.45rem 0 0.2rem;
+  }
+
+  dl div {
+    display: grid;
+    gap: 0.08rem;
+  }
+
+  dt {
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.92rem;
+  }
+
+  .buy {
+    width: fit-content;
+    margin-top: 0.35rem;
+    font-weight: 700;
+  }
+
+  .notes {
+    margin-top: 1.8rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+
+  .notes h2 {
+    margin-bottom: 0.55rem;
+    color: var(--text);
+    font-size: 1.05rem;
+  }
+
+  .notes ul {
+    margin: 0 0 0.9rem;
+    padding-left: 1.1rem;
+  }
+
+  .notes li + li {
+    margin-top: 0.45rem;
+  }
+
+  @media (max-width: 640px) {
+    .bed-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
