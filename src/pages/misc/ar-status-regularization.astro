@@ -1,0 +1,1238 @@
+---
+export const prerender = true;
+
+const pageTitle =
+  "Как россиянину в Аргентине урегулировать просроченное пребывание";
+const pageDescription =
+  "Практический разбор законных путей легализации для гражданина России в Буэнос-Айресе с истёкшим туристическим сроком: RaDEX, временное резидентство, семья, учёба, работа, рантье, выезд и убежище. По официальным источникам на 27 августа 2026.";
+const themeColorLight = "#f7f3ec";
+const themeColorDark = "#16130f";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  inLanguage: "ru",
+  dateModified: "2026-08-27",
+  author: { "@type": "Person", name: "Nikita Sokolsky" },
+};
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,500;0,600;0,700;1,500&family=Source+Serif+4:opsz,ital,wght@8..60,0,400;8..60,0,600;8..60,0,700;8..60,1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta property="og:locale" content="ru_RU" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <a class="home-link" href="/" aria-label="На главную">sokolsky.me</a>
+        <p class="eyebrow">Буэнос-Айрес · 27 августа 2026</p>
+        <h1>
+          Как россиянину урегулировать просроченное пребывание в Аргентине
+        </h1>
+        <p class="dek">
+          Гипотетический случай: гражданин России уже в Буэнос-Айресе, срок
+          туристического пребывания истёк. Ниже — все законные пути, которые
+          удалось подтвердить по официальным текстам. Это не юридическая
+          консультация.
+        </p>
+        <p class="source-note">
+          Источники: <cite>Ley 25.871</cite>, <cite>Decreto 616/2010</cite>,
+          <cite>DNU 366/2025</cite>, <cite>Disposición DNM 1520/2024</cite>,
+          порталы Migraciones и Cancillería. Испанские термины даны в скобках —
+          ими пользуются на стойке в Retiro.
+        </p>
+      </header>
+
+      <nav class="toc" aria-label="Содержание">
+        <p class="toc-label">Содержание</p>
+        <ol>
+          <li><a href="#sut">В чём суть</a></li>
+          <li><a href="#sroki">Окна по срокам</a></li>
+          <li><a href="#puti">Все пути остаться</a></li>
+          <li><a href="#uehat">Пути уехать и вернуться</a></li>
+          <li><a href="#radex">Как подать RaDEX</a></li>
+          <li><a href="#docs">Документы</a></li>
+          <li><a href="#fees">Пошлины</a></li>
+          <li><a href="#posle">После подачи</a></li>
+          <li><a href="#kontakty">Куда идти в CABA</a></li>
+          <li><a href="#istochniki">Нормы и ссылки</a></li>
+        </ol>
+      </nav>
+
+      <article class="article">
+        <section aria-labelledby="sut">
+          <h2 id="sut">В чём суть</h2>
+          <p>
+            России для въезда как туристу виза не нужна: действует двустороннее
+            соглашение 2009 года (до 90 дней в каждые 180). «Просроченная виза»
+            почти всегда означает истёкший штамп туриста (<em
+              >residencia transitoria — turista</em
+            >), а не консульскую визу. Список безвизовых стран —
+            <a
+              href="https://www.migraciones.gob.ar/accesos/regimenvisas.php"
+              rel="noopener noreferrer"
+              target="_blank">Régimen de Visas DNM</a
+            >; карточка договора —
+            <a
+              href="https://tratados.cancilleria.gob.ar/tratado_ficha.php?id=mqGkng=="
+              rel="noopener noreferrer"
+              target="_blank">tratado 9429, статус Vigente</a
+            >.
+          </p>
+          <p>
+            Остаться после разрешённого срока — это нерегулярное пребывание (<em
+              >permanencia irregular</em
+            >) по
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/ley-25871-92016/actualizacion"
+              rel="noopener noreferrer"
+              target="_blank">ст. 53 Закона 25.871</a
+            >. Работать в таком положении нельзя. Но сам въезд, как правило,
+            был законным (<em>ingreso regular</em>). Система
+            <a
+              href="https://www.migraciones.gob.ar/radex/index.html"
+              rel="noopener noreferrer"
+              target="_blank">Ra.D.Ex / RaDEX</a
+            > проверяет законность въезда, а не то, что туристический штамп ещё
+            действует.
+          </p>
+          <p>
+            Отдельной амнистии для россиян нет. Специальный режим для
+            венесуэльцев закрылся в январе 2025 (
+            <a
+              href="https://www.boletinoficial.gob.ar/detalleAviso/primera/313426/20240906"
+              rel="noopener noreferrer"
+              target="_blank">Disposición 388/2024</a
+            >). Остаётся обычная временная резиденция (<em
+              >residencia temporaria</em
+            >) по одному из оснований ст. 23, либо выезд с пошлиной (<em
+              >habilitación de salida</em
+            >).
+          </p>
+          <p>
+            Практический ход, если есть реальное основание: собрать пакет,
+            подать RaDEX, получить предварительное резидентство (<em
+              >residencia precaria</em
+            >) и перейти из статуса «нерегулярный» в «дело на рассмотрении» —
+            до того, как Управление по миграции (<em
+              >Dirección Nacional de Migraciones, DNM</em
+            >) вынесет предписание по
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/ley-25871-92016/actualizacion"
+              rel="noopener noreferrer"
+              target="_blank">ст. 61</a
+            >.
+          </p>
+        </section>
+
+        <section aria-labelledby="sroki">
+          <h2 id="sroki">Окна по срокам</h2>
+          <p>
+            Продление туриста (<em>prórroga</em>) и смена категории (<em
+              >cambio de categoría</em
+            >) — разные процедуры. Сроки —
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/decreto-616-2010-167004/texto"
+              rel="noopener noreferrer"
+              target="_blank">Decreto 616/2010, ст. 12</a
+            >
+            и страница
+            <a
+              href="https://www.argentina.gob.ar/migraciones/turistas"
+              rel="noopener noreferrer"
+              target="_blank">Turistas</a
+            >. Россияне как безвизовые туристы формально входят в
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/norma-400044/texto"
+              rel="noopener noreferrer"
+              target="_blank">Disposición DNM 1520/2024, ст. 1(a)</a
+            > — им можно просить смену категории, если есть основание.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Ситуация</th>
+                <th>Что ещё открыто</th>
+                <th>Что закрыто</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Срок ещё действует или осталось ≤10 дней</td>
+                <td>
+                  Продление туриста ещё на ~90 дней в здании 3 (edificio 3),
+                  8–13. Либо сразу смена на temporaria, если основание уже есть.
+                </td>
+                <td>Работать как турист.</td>
+              </tr>
+              <tr>
+                <td>Истёк, но ≤30 дней после срока подачи</td>
+                <td>
+                  Поздняя подача с надбавкой 50% к пошлине (ст. 12.f
+                  регламента). Либо сразу RaDEX, если критерий готов.
+                </td>
+                <td>
+                  Страница туриста говорит: если срок пребывания уже истёк,
+                  prórroga не дают.
+                </td>
+              </tr>
+              <tr>
+                <td>Больше ~30 дней после окна</td>
+                <td>
+                  Новая radicación через RaDEX по ст. 23 (проверяют законный
+                  въезд). Ст. 61 — DNM может обязать урегулироваться.
+                  Чрезвычайная смена — ст. 3 Disp. 1520 (на усмотрение). Выезд —
+                  habilitación de salida.
+                </td>
+                <td>
+                  Продление туриста. Работа и платное жильё в irregular
+                  (ст. 53 и 55). «Обнулиться туристом» в Ezeiza — риск отказа
+                  как falso turista.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Натяжка в нормах: ст. 12 регламента гасит право просить
+            <em>prórroga / cambio</em> через 30 дней, а карточки RaDEX требуют
+            именно <em>ingreso regular</em>. На консультации
+            (<em>asesoramiento</em>) стоит прямо спросить, считают ли ваш файл
+            новой radicación или просроченным cambio.
+          </p>
+        </section>
+
+        <section aria-labelledby="puti">
+          <h2 id="puti">Все пути остаться</h2>
+          <p>
+            Без МЕРКОСУР упрощённой резиденции «по паспорту» нет. Нужно одно
+            из оснований
+            <a
+              href="https://www.argentina.gob.ar/migraciones/residencias"
+              rel="noopener noreferrer"
+              target="_blank">ст. 23 Ley 25.871</a
+            >. Каталог —
+            <a
+              href="https://www.argentina.gob.ar/tema/extranjeros"
+              rel="noopener noreferrer"
+              target="_blank">Extranjeros / radicación</a
+            >.
+          </p>
+
+          <h3 id="trabajo">1. Работа по найму (trabajador migrante)</h3>
+          <p>
+            Официальная карточка:
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-temporaria-como-trabajador-migrante"
+              rel="noopener noreferrer"
+              target="_blank"
+              >residencia temporaria как trabajador migrante</a
+            >. Нужен работодатель в
+            <a
+              href="https://www.argentina.gob.ar/migraciones/registro-nacional-unico-de-requirentes-de-extranjeros"
+              rel="noopener noreferrer"
+              target="_blank">RENURE</a
+            >, предварительный трудовой договор (<em>precontrato laboral</em>,
+            образец
+            <a
+              href="https://www.migraciones.gob.ar/pdf/residencias/modelo_contrato.pdf"
+              rel="noopener noreferrer"
+              target="_blank">modelo_contrato.pdf</a
+            >), регистрация работодателя в AFIP и <em>alta temprana</em> в
+            течение 30 дней после precaria. Срок — 1 год, продлевается.
+          </p>
+          <p>
+            Пока статус irregular, работать нельзя. Легальная работа начинается
+            после precaria. «Мононалог» (<em>monotributo</em>) сам по себе
+            резиденции не даёт: отдельной temporaria для самозанятых нет.
+          </p>
+
+          <h3 id="estudio">2. Учёба (estudiante)</h3>
+          <p>
+            Карточка:
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-temporaria-como-estudiante"
+              rel="noopener noreferrer"
+              target="_blank">residencia temporaria как estudiante</a
+            >. Нужна электронная справка о зачислении (<em
+              >constancia de inscripción electrónica</em
+            >) от вуза или языковой школы, состоящей в RENURE. Одна запись в
+            UBA статус не чинит.
+          </p>
+          <p>
+            После
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/decreto-366-2025-413297/texto"
+              rel="noopener noreferrer"
+              target="_blank">DNU 366/2025</a
+            >
+            ст. 7 гарантирует школу нерегулярным только до среднего уровня, не
+            университет. Государственные вузы берут с иностранцев отдельный
+            тариф (не «как у аргентинца», пока нет permanente).
+          </p>
+          <p>
+            Из-за границы — другое окно:
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-un-permiso-de-ingreso-temporario-como-estudiante-de-ensenanza-oficial"
+              rel="noopener noreferrer"
+              target="_blank">permiso de ingreso temporario как estudiante</a
+            >
+            плюс студенческая виза в консульстве.
+          </p>
+
+          <h3 id="familia">3. Семья (reunificación familiar)</h3>
+          <p>
+            Карточка:
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-temporaria-por-reunificacion-familiar"
+              rel="noopener noreferrer"
+              target="_blank">temporaria por reunificación familiar</a
+            >. Ст. 23 п. «ñ» после DNU 366: супруг, родитель или ребёнок
+            аргентинца либо законного резидента. Срок — до 3 лет.
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/norma-400044/texto"
+              rel="noopener noreferrer"
+              target="_blank">Disp. 1520/2024 ст. 1(c)</a
+            >
+            открывает смену категории по семье даже тем, кому для въезда нужна
+            была виза.
+          </p>
+          <ul>
+            <li>
+              <strong>Брак в CABA.</strong> Регистрация брака не требует
+              действующей визы: нужен годный паспорт. Запись:
+              <a
+                href="https://buenosaires.gob.ar/tramites/solicitud-de-turno-para-matrimonios-en-la-sede-central-del-registro-civil-o-en-sedes"
+                rel="noopener noreferrer"
+                target="_blank">turno matrimonios</a
+              >. Брак сам по себе резиденции не даёт — потом отдельный RaDEX.
+            </li>
+            <li>
+              <strong>Зарегистрированный союз</strong> (<em
+                >unión convivencial inscripta</em
+              >, не менее 2 лет совместной жизни, если нет общего ребёнка):
+              <a
+                href="https://buenosaires.gob.ar/tramites/union-civil-convivencial"
+                rel="noopener noreferrer"
+                target="_blank">UCC CABA</a
+              >. Справка о сожительстве (<em>certificado de convivencia / información
+                sumaria</em>) для миграции не годится.
+            </li>
+            <li>
+              <strong>Ребёнок-аргентинец.</strong> Сам ребёнок — гражданин. Родители
+              после DNU 366 получают temporaria на 3 года, а не permanente «сразу
+              за рождение». Старый маршрут «родил — и постоянная» закрыт для
+              взрослых.
+            </li>
+            <li>
+              <strong>Ребёнок аргентинца, рождённый за границей</strong> — прямая
+              permanente:
+              <a
+                href="https://www.argentina.gob.ar/servicio/radicaciones-residencia-permanente"
+                rel="noopener noreferrer"
+                target="_blank">radicaciones residencia permanente</a
+              >.
+            </li>
+          </ul>
+
+          <h3 id="rentista">4. Рантье и пенсионер (rentista, pensionado)</h3>
+          <p>
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-temporaria-como-rentista"
+              rel="noopener noreferrer"
+              target="_blank">Rentista</a
+            >
+            и
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-temporaria-como-pensionado"
+              rel="noopener noreferrer"
+              target="_blank">pensionado</a
+            >: пассивный доход или пенсия из-за рубежа, не зарплата за личный
+            труд. Порог — не меньше 5 МРОТ (<em>SMVM</em>) в месяц. На август
+            2026 SMVM =
+            <a
+              href="https://www.boletinoficial.gob.ar/detalleAviso/primera/335463/20251203"
+              rel="noopener noreferrer"
+              target="_blank">$376&nbsp;600</a
+            >, то есть пол
+            <strong>$1&nbsp;883&nbsp;000</strong> в месяц (
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/disposición-1732-2023-384788/texto"
+              rel="noopener noreferrer"
+              target="_blank">Disp. 1732/2023</a
+            >
+            в ред.
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/disposición-3446-2023-392424/texto"
+              rel="noopener noreferrer"
+              target="_blank">3446/2023</a
+            >). Деньги — через банк, уполномоченный BCRA.
+          </p>
+
+          <h3 id="inversor">5. Инвестор (inversionista)</h3>
+          <p>
+            Категория есть в ст. 23(d) закона и в
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/decreto-616-2010-167004/texto"
+              rel="noopener noreferrer"
+              target="_blank">Decreto 616/2010</a
+            >
+            (исторический минимум 1&nbsp;500&nbsp;000 аргентинских песо — сумма
+            не обновлялась). Отдельной живой карточки radicación на
+            argentina.gob.ar нет. Короткий въезд для сделок — TIE Negocios, не
+            резиденция. Гражданство «за релевантную инвестицию» —
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/norma-415710/texto"
+              rel="noopener noreferrer"
+              target="_blank">Decreto 524/2025</a
+            >
+            — отдельная история, overstay не чинит.
+          </p>
+
+          <h3 id="nomada">6. Цифровой кочевник (nómada digital)</h3>
+          <p>
+            Это не виза и не temporaria на годы, а транзитная резиденция
+            (<em>residencia transitoria</em>) на 180 дней с одним продлением.
+            Карточка:
+            <a
+              href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-transitoria-como-nomada-digital"
+              rel="noopener noreferrer"
+              target="_blank">nómada digital</a
+            >. Нужны безвизовый въезд (россияне подходят), удалёнка на клиентов
+            за границей и <em>ingreso regular</em>. Из-за рубежа —
+            <a
+              href="https://www.argentina.gob.ar/servicio/tramitacion-de-ingreso-electronica-nomadas-digitales"
+              rel="noopener noreferrer"
+              target="_blank">TIE 24H для nómadas</a
+            >. DNI не даёт.
+          </p>
+
+          <h3 id="cientifico">7. Узкие temporaria: учёный, гуманитарий, особые</h3>
+          <ul>
+            <li>
+              <a
+                href="https://www.argentina.gob.ar/servicio/obtener-una-residencia-temporaria-como-cientifico-yo-personal-especializado-yo-personal-de"
+                rel="noopener noreferrer"
+                target="_blank">Científico / personal especializado</a
+              >
+              — контракт с организацией и RENURE.
+            </li>
+            <li>
+              Гуманитарные основания и «особые» подкатегории ст. 23 — только если
+              DNM сама видит состав. Это не самозапись «потому что хочу остаться».
+            </li>
+            <li>
+              Если туристический срок ещё не истёк: разовая
+              <a
+                href="https://www.argentina.gob.ar/servicio/obtener-una-autorizacion-de-trabajo-transitoria"
+                rel="noopener noreferrer"
+                target="_blank">autorización de trabajo transitoria</a
+              >
+              до конца текущего туристического срока (не годовая temporaria).
+            </li>
+          </ul>
+
+          <h3 id="art61">8. Предписание урегулироваться (intimación, ст. 61)</h3>
+          <p>
+            Если DNM уже заметила irregular, она <em>может</em> выставить срок
+            на легализацию — обычно до 30 дней, плюс ещё 30 при доказанном
+            намерении (
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/decreto-616-2010-167004/texto"
+              rel="noopener noreferrer"
+              target="_blank">регламент, ст. 61</a
+            >). Учитывают профессию, родство с аргентинцами, срок жизни в стране.
+            Неявка ведёт к выдворению (<em>expulsión</em>) с приостанавливающим
+            эффектом. Подача RaDEX с документами — как раз «явиться
+            урегулироваться». Одна кнопка в форме без пакета норму не закрывает.
+          </p>
+
+          <h3 id="extra">9. Чрезвычайная смена категории (Disp. 1520, ст. 3)</h3>
+          <p>
+            Вне трёх случаев ст. 1 смена категории «не производится» (ст. 2).
+            Дирекция иммиграции может разрешить исключение мотивированным актом,
+            «когда объективные причины того требуют». Это не право, а просьба.
+          </p>
+
+          <h3 id="refugio">10. Убежище (refugio, CONARE)</h3>
+          <p>
+            Отдельная гуманитарная процедура по
+            <a
+              href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/120000-124999/122609/norma.htm"
+              rel="noopener noreferrer"
+              target="_blank">Ley 26.165</a
+            >
+            и
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/decreto-646-2025-417374/texto"
+              rel="noopener noreferrer"
+              target="_blank">Decreto 646/2025</a
+            >, не миграционная амнистия.
+            <a
+              href="https://www.argentina.gob.ar/migraciones/comision-nacional-para-los-refugiados/preguntas-frecuentes-conare"
+              rel="noopener noreferrer"
+              target="_blank">FAQ CONARE</a
+            >
+            прямо отделяет беженца от экономического мигранта. Экономический
+            мотив и «просто хочу жить здесь» — отказ <em>in limine</em>.
+          </p>
+          <p>
+            Пока дело идёт, выдают временный документ на 90 дней с правом
+            работать. Выезд из страны = молчаливый отказ от заявления. Для
+            россиян особого режима нет: нужна индивидуальная угроза
+            преследования, а не общая мобилизация «на всякий случай». Ложный
+            сюжет остаётся в деле. Подача: <a
+              href="mailto:solicitud.conare@migraciones.gov.ar"
+              >solicitud.conare@migraciones.gov.ar</a
+            >. Бесплатный адвокат —
+            <a
+              href="https://www.mpd.gov.ar/index.php/comision-para-la-asistencia-integral-y-proteccion-al-refugiado-y-peticionante-de-refugio"
+              rel="noopener noreferrer"
+              target="_blank">COMAR / MPD</a
+            >.
+          </p>
+        </section>
+
+        <section aria-labelledby="uehat">
+          <h2 id="uehat">Пути уехать и вернуться</h2>
+
+          <h3>11. Выехать правильно (habilitación de salida)</h3>
+          <p>
+            Если остаётесь irregular и хотите уехать:
+            <a
+              href="https://www.argentina.gob.ar/migraciones/habilitacion-de-salida"
+              rel="noopener noreferrer"
+              target="_blank">habilitación de salida</a
+            >. Для extra-MERCOSUR — 40 UMSM ($40&nbsp;000). Срок действия
+            бланка — 10 календарных дней. Retiro: Av. Antártida Argentina 1355,
+            edificio 6, окно «M», пн–пт 8–16. Ezeiza — круглосуточно,
+            Aeroparque — 7–22. На сухопутной границе больше не принимают.
+          </p>
+          <p>
+            Уехать без оплаты — автоматический долг. Погашение уже из-за
+            границы:
+            <a
+              href="https://www.argentina.gob.ar/migraciones/deuda-pendiente-por-habilitacion-de-salida"
+              rel="noopener noreferrer"
+              target="_blank">deuda pendiente</a
+            >
+            (80 UMSM extra-MERCOSUR). Алерт в системе — до 5 лет.
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/norma-215889/actualizacion"
+              rel="noopener noreferrer"
+              target="_blank">Disposición DNM 899/2013</a
+            >.
+          </p>
+
+          <h3>12. Вернуться туристом</h3>
+          <p>
+            После оплаты выездной пошлины повторный въезд не запрещён и не
+            гарантирован. DNM вправе проверить цель поездки. Предыдущая
+            habilitación — официальный красный флаг при оценке «ложного
+            туриста» (
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/disposición-4362-2014-237942/texto"
+              rel="noopener noreferrer"
+              target="_blank">Disp. 4362/2014</a
+            >). Договор 90/180 тоже действует: нельзя бесконечно крутить
+            безвиз.
+          </p>
+
+          <h3>13. Вернуться по TIE 24H или консульской визе</h3>
+          <p>
+            <a
+              href="https://www.argentina.gob.ar/migraciones/tramitacion-de-ingreso-electronica-tie-24h"
+              rel="noopener noreferrer"
+              target="_blank">TIE 24H</a
+            >
+            — электронное разрешение на въезд не как турист (учёба, бизнес,
+            кочевник). Только из-за границы и только для безвизовых стран.
+            Не въезжать до одобрения. Консульский трек резиденции — 600
+            консульских единиц, см.
+            <a
+              href="https://www.argentina.gob.ar/migraciones/cuadro-tasas-migratorias"
+              rel="noopener noreferrer"
+              target="_blank">cuadro de tasas</a
+            >
+            и
+            <a
+              href="https://www.argentina.gob.ar/migraciones/permiso-de-ingreso-consular"
+              rel="noopener noreferrer"
+              target="_blank">permiso de ingreso consular</a
+            >.
+          </p>
+        </section>
+
+        <section aria-labelledby="radex">
+          <h2 id="radex">Как подать RaDEX</h2>
+          <ol class="steps">
+            <li>
+              Скачать движения:
+              <a
+                href="https://www.migraciones.gob.ar/transitos/"
+                rel="noopener noreferrer"
+                target="_blank">migraciones.gob.ar/transitos</a
+              >. Зафиксировать дату въезда и дни просрочки.
+            </li>
+            <li>
+              Записаться на консультацию:
+              <a
+                href="https://www.migraciones.gob.ar/turnosAsesoramiento/verificar_jurisdiccion.php"
+                rel="noopener noreferrer"
+                target="_blank">turnos de asesoramiento</a
+              >. Либо форма
+              <a
+                href="https://www.migraciones.gob.ar/contacto/"
+                rel="noopener noreferrer"
+                target="_blank">Canal Único de Contacto</a
+              >.
+            </li>
+            <li>
+              Если ≤30 дней и ещё можно продлить туриста — здание 3, 8–13,
+              с паспортом и пошлиной (+50%, если опоздали).
+            </li>
+            <li>
+              Иначе выбрать критерий ст. 23, зарегистрироваться в
+              <a
+                href="https://www.migraciones.gob.ar/radex/index.html"
+                rel="noopener noreferrer"
+                target="_blank">RaDEX</a
+              >, оплатить, загрузить документы. Заявитель должен быть в
+              Аргентине. Гестор не обязателен.
+            </li>
+            <li>
+              После шага 2 приходит письмо с cita в Sede Central. При
+              формализации выдают precaria.
+            </li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="docs">
+          <h2 id="docs">Документы</h2>
+          <ul>
+            <li>
+              Действующий загранпаспорт. Если просрочен — сначала консульский
+              отдел посольства РФ, Guido 1677, очередь
+              <a
+                href="https://argentina.kdmid.ru/queue/Agreement.aspx"
+                rel="noopener noreferrer"
+                target="_blank">argentina.kdmid.ru</a
+              >.
+            </li>
+            <li>
+              Справка о несудимости из России (<em>antecedentes penales</em> /
+              справка о несудимости) за страны, где жили больше года за
+              последние 3 года: Госуслуги с апостилем либо запрос через
+              <a
+                href="https://argentina.mid.ru/ru/consular-services/russia/document-requesting/"
+                rel="noopener noreferrer"
+                target="_blank">посольство в BA</a
+              >. Аргентина апостиль РФ принимает (оба в Гаагской конвенции).
+              Затем перевод присяжного переводчика (<em>traductor público</em>)
+              и легализация в
+              <a
+                href="https://www.traductores.org.ar/"
+                rel="noopener noreferrer"
+                target="_blank">CTPCBA</a
+              >.
+            </li>
+            <li>
+              Аргентинская несудимость обычно рождается внутри RaDEX. Иначе —
+              <a
+                href="https://www.argentina.gob.ar/servicio/solicitar-certificado-de-antecedentes-penales-con-documento-extranjero"
+                rel="noopener noreferrer"
+                target="_blank">RNR с иностранным документом</a
+              >, Tucumán 1353.
+            </li>
+            <li>Подтверждение адреса в BA (<em>acreditación de domicilio</em>).</li>
+            <li>Пакет по критерию: precontrato, constancia de inscripción, acta de matrimonio / UCC, выписки о пассивном доходе.</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="fees">
+          <h2 id="fees">Пошлины extra-MERCOSUR</h2>
+          <p>
+            Единица —
+            <em>UMSM</em> = $1&nbsp;000 по
+            <a
+              href="https://www.argentina.gob.ar/migraciones/cuadro-tasas-migratorias"
+              rel="noopener noreferrer"
+              target="_blank">Decreto 584/2024</a
+            >. Это не штраф иностранцу. Штрафы ст. 55/59 — работодателю и
+            тому, кто сдаёт жильё irregular.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Услуга</th>
+                <th>UMSM</th>
+                <th>Песо</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Residencia temporaria или permanente</td>
+                <td>100</td>
+                <td>$100&nbsp;000</td>
+              </tr>
+              <tr>
+                <td>Продление / смена на permanente</td>
+                <td>100</td>
+                <td>$100&nbsp;000</td>
+              </tr>
+              <tr>
+                <td>Надбавка 50% при поздней подаче (≤30 дней)</td>
+                <td>+50%</td>
+                <td>к ставке</td>
+              </tr>
+              <tr>
+                <td>Turno preferencial (по желанию)</td>
+                <td>50</td>
+                <td>$50&nbsp;000</td>
+              </tr>
+              <tr>
+                <td>Habilitación de salida</td>
+                <td>40</td>
+                <td>$40&nbsp;000</td>
+              </tr>
+              <tr>
+                <td>Снятие долга, если уехали без оплаты</td>
+                <td>80</td>
+                <td>$80&nbsp;000</td>
+              </tr>
+              <tr>
+                <td>Первый DNI иностранца (RENAPER)</td>
+                <td>—</td>
+                <td>около $20&nbsp;000</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section aria-labelledby="posle">
+          <h2 id="posle">После подачи</h2>
+          <p>
+            <strong>Precaria</strong> (после
+            <a
+              href="https://www.argentina.gob.ar/normativa/nacional/decreto-366-2025-413297/texto"
+              rel="noopener noreferrer"
+              target="_blank">DNU 366/2025</a
+            >) — до 90 дней, раньше было до 180. Продление онлайн с 15 дней
+            до конца:
+            <a
+              href="https://www.migraciones.gob.ar/accesible/consultaTramitePrecaria/ConsultaUnificada.php"
+              rel="noopener noreferrer"
+              target="_blank">consulta trámite / precaria</a
+            >. По ст. 20 можно оставаться, въезжать, выезжать, работать и
+            учиться. В срок для permanente и гражданства precaria <em>не
+            входит</em>.
+          </p>
+          <ul>
+            <li>
+              CUIL в ANSES по миграционному expediente:
+              <a
+                href="https://www.argentina.gob.ar/servicio/obtener-cuil"
+                rel="noopener noreferrer"
+                target="_blank">получить CUIL</a
+              >.
+            </li>
+            <li>
+              Счёт:
+              <a
+                href="https://www.argentina.gob.ar/economia/inclusion-financiera/cuenta-para-migrantes"
+                rel="noopener noreferrer"
+                target="_blank">cuenta para migrantes</a
+              >.
+            </li>
+            <li>
+              DNI — только после одобренной temporaria/permanente:
+              <a
+                href="https://www.argentina.gob.ar/servicio/tramitar-la-primera-identificacion-para-extranjeros"
+                rel="noopener noreferrer"
+                target="_blank">primera identificación</a
+              >.
+            </li>
+            <li>
+              Больница: неотложку не отказывают никому. Плановый приём в
+              национальных и городских больницах CABA после 2025–2026, как
+              правило, по страховке или с оплатой (
+              <a
+                href="https://www.argentina.gob.ar/normativa/nacional/norma-428778"
+                rel="noopener noreferrer"
+                target="_blank">Res. 1066/2026</a
+              >,
+              <a
+                href="https://boletinoficial.buenosaires.gob.ar/normativaba/norma/842026"
+                rel="noopener noreferrer"
+                target="_blank">Res. 913/MSGC/2026</a
+              >).
+            </li>
+            <li>
+              Permanente extra-MERCOSUR — через 3 года temporaria и
+              присутствие &gt;50% срока:
+              <a
+                href="https://www.argentina.gob.ar/servicio/radicaciones-residencia-permanente"
+                rel="noopener noreferrer"
+                target="_blank">permanente</a
+              >. Отсутствие 6+ месяцев может отменить temporaria.
+            </li>
+            <li>
+              Гражданство: 2 года непрерывного <em>законного</em> проживания
+              без выездов, подача в DNM, не в суд (
+              <a
+                href="https://www.argentina.gob.ar/normativa/nacional/ley-346-48854/actualizacion"
+                rel="noopener noreferrer"
+                target="_blank">Ley 346</a
+              >
+              в ред. DNU 366). Старый судебный путь оспаривается.
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="kontakty">
+          <h2 id="kontakty">Куда идти в CABA</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Место</th>
+                <th>Зачем</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  DNM Sede Central, Av. Antártida Argentina 1355
+                </td>
+                <td>
+                  Cita после RaDEX. Prórroga — edificio 3. Habilitación —
+                  edificio 6, «M».
+                  <a
+                    href="https://www.argentina.gob.ar/migraciones/acerca-de-la-dnm"
+                    rel="noopener noreferrer"
+                    target="_blank">Часы и схема</a
+                  >.
+                </td>
+              </tr>
+              <tr>
+                <td>Hipólito Yrigoyen 952</td>
+                <td>Asesoramiento. Только по turno.</td>
+              </tr>
+              <tr>
+                <td>
+                  <a
+                    href="https://caref.org.ar"
+                    rel="noopener noreferrer"
+                    target="_blank">CAREF</a
+                  >, Av. Alberdi 2236
+                </td>
+                <td>
+                  Бесплатная ориентация extra-MERCOSUR. 4613-7362, WhatsApp
+                  +54 9 11 5797-3566.
+                </td>
+              </tr>
+              <tr>
+                <td>CAJ Inmigrantes, Av. de los Inmigrantes 1950</td>
+                <td>Первичная юрпомощь. 4130-6599.</td>
+              </tr>
+              <tr>
+                <td>MPD Área Migrantes, 25 de Mayo 691, 8°</td>
+                <td>
+                  Если уже есть приказ о выдворении.
+                  <a
+                    href="https://www.mpd.gov.ar/index.php/servicio-a-personas-migrantes"
+                    rel="noopener noreferrer"
+                    target="_blank">mpd.gov.ar</a
+                  >, 5070-3224.
+                </td>
+              </tr>
+              <tr>
+                <td>AABA, Uruguay 485, 3°</td>
+                <td>Консультация коллегии, в том числе derecho migratorio. 4371-8869.</td>
+              </tr>
+              <tr>
+                <td>Посольство РФ, консульский отдел, Guido 1677</td>
+                <td>
+                  Паспорт, ЗАГС, справка о несудимости. Не решает аргентинский
+                  статус.
+                  <a
+                    href="https://argentina.mid.ru/ru/consular-services/"
+                    rel="noopener noreferrer"
+                    target="_blank">argentina.mid.ru</a
+                  >.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Не платите уличным «gestores» у Migraciones. DNM пишет: подача
+            личная, посредник не нужен.
+          </p>
+        </section>
+
+        <section aria-labelledby="istochniki">
+          <h2 id="istochniki">Нормы, на которые опирается текст</h2>
+          <ul class="sources">
+            <li>
+              <a
+                href="https://www.argentina.gob.ar/normativa/nacional/ley-25871-92016/actualizacion"
+                rel="noopener noreferrer"
+                target="_blank">Ley 25.871</a
+              >
+              — категории, irregular, работа, выдворение, ст. 20 precaria, ст.
+              61 intimación.
+            </li>
+            <li>
+              <a
+                href="https://www.argentina.gob.ar/normativa/nacional/decreto-616-2010-167004/texto"
+                rel="noopener noreferrer"
+                target="_blank">Decreto 616/2010</a
+              >
+              — смена категории без выезда, сроки 10 / 60 / 30 дней.
+            </li>
+            <li>
+              <a
+                href="https://www.argentina.gob.ar/normativa/nacional/norma-400044/texto"
+                rel="noopener noreferrer"
+                target="_blank">Disposición DNM 1520/2024</a
+              >
+              — кому можно просить cambio.
+            </li>
+            <li>
+              <a
+                href="https://www.argentina.gob.ar/normativa/nacional/decreto-366-2025-413297/texto"
+                rel="noopener noreferrer"
+                target="_blank">DNU 366/2025</a
+              >
+              — реформа 29 мая 2025: precaria 90 дней, здоровье, труд
+              irregular, гражданство.
+            </li>
+            <li>
+              <a
+                href="https://www.argentina.gob.ar/migraciones/cuadro-tasas-migratorias"
+                rel="noopener noreferrer"
+                target="_blank">Decreto 584/2024 / cuadro de tasas</a
+              >.
+            </li>
+            <li>
+              DNU 70/2023 миграцию не менял. DNU 70/2017 отменён. Disp.
+              34/2026 — рассрочка штрафов работодателям, не overstayer.
+            </li>
+          </ul>
+          <p class="fine">
+            Собрано 27 августа 2026 по официальным страницам. Практика стойки
+            в Retiro может разойтись с текстом. Перед подачей сверьте суммы и
+            часы на месте: SMVM могли пересмотреть 28 августа 2026. Это обзор
+            открытых норм, а не сопровождение конкретного дела.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f3ec;
+        --paper: #fffcf6;
+        --ink: #1c1914;
+        --muted: #6a6256;
+        --line: #d9d0c2;
+        --accent: #8a3d1b;
+        --accent-soft: #f3e4d6;
+        --ok: #2a4a38;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #16130f;
+          --paper: #211c16;
+          --ink: #f4eadc;
+          --muted: #b7ab9a;
+          --line: #3c342a;
+          --accent: #e8a078;
+          --accent-soft: #3a2618;
+          --ok: #9dceb0;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          "Source Serif 4", "Noto Serif", "PT Serif", "Iowan Old Style",
+          Georgia, serif;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      a {
+        color: var(--accent);
+        text-underline-offset: 0.18em;
+      }
+
+      a:hover {
+        color: var(--ink);
+      }
+
+      .page {
+        margin: 0 auto;
+        max-width: 920px;
+        padding: clamp(24px, 5vw, 56px) clamp(18px, 4vw, 40px) 88px;
+      }
+
+      .hero {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: clamp(28px, 5vw, 48px);
+      }
+
+      .home-link {
+        display: inline-flex;
+        width: fit-content;
+        margin-bottom: 40px;
+        color: var(--muted);
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .home-link:hover {
+        color: var(--accent);
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--accent);
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      li {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 18px;
+        font-size: clamp(2rem, 5.2vw, 3.35rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.08;
+        text-wrap: balance;
+      }
+
+      .dek {
+        max-width: 40rem;
+        margin-bottom: 22px;
+        color: var(--muted);
+        font-size: clamp(1.12rem, 2vw, 1.32rem);
+        line-height: 1.5;
+      }
+
+      .source-note {
+        max-width: 42rem;
+        margin: 0;
+        border-left: 3px solid var(--accent);
+        padding-left: 16px;
+        color: var(--muted);
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+
+      .toc {
+        margin: 36px 0 8px;
+      }
+
+      .toc-label {
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .toc ol {
+        margin: 0;
+        padding-left: 1.2rem;
+        columns: 2;
+        column-gap: 32px;
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      .article {
+        margin-top: 12px;
+      }
+
+      section + section {
+        margin-top: clamp(40px, 6vw, 68px);
+      }
+
+      h2 {
+        margin-bottom: 18px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 10px;
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      h3 {
+        margin: 28px 0 10px;
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      h2 + h3,
+      h2 + p {
+        margin-top: 0;
+      }
+
+      p,
+      li {
+        color: color-mix(in srgb, var(--ink) 92%, var(--muted));
+        font-size: clamp(1.05rem, 1.5vw, 1.14rem);
+        line-height: 1.72;
+      }
+
+      p + p {
+        margin-top: 14px;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 16px;
+        padding-left: 1.2rem;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      .steps {
+        padding-left: 1.25rem;
+      }
+
+      em {
+        font-style: italic;
+      }
+
+      table {
+        width: 100%;
+        margin: 16px 0 20px;
+        border-collapse: collapse;
+        font-family: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 12px 10px 0;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .sources li {
+        font-size: 1rem;
+      }
+
+      .fine {
+        margin-top: 22px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 640px) {
+        .toc ol {
+          columns: 1;
+        }
+
+        th,
+        td {
+          padding-right: 8px;
+        }
+      }
+    </style>
+  </body>
+</html>
