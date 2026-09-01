@@ -428,11 +428,12 @@ const getRentalListings = (building: Building) => {
   };
 
   addListing(building.localRentalAd);
-  if (!building.localRentalAd && building.rentalEvidence.url) {
+  const evidenceUrl = building.rentalEvidence.url;
+  if (!building.localRentalAd && typeof evidenceUrl === "string") {
     addListing({
-      source: building.rentalEvidence.source,
+      source: building.rentalEvidence.source ?? "Listing",
       title: `${building.name} rental source`,
-      url: building.rentalEvidence.url,
+      url: evidenceUrl,
     });
   }
 
