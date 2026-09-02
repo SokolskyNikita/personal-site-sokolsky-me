@@ -1,0 +1,843 @@
+---
+export const prerender = true;
+
+const pageTitle = "Chocolate kit in Buenos Aires";
+const pageDescription =
+  "Where to buy Fenix cobertura N°86, a tempering spatula, a bar mold, a thermometer, and food-grade cocoa butter in Buenos Aires or on Mercado Libre. Prices in ARS, restocked 2 September 2026.";
+const themeColorLight = "#f6f1ea";
+const themeColorDark = "#161210";
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const canonicalUrl = `${siteUrl}${Astro.url.pathname}`;
+
+type Option = {
+  rank: number;
+  name: string;
+  href: string;
+  pack: string;
+  price: string;
+  note: string;
+};
+
+type Item = {
+  id: string;
+  title: string;
+  lead: string;
+  options: Option[];
+};
+
+const items: Item[] = [
+  {
+    id: "cobertura",
+    title: "Fenix cobertura 86",
+    lead: "N°86 is factory code, not 86% cacao. The tablet is amargo lacteado, 60% cacao with milk powder (EAN 7794620160246). Closest high-cacao Fenix is N°88 at 80%. For 1 kg, Alpes cash is still the floor. For volume, MayoristaNet 2.5 kg is cheaper per kilo.",
+    options: [
+      {
+        rank: 1,
+        name: "Fábrica Fénix",
+        href: "https://www.chocolatesfenix.com/",
+        pack: "1 kg / boxes",
+        price: "Ask in shop",
+        note: "Solís 2022, Constitución. Mon–Fri 10–17. +54 11 4304-1524. Factory salon, mayorista and minorista.",
+      },
+      {
+        rank: 2,
+        name: "MayoristaNet",
+        href: "https://www.mayoristanet.com/ofertas-cms/ofertas-almacen/chocolate-cobertura-amargo-lacteado-86-fenix-caja-x-2-5-kg",
+        pack: "2.5 kg box",
+        price: "$71.950",
+        note: "En stock. $28.780/kg. Site says gastronomic prices may exclude IVA; ships CABA / GBA Norte only.",
+      },
+      {
+        rank: 3,
+        name: "Distribuidora Alpes",
+        href: "https://distribuidoraalpes.com.ar/producto/cobertura-de-chocolate-semiamargo-fenix-codigo-86-x-1-kg/",
+        pack: "1 kg",
+        price: "$35.847 cash",
+        note: "Carlos Antonio López 2341, Villa Pueyrredón. Cheapest verified 1 kg. Four in stock.",
+      },
+      {
+        rank: 4,
+        name: "Valentino",
+        href: "https://www.cocinaconvalentino.com.ar/coberturas-de-chocolate/11148-cob-amargo-lact-tableta-n86-60-cacao-fenix-1kg-7794620160246.html",
+        pack: "1 kg",
+        price: "$36.599",
+        note: "Viamonte 758, Microcentro. In stock. Núñez branch moved toward Cabildo 4662; confirm before going.",
+      },
+      {
+        rank: 5,
+        name: "La Botica del Pastelero",
+        href: "https://boticadelpastelero.com.ar/productos/chocolate-cobertura-amargo-lacteado-n86-60-cacao-x-1-kg-fenix/",
+        pack: "1 kg",
+        price: "$38.260",
+        note: "Jorge Newbery 3748, Chacarita. Two in stock. Transfer $36.347.",
+      },
+      {
+        rank: 6,
+        name: "Chocolate al Rescate",
+        href: "https://chocolatealrescate.empretienda.com.ar/fenix/chocolate-cobertura/amargo/chocolate-cobertura-fenix-negro-amargo-lacteado-86-bloque-de-1-kg",
+        pack: "1 kg",
+        price: "$38.600",
+        note: "In stock. Pickup San Isidro. Also Frio Dep 10 kg at $352.110 (1 box, $35.211/kg).",
+      },
+      {
+        rank: 7,
+        name: "New Garden",
+        href: "https://newgarden.com.ar/chocolate-fenix-cobertura-semiamargo-60-n-86-x-1-kg.html",
+        pack: "1 kg",
+        price: "$44.820",
+        note: "En stock. Many CABA dietéticas. El Portugués and El Nuevo Emporio online are out.",
+      },
+      {
+        rank: 8,
+        name: "Mercado Libre catalog",
+        href: "https://www.mercadolibre.com.ar/chocolate-cobertura-negro-amargo-86-lacteado-60-fenix-x1-kg/p/MLA22988542",
+        pack: "1 kg",
+        price: "from $46.524",
+        note: "About 25% above pastry shops. 4.9 from 234 reviews. 2.5 kg ML boxes run $105.000–$124.600.",
+      },
+    ],
+  },
+  {
+    id: "espatula",
+    title: "Espátula para templar",
+    lead: "Marble tabling needs a wide, rigid stainless scraper, 16–24 cm across. Seeding only needs a silicone spatula. The Botica “espátula para chocolate” is 4 cm wide — fine for spreading, wrong for tabling a real batch.",
+    options: [
+      {
+        rank: 1,
+        name: "Fontana Cakes",
+        href: "https://fontanacakes.com/productos/espatula-para-chocolateria-de-acero-inoxidable-y-madera-de-17-cm-de-ancho-pascua/",
+        pack: "17 cm wide steel",
+        price: "$17.640 transfer",
+        note: "True wide blade. Five in stock. List $19.600. Showroom Giribone 909, Canning.",
+      },
+      {
+        rank: 2,
+        name: "El Nuevo Emporio",
+        href: "https://tienda.elnuevoemporio.com.ar/tienda/espatulas/rasqueta-para-reposteria-de-acero-inoxidable-cornet-20-cm",
+        pack: "Cornet 20×10 cm",
+        price: "$6.827",
+        note: "In stock. Stainless pastry scraper, 20 cm wide. Pickup Cochabamba 2577. Cheapest CABA walk-in wide tool.",
+      },
+      {
+        rank: 3,
+        name: "ChocoBazar",
+        href: "https://www.chocobazar.com/productos/espatula-templadora-reforzada-20-cm/",
+        pack: "20 cm scraper",
+        price: "$24.500",
+        note: "Blade 16×20 cm. Purpose-built templadora. Ships from Rosario.",
+      },
+      {
+        rank: 4,
+        name: "Gourmand Place",
+        href: "https://www.gourmandplace.com/producto/espatulas-de-templado-20-cm/",
+        pack: "Pro 20 / 24 cm",
+        price: "$96.000 / $105.600",
+        note: "Primera Junta 878, Bajo San Isidro. Appointment only. 24 cm also in stock.",
+      },
+      {
+        rank: 5,
+        name: "La Botica del Pastelero",
+        href: "https://boticadelpastelero.com.ar/productos/pre-venta-espatula-para-chocolate-acero-inoxidable-20-cm-la-botica-11jz2/",
+        pack: "16 / 20 cm, 4 cm wide",
+        price: "$13.000–$14.900",
+        note: "Still the 4 cm spreading tool. Coty Manía 16/20 cm is in stock but blade width is unpublished.",
+      },
+    ],
+  },
+  {
+    id: "molde",
+    title: "Molde para barra",
+    lead: "Polycarbonate for gloss and snap. Classic ~100 g tablets are in stock now at Alyser (Pavoni) and Fontana (Chocolate World CW2162, last unit). Silicone is cheaper and fine for filled bars, but the finish is usually matte.",
+    options: [
+      {
+        rank: 1,
+        name: "Alyser Market",
+        href: "https://alysermarket.com/producto/molde-tableta-pave-pavoni-pc5006/",
+        pack: "Pavoni PC5006, 3×~100 g",
+        price: "$36.000",
+        note: "In stock. 155×78×10 mm. Dardo Rocha 2324, Martínez. Same shop has Ola/Bricks/Crush at $43.000 and PC5005FR at $36.000.",
+      },
+      {
+        rank: 2,
+        name: "Fontana CW2162",
+        href: "https://fontanacakes.com/productos/molde-para-chocolate-tableta-clasica-100-gr-cw2162/",
+        pack: "CW2162, 3×100 g PC",
+        price: "$65.772 transfer",
+        note: "Classic break-apart tablet. Last unit. List $73.080. Showroom Giribone 909, Canning.",
+      },
+      {
+        rank: 3,
+        name: "Fontana CW1429",
+        href: "https://fontanacakes.com/productos/molde-para-chocolate-tableta-205-gr-cw1429/",
+        pack: "CW1429, 3×205 g PC",
+        price: "$65.228 transfer",
+        note: "Two left. Same mold is $95.000 on Mercado Libre (4 units).",
+      },
+      {
+        rank: 4,
+        name: "Alyser Martellato",
+        href: "https://alysermarket.com/producto/molde-tableta-bar-quilted-mini-ma-2020-martellato/",
+        pack: "MA2020 / MA2008 / MA2021",
+        price: "$49.000",
+        note: "In stock. Mini ~80–82 g bars. WhatsApp +54 9 11 6561-5050.",
+      },
+      {
+        rank: 5,
+        name: "ML silicone / BWB",
+        href: "https://listado.mercadolibre.com.ar/molde-barra-chocolate",
+        pack: "Lingotes, Dubai, Kinder",
+        price: "$5.500–$15.500",
+        note: "Budget only. Daruma x8 lingotes is out. Boutique Cook Lovely acrylic 15 cm is in stock ($24.965 transfer, Pilar).",
+      },
+    ],
+  },
+  {
+    id: "termometro",
+    title: "Termómetro",
+    lead: "Dark chocolate temper sits around 31–32 °C. Buy a fast digital probe with 0.1 °C resolution. Infrared reads the surface only. Cheap pincha-carne clones often lie at chocolate temps — ice-bath check any budget unit.",
+    options: [
+      {
+        rank: 1,
+        name: "ThermoPro TP03H",
+        href: "https://www.mercadolibre.com.ar/termometro-digital-para-cocina-thermopro-tp03h-lectura-instantanea-impermeable/p/MLA25543056",
+        pack: "Instant-read probe",
+        price: "$20.340–$31.349",
+        note: "3–4 s, claimed ±0.5 °C, food-grade probe. Best value on Mercado Libre.",
+      },
+      {
+        rank: 2,
+        name: "Tu Medición",
+        href: "https://tumedicion.com/producto/termometro-thermapen-one/",
+        pack: "ETI Thermapen Superfast",
+        price: "$173.940",
+        note: "In stock. Lacroze 3020, Colegiales. ±0.4 °C. Thermapen ONE also in stock at $252.680.",
+      },
+      {
+        rank: 3,
+        name: "Valentino",
+        href: "https://www.cocinaconvalentino.com.ar/termometros/4907-termometro-para-chocolate-4140.html",
+        pack: "Silcook / Axen AX7200",
+        price: "$30.100 / $17.499",
+        note: "Silcook chocolate spatula ~$30.100. Axen digital $17.499 in stock. Emporio Silcook 4143 $39.696 also in stock.",
+      },
+      {
+        rank: 4,
+        name: "La Botica del Pastelero",
+        href: "https://boticadelpastelero.com.ar/productos/termometro-digital-importado-c-estuche-transparente-50300c/",
+        pack: "Digital −50/+300 °C",
+        price: "$5.250",
+        note: "Last unit. Walk-in Chacarita. Budget probe only — ice-bath it. Tutu's Caballito has 204 generic probes at $6.900.",
+      },
+      {
+        rank: 5,
+        name: "Alcohol analog",
+        href: "https://www.mercadolibre.com.ar/termometro-de-alcohol-para-chocolate-10-a-150c-color-amarillo/p/MLA35586395",
+        pack: "−10 to 150 °C glass",
+        price: "from $5.805",
+        note: "Backup only. Botica’s Franklin alcohol model is out. Skip kitchen infrared as the primary tool.",
+      },
+    ],
+  },
+  {
+    id: "manteca",
+    title: "Manteca de cacao",
+    lead: "Food-grade only: 100% cacao, pressed from liquor, no perfume. Natural / aromatic (Fénix) for dark chocolate. Deodorized (Enesa, Top Class, Nuda alimenticia) for white or colored work. Skip anything marked cosmética or labial.",
+    options: [
+      {
+        rank: 1,
+        name: "El Nuevo Emporio",
+        href: "https://tienda.elnuevoemporio.com.ar/tienda/dia-del-nino/manteca-de-cacao-1kg-importada-pura-cosmetologia-gastronomia",
+        pack: "Enesa 1 kg, deodorized",
+        price: "$32.073",
+        note: "Con stock. Cheapest verified kilo. Dual gastronomy listing. CABA shipping. Pickup Cochabamba 2577. ML asks $47.572 for the same SKU.",
+      },
+      {
+        rank: 2,
+        name: "Valentino",
+        href: "https://www.cocinaconvalentino.com.ar/manteca-de-cacao/14570-manteca-de-cacao-1-kg.html",
+        pack: "1 kg",
+        price: "$37.799",
+        note: "In stock. Food-only listing. Also 500 g at $19.499 and Lodiser 250 g at $10.100.",
+      },
+      {
+        rank: 3,
+        name: "Fénix factory",
+        href: "https://www.chocolatesfenix.com/",
+        pack: "Natural aromatic",
+        price: "Ask in shop",
+        note: "Solís 2022. Chocolate al Rescate’s Fénix 1 kg butter is out. AESA Rosario 3.5 kg bucket listed at $245.630.",
+      },
+      {
+        rank: 4,
+        name: "New Garden",
+        href: "https://newgarden.com.ar/manteca-de-cacao-x-1-kg.html",
+        pack: "1 kg",
+        price: "$51.696",
+        note: "En stock. Ingredient is cocoa butter only. Many CABA dietéticas.",
+      },
+      {
+        rank: 5,
+        name: "Mercado Libre food listings",
+        href: "https://listado.mercadolibre.com.ar/manteca-de-cacao-comestible",
+        pack: "1 kg comestible",
+        price: "$48.490–$72.939",
+        note: "Only if the copy says comestible or alimenticia. IBC 1 kg ML is out. Villares Cofina 25 kg is in stock at ~$38.400/kg with IVA.",
+      },
+    ],
+  },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  numberOfItems: items.length,
+  itemListElement: items.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.title,
+    url: `${canonicalUrl}#${item.id}`,
+    description: item.lead,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content={themeColorLight} />
+    <meta
+      name="theme-color"
+      content={themeColorLight}
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content={themeColorDark}
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="sokolsky.me" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}
+    ></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <a class="home" href="/">sokolsky.me</a>
+        <p class="eyebrow">Buenos Aires · restocked 2 September 2026</p>
+        <h1>Chocolate kit in Buenos Aires</h1>
+        <p class="lede">
+          Where to buy the five pieces for tempering and molding: Fenix
+          cobertura N°86, a wide scraper, a bar mold, a probe thermometer, and
+          food-grade cocoa butter. Physical pastry shops beat Mercado Libre on
+          chocolate and fat. Order the scraper and the polycarbonate mold.
+        </p>
+      </header>
+
+      <aside class="note" role="note">
+        <p>
+          <strong>Fenix 86 is a factory code, not 86% cacao.</strong> Cobertura
+          amargo lacteado N°86 is 60% cacao with milk. If you wanted extra-bitter
+          eating chocolate, ask for N°88 (80%).
+        </p>
+      </aside>
+
+      <nav class="jump" aria-label="On this page">
+        <a href="#plan">Plan</a>
+        <a href="#cobertura">Cobertura</a>
+        <a href="#espatula">Spatula</a>
+        <a href="#molde">Mold</a>
+        <a href="#termometro">Thermometer</a>
+        <a href="#manteca">Cocoa butter</a>
+      </nav>
+
+      <section class="plan" id="plan" aria-labelledby="plan-heading">
+        <h2 id="plan-heading">One-day walk</h2>
+        <ol class="stops">
+          <li>
+            <h3>
+              <a
+                href="https://maps.google.com/?q=Sol%C3%ADs+2022,+Buenos+Aires"
+                target="_blank"
+                rel="noreferrer noopener">Fénix factory</a
+              >
+            </h3>
+            <p>
+              Solís 2022, Constitución. Mon–Fri 10–17. Six blocks from
+              Constitución station.
+              <a href="tel:+541143041524">+54 11 4304-1524</a>. Ask for
+              cobertura N°86 and manteca de cacao natural. Call first — they do
+              not list prices online.
+            </p>
+          </li>
+          <li>
+            <h3>
+              <a
+                href="https://www.cocinaconvalentino.com.ar/tiendas"
+                target="_blank"
+                rel="noreferrer noopener">Valentino, Viamonte 758</a
+              >
+            </h3>
+            <p>
+              Microcentro. Mon–Fri 9–18, Sat 9–17.
+              <a href="tel:+541161825957">11 6182-5957</a>. N°86 at $36.599/kg
+              if the factory is closed. Cocoa butter $37.799/kg. Silcook /
+              Axen thermometers on the shelf. Backup: La Botica, Jorge Newbery
+              3748, Chacarita.
+            </p>
+          </li>
+          <li>
+            <h3>
+              <a
+                href="https://maps.google.com/?q=Cochabamba+2577,+Buenos+Aires"
+                target="_blank"
+                rel="noreferrer noopener">El Nuevo Emporio</a
+              >
+            </h3>
+            <p>
+              Cochabamba 2577, San Cristóbal. Enesa cocoa butter $32.073/kg and
+              a 20 cm cornet scraper $6.827, both in stock. N°86 couverture is
+              out online — do not count on it here.
+            </p>
+          </li>
+        </ol>
+        <h3>Then order</h3>
+        <ul class="orders">
+          <li>
+            <a
+              href="https://www.mayoristanet.com/ofertas-cms/ofertas-almacen/chocolate-cobertura-amargo-lacteado-86-fenix-caja-x-2-5-kg"
+              target="_blank"
+              rel="noreferrer noopener">MayoristaNet 2.5 kg N°86, $71.950</a
+            >
+            if you want volume ($28.780/kg, CABA / GBA Norte).
+          </li>
+          <li>
+            <a
+              href="https://alysermarket.com/producto/molde-tableta-pave-pavoni-pc5006/"
+              target="_blank"
+              rel="noreferrer noopener">Alyser Pavoni PC5006, $36.000</a
+            >
+            for a 100 g polycarbonate bar, or Fontana CW2162 if you want Chocolate
+            World (last unit).
+          </li>
+          <li>
+            <a
+              href="https://fontanacakes.com/productos/espatula-para-chocolateria-de-acero-inoxidable-y-madera-de-17-cm-de-ancho-pascua/"
+              target="_blank"
+              rel="noreferrer noopener">Fontana 17 cm scraper, $17.640 transfer</a
+            >
+            if you skip the Emporio cornet. Five in stock.
+          </li>
+          <li>
+            <a
+              href="https://www.mercadolibre.com.ar/termometro-digital-para-cocina-thermopro-tp03h-lectura-instantanea-impermeable/p/MLA25543056"
+              target="_blank"
+              rel="noreferrer noopener">ThermoPro TP03H, $20.340–$31.349</a
+            >, or Tu Medición on Lacroze 3020 if you want a Thermapen.
+          </li>
+        </ul>
+      </section>
+
+      {
+        items.map((item) => (
+          <section class="item" id={item.id} aria-labelledby={`${item.id}-heading`}>
+            <h2 id={`${item.id}-heading`}>{item.title}</h2>
+            <p class="item-lead">{item.lead}</p>
+            <ol class="options">
+              {item.options.map((option) => (
+                <li class="option">
+                  <span class="rank" aria-hidden="true">
+                    {option.rank}
+                  </span>
+                  <div class="option-body">
+                    <div class="option-top">
+                      <h3>
+                        <a
+                          href={option.href}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                        >
+                          {option.name}
+                        </a>
+                      </h3>
+                      <p class="price">
+                        <strong>{option.price}</strong>
+                        <span>{option.pack}</span>
+                      </p>
+                    </div>
+                    <p class="option-note">{option.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
+      }
+
+      <footer class="footer">
+        <p>
+          Prices in ARS. First pass 1 September 2026; restock pass 2 September
+          2026 via Google Argentina and product-page scrapes. Stock and shipping
+          change daily. Confirm Valentino Núñez at Cabildo 4662. MayoristaNet
+          gastronomic prices may exclude IVA. Factory prices are unpublished.
+          Mercado Libre “llega gratis mañana” often depends on a first-purchase
+          promo.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f1ea;
+    --ink: #1c1612;
+    --muted: #5e5348;
+    --line: #d6cbbd;
+    --soft: #efe6d8;
+    --accent: #6a3a28;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161210;
+      --ink: #f3ece4;
+      --muted: #b3a494;
+      --line: #3a322c;
+      --soft: #221c18;
+      --accent: #d08a6a;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    scroll-behavior: smooth;
+    font-family:
+      "Iowan Old Style",
+      "Palatino Linotype",
+      Palatino,
+      Georgia,
+      serif;
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .page {
+    width: min(42rem, 100%);
+    margin: 0 auto;
+    padding: 1.1rem 1rem 2.4rem;
+  }
+
+  .header {
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .home {
+    width: fit-content;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .home:hover {
+    text-decoration: underline;
+  }
+
+  .eyebrow {
+    margin: 0.7rem 0 0;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 5vw, 2.05rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .lede {
+    margin: 0.15rem 0 0;
+    max-width: 38rem;
+    color: var(--muted);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .note,
+  .jump,
+  .plan,
+  .item-lead,
+  .option-note,
+  .price,
+  .footer,
+  .stops p,
+  .orders {
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+  }
+
+  .note {
+    margin: 0 0 1.1rem;
+    padding: 0.75rem 0.85rem;
+    border-left: 3px solid var(--accent);
+    background: var(--soft);
+  }
+
+  .note p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    margin: 0 0 1.4rem;
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+
+  .jump a {
+    color: var(--accent);
+    text-underline-offset: 0.14em;
+  }
+
+  .plan,
+  .item {
+    margin: 0 0 1.7rem;
+    padding-top: 0.2rem;
+  }
+
+  h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.18rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  h3 a {
+    text-underline-offset: 0.14em;
+  }
+
+  .stops,
+  .orders,
+  .options {
+    margin: 0.55rem 0 0;
+    padding: 0;
+  }
+
+  .stops {
+    display: grid;
+    gap: 0.85rem;
+    list-style: none;
+    counter-reset: stop;
+  }
+
+  .stops li {
+    padding: 0.75rem 0 0.15rem;
+    border-top: 1px solid var(--line);
+    counter-increment: stop;
+  }
+
+  .stops li::before {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--accent);
+    content: counter(stop);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 1.1rem;
+    font-weight: 750;
+    line-height: 1.2;
+  }
+
+  .stops p,
+  .orders {
+    margin: 0.28rem 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .orders {
+    padding-left: 1.15rem;
+  }
+
+  .orders li + li {
+    margin-top: 0.35rem;
+  }
+
+  .item-lead {
+    margin: 0 0 0.55rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .options {
+    display: grid;
+    gap: 0;
+    list-style: none;
+  }
+
+  .option {
+    display: grid;
+    grid-template-columns: 1.6rem minmax(0, 1fr);
+    gap: 0.45rem 0.65rem;
+    padding: 0.75rem 0 0.8rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .rank {
+    color: var(--accent);
+    font-family:
+      "Segoe UI",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      sans-serif;
+    font-size: 1.1rem;
+    font-weight: 750;
+    line-height: 1.2;
+  }
+
+  .option-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.4rem 0.8rem;
+    align-items: start;
+  }
+
+  .price {
+    display: grid;
+    justify-items: end;
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .price strong {
+    font-size: 0.98rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .price span {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+  }
+
+  .option-note {
+    margin: 0.22rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .footer {
+    margin-top: 0.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding: 0.9rem 0.85rem 2rem;
+    }
+
+    .option-top {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .price {
+      justify-items: start;
+      text-align: left;
+    }
+  }
+</style>
