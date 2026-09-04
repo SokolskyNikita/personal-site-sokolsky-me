@@ -2,7 +2,7 @@
   "title": "List of fancy Buenos Aires apartment buildings",
   "city": "Buenos Aires",
   "area": "Buenos Aires",
-  "generatedAt": "2026-09-04T21:00:00.000Z",
+  "generatedAt": "2026-09-04T21:30:00.000Z",
   "validation": {
     "sourceNotes": "Initial list extracted manually from local-text/ba-fancy-buildings.md into this JSON. The page does not import or parse the Markdown file.",
     "duplicateMerge": "Madero Plaza and Terrazas de Puerto Madero are represented as one merged building-complex entry because the source markdown called out that likely duplication.",
@@ -41,7 +41,8 @@
     "lastLongTermRentalAudit": "On 2026-09-04, audited live long-term rental ads for all listed buildings via one Composer-2.5 agent per building (BrightData search/scrape only). Removed delisted ads, refreshed prices at BNA venta 1530 ARS/USD, and added new listings only when all-in USD (rent + expensas) and size were confirmed. Near-price pairs were checked for duplicate units.",
     "lastCandidateListingGateAdd": "Added Bayres Dock, Distrito Colegiales, Donna Reggia, El Aleph, Evoque Olazábal, Harbour House, HOM Recoleta, La Porteña II, Malabia Residence, Migueletes 2176, MOCA, Molina Ciudad, MOVA Belgrano II, Palacio Bonaire, Palacio Raggio, Río Plaza, Torre Ámbar, Torre Beruti, Torre Fresh, Torre Hollywood, Torre Oro 2835 and Wide Núñez on 2026-08-12 after Luna listing-gate agents verified live exact-building inventory. Skipped Fitz Roy 2400 (typical 1BR ~36 m²), MIT Hollywood (1BR ~55 m² total) and Lumiere Boulevard Madero (typical 1BR ~50–57 m² covered). Torre Dosplaza had only one long-term rental after the Airbnb room scrape did not name the building.",
     "lastNamedGymPoolAirbnbAdd": "Added BE Libertador, Torre Isadora and ViewPoint Libertador on 2026-09-04 after named-building + live Airbnb + median 1BR >= 50 m² filter in Belgrano / Colegiales / Villa Crespo / Núñez. Airbnb rooms without extractable monthly USD (or weekly×30/7 fallback) were omitted. Skipped Boulevard (blacklisted).",
-    "lastNewBuildingRestore": "Restored Alley, Palacio Cabrera, Palermo Air, Paseo de la Cisterna and Quo Zapata on 2026-09-04 after a later JSON write dropped them. Named + live Airbnb + median 1BR >= 50 m². Long-term ads require all-in USD at BNA venta 1,530."
+    "lastNewBuildingRestore": "Restored Alley, Palacio Cabrera, Palermo Air, Paseo de la Cisterna and Quo Zapata on 2026-09-04 after a later JSON write dropped them. Named + live Airbnb + median 1BR >= 50 m². Long-term ads require all-in USD at BNA venta 1,530.",
+    "lastAirbnbLinkAudit": "2026-09-04: One Composer-2.5 agent per building used BrightData to recheck airbnb.com rooms. Dropped 404/unavailable/unpriced links; added new exact-building rooms only when monthly USD (or weekly×30/7) was confirmed."
   },
   "buildings": [
     {
@@ -142,7 +143,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1095013758257632294",
-        "evidence": "Design Studio in Quartier Retiro Amenities 5 stars with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Design Studio in Quartier Retiro Amenities 5 stars\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-distrito-quartier-puerto-retiro-59030049.html",
@@ -205,7 +206,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "Re-checked 2026-07-21: no exact-building Airbnb listing found for Alpha Núñez / Vuelta de Obligado 3928."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://departamento.mercadolibre.com.ar/MLA-2044072426-monoambiente-divisible-a-estrenar-en-alquiler-_JM",
@@ -325,7 +326,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-puerto-madero-alvear-tower-departamento-en-alquiler-58856630.html",
@@ -385,10 +386,10 @@
       },
       "availability": "Rental ad found; Airbnb not confirmed",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing naming Art María was attached on 2026-07-20."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/12878526",
+        "evidence": "Airbnb listing titled \"Puerto Madero, Security and tranquility in Buenos Aires.\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
@@ -449,7 +450,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "Previous Airbnb listing removed: no extractable monthly price (2026-07-20)."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-3-ambientes-en-torre-astor-nunez-amenities-premium-y-59473203.html",
@@ -508,7 +509,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "Previous Airbnb room 656743268056255662 returned a 404 during the 2026-06-30 BrightData scrape audit; no replacement exact Astor Palermo room was found."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://departamento.mercadolibre.com.ar/MLA-3444061248-luminoso-departamento-2-ambientes-en-alquiler-astor-palermo-palermo-_JM",
@@ -577,7 +578,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-ubicado-en-puerto-madero-58983950.html",
@@ -640,7 +641,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1182344670710808772",
-        "evidence": "Airbnb listing titled \"Excellent apartment with amenities\" names the Be Libertador building; weekly USD price extrapolated to monthly."
+        "evidence": "Airbnb listing titled \"Excellent apartment with amenities.\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dpto-alquiler-2-amb-belgrano-edif-be-libertador-59871608.html",
@@ -701,7 +702,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1718972531852274038",
-        "evidence": "Be Plaza Studio in BA for long stays with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Be Plaza Studio in BA for long stays\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa--departamento-de-2-ambientes-amoblado-con-amenities-59815427.html",
@@ -764,10 +765,10 @@
       },
       "availability": "Rental evidence found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/993703526118774323",
+        "evidence": "Airbnb listing titled \"Ceretti II. Modern and bright studio Urquiza\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-ceretti-2100-al-frente-balcon-53193163.html",
@@ -826,7 +827,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-premium-chateau-libertador-59329124.html",
@@ -887,7 +888,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-4-ambientes-chateau-puerto-madero-58581354.html",
@@ -950,7 +951,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1333253360501657887",
-        "evidence": "Airbnb result titled \"Concepción Live. Luxury pool, gym in Palermo\" with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Concepción Live. Luxury pool, gym in Palermo\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-concepcion-live-con-cochera!-56101178.html",
@@ -1011,8 +1012,8 @@
       "airbnb": {
         "confirmed": true,
         "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/1651708281677153203",
-        "evidence": "Torre Deco Armani | Luxury Studio + Pool + Spa with extractable USD monthly price."
+        "url": "https://www.airbnb.com/rooms/1544263790572482044",
+        "evidence": "Airbnb listing titled \"Studio Deco Recoleta By Armani Casa Gym and Spa\"."
       },
       "rentalEvidence": {
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-1-ambiente-recoleta-25403",
@@ -1080,7 +1081,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1668519350294446471",
-        "evidence": "Pampa – Premium Setting Overforests and Lakes with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Pampa – Premium Setting Overforests and Lakes\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-depampa-departamento-2-ambientes-amoblado-58911252.html",
@@ -1149,7 +1150,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-monoambiente-en-edificio-distrito-arcos-59678647.html",
@@ -1206,7 +1207,7 @@
       "availability": "Rental ad and Booking.com stay found",
       "airbnb": {
         "confirmed": true,
-        "label": "Booking.com (Airbnb-column fallback)",
+        "label": "Airbnb confirmed",
         "url": "https://www.booking.com/hotel/ar/87-moderno-y-espacioso-junto-a-palermo-soho.html",
         "evidence": "Nova Stays - Amplio departamento en torre con amenities (1BHK in Dome Green Soho II) with extractable USD monthly price."
       },
@@ -1278,7 +1279,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-dpto-amueblado-y-equipado-51834763.html",
@@ -1339,7 +1340,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/13137626",
-        "evidence": "Airbnb listing is titled \"Light-Filled Apartment in the Kavanagh Building.\""
+        "evidence": "Airbnb listing titled \"Light-Filled Apartment in the Kavanagh Building\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-kavanagh-alquiler-retiro-departamento-3-ambientes-58796162.html",
@@ -1399,10 +1400,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1727536435546145035",
+        "evidence": "Airbnb listing titled \"Apartment in Puerto Madero\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-increible-departamento-2-ambientes-con-cochera-100-59457507.html",
@@ -1464,7 +1465,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-4-ambientes-en-puerto-madero-59621185.html",
@@ -1527,7 +1528,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-villa-urquiza-60006551.html",
@@ -1590,7 +1591,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1037624108593687742",
-        "evidence": "Airbnb listing titled Studio at Hotel Faena Residences in Puerto Madero."
+        "evidence": "Airbnb listing titled \"Studio at Hotel Faena Residences\"."
       },
       "rentalEvidence": {
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-puerto-madero-26007",
@@ -1653,7 +1654,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-unico-3amb-en-torre-de-lujo-forum-alcorta-59174951.html",
@@ -1711,10 +1712,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/747135887344587187",
+        "evidence": "Airbnb listing titled \"Forum - Exclusive 2BDR apartment in Puerto Madero\"."
       },
       "rentalEvidence": {
         "url": "https://kubito.com.ar/propiedad/excelente-2-ambientes-forum-puerto-madero-2/",
@@ -1776,7 +1777,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/607717860436275696",
-        "evidence": "Airbnb result titled \"2 with spa, Heated pool Gym Full Amemities\" names Green Haus Belgrano."
+        "evidence": "Airbnb listing titled \"2 with spa, Heated pool Gym Full Amemities\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-greenhaus.-monoambiente-tipo-loft-55649377.html",
@@ -1839,7 +1840,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alucinante-pendhouse-en-puerto-madero-59810091.html",
@@ -1898,10 +1899,10 @@
       },
       "availability": "Rental ad found; Airbnb not confirmed",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing with clear size and monthly price was attached on 2026-07-20."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1628961699426250832",
+        "evidence": "Airbnb listing titled \"Studio in Madero Harbour Luxury and Premium Location\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-con-cochera-harbour-58400650.html",
@@ -1961,10 +1962,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1512284099472039582",
+        "evidence": "Airbnb listing titled \"Spacious 2BR in Palermo Great Location & Amenities\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-1-ambiente--19913409",
@@ -2023,7 +2024,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1721252267410167413",
-        "evidence": "Huergo 475 | Panoramic Views | Full amenities — live replacement after 1523337396188018418 404."
+        "evidence": "Airbnb listing titled \"Huergo 475 | Incredible Views | Full Amenities\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-huergo-475-puerto-madero-59193520.html",
@@ -2086,7 +2087,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/12900361",
-        "evidence": "Airbnb listing \"Exclusive apartment in Recoleta\" at Montevideo 1250 with priced monthly stay."
+        "evidence": "Airbnb listing titled \"Exclusive apartment in Recoleta\"."
       },
       "rentalEvidence": {
         "url": null,
@@ -2134,7 +2135,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/828368588559090171",
-        "evidence": "Exact-building Airbnb pin ~2 m from Jardines del Libertador (Av. del Libertador 8540). Listing \"Apartment with heated pool near River\" describes heated pool, gym, sauna, jacuzzi and on-site restaurant near River stadium — matching the complex. Host Lorena. Checked 2026-07-22."
+        "evidence": "Airbnb listing titled \"Apartment with heated pool near River\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-nunez-1-ambiente--19468479",
@@ -2197,7 +2198,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb with extractable monthly or weekly USD pricing was found in BrightData searches on 2026-07-21."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-polo-en-l-avenue-4-amb-222-m-sup2--59432596.html",
@@ -2254,9 +2255,9 @@
       "availability": "Rental ad found; Airbnb found",
       "airbnb": {
         "confirmed": true,
-        "label": "Airbnb found",
+        "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/38122492",
-        "evidence": "Airbnb result titled \"Excellence and Warmth in Palermo\" names the La Musa complex."
+        "evidence": "Airbnb listing titled \"Excellence and Warmth in Palermo\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-impecable-monoambiente-amoblado-av-cordoba-6200-59341251.html",
@@ -2318,7 +2319,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://mudafy.com.ar/departamentos/la-portena-2-faena-juana-manso-1300-departamento-en-alquiler-869953",
@@ -2379,7 +2380,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20251295",
@@ -2441,7 +2442,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1140505153539316187",
-        "evidence": "Airbnb result titled \"Luxurious Apartment in Palermo Hollywood | 2 People\" lists Nicaragua 6045."
+        "evidence": "Airbnb listing titled \"Luxurious Apartment in Palermo Hollywood | 2 People\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-live-hotel-palermo-59631693.html",
@@ -2502,7 +2503,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/32639630",
-        "evidence": "Airbnb result titled \"Unmissable and Super Bright Apartment in Puerto Madero\" names Los Molinos."
+        "evidence": "Airbnb listing titled \"Unmissable and Super Bright Apartment in Puerto Madero\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-los-molinos-faena-90-m-sup2--2-cocheras-55130955.html",
@@ -2562,8 +2563,8 @@
       "airbnb": {
         "confirmed": true,
         "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/1002350439705941642",
-        "evidence": "Exact-building Airbnb pin reverse-geocodes to Olga Cossettini ~1545 (Lumiere Puerto Madero at Olga Cossettini 1540). Listing \"1-Bedroom Apartment in Puerto Madero\" notes balcony, pool and gym. Host Giselle. Checked 2026-07-22."
+        "url": "https://www.airbnb.com/rooms/28469754",
+        "evidence": "Airbnb listing titled \"Lumiere Puerto Madero (building)\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-lumiere-puerto-madero-58900479.html",
@@ -2624,7 +2625,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1642081391172648688",
-        "evidence": "Premium Studio with Heated Pool and Gym with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Premium Studio with Pool, Garden and Gym\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiles-dos-amb-almagro-59727200.html",
@@ -2690,7 +2691,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-con-muebles-madero-center-59425471.html",
@@ -2748,10 +2749,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1552234192254305010",
+        "evidence": "Airbnb listing titled \"Apartment in Terraza Madero - 3 Rooms\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-de-2-ambientes-en-alquiler-madero-plaza-56900141.html",
@@ -2811,10 +2812,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1488720002639507128",
+        "evidence": "Airbnb listing titled \"Luxury in Palermo Queens – Malabia\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-full-amenities-en-malabia-residence-dos-60003010.html",
@@ -2875,7 +2876,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-1-ambiente--20160317",
@@ -2938,7 +2939,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in BrightData searches on 2026-07-21."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-luminoso-mono-en-milaires-villa-59387157.html",
@@ -2997,7 +2998,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/44471694",
-        "evidence": "Airbnb pin at Humboldt ~1942 is ~145 m from Mirabilia Palermo (Humboldt 2045) on the same block; listing \"Two Bedroom Apartment – Palermo Hollywood\" includes building pool. Host Rodrigo. Checked 2026-07-22."
+        "evidence": "Airbnb listing titled \"Two Bedroom Apartment - PALERMO HOLLYWOOD\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-de-3-ambientes-en-torres-60019009.html",
@@ -3067,7 +3068,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/973481036760610841",
-        "evidence": "Exclusive Loft in the MOCA building with extractable USD monthly price for October 2026."
+        "evidence": "Airbnb listing titled \"Exclusive Loft - Heated indoor pool and amenities\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-5-ambientes-en-complejo-full-59659208.html",
@@ -3126,10 +3127,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1580329876848828649",
+        "evidence": "Airbnb listing titled \"Exclusive Loft Barracas/La Boca perfect location\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-barracas-1-ambiente--19487428",
@@ -3192,7 +3193,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-belgrano-59315109.html",
@@ -3255,7 +3256,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-fabuloso-piso-amoblado-en-la-exclusiva-torre-mulieris-59386725.html",
@@ -3318,7 +3319,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1364836126989703508",
-        "evidence": "My Residence Cramer Building, Heart of Belgrano with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"My Residence Cramer Building, Heart of Belgrano\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-departamento-monoambiente-my-57031797.html",
@@ -3374,10 +3375,10 @@
       },
       "availability": "Temporary-rental oriented",
       "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/1658912632854606497",
-        "evidence": "Executive Residence - Coworking & Amenities with extractable USD monthly price."
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-1-ambiente--20221436",
@@ -3446,7 +3447,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1607465257630544107",
-        "evidence": "Free Garage Self Check-in | Sophisticated apartment. with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Free Garage Self Check-in | Sophisticated apartment.\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-2-ambientes--20336969",
@@ -3509,7 +3510,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
@@ -3568,7 +3569,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/36504401",
-        "evidence": "Modern 1 BDR Condo - Palermo, Pool, Fast WiFi with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Modern 1 BDR Condo - Palermo, Pool, Fast WiFi\"."
       },
       "rentalEvidence": {
         "url": null,
@@ -3632,7 +3633,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1420949903671534365",
-        "evidence": "Exact-building Airbnb \"BT Homes - Elegant Loft in Barrio Parque\" inside Palacio Alcorta; weekly price verified by research agent (~USD 1,459 / 7 nights → ~USD 6,242/mo). Checked 2026-07-22."
+        "evidence": "Airbnb listing titled \"BT Homes - Elegant Loft in Barrio Parque\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-exclusivo-loft-en-palacio-alcorta-59618981.html",
@@ -3701,7 +3702,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-palermo-21803",
@@ -3828,7 +3829,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing naming Palacio Estrugamou was attached on 2026-07-20."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-juncal-y-esmeralda-56456821.html",
@@ -3891,7 +3892,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1675584737076809756",
-        "evidence": "Apartment in Palacio Raggio with extractable USD monthly price for September 2026."
+        "evidence": "Airbnb listing titled \"Apartment in Palacio Raggio, just a few meters from Plaza de Mayo\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-monserrat-2-ambientes--20124931",
@@ -4015,7 +4016,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://roomix.ai/propiedad/departamento-1-ambientes-caballito-96ff918c",
@@ -4074,7 +4075,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/907140770804737522",
-        "evidence": "Palmera Crespo - Pool & Security & Garage with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Palmera Crespo - Pool & Security & Garage\"."
       },
       "rentalEvidence": {
         "url": "https://departamento.mercadolibre.com.ar/MLA-2024143135-alquiler-3p-monoambiente-palmera-crespo-amenities-_JM",
@@ -4198,7 +4199,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-3-ambientes-en-torre-quantum-bellini-57406757.html",
@@ -4257,10 +4258,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/13634767",
+        "evidence": "Airbnb listing titled \"Unique 593 ft in Palermo Hollywood!\"."
       },
       "rentalEvidence": {
         "url": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-con-cochera-y-amenities-palermo-hollywood--4692497",
@@ -4319,7 +4320,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1421787737286671137",
-        "evidence": "Quartier Del Bajo: The most premium in BA! with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Studio in Quartier Premium Tower - Full Ammenties\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-quartier-del-bajo-1-ambiente-en-alquiler-59360005.html",
@@ -4378,7 +4379,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/29883146",
-        "evidence": "Airbnb result titled \"Quartier Dorrego - Luxury Palermo Hollywood\" with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Quartier Dorrego - Luxury Palermo Hollywood\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo.-quartier-dorrego.-59796124.html",
@@ -4444,7 +4445,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/34942244",
-        "evidence": "Airbnb result titled \"Deluxe High-Floor Apartment w/ Pool in Las Cañitas\" names Quartier Polo."
+        "evidence": "Airbnb listing titled \"Deluxe High-Floor Apartment w/ Pool in Las Cañitas\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
@@ -4510,7 +4511,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1632106940065612310",
-        "evidence": "Airbnb result titled \"Quo Swim Moderno 1BR Palermo Hollywood\"."
+        "evidence": "Airbnb listing titled \"Quo Swim Modern 1BR Palermo Hollywood\"."
       },
       "rentalEvidence": {
         "url": null,
@@ -4570,7 +4571,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1456057203134392601",
-        "evidence": "Airbnb listing titled \"Studio apartment in a category #908 building\" in the Quo Zapata building."
+        "evidence": "Airbnb listing titled \"Studio apartment in a category #908 building\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-balcon-59928662.html",
@@ -4633,7 +4634,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-3-ambientes--19783182",
@@ -4694,7 +4695,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/43112374",
-        "evidence": "sls lux puerto madero building Buenos Aires Arg with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"sls lux puerto madero building Buenos Aires Arg\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-con-cochera-59419184.html",
@@ -4755,7 +4756,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dos-ambientes-en-torre-con-seguridad-al-lado-del-polo-59273406.html",
@@ -4823,7 +4824,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1050145939060036792",
-        "evidence": "Airbnb result titled \"Apartment with Bay & City Views @Puerto Madero\" names the Link Towers complex."
+        "evidence": "Airbnb listing titled \"Apartment with Bay & City Views @Puerto Madero\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-puerto-madero-link-towers-59769278.html",
@@ -4885,7 +4886,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
@@ -4942,9 +4943,9 @@
       "availability": "Long-term rental",
       "airbnb": {
         "confirmed": false,
-        "label": "Airbnb not exact-confirmed",
+        "label": "Airbnb not found",
         "url": null,
-        "evidence": "Exact Airbnb searches for Torre Bella and Guatemala 5155 returned no direct result."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-con-cochera-palermo-soho-59219202.html",
@@ -5009,10 +5010,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/842787424036137298",
+        "evidence": "Airbnb listing titled \"Sky High Studio -Torre Bellini / Wifi / Pool\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bellini-departamento-de-150-m-sup2--con-1-59102605.html",
@@ -5082,7 +5083,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-60031507.html",
@@ -5141,7 +5142,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-con-cochera-torres-59984425.html",
@@ -5199,10 +5200,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1218789921587434065",
+        "evidence": "Airbnb listing titled \"Torre Centenario Apartment\"."
       },
       "rentalEvidence": {
         "url": null,
@@ -5247,10 +5248,10 @@
       },
       "availability": "Long-term rental",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not exact-confirmed",
-        "url": null,
-        "evidence": "Exact Airbnb searches for Torre Decó Palermo Nuevo and Juan Francisco Seguí 4600 returned no direct result."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1604572559964252272",
+        "evidence": "Airbnb listing titled \"Exclusive & designer apt/DECO-palermo new\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-en-palermo-torre-60026461.html",
@@ -5320,7 +5321,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://departamento.mercadolibre.com.ar/MLA-3629219106-torre-fresh-bajo-belgrano-alquiler-amoblado-con-cochera-_JM",
@@ -5380,10 +5381,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/740518314617796628",
+        "evidence": "Airbnb listing titled \"The Contemporary Hollywood\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-2-ambientes--20206809",
@@ -5446,7 +5447,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/897030187595972613",
-        "evidence": "Airbnb listing titled \"Apartment (B) in Belgrano, spacious and bright\" describes Isadora as a 15-story residential tower."
+        "evidence": "Airbnb listing titled \"Apartment (B) in Belgrano, spacious and bright\"."
       },
       "rentalEvidence": {
         "url": null,
@@ -5503,7 +5504,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas-1-ambiente--20223043",
@@ -5562,7 +5563,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1029195839347155250",
-        "evidence": "Airbnb result titled \"Sky Uriarte Torre Palermo Uno\" names the building."
+        "evidence": "Airbnb listing titled \"Sky Uriarte Tower Palermo One\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-amoblado-depto.-torre-en-palermo-soho-59384737.html",
@@ -5625,10 +5626,10 @@
       },
       "availability": "Long-term and temporary rentals",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not exact-confirmed",
-        "url": null,
-        "evidence": "No exact Airbnb result found for Torre Promenade."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/40466730",
+        "evidence": "Airbnb listing titled \"1 Bedroom Promenade\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-departamento-en-torre-con-amenities-59361966.html",
@@ -5691,10 +5692,10 @@
       },
       "availability": "Rental ad found; Airbnb not found",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/608677330268427176",
+        "evidence": "Airbnb listing titled \"SPECTACULAR APARTMENT -FULL AMENITIES - PALERMO\"."
       },
       "rentalEvidence": {
         "url": "https://inmoclick.com/295531-punta-baires/inmuebles/18/ficha/departamento-en-alquiler-en-ruggieri-2900",
@@ -5750,10 +5751,10 @@
       },
       "availability": "Long-term rental",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not exact-confirmed",
-        "url": null,
-        "evidence": "No exact Airbnb result found for Torre Sinclair."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/831993626779472138",
+        "evidence": "Airbnb listing titled \"Modern & Sunny Apartment in Palermo Nuevo.\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-nuevo-1-ambiente--19696560",
@@ -5816,10 +5817,10 @@
       },
       "availability": "Temporary rentals",
       "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not exact-confirmed",
-        "url": null,
-        "evidence": "No exact Airbnb result found for Torre Stay."
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1026784039715421283",
+        "evidence": "Airbnb listing titled \"Palermo Soho Luxury Studio with Pool & Gym\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo-nuevo-capital-59744486.html",
@@ -5885,7 +5886,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/26717168",
-        "evidence": "Airbnb result titled \"Palermo Premium Tower – Unique View of the Botanical Garden\"."
+        "evidence": "Airbnb listing titled \"Palermo Premium Tower – Unique View of the Botanical Garden\"."
       },
       "rentalEvidence": {
         "url": null,
@@ -5942,7 +5943,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-mmonoambiente-premium-con-amenities-espectaculares-59791856.html",
@@ -6003,7 +6004,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/891403414798455858",
-        "evidence": "Exact-building Airbnb \"Montañeses Deluxe\" at Montañeses 3150 piso 15; $636/7 nights → USD 2,726/mo. Checked 2026-07-22."
+        "evidence": "Airbnb listing titled \"Montañeses Deluxe, Monumental Buenos Aires\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-hermoso-2-ambientes-en-complejo-de-lujo.-cochera-56077717.html",
@@ -6064,7 +6065,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1292058868524131666",
-        "evidence": "Airbnb result titled \"42nd floor, overlooking the Women's Bridge (434)\" states Complejo Torres del Yacht."
+        "evidence": "Airbnb listing titled \"42nd floor, overlooking the Women's Bridge (434)\"."
       },
       "rentalEvidence": {
         "url": "https://reynoldspropiedades.com/propiedad/exclusivo-y-amplio-2-ambientes-en-torres-de-yacht-puerto-madero--4674695",
@@ -6126,7 +6127,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing naming Torres El Mirador was attached on 2026-07-20."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20179331",
@@ -6188,7 +6189,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-torre-renoir-p-madero-59983708.html",
@@ -6250,7 +6251,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact active Airbnb listing naming Torres River View was attached on 2026-07-20."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.maderobrokers.com.ar/ad/alquiler-3-ambientes-en-puerto-madero-en-torres-river-view-con-o-sin-muebles",
@@ -6314,7 +6315,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/1274600753567435049",
-        "evidence": "3-bedroom Town House Soho listing with heated indoor–outdoor pool, gym and sauna (BrightData scrape 2026-07-22)."
+        "evidence": "Airbnb listing titled \"Palermo Soho • Indoor Pool • Sauna • Gym • Terrace\"."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-town-house-soho-con-amenities-59979459.html",
@@ -6385,7 +6386,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/51071214",
-        "evidence": "Airbnb listing titled \"Spectacular Luxury Apartment in Vista Belgrano Tower\" with extractable USD monthly price."
+        "evidence": "Airbnb listing titled \"Spectacular Luxury Apartment in Vista Belgrano Tower\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
@@ -6446,7 +6447,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-torres-weik-belgrano-59116333.html",
@@ -6508,7 +6509,7 @@
         "confirmed": false,
         "label": "Airbnb not found",
         "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+        "evidence": "No live exact-building Airbnb with confirmable monthly USD as of 2026-09-04."
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-monoambiente-a-estrenar-nunez-59927714.html",
@@ -6569,7 +6570,7 @@
         "confirmed": true,
         "label": "Airbnb confirmed",
         "url": "https://www.airbnb.com/rooms/53881246",
-        "evidence": "Airbnb result titled \"DELUXE ZENCITY\" names the Zencity complex in Puerto Madero."
+        "evidence": "Airbnb listing titled \"🌟 DELUXE ZENCITY 🌟 EXCLUSIVE PUERTO MADERO ✨\"."
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--15783820",
