@@ -2,7 +2,7 @@
   "title": "List of fancy Buenos Aires apartment buildings",
   "city": "Buenos Aires",
   "area": "Buenos Aires",
-  "generatedAt": "2026-09-04T16:30:00.000Z",
+  "generatedAt": "2026-09-04T21:00:00.000Z",
   "validation": {
     "sourceNotes": "Initial list extracted manually from local-text/ba-fancy-buildings.md into this JSON. The page does not import or parse the Markdown file.",
     "duplicateMerge": "Madero Plaza and Terrazas de Puerto Madero are represented as one merged building-complex entry because the source markdown called out that likely duplication.",
@@ -38,7 +38,7 @@
     "lastMinOneBedroomAreaPurge": "Removed and blacklisted 9 buildings on 2026-07-22 for typical 1BR area under 60 m²: aer-julian-alvarez, avellaneda-260, aventura-julian-alvarez, beruti-3062, junin-1435, madero-urbano, pont-bleu, portal-arevalo, torre-liberateur.",
     "lastListingCountPurge": "2026-08-12: Removed Human Abasto Towers, Maior Barrancas and Palacio Bellini because each had only one live priced listing (Airbnb + long-term combined). Blacklisted so they are not re-added.",
     "lastCandidateFilterPass": "2026-07-26: Evaluated Liberateur, Oceana, SLS, Donna Vita/Reggia/Magna, La Algodonera, Palacio Alcorta, Quartier San Telmo, Prima Caballito, Torre Las Plazas. Year+rental pass (non-blacklisted): Prima Caballito, Quartier San Telmo, SLS (already listed). Not added Prima / Quartier San Telmo: typical 2-ambientes ~40–49 m² (under 60 m² 1BR minimum); Quartier also lacks confirmed losa radiante (28 floors, amenity path incomplete). Airbnb: SLS room 43112374 monthly refreshed to USD 3588; Prima Airbnb rejected (no address proof); Quartier Airbnbs rejected (no extractable USD monthly). Skipped previously blacklisted even when filters passed: Oceana, Liberateur, Torre Las Plazas. Year fail: Palacio Alcorta, La Algodonera. Rental fail: Donna Vita/Reggia/Magna.",
-    "lastLongTermRentalAudit": "On 2026-08-31, audited live long-term rental ads for all 97 buildings via one Composer-2.5 agent per building (BrightData search/scrape). Removed delisted ads, refreshed prices at BNA venta 1530 ARS/USD, and added new listings only when all-in USD (rent + expensas) and size were confirmed.",
+    "lastLongTermRentalAudit": "On 2026-09-04, audited live long-term rental ads for all listed buildings via one Composer-2.5 agent per building (BrightData search/scrape only). Removed delisted ads, refreshed prices at BNA venta 1530 ARS/USD, and added new listings only when all-in USD (rent + expensas) and size were confirmed. Near-price pairs were checked for duplicate units.",
     "lastCandidateListingGateAdd": "Added Bayres Dock, Distrito Colegiales, Donna Reggia, El Aleph, Evoque Olazábal, Harbour House, HOM Recoleta, La Porteña II, Malabia Residence, Migueletes 2176, MOCA, Molina Ciudad, MOVA Belgrano II, Palacio Bonaire, Palacio Raggio, Río Plaza, Torre Ámbar, Torre Beruti, Torre Fresh, Torre Hollywood, Torre Oro 2835 and Wide Núñez on 2026-08-12 after Luna listing-gate agents verified live exact-building inventory. Skipped Fitz Roy 2400 (typical 1BR ~36 m²), MIT Hollywood (1BR ~55 m² total) and Lumiere Boulevard Madero (typical 1BR ~50–57 m² covered). Torre Dosplaza had only one long-term rental after the Airbnb room scrape did not name the building.",
     "lastNamedGymPoolAirbnbAdd": "Added BE Libertador, Torre Isadora and ViewPoint Libertador on 2026-09-04 after named-building + live Airbnb + median 1BR >= 50 m² filter in Belgrano / Colegiales / Villa Crespo / Núñez. Airbnb rooms without extractable monthly USD (or weekly×30/7 fallback) were omitted. Skipped Boulevard (blacklisted).",
     "lastNewBuildingRestore": "Restored Alley, Palacio Cabrera, Palermo Air, Paseo de la Cisterna and Quo Zapata on 2026-09-04 after a later JSON write dropped them. Named + live Airbnb + median 1BR >= 50 m². Long-term ads require all-in USD at BNA venta 1,530."
@@ -92,12 +92,12 @@
         "expensesIncluded": true
       },
       "longTermRentUsd": {
-        "amount": 1850,
+        "amount": 1700,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-complejo-alley-recoleta-59326020.html",
-        "summary": "Live 2-ambientes rental at Complejo Alley Recoleta for USD 1,850/mo paquete (expensas included; tenant pays Edenor and WiFi). Audited 2026-09-04."
+        "source": "Properati",
+        "sourceUrl": "https://www.properati.com.ar/detalle/14032-32-8fbd-33ac73cd5dd-1a0006d-8825-7054",
+        "summary": "Live long-term rental ads from ~$1700/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -146,8 +146,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-distrito-quartier-puerto-retiro-59030049.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Argencons mixed-use Distrito Quartier complex beside the Paseo del Bajo, with Melía-affiliated Almarena hotel inventory plus residential lofts/studios sharing wellness amenities including a pilates studio.",
@@ -155,12 +155,12 @@
         "source": "Zonaprop",
         "title": "Departamento en Distrito Quartier Puerto Retiro",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-distrito-quartier-puerto-retiro-59030049.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
-        "priceUsdMonthly": 863,
+        "priceUsdMonthly": 955,
         "rentUsd": 700,
-        "expensesUsd": 163,
+        "expensesUsd": 255,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
@@ -169,7 +169,7 @@
         "confidence": "high",
         "source": "Mercado Libre",
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3499052444-excelente-loft-en-alquiler-para-studio-o-vivienda-distrito-quartier-retiro-_JM",
-        "summary": "Live long-term rental ads from ~$822/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$822/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 14,
       "approxTwoBedroomAreaSqm": {
@@ -208,17 +208,17 @@
         "evidence": "Re-checked 2026-07-21: no exact-building Airbnb listing found for Alpha Núñez / Vuelta de Obligado 3928."
       },
       "rentalEvidence": {
-        "url": "https://inmoup.com.ar/293456-martin-propiedades/inmuebles/1035/ficha/departamentos-en-alquiler-en-vuelta-de-obligado-al-3900",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "InmoUP"
+        "url": "https://departamento.mercadolibre.com.ar/MLA-2044072426-monoambiente-divisible-a-estrenar-en-alquiler-_JM",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Mercado Libre"
       },
       "description": "Jasper Architects 12-level Núñez tower at Vuelta de Obligado and Paroissien with rooftop infinity pool, coworking lounge, laundry and parrilla deck.",
       "localRentalAd": {
-        "source": "InmoUP",
-        "title": "Monoambiente divisible a estrenar en Alpha Núñez",
-        "url": "https://inmoup.com.ar/293456-martin-propiedades/inmuebles/1035/ficha/departamentos-en-alquiler-en-vuelta-de-obligado-al-3900",
-        "checkedAt": "2026-08-31",
+        "source": "Mercado Libre",
+        "title": "Monoambiente Divisible A Estrenar En Alquiler Núñez | Edificio Alpha | Balcón 7m² | Full Amenities",
+        "url": "https://departamento.mercadolibre.com.ar/MLA-2044072426-monoambiente-divisible-a-estrenar-en-alquiler-_JM",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 642,
@@ -230,9 +230,9 @@
         "amount": 642,
         "basis": "direct studio listing",
         "confidence": "high",
-        "source": "InmoUP",
-        "sourceUrl": "https://inmoup.com.ar/293456-martin-propiedades/inmuebles/1035/ficha/departamentos-en-alquiler-en-vuelta-de-obligado-al-3900",
-        "summary": "Live long-term rental ads from ~$642/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Mercado Libre",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-2044072426-monoambiente-divisible-a-estrenar-en-alquiler-_JM",
+        "summary": "Live long-term rental ads from ~$642/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 12,
       "approxTwoBedroomAreaSqm": {
@@ -270,16 +270,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-alvear-icon-residences-3-ambientes-amoblado-59469125.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Puerto Madero hotel-residence tower with high-floor units, river views and shared luxury services.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler Alvear Icon Residences | 3 ambientes amoblado premium",
+        "title": "Alquiler Alvear Icon Residences | 3 Ambientes Amoblado Premium",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-alvear-icon-residences-3-ambientes-amoblado-59469125.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 7100,
@@ -293,7 +293,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--18711240",
-        "summary": "Live long-term rental ads from ~$3500/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$3500/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 32,
       "approxTwoBedroomAreaSqm": {
@@ -329,16 +329,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-puerto-madero-alvear-tower-departamento-en-alquiler-58856630.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Argentina’s tallest residential tower, with high-floor views, full-service amenities and a premium Puerto Madero setting.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Puerto Madero, Alvear Tower - departamento en alquiler tres ambientes - amoblado",
+        "title": "Puerto Madero, Alvear Tower - Departamento en Alquiler Tres Ambientes - Amoblado",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-puerto-madero-alvear-tower-departamento-en-alquiler-58856630.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 5742,
@@ -352,7 +352,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-ambientes-piso-alto-alvear-tower-amueblado-59529833.html",
-        "summary": "Live long-term rental ads from ~$4210/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$4210/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 55,
       "approxTwoBedroomAreaSqm": {
@@ -392,16 +392,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Twin sustainable towers on Camila O'Gorman in Dique 1, with pools and full amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler departamento monoambiente Art Maria Puerto Madero",
+        "title": "Alquiler Departamento Monoambiente Art Maria Puerto Madero",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-art-maria-puerto-58994096.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1305,
@@ -410,12 +410,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1400,
+        "amount": 2166,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "MercadoLibre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1875014837-dueno-alquila-departamento-amoblado-en-torre-art-maria-puerto-madero-_JM",
-        "summary": "Live long-term rental ads from ~$1400/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-dos-ambientes-en-puerto-madero-58561431.html",
+        "summary": "Live long-term rental ads from ~$2166/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -453,16 +453,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-3-ambientes-en-torre-astor-nunez-amenities-premium-y-59473203.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Núñez tower on Libertador with high-floor river-view apartments and full amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "3 ambientes en torre Astor Núñez | amenities premium y excelente ubicación",
+        "title": "3 Ambientes en Torre Astor Núñez | Amenities Premium y Excelente Ubicación",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-3-ambientes-en-torre-astor-nunez-amenities-premium-y-59473203.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 2275,
@@ -476,7 +476,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-moderno-2-ambientes-con-cochera-y-baulera-full-59988445.html",
-        "summary": "Live long-term rental ads from ~$1143/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1143/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 30,
       "approxTwoBedroomAreaSqm": {
@@ -511,31 +511,31 @@
         "evidence": "Previous Airbnb room 656743268056255662 returned a 404 during the 2026-06-30 BrightData scrape audit; no replacement exact Astor Palermo room was found."
       },
       "rentalEvidence": {
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-viejo-2-ambientes--18374070",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Argenprop"
+        "url": "https://departamento.mercadolibre.com.ar/MLA-3444061248-luminoso-departamento-2-ambientes-en-alquiler-astor-palermo-palermo-_JM",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Mercado Libre"
       },
       "description": "Beruti 3351 tower with 26 floors, gym, parrillas, kids pool, adult pool, laundry and Alto Palermo nearby.",
       "localRentalAd": {
-        "source": "Argenprop",
-        "title": "Alquiler anual | 2 ambientes en Astor Palermo – frente al Alto Palermo",
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-viejo-2-ambientes--18374070",
-        "checkedAt": "2026-08-31",
+        "source": "Mercado Libre",
+        "title": "Luminoso Departamento 2 Ambientes En Alquiler - Astor Palermo",
+        "url": "https://departamento.mercadolibre.com.ar/MLA-3444061248-luminoso-departamento-2-ambientes-en-alquiler-astor-palermo-palermo-_JM",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1563,
+        "priceUsdMonthly": 1596,
         "rentUsd": 1400,
-        "expensesUsd": 163,
+        "expensesUsd": 196,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1563,
+        "amount": 1596,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-viejo-2-ambientes--18374070",
-        "summary": "Live long-term rental ads from ~$1563/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Mercado Libre",
+        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3444061248-luminoso-departamento-2-ambientes-en-alquiler-astor-palermo-palermo-_JM",
+        "summary": "Live long-term rental ads from ~$1596/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -581,16 +581,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-ubicado-en-puerto-madero-58983950.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Puerto Madero Dique 2 tower at Olga Cossettini 1300 with pool and gym, distinct from Lumiere Puerto Madero at Olga Cossettini 1540 and Torres El Mirador / Bayres Madero at Juana Manso 1100.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento en alquiler ubicado en Puerto Madero, Capital Federal, Buenos Aires",
+        "title": "Departamento en Alquiler Ubicado en Puerto Madero, Capital Federal, Buenos Aires",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-ubicado-en-puerto-madero-58983950.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 3,
         "priceUsdMonthly": 3654,
@@ -602,9 +602,9 @@
         "amount": 3141,
         "basis": "direct 3-bedroom listing",
         "confidence": "high",
-        "source": "InmoUP",
+        "source": "Inmoup",
         "sourceUrl": "https://inmoup.com.ar/250082-inmobrokers/inmuebles/377/ficha/undefined",
-        "summary": "Live long-term rental ads from ~$3141/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$3141/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -665,9 +665,9 @@
         "amount": 1277,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Zonaprop / RE/MAX",
+        "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dpto-alquiler-2-amb-belgrano-edif-be-libertador-59871608.html",
-        "summary": "Live unfurnished 2-ambientes rental at BE Libertador for USD 1,140/mo plus ~$210,000 expensas (~USD 1,277 all-in at BNA 1,530). Audited 2026-09-04."
+        "summary": "Live long-term rental ads from ~$1277/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 13,
       "approxTwoBedroomAreaSqm": {
@@ -704,23 +704,23 @@
         "evidence": "Be Plaza Studio in BA for long stays with extractable USD monthly price."
       },
       "rentalEvidence": {
-        "url": "https://departamento.mercadolibre.com.ar/MLA-1819796897-monoambiente-torre-be-plaza-full-amenites-decorado-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Mercado Libre"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa--departamento-de-2-ambientes-amoblado-con-amenities-59815427.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Santa Fe and Dorrego tower with rooftop pool, gym, sauna, coworking and Palermo/Las Cañitas transit access.",
       "localRentalAd": {
-        "source": "Mercado Libre",
-        "title": "Monoambiente torre Be Plaza full amenities decorado",
-        "url": "https://departamento.mercadolibre.com.ar/MLA-1819796897-monoambiente-torre-be-plaza-full-amenites-decorado-_JM",
-        "checkedAt": "2026-08-31",
-        "size": "studio",
-        "bedrooms": 0,
-        "priceUsdMonthly": 881,
-        "rentUsd": 750,
-        "expensesUsd": 131,
-        "expensesIncluded": false
+        "source": "Zonaprop",
+        "title": "Departamento de 2 Ambientes Amoblado con Amenities Premium en Palermo Hollyw",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa--departamento-de-2-ambientes-amoblado-con-amenities-59815427.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1300,
+        "rentUsd": 1300,
+        "expensesUsd": 0,
+        "expensesIncluded": true
       },
       "longTermRentUsd": {
         "amount": 1300,
@@ -728,7 +728,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa--departamento-de-2-ambientes-amoblado-con-amenities-59815427.html",
-        "summary": "Live long-term rental ads from ~$1300/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1300/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -771,16 +771,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-ceretti-2100-al-frente-balcon-53193163.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Villa Urquiza tower around Ceretti 2100 with balconies, pool and gym in a quieter residential pocket.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler 2 ambientes Ceretti 2100 al frente balcon Urquiza",
+        "title": "Alquiler 2 Ambientes Ceretti 2100 Al Frente Balcon Urquiza",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-ceretti-2100-al-frente-balcon-53193163.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 687,
@@ -794,7 +794,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-ceretti-2100-al-frente-balcon-53193163.html",
-        "summary": "Live long-term rental ads from ~$687/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$687/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -830,16 +830,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-premium-chateau-libertador-59329124.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Large-format residential tower on Libertador in Núñez, with family-size apartments and premium north-corridor access.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler premium Chateau Libertador",
+        "title": "Alquiler Premium Chateau Libertador",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-premium-chateau-libertador-59329124.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 3,
         "priceUsdMonthly": 7510,
@@ -853,7 +853,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-premium-chateau-libertador-59329124.html",
-        "summary": "Live long-term rental ads from ~$7510/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$7510/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 40,
       "approxTwoBedroomAreaSqm": {
@@ -891,16 +891,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-4-ambientes-chateau-puerto-madero-58581354.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "French-style residential tower beside the Dique 2 waterfront and the Alvear/Faena side of Puerto Madero.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler amoblado 4 ambientes Chateau Puerto Madero CABA",
+        "title": "Alquiler 4 Ambientes Dep Dos Cocheras Chateau Puerto Madero Caba",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-4-ambientes-chateau-puerto-madero-58581354.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 3,
         "priceUsdMonthly": 7646,
@@ -909,12 +909,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 4854,
+        "amount": 3223,
         "basis": "direct 2-bedroom listing",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-chateau-puerto-madero-sin-muebles.-59879799.html",
-        "summary": "Live long-term rental ads from ~$4854/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Madero Realty",
+        "sourceUrl": "https://www.maderorealty.com/p/4028315-Departamento-en-Alquiler-en-Puerto-Madero-Chateau-Madero---2-ambientes-con-cochera---amoblado",
+        "summary": "Live long-term rental ads from ~$3223/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 50,
       "approxTwoBedroomAreaSqm": {
@@ -954,16 +954,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-concepcion-live-con-cochera!-56101178.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Recent Palermo/Colegiales complex with large amenity areas, ground-floor retail, pool, gym and modern apartments.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Concepción Live con cochera!",
+        "title": "Concepción Live con Cochera!",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-concepcion-live-con-cochera!-56101178.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1696,
@@ -977,7 +977,7 @@
         "confidence": "high",
         "source": "Mercado Libre",
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3720474464-alquiler-concepcion-live-2-amb-_JM",
-        "summary": "Live long-term rental ads from ~$1494/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1494/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 23,
       "approxTwoBedroomAreaSqm": {
@@ -1016,16 +1016,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-1-ambiente-recoleta-25403",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "mob.ar"
       },
       "description": "Guido 1999 tower with Armani/Casa interiors, indoor pool, sauna and Plaza Francia nearby.",
       "localRentalAd": {
         "source": "mob.ar",
-        "title": "Departamento monoambiente en Guido 1999",
+        "title": "Departamento monoambiente en Guido 1999, Recoleta",
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-1-ambiente-recoleta-25403",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1136,
@@ -1039,7 +1039,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-en-torre-deco-59790922.html",
-        "summary": "Live long-term rental ads from ~$1518/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1518/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -1084,16 +1084,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-depampa-departamento-2-ambientes-amoblado-58911252.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "La Pampa 600 tower by Figueroa Alcorta, with indoor and outdoor pools, gym, sauna, coworking and a party room.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler Depampa - departamento 2 ambientes amoblado con escritorio y cochera - seg 24 hs",
+        "title": "Alquiler Depampa - Departamento 2 Ambientes Amoblado con Escritorio y Cochera",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-depampa-departamento-2-ambientes-amoblado-58911252.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 2425,
@@ -1107,7 +1107,7 @@
         "confidence": "high",
         "source": "Mercado Libre",
         "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1944830597-alquiler-departamento-2-amb-belgrano-chico-_JM",
-        "summary": "Live long-term rental ads from ~$1370/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1370/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -1153,16 +1153,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-monoambiente-en-edificio-distrito-arcos-59678647.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Colegiales building at Moldes 820 with pool and gym. Distinct from La Musa Stars and Quartier Lacroze.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento monoambiente en edificio Distrito Arcos full amenities",
+        "title": "Departamento Monoambiente en Edificio ¨distrito Arcos¨ Full Amenities",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-monoambiente-en-edificio-distrito-arcos-59678647.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 621,
@@ -1176,7 +1176,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-en-alquiler-a-estrenar-en-59864895.html",
-        "summary": "Live long-term rental ads from ~$1500/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1500/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1212,16 +1212,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-1-ambiente--20060963",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Córdoba 4340 building with 15 levels, party room, parrilla, gym, playroom, laundry and a dry sauna.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Departamento amoblado ambiente y medio en Av. Córdoba (CABA)",
+        "title": "DEPARTAMENTO AMOBLADO AMBIENTE Y MEDIO EN AV. CÓRDOBA (CABA)",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-1-ambiente--20060963",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 719,
@@ -1235,7 +1235,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-villa-crespo-capital-59903021.html",
-        "summary": "Live long-term rental ads from ~$1142/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1142/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -1281,31 +1281,31 @@
         "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
       },
       "rentalEvidence": {
-        "url": "https://departamento.mercadolibre.com.ar/MLA-1919356551-departamento-en-alquiler-2-amb-edificio-azcuy-donna-reggia-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Mercado Libre"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-dpto-amueblado-y-equipado-51834763.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Azcuy tower at Beauchef 907 / Av. Directorio 402 with pool and gym, finished February 2023. Distinct from Donna Vita and Donna Magna.",
       "localRentalAd": {
-        "source": "Mercado Libre",
-        "title": "Departamento en alquiler 2 amb. edificio Azcuy, Donna Reggia.",
-        "url": "https://departamento.mercadolibre.com.ar/MLA-1919356551-departamento-en-alquiler-2-amb-edificio-azcuy-donna-reggia-_JM",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "Alquiler Dpto Amueblado y Equipado",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-dpto-amueblado-y-equipado-51834763.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1283,
-        "rentUsd": 1100,
-        "expensesUsd": 183,
+        "priceUsdMonthly": 1442,
+        "rentUsd": 1200,
+        "expensesUsd": 242,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1283,
+        "amount": 1442,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Mercado Libre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1919356551-departamento-en-alquiler-2-amb-edificio-azcuy-donna-reggia-_JM",
-        "summary": "Live long-term rental ads from ~$1283/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-alquiler-dpto-amueblado-y-equipado-51834763.html",
+        "summary": "Live long-term rental ads from ~$1442/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1343,16 +1343,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-kavanagh-alquiler-retiro-departamento-3-ambientes-58796162.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Historic Art Deco residential tower overlooking Plaza San Martín and Retiro.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Kavanagh alquiler Retiro departamento 3 ambientes",
+        "title": "Kavanagh Alquiler Retiro Departamento 3 Ambientes",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-kavanagh-alquiler-retiro-departamento-3-ambientes-58796162.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 1994,
@@ -1366,7 +1366,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-florida-y-marcelo-t-alvear-58197266.html",
-        "summary": "Live long-term rental ads from ~$2742/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$2742/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 30,
       "approxTwoBedroomAreaSqm": {
@@ -1406,16 +1406,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-increible-departamento-2-ambientes-con-cochera-100-59457507.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Puerto Madero / Faena-district tower at Petrona Eyle 300 with pool and gym. Distinct from Faena Residences (El Porteño), La Porteña II at Juana Manso 1300, and Art María.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Increíble departamento 2 ambientes con cochera 100% equipado - Aleph by Faena Residences",
+        "title": "Increible Departamento 2 Ambientes con Cochera 100% Equipado - Aleph By Faena Residences",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-increible-departamento-2-ambientes-con-cochera-100-59457507.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 2904,
@@ -1424,12 +1424,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2904,
+        "amount": 2850,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-increible-departamento-2-ambientes-con-cochera-100-59457507.html",
-        "summary": "Live long-term rental ads from ~$2904/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-en-puerto-madero-60027602.html",
+        "summary": "Live long-term rental ads from ~$2850/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1468,16 +1468,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-4-ambientes-en-puerto-madero-59621185.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Twin riverfront towers in Dique 2, with large units and dockside amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento 4 ambientes en Puerto Madero",
+        "title": "El Faro - 4 Ambientes con Dependencia - 230 m²",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-de-departamento-4-ambientes-en-puerto-madero-59621185.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 3,
         "priceUsdMonthly": 6765,
@@ -1491,7 +1491,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--19429759",
-        "summary": "Live long-term rental ads from ~$3529/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$3529/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 46,
       "approxTwoBedroomAreaSqm": {
@@ -1531,16 +1531,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-villa-urquiza-60006551.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Villa Urquiza complex at Av. Olazábal 4800 with pool and gym. Distinct from VAIV Olazábal, Olazábal 2649, and Green Haus.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Monoambiente amoblado de categoría en Evoque Olazábal",
+        "title": "Monoambiente Amoblado de Categoría en Evoque Olazábal – Villa Urquiza Premium",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-villa-urquiza-60006551.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 654,
@@ -1549,12 +1549,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 870,
+        "amount": 1380,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Mercado Libre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3720467344-alquiler-2-ambientes-con-amenities-villa-urquiza-_JM",
-        "summary": "Live long-term rental ads from ~$870/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "buscainmueble",
+        "sourceUrl": "https://www.buscainmueble.com/departamento-en-alquiler-en-villa-urquiza-2-ambientes--20220659",
+        "summary": "Live long-term rental ads from ~$1380/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1593,21 +1593,21 @@
         "evidence": "Airbnb listing titled Studio at Hotel Faena Residences in Puerto Madero."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-puerto-madero-hotel-58850531.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Zonaprop"
+        "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-puerto-madero-26007",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "mob.ar"
       },
       "description": "Philippe Starck–designed Faena Hotel residences (El Porteño) on the Dique 2 waterfront, with hotel amenities and river views.",
       "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler 2 ambientes amoblado - Puerto Madero - Hotel Faena",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-puerto-madero-hotel-58850531.html",
-        "checkedAt": "2026-08-31",
+        "source": "mob.ar",
+        "title": "ALQUILER | 2 AMBIENTES AMOBLADO EN FAENA – PUERTO MADERO",
+        "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-puerto-madero-26007",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 3700,
-        "rentUsd": 3700,
+        "priceUsdMonthly": 2300,
+        "rentUsd": 2300,
         "expensesUsd": 0,
         "expensesIncluded": true
       },
@@ -1615,9 +1615,9 @@
         "amount": 2300,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Mob.ar",
+        "source": "mob.ar",
         "sourceUrl": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-puerto-madero-26007",
-        "summary": "Live long-term rental ads from ~$2300/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$2300/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1657,16 +1657,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-unico-3amb-en-torre-de-lujo-forum-alcorta-59174951.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Premium Bajo Belgrano complex with indoor/outdoor pools, fitness center, and covered plus outdoor tennis courts.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Único 3amb en torre de lujo Forum Alcorta",
+        "title": "Único 3amb en Torre de Lujo Forum Alcorta",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-unico-3amb-en-torre-de-lujo-forum-alcorta-59174951.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 5523,
@@ -1680,7 +1680,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-unico-3amb-en-torre-de-lujo-forum-alcorta-59174951.html",
-        "summary": "Live long-term rental ads from ~$5523/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$5523/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1718,16 +1718,16 @@
       },
       "rentalEvidence": {
         "url": "https://kubito.com.ar/propiedad/excelente-2-ambientes-forum-puerto-madero-2/",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Kubito"
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "kubito"
       },
       "description": "Dique 4 complex near the northern docks, with spa, pool, concierge-style amenities and dockside access.",
       "localRentalAd": {
-        "source": "Kubito",
-        "title": "Exclusivo 2 ambientes en Forum Puerto Madero",
+        "source": "kubito",
+        "title": "Exclusivo 2 Ambientes en Forum Puerto Madero",
         "url": "https://kubito.com.ar/propiedad/excelente-2-ambientes-forum-puerto-madero-2/",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1894,
@@ -1739,9 +1739,9 @@
         "amount": 1894,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Kubito",
+        "source": "kubito",
         "sourceUrl": "https://kubito.com.ar/propiedad/excelente-2-ambientes-forum-puerto-madero-2/",
-        "summary": "Live long-term rental ads from ~$1894/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1894/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 33,
       "approxTwoBedroomAreaSqm": {
@@ -1780,16 +1780,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-greenhaus.-monoambiente-tipo-loft-55649377.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "DoHo/Villa Urquiza complex with duplex-style units, pool, gym and a residential low-rise feel.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Greenhaus monoambiente tipo loft",
+        "title": "Greenhaus. Monoambiente Tipo Loft",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-greenhaus.-monoambiente-tipo-loft-55649377.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 843,
@@ -1798,12 +1798,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 843,
+        "amount": 1353,
         "basis": "direct studio listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-greenhaus.-monoambiente-tipo-loft-55649377.html",
-        "summary": "Live long-term rental ads from ~$843/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-2-ambientes-con-terraza-y-cochera-en-59870001.html",
+        "summary": "Live long-term rental ads from ~$1353/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 23,
       "approxTwoBedroomAreaSqm": {
@@ -1842,31 +1842,31 @@
         "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-ambientes-en-alquiler-harbour-house-puerto-madero-59972343.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alucinante-pendhouse-en-puerto-madero-59810091.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Finished Madero Harbour residential building at Juana Manso 1830 with pool, gym and spa, distinct from Harbour Residences at Lola Mora 457 and unfinished Harbour Tower.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "2 ambientes en alquiler - Harbour House Puerto Madero",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-ambientes-en-alquiler-harbour-house-puerto-madero-59972343.html",
-        "checkedAt": "2026-08-31",
-        "size": "1br",
-        "bedrooms": 1,
-        "priceUsdMonthly": 1600,
-        "rentUsd": 1600,
-        "expensesUsd": 0,
+        "title": "Alucinante Pendhouse en Puerto Madero",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alucinante-pendhouse-en-puerto-madero-59810091.html",
+        "checkedAt": "2026-09-04",
+        "size": "2br",
+        "bedrooms": 2,
+        "priceUsdMonthly": 4775,
+        "rentUsd": 3500,
+        "expensesUsd": 1275,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1600,
+        "amount": 4775,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-ambientes-en-alquiler-harbour-house-puerto-madero-59972343.html",
-        "summary": "Live long-term rental ads from ~$1600/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alucinante-pendhouse-en-puerto-madero-59810091.html",
+        "summary": "Live long-term rental ads from ~$4775/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1905,16 +1905,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-con-cochera-harbour-58400650.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Residential tower in the Madero Harbour complex on Dique 1, with pool, gym and contemporary amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento en alquiler, 1 ambiente, Harbour Residences, Puerto Madero",
+        "title": "Departamento en Alquiler, 1 Ambiente, Harbour Residences, Puerto Madero",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-con-cochera-harbour-58400650.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1148,
@@ -1928,7 +1928,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-con-cochera-harbour-58400650.html",
-        "summary": "Live long-term rental ads from ~$1148/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1148/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -1968,8 +1968,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-1-ambiente--19913409",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Recoleta tower at Agüero 1595 and Santa Fe with two heated pools and a gym. Distinct from Habitat Recoleta at Paraguay 2614 and Human Abasto.",
@@ -1977,11 +1977,11 @@
         "source": "Argenprop",
         "title": "Departamento monoambiente amueblado alquiler en Recoleta",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-1-ambiente--19913409",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
-        "priceUsdMonthly": 998,
-        "rentUsd": 720,
+        "priceUsdMonthly": 997,
+        "rentUsd": 719,
         "expensesUsd": 278,
         "expensesIncluded": false
       },
@@ -1989,9 +1989,9 @@
         "amount": 1184,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Orwel",
+        "source": "orwel",
         "sourceUrl": "https://www.orwel.com.ar/p/8044538-Departamento-en-Alquiler-en-Recoleta-Aguero-al-1500",
-        "summary": "Live long-term rental ads from ~$1184/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1184/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2026,22 +2026,22 @@
         "evidence": "Huergo 475 | Panoramic Views | Full amenities — live replacement after 1523337396188018418 404."
       },
       "rentalEvidence": {
-        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-puerto-madero-df9e8d4d",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Roomix"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-huergo-475-puerto-madero-59193520.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "New Consultatio tower on Huergo, with compact units and Puerto Madero access.",
       "localRentalAd": {
-        "source": "Roomix",
-        "title": "Monoambiente a estrenar en alquiler - Huergo 475",
-        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-puerto-madero-df9e8d4d",
-        "checkedAt": "2026-08-31",
-        "size": "studio",
-        "bedrooms": 0,
-        "priceUsdMonthly": 922,
-        "rentUsd": 700,
-        "expensesUsd": 222,
+        "source": "Zonaprop",
+        "title": "Alquiler 2 Ambientes Huergo 475, Puerto Madero",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-huergo-475-puerto-madero-59193520.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1296,
+        "rentUsd": 1100,
+        "expensesUsd": 196,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
@@ -2050,7 +2050,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-huergo-475-puerto-madero-59193520.html",
-        "summary": "Live long-term rental ads from ~$1296/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1296/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 39,
       "approxTwoBedroomAreaSqm": {
@@ -2089,31 +2089,20 @@
         "evidence": "Airbnb listing \"Exclusive apartment in Recoleta\" at Montevideo 1250 with priced monthly stay."
       },
       "rentalEvidence": {
-        "url": "https://administracional.com.ar/printproperty.php?id=68",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Administracion AL / Grupo AL"
+        "url": null,
+        "note": "No live long-term rental listing confirmed 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": null
       },
       "description": "French-style mansion facing Plaza Vicente López, redeveloped by Estudio Pisano with historic façades retained; studios and 1–2 ambientes plus duplexes, rooftop pool/gym/sauna under Flaat temporary-rental brand.",
-      "localRentalAd": {
-        "source": "Administracion AL / Grupo AL",
-        "title": "Alquiler departamento Montevideo 1250 — 1 hab / 62 m²",
-        "url": "https://administracional.com.ar/printproperty.php?id=68",
-        "checkedAt": "2026-08-31",
-        "size": "1br",
-        "bedrooms": 1,
-        "priceUsdMonthly": 1500,
-        "rentUsd": 1500,
-        "expensesUsd": 0,
-        "expensesIncluded": true
-      },
+      "localRentalAd": null,
       "longTermRentUsd": {
         "amount": 1500,
-        "basis": "direct 1-bedroom listing",
-        "confidence": "high",
+        "basis": "retained estimate; no live long-term ad",
+        "confidence": "low",
         "source": "Administracion AL / Grupo AL",
-        "sourceUrl": "https://administracional.com.ar/printproperty.php?id=68",
-        "summary": "Live long-term rental ads from ~$1500/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": null,
+        "summary": "No active long-term rental ads found in 2026-09-04 audit. Retaining prior estimate pending a new live listing."
       },
       "floorsAboveGround": 11,
       "approxTwoBedroomAreaSqm": {
@@ -2149,8 +2138,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-nunez-1-ambiente--19468479",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Large Núñez/Libertador complex with gardens, heated pool, gym, sauna and on-site services.",
@@ -2158,7 +2147,7 @@
         "source": "Argenprop",
         "title": "Elegante monoambiente de 55m2 disponible para alquilar en Nuñez",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-nunez-1-ambiente--19468479",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1142,
@@ -2172,7 +2161,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-av-del-libertador-8500.-jardines-del-libertador.-54664346.html",
-        "summary": "Live long-term rental ads from ~$972/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$972/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 15,
       "approxTwoBedroomAreaSqm": {
@@ -2211,31 +2200,31 @@
         "evidence": "No exact-building Airbnb with extractable monthly or weekly USD pricing was found in BrightData searches on 2026-07-21."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-4-ambientes-premium-en-torre-l-avenue-full-amenities-59387156.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-polo-en-l-avenue-4-amb-222-m-sup2--59432596.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Zaha Hadid Architects' 36-floor Palermo landmark, with indoor/outdoor pool, spa, gym, rooftop lounge, valet parking and concierge-level services.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "4 ambientes premium en torre L'Avenue - full amenities - 1 cochera",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-4-ambientes-premium-en-torre-l-avenue-full-amenities-59387156.html",
-        "checkedAt": "2026-08-31",
+        "title": "Espectacular Polo en L´avenue - 4 Amb 222 m² - Palermo Nuevo",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-polo-en-l-avenue-4-amb-222-m-sup2--59432596.html",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 3,
-        "priceUsdMonthly": 7500,
-        "rentUsd": 7500,
-        "expensesUsd": 0,
+        "priceUsdMonthly": 8046,
+        "rentUsd": 7000,
+        "expensesUsd": 1046,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 7500,
+        "amount": 8046,
         "basis": "direct 3-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-4-ambientes-premium-en-torre-l-avenue-full-amenities-59387156.html",
-        "summary": "Live long-term rental ads from ~$7500/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-polo-en-l-avenue-4-amb-222-m-sup2--59432596.html",
+        "summary": "Live long-term rental ads from ~$8046/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 36,
       "approxTwoBedroomAreaSqm": {
@@ -2271,16 +2260,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-impecable-monoambiente-amoblado-av-cordoba-6200-59341251.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Colegiales complex around Newbery and Álvarez Thomas, with pool, gym, parrilla and full-amenity common areas.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "1 amb - alquiler amoblado - 45 m² av cordoba 6200 - amenities de categoria",
+        "title": "1 Amb - Alquiler Amoblado - 45 m² Av Cordoba 6200 - Amenities de Categoria",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-impecable-monoambiente-amoblado-av-cordoba-6200-59341251.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 998,
@@ -2289,12 +2278,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1752,
+        "amount": 1320,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-colegiales-capital-58564380.html",
-        "summary": "Live long-term rental ads from ~$1752/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-amb-alquiler-amoblado-colegiales-full-59873960.html",
+        "summary": "Live long-term rental ads from ~$1320/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 10,
       "approxTwoBedroomAreaSqm": {
@@ -2333,16 +2322,16 @@
       },
       "rentalEvidence": {
         "url": "https://mudafy.com.ar/departamentos/la-portena-2-faena-juana-manso-1300-departamento-en-alquiler-869953",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Mudafy"
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "mudafy"
       },
       "description": "Puerto Madero / Faena-district tower at Juana Manso 1300 with pool and gym. Distinct from Torres El Mirador / Bayres Madero at Juana Manso 1100 and from the older Santa María del Puerto building on the same street number.",
       "localRentalAd": {
-        "source": "Mudafy",
-        "title": "La Porteña 2 Faena Juana Manso 1300",
+        "source": "mudafy",
+        "title": "LA PORTEÑA 2 FAENA JUANA MANSO 1300",
         "url": "https://mudafy.com.ar/departamentos/la-portena-2-faena-juana-manso-1300-departamento-en-alquiler-869953",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 2858,
@@ -2356,7 +2345,7 @@
         "confidence": "high",
         "source": "RE/MAX",
         "sourceUrl": "https://www.remax.com.ar/listings/alquiler-depto-2-amb-cochera-puerto-madero",
-        "summary": "Live long-term rental ads from ~$2823/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$2823/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2393,31 +2382,31 @@
         "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-le-parc-amoblado-y-equipado-cochera-y-51261872.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Zonaprop"
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20251295",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Argenprop"
       },
       "description": "Waterfront Le Parc towers with security, pool and a Puerto Madero location.",
       "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler Le Parc amoblado y equipado, cochera y baulera",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-le-parc-amoblado-y-equipado-cochera-y-51261872.html",
-        "checkedAt": "2026-08-31",
+        "source": "Argenprop",
+        "title": "Alquiler Departamento 2 Ambientes en Torres Le Parc en Puerto Madero",
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20251295",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 2490,
-        "rentUsd": 2000,
-        "expensesUsd": 490,
+        "priceUsdMonthly": 2056,
+        "rentUsd": 1600,
+        "expensesUsd": 456,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2490,
+        "amount": 2056,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-le-parc-amoblado-y-equipado-cochera-y-51261872.html",
-        "summary": "Live long-term rental ads from ~$2490/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20251295",
+        "summary": "Live long-term rental ads from ~$2056/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 43,
       "approxTwoBedroomAreaSqm": {
@@ -2456,16 +2445,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-live-hotel-palermo-59631693.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Palermo Hollywood hotel-style complex on Nicaragua with gym, pool, sauna and lively restaurant access.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler departamento monoambiente Live Hotel Palermo Hollywood",
+        "title": "Alquiler Departamento Monoambiente Live Hotel Palermo Hollywood",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-monoambiente-live-hotel-palermo-59631693.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1184,
@@ -2477,9 +2466,9 @@
         "amount": 1300,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Yacoub",
+        "source": "yacoub",
         "sourceUrl": "https://yacoub.com.ar/propiedad/nicaragua-6045/7879439/",
-        "summary": "Live long-term rental ads from ~$1300/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1300/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2517,16 +2506,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-los-molinos-faena-90-m-sup2--2-cocheras-55130955.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Historic mill conversion at the docks, with loft-like apartments, brick facades and a Faena District setting.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Los Molinos (Faena) 90 m² 2 cocheras",
+        "title": "Los Molinos (Faena) 90 m² 2 Cocheras",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-los-molinos-faena-90-m-sup2--2-cocheras-55130955.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1759,
@@ -2540,7 +2529,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-los-molinos-faena-90-m-sup2--2-cocheras-55130955.html",
-        "summary": "Live long-term rental ads from ~$1759/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1759/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2578,16 +2567,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-lumiere-puerto-madero-58900479.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Olga Cossettini tower close to Dique 1, with pool, gym, party room, parrilla and Puerto Madero dock access.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler 3 ambientes Lumiere Puerto Madero",
+        "title": "Alquiler 3 Ambientes Lumiere Puerto Madero",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-lumiere-puerto-madero-58900479.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 2181,
@@ -2596,12 +2585,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1200,
+        "amount": 1735,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--18908268",
-        "summary": "Live long-term rental ads from ~$1200/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-puerto-madero-lumiere-boulevard-59899291.html",
+        "summary": "Live long-term rental ads from ~$1735/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2638,22 +2627,22 @@
         "evidence": "Premium Studio with Heated Pool and Gym with extractable USD monthly price."
       },
       "rentalEvidence": {
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-almagro-1-ambiente--19468393",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Argenprop"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiles-dos-amb-almagro-59727200.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Corrientes 3800 tower in Almagro with indoor and outdoor pools, fitness center, garden deck and a party room.",
       "localRentalAd": {
-        "source": "Argenprop",
-        "title": "Departamento en alquiler monoambiente a estrenar en Almagro",
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-almagro-1-ambiente--19468393",
-        "checkedAt": "2026-08-31",
-        "size": "studio",
-        "bedrooms": 0,
-        "priceUsdMonthly": 898,
-        "rentUsd": 800,
-        "expensesUsd": 98,
+        "source": "Zonaprop",
+        "title": "Alquiles Dos Amb Almagro",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiles-dos-amb-almagro-59727200.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1167,
+        "rentUsd": 1000,
+        "expensesUsd": 167,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
@@ -2662,7 +2651,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiles-dos-amb-almagro-59727200.html",
-        "summary": "Live long-term rental ads from ~$1167/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1167/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -2705,16 +2694,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-con-muebles-madero-center-59425471.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Mixed-use residential complex by Macacha Güemes, with large units and hotel/office services nearby.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler con muebles Madero Center",
+        "title": "Alquiler con Muebles Madero Center",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-con-muebles-madero-center-59425471.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 4000,
@@ -2723,12 +2712,12 @@
         "expensesIncluded": true
       },
       "longTermRentUsd": {
-        "amount": 2800,
+        "amount": 4000,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-58a7ea60",
-        "summary": "Live long-term rental ads from ~$2800/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-con-muebles-madero-center-59425471.html",
+        "summary": "Live long-term rental ads from ~$4000/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 9,
       "approxTwoBedroomAreaSqm": {
@@ -2766,16 +2755,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-de-2-ambientes-en-alquiler-madero-plaza-56900141.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Juana Manso tower complex in Puerto Madero, with terrace-style volumes and residential amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento de 2 ambientes en alquiler - Madero Plaza Puerto Madero",
+        "title": "Departamento de 2 Ambientes en Alquiler - Madero Plaza Puerto Madero",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-de-2-ambientes-en-alquiler-madero-plaza-56900141.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1500,
@@ -2789,7 +2778,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20222703",
-        "summary": "Live long-term rental ads from ~$1473/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1473/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 38,
       "approxTwoBedroomAreaSqm": {
@@ -2828,31 +2817,31 @@
         "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
       },
       "rentalEvidence": {
-        "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-villa-crespo-24875",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "MOB"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-full-amenities-en-malabia-residence-dos-60003010.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Villa Crespo building at Malabia 444–450 with pool, gym, SUM and solarium, finished March 2019. Distinct from Palmera Crespo.",
       "localRentalAd": {
-        "source": "MOB",
-        "title": "Departamento 2 ambientes en Malabia 444",
-        "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-villa-crespo-24875",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "Departamento Full Amenities en Malabia Residence - Dos Ambientes",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-full-amenities-en-malabia-residence-dos-60003010.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 980,
-        "rentUsd": 784,
-        "expensesUsd": 196,
+        "priceUsdMonthly": 1076,
+        "rentUsd": 882,
+        "expensesUsd": 194,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 980,
+        "amount": 1076,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "MOB",
-        "sourceUrl": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-villa-crespo-24875",
-        "summary": "Live long-term rental ads from ~$980/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-full-amenities-en-malabia-residence-dos-60003010.html",
+        "summary": "Live long-term rental ads from ~$1076/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2890,8 +2879,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-1-ambiente--20160317",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "2025 Bajo Belgrano building at Migueletes 2176 with pool, gym, SUM and solarium. Distinct from Mine Migueletes at 2300, Lumen at 2200, and Maior Imprenta II at Migueletes 757.",
@@ -2899,7 +2888,7 @@
         "source": "Argenprop",
         "title": "Acogedor monoambiente en alquiler en el corazón de Belgrano",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-1-ambiente--20160317",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 569,
@@ -2913,7 +2902,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-chico-2-ambientes--20339416",
-        "summary": "Live long-term rental ads from ~$900/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$900/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -2953,8 +2942,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-luminoso-mono-en-milaires-villa-59387157.html",
-        "note": "Active long-term rental listing verified 2026-08-12",
-        "checkedAt": "2026-08-12",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Ecipsa low-rise oasis complex in Villa Devoto with club amenities including yoga/pilates studio, indoor pool, gym, coworking and kids areas.",
@@ -2962,11 +2951,11 @@
         "source": "Zonaprop",
         "title": "Dueño Directo Alquila Luminoso Mono en Milaires, Villa Devoto, Caba.",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-dueno-directo-alquila-luminoso-mono-en-milaires-villa-59387157.html",
-        "checkedAt": "2026-08-12",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
-        "priceUsdMonthly": 964,
-        "rentUsd": 820,
+        "priceUsdMonthly": 961,
+        "rentUsd": 817,
         "expensesUsd": 144,
         "expensesIncluded": false
       },
@@ -2976,7 +2965,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-villa-devoto-2-ambientes--20163967",
-        "summary": "Live long-term rental ads from ~$1209/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1209/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 5,
       "approxTwoBedroomAreaSqm": {
@@ -3011,31 +3000,31 @@
         "evidence": "Airbnb pin at Humboldt ~1942 is ~145 m from Mirabilia Palermo (Humboldt 2045) on the same block; listing \"Two Bedroom Apartment – Palermo Hollywood\" includes building pool. Host Rodrigo. Checked 2026-07-22."
       },
       "rentalEvidence": {
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-3-ambientes--20185701",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Argenprop"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-de-3-ambientes-en-torres-60019009.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Humboldt 2045 tower with a 9,000 m2 park, 25 m semi-olympic pool, indoor pool, tennis court and gym.",
       "localRentalAd": {
-        "source": "Argenprop",
-        "title": "Alquiler Palermo | Piso alto con vista y cochera",
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-3-ambientes--20185701",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "Hermoso Departamento de 3 Ambientes en Torres Mirabilia, Piso Alto con Vista La Ciudad!",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-de-3-ambientes-en-torres-60019009.html",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
-        "priceUsdMonthly": 3000,
-        "rentUsd": 2490,
-        "expensesUsd": 510,
+        "priceUsdMonthly": 2490,
+        "rentUsd": 2000,
+        "expensesUsd": 490,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 3000,
+        "amount": 2490,
         "basis": "direct 2-bedroom listing",
         "confidence": "high",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-3-ambientes--20185701",
-        "summary": "Live long-term rental ads from ~$3000/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-de-3-ambientes-en-torres-60019009.html",
+        "summary": "Live long-term rental ads from ~$2490/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -3082,16 +3071,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-5-ambientes-en-complejo-full-59659208.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Barracas factory conversion at Montes de Oca 100 with indoor and outdoor pools, gym, spa and sauna. Distinct from MOCA² at Finochietto 990 and from Solares de Montes de Oca.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento en alquiler 5 ambientes en complejo full amenities!",
+        "title": "Departamento en Alquiler 5 Ambientes en Complejo Full Amenities!",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-5-ambientes-en-complejo-full-59659208.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "4br",
         "bedrooms": 4,
         "priceUsdMonthly": 2946,
@@ -3105,7 +3094,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-barracas-moca-departamento-duplex-2-ambientes-59911609.html",
-        "summary": "Live long-term rental ads from ~$1194/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1194/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3144,8 +3133,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-barracas-1-ambiente--19487428",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Barracas factory conversion at Av. Regimiento de Patricios 1000 with indoor and outdoor pools, gym and spa. Distinct from unfinished Palacio Molina and Liberti 1181.",
@@ -3153,7 +3142,7 @@
         "source": "Argenprop",
         "title": "Cómodo monoambiente en alquiler en Barracas",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-barracas-1-ambiente--19487428",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1329,
@@ -3162,12 +3151,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1082,
+        "amount": 1078,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-barracas-alquiler-depto-2-amb-cochera-cubierta-59937049.html",
-        "summary": "Live long-term rental ads from ~$1082/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1078/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3207,16 +3196,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-belgrano-59315109.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "2025 Belgrano tower at Luis María Campos 1400/1461 with pool and gym. Distinct from Velvet Casa Campos at Luis María Campos 1300 and from MOVA O'Higgins.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler Belgrano monoambiente",
+        "title": "Alquiler Belgrano Monoambiente",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-belgrano-59315109.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 891,
@@ -3225,12 +3214,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 891,
+        "amount": 963,
         "basis": "direct studio listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-belgrano-59315109.html",
-        "summary": "Live long-term rental ads from ~$891/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-belgrano.-edificio-con-pileta-59469991.html",
+        "summary": "Live long-term rental ads from ~$963/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3270,16 +3259,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-fabuloso-piso-amoblado-en-la-exclusiva-torre-mulieris-59386725.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Twin Dique 2 residential towers with high-floor units, river views and full-service common areas.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Fabuloso piso amoblado, en la exclusiva torre Mulieris",
+        "title": "Fabuloso Piso Amoblado, en La Exclusiva Torre Mulieris",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-fabuloso-piso-amoblado-en-la-exclusiva-torre-mulieris-59386725.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 4461,
@@ -3293,7 +3282,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-fabuloso-piso-amoblado-en-la-exclusiva-torre-mulieris-59386725.html",
-        "summary": "Live long-term rental ads from ~$4461/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$4461/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 46,
       "approxTwoBedroomAreaSqm": {
@@ -3333,16 +3322,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-departamento-monoambiente-my-57031797.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "KWZ / Grupo Portland mixed-use Belgrano R tower inaugurated in 2024, with heated outdoor pool, gym, gourmet party room, kids areas, laundry and landscaped decks.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler amoblado departamento monoambiente My Residence Belgrano",
+        "title": "Alquiler Amoblado Departamento Monoambiente My Residence Belgrano",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-departamento-monoambiente-my-57031797.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 798,
@@ -3351,12 +3340,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1000,
+        "amount": 798,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "MercadoLibre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1878057429-alquiler-departamento-2-ambientes-en-belgrano-_JM",
-        "summary": "Live long-term rental ads from ~$1000/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-amoblado-departamento-monoambiente-my-57031797.html",
+        "summary": "Live long-term rental ads from ~$798/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 21,
       "approxTwoBedroomAreaSqm": {
@@ -3391,17 +3380,17 @@
         "evidence": "Executive Residence - Coworking & Amenities with extractable USD monthly price."
       },
       "rentalEvidence": {
-        "url": "https://www.remax.com.ar/listings/depto-monoambiente-en-alquiler-torre-om-botanico",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "REMAX"
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-1-ambiente--20221436",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Argenprop"
       },
       "description": "Aráoz 2532 tower by Santa Fe with a 13th-floor pool, party room, parrilla terrace and views over the Botánico area.",
       "localRentalAd": {
-        "source": "REMAX",
-        "title": "Depto monoambiente en alquiler torre OM Botánico",
-        "url": "https://www.remax.com.ar/listings/depto-monoambiente-en-alquiler-torre-om-botanico",
-        "checkedAt": "2026-08-31",
+        "source": "Argenprop",
+        "title": "Depto Monoambiente en Alquiler Torre OM Botánico",
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-1-ambiente--20221436",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 754,
@@ -3410,12 +3399,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 650,
+        "amount": 754,
         "basis": "direct studio listing",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-om-botanico-full-amenities-seguridad-24h-59864724.html",
-        "summary": "Live long-term rental ads from ~$650/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-1-ambiente--20221436",
+        "summary": "Live long-term rental ads from ~$754/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -3461,16 +3450,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-2-ambientes--20336969",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "NorthBaires 12-level Recoleta complex on Marcelo T. de Alvear / Callao with a central garden, party room/cowork, rooftop pool and parrilla terrace.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Alquiler 2 ambientes OM Recoleta Marcelo T y Av Callao",
+        "title": "Alquiler 2 ambientes OM RECOLETA Marcelo T y Av Callao",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-2-ambientes--20336969",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1388,
@@ -3484,7 +3473,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-recoleta-2-ambientes--20336969",
-        "summary": "Live long-term rental ads from ~$1388/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1388/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 12,
       "approxTwoBedroomAreaSqm": {
@@ -3524,16 +3513,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Palermo tower at Oro 2835 with pool and gym. Distinct from Oro Tower at Oro 2222 and blacklisted Quartier de Oro.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler departamento 2 ambientes amoblado en Torre Oro Costantini, Palermo Nuevo",
+        "title": "Alquiler Departamento 2 Ambientes Amoblado en Torre Oro Costantini, Palermo Nuevo",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1494,
@@ -3547,7 +3536,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-amoblado-en-alquiler-59390480.html",
-        "summary": "Live long-term rental ads from ~$1394/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1394/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3583,24 +3572,19 @@
       },
       "rentalEvidence": {
         "url": null,
-        "note": "Previous Argenprop monoambiente returned 410; no replacement long-term ad found in 2026-07-25 audit",
-        "checkedAt": "2026-07-25",
+        "note": "No live long-term rental listing confirmed 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": null
       },
       "description": "Oro 2222 tower in Palermo Soho with pool, party room, parrilla, gym and Plaza Italia a few blocks east.",
-      "localRentalAd": {
-        "source": "Prior listing (delisted)",
-        "title": "No current long-term rental ad found",
-        "url": null,
-        "checkedAt": "2026-07-25"
-      },
+      "localRentalAd": null,
       "longTermRentUsd": {
         "amount": 1400,
         "basis": "retained estimate; no live long-term ad",
         "confidence": "low",
         "source": "Prior market evidence",
         "sourceUrl": null,
-        "summary": "No active long-term rental ads found in 2026-08-31 audit. Retaining ~USD 1,400 estimate pending a new live listing."
+        "summary": "No active long-term rental ads found in 2026-09-04 audit. Retaining prior estimate pending a new live listing."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -3651,23 +3635,23 @@
         "evidence": "Exact-building Airbnb \"BT Homes - Elegant Loft in Barrio Parque\" inside Palacio Alcorta; weekly price verified by research agent (~USD 1,459 / 7 nights → ~USD 6,242/mo). Checked 2026-07-22."
       },
       "rentalEvidence": {
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-chico-1-ambiente--19713678",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Argenprop"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-exclusivo-loft-en-palacio-alcorta-59618981.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Mario Palanti 1928 ex-Chrysler/Resta dealership on Figueroa Alcorta by MALBA; 1994 MSGSSS loft conversion around a central garden pool with gym, sauna/spa, pilates and heated floors. Kept despite 1990s residential conversion because it was explicitly requested. Not Forum Alcorta (Ramsay 2055) and not Le Parc Figueroa Alcorta.",
       "localRentalAd": {
-        "source": "Argenprop",
-        "title": "Loft en Palacio Alcorta - 110 m² - 2 cocheras - Palermo Chico",
-        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-chico-1-ambiente--19713678",
-        "checkedAt": "2026-08-31",
-        "size": "studio",
-        "bedrooms": 0,
-        "priceUsdMonthly": 3000,
-        "rentUsd": 3000,
-        "expensesUsd": 0,
-        "expensesIncluded": true
+        "source": "Zonaprop",
+        "title": "Exclusivo Loft en Palacio Alcorta",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-exclusivo-loft-en-palacio-alcorta-59618981.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 3254,
+        "rentUsd": 2600,
+        "expensesUsd": 654,
+        "expensesIncluded": false
       },
       "longTermRentUsd": {
         "amount": 3254,
@@ -3675,7 +3659,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-exclusivo-loft-en-palacio-alcorta-59618981.html",
-        "summary": "Live long-term rental ads from ~$3254/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$3254/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -3721,16 +3705,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-palermo-21803",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Mob.ar"
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "mob.ar"
       },
       "description": "Palermo Chico tower at Salguero 2900 with pool, gym, solarium and SUM, between Libertador and Castex. Distinct from Torre Ámbar at Salguero 3000.",
       "localRentalAd": {
-        "source": "Mob.ar",
-        "title": "Departamento 2 ambientes en Jerónimo Salguero 2900, Palermo",
+        "source": "mob.ar",
+        "title": "Departamento 2 ambientes en Jerónimo Salguero 2900",
         "url": "https://www.mob.ar/propiedad/departamento-alquiler-2-ambientes-palermo-21803",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 963,
@@ -3744,7 +3728,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-2-ambientes--20207877",
-        "summary": "Live long-term rental ads from ~$686/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$686/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3792,7 +3776,7 @@
       "description": "1935 neocolonial palace in Palermo Hollywood restored 2016–22, with internal gardens, pool, gym and 24-hour security.",
       "localRentalAd": {
         "source": "Roomix",
-        "title": "Exclusivo departamento 2 ambientes – Palacio Cabrera",
+        "title": "EXCLUSIVO DEPARTAMENTO 2 AMBIENTES - PALACIO CABRERA",
         "url": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-1e3c3ee2",
         "checkedAt": "2026-09-04",
         "size": "1br",
@@ -3808,7 +3792,7 @@
         "confidence": "high",
         "source": "Roomix",
         "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-1e3c3ee2",
-        "summary": "Live 2-ambientes rental at José Antonio Cabrera 5653 for USD 1,000 + ARS 625,000 expensas (~USD 1,409 all-in at BNA venta 1,530). Audited 2026-09-04."
+        "summary": "Live long-term rental ads from ~$1409/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3848,8 +3832,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-juncal-y-esmeralda-56456821.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Historic French-academic palace apartments near Plaza San Martín, with grand floorplates and classic detailing.",
@@ -3857,9 +3841,9 @@
         "source": "Zonaprop",
         "title": "Juncal y Esmeralda",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-juncal-y-esmeralda-56456821.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
-        "bedrooms": 3,
+        "bedrooms": 2,
         "priceUsdMonthly": 5373,
         "rentUsd": 4000,
         "expensesUsd": 1373,
@@ -3871,7 +3855,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-juncal-y-esmeralda-56456821.html",
-        "summary": "Live long-term rental ads from ~$5373/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$5373/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 7,
       "approxTwoBedroomAreaSqm": {
@@ -3911,30 +3895,30 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-monserrat-2-ambientes--20124931",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Monserrat palace conversion at Moreno 500/502 with pool and gym, completed 2012. Distinct from Palacio Estrugamou and Palacio Alcorta.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Alquiler residencial departamento 2 ambientes San Telmo terraza exclusiva",
+        "title": "Alquiler Residencial Departamento 2 ambientes San Telmo Terraza Exclusiva",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-monserrat-2-ambientes--20124931",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 905,
+        "priceUsdMonthly": 904,
         "rentUsd": 650,
-        "expensesUsd": 255,
+        "expensesUsd": 254,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 905,
+        "amount": 904,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-monserrat-2-ambientes--20124931",
-        "summary": "Live long-term rental ads from ~$905/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$904/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -3975,12 +3959,12 @@
         "url": "https://yacoub.com.ar/propiedad/nicaragua-6030/8685233/",
         "note": "Active long-term rental listing verified 2026-09-04",
         "checkedAt": "2026-09-04",
-        "source": "Yacoub"
+        "source": "yacoub"
       },
       "description": "11-story Palermo Hollywood tower at Nicaragua 6030 (across from Live Hotel) with rooftop pool, gym, SUM and 24-hour security.",
       "localRentalAd": {
-        "source": "Yacoub",
-        "title": "Nicaragua 6030",
+        "source": "yacoub",
+        "title": "Departamento en Alquiler - Nicaragua 6030 (frente)",
         "url": "https://yacoub.com.ar/propiedad/nicaragua-6030/8685233/",
         "checkedAt": "2026-09-04",
         "size": "studio",
@@ -3991,12 +3975,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1877,
+        "amount": 948,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Airbnb",
-        "sourceUrl": "https://www.airbnb.com/rooms/1402073322976443978",
-        "summary": "No live long-term 2-ambientes ad with extractable all-in USD. 1BR Airbnb apt 505 is USD 1,877/mo. Studio long-term ads from ~USD 948 all-in. Audited 2026-09-04."
+        "source": "yacoub",
+        "sourceUrl": "https://yacoub.com.ar/propiedad/nicaragua-6030/8685233/",
+        "summary": "Live long-term rental ads from ~$948/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 11,
       "approxTwoBedroomAreaSqm": {
@@ -4034,31 +4018,31 @@
         "evidence": "No exact active Airbnb listing with extractable monthly USD was found in BrightData searches on 2026-07-21."
       },
       "rentalEvidence": {
-        "url": "https://departamento.mercadolibre.com.ar/MLA-3748239782-alquiler-departamento-2-ambientes-amoblado-en-palmera-caballito-totalmente-equipado-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "MercadoLibre"
+        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-caballito-96ff918c",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Roomix"
       },
       "description": "Portland tower on Doblas with club-style amenities including indoor/outdoor pools, spa, gym and a fútbol 5 court.",
       "localRentalAd": {
-        "source": "MercadoLibre",
-        "title": "Alquiler departamento 2 ambientes amoblado en Palmera Caballito. Totalmente equipado.",
-        "url": "https://departamento.mercadolibre.com.ar/MLA-3748239782-alquiler-departamento-2-ambientes-amoblado-en-palmera-caballito-totalmente-equipado-_JM",
-        "checkedAt": "2026-08-31",
+        "source": "Roomix",
+        "title": "ALQUILER DEPARTAMENTO DOS AMBIENTES, CABALLITO - PALMERA DE CABALLITO FULL AME",
+        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-caballito-96ff918c",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 951,
-        "rentUsd": 800,
-        "expensesUsd": 151,
+        "priceUsdMonthly": 815,
+        "rentUsd": 647,
+        "expensesUsd": 168,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 915,
+        "amount": 815,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-depto-2-amb-amoblado-con-cochera-piso-alto-complejo-59919011.html",
-        "summary": "Live long-term rental ads from ~$915/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-1-ambientes-caballito-96ff918c",
+        "summary": "Live long-term rental ads from ~$815/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 24,
       "approxTwoBedroomAreaSqm": {
@@ -4094,16 +4078,16 @@
       },
       "rentalEvidence": {
         "url": "https://departamento.mercadolibre.com.ar/MLA-2024143135-alquiler-3p-monoambiente-palmera-crespo-amenities-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Mercado Libre"
       },
       "description": "Villa Crespo complex around Pringles and Argañaraz, with pool, parking and a polished residential feel.",
       "localRentalAd": {
         "source": "Mercado Libre",
-        "title": "Alquiler 3°p monoambiente Palmera Crespo amenities",
+        "title": "ALQUILER 3°P MONOAMBIENTE PALMERA CRESPO AMENITIES",
         "url": "https://departamento.mercadolibre.com.ar/MLA-2024143135-alquiler-3p-monoambiente-palmera-crespo-amenities-_JM",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 627,
@@ -4112,12 +4096,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1224,
+        "amount": 848,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-villa-crespo-2-ambientes--20318161",
-        "summary": "Live long-term rental ads from ~$1224/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-palmeras-crespo:-depto-2-ambientes-en-torre-con-60036107.html",
+        "summary": "Live long-term rental ads from ~$848/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 12,
       "approxTwoBedroomAreaSqm": {
@@ -4180,7 +4164,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-departamento-a-m-de-puerto-madero-apto-profesional-57714127.html",
-        "summary": "Live 2-ambientes rental in Paseo de la Cisterna (Moreno 550, piso 11) for ARS 849,000 + ARS 350,000 expensas (~USD 784 all-in at BNA venta 1,530). Audited 2026-09-04."
+        "summary": "Live long-term rental ads from ~$784/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 14,
       "approxTwoBedroomAreaSqm": {
@@ -4218,16 +4202,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-3-ambientes-en-torre-quantum-bellini-57406757.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Núñez twin-tower development on Libertador, with river-view apartments and resort-style amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento 3 ambientes en torre Quantum Bellini cochera y amenities premium",
+        "title": "Departamento 3 Ambientes en Torre Quantum Bellini Cochera y Amenities Premium",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-3-ambientes-en-torre-quantum-bellini-57406757.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 3784,
@@ -4241,7 +4225,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-3-ambientes-en-torre-quantum-bellini-57406757.html",
-        "summary": "Live long-term rental ads from ~$3784/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$3784/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 43,
       "approxTwoBedroomAreaSqm": {
@@ -4280,16 +4264,16 @@
       },
       "rentalEvidence": {
         "url": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-con-cochera-y-amenities-palermo-hollywood--4692497",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Selectia"
       },
       "description": "Tall tower on Juan B. Justo in Palermo Hollywood with pool, gym, party room amenities, tennis court and fútbol 5.",
       "localRentalAd": {
         "source": "Selectia",
-        "title": "Alquiler departamento 2 ambientes con cochera y amenities - Palermo Hollywood",
+        "title": "Alquiler Departamento 2 ambientes con cochera y amenities - Palermo Hollywood",
         "url": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-con-cochera-y-amenities-palermo-hollywood--4692497",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1486,
@@ -4303,7 +4287,7 @@
         "confidence": "high",
         "source": "Selectia",
         "sourceUrl": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-con-cochera-y-amenities-palermo-hollywood--4692497",
-        "summary": "Live long-term rental ads from ~$1486/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1486/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -4339,16 +4323,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-quartier-del-bajo-1-ambiente-en-alquiler-59360005.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Newer Argencons tower on the Paseo del Bajo side, with pool, gym, spa amenities and compact apartments.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Torre Quartier del Bajo - 1 ambiente en alquiler - Puerto Madero - Espectacular",
+        "title": "Torre Quartier del Bajo - 1 Ambiente en Alquiler - Puerto Madero - Espectacular",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-quartier-del-bajo-1-ambiente-en-alquiler-59360005.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 948,
@@ -4357,12 +4341,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1200,
+        "amount": 1345,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-puerto-madero-a206b76b",
-        "summary": "Live long-term rental ads from ~$1200/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20179783",
+        "summary": "Live long-term rental ads from ~$1345/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 37,
       "approxTwoBedroomAreaSqm": {
@@ -4397,31 +4381,31 @@
         "evidence": "Airbnb result titled \"Quartier Dorrego - Luxury Palermo Hollywood\" with extractable USD monthly price."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-unidad-en-quartier-dorrego!-59303050.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo.-quartier-dorrego.-59796124.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Amenábar 30 tower with indoor and outdoor pools, sauna, gym, massage room and Dorrego restaurants nearby.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Excelente unidad en Quartier Dorrego!",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-unidad-en-quartier-dorrego!-59303050.html",
-        "checkedAt": "2026-08-31",
+        "title": "Departamento en Alquiler en Palermo. Quartier Dorrego. Lc a Balcón Suite Baño Apto Amenities.",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo.-quartier-dorrego.-59796124.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1096,
-        "rentUsd": 900,
-        "expensesUsd": 196,
+        "priceUsdMonthly": 1329,
+        "rentUsd": 1100,
+        "expensesUsd": 229,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1096,
+        "amount": 1329,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-unidad-en-quartier-dorrego!-59303050.html",
-        "summary": "Live long-term rental ads from ~$1096/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo.-quartier-dorrego.-59796124.html",
+        "summary": "Live long-term rental ads from ~$1329/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -4464,30 +4448,30 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Eslovenia complex in Las Cañitas with outdoor pool, jacuzzi, sauna, gym and the polo field a short walk away.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler departamento 2 ambientes con cochera y amenities - Quartier del Polo",
+        "title": "Alquiler Departamento 2 Ambientes con Cochera y Amenities - Quartier del Polo",
         "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1266,
+        "priceUsdMonthly": 1265,
         "rentUsd": 900,
-        "expensesUsd": 366,
+        "expensesUsd": 365,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1266,
+        "amount": 1265,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
-        "summary": "Live long-term rental ads from ~$1266/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1265/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -4530,8 +4514,8 @@
       },
       "rentalEvidence": {
         "url": null,
-        "note": "No live long-term rental listing confirmed 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "No live long-term rental listing confirmed 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": null
       },
       "description": "Dorrego and El Salvador building with two pools, rooftop garden and Palermo Hollywood cafés around Nicaragua.",
@@ -4542,7 +4526,7 @@
         "confidence": "low",
         "source": "Prior market evidence",
         "sourceUrl": null,
-        "summary": "No active long-term rental ads found in 2026-08-31 audit. Retaining ~USD 1,200 estimate pending a new live listing."
+        "summary": "No active long-term rental ads found in 2026-09-04 audit. Retaining prior estimate pending a new live listing."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -4597,7 +4581,7 @@
       "description": "Twin 12-story BrodyFriedman towers at Zapata and Jorge Newbery with pool, gym, SUM and laundry. Distinct from Quo Swim at Dorrego 1900.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento en alquiler 2 ambientes balcón Quo Zapata",
+        "title": "Departamento en Alquiler - 2 Ambientes - Balcón - Amenities - Palermo",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-balcon-59928662.html",
         "checkedAt": "2026-09-04",
         "size": "1br",
@@ -4613,7 +4597,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-balcon-59928662.html",
-        "summary": "Live 2-ambientes rental at Jorge Newbery 2400 / Quo Zapata for USD 800 + ARS 450,000 expensas (~USD 1,094 all-in at BNA venta 1,530). Audited 2026-09-04."
+        "summary": "Live long-term rental ads from ~$1094/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 12,
       "approxTwoBedroomAreaSqm": {
@@ -4653,16 +4637,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-3-ambientes--19783182",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Puerto Madero tower at Aimé Painé 1300 with pool and gym. Distinct from Madero Plaza, Quartier del Bajo, and Terrazas del Dique.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Amplio departamento de 3 ambientes en el corazón de Puerto Madero",
+        "title": "Espectacular Semipiso de 3 Ambientes en Edificio Río Plaza Puerto Madero",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-3-ambientes--19783182",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 2519,
@@ -4676,7 +4660,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-3-ambientes--19783182",
-        "summary": "Live long-term rental ads from ~$2519/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$2519/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -4713,31 +4697,31 @@
         "evidence": "sls lux puerto madero building Buenos Aires Arg with extractable USD monthly price."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-studio-en-alquiler-sls-puerto-madero-59289055.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-con-cochera-59419184.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Newer branded residential tower in Madero Harbour with hotel-style amenities, pool, gym and riverfront access.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Sls Puerto Madero - suite amoblada y equipada - alquiler mensual",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-studio-en-alquiler-sls-puerto-madero-59289055.html",
-        "checkedAt": "2026-08-31",
-        "size": "studio",
-        "bedrooms": 0,
-        "priceUsdMonthly": 1650,
-        "rentUsd": 800,
-        "expensesUsd": 850,
+        "title": "Departamento en Alquiler 2 Ambientes - con Cochera - Sls - Puerto Madero",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-con-cochera-59419184.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 4540,
+        "rentUsd": 3900,
+        "expensesUsd": 640,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 4541,
+        "amount": 4540,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-con-cochera-59419184.html",
-        "summary": "Live long-term rental ads from ~$4541/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$4540/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 33,
       "approxTwoBedroomAreaSqm": {
@@ -4774,31 +4758,31 @@
         "evidence": "No exact active Airbnb listing was found in targeted web searches on 2026-06-30."
       },
       "rentalEvidence": {
-        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-las-caitas-5a8aee5b",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Roomix"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dos-ambientes-en-torre-con-seguridad-al-lado-del-polo-59273406.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Arévalo tower by the polo field, with pool, gym, sauna, quincho and Las Cañitas restaurants nearby.",
       "localRentalAd": {
-        "source": "Roomix",
-        "title": "Terrazas de Polo - Amplio 2 amb. muy luminoso edificio de categoría - Arevalo 3000 Cañitas",
-        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-las-caitas-5a8aee5b",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "Dos Ambientes en Torre con Seguridad, Al Lado del Polo || con Muebles || Edificio Full Amenities",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dos-ambientes-en-torre-con-seguridad-al-lado-del-polo-59273406.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1827,
-        "rentUsd": 1500,
-        "expensesUsd": 327,
+        "priceUsdMonthly": 1792,
+        "rentUsd": 1400,
+        "expensesUsd": 392,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1827,
+        "amount": 1792,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-1-ambientes-las-caitas-5a8aee5b",
-        "summary": "Live long-term rental ads from ~$1827/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dos-ambientes-en-torre-con-seguridad-al-lado-del-polo-59273406.html",
+        "summary": "Live long-term rental ads from ~$1792/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -4842,31 +4826,31 @@
         "evidence": "Airbnb result titled \"Apartment with Bay & City Views @Puerto Madero\" names the Link Towers complex."
       },
       "rentalEvidence": {
-        "url": "https://departamento.mercadolibre.com.ar/MLA-3633226290-link-towers-2-amb-amoblado-con-terraza-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "MercadoLibre"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-puerto-madero-link-towers-59769278.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Dique 1 residential towers with high-floor views, in-out pool, gym and glass facades.",
       "localRentalAd": {
-        "source": "MercadoLibre",
-        "title": "Link Towers - 2 amb amoblado con terraza",
-        "url": "https://departamento.mercadolibre.com.ar/MLA-3633226290-link-towers-2-amb-amoblado-con-terraza-_JM",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "Alquiler 2 Ambientes en Puerto Madero - Link Towers",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-puerto-madero-link-towers-59769278.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 2200,
-        "rentUsd": 2200,
-        "expensesUsd": 0,
-        "expensesIncluded": true
+        "priceUsdMonthly": 2590,
+        "rentUsd": 2100,
+        "expensesUsd": 490,
+        "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2200,
+        "amount": 2590,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "MercadoLibre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-3633226290-link-towers-2-amb-amoblado-con-terraza-_JM",
-        "summary": "Live long-term rental ads from ~$2200/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-en-puerto-madero-link-towers-59769278.html",
+        "summary": "Live long-term rental ads from ~$2590/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 35,
       "approxTwoBedroomAreaSqm": {
@@ -4905,16 +4889,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Palermo Chico tower at Salguero 3000 with pool, gym, jacuzzi and SUM. Distinct from Palacio Bonaire at Salguero 2900, Torre Bellini, and blacklisted Torres de Gelly at Salguero 3031.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Excelente 4 ambientes con balcón terraza, frente y vista abierta – Salguero 3000 e/ Gelly y Castex",
+        "title": "Excelente 4 Ambientes con Balcón Terraza, Frente y Vista Abierta – Salguero 3000",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 2,
         "priceUsdMonthly": 1176,
@@ -4923,12 +4907,12 @@
         "expensesIncluded": true
       },
       "longTermRentUsd": {
-        "amount": 523,
+        "amount": 654,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-apto-profesional.-sin-expensas.-59972642.html",
-        "summary": "Live long-term rental ads from ~$523/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-2-ambientes--20053940",
+        "summary": "Live long-term rental ads from ~$654/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -4964,16 +4948,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-con-cochera-palermo-soho-59219202.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Guatemala 5155 high-rise with a heated indoor pool, spa, workspace, gym and offices in a separate tower.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler 2 ambientes con cochera - Palermo Soho - Torre Bella",
+        "title": "Alquiler 2 Ambientes con Cochera - Palermo Soho - Torre Bella",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-con-cochera-palermo-soho-59219202.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1942,
@@ -4987,7 +4971,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-con-cochera-palermo-soho-59219202.html",
-        "summary": "Live long-term rental ads from ~$1942/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1942/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5032,16 +5016,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bellini-departamento-de-150-m-sup2--con-1-59102605.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Salguero and Cerviño tower by Aisenson, with pool, gym, sauna, party room and large high-floor apartments.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Torre Bellini - Departamento de 150 m² con 1 dormitorio en alquiler en Palermo Chico",
+        "title": "Torre Bellini - Departamento de 150 m² con 1 Dormitorio en Alquiler en Palermo Chico",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bellini-departamento-de-150-m-sup2--con-1-59102605.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 5850,
@@ -5055,7 +5039,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bellini-departamento-de-150-m-sup2--con-1-59102605.html",
-        "summary": "Live long-term rental ads from ~$5850/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$5850/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5101,31 +5085,31 @@
         "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-59925512.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-60031507.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Palermo tower at Beruti 4600–4646 with multiple pools and a gym. Distinct from Astor Palermo at Beruti 3351, blacklisted Beruti 3062, unfinished DOME Torre Beruti at Beruti 4540, and Torre Bellini.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Departamento 2 ambientes - Palermo nuevo",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-59925512.html",
-        "checkedAt": "2026-08-31",
+        "title": "Departamento 2 Ambientes - Palermo Nuevo, Capital Federal",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-60031507.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1627,
+        "priceUsdMonthly": 1714,
         "rentUsd": 1300,
-        "expensesUsd": 327,
+        "expensesUsd": 414,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1627,
+        "amount": 1714,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-59925512.html",
-        "summary": "Live long-term rental ads from ~$1627/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-palermo-nuevo-capital-60031507.html",
+        "summary": "Live long-term rental ads from ~$1714/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -5160,31 +5144,31 @@
         "evidence": "The 29+ floor inclusion criteria were satisfied with a direct rental page; no exact Airbnb listing was used."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bulnes-vista-al-rio-70-m-sup2-59535235.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-con-cochera-torres-59984425.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Palermo Chico residential tower at Bulnes 2736, with large units and open city views.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Torre Bulnes vista al rio 70 m², capital federal",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bulnes-vista-al-rio-70-m-sup2-59535235.html",
-        "checkedAt": "2026-08-31",
+        "title": "Alquiler Departamento 2 Ambientes con Cochera Torres Bulnes",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-con-cochera-torres-59984425.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1755,
-        "rentUsd": 1500,
-        "expensesUsd": 255,
+        "priceUsdMonthly": 1253,
+        "rentUsd": 900,
+        "expensesUsd": 353,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1632,
+        "amount": 1253,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-bulnes-departamento-2-ambientes-amplio-piso-59964194.html",
-        "summary": "Live long-term rental ads from ~$1632/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-con-cochera-torres-59984425.html",
+        "summary": "Live long-term rental ads from ~$1253/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 37,
       "approxTwoBedroomAreaSqm": {
@@ -5222,8 +5206,8 @@
       },
       "rentalEvidence": {
         "url": null,
-        "note": "No live long-term rental listing confirmed 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "No live long-term rental listing confirmed 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": null
       },
       "description": "Caballito tower at Díaz Vélez 4924, close to Parque Centenario and the Primera Junta corridor.",
@@ -5234,7 +5218,7 @@
         "confidence": "low",
         "source": "Prior market evidence",
         "sourceUrl": null,
-        "summary": "No active long-term rental ads found in 2026-08-31 audit. Retaining ~USD 1,481 estimate pending a new live listing."
+        "summary": "No active long-term rental ads found in 2026-09-04 audit. Retaining prior estimate pending a new live listing."
       },
       "floorsAboveGround": 37,
       "approxTwoBedroomAreaSqm": {
@@ -5269,31 +5253,31 @@
         "evidence": "Exact Airbnb searches for Torre Decó Palermo Nuevo and Juan Francisco Seguí 4600 returned no direct result."
       },
       "rentalEvidence": {
-        "url": "https://departamento.mercadolibre.com.ar/MLA-1945491011-torre-deco-2-ambientes-full-amenities-palermo-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Mercado Libre"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-en-palermo-torre-60026461.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Seguí 4600 tower with pool, gym, spa, coworking, parrilla, solarium and a park-side Palermo Nuevo address.",
       "localRentalAd": {
-        "source": "Mercado Libre",
-        "title": "Torre Decó 2 ambientes full amenities Palermo",
-        "url": "https://departamento.mercadolibre.com.ar/MLA-1945491011-torre-deco-2-ambientes-full-amenities-palermo-_JM",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "TORRE DECÓ SEGUI 2 AMB C/BALCÓN COCHERA FULL AMENITIES - PISO 9",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-en-palermo-torre-60026461.html",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
-        "priceUsdMonthly": 1248,
-        "rentUsd": 1000,
-        "expensesUsd": 248,
+        "priceUsdMonthly": 1994,
+        "rentUsd": 1600,
+        "expensesUsd": 394,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1248,
+        "amount": 1994,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Mercado Libre",
-        "sourceUrl": "https://departamento.mercadolibre.com.ar/MLA-1945491011-torre-deco-2-ambientes-full-amenities-palermo-_JM",
-        "summary": "Live long-term rental ads from ~$1248/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-en-palermo-torre-60026461.html",
+        "summary": "Live long-term rental ads from ~$1994/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5340,16 +5324,16 @@
       },
       "rentalEvidence": {
         "url": "https://departamento.mercadolibre.com.ar/MLA-3629219106-torre-fresh-bajo-belgrano-alquiler-amoblado-con-cochera-_JM",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Mercado Libre"
       },
       "description": "Bajo Belgrano tower at La Pampa 700 / 717 with a heated pool and gym. Distinct from DePampa at La Pampa 600 and Florean Pampa at La Pampa 2900.",
       "localRentalAd": {
         "source": "Mercado Libre",
-        "title": "Torre Fresh Bajo Belgrano | Alquiler amoblado con cochera",
+        "title": "Torre Fresh – Bajo Belgrano | Alquiler Amoblado con Cochera",
         "url": "https://departamento.mercadolibre.com.ar/MLA-3629219106-torre-fresh-bajo-belgrano-alquiler-amoblado-con-cochera-_JM",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 948,
@@ -5358,12 +5342,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1637,
+        "amount": 1587,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-la-pampa-700-belgrano-semipiso-en-alquiler-de-2-59475351.html",
-        "summary": "Live long-term rental ads from ~$1637/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1587/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -5402,22 +5386,22 @@
         "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
       },
       "rentalEvidence": {
-        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-hollywood-8b936249",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Roomix"
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-2-ambientes--20206809",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Argenprop"
       },
       "description": "Palermo Hollywood tower at Humboldt 1900 with pool, gym, sauna and SUM. Distinct from SENS Humboldt at Humboldt 1925, Beat Hollywood at Humboldt 1800, and The Mark at Humboldt 2300.",
       "localRentalAd": {
-        "source": "Roomix",
-        "title": "Impecable monoambiente amoblado de revista en torre premium Palermo Hollywood",
-        "url": "https://roomix.ai/propiedad/departamento-1-ambientes-palermo-hollywood-8b936249",
-        "checkedAt": "2026-08-31",
-        "size": "studio",
-        "bedrooms": 0,
-        "priceUsdMonthly": 884,
-        "rentUsd": 590,
-        "expensesUsd": 294,
+        "source": "Argenprop",
+        "title": "Alquiler Departamento Dos Ambientes con Pileta y Terraza en Palermo Hollywood",
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-2-ambientes--20206809",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 935,
+        "rentUsd": 719,
+        "expensesUsd": 216,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
@@ -5426,7 +5410,7 @@
         "confidence": "high",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-hollywood-2-ambientes--20206809",
-        "summary": "Live long-term rental ads from ~$935/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$935/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -5465,31 +5449,20 @@
         "evidence": "Airbnb listing titled \"Apartment (B) in Belgrano, spacious and bright\" describes Isadora as a 15-story residential tower."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-full-amenities-en-59413566.html",
-        "note": "Active long-term rental listing verified 2026-09-04",
+        "url": null,
+        "note": "No live long-term rental listing confirmed 2026-09-04",
         "checkedAt": "2026-09-04",
-        "source": "Zonaprop"
+        "source": null
       },
       "description": "15-story Belgrano C tower at Olazábal 2258/66 with gym on 14, rooftop pool on 15, coworking, laundry and 24-hour security.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler 2 ambientes AMOBLADO full amenities en Belgrano!",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-full-amenities-en-59413566.html",
-        "checkedAt": "2026-09-04",
-        "size": "1br",
-        "bedrooms": 1,
-        "priceUsdMonthly": 1322,
-        "rentUsd": 1100,
-        "expensesUsd": 222,
-        "expensesIncluded": false
-      },
+      "localRentalAd": null,
       "longTermRentUsd": {
         "amount": 1322,
-        "basis": "direct 1-bedroom listing",
-        "confidence": "high",
+        "basis": "retained estimate; no live long-term ad",
+        "confidence": "low",
         "source": "Zonaprop / Argenprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-full-amenities-en-59413566.html",
-        "summary": "Live furnished 2-ambientes rental at Torre Isadora for USD 1,100/mo plus $340,000 expensas (~USD 1,322 all-in at BNA 1,530). Audited 2026-09-04."
+        "sourceUrl": null,
+        "summary": "No active long-term rental ads found in 2026-09-04 audit. Retaining prior estimate pending a new live listing."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5534,8 +5507,8 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas-1-ambiente--20223043",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Las Cañitas tower/address by Báez, close to restaurants, polo and Libertador transit.",
@@ -5543,7 +5516,7 @@
         "source": "Argenprop",
         "title": "Departamento alquiler premium monoambiente amueblado",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas-1-ambiente--20223043",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 778,
@@ -5552,12 +5525,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 778,
+        "amount": 716,
         "basis": "direct studio listing",
         "confidence": "high",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas-1-ambiente--20223043",
-        "summary": "Live long-term rental ads from ~$778/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "MercadoProp",
+        "sourceUrl": "https://www.mercadoprop.net/ar/departamentos/alquiler-departamento-1-dormitorio-palermo-111853",
+        "summary": "Live long-term rental ads from ~$716/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 9,
       "approxTwoBedroomAreaSqm": {
@@ -5593,16 +5566,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-amoblado-depto.-torre-en-palermo-soho-59384737.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Uriarte 2363 tower in Palermo Soho with pool, sauna, hydromassage, party room, gym and security.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Espectacular amoblado depto. torre en Palermo Soho",
+        "title": "Espectacular Amoblado Depto. Torre en Palermo Soho",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-espectacular-amoblado-depto.-torre-en-palermo-soho-59384737.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 1361,
@@ -5616,7 +5589,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-palermo-soho-59950509.html",
-        "summary": "Live long-term rental ads from ~$667/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$667/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5658,9 +5631,9 @@
         "evidence": "No exact Airbnb result found for Torre Promenade."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-amb-con-balcon-y-chochera-en-la-torre-promenade!-59957838.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-departamento-en-torre-con-amenities-59361966.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Güemes 3355 tower by Coronel Díaz with two heated pools, tennis court, gym, sauna, party room and Alto Palermo nearby.",
@@ -5673,23 +5646,23 @@
       },
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "2 amb con balcón y cochera en la Torre Promenade!",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-amb-con-balcon-y-chochera-en-la-torre-promenade!-59957838.html",
-        "checkedAt": "2026-08-31",
-        "size": "1br",
-        "bedrooms": 1,
-        "priceUsdMonthly": 1211,
-        "rentUsd": 948,
-        "expensesUsd": 263,
+        "title": "Excelente Departamento en Torre con Amenities",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-departamento-en-torre-con-amenities-59361966.html",
+        "checkedAt": "2026-09-04",
+        "size": "2br",
+        "bedrooms": 2,
+        "priceUsdMonthly": 2359,
+        "rentUsd": 2000,
+        "expensesUsd": 359,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1211,
+        "amount": 2359,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-amb-con-balcon-y-chochera-en-la-torre-promenade!-59957838.html",
-        "summary": "Live long-term rental ads from ~$1211/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-departamento-en-torre-con-amenities-59361966.html",
+        "summary": "Live long-term rental ads from ~$2359/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 35,
       "approxTwoBedroomAreaSqm": {
@@ -5725,16 +5698,16 @@
       },
       "rentalEvidence": {
         "url": "https://inmoclick.com/295531-punta-baires/inmuebles/18/ficha/departamento-en-alquiler-en-ruggieri-2900",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Inmoclick"
       },
       "description": "Palermo Chico tower on Silvio Ruggieri, with high-floor homes and park-side access.",
       "localRentalAd": {
         "source": "Inmoclick",
-        "title": "Departamento en alquiler en Ruggieri 2900",
+        "title": "Departamento en Alquiler en Ruggieri 2900",
         "url": "https://inmoclick.com/295531-punta-baires/inmuebles/18/ficha/departamento-en-alquiler-en-ruggieri-2900",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1490,
@@ -5748,7 +5721,7 @@
         "confidence": "high",
         "source": "Inmoclick",
         "sourceUrl": "https://inmoclick.com/295531-punta-baires/inmuebles/18/ficha/departamento-en-alquiler-en-ruggieri-2900",
-        "summary": "Live long-term rental ads from ~$1490/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1490/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 37,
       "approxTwoBedroomAreaSqm": {
@@ -5783,31 +5756,31 @@
         "evidence": "No exact Airbnb result found for Torre Sinclair."
       },
       "rentalEvidence": {
-        "url": "https://www.kuperpropiedades.com/inmueble/departamento-alquiler-3-ambientes-palermo-nuevo-capital-federal-buenos-aires-lp836480",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Kuper Propiedades"
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-nuevo-1-ambiente--19696560",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Argenprop"
       },
       "description": "Sinclair 3000 Palermo Nuevo tower with larger apartments, balconies, gym, party room and 24-hour security.",
       "localRentalAd": {
-        "source": "Kuper Propiedades",
-        "title": "Sinclair 3000 | GRE0080",
-        "url": "https://www.kuperpropiedades.com/inmueble/departamento-alquiler-3-ambientes-palermo-nuevo-capital-federal-buenos-aires-lp836480",
-        "checkedAt": "2026-08-31",
-        "size": "2br",
-        "bedrooms": 2,
-        "priceUsdMonthly": 2958,
-        "rentUsd": 2500,
-        "expensesUsd": 458,
+        "source": "Argenprop",
+        "title": "Palermo. Sinclair y Cerviño. Exc amplio monoamb. Baño completo. Balcón aterrazado. Vista abierta APTO PROF",
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-nuevo-1-ambiente--19696560",
+        "checkedAt": "2026-09-04",
+        "size": "studio",
+        "bedrooms": 0,
+        "priceUsdMonthly": 631,
+        "rentUsd": 490,
+        "expensesUsd": 141,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2958,
+        "amount": 631,
         "basis": "direct 2-bedroom listing",
         "confidence": "high",
-        "source": "Kuper Propiedades",
-        "sourceUrl": "https://www.kuperpropiedades.com/inmueble/departamento-alquiler-3-ambientes-palermo-nuevo-capital-federal-buenos-aires-lp836480",
-        "summary": "Live long-term rental ads from ~$2958/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-palermo-nuevo-1-ambiente--19696560",
+        "summary": "Live long-term rental ads from ~$631/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5849,31 +5822,31 @@
         "evidence": "No exact Airbnb result found for Torre Stay."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-torre-stay-tres-ambientes-en-suite-cochera-59615100.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo-nuevo-capital-59744486.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Sinclair 3070 tower in Palermo Nuevo with a 22 m pool, party room, gym, parrilla and open views toward the polo field.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Torre Stay || tres ambientes en suite || cochera || muy luminoso || full amenities",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-torre-stay-tres-ambientes-en-suite-cochera-59615100.html",
-        "checkedAt": "2026-08-31",
+        "title": "Departamento en Alquiler en Palermo Nuevo, Capital Federal, Buenos Aires",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo-nuevo-capital-59744486.html",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
-        "priceUsdMonthly": 2925,
+        "priceUsdMonthly": 2958,
         "rentUsd": 2500,
-        "expensesUsd": 425,
+        "expensesUsd": 458,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2500,
+        "amount": 2958,
         "basis": "direct 2-bedroom listing",
         "confidence": "high",
-        "source": "Roomix",
-        "sourceUrl": "https://roomix.ai/propiedad/departamento-3-ambientes-palermo-09f1627e",
-        "summary": "Live long-term rental ads from ~$2500/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-en-palermo-nuevo-capital-59744486.html",
+        "summary": "Live long-term rental ads from ~$2958/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5916,8 +5889,8 @@
       },
       "rentalEvidence": {
         "url": null,
-        "note": "No live long-term rental listing confirmed 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "No live long-term rental listing confirmed 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": null
       },
       "description": "Santa Fe 3770 tower facing the Botánico corridor, with pool, parrilla, party room, laundry and D-line subway stops nearby.",
@@ -5928,7 +5901,7 @@
         "confidence": "low",
         "source": "Prior market evidence",
         "sourceUrl": null,
-        "summary": "No active long-term rental ads found in 2026-08-31 audit. Retaining ~USD 881 estimate pending a new live listing."
+        "summary": "No active long-term rental ads found in 2026-09-04 audit. Retaining prior estimate pending a new live listing."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -5973,20 +5946,20 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-mmonoambiente-premium-con-amenities-espectaculares-59791856.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Caballito Nuevo tower complex near García Lorca, with gardens, sports courts, pool and gym.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Monoambiente premium con amenities espectaculares - piso 15",
+        "title": "Monoambiente Premium con Amenities Espectaculares - Piso 15",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-mmonoambiente-premium-con-amenities-espectaculares-59791856.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
-        "priceUsdMonthly": 763,
-        "rentUsd": 600,
+        "priceUsdMonthly": 719,
+        "rentUsd": 556,
         "expensesUsd": 163,
         "expensesIncluded": false
       },
@@ -5996,7 +5969,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-colpayo-700-59947034.html",
-        "summary": "Live long-term rental ads from ~$1124/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1124/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 34,
       "approxTwoBedroomAreaSqm": {
@@ -6034,16 +6007,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-hermoso-2-ambientes-en-complejo-de-lujo.-cochera-56077717.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Núñez tower complex near the rail corridor, with high-floor units and river-view apartments.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Hermoso 2 ambientes en complejo de lujo. Cochera",
+        "title": "Hermoso 2 Ambientes en Complejo de Lujo. Cochera",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-hermoso-2-ambientes-en-complejo-de-lujo.-cochera-56077717.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1927,
@@ -6052,12 +6025,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1927,
+        "amount": 1296,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-hermoso-2-ambientes-en-complejo-de-lujo.-cochera-56077717.html",
-        "summary": "Live long-term rental ads from ~$1927/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-departamento-torre-premium-60015928.html",
+        "summary": "Live long-term rental ads from ~$1296/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 36,
       "approxTwoBedroomAreaSqm": {
@@ -6095,8 +6068,8 @@
       },
       "rentalEvidence": {
         "url": "https://reynoldspropiedades.com/propiedad/exclusivo-y-amplio-2-ambientes-en-torres-de-yacht-puerto-madero--4674695",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Reynolds"
       },
       "description": "Dockside twin towers by Juana Manso, with high-floor views, pool, gym and full-time security.",
@@ -6104,7 +6077,7 @@
         "source": "Reynolds",
         "title": "Exclusivo y amplio 2 ambientes en Torres de Yacht Puerto Madero",
         "url": "https://reynoldspropiedades.com/propiedad/exclusivo-y-amplio-2-ambientes-en-torres-de-yacht-puerto-madero--4674695",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1762,
@@ -6118,7 +6091,7 @@
         "confidence": "high",
         "source": "Reynolds",
         "sourceUrl": "https://reynoldspropiedades.com/propiedad/exclusivo-y-amplio-2-ambientes-en-torres-de-yacht-puerto-madero--4674695",
-        "summary": "Live long-term rental ads from ~$1762/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$1762/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 44,
       "approxTwoBedroomAreaSqm": {
@@ -6157,16 +6130,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20179331",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Puerto Madero towers on Juana Manso with premium amenities and city/river outlooks.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Ver video-amoblado-excelente 2 amb. con vista abierta/cochera",
+        "title": "Video-Amoblado-Excelente 2 amb.con vista abierta/cochera",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20179331",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 2196,
@@ -6175,12 +6148,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2196,
+        "amount": 1840,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20179331",
-        "summary": "Live long-term rental ads from ~$2196/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--20190765",
+        "summary": "Live long-term rental ads from ~$1840/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -6219,16 +6192,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-torre-renoir-p-madero-59983708.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Puerto Madero high-rise towers with river-facing units, large layouts and private residential amenities.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler 3 ambientes torre Renoir - P Madero - tipología Ave",
+        "title": "Alquiler 3 Ambientes Torre Renoir - P Madero - Tipologia Ave",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-torre-renoir-p-madero-59983708.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 3484,
@@ -6242,7 +6215,7 @@
         "confidence": "high",
         "source": "Zonaprop",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-3-ambientes-torre-renoir-p-madero-59983708.html",
-        "summary": "Live long-term rental ads from ~$3484/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$3484/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 50,
       "approxTwoBedroomAreaSqm": {
@@ -6281,16 +6254,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.maderobrokers.com.ar/ad/alquiler-3-ambientes-en-puerto-madero-en-torres-river-view-con-o-sin-muebles",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Madero Brokers"
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Madero Realty"
       },
       "description": "Twin luxury towers on Juana Manso with river-facing units and full amenities.",
       "localRentalAd": {
-        "source": "Madero Brokers",
+        "source": "Madero Realty",
         "title": "Alquiler 3 ambientes en Puerto Madero en Torres River View con o sin muebles",
         "url": "https://www.maderobrokers.com.ar/ad/alquiler-3-ambientes-en-puerto-madero-en-torres-river-view-con-o-sin-muebles",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "2br",
         "bedrooms": 2,
         "priceUsdMonthly": 2225,
@@ -6302,9 +6275,9 @@
         "amount": 2225,
         "basis": "direct 2-bedroom listing",
         "confidence": "high",
-        "source": "Madero Brokers",
+        "source": "Madero Realty",
         "sourceUrl": "https://www.maderobrokers.com.ar/ad/alquiler-3-ambientes-en-puerto-madero-en-torres-river-view-con-o-sin-muebles",
-        "summary": "Live long-term rental ads from ~$2225/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$2225/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -6344,31 +6317,31 @@
         "evidence": "3-bedroom Town House Soho listing with heated indoor–outdoor pool, gym and sauna (BrightData scrape 2026-07-22)."
       },
       "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-amoblado-palermo-59804245.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-town-house-soho-con-amenities-59979459.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Town House Soho towers at Paraguay 4747 (II) and Godoy Cruz / Distrito Arcos (III), with heated pool, gym, sauna, kids club, sky amenities and 24-hour security.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Hermoso departamento amoblado Palermo",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-hermoso-departamento-amoblado-palermo-59804245.html",
-        "checkedAt": "2026-08-31",
+        "title": "Town House Soho con Amenities",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-town-house-soho-con-amenities-59979459.html",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
-        "priceUsdMonthly": 750,
-        "rentUsd": 750,
-        "expensesUsd": 0,
+        "priceUsdMonthly": 680,
+        "rentUsd": 523,
+        "expensesUsd": 157,
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 1200,
+        "amount": 680,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
         "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-torre-town-house-soho-frente-polo-tecnologico-59655056.html",
-        "summary": "Live long-term rental ads from ~$1200/mo all-in (rent + expensas). Audited 2026-08-31."
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-town-house-soho-con-amenities-59979459.html",
+        "summary": "Live long-term rental ads from ~$680/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "heatedFloors": {
         "confirmed": true,
@@ -6423,7 +6396,7 @@
       "description": "GES 29-floor Belgrano tower on Libertador at Virrey Loreto, with gym plus main and kids pools, SUM, coworking and river views.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Luminoso 3 amb / 2 dorm — ViewPoint, Belgrano",
+        "title": "Luminoso departamento de 3 ambientes, 91m², en Belgrano",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
         "checkedAt": "2026-09-04",
         "size": "2br",
@@ -6434,12 +6407,12 @@
         "expensesIncluded": false
       },
       "longTermRentUsd": {
-        "amount": 2970,
+        "amount": 3862,
         "basis": "extrapolated from 3-room listing",
         "confidence": "medium",
         "source": "Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
-        "summary": "Live 3-ambientes rental at ViewPoint is USD 3,300 plus $860,000 expensas (~USD 3,862 all-in) for 91 m² covered. Scaled to the building's ~70 m² 2-ambientes size: about USD 2,970/mo. Audited 2026-09-04."
+        "summary": "Live long-term rental ads from ~$3862/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 29,
       "approxTwoBedroomAreaSqm": {
@@ -6477,16 +6450,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-torres-weik-belgrano-59116333.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Zonaprop"
       },
       "description": "Belgrano high-rise at Arcos and Zabala, with large residences, terraces and city views.",
       "localRentalAd": {
         "source": "Zonaprop",
-        "title": "Alquiler departamento torres Weik Belgrano",
+        "title": "Alquiler Departamento Torres Weik Belgrano",
         "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-torres-weik-belgrano-59116333.html",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "3br",
         "bedrooms": 3,
         "priceUsdMonthly": 7261,
@@ -6500,7 +6473,7 @@
         "confidence": "high",
         "source": "Villegas",
         "sourceUrl": "https://villegasrealestate.com.ar/properties/weik-belgrano-edificio-arcos-1440-2-grandes-ambientes-7639-mts-2/",
-        "summary": "Live long-term rental ads from ~$831/mo all-in (rent + expensas). Audited 2026-08-31."
+        "summary": "Live long-term rental ads from ~$831/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 34,
       "approxTwoBedroomAreaSqm": {
@@ -6538,17 +6511,17 @@
         "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
       },
       "rentalEvidence": {
-        "url": "https://www.migalebarre.com.ar/p/8676614-Departamento-en-Alquiler-en-Nu%C3%B1ez-Jose-Pascual-Tamborini-al-2626",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Migale Barre Propiedades"
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-monoambiente-a-estrenar-nunez-59927714.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
       },
       "description": "Núñez building at Tamborini 2626 with pool, gym, solarium and SUM. Distinct from Alpha Núñez and Altos de Núñez at Cabildo 4667.",
       "localRentalAd": {
-        "source": "Migale Barre Propiedades",
-        "title": "Jose Pascual Tamborini 2626 piso 2 departamento 205",
-        "url": "https://www.migalebarre.com.ar/p/8676614-Departamento-en-Alquiler-en-Nu%C3%B1ez-Jose-Pascual-Tamborini-al-2626",
-        "checkedAt": "2026-08-31",
+        "source": "Zonaprop",
+        "title": "Alquiler Monoambiente a Estrenar Nuñez",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-monoambiente-a-estrenar-nunez-59927714.html",
+        "checkedAt": "2026-09-04",
         "size": "studio",
         "bedrooms": 0,
         "priceUsdMonthly": 698,
@@ -6560,9 +6533,9 @@
         "amount": 698,
         "basis": "direct studio listing",
         "confidence": "high",
-        "source": "Migale Barre Propiedades",
-        "sourceUrl": "https://www.migalebarre.com.ar/p/8676614-Departamento-en-Alquiler-en-Nu%C3%B1ez-Jose-Pascual-Tamborini-al-2626",
-        "summary": "Live long-term rental ads from ~$698/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-monoambiente-a-estrenar-nunez-59927714.html",
+        "summary": "Live long-term rental ads from ~$698/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": null,
       "approxTwoBedroomAreaSqm": {
@@ -6600,16 +6573,16 @@
       },
       "rentalEvidence": {
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--15783820",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
         "source": "Argenprop"
       },
       "description": "Large Dique 1 complex around internal courtyards, with pools, gym, spa-style amenities and dock access.",
       "localRentalAd": {
         "source": "Argenprop",
-        "title": "Espectacular 2 ambientes en Zencity. Expensas y ABL incluidos!",
+        "title": "Espectacular 2 ambientes en ZENCITY. Expensas y ABL incluidos!",
         "url": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--15783820",
-        "checkedAt": "2026-08-31",
+        "checkedAt": "2026-09-04",
         "size": "1br",
         "bedrooms": 1,
         "priceUsdMonthly": 1900,
@@ -6621,9 +6594,9 @@
         "amount": 1900,
         "basis": "direct 1-bedroom listing",
         "confidence": "high",
-        "source": "Argenprop",
-        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-puerto-madero-2-ambientes--15783820",
-        "summary": "Live long-term rental ads from ~$1900/mo all-in (rent + expensas). Audited 2026-08-31."
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-2-amb.-complejo-zencity-amob.-en-alquiler-con-cochera-59525847.html",
+        "summary": "Live long-term rental ads from ~$1900/mo all-in (rent + expensas). Audited 2026-09-04."
       },
       "floorsAboveGround": 25,
       "approxTwoBedroomAreaSqm": {
