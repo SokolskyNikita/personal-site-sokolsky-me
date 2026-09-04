@@ -1,0 +1,15 @@
+---
+description: Check Airbnb visitor rules when editing Buenos Aires apartment listings
+globs: src/pages/apartments/buenos-aires.astro,src/data/apartments-buenos-aires.json,src/data/apartments-buenos-aires-listings.json,src/pages/apartments/buenos-aires-NOTES.md
+alwaysApply: false
+---
+
+# Buenos Aires Airbnb visitor rules
+
+When adding or replacing an Airbnb URL, follow `src/pages/apartments/buenos-aires-NOTES.md`.
+
+- Flag rules that block bringing **visitors into the unit 24/7**: unit/building bans, overnight visitor bans, after-hours cutoffs, visitor pre-registration.
+- Occupancy caps are fine. Do not flag pool/gym-only rules, “no parties,” or booked-renter ID/passport at check-in.
+- Only treat “guests” as visitors when the text means external visitors (visitor/visita/invitado/terceros/additional people), not the people staying.
+- Scrape BrightData `/house-rules` then the room page; store the **English** wording of the rule in `airbnbGuestRestrictionsByUrl` (translate if the listing is Spanish).
+- Put real 404s in `removedAirbnbUrls`.
