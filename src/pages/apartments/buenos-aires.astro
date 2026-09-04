@@ -26,6 +26,11 @@ type AirbnbListing = {
   bedrooms?: number;
   priceUsdMonthly?: number | null;
   priceSource?: AirbnbPriceSource | null;
+  guestRestriction?: string | null;
+};
+type AirbnbGuestRestrictionMeta = {
+  rule: string;
+  source?: string;
 };
 type AirbnbPriceMeta = {
   priceUsdMonthly?: number | null;
@@ -104,6 +109,26 @@ const airbnbPricesByUrl = (
     ? (listingsData as { airbnbPricesByUrl?: Record<string, AirbnbPriceMeta> }).airbnbPricesByUrl
     : undefined
 ) ?? {};
+const airbnbGuestRestrictionsByUrl = (
+  "airbnbGuestRestrictionsByUrl" in listingsData
+    ? (listingsData as {
+        airbnbGuestRestrictionsByUrl?: Record<string, AirbnbGuestRestrictionMeta>;
+      }).airbnbGuestRestrictionsByUrl
+    : undefined
+) ?? {};
+const guestRestrictionByRoomId = new Map<string, string>();
+for (const [listingUrl, meta] of Object.entries(airbnbGuestRestrictionsByUrl)) {
+  const rule = meta?.rule?.replace(/\s+/g, " ").trim();
+  if (!rule) continue;
+  const roomId = listingUrl.match(/rooms\/(\d+)/)?.[1];
+  if (roomId) guestRestrictionByRoomId.set(roomId, rule);
+}
+const getGuestRestriction = (listingUrl: string) => {
+  const direct = airbnbGuestRestrictionsByUrl[listingUrl]?.rule?.replace(/\s+/g, " ").trim();
+  if (direct) return direct;
+  const roomId = listingUrl.match(/rooms\/(\d+)/)?.[1];
+  return roomId ? (guestRestrictionByRoomId.get(roomId) ?? null) : null;
+};
 const rentalMetaByUrl = (
   "rentalMetaByUrl" in listingsData
     ? (listingsData as { rentalMetaByUrl?: Record<string, RentalMeta> }).rentalMetaByUrl
@@ -211,8 +236,10 @@ const withAirbnbMeta = (listing: AirbnbListing): AirbnbListing => {
     bedrooms: inferred.bedrooms,
     priceUsdMonthly: listing.priceUsdMonthly ?? priceFromMeta ?? null,
     priceSource: listing.priceSource ?? knownPrice?.source ?? null,
+    guestRestriction: listing.guestRestriction ?? getGuestRestriction(listing.url),
   };
 };
+const guestRestrictionIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.7 22.4 21H1.6L12 2.7Zm0 5.6c.5 0 .8.4.8.9v5.1c0 .5-.3.9-.8.9s-.8-.4-.8-.9V9.2c0-.5.4-.9.8-.9Zm0 8.3c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1Z"/></svg>`;
 /** Sentence-case shouty/ALL-CAPS listing titles; leave normal titles alone. */
 const toStandardListingTitle = (title: string) => {
   const cleaned = title.replace(/\s+/g, " ").trim();
@@ -857,7 +884,7 @@ const structuredData = {
                     </header>
                     <ul class="listing-list">
                       {building.airbnbListings.slice(0, maxVisibleAirbnbListings).map((listing) => (
-                        <li>
+                        <li class={`listing-item${listing.guestRestriction ? " has-restriction" : ""}`}>
                           <a
                             class={`listing-link listing-link-airbnb${listing.priceUnknown ? " is-unpriced" : ""}`}
                             href={listing.url}
@@ -872,6 +899,7 @@ const structuredData = {
                                       : ""
                                   }`
                                 : "Price unknown",
+                              listing.guestRestriction ? "Visitors restricted" : null,
                               listing.title,
                             ]
                               .filter(Boolean)
@@ -891,6 +919,18 @@ const structuredData = {
                             </span>
                             <span class="listing-title">{truncateListingTitle(listing.title)}</span>
                           </a>
+                          {listing.guestRestriction ? (
+                            <button
+                              type="button"
+                              class="guest-restriction-flag"
+                              aria-expanded="false"
+                              aria-label={`Visitor restriction: ${listing.guestRestriction}`}
+                              data-rule={listing.guestRestriction}
+                            >
+                              <span class="guest-restriction-icon" set:html={guestRestrictionIcon} />
+                              <span class="guest-restriction-tooltip">{listing.guestRestriction}</span>
+                            </button>
+                          ) : null}
                         </li>
                       ))}
                     </ul>
@@ -904,7 +944,7 @@ const structuredData = {
                         </summary>
                         <ul class="listing-list">
                           {building.airbnbListings.slice(maxVisibleAirbnbListings).map((listing) => (
-                            <li>
+                            <li class={`listing-item${listing.guestRestriction ? " has-restriction" : ""}`}>
                               <a
                                 class={`listing-link listing-link-airbnb${listing.priceUnknown ? " is-unpriced" : ""}`}
                                 href={listing.url}
@@ -919,6 +959,7 @@ const structuredData = {
                                           : ""
                                       }`
                                     : "Price unknown",
+                                  listing.guestRestriction ? "Visitors restricted" : null,
                                   listing.title,
                                 ]
                                   .filter(Boolean)
@@ -938,6 +979,18 @@ const structuredData = {
                                 </span>
                                 <span class="listing-title">{truncateListingTitle(listing.title)}</span>
                               </a>
+                              {listing.guestRestriction ? (
+                                <button
+                                  type="button"
+                                  class="guest-restriction-flag"
+                                  aria-expanded="false"
+                                  aria-label={`Visitor restriction: ${listing.guestRestriction}`}
+                                  data-rule={listing.guestRestriction}
+                                >
+                                  <span class="guest-restriction-icon" set:html={guestRestrictionIcon} />
+                                  <span class="guest-restriction-tooltip">{listing.guestRestriction}</span>
+                                </button>
+                              ) : null}
                             </li>
                           ))}
                         </ul>
@@ -1451,10 +1504,14 @@ const structuredData = {
             const bits = [];
             if (listing.sizeLabel) bits.push(listing.sizeLabel);
             if (listing.priceLabel) bits.push(listing.priceLabel);
+            if (listing.guestRestriction) bits.push("visitors restricted");
             const prefix = bits.length ? `${bits.join(" · ")} · ` : "";
             const label = `${prefix}${listing.title}`;
             const shortLabel = label.length > 56 ? `${label.slice(0, 55)}…` : label;
-            return `<li><a href="${escapeHtml(listing.url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(shortLabel)}</a></li>`;
+            const restrictionTitle = listing.guestRestriction
+              ? ` title="${escapeHtml(listing.guestRestriction)}"`
+              : "";
+            return `<li><a href="${escapeHtml(listing.url)}" target="_blank" rel="noreferrer noopener"${restrictionTitle}>${escapeHtml(shortLabel)}</a></li>`;
           }).join("");
           const more =
             listings.length > 3
@@ -1490,6 +1547,26 @@ const structuredData = {
   updateAirbnbPriceFilterLabel();
   applyFilters();
   window.addEventListener("pageshow", applyFilters);
+
+  const closeGuestRestrictionFlags = (exceptButton = null) => {
+    for (const button of document.querySelectorAll(".guest-restriction-flag[aria-expanded='true']")) {
+      if (button !== exceptButton) button.setAttribute("aria-expanded", "false");
+    }
+  };
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest?.(".guest-restriction-flag");
+    if (button) {
+      event.preventDefault();
+      const next = button.getAttribute("aria-expanded") !== "true";
+      closeGuestRestrictionFlags(button);
+      button.setAttribute("aria-expanded", String(next));
+      return;
+    }
+    closeGuestRestrictionFlags();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeGuestRestrictionFlags();
+  });
   initApartmentMap().catch((error) => {
     console.error("Unable to initialize apartment map", error);
     if (mapStatus) mapStatus.textContent = "Map unavailable. Building list still works.";
@@ -2086,6 +2163,95 @@ const structuredData = {
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  .listing-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    position: relative;
+  }
+
+  .listing-item.has-restriction {
+    grid-template-columns: minmax(0, 1fr) 2.15rem;
+  }
+
+  .guest-restriction-flag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.15rem;
+    margin: 0;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 0.68rem;
+    background: color-mix(in srgb, #c45c12, transparent 88%);
+    color: #b45309;
+    cursor: help;
+  }
+
+  .guest-restriction-icon {
+    display: inline-flex;
+  }
+
+  .guest-restriction-icon :global(svg) {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .guest-restriction-tooltip {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.35rem);
+    z-index: 4;
+    width: min(22rem, 70vw);
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.7rem;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+    white-space: normal;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.15rem);
+  }
+
+  .guest-restriction-flag:hover,
+  .guest-restriction-flag:focus-visible,
+  .guest-restriction-flag[aria-expanded="true"] {
+    border-color: color-mix(in srgb, #c45c12, transparent 45%);
+    background: color-mix(in srgb, #c45c12, transparent 78%);
+  }
+
+  .guest-restriction-flag:hover .guest-restriction-tooltip,
+  .guest-restriction-flag:focus-visible .guest-restriction-tooltip,
+  .guest-restriction-flag[aria-expanded="true"] .guest-restriction-tooltip {
+    opacity: 1;
+    transform: none;
+  }
+
+  .guest-restriction-flag:focus-visible {
+    outline: 2px solid color-mix(in srgb, #c45c12, transparent 35%);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .guest-restriction-flag {
+      background: color-mix(in srgb, #f59e0b, transparent 82%);
+      color: #fbbf24;
+    }
+
+    .guest-restriction-flag:hover,
+    .guest-restriction-flag:focus-visible,
+    .guest-restriction-flag[aria-expanded="true"] {
+      border-color: color-mix(in srgb, #f59e0b, transparent 40%);
+      background: color-mix(in srgb, #f59e0b, transparent 70%);
+    }
   }
 
   .listing-link {
