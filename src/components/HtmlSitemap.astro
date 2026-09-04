@@ -1,0 +1,232 @@
+---
+import {
+  collectSitemapEntries,
+  groupSitemapSections,
+  sitemapStructuredData,
+  type SitemapVariant,
+} from "../lib/html-sitemap";
+
+interface Props {
+  variant: SitemapVariant;
+}
+
+const { variant } = Astro.props;
+
+const pageSources = import.meta.glob<string>(
+  ["../pages/**/*.{astro,md,mdx}", "!../pages/private/**"],
+  {
+    eager: true,
+    query: "?raw",
+    import: "default",
+  },
+);
+
+const dataModules = import.meta.glob<{ title?: string }>("../data/**/*.{json,ts}", {
+  eager: true,
+});
+
+const siteUrl = (Astro.site?.toString() ?? "https://sokolsky.me").replace(
+  /\/$/,
+  "",
+);
+const isAr = variant === "ar";
+const pageTitle = isAr ? "Argentina sitemap" : "Sitemap";
+const pageDescription = isAr
+  ? "HTML index of Argentina- and Ari-related pages on sokolsky.me."
+  : "Complete HTML index of all public pages on sokolsky.me for search engines and crawlers.";
+const canonicalUrl = `${siteUrl}${isAr ? "/sitemap-ar/" : "/sitemap/"}`;
+const heading = isAr ? "Argentina sitemap" : "Sitemap";
+
+const entries = collectSitemapEntries(pageSources, dataModules, siteUrl, variant);
+const sections = groupSitemapSections(entries);
+const structuredData = sitemapStructuredData(
+  entries,
+  pageTitle,
+  pageDescription,
+  canonicalUrl,
+  siteUrl,
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} · Nikita Sokolsky</title>
+    <meta name="description" content={pageDescription} />
+    <meta
+      name="robots"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta
+      name="googlebot"
+      content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:title" content={`${pageTitle} · Nikita Sokolsky`} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Nikita Sokolsky" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={`${pageTitle} · Nikita Sokolsky`} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:url" content={canonicalUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <header>
+      <h1>{heading}</h1>
+      <p>
+        {
+          isAr ? (
+            <>
+              HTML index of {entries.length} Argentina- and Ari-related pages on
+              <a href={`${siteUrl}/`}>{siteUrl.replace(/^https?:\/\//, "")}</a>.
+            </>
+          ) : (
+            <>
+              HTML index of {entries.length} public pages on
+              <a href={`${siteUrl}/`}>{siteUrl.replace(/^https?:\/\//, "")}</a>.
+              Machine-readable XML sitemap:
+              <a href={`${siteUrl}/sitemap-index.xml`}>{siteUrl}/sitemap-index.xml</a>.
+            </>
+          )
+        }
+      </p>
+    </header>
+
+    <nav aria-label="Sitemap sections">
+      <h2>Sections</h2>
+      <ul>
+        {
+          sections.map(([section]) => (
+            <li>
+              <a href={`#${section.toLowerCase().replace(/\s+/g, "-")}`}>{section}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <main>
+      {
+        sections.map(([section, pages]) => (
+          <section id={section.toLowerCase().replace(/\s+/g, "-")}>
+            <h2>{section}</h2>
+            <ul>
+              {pages.map((page) => (
+                <li>
+                  <a href={page.url}>{page.title}</a>
+                  <br />
+                  <code>{page.url}</code>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light;
+    --text: #111;
+    --muted: #444;
+    --link: #0645ad;
+    --border: #ccc;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--text);
+    background: #fff;
+  }
+
+  body {
+    margin: 0 auto;
+    max-width: 52rem;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  h1,
+  h2 {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    line-height: 1.25;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+    margin: 1.75rem 0 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  p,
+  li {
+    color: var(--text);
+  }
+
+  header p,
+  nav p {
+    color: var(--muted);
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  a:visited {
+    color: #0b0080;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    margin: 0.65rem 0;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    color: var(--muted);
+    word-break: break-all;
+  }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  nav li {
+    margin: 0;
+  }
+</style>

@@ -2,7 +2,7 @@
   "title": "List of fancy Buenos Aires apartment buildings",
   "city": "Buenos Aires",
   "area": "Buenos Aires",
-  "generatedAt": "2026-06-30T18:56:00.000Z",
+  "generatedAt": "2026-09-04T16:30:00.000Z",
   "validation": {
     "sourceNotes": "Initial list extracted manually from local-text/ba-fancy-buildings.md into this JSON. The page does not import or parse the Markdown file.",
     "duplicateMerge": "Madero Plaza and Terrazas de Puerto Madero are represented as one merged building-complex entry because the source markdown called out that likely duplication.",
@@ -39,9 +39,83 @@
     "lastListingCountPurge": "2026-08-12: Removed Human Abasto Towers, Maior Barrancas and Palacio Bellini because each had only one live priced listing (Airbnb + long-term combined). Blacklisted so they are not re-added.",
     "lastCandidateFilterPass": "2026-07-26: Evaluated Liberateur, Oceana, SLS, Donna Vita/Reggia/Magna, La Algodonera, Palacio Alcorta, Quartier San Telmo, Prima Caballito, Torre Las Plazas. Year+rental pass (non-blacklisted): Prima Caballito, Quartier San Telmo, SLS (already listed). Not added Prima / Quartier San Telmo: typical 2-ambientes ~40–49 m² (under 60 m² 1BR minimum); Quartier also lacks confirmed losa radiante (28 floors, amenity path incomplete). Airbnb: SLS room 43112374 monthly refreshed to USD 3588; Prima Airbnb rejected (no address proof); Quartier Airbnbs rejected (no extractable USD monthly). Skipped previously blacklisted even when filters passed: Oceana, Liberateur, Torre Las Plazas. Year fail: Palacio Alcorta, La Algodonera. Rental fail: Donna Vita/Reggia/Magna.",
     "lastLongTermRentalAudit": "On 2026-08-31, audited live long-term rental ads for all 97 buildings via one Composer-2.5 agent per building (BrightData search/scrape). Removed delisted ads, refreshed prices at BNA venta 1530 ARS/USD, and added new listings only when all-in USD (rent + expensas) and size were confirmed.",
-    "lastCandidateListingGateAdd": "Added Bayres Dock, Distrito Colegiales, Donna Reggia, El Aleph, Evoque Olazábal, Harbour House, HOM Recoleta, La Porteña II, Malabia Residence, Migueletes 2176, MOCA, Molina Ciudad, MOVA Belgrano II, Palacio Bonaire, Palacio Raggio, Río Plaza, Torre Ámbar, Torre Beruti, Torre Fresh, Torre Hollywood, Torre Oro 2835 and Wide Núñez on 2026-08-12 after Luna listing-gate agents verified live exact-building inventory. Skipped Fitz Roy 2400 (typical 1BR ~36 m²), MIT Hollywood (1BR ~55 m² total) and Lumiere Boulevard Madero (typical 1BR ~50–57 m² covered). Torre Dosplaza had only one long-term rental after the Airbnb room scrape did not name the building."
+    "lastCandidateListingGateAdd": "Added Bayres Dock, Distrito Colegiales, Donna Reggia, El Aleph, Evoque Olazábal, Harbour House, HOM Recoleta, La Porteña II, Malabia Residence, Migueletes 2176, MOCA, Molina Ciudad, MOVA Belgrano II, Palacio Bonaire, Palacio Raggio, Río Plaza, Torre Ámbar, Torre Beruti, Torre Fresh, Torre Hollywood, Torre Oro 2835 and Wide Núñez on 2026-08-12 after Luna listing-gate agents verified live exact-building inventory. Skipped Fitz Roy 2400 (typical 1BR ~36 m²), MIT Hollywood (1BR ~55 m² total) and Lumiere Boulevard Madero (typical 1BR ~50–57 m² covered). Torre Dosplaza had only one long-term rental after the Airbnb room scrape did not name the building.",
+    "lastNamedGymPoolAirbnbAdd": "Added BE Libertador, Torre Isadora and ViewPoint Libertador on 2026-09-04 after named-building + live Airbnb + median 1BR >= 50 m² filter in Belgrano / Colegiales / Villa Crespo / Núñez. Airbnb rooms without extractable monthly USD (or weekly×30/7 fallback) were omitted. Skipped Boulevard (blacklisted).",
+    "lastNewBuildingRestore": "Restored Alley, Palacio Cabrera, Palermo Air, Paseo de la Cisterna and Quo Zapata on 2026-09-04 after a later JSON write dropped them. Named + live Airbnb + median 1BR >= 50 m². Long-term ads require all-in USD at BNA venta 1,530."
   },
   "buildings": [
+    {
+      "id": "alley",
+      "name": "Alley",
+      "aliases": [
+        "Alley Recoleta",
+        "Alley Jack Green",
+        "Complejo Alley Recoleta",
+        "Billinghurst 2457",
+        "Sánchez de Bustamante 2496"
+      ],
+      "officialWebsiteUrl": "https://jackgreen.com.ar/alley/",
+      "zone": "Recoleta",
+      "built": "2024",
+      "address": "Billinghurst 2457 / Sánchez de Bustamante 2496",
+      "fullAddress": "Billinghurst 2457, C1425 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJJTOAYZ3KvJURa1UKMCk-R2o",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Billinghurst%202457%2C%20C1425%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJJTOAYZ3KvJURa1UKMCk-R2o",
+      "location": {
+        "lat": -34.5840534,
+        "lng": -58.4043866
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1655729669157172000",
+        "evidence": "Airbnb listing titled \"1BDR Loft Alley Recoleta | Pool Gym CoWork+Washer\"."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-complejo-alley-recoleta-59326020.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
+      },
+      "description": "Jack Green Recoleta pair of towers linked by a private pasaje, with pool, gym, coworking and electric piso radiante.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Complejo Alley Recoleta",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-complejo-alley-recoleta-59326020.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1850,
+        "rentUsd": 1850,
+        "expensesUsd": 0,
+        "expensesIncluded": true
+      },
+      "longTermRentUsd": {
+        "amount": 1850,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-complejo-alley-recoleta-59326020.html",
+        "summary": "Live 2-ambientes rental at Complejo Alley Recoleta for USD 1,850/mo paquete (expensas included; tenant pays Edenor and WiFi). Audited 2026-09-04."
+      },
+      "heatedFloors": {
+        "confirmed": true,
+        "system": "Piso radiante eléctrico with individual circuits per room",
+        "source": "Jack Green official Alley page",
+        "sourceUrl": "https://jackgreen.com.ar/alley/",
+        "evidence": "Official spec lists piso radiante eléctrico con circuitos individuales por ambiente."
+      },
+      "floorsAboveGround": 10,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 87,
+        "basis": "direct 3-room / 2-bedroom covered sale",
+        "confidence": "medium-high",
+        "source": "Soldati",
+        "sourceUrl": "https://soldati.com/propiedad/3-ambientes-con-pileta-en-venta-recoleta--4336209",
+        "summary": "Live 3-ambientes sale at Alley is 87 m² covered / 113 m² total. Other project 3-amb units cluster around 111–113 m²."
+      }
+    },
     {
       "id": "almarena-puerto-retiro",
       "name": "Almarena Puerto Retiro",
@@ -540,6 +614,69 @@
         "source": "Prior candidate research / portal sales",
         "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-ubicado-en-puerto-madero-58983950.html",
         "summary": "Bayres Dock 2BR/3-ambiente asking samples clustered around ~84–97 m²; using 90 m². Larger duplex listings exist."
+      }
+    },
+    {
+      "id": "be-libertador",
+      "name": "BE Libertador",
+      "aliases": [
+        "Be Libertador",
+        "IN BE Libertador",
+        "BE Libertador 2"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Belgrano",
+      "built": "2018",
+      "address": "Av. del Libertador 6299",
+      "fullAddress": "Av. del Libertador 6299, C1428ARF Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJoyNCNAC1vJURiA9a7CozqvQ",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%206299%2C%20C1428ARF%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJoyNCNAC1vJURiA9a7CozqvQ",
+      "location": {
+        "lat": -34.5538163,
+        "lng": -58.4496625
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1182344670710808772",
+        "evidence": "Airbnb listing titled \"Excellent apartment with amenities\" names the Be Libertador building; weekly USD price extrapolated to monthly."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dpto-alquiler-2-amb-belgrano-edif-be-libertador-59871608.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
+      },
+      "description": "Belgrano Chico tower at Libertador and Blanco Encalada with gym, 13th-floor pool, laundry, SUM/coworking and 24-hour security.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Dpto Alquiler 2 Amb Belgrano Edif Be Libertador",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dpto-alquiler-2-amb-belgrano-edif-be-libertador-59871608.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1277,
+        "rentUsd": 1140,
+        "expensesUsd": 137,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1277,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop / RE/MAX",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-dpto-alquiler-2-amb-belgrano-edif-be-libertador-59871608.html",
+        "summary": "Live unfurnished 2-ambientes rental at BE Libertador for USD 1,140/mo plus ~$210,000 expensas (~USD 1,277 all-in at BNA 1,530). Audited 2026-09-04."
+      },
+      "floorsAboveGround": 13,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 87,
+        "basis": "direct 3-room / 2-bedroom covered sale",
+        "confidence": "medium-high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/veclapin-venta-be-libertador-departamento-3-ambientes-cochera-59907262.html",
+        "summary": "Live 3-ambientes sale at BE Libertador is 87 m² covered / 108 m² total. Typical 2-ambientes covered samples in the building run about 44–56 m²."
       }
     },
     {
@@ -3360,6 +3497,69 @@
       }
     },
     {
+      "id": "oro-2835",
+      "name": "Torre Oro 2835",
+      "aliases": [
+        "Oro 2835",
+        "Edificio Oro 2835",
+        "Torre Oro Costantini"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Palermo",
+      "built": "2006",
+      "address": "Fray Justo Santa María de Oro 2835",
+      "fullAddress": "Fray Justo Santa María de Oro 2835, C1425 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Fray%20Justo%20Santa%20Mar%C3%ADa%20de%20Oro%202835%2C%20C1425%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina",
+      "location": {
+        "lat": -34.5755176,
+        "lng": -58.4205758
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
+        "note": "Active long-term rental listing verified 2026-08-31",
+        "checkedAt": "2026-08-31",
+        "source": "Zonaprop"
+      },
+      "description": "Palermo tower at Oro 2835 with pool and gym. Distinct from Oro Tower at Oro 2222 and blacklisted Quartier de Oro.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler departamento 2 ambientes amoblado en Torre Oro Costantini, Palermo Nuevo",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
+        "checkedAt": "2026-08-31",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1494,
+        "rentUsd": 1200,
+        "expensesUsd": 294,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1394,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-amoblado-en-alquiler-59390480.html",
+        "summary": "Live long-term rental ads from ~$1394/mo all-in (rent + expensas). Audited 2026-08-31."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 82,
+        "basis": "covered-area 3-ambiente sales samples",
+        "confidence": "medium",
+        "source": "Prior candidate research / portal sales",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
+        "summary": "Torre Oro 2835 2BR samples ranged about 74–89 m²; using 82 m²."
+      }
+    },
+    {
       "aliases": [],
       "id": "oro-tower",
       "name": "Oro Tower",
@@ -3557,6 +3757,70 @@
       }
     },
     {
+      "id": "palacio-cabrera",
+      "name": "Palacio Cabrera",
+      "aliases": [
+        "Hogar Devoto",
+        "Palacio Cabrera II",
+        "Cabrera 5653",
+        "José Antonio Cabrera 5653"
+      ],
+      "officialWebsiteUrl": "http://palaciocabrera.com.ar/",
+      "zone": "Palermo Hollywood",
+      "built": "2016-2022",
+      "address": "José A. Cabrera 5653",
+      "fullAddress": "José A. Cabrera 5653, C1414BHE Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJCQqmbI21vJURaDOw0KMPOsc",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jos%C3%A9%20A.%20Cabrera%205653%2C%20C1414BHE%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJCQqmbI21vJURaDOw0KMPOsc",
+      "location": {
+        "lat": -34.5850315,
+        "lng": -58.4382539
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/54338722",
+        "evidence": "Airbnb listing titled \"Lovely Premium Apt at Palacio Cabrera PC113\"."
+      },
+      "rentalEvidence": {
+        "url": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-1e3c3ee2",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Roomix"
+      },
+      "description": "1935 neocolonial palace in Palermo Hollywood restored 2016–22, with internal gardens, pool, gym and 24-hour security.",
+      "localRentalAd": {
+        "source": "Roomix",
+        "title": "Exclusivo departamento 2 ambientes – Palacio Cabrera",
+        "url": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-1e3c3ee2",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1409,
+        "rentUsd": 1000,
+        "expensesUsd": 409,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1409,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Roomix",
+        "sourceUrl": "https://roomix.ai/propiedad/departamento-2-ambientes-palermo-hollywood-1e3c3ee2",
+        "summary": "Live 2-ambientes rental at José Antonio Cabrera 5653 for USD 1,000 + ARS 625,000 expensas (~USD 1,409 all-in at BNA venta 1,530). Audited 2026-09-04."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 90,
+        "basis": "extrapolated from 2-ambientes covered samples",
+        "confidence": "medium",
+        "source": "Prior sale-ad sample / Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/veclappa-exclusivo-departamento-de-lujo-en-palacio-cabrera-2-56684014.html",
+        "summary": "Typical 2-ambientes covered area is about 66 m² (sale samples 50–72). No live 3-ambientes venta at Cabrera 5653; representative 2BR estimated near 90 m²."
+      }
+    },
+    {
       "id": "palacio-estrugamou",
       "name": "Palacio Estrugamou",
       "aliases": [
@@ -3683,6 +3947,68 @@
       }
     },
     {
+      "id": "palermo-air",
+      "name": "Palermo Air",
+      "aliases": [
+        "Nicaragua 6030",
+        "PALERMO AIR"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Palermo Hollywood",
+      "built": "2020",
+      "address": "Nicaragua 6030",
+      "fullAddress": "Nicaragua 6030, C1414BWN Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJXXohhZS1vJURiZv06sWG80E",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Nicaragua%206030%2C%20C1414BWN%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJXXohhZS1vJURiZv06sWG80E",
+      "location": {
+        "lat": -34.5782894,
+        "lng": -58.4379489
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1397993610990821481",
+        "evidence": "Airbnb listing titled \"502 Luxury Apartment in Palermo Hollywood with pool\"."
+      },
+      "rentalEvidence": {
+        "url": "https://yacoub.com.ar/propiedad/nicaragua-6030/8685233/",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Yacoub"
+      },
+      "description": "11-story Palermo Hollywood tower at Nicaragua 6030 (across from Live Hotel) with rooftop pool, gym, SUM and 24-hour security.",
+      "localRentalAd": {
+        "source": "Yacoub",
+        "title": "Nicaragua 6030",
+        "url": "https://yacoub.com.ar/propiedad/nicaragua-6030/8685233/",
+        "checkedAt": "2026-09-04",
+        "size": "studio",
+        "bedrooms": 0,
+        "priceUsdMonthly": 948,
+        "rentUsd": 850,
+        "expensesUsd": 98,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1877,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Airbnb",
+        "sourceUrl": "https://www.airbnb.com/rooms/1402073322976443978",
+        "summary": "No live long-term 2-ambientes ad with extractable all-in USD. 1BR Airbnb apt 505 is USD 1,877/mo. Studio long-term ads from ~USD 948 all-in. Audited 2026-09-04."
+      },
+      "floorsAboveGround": 11,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 85,
+        "basis": "extrapolated from 2-ambientes covered listings",
+        "confidence": "medium",
+        "source": "Zonaprop / prior 1BR sample",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/emprendimiento/ememvein-palermo-air-59116514.html",
+        "summary": "Live 2-ambientes inventory is about 59–64 m² covered; typical 1BR ~70 m² total. No live 3-ambientes covered venta at 6030; representative 2BR estimated near 85 m²."
+      }
+    },
+    {
       "id": "palmera-caballito",
       "name": "Palmera Caballito",
       "aliases": [
@@ -3801,6 +4127,69 @@
         "source": "Lanven sale listing",
         "sourceUrl": "https://lanven.com.ar/ficha-propiedad.php?id=4343344",
         "summary": "A Palmera Crespo sale listing described a 3 ambientes apartment at 83 m2."
+      }
+    },
+    {
+      "id": "paseo-de-la-cisterna",
+      "name": "Paseo de la Cisterna",
+      "aliases": [
+        "Paseo Cisterna",
+        "Moreno 550",
+        "Kohon Cisterna"
+      ],
+      "officialWebsiteUrl": "https://paseodelacisterna.com.ar/",
+      "zone": "Monserrat",
+      "built": "2022",
+      "address": "Moreno 550",
+      "fullAddress": "Moreno 550, C1091AAL Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJRarA8tTKvJURHqPdrGYTgxI",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Moreno%20550%2C%20C1091AAL%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJRarA8tTKvJURHqPdrGYTgxI",
+      "location": {
+        "lat": -34.6115181,
+        "lng": -58.3738937
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1004535732492890001",
+        "evidence": "Airbnb listing titled \"Studio in Historic Center, comfortable and well-equipped\"."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-departamento-a-m-de-puerto-madero-apto-profesional-57714127.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
+      },
+      "description": "14-story Monserrat redevelopment over the Museo de la Cisterna, with pool, gym and mostly compact studios. Distinct from Palacio Raggio at Moreno 500.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Departamento a m de Puerto Madero Apto Profesional",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-departamento-a-m-de-puerto-madero-apto-profesional-57714127.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 784,
+        "rentUsd": 555,
+        "expensesUsd": 229,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 784,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclappa-departamento-a-m-de-puerto-madero-apto-profesional-57714127.html",
+        "summary": "Live 2-ambientes rental in Paseo de la Cisterna (Moreno 550, piso 11) for ARS 849,000 + ARS 350,000 expensas (~USD 784 all-in at BNA venta 1,530). Audited 2026-09-04."
+      },
+      "floorsAboveGround": 14,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 80,
+        "basis": "extrapolated from 2-ambientes samples",
+        "confidence": "medium",
+        "source": "Prior candidate research / Kohon",
+        "sourceUrl": "https://paseodelacisterna.com.ar/moreno-550/",
+        "summary": "Typical 2-ambientes about 55 m²; live ads are studio-heavy (27–34 m² covered). No live 3-ambientes covered venta at Moreno 550; representative 2BR estimated near 80 m²."
       }
     },
     {
@@ -3987,72 +4376,6 @@
     },
     {
       "aliases": [],
-      "id": "quartier-polo",
-      "name": "Quartier del Polo",
-      "officialWebsiteUrl": "https://www.obrasysistemas.com.ar/quartier-polo",
-      "zone": "Las Cañitas",
-      "built": "2011-2016",
-      "address": "República de Eslovenia 1944",
-      "fullAddress": "República de Eslovenia 1944, C1426 Cañitas, Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": "ChIJR71P1r21vJURrmUQnhFYBL4",
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Rep%C3%BAblica%20de%20Eslovenia%201944%2C%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJR71P1r21vJURrmUQnhFYBL4",
-      "location": {
-        "lat": -34.5706327,
-        "lng": -58.4343843
-      },
-      "availability": "Airbnb and temporary rentals",
-      "airbnb": {
-        "confirmed": true,
-        "label": "Airbnb confirmed",
-        "url": "https://www.airbnb.com/rooms/34942244",
-        "evidence": "Airbnb result titled \"Deluxe High-Floor Apartment w/ Pool in Las Cañitas\" names Quartier Polo."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Zonaprop"
-      },
-      "description": "Eslovenia complex in Las Cañitas with outdoor pool, jacuzzi, sauna, gym and the polo field a short walk away.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler departamento 2 ambientes con cochera y amenities - Quartier del Polo",
-        "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
-        "checkedAt": "2026-08-31",
-        "size": "1br",
-        "bedrooms": 1,
-        "priceUsdMonthly": 1266,
-        "rentUsd": 900,
-        "expensesUsd": 366,
-        "expensesIncluded": false
-      },
-      "longTermRentUsd": {
-        "amount": 1266,
-        "basis": "direct 1-bedroom listing",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
-        "summary": "Live long-term rental ads from ~$1266/mo all-in (rent + expensas). Audited 2026-08-31."
-      },
-      "heatedFloors": {
-        "confirmed": true,
-        "system": "Calefacción por losa radiante by individual boiler",
-        "source": "BrightData Google search / Zonaprop snippets",
-        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-estandar-alquiler-las-canitas-con-vestidor-mas-de-1-bano-publicado-hace-menos-de-15-dias.html",
-        "evidence": "Quartier del Polo snippets at República de Eslovenia mention \"Agua caliente y calefacción por losa radiante mediante caldera individual\"."
-      },
-      "floorsAboveGround": 19,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 75,
-        "basis": "extrapolated from direct 2-room Quartier del Polo evidence",
-        "confidence": "medium",
-        "source": "Existing rental evidence / Selectia / Argenprop",
-        "sourceUrl": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-amoblado-cochera-y-amenities-quartier-del-polo--4666365",
-        "summary": "Direct 2-room Quartier del Polo evidence was available; comparable Las Canitas 2BR layouts support about 75 m2."
-      }
-    },
-    {
-      "aliases": [],
       "id": "quartier-dorrego",
       "name": "Quartier Dorrego",
       "officialWebsiteUrl": "https://argencons.com/ver-terminado.php?id=Dorrego",
@@ -4119,6 +4442,72 @@
     },
     {
       "aliases": [],
+      "id": "quartier-polo",
+      "name": "Quartier del Polo",
+      "officialWebsiteUrl": "https://www.obrasysistemas.com.ar/quartier-polo",
+      "zone": "Las Cañitas",
+      "built": "2011-2016",
+      "address": "República de Eslovenia 1944",
+      "fullAddress": "República de Eslovenia 1944, C1426 Cañitas, Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJR71P1r21vJURrmUQnhFYBL4",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Rep%C3%BAblica%20de%20Eslovenia%201944%2C%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJR71P1r21vJURrmUQnhFYBL4",
+      "location": {
+        "lat": -34.5706327,
+        "lng": -58.4343843
+      },
+      "availability": "Airbnb and temporary rentals",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/34942244",
+        "evidence": "Airbnb result titled \"Deluxe High-Floor Apartment w/ Pool in Las Cañitas\" names Quartier Polo."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
+        "note": "Active long-term rental listing verified 2026-08-31",
+        "checkedAt": "2026-08-31",
+        "source": "Zonaprop"
+      },
+      "description": "Eslovenia complex in Las Cañitas with outdoor pool, jacuzzi, sauna, gym and the polo field a short walk away.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler departamento 2 ambientes con cochera y amenities - Quartier del Polo",
+        "url": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
+        "checkedAt": "2026-08-31",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1266,
+        "rentUsd": 900,
+        "expensesUsd": 366,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1266,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/emprendimiento/alunapna-alquiler-departamento-2-ambientes-con-cochera-y-59282320.html",
+        "summary": "Live long-term rental ads from ~$1266/mo all-in (rent + expensas). Audited 2026-08-31."
+      },
+      "heatedFloors": {
+        "confirmed": true,
+        "system": "Calefacción por losa radiante by individual boiler",
+        "source": "BrightData Google search / Zonaprop snippets",
+        "sourceUrl": "https://www.zonaprop.com.ar/departamentos-estandar-alquiler-las-canitas-con-vestidor-mas-de-1-bano-publicado-hace-menos-de-15-dias.html",
+        "evidence": "Quartier del Polo snippets at República de Eslovenia mention \"Agua caliente y calefacción por losa radiante mediante caldera individual\"."
+      },
+      "floorsAboveGround": 19,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 75,
+        "basis": "extrapolated from direct 2-room Quartier del Polo evidence",
+        "confidence": "medium",
+        "source": "Existing rental evidence / Selectia / Argenprop",
+        "sourceUrl": "https://selectia.net.ar/propiedad/alquiler-departamento-2-ambientes-amoblado-cochera-y-amenities-quartier-del-polo--4666365",
+        "summary": "Direct 2-room Quartier del Polo evidence was available; comparable Las Canitas 2BR layouts support about 75 m2."
+      }
+    },
+    {
+      "aliases": [],
       "id": "quo-swim",
       "name": "Quo Swim",
       "officialWebsiteUrl": "https://www.brodyfriedman.com.ar/proyectos/8/quo-swim",
@@ -4170,6 +4559,70 @@
         "source": "BrightData Google / social snippets",
         "sourceUrl": "https://www.instagram.com/p/DL2wBRztj3b/",
         "summary": "Search snippets showed a compact 3-room / 2-bedroom Quo Swim-style layout around 62.5 m2."
+      }
+    },
+    {
+      "id": "quo-zapata",
+      "name": "Quo Zapata",
+      "aliases": [
+        "QUO Zapata",
+        "Torre Quo Zapata",
+        "Zapata 359",
+        "Jorge Newbery 2460"
+      ],
+      "officialWebsiteUrl": "https://quozapata.com.ar/",
+      "zone": "Las Cañitas",
+      "built": "2024",
+      "address": "Zapata 359 / Jorge Newbery 2460",
+      "fullAddress": "Zapata 359, C1426AEE Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJZSlIacC1vJURbkBItOEPQYc",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Zapata%20359%2C%20C1426AEE%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJZSlIacC1vJURbkBItOEPQYc",
+      "location": {
+        "lat": -34.5731063,
+        "lng": -58.4412707
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/1456057203134392601",
+        "evidence": "Airbnb listing titled \"Studio apartment in a category #908 building\" in the Quo Zapata building."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-balcon-59928662.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
+      },
+      "description": "Twin 12-story BrodyFriedman towers at Zapata and Jorge Newbery with pool, gym, SUM and laundry. Distinct from Quo Swim at Dorrego 1900.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Departamento en alquiler 2 ambientes balcón Quo Zapata",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-balcon-59928662.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1094,
+        "rentUsd": 800,
+        "expensesUsd": 294,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1094,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-en-alquiler-2-ambientes-balcon-59928662.html",
+        "summary": "Live 2-ambientes rental at Jorge Newbery 2400 / Quo Zapata for USD 800 + ARS 450,000 expensas (~USD 1,094 all-in at BNA venta 1,530). Audited 2026-09-04."
+      },
+      "floorsAboveGround": 12,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 68,
+        "basis": "direct 3-room / 2-bedroom covered sale",
+        "confidence": "medium",
+        "source": "Soldati",
+        "sourceUrl": "https://www.soldati.com/propiedad/departamento-3-ambientes-en-venta-palermo--4439208",
+        "summary": "Live 3-ambientes sale in Quo Zapata is 68 m² covered / 118 m² total. Typical 2-ambientes about 50–55 m²."
       }
     },
     {
@@ -4423,6 +4876,68 @@
         "source": "Argenprop sale listing",
         "sourceUrl": "https://www.argenprop.com/departamento-en-venta-en-puerto-madero-3-ambientes--18542663",
         "summary": "The Link Towers sale snippets showed 3 ambientes units around 115-122 m2; this uses the 122 m2 Argenprop sale listing rather than extrapolated 2-room evidence."
+      }
+    },
+    {
+      "id": "torre-ambar",
+      "name": "Torre Ámbar",
+      "aliases": [
+        "Torre Ambar",
+        "Salguero 3000"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Palermo Chico",
+      "built": "2012-2013",
+      "address": "Jerónimo Salguero 3000",
+      "fullAddress": "Jerónimo Salguero 3000, C1425DDA Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": null,
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jer%C3%B3nimo%20Salguero%203000%2C%20C1425DDA%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina",
+      "location": {
+        "lat": -34.5778642,
+        "lng": -58.4061786
+      },
+      "availability": "Rental ad found; Airbnb not found",
+      "airbnb": {
+        "confirmed": false,
+        "label": "Airbnb not found",
+        "url": null,
+        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
+        "note": "Active long-term rental listing verified 2026-08-31",
+        "checkedAt": "2026-08-31",
+        "source": "Zonaprop"
+      },
+      "description": "Palermo Chico tower at Salguero 3000 with pool, gym, jacuzzi and SUM. Distinct from Palacio Bonaire at Salguero 2900, Torre Bellini, and blacklisted Torres de Gelly at Salguero 3031.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Excelente 4 ambientes con balcón terraza, frente y vista abierta – Salguero 3000 e/ Gelly y Castex",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
+        "checkedAt": "2026-08-31",
+        "size": "3br",
+        "bedrooms": 2,
+        "priceUsdMonthly": 1176,
+        "rentUsd": 1176,
+        "expensesUsd": 0,
+        "expensesIncluded": true
+      },
+      "longTermRentUsd": {
+        "amount": 523,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-apto-profesional.-sin-expensas.-59972642.html",
+        "summary": "Live long-term rental ads from ~$523/mo all-in (rent + expensas). Audited 2026-08-31."
+      },
+      "floorsAboveGround": null,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 104,
+        "basis": "asking 3-ambiente / 2-bedroom sales samples",
+        "confidence": "medium",
+        "source": "Prior candidate research / portal sales",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
+        "summary": "Torre Ámbar 2BR samples ranged about 98–110 m²; using 104 m²."
       }
     },
     {
@@ -4924,6 +5439,76 @@
       }
     },
     {
+      "id": "torre-isadora",
+      "name": "Torre Isadora",
+      "aliases": [
+        "Isadora",
+        "Edificio Isadora",
+        "Torre Isadora Premium"
+      ],
+      "officialWebsiteUrl": null,
+      "zone": "Belgrano",
+      "built": "2024",
+      "address": "Olazábal 2258 / 2266",
+      "fullAddress": "Av. Olazábal 2258, C1428 Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJCdNNU9O1vJURmBOU49QV4kM",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20Olaz%C3%A1bal%202258%2C%20C1428%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJCdNNU9O1vJURmBOU49QV4kM",
+      "location": {
+        "lat": -34.5593333,
+        "lng": -58.4568333
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/897030187595972613",
+        "evidence": "Airbnb listing titled \"Apartment (B) in Belgrano, spacious and bright\" describes Isadora as a 15-story residential tower."
+      },
+      "rentalEvidence": {
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-full-amenities-en-59413566.html",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Zonaprop"
+      },
+      "description": "15-story Belgrano C tower at Olazábal 2258/66 with gym on 14, rooftop pool on 15, coworking, laundry and 24-hour security.",
+      "localRentalAd": {
+        "source": "Zonaprop",
+        "title": "Alquiler 2 ambientes AMOBLADO full amenities en Belgrano!",
+        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-full-amenities-en-59413566.html",
+        "checkedAt": "2026-09-04",
+        "size": "1br",
+        "bedrooms": 1,
+        "priceUsdMonthly": 1322,
+        "rentUsd": 1100,
+        "expensesUsd": 222,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 1322,
+        "basis": "direct 1-bedroom listing",
+        "confidence": "high",
+        "source": "Zonaprop / Argenprop",
+        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-amoblado-full-amenities-en-59413566.html",
+        "summary": "Live furnished 2-ambientes rental at Torre Isadora for USD 1,100/mo plus $340,000 expensas (~USD 1,322 all-in at BNA 1,530). Audited 2026-09-04."
+      },
+      "heatedFloors": {
+        "confirmed": true,
+        "system": "Underfloor heating in listed units",
+        "source": "Airbnb host listing for Isadora apartment (C)",
+        "sourceUrl": "https://www.airbnb.com/rooms/897058564983987792",
+        "evidence": "Host copy for the Isadora tower unit states air conditioning and underfloor heating."
+      },
+      "floorsAboveGround": 15,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 79,
+        "basis": "developer 3-room / 2-bedroom marketing size",
+        "confidence": "medium",
+        "source": "Korn Propiedades",
+        "sourceUrl": "https://www.instagram.com/p/CIVwD9oIiVJ/",
+        "summary": "Korn marketing for Olazábal 2258 lists 3-ambientes units at 79 m². Typical 2-ambientes are about 51 m²."
+      }
+    },
+    {
       "id": "torre-nic-baez-600",
       "name": "Torre NIC",
       "aliases": [
@@ -4982,69 +5567,6 @@
         "source": "Existing rental evidence / Argenprop",
         "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-las-canitas--19475444",
         "summary": "Only smaller direct Baez 600 rental evidence was visible; a standard Las Canitas 2BR tower layout is estimated at 75 m2."
-      }
-    },
-    {
-      "id": "oro-2835",
-      "name": "Torre Oro 2835",
-      "aliases": [
-        "Oro 2835",
-        "Edificio Oro 2835",
-        "Torre Oro Costantini"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo",
-      "built": "2006",
-      "address": "Fray Justo Santa María de Oro 2835",
-      "fullAddress": "Fray Justo Santa María de Oro 2835, C1425 Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Fray%20Justo%20Santa%20Mar%C3%ADa%20de%20Oro%202835%2C%20C1425%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina",
-      "location": {
-        "lat": -34.5755176,
-        "lng": -58.4205758
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Zonaprop"
-      },
-      "description": "Palermo tower at Oro 2835 with pool and gym. Distinct from Oro Tower at Oro 2222 and blacklisted Quartier de Oro.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Alquiler departamento 2 ambientes amoblado en Torre Oro Costantini, Palermo Nuevo",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
-        "checkedAt": "2026-08-31",
-        "size": "1br",
-        "bedrooms": 1,
-        "priceUsdMonthly": 1494,
-        "rentUsd": 1200,
-        "expensesUsd": 294,
-        "expensesIncluded": false
-      },
-      "longTermRentUsd": {
-        "amount": 1394,
-        "basis": "direct 1-bedroom listing",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-departamento-2-ambientes-amoblado-en-alquiler-59390480.html",
-        "summary": "Live long-term rental ads from ~$1394/mo all-in (rent + expensas). Audited 2026-08-31."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 82,
-        "basis": "covered-area 3-ambiente sales samples",
-        "confidence": "medium",
-        "source": "Prior candidate research / portal sales",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-departamento-2-ambientes-amoblado-en-torre-59859291.html",
-        "summary": "Torre Oro 2835 2BR samples ranged about 74–89 m²; using 82 m²."
       }
     },
     {
@@ -5423,68 +5945,6 @@
         "source": "BrightData Google / Zonaprop sale snippets",
         "sourceUrl": "https://www.zonaprop.com.ar/departamentos-botanico-palermo-con-balcon-1-ambiente-hasta-5-anos.html",
         "summary": "Torre Vista Botanico sale snippets showed 3 ambientes Palermo Botanico inventory around 97 m2."
-      }
-    },
-    {
-      "id": "torre-ambar",
-      "name": "Torre Ámbar",
-      "aliases": [
-        "Torre Ambar",
-        "Salguero 3000"
-      ],
-      "officialWebsiteUrl": null,
-      "zone": "Palermo Chico",
-      "built": "2012-2013",
-      "address": "Jerónimo Salguero 3000",
-      "fullAddress": "Jerónimo Salguero 3000, C1425DDA Cdad. Autónoma de Buenos Aires, Argentina",
-      "googlePlaceId": null,
-      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Jer%C3%B3nimo%20Salguero%203000%2C%20C1425DDA%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina",
-      "location": {
-        "lat": -34.5778642,
-        "lng": -58.4061786
-      },
-      "availability": "Rental ad found; Airbnb not found",
-      "airbnb": {
-        "confirmed": false,
-        "label": "Airbnb not found",
-        "url": null,
-        "evidence": "No exact-building Airbnb room with extractable monthly USD was found on 2026-08-12."
-      },
-      "rentalEvidence": {
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
-        "note": "Active long-term rental listing verified 2026-08-31",
-        "checkedAt": "2026-08-31",
-        "source": "Zonaprop"
-      },
-      "description": "Palermo Chico tower at Salguero 3000 with pool, gym, jacuzzi and SUM. Distinct from Palacio Bonaire at Salguero 2900, Torre Bellini, and blacklisted Torres de Gelly at Salguero 3031.",
-      "localRentalAd": {
-        "source": "Zonaprop",
-        "title": "Excelente 4 ambientes con balcón terraza, frente y vista abierta – Salguero 3000 e/ Gelly y Castex",
-        "url": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
-        "checkedAt": "2026-08-31",
-        "size": "3br",
-        "bedrooms": 2,
-        "priceUsdMonthly": 1176,
-        "rentUsd": 1176,
-        "expensesUsd": 0,
-        "expensesIncluded": true
-      },
-      "longTermRentUsd": {
-        "amount": 523,
-        "basis": "direct 1-bedroom listing",
-        "confidence": "high",
-        "source": "Zonaprop",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-alquiler-2-ambientes-apto-profesional.-sin-expensas.-59972642.html",
-        "summary": "Live long-term rental ads from ~$523/mo all-in (rent + expensas). Audited 2026-08-31."
-      },
-      "floorsAboveGround": null,
-      "approxTwoBedroomAreaSqm": {
-        "amount": 104,
-        "basis": "asking 3-ambiente / 2-bedroom sales samples",
-        "confidence": "medium",
-        "source": "Prior candidate research / portal sales",
-        "sourceUrl": "https://www.zonaprop.com.ar/propiedades/clasificado/alclapin-excelente-4-ambientes-con-balcon-terraza-frente-y-58966360.html",
-        "summary": "Torre Ámbar 2BR samples ranged about 98–110 m²; using 104 m²."
       }
     },
     {
@@ -5925,6 +6385,70 @@
         "source": "Inmuebles Clarín / Roomix sale listing",
         "sourceUrl": "https://www.inmuebles.clarin.com/departamento-en-venta-en-palermo-soho-3-ambientes--20009803",
         "summary": "Town House Soho 3 ambientes sale at Paraguay 4700 listed 83 m² total / 78 m² covered; replaces prior ~85 m² snippet. Live Soho III 1BR is 62 m² total / 55 m² covered."
+      }
+    },
+    {
+      "id": "viewpoint-libertador",
+      "name": "ViewPoint Libertador",
+      "aliases": [
+        "Viewpoint Libertador",
+        "View Point",
+        "Torre View Point",
+        "Vista Belgrano Tower"
+      ],
+      "officialWebsiteUrl": "https://www.gesdesarrollos.com/project/viewpoint/",
+      "zone": "Belgrano",
+      "built": "2018",
+      "address": "Av. del Libertador 5414",
+      "fullAddress": "Av. del Libertador 5414, C1426BTV Cdad. Autónoma de Buenos Aires, Argentina",
+      "googlePlaceId": "ChIJy1udxlq1vJURDfDuPoudmKA",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Av.%20del%20Libertador%205414%2C%20C1426BTV%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires%2C%20Argentina&query_place_id=ChIJy1udxlq1vJURDfDuPoudmKA",
+      "location": {
+        "lat": -34.5622944,
+        "lng": -58.4431832
+      },
+      "availability": "Rental ad and Airbnb found",
+      "airbnb": {
+        "confirmed": true,
+        "label": "Airbnb confirmed",
+        "url": "https://www.airbnb.com/rooms/51071214",
+        "evidence": "Airbnb listing titled \"Spectacular Luxury Apartment in Vista Belgrano Tower\" with extractable USD monthly price."
+      },
+      "rentalEvidence": {
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
+        "note": "Active long-term rental listing verified 2026-09-04",
+        "checkedAt": "2026-09-04",
+        "source": "Argenprop"
+      },
+      "description": "GES 29-floor Belgrano tower on Libertador at Virrey Loreto, with gym plus main and kids pools, SUM, coworking and river views.",
+      "localRentalAd": {
+        "source": "Argenprop",
+        "title": "Luminoso 3 amb / 2 dorm — ViewPoint, Belgrano",
+        "url": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
+        "checkedAt": "2026-09-04",
+        "size": "2br",
+        "bedrooms": 2,
+        "priceUsdMonthly": 3862,
+        "rentUsd": 3300,
+        "expensesUsd": 562,
+        "expensesIncluded": false
+      },
+      "longTermRentUsd": {
+        "amount": 2970,
+        "basis": "extrapolated from 3-room listing",
+        "confidence": "medium",
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
+        "summary": "Live 3-ambientes rental at ViewPoint is USD 3,300 plus $860,000 expensas (~USD 3,862 all-in) for 91 m² covered. Scaled to the building's ~70 m² 2-ambientes size: about USD 2,970/mo. Audited 2026-09-04."
+      },
+      "floorsAboveGround": 29,
+      "approxTwoBedroomAreaSqm": {
+        "amount": 91,
+        "basis": "direct 3-room / 2-bedroom covered listing",
+        "confidence": "high",
+        "source": "Argenprop",
+        "sourceUrl": "https://www.argenprop.com/departamento-en-alquiler-en-belgrano-3-ambientes--19754165",
+        "summary": "Live 3-ambientes / 2-bedroom rental at ViewPoint is 91 m² covered / 114 m² total; matching sale samples are about 88–91 m² covered."
       }
     },
     {

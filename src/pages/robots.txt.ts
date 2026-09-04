@@ -126,6 +126,7 @@ export const GET: APIRoute = ({ site, url }) => {
     "",
     "# HTML sitemap (human- and bot-readable page index)",
     `# ${origin}/sitemap/`,
+    `# ${origin}/sitemap-ar/`,
   ].join("\n");
 
   return new Response(body, {
